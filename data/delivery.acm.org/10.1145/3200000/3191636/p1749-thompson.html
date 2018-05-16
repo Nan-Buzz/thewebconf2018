@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+   <head>
+      <title>Can Common Crawl Reliably Track Persistent Identifier (PID) Use Over Time?</title>
+      <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+      <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+      <link media="screen, print" rel="stylesheet"
+            href="../../../../dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"
+            href="../../../../dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"
+            href="../../../../dl.acm.org/pubs/lib/css/main.css"/><script src="../../../../dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>
+      <script src="../../../../dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>
+      <script src="../../../../dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>
+      <script src="../../../../dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>
+      <script type="text/javascript"
+              src="../../../../dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+      <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>
+   </head>
+   <body id="main">
+      <section class="front-matter">
+         <section>
+            <header class="title-info">
+               <div class="journal-title">
+                  <h1>
+                     <span class="title">Can Common Crawl Reliably Track Persistent Identifier (PID) Use Over Time?</span>
+                     <br/>
+                     <span class="subTitle"/>
+                  </h1>
+               </div>
+            </header>
+            <div class="authorGroup">
+               <div class="author"><a href="https://orcid.org/0001-5490-1347" ref="author"><span class="givenName">Henry S.</span> 
+                     <span class="surName">Thompson</span></a>,
+                  University of Edinburgh, Edinburgh, United Kingdom, <a href="mailto:ht@inf.ed.ac.uk">ht@inf.ed.ac.uk</a>
+               </div>
+               <div class="author">
+                  <span class="givenName">TONG</span> 
+                  <span class="surName">Jian<a class="fn" href="#fn1" id="foot-fn1"><sup>*</sup></a></span>,
+                  University of Edinburgh, Edinburgh, United Kingdom, <a href="mailto:s1615354@sms.ed.ac.uk">s1615354@sms.ed.ac.uk</a>
+               </div>
+               
+               
+            </div>
+            <br/>
+            <div class="pubInfo">
+               <p>DOI: <a href="https://doi.org/10.1145/3184558.3191636" target="_blank">https://doi.org/10.1145/3184558.3191636</a>
+                  <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>
+            </div>
+            <div class="abstract">
+               <p>
+                  <small>We report here on the results of two studies using two and four monthly web crawls respectively from the Common Crawl (CC) initiative between 2014 and 2017, whose initial goal was to provide empirical evidence for the changing patterns of use of so-called persistent identifiers. This paper focusses on the tooling needed for dealing with CC data, and the problems we found with it. The first study is based on over 10<sup>12</sup> URIs from over 5<em>x</em>10<sup>9</sup> pages crawled in April 2014 and April 2017, the second study adds a further 3<em>x</em>10<sup>9</sup> pages from the April 2015 and April 2016 crawls. We conclude with suggestions on specific actions needed to enable studies based on CC to give reliable longitudinal information.</small>
+               </p>
+            </div>
+            <div class="classifications">
+               <div class="author">
+                  <span style="font-weight:bold;">
+                     <small>Keywords:</small>
+                  </span>
+                  <span class="keyword">
+                     <small>temporal web analytics</small>, </span>
+                  <span class="keyword">
+                     <small> persistent identifier</small>, </span>
+                  <span class="keyword">
+                     <small> Common Crawl</small>, </span>
+                  <span class="keyword">
+                     <small> Uniform Resource Identifier</small>, </span>
+                  <span class="keyword">
+                     <small> longitudinal web crawl analysis</small>, </span>
+                  <span class="keyword">
+                     <small> Digital Object Identifier</small>
+                  </span>
+               </div>
+               <br/>
+               <div class="AcmReferenceFormat">
+                  <p>
+                     <small>
+                        <span style="font-weight:bold;">ACM Reference Format:</span>
+                        <br/>
+                        Henry S. Thompson and TONG Jian. 2018. Can Common Crawl Reliably Track Persistent Identifier (PID) Use Over Time?. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em> 
+                        <em>April 23&#x2013;27, 2018,</em> 
+                        <em> Lyon, France</em>. ACM, New York, NY, USA 7 Pages. <a href="https://doi.org/10.1145/3184558.3191636" class="link-inline force-break"
+                           target="_blank">https://doi.org/10.1145/3184558.3191636</a></small>
+                  </p>
+               </div>
+            </div>
+         </section>
+      </section>
+      <section class="body">
+         <section id="sec-3">
+            <header>
+               <div class="title-info">
+                  <h2>
+                     <span class="section-number">1</span> Introduction</h2>
+               </div>
+            </header>
+            <p>The history of efforts to meet the demand for so-called &#x2018;persistent identifiers&#x2019; (PIDs) for use on the Web is complicated, with many alternative offerings and much debate about the meaning of persistence and how to go about ensuring it. We take no position in that debate here, beyond the observation that the demand for PIDs shows no signs of abating, and that there has been a more-or-less general acknowledgement over the last 5&#x2013;10 years that to be successful in the context of the Web a PID scheme must define and support a mapping from PIDs in the scheme to &#x2018;actionable&#x2019; identifiers. In practice this has meant specifying a purely syntactic procedure for converting a PID into an <tt>http(s):</tt> URI using a domain owned and operated by the proprietors of the scheme. An HTTP request for such &#x2018;actionable&#x2019; URIs will typically result in a redirection to the then-current location of the identified resource.</p>
+            <p>The Digital Object Identifier scheme [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                  href="#BibPLXBIB0011">11</a>], managed by the International DOI Foundation (IDF) [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                  href="#BibPLXBIB0016">16</a>], was an early adopter of this approach, and DOIs are now in widespread use, particularly in scientific journals, where their use is actually mandated by a number of major publishers. The mapping for DOIs to actionable <tt>https:</tt> URIs is simple: For example a DOI for a journal article written in the form of a URI such as <a class="link-inline force-break" href="http://doi:...">doi:...</a>
+ is mapped (client-side) to <a class="link-inline force-break" href="https://doi.org/...">https://doi.org/...</a><a class="fn" href="#fn2" id="foot-fn2"><sup>1</sup></a>. In response to an HTTP request for that URI, the server at <tt>doi.org</tt> (operated on behalf of IDF by the Corporation for National Research Initiatives (CNRI) [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                  href="#BibPLXBIB0005">5</a>]) will respond with a redirect to the appropriate <tt>http(s):</tt> URI from the actual publisher of the article. We call the three forms involved the &#x2019;original&#x2019; (e.g. <tt>doi:</tt> or <tt>info:hdl</tt>), the &#x2018;actionable&#x2019; (e.g. <tt>https://doi.org/...</tt> and variants thereof or <tt>http://hdl.handle.net/...</tt>) and the &#x2018;locating&#x2019;. Note that <em>none</em> of these is strictly speaking a PID as such: that&#x0027;s what comes <em>after</em> the <tt>doi:</tt> or <tt>https://hdl:handle.net/</tt>.</p>
+            <p>The success of this approach has overcome a significant barrier to the adoption of PIDs in general: to date there has been no significant move towards support for any of them <em>as URIs</em> in web browsers or PDF viewers. That is, if you try to use <a class="link-inline force-break" href="http://doi://10.1000/182">doi://10.1000/182</a>
+ or <a class="link-inline force-break" href="http://info:hdl/20.1000/100">info:hdl/20.1000/100</a>
+ as a link (for example, as the value of the <strong>href</strong> attribute of an HTML <strong>A</strong> element), it will not work. But you <em>can</em> use them as the link text of an <strong>A</strong> element, and put the actionable form (<a class="link-inline force-break" href="https://doi.org/10.1000/182">https://doi.org/10.1000/182</a>
+ and <a class="link-inline force-break" href="http://hdl.handle.net/20.1000/100">http://hdl.handle.net/20.1000/100</a>
+ respectively) in the <strong>href</strong> attribute, and <em>that</em> will work just fine.</p>
+            <p>That&#x0027;s the good news. The less good news is that the use of redirection from the actionable form to the locating form means that when someone follows a link such as those in the previous paragraph, it&#x0027;s the <em>locating</em> form that appears in the address bar of their browser, and is thus the form they may well copy and paste into an email to a colleague or their own reading list. But this undermines the fundamental value proposition of the original (&#x2019;persistent&#x2019;) form: that it is not vulnerable to all the things that cause <tt>http:</tt> URIs to fail over time.</p>
+            <p>Our goal in the work reported here was to quantify the growth over time in actual usage of the three forms, to see not only how good the good news was, but also whether there was cause to worry about the less good news: are locating forms &#x2018;leaking&#x2019; into public use?</p>
+            <p>For concrete evidence we used the Common Crawl sample of HTML pages on the Web [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                  href="#BibPLXBIB0003">3</a>], the only large-scale public source of evidence readily available to us. This turned out to be challenging in a number of respects, to the extent that although our results are interesting, problems with the CC data mean that they may not accurately reflect the actual situation. In what follows we will first describe the work as such, and then discuss the ways in which the CC data fell short of what we think is required for reliable analysis.</p>
+            <p>
+               <strong>Note on terminology</strong> Although most of the PIDs in various forms (original, actionable or locating) found during our studies were DOIs, we will be careful hereafter to use &#x2018;PID&#x2019; when we mean <em>anything</em> recognised as a form of persistent identifier, and &#x2018;DOI&#x2019; for the subset thereof which are some form of DOI.</p>
+         </section>
+         <section id="sec-4">
+            <header>
+               <div class="title-info">
+                  <h2>
+                     <span class="section-number">2</span> Prior work and other sources of information</h2>
+               </div>
+            </header>
+            <p>An excellent overview of the space of PIDs and arguments for their use, only slightly dated, can be found in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                  href="#BibPLXBIB0021">21</a>]. The IDF&#x0027;s views on the need for PIDs and their goals for DOIs is described in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                  href="#BibPLXBIB0001">1</a>].</p>
+            <p>The IDF occasionally update their &#x201D;Key Facts&#x201D; page [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                  href="#BibPLXBIB0012">12</a>] which currently says that</p>
+            <ul class="list-no-style">
+               <li id="list1" label="&#x2022;">[DOIs are] Currently used by well over 5,000 assigners, e.g., publishers, science data centres, movie studios, etc.<br/></li>
+               <li id="list2" label="&#x2022;">Approximately 148 million DOI names assigned to date<br/></li>
+               <li id="list3" label="&#x2022;">Over 5 billion DOI resolutions per year<br/></li>
+            </ul>
+            <p>The leading issuer of DOIs for publications is CrossRef [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                  href="#BibPLXBIB0007">7</a>], who publish regularly-updated statistics about membership numbers, DOIs registered, etc. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                  href="#BibPLXBIB0008">8</a>]</p>
+            <p>The leading issuer of DOIs for research data (as opposed to publications) is DataCite [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                  href="#BibPLXBIB0009">9</a>] who similarly publish statistics of the number of data-specific DOIs issued, cited etc. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                  href="#BibPLXBIB0010">10</a>]</p>
+            <p>The only longitudinal study for PID usage we are aware of is [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                  href="#BibPLXBIB0025">25</a>]. They processed approximately 1.8 million scholarly articles published between 1997 and 2012, drawn from arXiv.org, Elsevier journals and PubMed Central, yielding a total of 2.2 million URIs. Of these there were</p>
+            <ul class="list-no-style">
+               <li id="list4" label="&#x2022;">397,412 actionable-form DOIs (all using <tt>dx.doi.org</tt>)<br/></li>
+               <li id="list5" label="&#x2022;">505,657 &#x201D;should-be-DOIs&#x201D;<br/></li>
+            </ul>
+            <p>Their results are difficult to compare to ours, not only because they were looking at a disjoint set of years, but also because they didn&#x0027;t actually <em>look up</em> the actionable-form DOIs they found and then tabulate the occurrences of the resulting locating-form URIs. Instead they used &#x201D;a list of hash values of publisher [domain names] provided by CrossRef. If the hash of a [domain name] of an extracted reference matches a hash in CrossRef&#x0027;s list, a reference is [considered to be a should-be-DOI].&#x201D; This was because their goal, as the name suggests, was to identify references that <em>could</em> have been DOIs, because the publisher was a CrossRef member and so would have assigned a DOI to the article in question. This is not quite the same goal as ours, which was to measure the ratio of actionable-form to locating-form PIDs <em>for the same individual article</em>.</p>
+         </section>
+         <section id="sec-5">
+            <header>
+               <div class="title-info">
+                  <h2>
+                     <span class="section-number">3</span> Materials</h2>
+               </div>
+            </header>
+            <section id="sec-6">
+               <header>
+                  <div class="title-info">
+                     <h3>
+                        <span class="section-number">3.1</span> First study</h3>
+                  </div>
+               </header>
+               <p>Our first study, of the use of PIDs in all three forms, compared usage in April 2014 with that in April 2017, based on the Common Crawl sample of HTML pages on the Web [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                     href="#BibPLXBIB0003">3</a>] for those months. Table&#x00A0;<a class="tbl" href="#tab1">1</a> gives basic size information for this sample.</p>
+               <div class="table-responsive" id="tab1">
+                  <div class="table-caption">
+                     <span class="table-number">Table 1:</span>
+                     <span class="table-title">Crawl size for first study [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                           href="#BibPLXBIB0024">24</a>].</span>
+                  </div>
+                  <table class="table">
+                     <thead>
+                        <tr>
+                           <th style="text-align:right;">Crawl month</th>
+                           <th style="text-align:right;">URIs crawled</th>
+                           <th style="text-align:right;">Pages retrieved</th>
+                           <th style="text-align:right;">Dup URI %age</td>
+                        </tr>
+						</thead>
+						<tbody>
+                        <tr>
+                           <td style="text-align:right;">2014-04</td>
+                           <td style="text-align:right;">1,718,646,762</td>
+                           <td style="text-align:right;">2,641,371,316</td>
+                           <td style="text-align:right;">34.9%</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">2017-04</td>
+                           <td style="text-align:right;">2,907,715,349</td>
+                           <td style="text-align:right;">2,942,930,482</td>
+                           <td style="text-align:right;">1.2%</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+               <p>The difference between the &#x201D;URIs crawled&#x201D; and &#x201D;Pages retrieved&#x201D; columns in this table, particularly for 2014, signal a problem with the same URI being retrieved multiple times. Although the crawl always starts with a unique set of URIs and does not follow page-internal links, redirects to URIs in the initial set occur surprisingly often, giving rise to duplication in some cases. The &#x201D;Duplicate URI %age&#x201D; column in Table&#x00A0;reftab:t1 reports this, as <em>estimated</em> by subtracting the ratio of the URI to Page columns from 1. Detecting instances of this problem and not including pages from the duplicates has improved considerably between 2014 and 2017, as can be seen from the convergence of the &#x201D;URIs crawled&#x201D; and &#x201D;Pages retrieved&#x201D; columns and the big drop in the duplicate URI percentage estimate.</p>
+               <p>This duplication does not always mean that duplicate pages have been retrieved &#x2013; as the crawl takes several weeks to complete the identified page may have changed. A direct estimate of the number of duplicate pages retrieved, based on comparing Hyperloglog digest values, is shown in Table&#x00A0;<a class="tbl" href="#tab2">2</a>. We&#x0027;ll return to the impact this has on our DOI tabulations in the Results section below.</p>
+               <div class="table-responsive" id="tab2">
+                  <div class="table-caption">
+                     <span class="table-number">Table 2:</span>
+                     <span class="table-title">Duplicate page estimates for first study [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                           href="#BibPLXBIB0024">24</a>].</span>
+                  </div>
+                  <table class="table">
+                     <thead>
+                        <tr>
+                           <th style="text-align:right;">Crawl month</th>
+                           <th style="text-align:right;">Pages retrieved</th>
+                           <th style="text-align:right;">Digests</th>
+                           <th style="text-align:right;">Dup pages %age</th>
+                        </tr>
+						</thead>
+						<tbody>
+                        <tr>
+                           <td style="text-align:right;">2014-04</td>
+                           <td style="text-align:right;">2,641,371,316</td>
+                           <td style="text-align:right;">2,250,363,653</td>
+                           <td style="text-align:right;">14.8%</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">2017-04</td>
+                           <td style="text-align:right;">2,907,715,349</td>
+                           <td style="text-align:right;">2,915,114,582</td>
+                           <td style="text-align:right;">0.9%</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </section>
+            <section id="sec-7">
+               <header>
+                  <div class="title-info">
+                     <h3>
+                        <span class="section-number">3.2</span> Second study</h3>
+                  </div>
+               </header>
+               <p>Our second study added crawls from April 2015 and 2016, but focused exclusively on URIs using the <tt>doi:</tt> scheme. Table&#x00A0;<a class="tbl" href="#tab3">3</a> combines the columns from Tables&#x00A0;<a class="tbl" href="#tab1">1</a>&#x00A0;&#x0026;&#x00A0;<a class="tbl" href="#tab2">2</a> and includes these additional years.</p>
+               <div class="table-responsive" id="tab3">
+                  <div class="table-caption">
+                     <span class="table-number">Table 3:</span>
+                     <span class="table-title">Crawl number for all four years [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                           href="#BibPLXBIB0024">24</a>].</span>
+                  </div>
+                  <table class="table">
+                     <thead>
+                        <tr>
+                           <th style="text-align:right;">Crawl month</th>
+                           <th style="text-align:right;">URIs crawled</th>
+                           <th style="text-align:right;">Pages retrieved</th>
+                           <th style="text-align:right;">Dup URI %age</th>
+                           <th style="text-align:right;">Digests</th>
+                           <th style="text-align:right;">Dup pages %age</th>
+                        </tr>
+						</thead>
+						<tbody>
+                        <tr>
+                           <td style="text-align:right;">2014-04</td>
+                           <td style="text-align:right;">1,718,646,762</td>
+                           <td style="text-align:right;">2,641,371,316</td>
+                           <td style="text-align:right;">34.9%</td>
+                           <td style="text-align:right;">2,250,363,653</td>
+                           <td style="text-align:right;">14.8%</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">2015-04</td>
+                           <td style="text-align:right;">1,934,559,347</td>
+                           <td style="text-align:right;">2,115,818,059</td>
+                           <td style="text-align:right;">8.6%</td>
+                           <td style="text-align:right;">1,910,978,257</td>
+                           <td style="text-align:right;">9.7%</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">2016-04</td>
+                           <td style="text-align:right;">1,335,046,923</td>
+                           <td style="text-align:right;">1,335,046,923</td>
+                           <td style="text-align:right;">0.0%</td>
+                           <td style="text-align:right;">1,211,048,216</td>
+                           <td style="text-align:right;">9.3%</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">2017-04</td>
+                           <td style="text-align:right;">2,907,715,349</td>
+                           <td style="text-align:right;">2,942,930,482</td>
+                           <td style="text-align:right;">1.2%</td>
+                           <td style="text-align:right;">2,915,114,582</td>
+                           <td style="text-align:right;">0.9%</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+               <p>The Common Crawl makes data from each crawl available in 3 variants of the WARC format [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                     href="#BibPLXBIB0015">15</a>],[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                     href="#BibPLXBIB0017">17</a>]:</p>
+               <ul class="list-no-style">
+                  <li id="list6" label="&#x2022;">WARC for the raw crawl data;<br/></li>
+                  <li id="list7" label="&#x2022;">WAT [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                        href="#BibPLXBIB0018">18</a>] for computed metadata, including request and response headers and, for responses, link tabulations from HEAD and BODY, using JSON<br/></li>
+                  <li id="list8" label="&#x2022;">WET for plaintext from the BODY<br/></li>
+               </ul>
+               <p>In both studies we worked exclusively with the WAT format, as that contains the link data we were interested in without the additional overhead of the entire HTML response. The number of files, average number of request/response pairs reported and the approximate total compressed WAT file size (in terabytes) is shown in Table&#x00A0;<a class="tbl" href="#tab4">4</a>.</p>
+               <div class="table-responsive" id="tab4">
+                  <div class="table-caption">
+                     <span class="table-number">Table 4:</span>
+                     <span class="table-title">Sizes for the second study.</span>
+                  </div>
+                  <table class="table">
+                     <thead>
+                        <tr>
+                           <th style="text-align:right;">Crawl month</th>
+                           <th style="text-align:right;">WAT file count</th>
+                           <th style="text-align:right;">pages per file</th>
+                           <th style="text-align:right;">Total size (TB)</th>
+                        </tr>
+						</thead>
+						<tbody>
+                        <tr>
+                           <td style="text-align:right;">2014-04</td>
+                           <td style="text-align:right;">44488</td>
+                           <td style="text-align:right;">59373</td>
+                           <td style="text-align:right;">17</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">2015-04</td>
+                           <td style="text-align:right;">38609</td>
+                           <td style="text-align:right;">54801</td>
+                           <td style="text-align:right;">14</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">2016-04</td>
+                           <td style="text-align:right;">22200</td>
+                           <td style="text-align:right;">60137</td>
+                           <td style="text-align:right;">9</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">2017-04</td>
+                           <td style="text-align:right;">64700</td>
+                           <td style="text-align:right;">45486</td>
+                           <td style="text-align:right;">19</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+               <p>It should be noted that for 2014 and 2017, the number of actual request/response entries recovered from the WAT files was slightly less than the numbers published by Common Crawl: approximately 4 million less in 2014 and 600,000 less in 2017.</p>
+            </section>
+         </section>
+         <section id="sec-8">
+            <header>
+               <div class="title-info">
+                  <h2>
+                     <span class="section-number">4</span> Methods</h2>
+               </div>
+            </header>
+            <section id="sec-9">
+               <header>
+                  <div class="title-info">
+                     <h3>
+                        <span class="section-number">4.1</span> First study</h3>
+                  </div>
+               </header>
+               <p>For the first study we wanted to check every link from the body of each crawled HTML page, which meant downloading around 110,000 WAT-format files totalling around 36TB in (compressed) size.</p>
+               <p>We achieved this by streaming about 1/10th of the data each night, divided over approximately 100 machines that were detected as idle in one of several student labs. Each machine tabulated summary counts for approximately 100 WAT files each night, taking 4&#x2013;6 hours. These were uploaded to a central machine and merged. The process was slightly different in 2014 and 2017: only in 2017 did we look for PIDs in their locating form, as explained below.</p>
+               <section id="sec-10">
+                  <p><em>4.1.1 2014 crawl.</em> There were 44488 WAT files to be processed, containing information from a total of 2,534,229,771 pages. For each page the WAT file contains three JSON objects, one each for information about the crawl, the HTTP request and the HTTP response. We extracted the latter, and from it the following three components:</p>
+                  <ul class="list-no-style">
+                     <li id="list9" label="&#x2022;"><tt>Envelope/WARC-Header-Metadata/WARC-Target-URI</tt> (a string)<br/></li>
+                     <li id="list10" label="&#x2022;"><tt>Envelope/Payload-Metadata/HTTP-Response-Metadata/Headers/Content-Type</tt> (a string)<br/></li>
+                     <li id="list11" label="&#x2022;"><tt>Envelope/Payload-Metadata/HTTP-Response-Metadata/HTML-Metadata/Links</tt> (an array, see below)<br/></li>
+                  </ul>
+                  <p>For each page we accumulated counts for</p>
+                  <ul class="list-no-style">
+                     <li id="list12" label="&#x2022;">the target URI scheme (always <tt>http:</tt> or <tt>https:</tt>)<br/></li>
+                     <li id="list13" label="&#x2022;">the target URI host (strictly speaking the &#x2018;authority&#x2019; per RFC3986 [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                           href="#BibPLXBIB0020">20</a>])<br/></li>
+                     <li id="list14" label="&#x2022;">the Content-Type header<br/></li>
+                  </ul>
+                  <p>The contents of the .../Links component array are each an object with at least the following contents:</p>
+                  <p>
+                     <img src="http://delivery.acm.org/10.1145/3200000/3191636/images/www18companion-375-img1.svg" class="img-responsive" alt=""
+                          longdesc=""/>
+                  </p>
+                  <p>For the value of the &#x201D;url&#x201D; property of each entry in this array we accumulated counts for</p>
+                  <ul class="list-no-style">
+                     <li id="list15" label="&#x2022;">the target URI scheme (possibly absent)<br/></li>
+                     <li id="list16" label="&#x2022;">the target URI host (possibly absent)<br/></li>
+                     <li id="list17" label="&#x2022;">if the host was one of a list of actionable PID resolvers (see below), the number of times the whole URI (normalised) appeared in the Links array<br/></li>
+                  </ul>
+                  <p>The resolvers we watched for were as follows:</p>
+                  <p>
+                     <img src="http://delivery.acm.org/10.1145/3200000/3191636/images/www18companion-375-img2.svg" class="img-responsive" alt=""
+                          longdesc=""/>
+                  </p>
+                  <p>The normalisation of the Link URIs involved</p>
+                  <ul class="list-no-style">
+                     <li id="list18" label="&#x2022;">removing spurious whitespace apparently arising from issues with the Common Crawl process itself;<br/></li>
+                     <li id="list19" label="&#x2022;">replacing both percent-encoded and HTML entity-encoded character forms<br/></li>
+                  </ul>
+                  <p>The Links array data is our primary concern in this paper. As the individual processor results were merged, the individual per-page tabulations enabled us to produce the following summary tabulation:</p>
+                  <ul class="list-no-style">
+                     <li id="list20" label="&#x2022;">The frequency of <tt>http:</tt> and <tt>https:</tt> URI schemes in both the crawled URI set and of (none), <tt>http:</tt>, <tt>https:</tt> and many other URI schemes in the Link URI set<br/></li>
+                     <li id="list21" label="&#x2022;">In particular, the frequency of <tt>doi:</tt> and <tt>info:</tt> in the Link URI set<br/></li>
+                     <li id="list22" label="&#x2022;">The frequency of the five resolvers in the Link URI set<br/></li>
+                     <li id="list23" label="&#x2022;">The frequency of each actionable URI in the Link URI set<br/></li>
+                  </ul>
+                  <p>(Note that only a handful of actionable-form URIs appeared in the crawled URI set)</p>
+                  <p>For all but the first (URI schemes in general) frequency tabulations, we have both type and token frequency.</p>
+               </section>
+               <section id="sec-11">
+                  <p><em>4.1.2 2017 crawl.</em> For the April 2017 crawl, we added two additional tabulations:</p>
+                  <ul class="list-no-style">
+                     <li id="list24" label="&#x2022;">Document frequency for actionable URIs, that is, the number of pages in which each appears, regardless of how many times<br/></li>
+                     <li id="list25" label="&#x2022;">For each URI in the Link set which is the locating form of an actionable URI in the 2014 Link set, type, token and document frequency<br/></li>
+                  </ul>
+                  <p>The latter counts were tabulated by taking all the 2014 actionable forms, issuing HTTP HEAD requests for them and noting the Location response header which came back (iterating and accumulating until a 200 response was achieved). This succeeded more that 99% of the time, and a Bloom filter was constructed from the results, which then allowed us to check every Link URI as we processed the 2017 Link URIs.</p>
+                  <p>These counts are restricted to the 2017 appearances of the locating forms of 2014 actionable forms, because we didn&#x0027;t have time to do two passes over either the 2014 data or the 2017 data.</p>
+                  <p>For both years, the final step was to extract the PID itself (that is, the path part of the actionable-form URI, regardless of URI scheme, redirection server hostname or query parameters) and merge the counts across all the actionable-form URIs with the same PID. Unless otherwise noted, these are the counts reported in the Results section below.</p>
+               </section>
+            </section>
+            <section id="sec-12">
+               <header>
+                  <div class="title-info">
+                     <h3>
+                        <span class="section-number">4.2</span> Second study</h3>
+                  </div>
+               </header>
+               <p>The second study aimed to fill in the gap between 2014 and 2017, but at a much lower level of detail. It simply counted original-form DOI occurrences in the HTML head (in <strong>link</strong> and <strong>meta</strong> elements) as well as the body.</p>
+               <p>The scale of the 4 years&#x2019; data is shown above in Table&#x00A0;<a class="tbl" href="#tab4">4</a>. This study was actually a pilot study to determine whether using 100 8-core computers with better bandwidth via Microsoft&#x0027;s Azure facility<a class="fn" href="#fn3" id="foot-fn3"><sup>2</sup></a> would significantly increase throughput, and did in fact allow for one month&#x0027;s crawl data to be processed in about 6 hours, an improvement of about a factor of 8 over the first study.</p>
+               <p>As in the first study, only the &#x2018;response&#x2019; JSON object was processed, extracting 3 components:</p>
+               <ul class="list-no-style">
+                  <li id="list26" label="&#x2022;"><tt>Envelope/Payload-Metadata/HTTP-Response-Metadata/HTML-Metadata/Links</tt> (as in study 1)<br/></li>
+                  <li id="list27" label="&#x2022;"><tt>Envelope/Payload-Metadata/HTTP-Response-Metadata/HTML-Metadata/Head/Link</tt> (an array)<br/></li>
+                  <li id="list28" label="&#x2022;"><tt>Envelope/Payload-Metadata/HTTP-Response-Metadata/HTML-Metadata/Head/Metas</tt> (an array)<br/></li>
+               </ul>
+               <p>Each member of the Metas array is an object, where the ones of interest had the following contents:</p>
+               <p>
+                  <img src="http://delivery.acm.org/10.1145/3200000/3191636/images/www18companion-375-img3.svg" class="img-responsive" alt=""
+                       longdesc=""/>
+               </p>
+               <p>and we counted objects where the &#x201D;content&#x201D; property was an original-form DOI.</p>
+               <p>Likewise for the Link array, where we care about</p>
+               <p>
+                  <img src="http://delivery.acm.org/10.1145/3200000/3191636/images/www18companion-375-img4.svg" class="img-responsive" alt=""
+                       longdesc=""/>
+               </p>
+               <p>and counted ones where the &#x201D;href&#x201D; property was an original-form DOI.</p>
+               <p>In contrast to the first study, all that was tabulated were occurrence counts per page of any original-form DOI, counts for the different DOIs themselves were not kept, so the net results were just three totals, first per WAT file, then after merging, per month.</p>
+               <p>Finally a very small sample, just 645 WAT files from April 2014 (1.5% of the total), was processed looking only at the Metas array, to count the different values of &#x201D;name&#x201D; whose &#x201D;content&#x201D; was an original-form DOI.</p>
+            </section>
+         </section>
+         <section id="sec-13">
+            <header>
+               <div class="title-info">
+                  <h2>
+                     <span class="section-number">5</span> Results as such</h2>
+               </div>
+            </header>
+            <p>In this section we present the results as if the data they are derived from gave reliable evidence. Discussion of reasons to fear this may not be the case and suggestions for what to do about this are given in section&#x00A0;<a class="sec" href="#sec-17">6</a>
+            </p>
+            <section id="sec-14">
+               <header>
+                  <div class="title-info">
+                     <h3>
+                        <span class="section-number">5.1</span> First study</h3>
+                  </div>
+               </header>
+               <p>Counts for all Link URIs, the actionable-form URI subset thereof and distinct PIDs extracted from those, as tabulated across April 2014 and 2017, are shown in Table&#x00A0;<a class="tbl" href="#tab5">5</a>.</p>
+               <p>Two columns are shown for the total number of Link URIs: The first column is the actual number we found, the second is adjusted downwards for the estimated degree of duplication, as reported above in Table&#x00A0;<a class="tbl" href="#tab1">1</a>. This correction is not needed for the actionable URI and PID columns (see section&#x00A0;<a class="sec" href="#sec-17">6</a>), but is given here as it is used for the ratios given in the Actionable Link URIs Ratio column.</p>
+               <div class="table-responsive" id="tab5">
+                  <div class="table-caption">
+                     <span class="table-number">Table 5:</span>
+                     <span class="table-title">Link URI counts for first study.</span>
+                  </div>
+                  <table class="table">
+                     <thead>
+                        <tr>
+                           <th style="text-align:right;">Crawl</th>
+                           <th colspan="2" style="text-align:center;">Link URIs</th>
+                           <th colspan="2" style="text-align:center;">Actionable Link URIs
+                           </th>
+                           <th style="text-align:right;">Distinct</th>
+                        </tr>
+						</thead>
+						<tbody>
+                        <tr>
+                           <td style="text-align:right;">month</td>
+                           <td style="text-align:right;">Total</td>
+                           <td style="text-align:right;">Corrected</td>
+                           <td style="text-align:right;">URIs</td>
+                           <td style="text-align:right;">Ratio</td>
+                           <td style="text-align:right;">PIDs</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">2014-04</td>
+                           <td style="text-align:right;">299<em>x</em>10<sup>9</sup>
+                           </td>
+                           <td style="text-align:right;">194<em>x</em>10<sup>9</sup>
+                           </td>
+                           <td style="text-align:right;">30,445,532</td>
+                           <td style="text-align:right;">0.00016</td>
+                           <td style="text-align:right;">5,369,831</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">2017-04</td>
+                           <td style="text-align:right;">620<em>x</em>10<sup>9</sup>
+                           </td>
+                           <td style="text-align:right;">613<em>x</em>10<sup>9</sup>
+                           </td>
+                           <td style="text-align:right;">37,913,544</td>
+                           <td style="text-align:right;">0.00006</td>
+                           <td style="text-align:right;">12,659,694</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+               <p>The overlap between the sets of URIs crawled in April 2014 and April 2017 is low (estimated at 7%) and for the responses (pages) themselves even lower (estimated at 0.8%) [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                     href="#BibPLXBIB0006">6</a>] However the PID numbers have a much higher overlap: the union of the two years contains only 14.7 million PIDs &#x2013; the details are given in Table&#x00A0;<a class="tbl" href="#tab6">6</a>. This suggests that the overlap PIDs are <em>very</em> popular, as they are not just persisting from 2014 to 2017, but their second appearance is in a <em>different</em> set of pages.</p>
+               <div class="table-responsive" id="tab6">
+                  <div class="table-caption">
+                     <span class="table-number">Table 6:</span>
+                     <span class="table-title">Shared vs. one-year-only PIDs in the first study.</span>
+                  </div>
+                  <table class="table">
+                     <thead>
+                        <tr>
+                           <th style="text-align:right;"/>
+                           <th style="text-align:center;">2014</th>
+                           <th style="text-align:center;">not 2014</th>
+                        </tr>
+						</thead>
+						<tbody>
+						<tr>
+                           <td style="text-align:right;">2017</td>
+                           <td style="text-align:center;">3,354,906</td>
+                           <td style="text-align:right;">9,304,788</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">not 2017</td>
+                           <td style="text-align:center;">2,014,925</td>
+                           <td style="text-align:center;">0</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+               <p>As mentioned earlier, the actionable-form PIDs that we looked for can be divided on the basis of the domain name used to identify their resolving proxies: <tt>doi.org</tt>, <tt>dx.doi.org</tt> and dx.medra.org for DOIs, <tt>hdl.handle.net</tt> for handles and <tt>n2t.net</tt> for ARKs and other PIDs (we didn&#x0027;t explore these in any detail). The numbers in each category are shown in Table&#x00A0;<a class="tbl" href="#tab7">7</a>.</p>
+               <div class="table-responsive" id="tab7">
+                  <div class="table-caption">
+                     <span class="table-number">Table 7:</span>
+                     <span class="table-title">PID scheme and resolver counts from distinct actionable-form PIDs.</span>
+                  </div>
+                  <table class="table">
+                     <thead>
+                        <tr>
+                           <th style="text-align:right;">When</th>
+                           <th style="text-align:right;">DOIs</th>
+                           <th style="text-align:right;">handles</th>
+                           <th style="text-align:right;">other</th>
+                        </tr>
+						</thead>
+						<tbody>
+                        <tr>
+                           <td style="text-align:right;">2014 only</td>
+                           <td style="text-align:right;">1,656,913</td>
+                           <td style="text-align:right;">357,997</td>
+                           <td style="text-align:right;">15</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">2014 and 2017</td>
+                           <td style="text-align:right;">2,914,930</td>
+                           <td style="text-align:right;">439,969</td>
+                           <td style="text-align:right;">7</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">2017 only</td>
+                           <td style="text-align:right;">7,383,189</td>
+                           <td style="text-align:right;">1,914,395</td>
+                           <td style="text-align:right;">7,204</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+               <p>The relative recency of the arrival of the <tt>n2t.net</tt> resolver on the scene is clearly evident here.</p>
+               <p>Finally the locating-form leakage question is addressed in Table&#x00A0;<a class="tbl" href="#tab8">8</a>, which gives the number of locating-form URIs retrieved for the actionable-form URIs found in 2014.</p>
+               <div class="table-responsive" id="tab8">
+                  <div class="table-caption">
+                     <span class="table-number">Table 8:</span>
+                     <span class="table-title">Locating-form URIs in 2017 for 2014 actionable-form PIDs.</span>
+                  </div>
+                  <table class="table">
+                     <thead>
+                        <tr>
+                           <th style="text-align:right;"/>
+                           <th style="text-align:right;">Distinct</th>
+                           <th style="text-align:right;">Total</th>
+                        </tr>
+						</thead>
+						<tbody>
+                        <tr>
+                           <td style="text-align:right;">Actionable found in 2014</td>
+                           <td style="text-align:right;">5,369,831</td>
+                           <td style="text-align:right;">12,642,054</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">Retrieved locating form</td>
+                           <td style="text-align:right;">5,315,129</td>
+                           <td/>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">Locating found in 2017</td>
+                           <td style="text-align:right;">413,397</td>
+                           <td style="text-align:right;">1,202,610</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">Ratio</td>
+                           <td style="text-align:right;">8%</td>
+                           <td style="text-align:right;">10%</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+               <p>There were 12+ million actionable-form URIs found in 2014, from which 5+ million distinct PIDs were extracted, almost all of which successfully yielded locating URIs. Of these around 400,000 (8%) by type count, or 1.2 million (10%) by token count, occurred in body links in the the 2017 crawl. There is of course no way to tell whether these usages arose from the kind of leakage scenario discussed in the Introduction, or whether they were found and used independently of the antecedent actionable-form URI, but either way this is a large enough number to be of some concern.</p>
+            </section>
+            <section id="sec-15">
+               <header>
+                  <div class="title-info">
+                     <h3>
+                        <span class="section-number">5.2</span> Second study</h3>
+                  </div>
+               </header>
+               <p>Adding data for April 2015 and 2016 allows us to track the growth of <tt>doi:</tt> use in HTML body and head links (distinguishing between <strong>meta</strong> and <strong>link</strong> elements). In head <strong>link</strong> elements we found no (!) uses of the <tt>doi:</tt> form in April 2014 or 2015, and only 2 in April 2016 and 2017, so the data in Table&#x00A0;<a class="tbl" href="#tab9">9</a>, with graphs in Figure&#x00A0;<a class="sec" href="#sec-15">5.2</a>, only report on the numbers for use in body links and head <strong>meta</strong> elements.</p>
+<figure id="fig1">
+                  <img src="http://delivery.acm.org/10.1145/3200000/3191636/images/fig1AandB.jpg" class="img-responsive" alt="Figure 1"
+                       longdesc=""/>
+                  <div class="figure-caption">
+                     <span class="figure-number">Figure 1:</span>
+                     <span class="figure-title">Growth in <tt>doi:</tt> use in body links and in head meta.</span>
+                  </div>
+               </figure>
+
+               <div class="table-responsive" id="tab9">
+                  <div class="table-caption">
+                     <span class="table-number">Table 9:</span>
+                     <span class="table-title">Growth of <tt>doi:</tt> usage for second study.</span>
+                  </div>
+                  <table class="table">
+                     <thead>
+                        <tr>
+                           <th colspan="2" style="text-align:center;">Body links
+                           </th>
+                           <th colspan="2" style="text-align:center;">Head <strong>meta</strong>
+                              
+                           </th>
+                           <th/>
+                        </tr>
+						<tr>
+                           <th style="text-align:right;">year</th>
+                           <th style="text-align:right;">n</th>
+                           <th style="text-align:right;">per mil pg</th>
+                           <th style="text-align:right;">n</th>
+                           <th style="text-align:right;">per 10K pg</th>
+                        </tr>
+						</	thead>
+						<tbody>
+                        <tr>
+                           <td style="text-align:right;">2014</td>
+                           <td style="text-align:right;">1893</td>
+                           <td style="text-align:right;">0.72</td>
+                           <td style="text-align:right;">731938</td>
+                           <td style="text-align:right;">2.77</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">2015</td>
+                           <td style="text-align:right;">1410</td>
+                           <td style="text-align:right;">0.67</td>
+                           <td style="text-align:right;">727167</td>
+                           <td style="text-align:right;">3.44</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">2016</td>
+                           <td style="text-align:right;">1440</td>
+                           <td style="text-align:right;">1.08</td>
+                           <td style="text-align:right;">410603</td>
+                           <td style="text-align:right;">3.08</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">2017</td>
+                           <td style="text-align:right;">3550</td>
+                           <td style="text-align:right;">1.21</td>
+                           <td style="text-align:right;">459328</td>
+                           <td style="text-align:right;">1.56</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+               <p>It&#x0027;s interesting to see that a small number of original-form <tt>doi:</tt> URIs are appearing as e.g. <strong>A/@href</strong>, and that this usage is slowly increasing. It&#x0027;s certainly not obvious <em>why</em> anyone would do this: It would be necessary to look at the complete HTML pages to make sense of this.</p>
+               <p>The much more substantial use in HTML head <strong>meta</strong> elements is, on the other hand, quite plausible, although the drop in 2017 is hard to evaluate without seeing data from the surrounding months.</p>
+               <p>We did a quick check of around 1.5% of the April 2014 to see which meta tags the doi: URIs were being used with. Table&#x00A0;<a class="tbl" href="#tab10">10</a> gives the rank-ordered results.</p>
+               <div class="table-responsive" id="tab10">
+                  <div class="table-caption">
+                     <span class="table-number">Table 10:</span>
+                     <span class="table-title">What <tt>meta</tt> tags are <strong>doi:</strong> URIs used for?.</span>
+                  </div>
+                  <table class="table">
+                     <thead>
+                        <tr>
+                           <th style="text-align:right;">Tag</th>
+                           <th style="text-align:right;">Count</th>
+                           <th style="text-align:right;">Tag</th>
+                           <th style="text-align:right;">Count</th>
+                        </tr>
+						</thead>
+						<tbody>
+                        <tr>
+                           <td style="text-align:right;">dc.identifier</td>
+                           <td style="text-align:right;">6548</td>
+                           <td style="text-align:right;">dcterms.isReferencedBy</td>
+                           <td style="text-align:right;">4</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">eprints.id_number</td>
+                           <td style="text-align:right;">1174</td>
+                           <td style="text-align:right;">eprints.related_url_url</td>
+                           <td style="text-align:right;">2</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">citation_doi</td>
+                           <td style="text-align:right;">435</td>
+                           <td style="text-align:right;">keywords</td>
+                           <td style="text-align:right;">2</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">dc.Identifier</td>
+                           <td style="text-align:right;">146</td>
+                           <td style="text-align:right;">bepress_citation_doi</td>
+                           <td style="text-align:right;">1</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">dcterms.isVersionOf</td>
+                           <td style="text-align:right;">105</td>
+                           <td style="text-align:right;">dc.citation.spage</td>
+                           <td style="text-align:right;">1</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">dc.relation</td>
+                           <td style="text-align:right;">44</td>
+                           <td style="text-align:right;">eprints.data</td>
+                           <td style="text-align:right;">1</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">dcterms.hasPart</td>
+                           <td style="text-align:right;">15</td>
+                           <td style="text-align:right;">eprints.doi</td>
+                           <td style="text-align:right;">1</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;">dcterms.isPartOf</td>
+                           <td style="text-align:right;">12</td>
+                           <td style="text-align:right;">eprints.note</td>
+                           <td style="text-align:right;">1</td>
+                        </tr>
+                        <tr>
+                           <td style="text-align:right;"/>
+                           <td style="text-align:right;"/>
+                           <td style="text-align:right;">eprints.official_url</td>
+                           <td style="text-align:right;">1</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+               <p>The vast majority of these are Dublin Core [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                     href="#BibPLXBIB0013">13</a>] or EPrints toolset [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                     href="#BibPLXBIB0014">14</a>] tags.</p>
+               <p>Given the quite large number of doi: URIs showing up in the HTML header as <strong>META/@content</strong>, it&#x0027;s a bit surprising not to find any as <strong>LINK/@uri</strong>.</p>
+            </section>
+            <section id="sec-16">
+               <header>
+                  <div class="title-info">
+                     <h3>
+                        <span class="section-number">5.3</span> Conclusions for DOIs</h3>
+                  </div>
+               </header>
+               <p>In summary, the results of the two studies show</p>
+               <ul class="list-no-style">
+                  <li id="list29" label="&#x2022;">Virtually no use of original-form URIs in head links<br/></li>
+                  <li id="list30" label="&#x2022;">Only small numbers of 1000s of original-form URIs in body links<br/></li>
+                  <li id="list31" label="&#x2022;">Significant, slowly increasing, use (100s of thousands) of original-form URIs as meta-information<br/></li>
+                  <li id="list32" label="&#x2022;">Much larger numbers (millions) of actionable-form URIs in body links<br/></li>
+                  <li id="list33" label="&#x2022;">A 2.5 times increase in the number of distinct DOIs in body links between the 2014 and 2017 crawls<br/></li>
+                  <li id="list34" label="&#x2022;">For about 8% of the actionable-form URIs in the 2014 crawl, the corresponding locating-form URI appears in the 2017 crawl<br/></li>
+               </ul>
+            </section>
+         </section>
+         <section id="sec-17">
+            <header>
+               <div class="title-info">
+                  <h2>
+                     <span class="section-number">6</span> Conclusions for longitudinal studies</h2>
+               </div>
+            </header>
+            <p>The work reported here cannot be taken as anything more than a starting point, demonstrating that it is possible to extract longitudinal information about URI usage and encouraging others to do so: neither the numbers nor the trends presented here can be claimed to be reliable. It illustrates the kind of questions we would like to get answers for with respect to one kind of longitudinal study, and the very <em>lack</em> of reliable answers to those questions points towards the things we need to do to improve the situation.</p>
+            <p>In what follows we look at a number of different kinds of problem we encountered and suggest possible remediations.</p>
+            <section id="sec-18">
+               <header>
+                  <div class="title-info">
+                     <h3>
+                        <span class="section-number">6.1</span> Common Crawl itself</h3>
+                  </div>
+               </header>
+               <p>Duplication of pages crawled within an individual release is an issue for any use of Common Crawl data. Duplication of pages between releases may be a bug or a feature for longitudinal study, but its existence needs to be taken account of in any case.</p>
+               <p>A number of discussions of these issues can be found in the Common Crawl forum [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                     href="#BibPLXBIB0004">4</a>], and it does appear that within-release duplication has been considerably reduced.</p>
+               <p>However, for our study, and as noted above in the Materials section, the April 2014 data shows a substantial degree of likely duplication at the page level. This is almost entirely due to two sources [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                     href="#BibPLXBIB0023">23</a>]</p>
+               <ol class="list-no-style">
+                  <li id="list35" label="(1)">Shared error pages;<br/></li>
+                  <li id="list36" label="(2)">Same page for distinct URIs differing only in query parameter values.<br/></li>
+               </ol>
+               <p>It seems reasonable to assume that error pages are unlikely to involve much PID use, and the same is true for the kinds of commercially-orientated applications which make heavy use of query parameters. The latter expectation is easy to check empirically, and a quick check of a random sample (3425 actionable-form (a mixture of doi.org and dx.doi.org) URIs from 4 different WAT files from April 2014) confirms this: none of them have query parameters.</p>
+               <p>There&#x0027;s clearly a pressing need for a careful study of the last 3 or 4 years of CC data, to establish in detail the within- and between-release overlaps, both with respect to content and URI (see also section&#x00A0;<a class="sec" href="#sec-19">6.2</a>). CC&#x0027;s own version of this information [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                     href="#BibPLXBIB0006">6</a>] covers 2015 onwards, but has not as far as we know been published in a peer-reviewed context or otherwise confirmed.</p>
+               <p>In harvesting URIs from the Links component of the response records in a CC WAT file, we encountered a wide range of low-level problems with format and character encoding. Some of these did <em>not</em> occur in the original, in the few cases we checked by hand and could find. Although tedious, a survey of the kinds of errors introduced in the WAT files is needed, to at least document their frequency over time, but also to try to establish which can be detected reliably and, of those detectable, which can be reliably corrected. For those problems which persist in more recent releases, we would hope once alerted to them CC could fix the problem at source going forward.</p>
+               <p>Correct reporting of links that are found is important, but so is actually reliably <em>detecting</em> links&#x2014;some empirical checking of this would also be a good idea.</p>
+               <p>The recent rapid growth of personalised responses based on information in the query string of URIs and/or on cookies has serious implications for the &#x2019;Identifier&#x2019; aspect of URIs, and the extent to which responses to URIs which share their <tt>authority</tt> and <tt>path</tt> components but not their <tt>query</tt>. Again, at least some comparison of CC crawl target URIs both with and without including the <tt>query</tt> component is needed.</p>
+               <p>For the two CC releases we have checked, that is April 2014 and April 2017, the good news is that the percentage of HTTP vs. HTTPS is close as between URIs crawled and Link URIs seen (around 20 to 1 in 2014, dropping to 3.3 to 1 in 2017, reflecting the success of initiatives such as Encrypt the Web [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                     href="#BibPLXBIB0019">19</a>]. A more systematic tabulation over all releases is obviously needed before we can tell whether this is a reliable trend or not. How representative a sample the CC HTML is of Web HTML as a whole is unknown, and indeed it&#x0027;s not clear how one would quantify this.</p>
+               <p>A <em>much</em> more serious coverage issue, particularly for the persistence issues we started out to explore, is the lack of anything other than HTML documents in the CC releases. For scholarly publications, which are a major market for PIDs, PDF is the preferred format for publication. Expanding CC to include PDF files clearly would be a major undertaking, but at least some attempt to crawl links from a CC release to PDF files would be useful to get some sense of how much the profile of links found <em>there</em> differs from that in the HTML data.</p>
+            </section>
+            <section id="sec-19">
+               <header>
+                  <div class="title-info">
+                     <h3>
+                        <span class="section-number">6.2</span> Versioning and deduplication</h3>
+                  </div>
+               </header>
+               <p>Detecting and at least tabulating, preferably eliminating, exact duplicate content is of course important, but for at least some kinds of longitudinal studies, detecting and relating multiple versions of the &#x2019;same&#x2019; content is also important. Detecting similar-but-different content retrieved from different (post-redirection) URIs is obviously non-trivial, as it depends implicitly on some notion of &#x2019;sufficient&#x2019; similarity to count as the same version. Plagiarism detection software has a contribution to make here. Even quite a tight threshold might be very useful: in a way two documents which differ only by a tiny change, say a single spelling correction, is much worse than two identical document, because hash-based methods will find the latter but not the former.</p>
+            </section>
+            <section id="sec-20">
+               <header>
+                  <div class="title-info">
+                     <h3>
+                        <span class="section-number">6.3</span> Scale</h3>
+                  </div>
+               </header>
+               <p>At the very least the variability and occasional unreliability of the Common Crawl data means that for improved confidence the usage being studied should be tabulated for <em>every</em> month&#x0027;s crawl over a at least a year. With hindsight it would also probably be wise to use crawls from 2015 onwards, as both the effort to remove duplicates and the documentation improve noticeably at that point. This in turn however begins to move the effort involved out of the reach of the kind of <em>ad-hoc</em> multiprocessor we assembled and used for the first study. Even the 6-hour turnaround we achieved for the second study still made debugging a tedious and potentially expensive process. We have some speed-ups in mind, but they are unlikely to gain us more than a factor of two or so. Generosity of the sort provided by the donor of cloud resources for the second study will be needed if academic longitudinal studies of Web usage are to reach the levels of reliability and utility we need.</p>
+               <p>In conclusion, Common Crawl releases since 2015 provide a potential basis for longitudinal studies of HTML web page content and linking, but results have to be treated with caution. A number of gaps in documentation and quality assurance need to be addressed before conclusions based on such studies can be taken as reliable.</p>
+            </section>
+         </section>
+      </section>
+      <section class="back-matter">
+         <section id="sec-21">
+            <header>
+               <div class="title-info">
+                  <h2>ACKNOWLEDGMENTS</h2>
+               </div>
+            </header>
+            <p>The idea for this kind of study came in the form of a question by Greg Jan&#x00E9;e at PHOIBOS 2 [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                  href="#BibPLXBIB0002">2</a>]: &#x201C;How effective are PIDs?&#x201D;. He subsequently expanded on this: &#x201C;A PID is <em>effective</em> only if the resource identified by the PID is uniformly and universally accessed via the PID, and not via other non-persistent URLs&#x201D; [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"
+                  href="#BibPLXBIB0022">22</a>].</p>
+            <p>Thanks to Sebastian Nagel of Common Crawl for prompt and helpful answers to my questions about duplicates and duplicate detection.</p>
+            <p>The second study reported above was made possible by Microsoft&#x0027;s donation of Azure credits to The Alan Turing Institute. This work was supported by The Alan Turing Institute under the EPSRC grant EP/N510129/1. Our thanks to Dr. Kenneth Heafield (Informatics, University of Edinburgh) for his help with using this.</p>
+         </section>
+         <section id="ref-001">
+            <header>
+               <div class="title-info">
+                  <h2 class="page-brake-head">REFERENCES</h2>
+               </div>
+            </header>
+            <ul class="bibUl">
+               <li id="BibPLXBIB0001" label="[1]">2015. DOI System and Internet Identifier Specifications.  (6 May 2015). Retrieved 2017-11-02 from <a class="link-inline force-break" href="https://www.doi.org/factsheets/DOIIdentifierSpecs.html" target="_blank">https://www.doi.org/factsheets/DOIIdentifierSpecs.html</a></li>
+               <li id="BibPLXBIB0002" label="[2]">(2016. 17&#x2013;19 Feb 2016). Retrieved 2018-01-23 from <a class="link-inline force-break" href="https://github.com/identifier-services/phoibos2/wiki" target="_blank">https://github.com/identifier-services/phoibos2/wiki</a> Workshop on Practical Hacking On Identifiers.</li>
+               <li id="BibPLXBIB0003" label="[3]">2017. Common Crawl. (2017). Retrieved 2017-11-02 from <a class="link-inline force-break" href="http://commoncrawl.org/" target="_blank">http://commoncrawl.org/</a></li>
+               <li id="BibPLXBIB0004" label="[4]">2017. Common Crawl forum. web forum. (2017). Retrieved 2017-11-02 from <a class="link-inline force-break" href="https://groups.google.com/forum/#!forum/common-crawl" target="_blank">https://groups.google.com/forum/#!forum/common-crawl</a></li>
+               <li id="BibPLXBIB0005" label="[5]">2017. Corporation for National Research Initiatives. (2017). Retrieved 2017-11-02 from <a class="link-inline force-break" href="https://www.cnri.reston.va.us/" target="_blank">https://www.cnri.reston.va.us/</a></li>
+               <li id="BibPLXBIB0006" label="[6]">2017. Crawl overlap tabulations. (2017). Retrieved 2017-11-02 from <a class="link-inline force-break" href="https://commoncrawl.github.io/cc-crawl-statistics/plots/crawloverlap" target="_blank">https://commoncrawl.github.io/cc-crawl-statistics/plots/crawloverlap</a></li>
+               <li id="BibPLXBIB0007" label="[7]">2017. CrossRef. (2017). Retrieved 2017-11-02 from <a class="link-inline force-break" href="https://www.crossref.org/" target="_blank">https://www.crossref.org/</a></li>
+               <li id="BibPLXBIB0008" label="[8]">2017. CrossRef facts. (2017). Retrieved 2017-11-02 from <a class="link-inline force-break" href="https://www.crossref.org/dashboard/" target="_blank">https://www.crossref.org/dashboard/</a></li>
+               <li id="BibPLXBIB0009" label="[9]">2017. DataCite mission. (2017). Retrieved 2017-11-02 from <a class="link-inline force-break" href="https://www.datacite.org/mission.html" target="_blank">https://www.datacite.org/mission.html</a></li>
+               <li id="BibPLXBIB0010" label="[10]">2017. DataCite stats. (2017). Retrieved 2017-11-02 from <a class="link-inline force-break" href="https://stats.datacite.org/" target="_blank">https://stats.datacite.org/</a></li>
+               <li id="BibPLXBIB0011" label="[11]">2017. DOI Handbook. (2017). <a class="link-inline force-break" href="https://www.doi.org/hb.html" target="_blank">https://www.doi.org/hb.html</a></li>
+               <li id="BibPLXBIB0012" label="[12]">2017. DOI key facts. (2017). Retrieved 2017-11-02 from <a class="link-inline force-break" href="https://www.doi.org/factsheets/DOIKeyFacts.html" target="_blank">https://www.doi.org/factsheets/DOIKeyFacts.html</a></li>
+               <li id="BibPLXBIB0013" label="[13]">2017. Dublin Core. (2017). Retrieved 2017-11-02 from <a class="link-inline force-break" href="http://dublincore.org/" target="_blank">http://dublincore.org/</a></li>
+               <li id="BibPLXBIB0014" label="[14]">2017. EPrints. (2017). Retrieved 2017-11-02 from <a class="link-inline force-break" href="http://www.eprints.org/uk/" target="_blank">http://www.eprints.org/uk/</a></li>
+               <li id="BibPLXBIB0015" label="[15]">2017. <em>
+                     <em>Information and documentation &#x2013; WARC file format</em>
+                  </em>. Retrieved 2017-11-02 from <a class="link-inline force-break" href="https://www.iso.org/standard/44717.html" target="_blank">https://www.iso.org/standard/44717.html</a></li>
+               <li id="BibPLXBIB0016" label="[16]">2017. International DOI Foundation. (2017). Retrieved 2017-11-02 from <a class="link-inline force-break" href="https://www.doi.org/" target="_blank">https://www.doi.org/</a></li>
+               <li id="BibPLXBIB0017" label="[17]">2017. So you&#x0027;re ready to get started. (2017). Retrieved 2017-11-02 from <a class="link-inline force-break" href="http://commoncrawl.org/the-data/get-started/" target="_blank">http://commoncrawl.org/the-data/get-started/</a></li>
+               <li id="BibPLXBIB0018" label="[18]">2017. WAT format spec. (2017). Retrieved 2017-11-02 from <a class="link-inline force-break" href="https://webarchive.jira.com/wiki/spaces/Iresearch/pages/13467719/Web+Archive+Metadata+File+Specification" target="_blank">https://webarchive.jira.com/wiki/spaces/Iresearch/pages/13467719/Web+Archive+Metadata+File+Specification</a> Not clear what if any official status this has...</li>
+               <li id="BibPLXBIB0019" label="[19]">2018. Encrypt the Web. (2018). Retrieved 2018-01-22 from <a class="link-inline force-break" href="https://www.eff.org/encrypt-the-web" target="_blank">https://www.eff.org/encrypt-the-web</a></li>
+               <li id="BibPLXBIB0020" label="[20]">T. Berners-Lee, R. Fielding, and L. Masinter. 2005. RFC 3986, Uniform Resource Identifier (URI): Generic Syntax. (2005). <a class="link-inline force-break" href="https://tools.ietf.org/html/rfc3986" target="_blank">https://tools.ietf.org/html/rfc3986</a></li>
+               <li id="BibPLXBIB0021" label="[21]">Ruth E. Duerr, Robert R. Downs, Curt Tilmes, Bruce Barkstrom, W. Christopher Lenhardt, Joseph Glassy, Luis E. Bermudez, and Peter Slaughter. 2011. On the utility of identification schemes for digital earth science data: An assessment and recommendations. <em>
+                     <em>Earth Science Informatics</em>
+                  </em>4, 3 (9 2011), 139&#x2013;160. <a class="link-inline force-break" href="https://doi.org/10.1007/s12145-011-0083-6" target="_blank">https://doi.org/10.1007/s12145-011-0083-6</a></li>
+               <li id="BibPLXBIB0022" label="[22]">Greg Jan&#x00E9;e. 2016. Are PIDs effective. personal communication.  (18 Feb 2016).</li>
+               <li id="BibPLXBIB0023" label="[23]">Tom Morris. 2017. personal communication.  (30 October 2017). Archived at <a class="link-inline force-break" href="https://groups.google.com/d/msg/common-crawl/DdEjqaVRwfg/q1qlACsrCAAJ">https://groups.google.com/d/msg/common-crawl/DdEjqaVRwfg/q1qlACsrCAAJ</a>.</li>
+               <li id="BibPLXBIB0024" label="[24]">Sebastian Nagel. 2017. Understanding Common Crawl. personal communication.  (23 October 2017). Archived at <a class="link-inline force-break" href="https://groups.google.com/d/msg/common-crawl/DdEjqaVRwfg/Y1zUd0dIAwAJ">https://groups.google.com/d/msg/common-crawl/DdEjqaVRwfg/Y1zUd0dIAwAJ</a>. See also these pages referenced in the email: <a class="link-inline force-break" href="https://commoncrawl.github.io/cc-crawl-statistics/plots/crawlsize">https://commoncrawl.github.io/cc-crawl-statistics/plots/crawlsize</a>; <a class="link-inline force-break" href="https://github.com/commoncrawl/cc-crawl-statistics">https://github.com/commoncrawl/cc-crawl-statistics</a>.</li>
+               <li id="BibPLXBIB0025" label="[25]">Herbert Van&#x00A0;de Sompel, Martin Klein, and Shawn&#x00A0;M. Jones. 2016. Persistent URIs Must Be Used To Be Persistent. In <em>
+                     <em>Proceedings of the 25th International Conference Companion on World Wide Web</em>
+                  </em>(<em>WWW &#x2019;16 Companion</em>). International World Wide Web Conferences Steering Committee, Republic and Canton of Geneva, Switzerland, 119&#x2013;120. <a class="link-inline force-break" href="https://doi.org/10.1145/2872518.2889352" target="_blank">https://doi.org/10.1145/2872518.2889352</a></li>
+            </ul>
+         </section>
+      </section>
+      <section id="foot-001" class="footnote">
+         <header>
+            <div class="title-info">
+               <h2>FOOTNOTE</h2>
+            </div>
+         </header>
+         <p id="fn1"><a href="#foot-fn1"><sup>*</sup></a>SURNAME forename</p>
+         <p id="fn2"><a href="#foot-fn2"><sup>1</sup></a>
+            <tt>doi:</tt> is not (yet) a registered URI scheme, but often used as if it were one</p>
+         <p id="fn3"><a href="#foot-fn3"><sup>2</sup></a>See <a class="sec" href="#sec-20">6.3</a>
+         </p>
+         <div class="bibStrip">
+            <p>This paper is published under the Creative Commons Attribution 4.0  International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to  disseminate the work on their personal and corporate Web sites with  the appropriate attribution.</p>
+            <p>
+               <em>WWW '18, April 23-27, 2018, Lyon, France</em>
+            </p>
+            <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"
+                  href="https://doi.org/10.1145/3184558.3191636">https://doi.org/10.1145/3184558.3191636</a>
+            </p>
+         </div>
+      </section>
+      <div class="pubHistory">
+         <p/>
+      </div>
+   </body>
+</html>
