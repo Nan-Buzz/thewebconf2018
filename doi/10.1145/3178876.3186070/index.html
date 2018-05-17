@@ -1,0 +1,2448 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Neural Attentional Rating Regression with Review-level
+  Explanations</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Neural Attentional Rating
+          Regression with Review-level Explanations</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Chong</span> <span class=
+          "surName">Chen</span>, DCST, Tsinghua University,
+          Beijing, China, <a href=
+          "mailto:cstchenc@163.com">cstchenc@163.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Min</span> <span class=
+          "surName">Zhang<a class="fn" href="#fn10" id=
+          "foot-fn10"><sup>*</sup></a></span>, DCST, Tsinghua
+          University, Beijing, China, <a href=
+          "mailto:z-m@tsinghua.edu.cn">z-m@tsinghua.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Yiqun</span> <span class=
+          "surName">Liu</span>, DCST, Tsinghua University, Beijing,
+          China, <a href=
+          "mailto:yiqunliu@tsinghua.edu.cn">yiqunliu@tsinghua.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Shaoping</span> <span class=
+          "surName">Ma</span>, DCST, Tsinghua University, Beijing,
+          China, <a href=
+          "mailto:msp@tsinghua.edu.cn">msp@tsinghua.edu.cn</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3178876.3186070"
+        target=
+        "_blank">https://doi.org/10.1145/3178876.3186070</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3178876" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Reviews information is dominant for users to make
+        online purchasing decisions in e-commerces. However, the
+        usefulness of reviews is varied. We argue that less-useful
+        reviews hurt model's performance, and are also less
+        meaningful for user's reference. While some existing models
+        utilize reviews for improving the performance of
+        recommender systems, few of them consider the usefulness of
+        reviews for recommendation quality. In this paper, we
+        introduce a novel attention mechanism to explore the
+        usefulness of reviews, and propose a Neural Attentional
+        Regression model with Review-level Explanations (NARRE) for
+        recommendation. Specifically, NARRE can not only predict
+        precise ratings, but also learn the usefulness of each
+        review simultaneously. Therefore, the highly-useful reviews
+        are obtained which provide review-level explanations to
+        help users make better and faster decisions. Extensive
+        experiments on benchmark datasets of Amazon and Yelp on
+        different domains show that the proposed NARRE model
+        consistently outperforms the state-of-the-art
+        recommendation approaches, including PMF, NMF, SVD++, HFT,
+        and DeepCoNN in terms of rating prediction, by the proposed
+        attention model that takes review usefulness into
+        consideration. Furthermore, the selected reviews are shown
+        to be effective when taking existing review-usefulness
+        ratings in the system as ground truth. Besides,
+        crowd-sourcing based evaluations reveal that in most cases,
+        NARRE achieves equal or even better performances than
+        system's usefulness rating method in selecting reviews. And
+        it is flexible to offer great help on the dominant cases in
+        real e-commerce scenarios when the ratings on
+        review-usefulness are not available in the
+        system.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Information systems</strong> →
+        <strong>Recommender systems;</strong> • <strong>Computing
+        methodologies</strong> → <strong>Neural
+        networks;</strong></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Recommender
+          Systems</small>,</span> <span class=
+          "keyword"><small>Neural Attention Network</small>,</span>
+          <span class="keyword"><small>Explainable
+          Recommendation</small>,</span> <span class=
+          "keyword"><small>Review Usefulness</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Chong Chen, Min Zhang<sup>*</sup>, Yiqun Liu, and
+          Shaoping Ma. 2018. Neural Attentional Rating Regression
+          with Review-level Explanations. In <em>The Web Conference
+          2018,</em> <em>April 23–27, 2018,</em> <em>Lyon, France.
+          ACM, New York, NY, USA</em> 11 Pages. <a href=
+          "https://doi.org/10.1145/3178876.3186070" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3178876.3186070</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>With the growing number of choices available online,
+      recommender systems are playing a more and more important
+      role in alleviating information overload, and have been
+      widely adopted by many websites and applications.
+      Collaborative Filtering(CF) is a dominant state-of-art
+      recommendation methodology, which focus on the proper
+      modeling of user preferences and item features by historical
+      records such as ratings, clicks, and consumptions[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0020">20</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0021">21</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0024">24</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0029">29</a>]. Although
+      CF techniques have shown good performance, they encounter an
+      important problem in practical applications: can not provide
+      explicit explanations about why an item is recommended. In
+      recent years, some researchers have found that explanations
+      in recommendation systems could be very beneficial[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0011">11</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0044">44</a>]. By
+      explaining how the system works, the system becomes more
+      transparent and has the potential to increase users’
+      confidence or trust in the system and help users make better
+      (effectiveness) and faster (efficiency) decisions[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0044">44</a>]. Lack of
+      explainability weakens the ability to persuade users and help
+      users on consumptions in real life[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0040">40</a>].</p>
+      <p>In most e-commerce and review service websites like Amazon
+      and Yelp, users are allowed to write free-text reviews along
+      with a numerical star rating. The text reviews usually
+      contain rich information about the item's features (e.g.
+      quality, material, and color), and sometimes instructive
+      suggestions, which are of great reference values for those
+      who are going to make purchasing decisions.</p>
+      <p>However, it is difficult for users to get useful
+      information from an immense number of available reviews, as
+      the usefulness of them are varied. In this paper, the
+      <em><strong>usefulness</strong></em> of a review is defined
+      as whether it can provide detailed information about the item
+      and help users make their purchasing decisions easily. In
+      Figure <a class="fig" href="#fig1">1</a>, we show the
+      examples of less-useful (A, B) reviews and highly-useful (C)
+      review selected from the film “Iron Man” on Amazon. As we can
+      see, compared with review C, review A only contains the rough
+      opinion of the consumer, but shows no characteristic of the
+      film, and review B has less relevance to the film and is
+      somehow biased. Review C is also marked as helpful by 8 users
+      in the system, which is called
+      <strong>“Rated_Useful”</strong> in this paper. Less-useful
+      reviews not only introduce noises which undermine the
+      performance of recommender systems, but also are less useful
+      to users.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186070/images/www2018-79-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Examples of less-useful (A, B) and
+          highly-useful (C) reviews selected from the film “Iron
+          Man” on Amazon. Review A just contains the rough
+          preference of the consumer. Review B is talking about
+          something else, but not about the film. In contrast,
+          review C provides detailed information, which is more
+          helpful for user's potential consumption.</span>
+        </div>
+      </figure>
+      <p>Existing models integrate user reviews to enhance the
+      performance of latent factor modeling[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0003">3</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0025">25</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0026">26</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0027">27</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0039">39</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0046">46</a>] and generate
+      explanations[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0011">11</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0032">32</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0044">44</a>]. Although
+      they have achieved good results, they still have some
+      inherent limitations. First, they do not consider the
+      contributions of each review to item modeling, as well as the
+      usefulness to other users. Second, their explanations are
+      simple extractions of words or phrases from the reviews,
+      which may twist the meaning of the original
+      sentences[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0034">34</a>].
+      To the best of our knowledge, we are the first to consider
+      the usefulness of reviews for improving the performance and
+      explainability of recommendation. We aim at developing a
+      model that is capable of conducting rating prediction, and
+      more importantly, it is able to pick out valuable reviews
+      from the messy data simultaneously. Based on this work, the
+      review-level explanations on whether and why an item is worth
+      recommending can be provided.</p>
+      <p>To learn the usefulness of the reviews, we propose a
+      Neural Attentional Regression model with Review-level
+      Explanations (NARRE) in this paper, which utilizes the recent
+      advance in neural network modelling – the attention mechanism
+      to automatically assign weights to reviews in a distant
+      supervised manner[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>]. Specifically, we propose a weighting
+      function which is a multi-layer neural network and takes the
+      characteristics of both users and items, as well as the
+      content of reviews as input. What's more, inspired
+      by[<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0046">46</a>], NARRE
+      learns hidden latent features for users and items jointly
+      using two parallel neural networks. One of the networks
+      models user preferences using the reviews written by the
+      user, and the other network models item features using the
+      written reviews for the item. In the last layer, we draw on
+      the Latent Factor Model[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0021">21</a>] and extend it to a neural network
+      for rating prediction. We evaluate NARRE extensively on four
+      real-world datasets. Experimental results show that our model
+      consistently outperforms the state-of-the-art methods
+      including PMF[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0029">29</a>], NMF[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0024">24</a>], SVD++[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0020">20</a>], HFT[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0027">27</a>], and DeepCoNN[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0046">46</a>].</p>
+      <p>The main contributions of this work are summarized as
+      follows.</p>
+      <ol class="list-no-style">
+        <li id="list1" label="(1)">We propose a novel idea that
+        different reviews have different contributions on item
+        modelling and lead to different usefulness to other users
+        on consumptions.<br /></li>
+        <li id="list2" label="(2)">To the best of our knowledge, we
+        are the first to introduce neural attention mechanism to
+        build the recommendation model and select highly-useful
+        reviews simultaneously, which helps to improve the
+        performance and explainability of the recommender
+        system.<br /></li>
+        <li id="list3" label="(3)">Experimental results on
+        benchmark datasets show that our model achieves better
+        rating prediction results than the state-of-the-art models,
+        including matrix factorization based approaches and deep
+        learning based DeepCoNN. Furthermore, crowd-sourcing based
+        analyses on review usefulness have been made, which show
+        that our selected reviews are equally useful or even better
+        than the original users’ usefulness-rated ones in the
+        system. And it is flexible to offer great help on the
+        dominant cases in real scenarios when the ratings on
+        review-usefulness are not available in the
+        system.<br /></li>
+      </ol>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          work</h2>
+        </div>
+      </header>
+      <p>In recent years, matrix factorization (MF) has become the
+      most popular collaborative filtering approach[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0035">35</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0038">38</a>]. The original MF
+      model[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0021">21</a>]
+      was designed to model users’ explicit feedback by mapping
+      users and items to a latent factor space, so that user-item
+      relationships (e.g., ratings) can be captured by their latent
+      factors’ dot product. Based on that, many research efforts
+      have been made to enhance MF, such as integrating it with
+      neighbor-based models[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0020">20</a>] and extending it to factorization
+      machines[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0033">33</a>]
+      for a generic modeling of features. Although they have shown
+      good results, the recommendation performance of these methods
+      will degrade significantly when the rating matrix is very
+      sparse. Moreover, they can not provide explanations about why
+      an item is worth recommending or not.</p>
+      <p>In the last few years, there is a large literature
+      exploiting text review information for improving the rating
+      prediction performance, such as HFT[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0027">27</a>], RMR[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0026">26</a>], EFM[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0044">44</a>],TriRank[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0011">11</a>], RBLT[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0039">39</a>], and sCVR[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0032">32</a>]. These work integrates
+      topic models in their frameworks to generate the latent
+      factors for users and items incorporating review texts.
+      Specifically, EFM, TriRank and sCVR have been explicitly
+      claimed that they can provide explanations for
+      recommendations. These models first extract explicit product
+      features (i.e. aspects) and user opinions by phrase-level
+      sentiment analysis on user reviews, then generate
+      feature-level explanations according to the specific product
+      features to the user's interests. Besides, some studies
+      focues on the preprocessing of reviews. The work in
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0045">45</a>] is
+      dedicated to filtering out the spam in reviews, and
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0017">17</a>] utilizes
+      supervised machine learning techniques to learn the
+      “helpfulness” of reviews.</p>
+      <p>However, there are some limitations in these work. First,
+      manual preprocessing is usually required for sentiment
+      analysis and feature extraction of reviews[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0017">17</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0032">32</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0044">44</a>]. Second, for EFM, TriRank
+      and sCVR, the explanations are simple extractions of words or
+      phrases from the texts, which changes the integrity of
+      reviews and may distort their original meanings[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0034">34</a>]. In
+      contrast, we aim at making recommendations and selecting
+      useful reviews simultaneously via an end to end neural
+      network, which alleviates human effort tremendously and
+      provides more informative explanations. Another limitation of
+      the above studies is that their textual similarity is solely
+      based on lexical similarity[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0046">46</a>]. The semantic meaning has been
+      ignored in these works since the vocabulary in English is
+      very diverse, and two reviews can be semantically similar
+      even with low lexical overlapping. As a result, the
+      approaches which employ topic modeling techniques suffer from
+      a scalability problem.</p>
+      <p>Recently, deep neural networks have yielded an immense
+      success in speech recognition, computer vision and natural
+      language processing[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>]. Some works also trying to combine
+      different neural network structures with collaborative
+      filtering to improve the recommendation performance.
+      In[<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0013">13</a>], He et al.
+      presented a Neural Collaborative Filtering (NCF) framework to
+      learn the nonlinear interactions between users and items.
+      Later, Neural Factorization Machines(NFM)[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0012">12</a>] was developed to enhance
+      FM by modelling higher-order and non-linear feature
+      interactions. For review utilizing methods, Collaborative
+      Deep Learning (CDL)[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0041">41</a>] employs a hierarchical Bayesian
+      model which jointly performs deep representation learning for
+      the content and collaborative filtering for the rating
+      matrix. DeepCoNN[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0046">46</a>] uses convolutional neural networks
+      to process reviews, and jointly models users and items by two
+      parallel parts coupled by FM[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0033">33</a>] in the last layer for rating
+      prediction. NRT[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0025">25</a>] combines gated recurrent neural
+      networks and collaborative filtering to simultaneously
+      predict ratings and generate abstractive tips simulating user
+      experience and feelings. However, most of the existing
+      methods failed to pay attention to the usefulness of reviews,
+      which is the major focus of our work.</p>
+      <p>Attention mechanism has been shown effective in various
+      machine learning tasks such as image/video captioning and
+      machine translation[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0036">36</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0042">42</a>]. The key idea of soft attention is
+      to learn to assign attentive weights (normalized by sum to 1)
+      for a set of features: higher (lower) weights indicate that
+      the corresponding features are informative (less informative)
+      for the end task. In the field of recommendation systems, He
+      et al. introduce an attention mechanism in CF which consists
+      of both component-level and item-level attention module for
+      multimedia recommendation[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>]. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0042">42</a>] improves FM by discriminating the
+      importance of different feature interactions via a neural
+      attention network. In this paper, we use attention mechanism
+      to learn the usefulness and contribution of each review to
+      better model users and items for predicting item ratings and
+      generating explanations.</p>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span>
+          Preliminaries</h2>
+        </div>
+      </header>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Latent
+            Factor Model</h3>
+          </div>
+        </header>
+        <p>Before introducing our model, we begin by briefly
+        introducing the Latent Factor Model[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0021">21</a>]. LFM is a category of
+        algorithms mostly based on matrix factorization techniques.
+        One of the most popular algorithms of LFM predicts the
+        rating <span class="inline-equation"><span class=
+        "tex">$\widehat{R}_{u,i}$</span></span> of item <em>i</em>
+        by user <em>u</em> as follows[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0039">39</a>]:</p>
+        <div class="table-responsive" id="eq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            \widehat{R}_{u,i}=q_{u}p_{i}^{T}+b_{u}+b_{i}+\mu
+            \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>Here the equation contains four components: global
+        average rating <em>μ</em>, user bias <em>b<sub>u</sub></em>
+        , item bias <em>b<sub>i</sub></em> and interaction of the
+        user and item <span class="inline-equation"><span class=
+        "tex">$q_{u}p_{i}^{T}$</span></span> . Further,
+        <em>q<sub>u</sub></em> and <em>p<sub>i</sub></em> are
+        <em>K</em>-dimensional factors that represent user
+        preferences and item features, respectively.</p>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> CNN Text
+            Processor</h3>
+          </div>
+        </header>
+        <p>In recent years, many text processing methods based on
+        deep learning technology have been proposed and have
+        achieved better performance than traditional methods. Such
+        as fastText[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0015">15</a>], TextCNN[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0018">18</a>], TextRNN, and paragraph
+        vector[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0023">23</a>],etc. In this paper, we process
+        text using the same approach as the current
+        state-of-the-art method, DeepCoNN[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0046">46</a>]. The method which is
+        referred to as CNN Text Processor in the rest of this
+        paper, follows TextCNN that inputs a sequence of words and
+        outputs a n-dimensional vector representation for the
+        input. Figure <a class="fig" href="#fig2">2</a> gives the
+        architecture of the CNN Text Processor.</p>
+        <figure id="fig2">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186070/images/www2018-79-fig2.jpg"
+          class="img-responsive" alt="Figure 2" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 2:</span>
+            <span class="figure-title">The CNN Text Processor
+            architecture.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>In the first layer, a word embedding function
+        <span class="inline-equation"><span class=
+        "tex">$f:M\rightarrow \mathbb {R}^{d}$</span></span> maps
+        each word in the review into a <em>d</em> dimensional
+        vector, and then the given text will be transformed to a
+        embedded matrix with fixed length <em>T</em> (padded with
+        zero wherever necessary to tackle length variations). The
+        embedding can be any pre-trained embedding like those
+        trained on the GoogleNews corpus using word2vec<a class=
+        "fn" href="#fn1" id="foot-fn1"><sup>1</sup></a>[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0028">28</a>], or on
+        Wikipedia using GloVe<a class="fn" href="#fn2" id=
+        "foot-fn2"><sup>2</sup></a>[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0031">31</a>].</p>
+        <p>Following the embedding layer is the convolutional
+        layer. It consists of <em>m</em> neurons, and each
+        associated with a filter <span class=
+        "inline-equation"><span class="tex">$K\in \mathbb
+        {R}^{t\times d}$</span></span> which produces features by
+        applying convolution operator on word vectors. Let
+        <em>V</em> <sub>1: <em>T</em></sub> be the embedded matrix
+        corresponding to the <em>T</em> − length input text. Then,
+        <em>j<sup>th</sup></em> neuron produces its features
+        as:</p>
+        <div class="table-responsive" id="eq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            z_{j}=ReLU(V_{1:T}*K_{j}+b_{j})
+            \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>where <em>b<sub>j</sub></em> is the bias, * is the
+        convolution operation and <em>ReLU</em>[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0030">30</a>] is a nonlinear
+        activation function.
+        <p></p>
+        <p>Let <span class="inline-equation"><span class=
+        "tex">$z_{1},z_{2},...z_{j}^{(T-t+1)}$</span></span> be the
+        features produced by the <em>j<sup>th</sup></em> neuron on
+        the sliding windows <em>t</em> over the embedded text.
+        Then, the final feature corresponding to this neuron is
+        computed using a max-pooling operation[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0007">7</a>]. The idea behind
+        max-pooling is to capture the most important feature-one
+        with the highest value, which is defined as:</p>
+        <div class="table-responsive" id="eq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            o_{j}=max(z_{1},z_{2},...z_{j}^{(T-t+1)})
+            \end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>The final output of the convolutional layer is the
+        concatenation of the output from its <em>m</em> neurons,
+        denoted by:</p>
+        <div class="table-responsive" id="eq4">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            O=[o_{1},o_{2},...o_{m}] \end{equation}</span><br />
+            <span class="equation-number">(4)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>Generally, the output <em>O</em> is then passed to a
+        fully connected layer consisting of a weight matrix
+        <span class="inline-equation"><span class="tex">$W \in
+        \mathbb {R}^{m\times n}$</span></span> and a bias
+        <span class="inline-equation"><span class="tex">$g \in
+        \mathbb {R}^{n}$</span></span> , which is:</p>
+        <div class="table-responsive" id="eq5">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} X=W O+g
+            \end{equation}</span><br />
+            <span class="equation-number">(5)</span>
+          </div>
+        </div>
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Neural
+          Attentional Regression with Reviews</h2>
+        </div>
+      </header>
+      <p>In this section, we introduce our Neural Attentional
+      Regression with Reviews-level Explanation (NARRE). First, we
+      will present the general architecture of NAMRE and the review
+      processing method based on CNN Text Processor. Then, we will
+      show our attention-based review pooling layer, which is the
+      main concern in this paper. After that, we will introduce the
+      prediction layer, which is a neural latent factor model
+      designed for rating prediction. Lastly we will go through the
+      optimization details of NARRE.</p>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Overview of
+            NARRE</h3>
+          </div>
+        </header>
+        <p>The goal of our model is to predict a rating given a
+        user and an item, as well as to select both useful and
+        representative reviews. To this end, we utilize the
+        attention mechanism to automatically assign weights to
+        reviews when modeling users and items. The architecture of
+        the proposed model is shown in Figure <a class="fig" href=
+        "#fig3">3</a>. The model consists of two parallel neural
+        networks, one for user modeling (<em>Net<sub>u</sub></em>
+        ), and another for item modeling (<em>Net<sub>i</sub></em>
+        ). On the top of the two networks, a prediction layer is
+        added to let the hidden latent factors of user and item
+        interact with each other and calculate the final result of
+        the model. At the training stage, the training data
+        consists of users, items, and text reviews, while only
+        users and items are available at the test stage. In the
+        following, since <em>Net<sub>u</sub></em> and
+        <em>Net<sub>i</sub></em> only differ in their inputs, we
+        focus on illustrating the process for
+        <em>Net<sub>i</sub></em> in details. The same process is
+        applied for <em>Net<sub>u</sub></em> with similar
+        layers.</p>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186070/images/www2018-79-fig3.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">The neural network
+            architecture of NARRE. Our attention model uses both
+            IDs(<em>i<sub>uj</sub></em> , <em>u<sub>jk</sub></em> )
+            and review content(<em>O<sub>uj</sub></em> ,
+            <em>O<sub>jk</sub></em> ) to automatically assign
+            weights to reviews.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>In the first stage of <em>Net<sub>i</sub></em> , CNN
+        Text Processor is applied to process the textual reviews of
+        item <em>i</em>. We first discuss the limitation in the
+        start-of-the-art model DeepCoNN[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0046">46</a>], and then present our
+        review processing method.</p>
+        <p>In DeepCoNN, all the reviews of item <em>i</em> are
+        concatenated to a single matrix of world vectors
+        <em>V<sub>i</sub></em> . In this case, item <em>i</em>’s
+        feature vector <em>O<sub>i</sub></em> is obtained directly
+        by the convolutional layer (cf Eq. (<a class="eqn" href=
+        "#eq2">2</a>,<a class="eqn" href="#eq3">3</a>,<a class=
+        "eqn" href="#eq4">4</a>)). We argue that this method lead
+        to loss of information. As the max-pooling operation is
+        applied to the features generated from all the reviews of
+        <em>i</em>, a strong feature in one review will override
+        the rest of reviews[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0007">7</a>]. But actually, it's not fair to
+        judge an item from only one review in real life. In
+        addition, max-pooling only keeps the maximum value, and
+        even if a feature appears several times, it is only kept
+        once. Hence the strength information of the feature is
+        lost[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0016">16</a>].</p>
+        <p>To alleviate the above problems, we propose to process
+        each review of item <em>i</em> respectively. specifically,
+        each review is first transformed into a matrix of word
+        vectors, which we denoted as <em>V</em>
+        <sub><em>i</em>1</sub>, <em>V</em> <sub><em>i</em>2</sub>,
+        ...<em>V<sub>ik</sub></em> . Then, these matrixes are sent
+        to the convolutional layer and the feature vectors of them
+        can be obtained from the output. These feature vectors are
+        noted as <em>O</em> <sub><em>i</em>1</sub>, <em>O</em>
+        <sub><em>i</em>2</sub>, ...<em>O<sub>ij</sub></em> .</p>
+        <p>As these vectors are in the same feature space (they are
+        all generated from the same convolutional layer), a general
+        idea is to aggregate these vectors to get the
+        representation of item <em>i</em>:</p>
+        <div class="table-responsive" id="eq6">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} O_{i}=\sum
+            _{l=1,...k}\frac{1}{k}O_{il}
+            \end{equation}</span><br />
+            <span class="equation-number">(6)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>However, Eq.(<a class="eqn" href="#eq6">6</a>) assumes
+        that each review has the same contribution to item
+        <em>i</em>, which is not robust in real life as the reviews
+        are not equally useful and representative[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0045">45</a>]. To settle this
+        problem, we introduce attention mechanism into our model,
+        which can help to learn the weight of each review in a
+        distant supervised manner.</p>
+      </section>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span>
+            Attention-based Review Pooling</h3>
+          </div>
+        </header>
+        <p>Attention mechanism has been widely used in many tasks,
+        such as information retrieval[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0043">43</a>], recommendation[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0004">4</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0042">42</a>], computer
+        vision[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0005">5</a>], and machine translation[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0008">8</a>]. The goal
+        of the attention-based review pooling in
+        <em>Net<sub>i</sub></em> is to select reviews that are
+        representative to item <em>i</em>’s features and then
+        aggregate the representation of informative reviews to
+        characterize item <em>i</em>. A two-layer network is
+        applied to compute the attention score
+        <em>a<sub>il</sub></em> . The input contains the feature
+        vector of the <em>l</em>th review of item <em>i</em>
+        (<em>O<sub>il</sub></em> ) and the user who wrote it (ID
+        embedding, <em>u<sub>il</sub></em> ). The ID embedding is
+        added to model the quality of users, which helps identify
+        users who always write less-useful reviews. Formally, the
+        attention network is defined as:</p>
+        <div class="table-responsive" id="eq7">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            a_{il}^{*}=h^{T}ReLU(W_{O}O_{il}+W_{u}u_{il}+b_{1})+b_{2}
+            \end{equation}</span><br />
+            <span class="equation-number">(7)</span>
+          </div>
+        </div>where <span class="inline-equation"><span class=
+        "tex">$W_{O}\in \mathbb {R}^{t\times k_{1}}$</span></span>
+        , <span class="inline-equation"><span class="tex">$W_{u}\in
+        \mathbb {R}^{t\times k_{2}}$</span></span> , <span class=
+        "inline-equation"><span class="tex">$b_{1}\in \mathbb
+        {R}^{t}$</span></span> , <span class=
+        "inline-equation"><span class="tex">$h\in \mathbb
+        {R}^{t}$</span></span> , <span class=
+        "inline-equation"><span class="tex">$b_{2}\in \mathbb
+        {R}^{1}$</span></span> are model parameters, <em>t</em>
+        denotes the hidden layer size of the attention network, and
+        <em>ReLU</em>[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0030">30</a>] is a nonlinear activation
+        function.
+        <p></p>
+        <p>The final weight of reviews are obtained by normalizing
+        the above attention scores using the softmax function,
+        which can be interpreted as the contribution of the
+        <em>l</em>th review to the feature profile of item
+        <em>i</em>:</p>
+        <div class="table-responsive" id="eq8">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            a_{il}=\frac{exp(a_{il}^{*})}{\sum
+            _{l=0}^{k}exp(a_{il}^{*})} \end{equation}</span><br />
+            <span class="equation-number">(8)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>After we obtain the attention weight of each review, the
+        feature vector of item <em>i</em> is calculated as the
+        following weighted sum:</p>
+        <div class="table-responsive" id="eq9">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} O_{i}=\sum
+            _{l=1,...k}a_{il}O_{il} \end{equation}</span><br />
+            <span class="equation-number">(9)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>The output of the attention-based pooling layer is a
+        <em>k</em> <sub>1</sub> dimensional vector, which
+        compresses all reviews of item <em>i</em> in the embedding
+        space by distinguishing their contributions. Then it is
+        sent to a fully connected layer with weight matrix
+        <span class="inline-equation"><span class="tex">$W_{0}\in
+        \mathbb {R}^{n\times k_{1}}$</span></span> and bias
+        <span class="inline-equation"><span class="tex">$b_{0}\in
+        \mathbb {R}^{n}$</span></span> , which computes the final
+        representation of item <em>i</em>:</p>
+        <div class="table-responsive" id="eq10">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            Y_{i}=W_{0}O_{i}+b_{0} \end{equation}</span><br />
+            <span class="equation-number">(10)</span>
+          </div>
+        </div>
+        <p></p>
+      </section>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span> Prediction
+            Layer</h3>
+          </div>
+        </header>
+        <p>In this paper, we apply our NARRE model for the
+        recommendation task of rating prediction. To this end, we
+        draw on the traditional latent factor model and extend it
+        by the following ways: first, we extend user preferences
+        and item features in LFM model to two components: one based
+        on ratings while the other based on reviews. Then, inspired
+        by[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0013">13</a>], we present a neural form LFM for
+        predicting ratings.</p>
+        <p>Specifically, the latent factors of user and item are
+        first mapped to a shared hidden space. By introducing the
+        latent representation learned from the reviews, the
+        interaction between user <em>u</em> and item <em>i</em> is
+        modelled as:</p>
+        <div class="table-responsive" id="eq11">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            h_{0}=(q_{u}+X_{u})\odot (p_{i}+Y_{i})
+            \end{equation}</span><br />
+            <span class="equation-number">(11)</span>
+          </div>
+        </div>where <em>q<sub>u</sub></em> and
+        <em>p<sub>i</sub></em> are user preferences and item
+        features based on ratings as Eq. (<a class="eqn" href=
+        "#eq1">1</a>), <em>X<sub>u</sub></em> and
+        <em>Y<sub>i</sub></em> are user preferences and item
+        features obtained from the method introduced above, and ⊙
+        denotes the element-wise product of vectors. Note that here
+        the id embeddings are different from the id embeddings in
+        Eq. (<a class="eqn" href="#eq7">7</a>). Because we think
+        that user quality and preference are different kinds of
+        objects with different characteristics. Modeling them in
+        the same vector space would lead to limitations.
+        <p></p>
+        <p>The output of Eq. (<a class="eqn" href="#eq11">11</a>)
+        is a <em>n</em> dimensional vector, then it is passed to
+        the prediction layer to get a real-valued rating
+        <span class="inline-equation"><span class=
+        "tex">$\widehat{R}_{u,i}$</span></span> :</p>
+        <div class="table-responsive" id="eq12">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            \widehat{R}_{u,i}=W_{1}^{T}h_{0}+b_{u}+b_{i}+\mu
+            \end{equation}</span><br />
+            <span class="equation-number">(12)</span>
+          </div>
+        </div>where <span class="inline-equation"><span class=
+        "tex">$W_{1}\in \mathbb {R}^{n}$</span></span> denotes edge
+        weights of the prediction layer, <em>b<sub>u</sub></em> ,
+        <em>b<sub>i</sub></em> and <em>μ</em> denote user bias,
+        item bias and global bias respectively. Clearly, by fixing
+        <em>W</em><sub>1</sub> to 1 and leave out
+        <em>X<sub>u</sub></em> and <em>Y<sub>i</sub></em> , we can
+        exactly recover the latent factor model. It is also obvious
+        that we can add more hidden layers of non-linear
+        transformation between <em>h</em> <sub>0</sub> and
+        prediction layer, we leave the exploration as a future
+        work.
+        <p></p>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.4</span>
+            Learning</h3>
+          </div>
+        </header>
+        <p>Since the task we focus in this paper is rating
+        prediction, which actually is a regression problem. For
+        regression, a commonly used objective function is the
+        squared loss[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0012">12</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0025">25</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0042">42</a>]:</p>
+        <div class="table-responsive" id="eq13">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} L_{r}=\sum
+            _{u,i\in \mathcal {T}}(\widehat{R}_{u,i}-{R}_{u,i})^{2}
+            \end{equation}</span><br />
+            <span class="equation-number">(13)</span>
+          </div>
+        </div>where <span class="inline-equation"><span class=
+        "tex">$\mathcal {T}$</span></span> denotes the set of
+        instances for training, and <em>R</em> <sub><em>u</em>,
+        <em>i</em></sub> is the ground truth rating assigned by the
+        user <em>u</em> to the item <em>i</em>.
+        <p></p>
+        <p>To optimize the objective function, we adopt the
+        Adaptive Moment Estimation (Adam)[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0019">19</a>] as the optimizer. Its
+        main advantage is that the learning rate can be self
+        adapted during the training phase, which eases the pain of
+        choosing a proper learning rate and leads to faster
+        convergence than the vanilla SGD.</p>
+        <p>Overfitting is a perpetual problem in optimizing a ML
+        model. Many works have mentioned that deep learning models
+        are even more likely to suffer from overfitting[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0009">9</a>, <a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0012">12</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0018">18</a>]. To
+        alleviate this issue, we consider dropout[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0037">37</a>] — a widely used method
+        in deep learning models, in our work. The idea of dropout
+        is randomly drop some neurons (along with their
+        connections) during the training process[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0037">37</a>]. When updating
+        parameters, only part of them will be updated. Trough this
+        process, it can prevent complex co-adaptations of neurons
+        on training data. Moreover, as dropout is disabled during
+        testing and the whole network is used for prediction,
+        dropout has another side effect of performing model
+        averaging with smaller neural networks, which may
+        potentially improve the performance[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0042">42</a>].</p>
+        <p>Specifically, in NARRE, we propose to adopt dropout on
+        the attention based review pooling layer. After obtaining
+        <em>O<sub>i</sub></em> which is a <em>k</em>
+        <sub>1</sub>-dimensional vector of latent factors, we
+        randomly drop <em>ρ</em> percent of latent factors, where
+        <em>ρ</em> is termed as the dropout ratio. Moreover, we
+        also apply dropout after obtaining <em>h</em> <sub>0</sub>
+        at the same way to prevent overfitting.</p>
+      </section>
+    </section>
+    <section id="sec-15">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Experiments on
+          rating prediction</h2>
+        </div>
+      </header>
+      <section id="sec-16">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span>
+            Experimental Settings</h3>
+          </div>
+        </header>
+        <section id="sec-17">
+          <header>
+            <div class="title-info">
+              <h4><span class="section-number">5.1.1</span>
+              <strong>Datasets</strong></h4>
+            </div>
+          </header>
+          <p>In our experiments, we use four publicly accessible
+          datasets from different domains to evaluate our model.
+          Three datasets are from Amazon 5-core<a class="fn" href=
+          "#fn3" id="foot-fn3"><sup>3</sup></a>[<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0010">10</a>]:
+          <strong>Toys_and_Games</strong>,
+          <strong>Kindle_Store</strong>, and
+          <strong>Movies_and_TV</strong>. These datasets are
+          selected to cover both different domains and different
+          scales. Among them, Movies_and_TV is the largest dataset
+          and it contains more than 1.6 million reviews, while
+          Toys_and_Games is the smallest one and only contains
+          about 160 thousand reviews.</p>
+          <p>Another dataset is from <strong>Yelp</strong>
+          Challenge 2017<a class="fn" href="#fn4" id=
+          "foot-fn4"><sup>4</sup></a>. It is a large-scale dataset
+          consisting of restaurant ratings and reviews. Since the
+          raw data is very large and sparse, we preprocessed it to
+          ensure that all users and items have at least five
+          ratings. Even so, it's still the largest dataset in all
+          of our datasets. It contains more than 3 million reviews
+          from about 200 thousand users.</p>
+          <p>The ratings of these datasets are integers in the
+          range of [1, 5]. Since the length and the number of
+          reviews have a long tail effect, we only keep the length
+          and the number of reviews covering <em>p</em> percent
+          users and items respectively, while <em>p</em> is set to
+          0.9 for Toys_and_Games and Kindle_Store, 0.85 for
+          Movies_and_TV and Yelp. The characteristics of our
+          datasets are summarized in Table <a class="tbl" href=
+          "#tab1">1</a>.</p>
+          <div class="table-responsive" id="tab1">
+            <div class="table-caption">
+              <span class="table-number">Table 1:</span>
+              <span class="table-title">Statistical details of the
+              datasets.</span>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="text-align:left;"></th>
+                  <th style="text-align:left;">
+                  <strong>Toys_and_Games</strong></th>
+                  <th style="text-align:left;">
+                  <strong>Kindle_Store</strong></th>
+                  <th style="text-align:left;">
+                  <strong>Movies_and_TV</strong></th>
+                  <th style="text-align:left;">
+                  <strong>Yelp_2017</strong></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:left;"><em>users</em></td>
+                  <td style="text-align:right;">19,412</td>
+                  <td style="text-align:right;">68,223</td>
+                  <td style="text-align:right;">123,960</td>
+                  <td>199,445</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>items</em></td>
+                  <td style="text-align:right;">11,924</td>
+                  <td style="text-align:right;">61,935</td>
+                  <td style="text-align:right;">50,052</td>
+                  <td>119,441</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>ratings &amp;
+                  reviews</em></td>
+                  <td style="text-align:right;">167,597</td>
+                  <td style="text-align:right;">982,619</td>
+                  <td style="text-align:right;">1,679,533</td>
+                  <td>3.072.129</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section id="sec-18">
+          <header>
+            <div class="title-info">
+              <h4><span class="section-number">5.1.2</span>
+              <strong>Baselines</strong></h4>
+            </div>
+          </header>
+          <p>To evaluate the performance of rating prediction, we
+          compare NARRE with five state-of-the-art models, namely
+          PMF, NMF, SVD++, HFT, and DeepCoNN. The first two methods
+          only utilize ratings at the training stage, while the
+          later two are representative review utilizing methods for
+          rating prediction. The characteristics of the comparative
+          approaches are listed in Table <a class="tbl" href=
+          "#tab2">2</a>.</p>
+          <div class="table-responsive" id="tab2">
+            <div class="table-caption">
+              <span class="table-number">Table 2:</span>
+              <span class="table-title">Comparison of the
+              Approaches.</span>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="text-align:left;">
+                  <strong>Characteristics</strong></th>
+                  <th style="text-align:left;">
+                  <strong>PMF</strong></th>
+                  <th style="text-align:left;">
+                  <strong>NMF</strong></th>
+                  <th style="text-align:left;">
+                  <strong>SVD++</strong></th>
+                  <th style="text-align:left;">
+                  <strong>HFT</strong></th>
+                  <th style="text-align:left;">
+                  <strong>DeepCoNN</strong></th>
+                  <th style="text-align:left;">
+                  <strong>NARRE</strong></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:left;">
+                  <strong>Ratings</strong></td>
+                  <td style="text-align:center;">√</td>
+                  <td style="text-align:center;">√</td>
+                  <td style="text-align:center;">√</td>
+                  <td style="text-align:center;">√</td>
+                  <td style="text-align:center;">√</td>
+                  <td style="text-align:center;">√</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><strong>Textual
+                  Reviews</strong></td>
+                  <td style="text-align:center;">\</td>
+                  <td style="text-align:center;">\</td>
+                  <td style="text-align:center;">\</td>
+                  <td style="text-align:center;">√</td>
+                  <td style="text-align:center;">√</td>
+                  <td style="text-align:center;">√</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><strong>Deep
+                  Learning</strong></td>
+                  <td style="text-align:center;">\</td>
+                  <td style="text-align:center;">\</td>
+                  <td style="text-align:center;">\</td>
+                  <td style="text-align:center;">\</td>
+                  <td style="text-align:center;">√</td>
+                  <td style="text-align:center;">√</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><strong>Review
+                  Usefulness</strong></td>
+                  <td style="text-align:center;">\</td>
+                  <td style="text-align:center;">\</td>
+                  <td style="text-align:center;">\</td>
+                  <td style="text-align:center;">\</td>
+                  <td style="text-align:center;">\</td>
+                  <td style="text-align:center;">√</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="list-no-style">
+            <li id="list4" label="•">
+              <strong>PMF</strong>[<a class="bib" data-trigger=
+              "hover" data-toggle="popover" data-placement="top"
+              href="#BibPLXBIB0029">29</a>]: Probabilistic Matrix
+              Factorization. Gaussian distribution is introduced to
+              model the latent factors for users and items.<br />
+            </li>
+            <li id="list5" label="•">
+              <strong>NMF</strong>[<a class="bib" data-trigger=
+              "hover" data-toggle="popover" data-placement="top"
+              href="#BibPLXBIB0024">24</a>]: Non-negative Matrix
+              Factorization.It only uses the rating matrix as the
+              input.<br />
+            </li>
+            <li id="list6" label="•">
+              <strong>SVD++</strong>[<a class="bib" data-trigger=
+              "hover" data-toggle="popover" data-placement="top"
+              href="#BibPLXBIB0020">20</a>]: It extends Singular
+              Value Decomposition with neighborhood models, in
+              which a second set of item factors is added to model
+              the item-item similarity.<br />
+            </li>
+            <li id="list7" label="•">
+              <strong>HFT</strong>[<a class="bib" data-trigger=
+              "hover" data-toggle="popover" data-placement="top"
+              href="#BibPLXBIB0027">27</a>]: This is the
+              state-of-the-art method that combines reviews with
+              ratings. An exponential transformation function is
+              used to link the stochastic topic distribution in
+              modeling the review text and the latent vector in
+              modeling the ratings.<br />
+            </li>
+            <li id="list8" label="•">
+              <strong>DeepCoNN</strong>[<a class="bib"
+              data-trigger="hover" data-toggle="popover"
+              data-placement="top" href="#BibPLXBIB0046">46</a>]:
+              This is the state-of-the-art method that utilizes
+              deep learning technology to jointly model user and
+              item from textual reviews. The authors have shown
+              that it can achieve significant improvements compared
+              with other strong topic modeling based methods. In
+              this paper, we implement this model and change the
+              optimizer to Adam[<a class="bib" data-trigger="hover"
+              data-toggle="popover" data-placement="top" href=
+              "#BibPLXBIB0019">19</a>] as it can get a better
+              performance than RMSprop[<a class="bib" data-trigger=
+              "hover" data-toggle="popover" data-placement="top"
+              href="#BibPLXBIB0014">14</a>] used in[<a class="bib"
+              data-trigger="hover" data-toggle="popover"
+              data-placement="top" href=
+              "#BibPLXBIB0046">46</a>].<br />
+            </li>
+          </ul>
+        </section>
+        <section id="sec-19">
+          <header>
+            <div class="title-info">
+              <h4><span class="section-number">5.1.3</span>
+              <strong>Evaluation Metric</strong></h4>
+            </div>
+          </header>
+          <p>To evaluate the performance of all algorithms, we
+          calculate Root Mean Square Error (RMSE), which is widely
+          used for rating prediction in recommender systems. A
+          lower RMSE score indicates a better performance. Given a
+          predicted rating <span class=
+          "inline-equation"><span class=
+          "tex">$\widehat{R}_{u,i}$</span></span> and a
+          ground-truth rating <em>R</em> <sub><em>u</em>,
+          <em>i</em></sub> from the user <em>u</em> for the item
+          <em>i</em>, the RMSE is calculated as:</p>
+          <div class="table-responsive" id="eq14">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} RMSE=\sqrt
+              {\frac{1}{N}\sum
+              _{u,i}(\widehat{R}_{u,i}-{R}_{u,i})^{2} }
+              \end{equation}</span><br />
+              <span class="equation-number">(14)</span>
+            </div>
+          </div>where <em>N</em> indicates the number of ratings
+          between users and items.
+          <p></p>
+        </section>
+        <section id="sec-20">
+          <header>
+            <div class="title-info">
+              <h4><span class="section-number">5.1.4</span>
+              <strong>Experiments Details</strong></h4>
+            </div>
+          </header>
+          <p>We randomly split the dataset into training (80%),
+          validation (10%), and test (10%) sets. The validation set
+          was used for tuning hyper-parameters and the final
+          performance comparison was conducted on the test set. The
+          parameters for the baseline algorithms were initialized
+          as in the corresponding papers, and were then carefully
+          tuned to achieve optimal performance. For deep learning
+          based methods DeepCoNN and NARRE, the learning rate was
+          searched in [0.005, 0.01, 0.02, 0.05]. To prevent
+          overfitting, we turned the dropout ratio in [0.1, 0.3,
+          0.5, 0.7, 0.9]. The batch size was tested in [50, 100,
+          150] and the latent factor number was tested in [8, 16,
+          32, 64]. After the turning process, we set the number of
+          latent factors <em>k</em> = 10 for NMF and SVD++. We set
+          the number of topics <em>K</em> = 50 for HFT. For CNN
+          Text Processors in DeepCoNN and NARRE, we reuse most of
+          the hyper-parameter settings reported by the authors of
+          DeepCoNN since varying them did not give any perceivable
+          improvement, the number of neurons, <em>m</em>, in the
+          convolutional layer is 100, the window size <em>t</em> is
+          3. Moreover, we used a pre-trained word embeddings which
+          are trained on more than 100 billion words from Google
+          News[<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0028">28</a>]. Without special mention, we
+          show the results of latent factor number <em>n</em>=32
+          and dropout ratio <em>ρ</em>=0.5 for DeepCoNN and
+          NARRE.</p>
+        </section>
+      </section>
+      <section id="sec-21">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> Comparative
+            Analysis on Overall Performances</h3>
+          </div>
+        </header>
+        <p>The rating prediction results of our model NARRRE and
+        baseline models on all datasets are given in Table
+        <a class="tbl" href="#tab3">3</a>. From the results,
+        several observations can be made:</p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Performance comparison on four datasets
+            for all methods (RMSE). * and ** denote the statistical
+            significance for <em>p</em> &lt; 0.05 and <em>p</em>
+            &lt; 0.01, respectively, compared to the best
+            baseline.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;"></th>
+                <th style="text-align:left;">
+                <strong>Toys_and_Games</strong></th>
+                <th style="text-align:left;">
+                <strong>Kindle_Store</strong></th>
+                <th style="text-align:left;">
+                <strong>Movies_and_TV</strong></th>
+                <th style="text-align:left;">
+                <strong>Yelp-2017</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">
+                <strong>PMF</strong></td>
+                <td style="text-align:center;">1.3076</td>
+                <td style="text-align:center;">0.9914</td>
+                <td style="text-align:center;">1.2920</td>
+                <td style="text-align:center;">1.3340</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                <strong>NMF</strong></td>
+                <td style="text-align:center;">1.0399</td>
+                <td style="text-align:center;">0.9023</td>
+                <td style="text-align:center;">1.1125</td>
+                <td style="text-align:center;">1.2916</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                <strong>SVD++</strong></td>
+                <td style="text-align:center;">0.8860</td>
+                <td style="text-align:center;">0.7928</td>
+                <td style="text-align:center;">1.0447</td>
+                <td style="text-align:center;">1.1735</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                <strong>HFT</strong></td>
+                <td style="text-align:center;">0.8925</td>
+                <td style="text-align:center;">0.7917</td>
+                <td style="text-align:center;">1.0291</td>
+                <td style="text-align:center;">1.1699</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                <strong>DeepCoNN</strong></td>
+                <td style="text-align:center;">0.8890</td>
+                <td style="text-align:center;">0.7875</td>
+                <td style="text-align:center;">1.0128</td>
+                <td style="text-align:center;">1.1642</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                <strong>NARRE</strong></td>
+                <td style="text-align:center;">
+                <strong>&nbsp;&nbsp;&nbsp;0.8769**</strong></td>
+                <td style="text-align:center;">
+                <strong>&nbsp;&nbsp;&nbsp;0.7783**</strong></td>
+                <td style="text-align:center;">
+                <strong>&nbsp;&nbsp;&nbsp;0.9965**</strong></td>
+                <td style="text-align:center;">
+                <strong>1.1559*</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>First, methods considering reviews (HFT, DeepCoNN and
+        NARRE) generally perform better than collaborative
+        filtering models (e.g. PMF, NMF and SVD++) which only
+        consider the rating matrix as the input. This is not
+        surprising, as review information is complementary to
+        ratings and it can be used to improve the representation
+        quality of latent factors. Therefore, the better-quality
+        modeling increases the learning accuracy of user
+        preferences and item features, and thus leads to a better
+        rating prediction result.</p>
+        <p>Second, the methods that utilize deep learning
+        technology (DeepCoNN and NARRE) usually outperform
+        traditional methods, including HFT which also considers
+        reviews for user and item modeling. We think that the
+        reasons are as follows. First, previous works[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0018">18</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0046">46</a>] have
+        shown that neural networks like CNN can be used to get
+        better performance than topic models like LDA[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0002">2</a>] in
+        analyzing text information. Second, deep learning can model
+        users and items in a non-liner way[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0013">13</a>], which is the
+        limitation of traditional CF-based models. What's more,
+        some tricks in deep learning like dropout can be adopted to
+        avoid overfitting and potentially improve the
+        performance.</p>
+        <p>Third, as shown in Table <a class="tbl" href=
+        "#tab3">3</a>, our method NARRE consistently outperforms
+        all the baseline methods. Although review information is
+        useful in recommendation, the performance can vary
+        depending on how the review information is utilized. In our
+        model, we propose a new attention based pooling for
+        utilizing reviews while the representativeness of each
+        review is considered. The representativeness allows each
+        review to be modeled with a finer granularity, which can
+        lead to a better performance according to the results.</p>
+      </section>
+      <section id="sec-22">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.3</span> Parameter
+            Sensitivity Analysis</h3>
+          </div>
+        </header>
+        <p>In this section, we show our exploration of parameters
+        on the validation sets. Due to the space limitation, we
+        only show the results of Toys_and_Games and Kindle_Store.
+        The results of other datasets are similar to that of
+        Kindle_Store. To better demonstrate the performance and
+        improvement of our model, we extend DeepCoNN by changing
+        its share layer from FM to our neural prediction layer (cf
+        Eq. (<a class="eqn" href="#eq11">11</a>,<a class="eqn"
+        href="#eq12">12</a>)), and name it DeepCoNN++. The results
+        of DeepCoNN++ are also shown in the following figures.</p>
+        <p>We first explore the effect of the number of predictive
+        factors. For MF methods (PMF, NMF and SVD++), the number of
+        predictive factors is equal to the number of latent
+        factors. Due to the weak performance of PMF and NMF, they
+        are omitted in Figure <a class="fig" href="#fig4">4</a> to
+        better highlight the performance difference of other
+        methods.</p>
+        <figure id="fig4">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186070/images/www2018-79-fig4.jpg"
+          class="img-responsive" alt="Figure 4" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 4:</span>
+            <span class="figure-title">Performances w.r.t.
+            different predictive factors (The number of dimensions
+            of <em>h</em> <sub>0</sub> in Eq. (<a class="eqn" href=
+            "#eq11">11</a>)).</span>
+          </div>
+        </figure>
+        <p>Generally, we can see that NARRE achieves the best
+        performance on both datasets and all the predictive
+        numbers. What's more, DeepCoNN++ outperforms DeepCoNN but
+        still weaker than NARRE. This demonstrates the benefits of
+        both the attention based review pooling and our neural
+        prediction layer. In addition, with the increase of the
+        number of predictive factors, the performance of SVD++
+        decreases significantly (note that a higher RMSE value
+        means a weaker performance), but for other methods it does
+        not improve the performance or the opposite obviously.</p>
+        <p>We then study the effect of dropout on deep learning
+        based methods. Figure <a class="fig" href="#fig5">5</a>
+        shows the validation performances of NARRE, DeepCoNN and
+        DeepCoNN++ w.r.t. different dropout ratios.</p>
+        <figure id="fig5">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186070/images/www2018-79-fig5.jpg"
+          class="img-responsive" alt="Figure 5" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 5:</span>
+            <span class="figure-title">Performances w.r.t.
+            different dropout ratios.</span>
+          </div>
+        </figure>
+        <p>From the results, we find that by setting the dropout
+        ratio to a proper value, all methods can be significantly
+        improved. This demonstrates the ability of dropout in
+        preventing overfitting and as such, better generalization
+        can be achieved. The optimal dropout ratio for NARRE is 0.5
+        on both datasets. Specifically, we find that the results of
+        Toys_and_Games are more sensitive to the dropout ratios
+        than the results of Kindle_Store. The reason we think is
+        that the first dataset is very small, which makes the model
+        more likely to overfit without dropout.</p>
+      </section>
+      <section id="sec-23">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.4</span> Effect of
+            Attention Based Review Pooling</h3>
+          </div>
+        </header>
+        <p>We now focus on analyzing the effect of attention based
+        review pooling. Recall that to generate the attention
+        weight of each review in Eq. (<a class="eqn" href=
+        "#eq7">7</a>), we incorporate different information
+        sources. Specifically, in <em>Net<sub>i</sub></em> they are
+        the review content and the id embedding of the user who
+        wrote this review. In <em>Net<sub>u</sub></em> they are the
+        review content and the id embedding of the item this review
+        writing for. Note that when we do not consider attention, a
+        normalized constant weight will be assigned to each review
+        (Eq. (<a class="eqn" href="#eq6">6</a>)). The results are
+        shown in Figure <a class="fig" href="#fig6">6</a>.</p>
+        <figure id="fig6">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186070/images/www2018-79-fig6.jpg"
+          class="img-responsive" alt="Figure 6" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 6:</span>
+            <span class="figure-title">Effect of attention
+            mechanism. The performances of the method with
+            attention mechanism are significant better (p&lt;0.05)
+            than that of the method without it.</span>
+          </div>
+        </figure>
+        <p>From the figure, we can see that when the attention
+        mechanism is applied, the performance of rating prediction
+        is improved significantly as compared with a constant
+        weight method. It justifies our assumption that the
+        usefulness of reviews are varied, and different reviews
+        should have different representativeness for user
+        preference and item feature. What’ more, our
+        attention-based review pooling can learn this
+        representativeness well and lead to a better performance of
+        the recommender algorithm.</p>
+      </section>
+      <section id="sec-24">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.5</span> Case
+            Analysis</h3>
+          </div>
+        </header>
+        <p>We provide some examples on the reviews and their final
+        attention weights in Table <a class="tbl" href=
+        "#tab4">4</a> to illustrate the results on review
+        usefulness identification. In the table, Review 1a and 2a
+        represent more useful reviews with higher attention
+        weights, and Review 1b and 2b are less helpful ones with
+        lower attention weights. As we can see, the reviews with
+        high attention weight generally contain more details about
+        the item. For instance, from Review 1a and 2a, we can
+        easily get the characteristics of each item, which is
+        highly instructive for us to make our purchasing decisions.
+        In contrast, the low attention reviews of the two items
+        only contain the authors’ general opinions, but show none
+        or less details of the item. In fact, this kind of reviews
+        is not very convincing to other users on making
+        decisions.</p>
+        <div class="table-responsive" id="tab4">
+          <div class="table-caption">
+            <span class="table-number">Table 4:</span> <span class=
+            "table-title">Examples of the high-weight and
+            low-weight reviews selected by our model
+            (<em>a<sub>ij</sub></em> means attention
+            weight).</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Item 1</td>
+                <td style="text-align:left;">a
+                (<em>a<sub>ij</sub></em>=0.1932)</td>
+                <td style="text-align:left;">These brushes are
+                great quality for children's art work. They seem to
+                last well and the bristles stay in place very well
+                even with tough use.</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">b
+                (<em>a<sub>ij</sub></em> =0.0161)</td>
+                <td style="text-align:left;">I bought it for my
+                daughter as a gift.</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Item 2</td>
+                <td style="text-align:left;">a
+                (<em>a<sub>ij</sub></em> =0.2143)</td>
+                <td style="text-align:left;">From beginning to end
+                this book is a joy to read. Full of mystery,
+                mayhem, and a bit of magic for good measure.
+                Perfect flow with excellent writing and
+                editing.</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">b
+                (<em>a<sub>ij</sub></em> =0.0319)</td>
+                <td style="text-align:left;">I like reading in my
+                spare time, and I think this book is very suitable
+                for me.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+    <section id="sec-25">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Explainability
+          Study</h2>
+        </div>
+      </header>
+      <section id="sec-26">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">6.1</span>
+            Review-level Explanation</h3>
+          </div>
+        </header>
+        <p>Reviews are used to express users’ experience and
+        feelings, which also provide other users with detailed
+        information and suggestions to help them make informed
+        decisions. Since our NARRE model can simultaneously learn
+        the weight of each review. The high-weight reviews contain
+        more representative information of items, which is not only
+        useful for item modelling, but also useful for users’
+        reference. Therefore, by providing users with the
+        highly-useful reviews, the explainability of recommender
+        system is improved.</p>
+        <p>In fact, there are some e-commerce sites who have
+        adopted this kind of explanation approach. However, in
+        their settings, the reviews are selected by two simple
+        methods. In the first method (named
+        <strong>Latest</strong>), the reviews of an item are ranked
+        by their writing time and the latest reviews are on the
+        top. In the second method (named
+        <strong>Top_Rated_Useful</strong>), each review is ranked
+        by the number of users who have rated the review as useful.
+        We argue that both the two methods have their deficiencies.
+        The first method always puts the early reviews behind,
+        which makes them hard to be found by users. The second
+        method is not fair for new reviews since they haven't been
+        rated. Moreover, the second method needs manual operation
+        of users and the number of rated reviews usually very
+        sparse in real life. Compared with them, NARRE can
+        automatically select useful reviews when making
+        recommendation, and doesn't suffer from the the above
+        deficiencies.</p>
+        <p>In recent years, there are many works utilizing reviews
+        for generating feature/word-level recommendation
+        explanations. However, as natural language is susceptible
+        to its integrity, the information of the review is not
+        equal to the simple combination of features. Besides, the
+        feature-level is not conflict with the review-level, which
+        can also learned by attention mechanism[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0004">4</a>]. We leave the
+        exploration of feature-level explanations as a future
+        work.</p>
+      </section>
+      <section id="sec-27">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">6.2</span> Usefulness
+            in Terms of User Rated</h3>
+          </div>
+        </header>
+        <p>As there are some reviews who have been rated useful by
+        previous users, we first take these rated usefulness of
+        reviews as ground truth to study the performance of NARRE
+        in selecting useful reviews. Specifically, for each
+        dataset, we only keep the items who have at least 1 rated
+        review. For each item, the reviews are selected by four
+        methods respectively, which are <strong>Random</strong>
+        (The reviews are selected randomly),
+        <strong>Latest</strong> (The most latest <em>K</em> reviews
+        are selected), <strong>Length</strong> (The longest
+        <em>K</em> reviews are selected) and <strong>NARRE</strong>
+        (The <em>K</em> reviews with highest attention weight are
+        selected). To evaluate the performance, we calculated the
+        <em>Precision</em>@<em>K</em> and
+        <em>Recall</em>@<em>K</em> as follows:</p>
+        <div class="table-responsive" id="eq15">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            Precision@K=\frac{\sum _{j=1}^{K}rel_{j}}{K};\quad
+            Recall@K=\frac{\sum _{j=1}^{K}rel_{j}}{Re_{i}^{rated}}
+            \end{equation}</span><br />
+            <span class="equation-number">(15)</span>
+          </div>
+        </div>where <em>rel<sub>j</sub></em> = 1/0 indicates
+        whether the review at rank <em>j</em> in the Top-K list
+        have been rated useful. To evaluate different length of
+        review list, we set <em>K</em>=1 and 10. The results are
+        shown in Table <a class="tbl" href="#tab5">5</a>.
+        <p></p>
+        <div class="table-responsive" id="tab5">
+          <div class="table-caption">
+            <span class="table-number">Table 5:</span> <span class=
+            "table-title">Usefulness evaluation on Amazon datasets
+            (taking rated usefulness of reviews as ground truth).
+            **: <em>p</em>&lt;0.01 in statistical significance
+            test, compared to the best baseline.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;"></th>
+                <th colspan="4" style="text-align:center;">
+                <strong>Toys_and_Games</strong></th>
+                <th colspan="4" style="text-align:center;">
+                <strong>Kindle_Store</strong></th>
+                <th colspan="4" style="text-align:center;">
+                <strong>Movies_and_TV</strong></th>
+              </tr>
+              <tr>
+                <th style="text-align:left;"></th>
+                <th style="text-align:left;">
+                <strong>Latest</strong></th>
+                <th style="text-align:left;">
+                <strong>Random</strong></th>
+                <th style="text-align:left;">
+                <strong>Length</strong></th>
+                <th style="text-align:left;">
+                <strong>NARRE</strong></th>
+                <th style="text-align:left;">
+                <strong>Latest</strong></th>
+                <th style="text-align:left;">
+                <strong>Random</strong></th>
+                <th style="text-align:left;">
+                <strong>Length</strong></th>
+                <th style="text-align:left;">
+                <strong>NARRE</strong></th>
+                <th style="text-align:left;">
+                <strong>Latest</strong></th>
+                <th style="text-align:left;">
+                <strong>Random</strong></th>
+                <th style="text-align:left;">
+                <strong>Length</strong></th>
+                <th><strong>NARRE</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">
+                <strong>Precision@1</strong></td>
+                <td style="text-align:left;">0.1487</td>
+                <td style="text-align:left;">0.3255</td>
+                <td style="text-align:left;">0.2476</td>
+                <td style="text-align:left;">
+                <strong>0.3860**</strong></td>
+                <td style="text-align:left;">0.2447</td>
+                <td style="text-align:left;">0.4574</td>
+                <td style="text-align:left;">0.4041</td>
+                <td style="text-align:left;">
+                <strong>0.5235**</strong></td>
+                <td style="text-align:left;">0.3040</td>
+                <td style="text-align:left;">0.4908</td>
+                <td style="text-align:left;">0.3903</td>
+                <td><strong>0.6576**</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                <strong>Recall@1</strong></td>
+                <td style="text-align:left;">0.0362</td>
+                <td style="text-align:left;">0.0952</td>
+                <td style="text-align:left;">0.0771</td>
+                <td style="text-align:left;">
+                <strong>0.1398**</strong></td>
+                <td style="text-align:left;">0.0400</td>
+                <td style="text-align:left;">0.0992</td>
+                <td style="text-align:left;">0.0852</td>
+                <td style="text-align:left;">
+                <strong>0.1131**</strong></td>
+                <td style="text-align:left;">0.0436</td>
+                <td style="text-align:left;">0.0976</td>
+                <td style="text-align:left;">0.0677</td>
+                <td><strong>0.1445**</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                <strong>Precision@10</strong></td>
+                <td style="text-align:left;">0.1550</td>
+                <td style="text-align:left;">0.2000</td>
+                <td style="text-align:left;">0.2316</td>
+                <td style="text-align:left;">
+                <strong>0.2697**</strong></td>
+                <td style="text-align:left;">0.2228</td>
+                <td style="text-align:left;">0.2707</td>
+                <td style="text-align:left;">0.2933</td>
+                <td style="text-align:left;">
+                <strong>0.3530**</strong></td>
+                <td style="text-align:left;">0.2325</td>
+                <td style="text-align:left;">0.2925</td>
+                <td style="text-align:left;">0.3369</td>
+                <td><strong>0.3459**</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                <strong>Recall@10</strong></td>
+                <td style="text-align:left;">0.4367</td>
+                <td style="text-align:left;">0.5763</td>
+                <td style="text-align:left;">0.6763</td>
+                <td style="text-align:left;">
+                <strong>0.8601**</strong></td>
+                <td style="text-align:left;">0.4510</td>
+                <td style="text-align:left;">0.5551</td>
+                <td style="text-align:left;">0.6168</td>
+                <td style="text-align:left;">
+                <strong>0.8317**</strong></td>
+                <td style="text-align:left;">0.3716</td>
+                <td style="text-align:left;">0.4673</td>
+                <td style="text-align:left;">0.5403</td>
+                <td><strong>0.7674**</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>From the Table, we can see that when taking the rated
+        usefulness of reviews as ground truth, the results of NARRE
+        are significantly better than the other three methods. It
+        shows that the attention weights are consistent with the
+        users’ perceptions of reviews. By applying attention
+        mechanism, the usefulness of reviews can be learned well by
+        the model.</p>
+      </section>
+      <section id="sec-28">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">6.3</span>
+            Crowd-sourcing based Usefulness Evaluation</h3>
+          </div>
+        </header>
+        <section id="sec-29">
+          <header>
+            <div class="title-info">
+              <h4><span class="section-number">6.3.1</span>
+              <strong>Review-level Usefulness
+              Analysis</strong></h4>
+            </div>
+          </header>
+          <p>To study the effectiveness of our model's explanations
+          in real life, we make crowd-sourcing evaluation via
+          CrowdFlower<a class="fn" href="#fn5" id=
+          "foot-fn5"><sup>5</sup></a> platform to generate
+          usefulness annotations for reviews. Specifically, for
+          review-level annotations (<em>U<sub>a</sub></em> ), we
+          first randomly select 100 items for evaluation; for each
+          item, we select top 10 reviews by each method, and
+          generate the annotation pool by two methods, namely
+          <strong>Top_Rated_Useful</strong> and
+          <strong>NARRE</strong>. To make the experiment fair, for
+          those items who have less than 10 Top_Rated_Useful
+          reviews, we only use the same number of reviews by
+          NARRE.</p>
+          <figure id="fig7">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186070/images/www2018-79-fig7.jpg"
+            class="img-responsive" alt="Figure 7" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 7:</span>
+              <span class="figure-title">Review-level annotation
+              instructions.</span>
+            </div>
+          </figure>
+          <p>Figure <a class="fig" href="#fig7">7</a> shows the
+          task description and the instruction to assessors. To
+          make sure the data annotations are reliable, we ensured
+          that each task was judged by at least 3 different
+          assessors. As the annotations of <em>U<sub>a</sub></em>
+          are <em>ordinal</em>, we applied Cohen's Weighted
+          <em>κ</em>[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0006">6</a>] to assess the inter-assessor
+          agreements. We chose to use the difference on the ordinal
+          scale as the values in <em>W</em>. The statistics of
+          annotation data are shown in Table <a class="tbl" href=
+          "#tab6">6</a>. According to Landis et al. [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href=
+          "#BibPLXBIB0022">22</a>]<a class="fn" href="#fn6" id=
+          "foot-fn6"><sup>6</sup></a>, moderate inter-assessor
+          agreements between assessors are reached for
+          <em>U<sub>a</sub></em> , which indicates the annotation
+          data are of reasonable quality. The final “usefulness” of
+          the reviews are calculated by averaging the three
+          annotations and rounding them into integers.</p>
+          <div class="table-responsive" id="tab6">
+            <div class="table-caption">
+              <span class="table-number">Table 6:</span>
+              <span class="table-title">Statistics of review-level
+              annotation data.</span>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="text-align:left;"></th>
+                  <th style="text-align:left;">Items</th>
+                  <th style="text-align:left;">Reviews</th>
+                  <th style="text-align:left;">Reviews of each
+                  method</th>
+                  <th style="text-align:left;">Annotations</th>
+                  <th style="text-align:left;">Weighted
+                  <em>κ</em></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:left;">
+                  <em>U<sub>a</sub></em></td>
+                  <td style="text-align:left;">100</td>
+                  <td style="text-align:left;">1264</td>
+                  <td style="text-align:left;">745</td>
+                  <td style="text-align:left;">3792</td>
+                  <td style="text-align:left;">0.4112</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Based on the data collected, we first investigated the
+          usefulness distributions of the reviews selected by NARRE
+          and Top_Rated_Useful respectively. In the following, we
+          use the annotations (<em>U<sub>a</sub></em> ) as the
+          ground truth labels for usefulness. The distributions are
+          shown in Figure <a class="fig" href="#fig8">8</a>. From
+          the figure, we can see that the distributions of the two
+          methods are similar, and almost 50% reviews are annotated
+          as very useful (<em>U<sub>a</sub></em> =4). This is not
+          surprising because all these reviews ranked in high
+          positions by NARRE and Top_Rated_Useful respectively.
+          Meanwhile, we notice that NARRE can select more “very
+          useful” reviews compared to the latter (51.68% compared
+          to 48.46%).</p>
+          <figure id="fig8">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186070/images/www2018-79-fig8.jpg"
+            class="img-responsive" alt="Figure 8" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 8:</span>
+              <span class="figure-title">The distributions of the
+              usefulness annotations (<em>U<sub>a</sub></em> ) for
+              the selected reviews. For usefulness,
+              <em>U<sub>a</sub></em> = 1: not useful at all; 2:
+              somewhat useful; 3: fairly useful; 4: very
+              useful.</span>
+            </div>
+          </figure>
+          <p></p>
+          <p>We then calculated the <em>Precision</em>@<em>K</em>
+          and <em>Recall</em>@<em>K</em> of the “very useful”
+          reviews (<em>U<sub>a</sub></em> =4) selected by the two
+          methods. Besides, to further evaluate the ranking
+          performance of each method, we also calculated the
+          <em>NDCG</em>@<em>K</em> as follows:</p>
+          <div class="table-responsive" id="eq16">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} DCG@K=\sum
+              _{j=1}^{K}\frac{2^{rel_{j}}-1}{log_{2}(j+1)};\quad
+              NDCG@K=\frac{DCG@K}{IDCG@K}
+              \end{equation}</span><br />
+              <span class="equation-number">(16)</span>
+            </div>
+          </div>while <em>rel<sub>j</sub></em> =[1–4] indicates the
+          usefulness score of the review at rank <em>j</em>. The
+          results are shown in Table <a class="tbl" href=
+          "#tab7">7</a>. We can see that NARRE consistently and
+          significantly better than the Top_Rated_Useful method in
+          different evaluation metrics. Especially, great
+          improvements are observed on the top one review
+          performance. It indicates the effectiveness of our model
+          in selecting high-quality and useful reviews.
+          <p></p>
+          <div class="table-responsive" id="tab7">
+            <div class="table-caption">
+              <span class="table-number">Table 7:</span>
+              <span class="table-title">Performance comparison
+              between NARRE and Top_Rated_Useful on annotation
+              data, **: <em>p</em>&lt;0.01.</span>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="text-align:left;"></th>
+                  <th style="text-align:left;">
+                  <strong>Precision@1</strong></th>
+                  <th style="text-align:left;">
+                  <strong>Precision@5</strong></th>
+                  <th style="text-align:left;">
+                  <strong>Precision@10</strong></th>
+                  <th style="text-align:left;">
+                  <strong>Recall@1</strong></th>
+                  <th style="text-align:left;">
+                  <strong>Recall@5</strong></th>
+                  <th style="text-align:left;">
+                  <strong>Recall@10</strong></th>
+                  <th style="text-align:left;">
+                  <strong>NDCG@1</strong></th>
+                  <th style="text-align:left;">
+                  <strong>NDCG@5</strong></th>
+                  <th style="text-align:left;">
+                  <strong>NDCG@10</strong></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:left;">
+                  <strong>Top_Rated_Useful</strong></td>
+                  <td style="text-align:left;">0.4800</td>
+                  <td style="text-align:left;">0.4440</td>
+                  <td style="text-align:left;">0.3610</td>
+                  <td style="text-align:left;">0.0821</td>
+                  <td style="text-align:left;">0.3453</td>
+                  <td style="text-align:left;">0.4953</td>
+                  <td style="text-align:left;">0.6640</td>
+                  <td style="text-align:left;">0.6906</td>
+                  <td>0.7076</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">
+                  <strong>NARRE</strong></td>
+                  <td style="text-align:left;">
+                  <strong>0.5900**</strong></td>
+                  <td style="text-align:left;">
+                  <strong>0.4760**</strong></td>
+                  <td style="text-align:left;">
+                  <strong>0.3850**</strong></td>
+                  <td style="text-align:left;">
+                  <strong>0.1067**</strong></td>
+                  <td style="text-align:left;">
+                  <strong>0.3532**</strong></td>
+                  <td style="text-align:left;">
+                  <strong>0.5046**</strong></td>
+                  <td style="text-align:left;">
+                  <strong>0.7413**</strong></td>
+                  <td style="text-align:left;">
+                  <strong>0.7231**</strong></td>
+                  <td><strong>0.7358**</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section id="sec-30">
+          <header>
+            <div class="title-info">
+              <h4><span class="section-number">6.3.2</span>
+              <strong>Pairwise Usefulness Analysis</strong></h4>
+            </div>
+          </header>
+          <p>It is intuitive to conduct pairwise evaluation on
+          whether our selected useful reviews are as helpful as the
+          rated useful ones in the e-commerce system. Hence
+          crowd-sourcing based pairwise experiments have been made
+          (<em>U<sub>b</sub></em> ). We randomly selected 100 items
+          with two groups of reviews for comparison, namely reviews
+          generated by <strong>NARRE</strong> and
+          <strong>Top_Rated_Useful</strong> respectively. Since the
+          average number of useful reviews for each item by the
+          system user ratings in the dataset is 3.71, and 21.50%
+          items with usefulness ratings have more than 5 useful
+          reviews, to make a fair comparison, each group only
+          contain top 5 reviews for each item. (The items with no
+          less than 5 rated useful reviews have been used.) The
+          order of the two review groups are randomly shown in the
+          experiments. The instructions are shown in Figure
+          <a class="fig" href="#fig9">9</a>. Each pair of reviews
+          is judged by 3 assessors. The Kappa score for consistency
+          is 0.2981, showing fair agreements for
+          <em>U<sub>b</sub></em> .</p>
+          <figure id="fig9">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186070/images/www2018-79-fig9.jpg"
+            class="img-responsive" alt="Figure 9" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 9:</span>
+              <span class="figure-title">Pairwise annotation
+              instructions.</span>
+            </div>
+          </figure>
+          <p></p>
+          <p>Pairwise evaluation results are shown in Figure
+          <a class="fig" href="#fig10">10</a>. For 31% of items,
+          our selected reviews are thought of more useful than the
+          top usefulness-rated ones. While only for 26% of items,
+          NARRE is thought weaker. In addition, for 36% of items,
+          the annotators find that both groups of reviews are
+          useful and it is hard to judge which is better. Therefore
+          we can conclude that in most cases, NARRE achieves equal
+          or even better performance than system's usefulness
+          rating method in selecting useful reviews. Note that in
+          this experiment, we only select the items who have at
+          least 5 usefulness-rated reviews. according our
+          observation, only 37.51% items have user ratings on
+          review usefulness in the dataset. Since this Amazon
+          dataset has been filtered before its release to public,
+          the ratio of usefulness-rated reviews is even sparser in
+          real applications. For these majority part of items that
+          lack of review usefulness rating information, our
+          proposed NARRE approach will be great helpful on
+          selecting useful reviews to the users for their
+          purchasing decision making in real e-commerce
+          scenarios.</p>
+          <figure id="fig10">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186070/images/www2018-79-fig10.jpg"
+            class="img-responsive" alt="Figure 10" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 10:</span>
+              <span class="figure-title">Pairwise annotations
+              results (<em>U<sub>b</sub></em> ). Group A: top 5
+              reviews by NARRE, Group B: top 5 reviews by
+              Top_Rated_Useful.</span>
+            </div>
+          </figure>
+        </section>
+      </section>
+    </section>
+    <section id="sec-31">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">7</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>Post-purchase reviews play a very import role for user's
+      purchasing behavior. However, it is hard for users to find
+      useful information from an immense amount of reviews. In this
+      paper, we propose a neural attentional model named NARRE
+      which simultaneously predicts precise user ratings to the
+      item and select useful reviews automatically to provide
+      review-level explanations. Extensive experiments have been
+      made on 4 real-life datasets from Amazon and Yelp. In terms
+      of recommendation performance, the proposed NARRE
+      consistently outperforms the state-of-the-art recommendation
+      models based on matrix factorization and deep learning in
+      rating prediction. In terms of review usefulness
+      identification, the highly-useful reviews selected by NARRE
+      are consistent with, if not better than, users’ usefulness
+      rating in e-commerce system. Furthermore, it contributes a
+      lot to the system when there is no review-usefulness-labeling
+      available, which is common in real e-commerces. Therefore,
+      our proposed model NARRE will help build a more efficient and
+      explainable recommender system.</p>
+      <p>This review-level usefulness identification can also help
+      other researches on feature/word-level explainable
+      recommendation, e.g. models in [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0032">32</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0044">44</a>], as the pre-selection of reviews,
+      which will be studied in the future. Feature-level attention
+      model is also the potential future work. Moreover, we are
+      interested in exploring whether our method can used to model
+      user quality and help identify users who always write
+      less-useful reviews.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="sec-32">
+      <header>
+        <div class="title-info">
+          <h2>ACKNOWLEDGMENTS</h2>
+        </div>
+      </header>
+      <p>We thank the anonymous reviewers for their valuable
+      comments and suggestions. This work is supported by the
+      Natural Science Foundation of China under Grant No.: 61672311
+      and 61532011.</p>
+    </section>
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Dzmitry Bahdanau,
+        Kyunghyun Cho, and Yoshua Bengio. 2014. Neural machine
+        translation by jointly learning to align and translate.
+        <em><em>arXiv preprint arXiv:1409.0473</em></em>
+        (2014).</li>
+        <li id="BibPLXBIB0002" label="[2]">David&nbsp;M Blei,
+        Andrew&nbsp;Y Ng, and Michael&nbsp;I Jordan. 2003. Latent
+        dirichlet allocation. <em><em>Journal of machine Learning
+        research</em></em> 3, Jan (2003), 993–1022.</li>
+        <li id="BibPLXBIB0003" label="[3]">Rose Catherine and
+        William Cohen. 2017. TransNets: Learning to Transform for
+        Recommendation. <em><em>arXiv preprint
+        arXiv:1704.02298</em></em> (2017).</li>
+        <li id="BibPLXBIB0004" label="[4]">Jingyuan Chen, Hanwang
+        Zhang, Xiangnan He, Liqiang Nie, Wei Liu, and Tat-Seng
+        Chua. 2017. Attentive collaborative filtering: Multimedia
+        recommendation with item-and component-level attention. In
+        <em><em>SIGIR</em></em> . 335–344.</li>
+        <li id="BibPLXBIB0005" label="[5]">Long Chen, Hanwang
+        Zhang, Jun Xiao, Liqiang Nie, Jian Shao, and Tat-Seng Chua.
+        2016. SCA-CNN: Spatial and Channel-wise Attention in
+        Convolutional Networks for Image Captioning. <em><em>arXiv
+        preprint arXiv:1611.05594</em></em> (2016).</li>
+        <li id="BibPLXBIB0006" label="[6]">J Cohen. 1968. Weighted
+        kappa: nominal scale agreement with provision for scaled
+        disagreement or partial credit. <em><em>Psychological
+        Bulletin</em></em> 70, 4 (1968), 213.</li>
+        <li id="BibPLXBIB0007" label="[7]">Ronan Collobert, Jason
+        Weston, Léon Bottou, Michael Karlen, Koray Kavukcuoglu, and
+        Pavel Kuksa. 2011. Natural language processing (almost)
+        from scratch. <em><em>Journal of Machine Learning
+        Research</em></em> 12, Aug (2011), 2493–2537.</li>
+        <li id="BibPLXBIB0008" label="[8]">Qiming Diao, Minghui
+        Qiu, Chao-Yuan Wu, Alexander&nbsp;J Smola, Jing Jiang, and
+        Chong Wang. 2014. Jointly modeling aspects, ratings and
+        sentiments for movie recommendation (jmars). In
+        <em><em>SIGKDD</em></em> . 193–202.</li>
+        <li id="BibPLXBIB0009" label="[9]">Ian Goodfellow, Yoshua
+        Bengio, and Aaron Courville. 2016. <em><em>Deep
+        learning</em></em> . MIT press.</li>
+        <li id="BibPLXBIB0010" label="[10]">Ruining He and Julian
+        McAuley. 2016. Ups and downs: Modeling the visual evolution
+        of fashion trends with one-class collaborative filtering.
+        In <em><em>WWW</em></em> . 507–517.</li>
+        <li id="BibPLXBIB0011" label="[11]">Xiangnan He, Tao Chen,
+        Min-Yen Kan, and Xiao Chen. 2015. Trirank: Review-aware
+        explainable recommendation by modeling aspects. In
+        <em><em>CIKM</em></em> . 1661–1670.</li>
+        <li id="BibPLXBIB0012" label="[12]">Xiangnan He and
+        Tat-Seng Chua. 2017. Neural Factorization Machines for
+        Sparse Predictive Analytics. (2017).</li>
+        <li id="BibPLXBIB0013" label="[13]">Xiangnan He, Lizi Liao,
+        Hanwang Zhang, Liqiang Nie, Xia Hu, and Tat-Seng Chua.
+        2017. Neural collaborative filtering. In
+        <em><em>WWW</em></em> . 173–182.</li>
+        <li id="BibPLXBIB0014" label="[14]">G Hinton, N Srivastava,
+        and K Swersky. 2012. RMSProp: Divide the gradient by a
+        running average of its recent magnitude. <em><em>Neural
+        networks for machine learning, Coursera lecture
+        6e</em></em> (2012).</li>
+        <li id="BibPLXBIB0015" label="[15]">Armand Joulin, Edouard
+        Grave, Piotr Bojanowski, and Tomas Mikolov. 2016. Bag of
+        tricks for efficient text classification. <em><em>arXiv
+        preprint arXiv:1607.01759</em></em> (2016).</li>
+        <li id="BibPLXBIB0016" label="[16]">Nal Kalchbrenner,
+        Edward Grefenstette, and Phil Blunsom. 2014. A
+        Convolutional Neural Network for Modelling Sentences.
+        <em><em>Eprint Arxiv</em></em> 1(2014).</li>
+        <li id="BibPLXBIB0017" label="[17]">Soo&nbsp;Min Kim,
+        Patrick Pantel, Tim Chklovski, and Marco Pennacchiotti.
+        2006. Automatically assessing review helpfulness. In
+        <em><em>EMNLP</em></em> . 423–430.</li>
+        <li id="BibPLXBIB0018" label="[18]">Yoon Kim. 2014.
+        Convolutional neural networks for sentence classification.
+        <em><em>arXiv preprint arXiv:1408.5882</em></em>
+        (2014).</li>
+        <li id="BibPLXBIB0019" label="[19]">D Kinga and J&nbsp;Ba
+        Adam. 2015. A method for stochastic optimization. In
+        <em><em>ICLR</em></em> .</li>
+        <li id="BibPLXBIB0020" label="[20]">Yehuda Koren. 2008.
+        Factorization meets the neighborhood: a multifaceted
+        collaborative filtering model. In <em><em>SIGKDD</em></em>
+        . 426–434.</li>
+        <li id="BibPLXBIB0021" label="[21]">Yehuda Koren, Robert
+        Bell, and Chris Volinsky. 2009. Matrix factorization
+        techniques for recommender systems.
+        <em><em>Computer</em></em> 42, 8 (2009).</li>
+        <li id="BibPLXBIB0022" label="[22]">J&nbsp;Richard Landis
+        and Gary&nbsp;G Koch. 1977. The measurement of observer
+        agreement for categorical data.
+        <em><em>biometrics</em></em> (1977), 159–174.</li>
+        <li id="BibPLXBIB0023" label="[23]">Quoc&nbsp;V. Le and
+        Tomas Mikolov. 2014. Distributed Representations of
+        Sentences and Documents. 4 (2014), II–1188.</li>
+        <li id="BibPLXBIB0024" label="[24]">Daniel&nbsp;D Lee and
+        H&nbsp;Sebastian Seung. 2001. Algorithms for non-negative
+        matrix factorization. In <em><em>Advances in neural
+        information processing systems</em></em> . 556–562.</li>
+        <li id="BibPLXBIB0025" label="[25]">Piji Li, Zihao Wang,
+        Zhaochun Ren, Lidong Bing, and Wai Lam. 2017. Neural Rating
+        Regression with Abstractive Tips Generation for
+        Recommendation. (2017).</li>
+        <li id="BibPLXBIB0026" label="[26]">Guang Ling,
+        Michael&nbsp;R Lyu, and Irwin King. 2014. Ratings meet
+        reviews, a combined approach to recommend. In
+        <em><em>RecSys</em></em> . 105–112.</li>
+        <li id="BibPLXBIB0027" label="[27]">Julian McAuley and Jure
+        Leskovec. 2013. Hidden factors and hidden topics:
+        understanding rating dimensions with review text. In
+        <em><em>RecSys</em></em> . 165–172.</li>
+        <li id="BibPLXBIB0028" label="[28]">Tomas Mikolov, Ilya
+        Sutskever, Kai Chen, Greg Corrado, and Jeffrey Dean. 2013.
+        Distributed representations of words and phrases and their
+        compositionality. In <em><em>NIPS</em></em> .
+        3111–3119.</li>
+        <li id="BibPLXBIB0029" label="[29]">Andriy Mnih and
+        Ruslan&nbsp;R Salakhutdinov. 2008. Probabilistic matrix
+        factorization. In <em><em>Advances in neural information
+        processing systems</em></em> . 1257–1264.</li>
+        <li id="BibPLXBIB0030" label="[30]">Vinod Nair and
+        Geoffrey&nbsp;E. Hinton. 2010. Rectified linear units
+        improve restricted boltzmann machines. In
+        <em><em>ICML</em></em> . 807–814.</li>
+        <li id="BibPLXBIB0031" label="[31]">Jeffrey Pennington,
+        Richard Socher, and Christopher Manning. 2014. Glove:
+        Global Vectors for Word Representation. In
+        <em><em>EMNLP</em></em> . 1532–1543.</li>
+        <li id="BibPLXBIB0032" label="[32]">Zhaochun Ren, Shangsong
+        Liang, Piji Li, Shuaiqiang Wang, and Maarten de Rijke.
+        2017. Social collaborative viewpoint regression with
+        explainable recommendations. In <em><em>WSDM</em></em> .
+        485–494.</li>
+        <li id="BibPLXBIB0033" label="[33]">Steffen Rendle. 2010.
+        Factorization machines. In <em><em>ICDM</em></em> .
+        995–1000.</li>
+        <li id="BibPLXBIB0034" label="[34]">Marco&nbsp;Tulio
+        Ribeiro, Sameer Singh, and Carlos Guestrin. 2016. Why
+        should i trust you?: Explaining the predictions of any
+        classifier. In <em><em>SIGKDD</em></em> . 1135–1144.</li>
+        <li id="BibPLXBIB0035" label="[35]">Francesco Ricci, Lior
+        Rokach, and Bracha Shapira. 2011. Introduction to
+        recommender systems handbook. In <em><em>Recommender
+        systems handbook</em></em> . Springer, 1–35.</li>
+        <li id="BibPLXBIB0036" label="[36]">Alexander&nbsp;M Rush,
+        Sumit Chopra, and Jason Weston. 2015. A neural attention
+        model for abstractive sentence summarization. <em><em>arXiv
+        preprint arXiv:1509.00685</em></em> (2015).</li>
+        <li id="BibPLXBIB0037" label="[37]">Nitish Srivastava,
+        Geoffrey&nbsp;E Hinton, Alex Krizhevsky, Ilya Sutskever,
+        and Ruslan Salakhutdinov. 2014. Dropout: a simple way to
+        prevent neural networks from overfitting. <em><em>Journal
+        of machine learning research</em></em> 15, 1 (2014),
+        1929–1958.</li>
+        <li id="BibPLXBIB0038" label="[38]">Xiaoyuan Su and
+        Taghi&nbsp;M Khoshgoftaar. 2009. A survey of collaborative
+        filtering techniques. <em><em>Advances in artificial
+        intelligence</em></em> 2009 (2009), 4.</li>
+        <li id="BibPLXBIB0039" label="[39]">Yunzhi Tan, Min Zhang,
+        Yiqun Liu, and Shaoping Ma. 2016. Rating-Boosted Latent
+        Topics: Understanding Users and Items with Ratings and
+        Reviews.. In <em><em>IJCAI</em></em> . 2640–2646.</li>
+        <li id="BibPLXBIB0040" label="[40]">Jesse Vig, Shilad Sen,
+        and John Riedl. 2009. Tagsplanations: explaining
+        recommendations using tags. In <em><em>IUI</em></em> .
+        47–56.</li>
+        <li id="BibPLXBIB0041" label="[41]">Hao Wang, Naiyan Wang,
+        and Dit-Yan Yeung. 2015. Collaborative deep learning for
+        recommender systems. In <em><em>SIGKDD</em></em> .
+        1235–1244.</li>
+        <li id="BibPLXBIB0042" label="[42]">Jun Xiao, Hao Ye,
+        Xiangnan He, Hanwang Zhang, Fei Wu, and Tat-Seng Chua.
+        2017. Attentional factorization machines: Learning the
+        weight of feature interactions via attention networks.
+        <em><em>arXiv preprint arXiv:1708.04617</em></em>
+        (2017).</li>
+        <li id="BibPLXBIB0043" label="[43]">Chenyan Xiong, Jimie
+        Callan, and Tie-Yen Liu. 2017. Learning to attend and to
+        rank with word-entity duets. In <em><em>SIGIR</em></em>
+        .</li>
+        <li id="BibPLXBIB0044" label="[44]">Yongfeng Zhang, Guokun
+        Lai, Min Zhang, Yi Zhang, Yiqun Liu, and Shaoping Ma. 2014.
+        Explicit factor models for explainable recommendation based
+        on phrase-level sentiment analysis. In
+        <em><em>SIGIR</em></em> . 83–92.</li>
+        <li id="BibPLXBIB0045" label="[45]">Yongfeng Zhang, Yunzhi
+        Tan, Min Zhang, Yiqun Liu, Tat-Seng Chua, and Shaoping Ma.
+        2015. Catch the Black Sheep: Unified Framework for Shilling
+        Attack Detection Based on Fraudulent Action Propagation..
+        In <em><em>IJCAI</em></em> . 2408–2414.</li>
+        <li id="BibPLXBIB0046" label="[46]">Lei Zheng, Vahid
+        Noroozi, and Philip&nbsp;S Yu. 2017. Joint deep modeling of
+        users and items using reviews for recommendation. In
+        <em><em>WSDM</em></em> . 425–434.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn10"><a href="#foot-fn10"><sup>*</sup></a>Corresponding
+    author</p>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "https://code.google.com/archive/p/word2vec">https://code.google.com/archive/p/word2vec</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "https://nlp.stanford.edu/projects/glove">https://nlp.stanford.edu/projects/glove</a></p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "http://jmcauley.ucsd.edu/data/amazon">http://jmcauley.ucsd.edu/data/amazon</a></p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.yelp.com/dataset_challenge">https://www.yelp.com/dataset_challenge</a></p>
+    <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.crowdflower.com">https://www.crowdflower.com</a></p>
+    <p id="fn6"><a href="#foot-fn6"><sup>6</sup></a>Landis et al.
+    [<a class="bib" data-trigger="hover" data-toggle="popover"
+    data-placement="top" href="#BibPLXBIB0022">22</a>] characterize
+    <em>κ</em> values &lt; 0 as no agreement, 0–0.20 as slight,
+    0.21–0.40 as fair, 0.41–0.60 as moderate, 0.61–0.80 as
+    substantial, and 0.81–1 as almost perfect agreement.</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5639-8/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3178876.3186070">https://doi.org/10.1145/3178876.3186070</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

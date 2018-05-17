@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Incorporating Statistical Features in Convolutional Neural
+  Networks for Question Answering with Financial Data</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Incorporating Statistical
+          Features in Convolutional Neural Networks for Question
+          Answering with Financial Data</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Shijia</span> <span class=
+          "surName">E</span> Tongji University, Shanghai, China
+          201804, <a href=
+          "mailto:436_eshijia@tongji.edu.cn">436_eshijia@tongji.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Shiyao</span> <span class=
+          "surName">Xu</span> Tongji University, Shanghai, China
+          201804, <a href=
+          "mailto:1452221@tongji.edu.cn">1452221@tongji.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Yang</span> <span class=
+          "surName">Xiang</span> Tongji University, Shanghai, China
+          201804, <a href=
+          "mailto:shxiangyang@tongji.edu.cn">shxiangyang@tongji.edu.cn</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191826"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191826</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>The goal of question answering with financial
+        data is selecting sentences as answers from the given
+        documents for a question. The core of the task is computing
+        the similarity score between the question and answer pairs.
+        In this paper, we incorporate statistical features such as
+        the term frequency-inverse document frequency (TF-IDF) and
+        the word overlap in convolutional neural networks to learn
+        optimal vector representations of question-answering pairs.
+        The proposed model does not depend on any external
+        resources and can be easily extended to other domains. Our
+        experiments show that the TF-IDF and the word overlap
+        features can improve the performance of basic neural
+        network models. Also, with our experimental results, we can
+        prove that models based on the margin loss training achieve
+        better performance than the traditional classification
+        models. When the number of candidate answers for each
+        question is 500, our proposed model can achieve 0.622 in
+        Top-1 accuracy (Top-1), 0.654 in mean average precision
+        (MAP), 0.767 in normalized discounted cumulative gain
+        (NDCG), and 0.701 in bilingual evaluation understudy
+        (BLEU). If the number of candidate answers is 30, all the
+        values of the evaluation metrics can reach more than
+        90%.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Computing methodologies</strong>
+        → <strong>Natural language processing;</strong>
+        <strong>Neural networks;</strong> <em>Learning latent
+        representations;</em></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>question answering;
+          convolutional neural network; representation
+          learning</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Shijia E, Shiyao Xu, and Yang Xiang. 2018. Incorporating
+          Statistical Features in Convolutional Neural Networks for
+          Question Answering with Financial Data. In <em>WWW '18
+          Companion: The 2018 Web Conference Companion,</em>
+          <em>April 23–27, 2018,</em> <em>Lyon, France. ACM, New
+          York, NY, USA</em> 5 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3191826" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191826</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Question answering (QA) is a critical task in the research
+      areas of natural language processing (NLP) and information
+      retrieval (IR). Retrieval-based QA systems [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0001">1</a>] are mainly focused on
+      measuring the semantic similarity of two sentences and
+      selecting the possible answer to the question by ranking one
+      or more sentences [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>] [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>]. Therefore, the question answering
+      task with financial data can be defined as that given a
+      question <em>q</em> and an answer candidate pool {<em>a</em>
+      <sub>1</sub>, <em>a</em> <sub>2</sub>, ...,
+      <em>a<sub>n</sub></em> }; we should select the best answer
+      <em>a<sub>i</sub></em> , where 1 &lt; = <em>i</em> &lt; =
+      <em>n</em>. Due to the short text characteristic of the
+      questions and answers, the current text matching methods
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0002">2</a>] cannot be
+      directly used in this task. In this paper, we primarily pay
+      attention to the following problems:</p>
+      <p><em>1. How to get the most valuable features of the QA
+      pairs?</em> After analyzing the financial dataset, we find
+      the QA pairs mostly are short texts. The length limitation of
+      QA pairs leads to the sparsity of word occurrence, which is
+      usually one or two. This feature implies that every word may
+      have an important semantic information.</p>
+      <p><em>2. How to train a model that can rank the positive
+      answers before the negative ones in QA dataset?</em> As for
+      the financial dataset, the positive answer to a question must
+      be different from the negative one to some degree. In the
+      task, we put the positive and the negative answers into the
+      answer candidate pool for every question.</p>
+      <p>As a result, we tackle the matching problem mainly by
+      convolutional neural networks (CNN) [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0008">8</a>], and further improve the
+      performance by incorporating the specific features. More
+      precisely, we preprocess the financial dataset with TF-IDF
+      and word-overlap to generate extra input features for the QA
+      texts. After that, we use the proposed QA framework to
+      extract the important features which can produce the
+      distributed representations of questions and answers with
+      neural layers.</p>
+      <p>The rest of this paper is structured as follows. Section 2
+      contains related work. In Section 3, we describe the
+      definitions and implementations of the preprocessing and
+      analyze the model we use. Experimental results and
+      discussions are presented in Section 4, and finally, we give
+      some concluding remarks in Section 5.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>As mentioned above, the goal of the answer selection task
+      is to find the best candidate answer. If the selected answer
+      is contained in the ground truth set of the corresponding
+      question, the prediction result is considered to be correct.
+      Otherwise, it is incorrect. For this reason, the task can be
+      treated as a binary classification problem. In addition to
+      the distributed representation of questions and answers,
+      another important thing is to give a metric to measure the
+      matching degree of the QA pairs. Feng et al. [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0004">4</a>] present a framework based
+      on CNN. The questions and answers share the same CNN layers
+      to represent the features. It also attempts several general
+      similarities metrics such as cosine similarity. Similarly,
+      Pang et al. [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0005">5</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0009">9</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0010">10</a>] propose
+      the models based on CNN for matching natural language
+      sentences. Tan et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0013">13</a>] consider the shortcomings of CNN and
+      adopt the long short-term memory network (LSTM) to model the
+      QA pairs. LSTM is essentially a recurrent neural network
+      (RNN), and the learned features can retain the word order, so
+      as to further improve the overall performance of the
+      model.</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Model
+          Description</h2>
+        </div>
+      </header>
+      <p>Our question answering model (QA-Model) is based on CNN.
+      The CNN has achieved good performance in the domain of image
+      processing [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0007">7</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0008">8</a>] and machine
+      translation [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0003">3</a>].
+      We can leverage the experience of applying CNN to images and
+      then fit it to the financial QA task. In a CNN, the kernel
+      size is always much smaller than the input size. As a
+      consequent, the output is only interactive with a narrow
+      window of the input. Another feature of CNN is that it reuses
+      the kernel parameters in the convolution operations, while
+      the element in the weight matrix of traditional neural
+      networks will be used only once to calculate the output.
+      Also, with the <em>k</em>-MaxPooling combined to a CNN, we
+      can always have equivariant representation. As the overall
+      framework shown in Figure 1, the question word sequence is in
+      the input layer, and the embedding layer takes it as the
+      input to produce the question's vector representation for the
+      next convolution layer. In what follows, the output of the
+      convolution layer is the question's feature representation.
+      The following are the max pooling layer and activation layer.
+      In addition, the processing pipeline of the answer is same as
+      the question. The final result of the input QA pair is the
+      matching score between the two vector representations. The
+      following is a detailed description of the proposed
+      QA-model.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191826/images/www18companion-403-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">The overall architecture of our proposed
+          solution.</span>
+        </div>
+      </figure>
+      <p></p>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Embedding
+            Layer</h3>
+          </div>
+        </header>
+        <p>As shown in Figure 1, the input of the CNN is a sequence
+        of words (<strong>q</strong> = &lt; <em>q</em>
+        <sub>1</sub>, <em>q</em> <sub>2</sub>, ...,
+        <em>q<sub>d</sub></em> &gt; , <em>d</em> is the length) and
+        the word vector (<strong>V</strong>, <strong>V</strong> ∈
+        <strong>R</strong> <sup><em>d</em></sup> ) dimension is
+        <em>m</em>. All word vector representations are drawn from
+        the word embedding (<strong>W</strong> ∈ <strong>R</strong>
+        <sup>∣<em>V</em>∣ × <em>d</em></sup> ) which is trained by
+        <em>word2vec</em> [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0012">12</a>] based on the financial training
+        data.</p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Convolution
+            Layer</h3>
+          </div>
+        </header>
+        <p>Convolution layer is a special linear computation, used
+        for extracting patterns. Let the input sequence be
+        <strong>q</strong> = &lt; <em>q</em> <sub>1</sub>,
+        <em>q</em> <sub>2</sub>, ..., <em>q<sub>d</sub></em> &gt;
+        (<em>d</em> is the fixed length) and i-th word's vector is
+        <strong>V</strong> <sub><em>qi</em></sub> = &lt; <em>v</em>
+        <sub>1</sub>, <em>v</em> <sub>2</sub>, ...,
+        <em>v<sub>m</sub></em> &gt; (<em>m</em> is the length of
+        the embedding vector) which is derived from the matrix
+        <strong>R</strong> <sup><em>d</em></sup> . The convolution
+        layer projects the input layer into the feature maps, and
+        the computation follows:</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} {\bf P} =
+            ReLU({\bf W}*{\bf V}_q + {\bf b})
+            \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>where convolution weight <strong>W</strong> and the
+        vector <strong>b</strong> are the parameters that need to
+        be learned. <em>ReLU</em> is the activation function (shown
+        as the activation layer in Figure 1) which is widely used
+        in CNN. <strong>P</strong> is the generated representation
+        of the input. Besides, each convolution layer's stride is
+        decided by users. As for this task, because the length of
+        the sentence is short, we use one as the stride, so as to
+        maximize the acquisition of multiple semantic
+        representations.
+        <p></p>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span> Pooling
+            Layer</h3>
+          </div>
+        </header>
+        <p>To capture the important information of QA pairs, we use
+        pooling function to combine the all representations
+        <strong>P</strong> extracted from the previous convolution
+        layers. In this paper, we prefer 1-max pooling, and it
+        means we consider the strongest values that represent the
+        most important feature in one filter.</p>
+      </section>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.4</span> Additional
+            features</h3>
+          </div>
+        </header>
+        <section id="sec-11">
+          <p><em>3.4.1 TF-IDF feature.</em> Term frequency-inverse
+          document frequency (TF-IDF) [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0011">11</a>] can be used to determine what
+          words in a corpus of documents might be favorable to use
+          in a sentence. Considering the financial QA dataset,
+          almost every topic of the QA pair is different from the
+          others. It means that the keywords of every QA pair
+          differ from the others. For every QA pair, the
+          <strong>TF</strong> of the keyword is lower than the
+          <strong>TF</strong> of the remaining words. Equally, the
+          <strong>IDF</strong> of keywords is much higher than the
+          remaining words. <strong>IDF</strong> is computed as
+          follows:</p>
+          <div class="table-responsive" id="Xeq2">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} {\bf IDF} =
+              log\frac{|D|}{1 + |j:t_i \in d_j|}
+              \end{equation}</span><br />
+              <span class="equation-number">(2)</span>
+            </div>
+          </div>where |<em>D</em>| is the number of all QA pairs,
+          and |<em>j</em>: <em>t<sub>i</sub></em> ∈
+          <em>d<sub>j</sub></em> | denotes the number of documents
+          containing the word <em>t<sub>i</sub></em> .Therefore, we
+          will compute TF-IDF (<em>TF</em> × <em>IDF</em>) values
+          of all words, and those values will be used to build our
+          proposed models.
+          <p></p>
+        </section>
+        <section id="sec-12">
+          <p><em>3.4.2 Word overlap feature.</em> The word overlap
+          (WO) is computed as follows:</p>
+          <div class="table-responsive" id="Xeq3">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} {\bf WO} =
+              \frac{n_{common}}{n_q} \end{equation}</span><br />
+              <span class="equation-number">(3)</span>
+            </div>
+          </div>where <em>n<sub>common</sub></em> is the number of
+          words that are located in both the question and the
+          answer, and we can call that <em>common words</em>.
+          <em>n<sub>q</sub></em> is the number of words in the
+          question. The <em>WO</em> feature and common words will
+          be used to enhance the representation of QA pairs.
+          <p></p>
+        </section>
+        <section id="sec-13">
+          <p><em>3.4.3 Combination of the additional features and
+          neural networks.</em> With the features of TF-IDF and
+          word overlap, we propose following feature combination
+          methods.</p>
+          <p><em>TF-IDF embedding.</em> For a word, we concatenate
+          the original word vector and the TF-IDF value of that
+          word to generate the TF-IDF embedding.</p>
+          <p><em>Simple overlap.</em> We concatenate the cosine
+          matching score and the WO value of the QA pair, and feed
+          this representation to the fully connected neural layers.
+          The output of the last layer is the final score, and it
+          will be used to judge the matching degree of the QA
+          pair.</p>
+          <p><em>TF-IDF overlap.</em> In this method, we use all
+          the TF-IDF values of the common words. The TF-IDF overlap
+          is computed as follows:</p>
+          <div class="table-responsive" id="Xeq4">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} {\bf TF-IDF
+              overlap} = \frac{\sum
+              _{n=0}^{N}(TF\text{-}IDF)_n}{n_q}
+              \end{equation}</span><br />
+              <span class="equation-number">(4)</span>
+            </div>
+          </div>where <em>N</em> is the number of common words with
+          the QA pair.
+          <p></p>
+        </section>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.5</span> Training
+            loss function</h3>
+          </div>
+        </header>
+        <p>During the training process, we always prepare a
+        positive answer (<em>A</em> +) and a negative one
+        (<em>A</em> −) for each question (<em>Q</em>). With the
+        convolution layers and pooling layers, our QA-Model can
+        capture the distributed representations for the question
+        (<em>V<sub>Q</sub></em> ) and the answers (<em>V</em>
+        <sub><em>A</em> +</sub> and <em>V</em> <sub><em>A</em>
+        −</sub>). At last, we use cosine similarity to compute the
+        matching score of QA pairs including
+        <em>cosine</em>(<em>V<sub>Q</sub></em> , <em>V</em>
+        <sub><em>A</em> +</sub>) and
+        <em>cosine</em>(<em>V<sub>Q</sub></em> , <em>V</em>
+        <sub><em>A</em> −</sub>). As a result, we minimize a
+        ranking objective function defined as follows:</p>
+        <div class="table-responsive" id="Xeq5">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} L = max(0, M -
+            cos(V_{Q}, V_{A+}) + cos(V_{Q},V_{A-}))
+            \end{equation}</span><br />
+            <span class="equation-number">(5)</span>
+          </div>
+        </div>where <em>M</em> is the constant margin, and
+        <em>L</em> is the ranking loss value. Obviously, the loss
+        function is aimed to enlarge the distance between the
+        positive answer and the negative one. If
+        <em>cos</em>(<em>V<sub>Q</sub></em> , <em>V</em>
+        <sub><em>A</em> +</sub>) &gt;
+        <em>cos</em>(<em>V<sub>Q</sub></em> , <em>V</em>
+        <sub><em>A</em> −</sub>) + <em>M</em>, it means that the
+        training process makes the positive answer more suitable
+        for the question than the negative one. Otherwise, if
+        <em>cos</em>(<em>V<sub>Q</sub></em> , <em>V</em>
+        <sub><em>A</em> +</sub>) −
+        <em>cos</em>(<em>V<sub>Q</sub></em> , <em>V</em>
+        <sub><em>A</em> −</sub>) &lt; <em>M</em>, the neural
+        network needs to update the parameters. In the test phase,
+        we utilize the QA-Model to get the representations of QA
+        pairs and treat the answer with the largest matching score
+        as the correct candidate answer for the corresponding
+        question.
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-15">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span>
+          Experiments</h2>
+        </div>
+      </header>
+      <section id="sec-16">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span>
+            Dataset</h3>
+          </div>
+        </header>
+        <p>We apply our proposed models to this QA task with
+        financial data. In this dataset, each QA pair has a label
+        manually annotated with 1 or 0, where 1 means the answer is
+        positive to the question, and 0 means the one is negative.
+        There are 17,110 positive QA pairs in the training data
+        which contain 6,648 questions and 57,638 answers.</p>
+      </section>
+      <section id="sec-17">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span>
+            Experimental Setup</h3>
+          </div>
+        </header>
+        <section id="sec-18">
+          <p><em>4.2.1 Parameter settings.</em> Before the training
+          process, all the questions and answers were
+          pre-processed, such that the sentence was segmented to a
+          word sequence, where conjunctions, exclamations, and
+          punctuation marks were removed. We tried several
+          different margin values, such as 0.009, 0.1 and 0.5, and
+          finally, we set <em>M</em> as 0.009 according to the
+          experimental results on the training dataset based on the
+          result of 10-fold cross-validation. During the training
+          process, we utilized the pre-trained 100-dimensional word
+          embedding as the initial embedding matrix. We trained our
+          model with Adam [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0006">6</a>] as the final optimization
+          strategy. The batch size was 256. We mixed multiple
+          convolution filters with length 2, 3, 5, and 7. All of
+          the hyper-parameters were tuned based on measuring the
+          cross-validation results.</p>
+        </section>
+        <section id="sec-19">
+          <p><em>4.2.2 Baseline.</em> To further evaluate our
+          models, we also set up a baseline model. We directly
+          concatenate the distributed representations of the
+          question and answer shown in Figure 1 as the feature
+          vector, so that we can use a classification model to
+          output the label of the QA pair. Therefore, 1 means the
+          positive QA pair, and 0 means the negative QA pair.</p>
+          <div class="table-responsive" id="tab1">
+            <div class="table-caption">
+              <span class="table-number">Table 1:</span>
+              <span class="table-title">The experimental results of
+              the 10-fold cross-validation with 500 candidate
+              answers for each question.</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:center;"><strong>Model
+                  type</strong></td>
+                  <td style="text-align:center;"><strong>Additional
+                  feature</strong></td>
+                  <td style="text-align:center;">
+                  <strong>#Filter</strong></td>
+                  <td style="text-align:center;">
+                  <strong>Top-1@500</strong></td>
+                  <td style="text-align:center;">
+                  <strong>MAP@500</strong></td>
+                  <td style="text-align:center;">
+                  <strong>NDCG@500</strong></td>
+                  <td style="text-align:center;">
+                  <strong>BLEU@500</strong></td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">
+                  Classification</td>
+                  <td style="text-align:center;">-</td>
+                  <td style="text-align:center;">400</td>
+                  <td style="text-align:center;">0.125</td>
+                  <td style="text-align:center;">0.192</td>
+                  <td style="text-align:center;">0.392</td>
+                  <td style="text-align:center;">0.178</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">TF-IDF embedding
+                  (f1)</td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">0.132</td>
+                  <td style="text-align:center;">0.200</td>
+                  <td style="text-align:center;">0.399</td>
+                  <td style="text-align:center;">0.186</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">Simple overlap
+                  (f2)</td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">0.304</td>
+                  <td style="text-align:center;">0.322</td>
+                  <td style="text-align:center;">0.506</td>
+                  <td style="text-align:center;">0.344</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">TF-IDF overlap
+                  (f3)</td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">0.360</td>
+                  <td style="text-align:center;">0.365</td>
+                  <td style="text-align:center;">0.542</td>
+                  <td style="text-align:center;">0.407</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">f2 + f3</td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">0.395</td>
+                  <td style="text-align:center;">0.390</td>
+                  <td style="text-align:center;">0.563</td>
+                  <td style="text-align:center;">0.423</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">f1 + f2 + f3</td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">0.402</td>
+                  <td style="text-align:center;">0.394</td>
+                  <td style="text-align:center;">0.566</td>
+                  <td style="text-align:center;">0.426</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">f1 + f2 + f3</td>
+                  <td style="text-align:center;">4000</td>
+                  <td style="text-align:center;">0.412</td>
+                  <td style="text-align:center;">0.408</td>
+                  <td style="text-align:center;">0.581</td>
+                  <td style="text-align:center;">0.443</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">Margin loss</td>
+                  <td style="text-align:center;">-</td>
+                  <td style="text-align:center;">400</td>
+                  <td style="text-align:center;">0.418</td>
+                  <td style="text-align:center;">0.445</td>
+                  <td style="text-align:center;">0.608</td>
+                  <td style="text-align:center;">0.472</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">TF-IDF embedding
+                  (f1)</td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">0.427</td>
+                  <td style="text-align:center;">0.453</td>
+                  <td style="text-align:center;">0.614</td>
+                  <td style="text-align:center;">0.479</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">Simple overlap
+                  (f2)</td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">0.481</td>
+                  <td style="text-align:center;">0.486</td>
+                  <td style="text-align:center;">0.640</td>
+                  <td style="text-align:center;">0.533</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">TF-IDF overlap
+                  (f3)</td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">0.563</td>
+                  <td style="text-align:center;">0.552</td>
+                  <td style="text-align:center;">0.682</td>
+                  <td style="text-align:center;">0.610</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">f2 + f3</td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">0.563</td>
+                  <td style="text-align:center;">0.551</td>
+                  <td style="text-align:center;">0.691</td>
+                  <td style="text-align:center;">0.604</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">f1 + f2 + f3</td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">0.575</td>
+                  <td style="text-align:center;">0.561</td>
+                  <td style="text-align:center;">0.699</td>
+                  <td style="text-align:center;">0.614</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">f1 + f2 + f3</td>
+                  <td style="text-align:center;">4000</td>
+                  <td style="text-align:center;">
+                  <strong>0.622</strong></td>
+                  <td style="text-align:center;">
+                  <strong>0.654</strong></td>
+                  <td style="text-align:center;">
+                  <strong>0.767</strong></td>
+                  <td style="text-align:center;">
+                  <strong>0.701</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-responsive" id="tab2">
+            <div class="table-caption">
+              <span class="table-number">Table 2:</span>
+              <span class="table-title">The experimental results of
+              the 10-fold cross-validation with 30 candidate
+              answers for each question.</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:center;"><strong>Model
+                  type</strong></td>
+                  <td style="text-align:center;"><strong>Additional
+                  feature</strong></td>
+                  <td style="text-align:center;">
+                  <strong>#Filter</strong></td>
+                  <td style="text-align:center;">
+                  <strong>Top-1@30</strong></td>
+                  <td style="text-align:center;">
+                  <strong>MAP@30</strong></td>
+                  <td style="text-align:center;">
+                  <strong>NDCG@30</strong></td>
+                  <td style="text-align:center;">
+                  <strong>BLEU@30</strong></td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">
+                  Classification</td>
+                  <td style="text-align:center;">f1 + f2 + f3</td>
+                  <td style="text-align:center;">400</td>
+                  <td style="text-align:center;">0.736</td>
+                  <td style="text-align:center;">0.753</td>
+                  <td style="text-align:center;">0.839</td>
+                  <td style="text-align:center;">0.738</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">4000</td>
+                  <td style="text-align:center;">0.783</td>
+                  <td style="text-align:center;">0.802</td>
+                  <td style="text-align:center;">0.871</td>
+                  <td style="text-align:center;">0.752</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">Margin loss</td>
+                  <td style="text-align:center;">f1 + f2 + f3</td>
+                  <td style="text-align:center;">400</td>
+                  <td style="text-align:center;">0.867</td>
+                  <td style="text-align:center;">0.892</td>
+                  <td style="text-align:center;">0.930</td>
+                  <td style="text-align:center;">0.874</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">4000</td>
+                  <td style="text-align:center;">
+                  <strong>0.928</strong></td>
+                  <td style="text-align:center;">
+                  <strong>0.942</strong></td>
+                  <td style="text-align:center;">
+                  <strong>0.963</strong></td>
+                  <td style="text-align:center;">
+                  <strong>0.930</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+      <section id="sec-20">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span> Results and
+            Discussions</h3>
+          </div>
+        </header>
+        <p>The performance of our proposed models is evaluated by
+        Top-1 accuracy, MAP, NDCG, and BLEU defined by this task.
+        Table 1 and Table 2 show the experimental results of the
+        10-fold cross-validation in detail.</p>
+        <p>We prepare 500 candidate answers for each question to
+        evaluate the performance of different models shown in Table
+        1. We can find that the results obtained by margin loss
+        training are better than those of the traditional
+        classification model, no matter what features are used.
+        Moreover, each of the proposed additional features,
+        especially the TF-IDF overlap, can effectively improve the
+        performance. For the NDCG metric, when we adopt the margin
+        loss training with 400 convolution filters, the use of all
+        additional features can yield nearly 10% absolute
+        improvement over the results without any additional
+        features. We also find that the number of convolution
+        filters has a great influence on the performance of the
+        models. The model with 4000 convolution filters is better
+        than the 400 convolution filters under the same condition.
+        In Table 2, we show the performance with 30 candidate
+        answers. We can find that all the evaluation metrics can
+        reach more than 90% in this case.</p>
+      </section>
+    </section>
+    <section id="sec-21">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>In this paper, we study the QA task with financial data by
+      applying the CNN based deep learning models. Furthermore, the
+      proposed models can perform better by incorporating the
+      statistical features. The solution is an end-to-end framework
+      which does not need manual intervention, so it can also be
+      easily migrated to other similar tasks in the future.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="sec-22">
+      <header>
+        <div class="title-info">
+          <h2>ACKNOWLEDGMENTS</h2>
+        </div>
+      </header>
+      <p>The work is supported by the National Basic Research
+      Program of China 97314 under Grant No.:&nbsp; 2014CB340404
+      97314 , National Natural Science Foundation of China nsfc16
+      http://dx.doi.org/10.13039/501100001809 under Grant
+      No.:&nbsp; 71571136 nsfc16 and Science and Technology
+      Commission of Shanghai Municipality stcsm
+      http://dx.doi.org/10.13039/501100003399 under Grant
+      No.:&nbsp; 16JC1403000, 14511108002 stcsm .</p>
+    </section>
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Li Cai, Guangyou Zhou,
+        Kang Liu, and Jun Zhao. 2011. Learning the Latent Topics
+        for Question Retrieval in Community QA.. In
+        <em><em>IJCNLP</em></em> , Vol.&nbsp;11. 273–281.</li>
+        <li id="BibPLXBIB0002" label="[2]">Asli Celikyilmaz, Dilek
+        Hakkani-Tur, and Gokhan Tur. 2010. LDA based similarity
+        modeling for question answering. In <em><em>Proceedings of
+        the NAACL HLT 2010 Workshop on Semantic Search</em></em> .
+        Association for Computational Linguistics, 1–9.</li>
+        <li id="BibPLXBIB0003" label="[3]">Jacob Devlin, Rabih
+        Zbib, Zhongqiang Huang, Thomas Lamar, Richard&nbsp;M
+        Schwartz, and John Makhoul. 2014. Fast and Robust Neural
+        Network Joint Models for Statistical Machine Translation..
+        In <em><em>ACL (1)</em></em> . 1370–1380.</li>
+        <li id="BibPLXBIB0004" label="[4]">Minwei Feng, Bing Xiang,
+        Michael&nbsp;R Glass, Lidan Wang, and Bowen Zhou. 2015.
+        Applying deep learning to answer selection: A study and an
+        open task. In <em><em>Automatic Speech Recognition and
+        Understanding (ASRU), 2015 IEEE Workshop on</em></em> .
+        IEEE, 813–820.</li>
+        <li id="BibPLXBIB0005" label="[5]">Baotian Hu, Zhengdong
+        Lu, Hang Li, and Qingcai Chen. 2014. Convolutional neural
+        network architectures for matching natural language
+        sentences. In <em><em>Advances in neural information
+        processing systems</em></em> . 2042–2050.</li>
+        <li id="BibPLXBIB0006" label="[6]">Diederik&nbsp;P Kingma
+        and Jimmy Ba. 2014. Adam: A method for stochastic
+        optimization. <em><em>arXiv preprint
+        arXiv:1412.6980</em></em> (2014).</li>
+        <li id="BibPLXBIB0007" label="[7]">Alex Krizhevsky, Ilya
+        Sutskever, and Geoffrey&nbsp;E Hinton. 2012. Imagenet
+        classification with deep convolutional neural networks. In
+        <em><em>Advances in neural information processing
+        systems</em></em> . 1097–1105.</li>
+        <li id="BibPLXBIB0008" label="[8]">Yann LeCun, Léon Bottou,
+        Yoshua Bengio, and Patrick Haffner. 1998. Gradient-based
+        learning applied to document recognition. <em><em>Proc.
+        IEEE</em></em> 86, 11 (1998), 2278–2324.</li>
+        <li id="BibPLXBIB0009" label="[9]">Zhengdong Lu and Hang
+        Li. 2013. A deep architecture for matching short texts. In
+        <em><em>Advances in Neural Information Processing
+        Systems</em></em> . 1367–1375.</li>
+        <li id="BibPLXBIB0010" label="[10]">Liang Pang, Yanyan Lan,
+        Jiafeng Guo, Jun Xu, Shengxian Wan, and Xueqi Cheng. 2016.
+        Text Matching as Image Recognition.. In
+        <em><em>AAAI</em></em> . 2793–2799.</li>
+        <li id="BibPLXBIB0011" label="[11]">Juan Ramos <em>et
+        al.</em> 2003. Using tf-idf to determine word relevance in
+        document queries. In <em><em>Proceedings of the first
+        instructional conference on machine learning</em></em> ,
+        Vol.&nbsp;242. 133–142.</li>
+        <li id="BibPLXBIB0012" label="[12]">Radim Řehůřek and Petr
+        Sojka. 2010. Software Framework for Topic Modelling with
+        Large Corpora. In <em><em>Proceedings of the LREC 2010
+        Workshop on New Challenges for NLP Frameworks</em></em> .
+        ELRA, Valletta, Malta, 45–50. <a class=
+        "link-inline force-break" href=
+        "http://is.muni.cz/publication/884893/en">http://is.muni.cz/publication/884893/en</a>.
+        </li>
+        <li id="BibPLXBIB0013" label="[13]">Ming Tan,
+        Cicero&nbsp;dos Santos, Bing Xiang, and Bowen Zhou. 2015.
+        Lstm-based deep learning models for non-factoid answer
+        selection. <em><em>arXiv preprint
+        arXiv:1511.04108</em></em> (2015).</li>
+        <li id="BibPLXBIB0014" label="[14]">Haocheng Wu, Wei Wu,
+        Ming Zhou, Enhong Chen, Lei Duan, and Heung-Yeung Shum.
+        2014. Improving search relevance for short queries in
+        community question answering. In <em><em>Proceedings of the
+        7th ACM international conference on Web search and data
+        mining</em></em> . ACM, 43–52.</li>
+        <li id="BibPLXBIB0015" label="[15]">Lei Yu,
+        Karl&nbsp;Moritz Hermann, Phil Blunsom, and Stephen Pulman.
+        2014. Deep learning for answer sentence selection.
+        <em><em>arXiv preprint arXiv:1412.1632</em></em>
+        (2014).</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191826">https://doi.org/10.1145/3184558.3191826</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>A Neural Network-based Framework for Non-factoid Question
+  Answering</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">A Neural Network-based Framework
+          for Non-factoid Question Answering</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Nam Khanh</span> <span class=
+          "surName">Tran</span>, L3S Research Center, Leibniz
+          Universität Hannover, Appelstr. 9Hannover, Germany 30167,
+          <a href="mailto:ntran@L3S.de">ntran@L3S.de</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Claudia</span> <span class=
+          "surName">Niederée</span>, L3S Research Center, Leibniz
+          Universität Hannover, Appelstr. 9Hannover, Germany 30167,
+          <a href="mailto:niederee@L3S.de">niederee@L3S.de</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191830"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191830</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>In this paper, we present a neural network based
+        framework for answering non-factoid questions. The
+        framework consists of two main components: <em>Answer
+        Retriever</em> and <em>Answer Ranker</em>. In the first
+        component, we leverage off-the-shelf retrieval models (e.g.
+        bm25) to retrieve a pool of candidate answers regarding to
+        the input question. Answer Ranker is then used to select
+        the most suitable answer. In this work, we adopt two
+        typical deep learning based frameworks for our Answer
+        Ranker component. One is based on Siamese architecture and
+        the other is the Compare-Aggregate framework. The Answer
+        Ranker component is evaluated separately based on popular
+        answer selection datasets. Our overall system is evaluated
+        using FiQA dataset, a newly released dataset for financial
+        domain and shows promising results.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Non-factoid question
+          answering</small>,</span> <span class=
+          "keyword"><small>representation learning</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Nam Khanh Tran and Claudia Niederée. 2018. A Neural
+          Network-based Framework for Non-factoid Question
+          Answering. In <em>WWW '18 Companion: The 2018 Web
+          Conference Companion,</em> <em>April 23–27, 2018,</em>
+          <em>Lyon, France. ACM, New York, NY, USA</em> 5 Pages.
+          <a href="https://doi.org/10.1145/3184558.3191830" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191830</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-2">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Question answering (QA) is an important end-user task at
+      the intersection of natural language processing (NLP) and
+      information retrieval (IR). QA itself can be divided into
+      factoid QA, which enables the retrieval of facts, and
+      non-factoid QA, which enables finding of complex answer texts
+      such as descriptions, opinions, or explanations. Table
+      <a class="tbl" href="#tab1">1</a> shows an example of a
+      question with a ground-truth answer from financial domain. In
+      this paper, we give more attention to non-factoid QA and
+      propose a two-step framework to tackle this problem: i)
+      <em>Answer Retriever</em> - question analysis and retrieval
+      of candidate answers; ii) <em>Answer Ranker</em> - ranking
+      and selecting of the most suitable answer. While the first
+      step can be accomplished by using off-the-shelf retrieval
+      models (e.g. tf-idf, bm25), the second step brings more
+      challenges.</p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">An example of a question with an answer
+          from the FiQA dataset.</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:center;">
+              <strong>Question:</strong> Having a separate bank
+              account for business/investing, but not a business
+              account?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:center;"><strong>Ground-gruth
+              answer:</strong> Having a separate checking account
+              for the business makes sense. It simplifies
+              documenting your income/expenses. You can explain
+              every dollar entering and exiting the account without
+              having to remember that some of them were for
+              non-business items... I don't see the need for a
+              separate checking account for investing. The money
+              can be kept in a separate savings account that has no
+              fees, and can even earn a little interest....</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>One main challenge of the second task lies in the complex
+      and versatile semantic relations that can be observed between
+      questions and answers. In non-factoid QA, different from many
+      other matching tasks, the linguistic similarities between
+      questions and answers may or may not be indicative for the
+      good answers; depending on what the question is looking for,
+      a good answer may come in different forms. Sometimes a
+      correct answer completes the question precisely with the
+      missing information, and in other scenarios, good answers
+      need to elaborate part of the question to rationalize it. In
+      other cases, the best answers can also be noisy and include
+      extraneous information irrelevant to the question. In
+      addition, while a good answer must relate to the question,
+      they might not share common lexical units.</p>
+      <p>Recently, deep learning based approaches are proposed to
+      tackle these challenges and have shown competitive results
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0005">5</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0009">9</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0012">12</a>]. In
+      principle, they are based on Siamese architecture [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0004">4</a>] and
+      Compare-Aggregate framework [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>]. In the first architecture, the same
+      neural network encoder (e.g., a CNN or a LSTM) is applied to
+      question and answer sequences individually, so that both of
+      the two sequences are encoded into latent vectors in the same
+      embedding space. Then, a matching decision is made solely
+      based on the two feature vectors [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0005">5</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0009">9</a>]. Under the second
+      architecture, smaller units (such as words or contextual
+      vectors) of the question and answer sequences are firstly
+      matched, and then the matching results are aggregated (by a
+      CNN or a LSTM) into a vector to make the final decision
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0011">11</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0012">12</a>].</p>
+      <p>In this work, we adopt these architectures to our Answer
+      Ranker component and evaluate their performances on two
+      different non-factoid answer selection datasets, i.e.
+      InsuranceQA and FiQA. To evaluate our overall system as well
+      as participate in WWW 2018 Challenge<a class="fn" href="#fn1"
+      id="foot-fn1"><sup>1</sup></a>, we report the system
+      performance on the FiQA dataset.</p>
+    </section>
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Our System</h2>
+        </div>
+      </header>
+      <p>In the following, we describe our system for non-factoid
+      QA which consists of two components as shown in Figure
+      <a class="fig" href="#fig1">1</a>: (1) Answer Retriever
+      module for finding candidate answers and (2) an answer
+      selection model, Answer Ranker, for selecting the most
+      suitable answer.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191830/images/www18companion-407-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">An overview of our system for non-factoid
+          question answering.</span>
+        </div>
+      </figure>
+      <p></p>
+      <section id="sec-4">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Answer
+            Retriever</h3>
+          </div>
+        </header>
+        <p>Following classical QA systems, we use an efficient
+        (non-machine learning) answer retrieval system to first
+        narrow our search space and focus on ranking only answers
+        that are likely to be relevant. A simple inverted index
+        lookup followed by term vector model scoring performs quite
+        well on this task. In particular, our Answer Retriever is
+        based on popular information retrieval models, i.e.,
+        <em>query-likelihood language model</em> and
+        <em>bm25</em>.</p>
+      </section>
+      <section id="sec-5">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> Answer
+            Ranker</h3>
+          </div>
+        </header>
+        <p>In this paper, we pay more attention to the second
+        component that enables choosing suitable answer from a list
+        of candidate answers in regard to the input question. Our
+        Answer Ranker model is inspired by the recent success of
+        neural network models on this task. Typically, previous
+        works such as [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0009">9</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0012">12</a>] are based on two types of deep
+        learning frameworks. One is the Siamese architecture
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0004">4</a>] and the
+        other is the Compare-Aggregate framework [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0011">11</a>]. We adopt both types of
+        frameworks to our Answer Ranker creating SRanker and
+        CARanker as described below. For both answer rankers, given
+        a question <em>q</em> consisting of <em>m</em> tokens and a
+        candidate answer <em>a</em> of <em>l</em> tokens, the word
+        embeddings (WEs) of both <em>q</em> and <em>a</em> are
+        first retrieved, that are sequences of vectors <em>q</em> =
+        {<em>q</em> <sub>1</sub>, ..., <em>q<sub>m</sub></em> } and
+        <em>a</em> = {<em>a</em> <sub>1</sub>, ...,
+        <em>a<sub>l</sub></em> } where each <em>q<sub>i</sub></em>
+        (<em>a<sub>j</sub></em> ) is a <em>d</em>-dimensional
+        vector.</p>
+        <p><strong>SRanker</strong>SRanker is based on the siamese
+        architecture [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0004">4</a>]. Firstly, a bidirectional LSTM is
+        applied separately over the two sequences of WEs creating
+        hidden vectors for the question and answer, i.e.
+        <span class="inline-equation"><span class="tex">$h_q(t) =
+        \text{LSTM}(\overrightarrow{h_q}(t-1), q_t)~~\Vert
+        ~~\text{LSTM}(\overleftarrow{h_q}(t+1), q_t)$</span></span>
+        and <span class="inline-equation"><span class="tex">$h_a(t)
+        = \text{LSTM}(\overrightarrow{h_a}(t-1), a_t)~~\Vert
+        ~~\text{LSTM}(\overleftarrow{h_a}(t+1), a_t)$</span></span>
+        .</p>
+        <figure id="fig2">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191830/images/www18companion-407-fig2.jpg"
+          class="img-responsive" alt="Figure 2" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 2:</span>
+            <span class="figure-title">Overview of SRanker.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>Let <em>o<sub>q</sub></em> denote the final
+        representation of the question by taking the last hidden
+        vector <em>h<sub>q</sub></em> (<em>m</em>) or max/mean
+        pooling over all hidden vectors. Let <em>H<sub>a</sub></em>
+        = {<em>h<sub>a</sub></em> (1), <em>h<sub>a</sub></em> (2),
+        ..., <em>h<sub>a</sub></em> (<em>l</em>)} denote the hidden
+        states when modeling the answer. Instead of using the last
+        hidden state or average or max over all hidden sates, an
+        attention mechanism is applied:</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \begin{split}
+            \alpha _t &amp;\propto f_{attention}\left(o_q, h_a(t)
+            \right) \\ o_a &amp;= \sum _t \alpha _t h_a(t)\\
+            \end{split} \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>where <em>h<sub>a</sub></em> (<em>t</em>) is hidden
+        state of the answer at time <em>t</em>. Basically, the
+        attention mechanism gives more weight to words that have
+        more influence on the resulting representation. In SRanker,
+        we adopt the two most commonly used implementations of the
+        attention function: <em>MLP Attention</em> [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0009">9</a>] and <em>Bilinear
+        Attention</em> [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0003">3</a>].
+        <p></p>
+        <p><em>MLP Attention:</em> In [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0009">9</a>], Tan et al. proposed to compute
+        <em>f<sub>attention</sub></em> by a multi-layer perceptron
+        as follows:</p>
+        <div class="table-responsive" id="Xeq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \begin{split}
+            m(t) &amp;= \text{tanh} \left(W_a h_a(t) + W_q o_q
+            \right) \\ f_{attention} &amp;= \text{softmax}
+            \left(w^T m(t) \right) \\ \end{split}
+            \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>where <em>W<sub>a</sub></em> , <em>W<sub>q</sub></em>
+        are attentive weight matrices and <em>w</em> is an
+        attentive weight vector.
+        <p></p>
+        <p><em>Bilinear Attention:</em> In [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0003">3</a>], Chen et al. presented
+        another attention model which uses a bilinear term instead
+        of a tanh layer, and showed its effectiveness in machine
+        reading comprehension task. We adapt this model to estimate
+        the attention function <em>f<sub>attention</sub></em> :</p>
+        <div class="table-responsive" id="Xeq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \begin{split}
+            f_{attention} &amp;= \text{softmax}_t \left(o_q^T W_s
+            h_a(t) \right) \end{split} \end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>where <em>W<sub>s</sub></em> is the attention
+        parameter.
+        <p></p>
+        <p>In SRanker, we adopt a <em>pairwise</em> ranking method
+        to define our objective function. First, a cosine
+        similarity between two vectors <em>o<sub>q</sub></em> and
+        <em>o<sub>a</sub></em> is used to score the input pair,
+        i.e. <em>sim</em>(<em>q</em>, <em>a</em>) and the hinge
+        loss training objective is defined as follows:</p>
+        <div class="table-responsive" id="Xeq4">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} L = \max
+            \lbrace 0, \lambda - sim(q, a_+) + sim(q, a_-)\rbrace
+            \end{equation}</span><br />
+            <span class="equation-number">(4)</span>
+          </div>
+        </div>where <em>a</em> <sub>+</sub> is a ground truth
+        answer, <em>a</em> <sub>−</sub> is an incorrect answer
+        randomly chosen from the entire answer space, and
+        <em>λ</em> is a margin. In non-factoid QA datasets, we
+        treat any question with more than one ground truth as
+        multiple training examples. During training, for each
+        question we randomly sample <em>K</em> negative answers,
+        but only use the one with the highest <em>L</em> to update
+        the model.
+        <p></p>
+        <p><strong>CARanker</strong></p>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191830/images/www18companion-407-fig3.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">Overview of CARanker. ⊕
+            represents attention operation, and ⊗ represents
+            element-wise multiplication.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>CARanker is based on Compare-Aggregate model [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0011">11</a>], which
+        is illustrated in Figure <a class="fig" href="#fig3">3</a>.
+        In general, the model can be divided into four layers:</p>
+        <p><em>Word Representation Layer</em>: Similar to
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0011">11</a>], we
+        preprocess questions and answers as follows:</p>
+        <div class="table-responsive" id="Xeq5">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \begin{split}
+            \overline{q}_i &amp;= \sigma (W_1 q_i + b_1) \odot
+            \tanh (W_2 q_i + b_2) \\ \overline{a}_j &amp;= \sigma
+            (W_1 a_j + b_1) \odot \tanh (W_2 a_j + b_2) \\
+            \end{split} \end{equation}</span><br />
+            <span class="equation-number">(5)</span>
+          </div>
+        </div>where <em>W</em> <sub>1</sub>, <em>W</em>
+        <sub>2</sub> and <em>b</em> <sub>1</sub>, <em>b</em>
+        <sub>2</sub> are network parameters.
+        <p></p>
+        <p><em>Attention Layer</em>: As shown in Figure <a class=
+        "fig" href="#fig3">3</a>, in this layer we compute
+        attention matrix <strong>E</strong> =
+        {<em>e<sub>ij</sub></em> } of question vector <span class=
+        "inline-equation"><span class=
+        "tex">$\overline{q}_i$</span></span> and answer vector
+        <span class="inline-equation"><span class=
+        "tex">$\overline{a}_j$</span></span> and obtain soft
+        aligned sub-phrase <span class=
+        "inline-equation"><span class="tex">$\mathbf {H}=\lbrace
+        h_j^a\rbrace$</span></span> as follows:</p>
+        <div class="table-responsive" id="Xeq6">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \begin{split}
+            e_{ij} &amp;= \overline{q}_i * \overline{a}_j \\ h_j^a
+            &amp;= \sum ^m_{i=1}
+            \text{softmax}(e_{ij})~\overline{q}_i \end{split}
+            \end{equation}</span><br />
+            <span class="equation-number">(6)</span>
+          </div>
+        </div>where <span class="inline-equation"><span class=
+        "tex">$h^a_j$</span></span> is the corresponding vector in
+        <span class="inline-equation"><span class=
+        "tex">$\overline{q}$</span></span> that is aligned to
+        <span class="inline-equation"><span class=
+        "tex">$\overline{a}_j$</span></span> .
+        <p></p>
+        <p><em>Comparison Layer</em>: The goal of this comparison
+        layer is to match each <span class=
+        "inline-equation"><span class=
+        "tex">$\overline{a}_j$</span></span> (the
+        <em>j<sup>th</sup></em> word and its context in
+        <span class="inline-equation"><span class=
+        "tex">$\overline{a}$</span></span> ) with <span class=
+        "inline-equation"><span class="tex">$h^{a}_j$</span></span>
+        (a weighted version of <span class=
+        "inline-equation"><span class=
+        "tex">$\overline{q}$</span></span> that best matches
+        <span class="inline-equation"><span class=
+        "tex">$\overline{a}_j$</span></span> ). Here we adopt a
+        comparison function as follows:</p>
+        <div class="table-responsive" id="Xeq7">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} t_j^a =
+            \overline{a}_j \odot h_j^a \end{equation}</span><br />
+            <span class="equation-number">(7)</span>
+          </div>
+        </div>where ⊙ is element-wise multiplication.
+        <p></p>
+        <p><em>Aggregation Layer</em>: Finally, we aggregate the
+        vectors <span class="inline-equation"><span class=
+        "tex">$t^a_j$</span></span> using one-layer CNN [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0007">7</a>]:</p>
+        <div class="table-responsive" id="Xeq8">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \begin{split}
+            r_a &amp;= \text{CNN}([t_1^a, t_2^a,...,t_l^a]) \\ s_a
+            &amp;= \text{tanh}(W_s r_a + b_s) \end{split}
+            \end{equation}</span><br />
+            <span class="equation-number">(8)</span>
+          </div>
+        </div>where <em>W<sub>s</sub></em> and
+        <em>b<sub>s</sub></em> are the weights of prediction layer.
+        The final score <em>s<sub>a</sub></em> is then used to rank
+        candidate answers.
+        <p></p>
+        <p>As suggested by Bian et al. [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0002">2</a>], we adopt a
+        <em>listwise</em> ranking method for our CARanker.
+        Concretely, we feed a question <em>Q</em> and a set of
+        candidate answers <em>A</em> = {<em>A</em> <sub>1</sub>,
+        <em>A</em> <sub>2</sub>...<em>A<sub>n</sub></em> } and
+        target label set <em>Y</em> = {<em>y</em> <sub>1</sub>,
+        <em>y</em> <sub>2</sub>...<em>y<sub>n</sub></em> } into the
+        model, then get the normalized score vector <em>S</em>:</p>
+        <div class="table-responsive" id="Xeq9">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} S =
+            \text{softmax}([s_{A_1}, s_{A_2}, ... , s_{A_n} ])
+            \end{equation}</span><br />
+            <span class="equation-number">(9)</span>
+          </div>
+        </div>Target labels also need to be normalized by
+        <span class="inline-equation"><span class="tex">$Y =
+        \dfrac{Y}{\sum _{i=1}^n y_i}$</span></span> . Lastly, the
+        KL-divergence loss is used to train our CARanker:
+        <div class="table-responsive" id="Xeq10">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} L =
+            \dfrac{1}{n} \sum _1^n KL~(S || Y)
+            \end{equation}</span><br />
+            <span class="equation-number">(10)</span>
+          </div>
+        </div>
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Experimental
+          Setup</h2>
+        </div>
+      </header>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span>
+            Dataset</h3>
+          </div>
+        </header>
+        <p>First, to evaluate our Answer Rankers we conduct an
+        empirical evaluation based on two different answer
+        selection datasets: InsuranceQA and FiQA. These datasets
+        contain text of different domains and exhibit different
+        characteristics:</p>
+        <ul class="list-no-style">
+          <li id="list1" label="•">
+            <strong>InsuranceQA</strong> - This is a recently
+            released large-scale non-factoid QA dataset from the
+            insurance domain created by Feng et al. [<a class="bib"
+            data-trigger="hover" data-toggle="popover"
+            data-placement="top" href="#BibPLXBIB0006">6</a>]. In
+            this work we use the first version of the dataset. The
+            dataset is already divided into a training set, a
+            validation set, and two test sets, in which a question
+            may have multiple correct answers and normally the
+            questions are much shorter than the answers. The
+            average length of questions and answers in tokens are 7
+            and 95, respectively. For each question in the
+            development and test sets, there is a set of 500
+            candidate answers, which include the ground-truth
+            answers and randomly selected negative answers. More
+            details can be found in [<a class="bib" data-trigger=
+            "hover" data-toggle="popover" data-placement="top"
+            href="#BibPLXBIB0006">6</a>].<br />
+          </li>
+          <li id="list2" label="•"><strong>FiQA</strong> - This
+          dataset has been recently released for WWW 2018
+          Challenge. The dataset is built by crawling
+          Stackexchange, Reddit and StockTwits in which part of the
+          questions are opinionated, targeting mined opinions and
+          their respective entities, aspects, sentiment polarity
+          and opinion holder. We minimally preprocess the data only
+          performing tokenization and lowercasing all words. To
+          reduce the size of resulting vocabulary, we remove all
+          rare words which occur less than 5 times. The length of
+          the vocabulary |<em>V</em>|=22413 and the average length
+          of questions and answers in tokens are 11 and 135,
+          respectively. We split the dataset into training,
+          development and test sets which consist of 5999, 323 and
+          324 questions, respectively. To evaluate our Answer
+          Rankers, for each question in the development and test
+          sets, we construct the answer pools by including the
+          correct answer(s) and randomly selected candidates from
+          the complete set of unique answers. Finally we have 500
+          candidate answers for each question.<br /></li>
+        </ul>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">The statistic of the FiQA dataset.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Dataset</th>
+                <th style="text-align:center;">Train</th>
+                <th style="text-align:center;">Dev</th>
+                <th style="text-align:center;">Test</th>
+                <th style="text-align:center;">Avg.Q</th>
+                <th style="text-align:center;">Avg.A</th>
+                <th style="text-align:center;">#CAs</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">InsuranceQA</td>
+                <td style="text-align:center;">12887</td>
+                <td style="text-align:center;">1000</td>
+                <td style="text-align:center;">1800x2</td>
+                <td style="text-align:center;">7</td>
+                <td style="text-align:center;">95</td>
+                <td style="text-align:center;">500</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">FiQA</td>
+                <td style="text-align:center;">5999</td>
+                <td style="text-align:center;">323</td>
+                <td style="text-align:center;">324</td>
+                <td style="text-align:center;">11</td>
+                <td style="text-align:center;">135</td>
+                <td style="text-align:center;">500</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Table <a class="tbl" href="#tab2">2</a> presents some
+        statistics about the datasets, including the number of
+        questions in each set, average length of questions and
+        answers as well as average number of candidate answers in
+        the development and test sets.</p>
+        <p>To evaluate our overall system, we utilize the same set
+        of questions in the development and test sets in FiQA
+        dataset. Unlike Answer Ranker evaluation, these questions
+        are first passed through Answer Retriever to retrieve a
+        pool of candidate answers. Then, the Answer Ranker, which
+        is trained on the FiQA answer selection dataset, is applied
+        to select the positive answers.</p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span>
+            Implementation Details</h3>
+          </div>
+        </header>
+        <p>Our Answer Retriever is implemented based on Apache
+        Lucene.<a class="fn" href="#fn2" id=
+        "foot-fn2"><sup>2</sup></a> We tried <em>bm25</em> and
+        <em>query-likelihood language model (LM)</em> as our
+        retrieval models, and finally use <em>bm25</em> since it
+        yields slightly better results. For each input question, we
+        used the top 50 and top 100 answers returned by
+        <em>bm25</em> model as our candidate answers for the answer
+        selection step.</p>
+        <p>Our Answer Rankers are trained as follows. The model
+        parameters are optimized using Adam optimizer [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0001">1</a>] with a
+        learning rate of 0.001. The parameters are regularized with
+        a per-minibatch L2 regularization strength of 10<sup>−
+        5</sup> and a dropout of <em>d</em> = 0.2 is also applied
+        to prevent overfitting. We initialized the word embeddings
+        with 300-dimensional Glove vectors [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0008">8</a>] trained on 840 billion
+        words. Embeddings for words not present in the Glove
+        vectors are randomly initialized with each component
+        sampled from the uniform distribution over [ − 0.25,
+        0.25].</p>
+        <p><strong>SRanker</strong> A batch size is tuned amongst
+        {50, 100, 150} and finally set to 100. The hidden size of
+        LSTM layer is set to 512 for FiQA and 141 for InsuranceQA.
+        We tried different margins <em>λ</em> in the hinge loss
+        function and finally fixed the margin to <em>λ</em> = 0.2.
+        A number of negative answers <em>K</em> = 50 is used during
+        training. The word embeddings are also part of the
+        parameters and are optimized during training.</p>
+        <p><strong>CARanker</strong> A batch size is tuned amongst
+        {30, 50, 100} and finally set to 30. The dimensionality of
+        the hidden layers is set to 300 for FiQA and 282 for
+        InsuranceQA. For each positive answer, the number of
+        negative answers is tuned amongst {5, 10, 20, 50} which are
+        randomly chosen from the answer set. The word embeddings
+        are not updated during training in CARanker.</p>
+        <p>Since sequences within a mini-batch have different
+        lengths, we use a mask matrix to indicate the real length
+        of each sequence. We trained all models for a maximum of 20
+        epochs. In this work, we use Mean Reciprocal Rank (MRR),
+        Precision@1 (P@1) and Normalized Discounted Cumulative Gain
+        (NDCG) at top 10 as our evaluation metrics. We take MRR
+        scores on the development set at every epoch and save the
+        parameters of the network for the top three models. We
+        report the best test score from the saved models. All
+        models were built on a Linux machine with Nvidia GTX Ti
+        1080 GPU (12GB RAM). The code to reproduce the reported
+        results are publicly available at <a class=
+        "link-inline force-break" href=
+        "https://github.com/namkhanhtran/nn4nqa">https://github.com/namkhanhtran/nn4nqa</a>.</p>
+      </section>
+    </section>
+    <section id="sec-9">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Experimental
+          Results</h2>
+        </div>
+      </header>
+      <p>In this section, we first present the results of our
+      Answer Rankers on InsuranceQA and FiQA datasets, and then
+      describe overall performance of our system on the FiQA
+      dataset.</p>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Answer
+            Ranker</h3>
+          </div>
+        </header>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Experimental results of Answer Rankers on
+            InsuranceQA. The first group reports the results of
+            several baselines on InsuranceQA. The results of
+            Siamese-LSTM are reported in the second group. We
+            report the performance of SRanker and CARanker in the
+            last group.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Model</th>
+                <th style="text-align:center;" colspan="2">
+                  Test1
+                  <hr />
+                </th>
+                <th style="text-align:center;" colspan="2">
+                  Test2
+                  <hr />
+                </th>
+              </tr>
+              <tr>
+                <th style="text-align:left;">2-5</th>
+                <th style="text-align:center;">MRR</th>
+                <th style="text-align:center;">P@1</th>
+                <th style="text-align:center;">MRR</th>
+                <th style="text-align:center;">P@1</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">
+                  CNN (Feng et al. [<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0006">6</a>])
+                </td>
+                <td style="text-align:center;">–</td>
+                <td style="text-align:center;">0.628</td>
+                <td style="text-align:center;">–</td>
+                <td style="text-align:center;">0.592</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                  CNN-GESD (Feng et al. [<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0006">6</a>])
+                </td>
+                <td style="text-align:center;">–</td>
+                <td style="text-align:center;">0.653</td>
+                <td style="text-align:center;">–</td>
+                <td style="text-align:center;">0.610</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                  AP-LSTM (Tan et al. [<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0009">9</a>])
+                </td>
+                <td style="text-align:center;">–</td>
+                <td style="text-align:center;">0.690</td>
+                <td style="text-align:center;">–</td>
+                <td style="text-align:center;">0.648</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                  IARNN-Gate (Wang et al [<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0010">10</a>])
+                </td>
+                <td style="text-align:center;">–</td>
+                <td style="text-align:center;">0.701</td>
+                <td style="text-align:center;">–</td>
+                <td style="text-align:center;">0.628</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Siamese-LSTM</td>
+                <td style="text-align:center;">0.743</td>
+                <td style="text-align:center;">0.643</td>
+                <td style="text-align:center;">0.719</td>
+                <td style="text-align:center;">0.617</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">SRanker
+                <sub><em>mlp</em></sub></td>
+                <td style="text-align:center;">0.790</td>
+                <td style="text-align:center;">0.693</td>
+                <td style="text-align:center;">0.762</td>
+                <td style="text-align:center;">0.648</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">SRanker
+                <sub><em>bilinear</em></sub></td>
+                <td style="text-align:center;">0.781</td>
+                <td style="text-align:center;">0.689</td>
+                <td style="text-align:center;">0.755</td>
+                <td style="text-align:center;">0.658</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">CARanker</td>
+                <td style="text-align:center;">0.783</td>
+                <td style="text-align:center;">0.686</td>
+                <td style="text-align:center;">0.756</td>
+                <td style="text-align:center;">0.652</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-responsive" id="tab4">
+          <div class="table-caption">
+            <span class="table-number">Table 4:</span> <span class=
+            "table-title">Experimental results of Answer Rankers on
+            FiQA. The results of Siamese-LSTM are reported in the
+            first group. The results of SRanker and CARanker are
+            shown in the second group.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Model</th>
+                <th style="text-align:center;">NDCG</th>
+                <th style="text-align:center;">MRR</th>
+                <th style="text-align:center;">P@1</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Siamese-LSTM</td>
+                <td style="text-align:center;">0.509</td>
+                <td style="text-align:center;">0.566</td>
+                <td style="text-align:center;">0.469</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">SRanker
+                <sub><em>mlp</em></sub></td>
+                <td style="text-align:center;">0.562</td>
+                <td style="text-align:center;">0.616</td>
+                <td style="text-align:center;">0.509</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">SRanker
+                <sub><em>bilinear</em></sub></td>
+                <td style="text-align:center;">0.558</td>
+                <td style="text-align:center;">0.606</td>
+                <td style="text-align:center;">0.506</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">CARanker</td>
+                <td style="text-align:center;">0.605</td>
+                <td style="text-align:center;">0.653</td>
+                <td style="text-align:center;">0.540</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The results of our Answer Ranker models are shown in
+        Table <a class="tbl" href="#tab3">3</a> and Table <a class=
+        "tbl" href="#tab4">4</a>. Overall, our models perform
+        better than the simple Siamese-LSTM model. This is due to
+        the fact that answers in non-factoid QA are often noisy and
+        include extraneous information irrelevant to the question,
+        which cannot be handled by the simple Siamese-LSTM model.
+        This confirms the conclusion from previous works [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0009">9</a>, <a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0010">10</a>] where
+        attention-based models outperform the basic Siamese
+        matching model. In addition, SRanker and CARanker obtain
+        comparable results on InsuranceQA while CARanker
+        outperforms SRanker on FiQA. Table <a class="tbl" href=
+        "#tab3">3</a> also shows that our Answer Ranker models
+        obtain similar performances compared to previous
+        baselines.</p>
+      </section>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Full
+            Non-factoid Question Answering</h3>
+          </div>
+        </header>
+        <div class="table-responsive" id="tab5">
+          <div class="table-caption">
+            <span class="table-number">Table 5:</span> <span class=
+            "table-title">Overall performance of our system on
+            FiQA. The top 100 candidate answers returned by Answer
+            Retriever are considered.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Model</th>
+                <th style="text-align:center;">NDCG</th>
+                <th style="text-align:center;">MRR</th>
+                <th style="text-align:center;">P@1</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">SRanker
+                <sub><em>mlp</em></sub></td>
+                <td style="text-align:center;">0.248</td>
+                <td style="text-align:center;">0.232</td>
+                <td style="text-align:center;">0.115</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">SRanker
+                <sub><em>bilinear</em></sub></td>
+                <td style="text-align:center;">0.252</td>
+                <td style="text-align:center;">0.242</td>
+                <td style="text-align:center;">0.138</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">CARanker</td>
+                <td style="text-align:center;">0.263</td>
+                <td style="text-align:center;">0.243</td>
+                <td style="text-align:center;">0.127</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-responsive" id="tab6">
+          <div class="table-caption">
+            <span class="table-number">Table 6:</span> <span class=
+            "table-title">Overall performance of our system on
+            FiQA. The top 50 candidate answers from Answer
+            Retriever are taken.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Models</th>
+                <th style="text-align:center;">NDCG</th>
+                <th style="text-align:center;">MRR</th>
+                <th style="text-align:center;">P@1</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">SRanker
+                <sub><em>mlp</em></sub></td>
+                <td style="text-align:center;">0.278</td>
+                <td style="text-align:center;">0.242</td>
+                <td style="text-align:center;">0.119</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">SRanker
+                <sub><em>bilinear</em></sub></td>
+                <td style="text-align:center;">0.297</td>
+                <td style="text-align:center;">0.268</td>
+                <td style="text-align:center;">0.153</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">CARanker</td>
+                <td style="text-align:center;">0.308</td>
+                <td style="text-align:center;">0.279</td>
+                <td style="text-align:center;">0.157</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Table <a class="tbl" href="#tab5">5</a> and Table
+        <a class="tbl" href="#tab6">6</a> show the overall
+        performance of our system for answering non-factoid
+        questions from FiQA dataset. The results show that by using
+        top 50 candidate answers from Answer Retriever, our system
+        performs slightly better than using top 100 candidate
+        answers. In addition, SRanker <sub><em>bilinear</em></sub>
+        and CARanker show comparable performances and both
+        outperform SRanker <sub><em>mlp</em></sub> . One possible
+        explanation is that CARanker and SRanker
+        <sub><em>bilinear</em></sub> directly model the interaction
+        between questions and answers via multiplication, while
+        SRanker <sub><em>mlp</em></sub> indirectly models this
+        interaction via a tanh layer. In addition, it can be
+        observed that the results here are lower than in Table
+        <a class="tbl" href="#tab4">4</a>. This is due to the fact
+        that correct answers might not be included in the candidate
+        answers returned from Answer Retriever (bm25). More
+        advanced approaches could be used to improve the answer
+        retrieval step performance.</p>
+      </section>
+    </section>
+    <section id="sec-12">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span>
+          Conclusions</h2>
+        </div>
+      </header>
+      <p>We have presented a neural network based framework for
+      tackling non-factoid question answering. Our framework
+      contains Answer Retriever which retrieves a pool of candidate
+      answers and Answer Ranker which selects the most relevant
+      answer from the answer pool. For Answer Ranker, we adopted
+      recent deep learning based approaches which aim to learn
+      low-dimensional vectors for questions and answers, perform
+      matching and probably aggregate matching scores for final
+      answer ranking. Experimental results show that our Answer
+      Rankers obtain comparable performances to start-of-the-art
+      approaches and overall our system achieves promising
+      results.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="sec-13">
+      <header>
+        <div class="title-info">
+          <h2>ACKNOWLEDGMENTS</h2>
+        </div>
+      </header>
+      <p>This work was partially funded by the German Federal
+      Ministry of Education and Research (BMBF) for the project
+      eLabour (01UG1512C).</p>
+    </section>
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Jimmy Ba and Diederik
+        Kingma. 2015. Adam: A Method for Stochastic Optimization.
+        In <em><em>Proceedings of International Conference of
+        Learning Representations</em></em> .</li>
+        <li id="BibPLXBIB0002" label="[2]">Weijie Bian, Si Li, Zhao
+        Yang, Guang Chen, and Zhiqing Lin. 2017. A
+        Compare-Aggregate Model with Dynamic-Clip Attention for
+        Answer Selection. In <em><em>Proceedings of the 2017 ACM on
+        Conference on Information and Knowledge
+        Management</em></em> . 1987–1990.</li>
+        <li id="BibPLXBIB0003" label="[3]">Danqi Chen, Jason
+        Bolton, and Christopher&nbsp;D. Manning. 2016. A Thorough
+        Examination of the CNN/Daily Mail Reading Comprehension
+        Task. In <em><em>Proceedings of the 54th Annual Meeting of
+        the Association for Computational Linguistics (Volume 1:
+        Long Papers)</em></em> . 2358–2367.</li>
+        <li id="BibPLXBIB0004" label="[4]">Sumit Chopra, Raia
+        Hadsell, and Yann LeCun. 2005. Learning a Similarity Metric
+        Discriminatively, with Application to Face Verification. In
+        <em><em>Proceedings of the 2005 IEEE Computer Society
+        Conference on Computer Vision and Pattern Recognition
+        (CVPR’05) - Volume 1 - Volume 01</em></em> . 539–546.</li>
+        <li id="BibPLXBIB0005" label="[5]">Cicero dos Santos, Ming
+        Tan, Bing Xiang, and Bowen Zhou. 2016. Attentive pooling
+        networks. In <em><em>CoRR, abs/1602.03609</em></em> .</li>
+        <li id="BibPLXBIB0006" label="[6]">Minwei Feng, Bing Xiang,
+        Michael&nbsp;R. Glass, Lidan Wang, and Bowen Zhou. 2015.
+        Applying deep learning to answer selection: A study and an
+        open task. In <em><em>Workshop on Automatic Speech
+        Recognition and Understanding</em></em> . 813–820.</li>
+        <li id="BibPLXBIB0007" label="[7]">Yoon Kim. 2014.
+        Convolutional Neural Networks for Sentence Classification.
+        In <em><em>Proceedings of the 2014 Conference on Empirical
+        Methods in Natural Language Processing (EMNLP)</em></em> .
+        1746–1751.</li>
+        <li id="BibPLXBIB0008" label="[8]">Jeffrey Pennington,
+        Richard Socher, and Christopher&nbsp;D. Manning. 2014.
+        GloVe: Global Vectors for Word Representation. In
+        <em><em>Empirical Methods in Natural Language Processing
+        (EMNLP)</em></em> . 1532–1543.</li>
+        <li id="BibPLXBIB0009" label="[9]">Ming Tan, Cicero dos
+        Santos, Bing Xiang, and Bowen Zhou. 2016. Improved
+        Representation Learning for Question Answer Matching. In
+        <em><em>Proceedings of the 54th Annual Meeting of the
+        Association for Computational Linguistics (Volume 1: Long
+        Papers)</em></em> . 464–473.</li>
+        <li id="BibPLXBIB0010" label="[10]">Bingning Wang, Kang
+        Liu, and Jun Zhao. 2016. Inner Attention based Recurrent
+        Neural Networks for Answer Selection. In
+        <em><em>Proceedings of the 54th Annual Meeting of the
+        Association for Computational Linguistics (Volume 1: Long
+        Papers)</em></em> . 1288–1297.</li>
+        <li id="BibPLXBIB0011" label="[11]">Shuohang Wang and Jing
+        Jiang. 2017. A Compare-Aggregate Model for Matching Text
+        Sequences. In <em><em>Proceedings of 5th the International
+        Conference on Learning Representations</em></em> .</li>
+        <li id="BibPLXBIB0012" label="[12]">Radu&nbsp;Florian
+        Zhiguo&nbsp;Wang, Wael&nbsp;Hamza. 2017. Bilateral
+        Multi-Perspective Matching for Natural Language Sentences.
+        In <em><em>Proceedings of the Twenty-Sixth International
+        Joint Conference on Artificial Intelligence,
+        IJCAI-17</em></em> . 4144–4150.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "https://sites.google.com/view/fiqa/home">https://sites.google.com/view/fiqa/home</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "https://lucene.apache.org/">https://lucene.apache.org/</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191830">https://doi.org/10.1145/3184558.3191830</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

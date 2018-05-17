@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>An Empirical Study of the Framework Impact on the Security
+  of JavaScript Web Applications</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">An Empirical Study of the
+          Framework Impact on the Security of JavaScript Web
+          Applications</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Ksenia</span> <span class=
+          "surName">Peguero</span> George Washington University,
+          Washington, D.C.USA, <a href=
+          "mailto:kseniad@gwu.edu">kseniad@gwu.edu</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Nan</span> <span class=
+          "surName">Zhang</span> Pennsylvania State University,
+          University Park, PA, USA, <a href=
+          "mailto:nan@ist.psu.edu">nan@ist.psu.edu</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Xiuzhen</span> <span class=
+          "surName">Cheng</span> George Washington University,
+          Washington, D.C.USA, <a href=
+          "mailto:cheng@gwu.edu">cheng@gwu.edu</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3188736"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3188736</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small><em>Background:</em> JavaScript frameworks are
+        widely used to create client-side and server-side parts of
+        contemporary web applications. Vulnerabilities like
+        cross-site scripting introduce significant risks in web
+        applications. <em>Aim:</em> The goal of our study is to
+        understand how the security features of a framework impact
+        the security of the applications written using that
+        framework. <em>Method:</em> In this paper, we present four
+        locations in an application, relative to the framework
+        being used, where a mitigation can be applied. We perform
+        an empirical study of JavaScript applications that use the
+        three most common template engines: Jade/Pug, EJS, and
+        Angular. Using automated and manual analysis of each group
+        of applications, we identify the number of projects
+        vulnerable to cross-site scripting, and the number of
+        vulnerabilities in each project, based on the framework
+        used. <em>Results:</em> We analyze the results to compare
+        the number of vulnerable projects to the mitigation
+        locations used in each framework and perform statistical
+        analysis of confounding variables. <em>Conclusions:</em>
+        The location of the mitigation impacts the application's
+        security posture, with mitigations placed within the
+        framework resulting in more secure
+        applications.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Security and privacy</strong> →
+        <strong>Web application security;</strong> •
+        <strong>Software and its engineering</strong> →
+        <em>Development frameworks and environments;</em> Software
+        defect analysis;</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>JavaScript security; web
+          security; web frameworks; framework analysis; template
+          engines; cross-site scripting</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Ksenia Peguero, Nan Zhang, and Xiuzhen Cheng. 2018. An
+          Empirical Study of the Framework Impact on the Security
+          of JavaScript Web Applications. In <em>WWW '18 Companion:
+          The 2018 Web Conference Companion,</em> <em>April 23–27,
+          2018,</em> <em>Lyon, France. ACM, New York, NY, USA</em>
+          6 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3188736" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3188736</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Many security vulnerabilities in modern web applications
+      see common occurrences on numerous real-world websites, as
+      demonstrated by studies like the Open Web Application
+      Security Project (OWASP), which measures the most common
+      vulnerabilities and releases their Top Ten list every few
+      years [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0023">23</a>].
+      There has been substantial research on the problems of
+      discovering vulnerabilities [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0018">18</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0020">20</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0021">21</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0030">30</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0033">33</a>] and preventing them through
+      user-facing solutions, e.g., web application firewalls
+      (WAFs), browser plugins, and other instrumentation like
+      NoScript for Firefox [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0019">19</a>], XSS Filter for Internet Explorer
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0008">8</a>], DexterJS
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0024">24</a>], etc.</p>
+      <p>Somewhat surprisingly, there has been relatively little
+      research on the other side of vulnerability prevention -
+      i.e., how to properly design tools and instruments for
+      developers, so as to reduce the likelihood for them to make
+      mistakes and incur vulnerabilities in their web applications.
+      In the current state of practice, when developers are
+      security-aware and know of a potential vulnerability they may
+      be introducing in their code, they can address it in several
+      ways. Consider a generic injection vulnerability (which could
+      be an SQL injection, a code injection, an operating system
+      injection, a cross-site scripting (XSS), etc.) as an example.
+      The different options available for a developer to mitigate
+      the risk of introducing injection vulnerabilities are:</p>
+      <ul class="list-no-style">
+        <li id="list1" label="•"><strong>L0 - No
+        mitigation</strong> in place. This provides a base case of
+        lack of any protection and the presence of a
+        vulnerability;<br /></li>
+        <li id="list2" label="•"><strong>L1 - Custom
+        function</strong>, such as a sanitization or filtering
+        routine, that is written by developers and is included in
+        their own code;<br /></li>
+        <li id="list3" label="•"><strong>L2 - An external
+        library</strong> that provides a sanitization function and
+        is called from developers’ code;<br /></li>
+        <li id="list4" label="•"><strong>L3 - A framework
+        plugin</strong>, similar to an external library, that is a
+        third-party code used by developers, but it integrates
+        tightly with the framework;<br /></li>
+        <li id="list5" label="•"><strong>L4 - Built-in mitigation
+        control</strong>, that is implemented in the framework as a
+        function or feature providing protection out of the
+        box.<br /></li>
+      </ul>
+      <p>The question we would like to study is <em>which of these
+      different mitigation levels produce more secure code</em>? To
+      study this problem, we selected one of the most common
+      vulnerabilities that has been present in the OWASP Top 10
+      since 2003 [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0012">12</a>]
+      and is still in the top 3 issues in OWASP Top 10 2017
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0022">22</a>] –
+      cross-site scripting (XSS). We decided to focus on JavaScript
+      frameworks, both client-side and server-side, as the issue of
+      XSS assumes vulnerable JavaScript running in the browser.</p>
+      <p>Typically, an XSS vulnerability occurs when untrusted user
+      input is sent to the output (a web page) without prior
+      validation or encoding. Most contemporary frameworks have
+      some built-in protection for this scenario. A common
+      protection is using a template engine to process HTML pages
+      that employs an encoding function replacing raw HTML tags
+      with HTML entities that are not interpreted as tags by the
+      browser. However, there are scenarios where developers do
+      need to keep certain HTML tags in user input. For example, a
+      blog application often requires rich text editing of posts
+      and comments, so users can highlight text in bold, italics,
+      or use emoticons (basically, images). Content management
+      systems (CMSs) also have similar requirements for using rich
+      text elements in the pages. When developers face this
+      requirement, there are several approaches they can take which
+      correspond to the different levels of mitigation introduced
+      above:</p>
+      <ul class="list-no-style">
+        <li id="list6" label="•">Turn off the built-in output
+        encoding and allow all HTML tags in the user input for
+        certain fields, such as a post body in a blog application.
+        From our experience, this is the most common approach and
+        it leads to the greatest number of XSS vulnerabilities,
+        since turning encoding completely off allows any dangerous
+        HTML tags, including scripts. No mitigation technique is
+        used, which corresponds to level L0.<br /></li>
+        <li id="list7" label="•">Turn off the built-in output
+        encoding function and write their own sanitization routine
+        that will either allow only ”safe” HTML tags (whitelisting)
+        or disallow any ”dangerous” HTML tags (blacklisting).
+        Writing custom sanitization functions yields subpar
+        solutions and eventually leads to vulnerabilities in the
+        code, as blacklists can often be bypassed and developers
+        may create insecure whitelists. This approach corresponds
+        to level L1.<br /></li>
+        <li id="list8" label="•">Turn off the built-in output
+        encoding function and instead use an existing third-party
+        sanitization function. Such an approach may result in
+        secure applications, if the third-party function itself is
+        secure and easily integrates with the framework. Some
+        third-party solutions require additional configuration to
+        run smoothly with the framework. Examples of such solutions
+        in server-side JavaScript are the <em>markdown</em> library
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0017">17</a>],
+          presenting text in a wiki-format instead of HTML, and the
+          <em>sanitizer</em> library [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0028">28</a>], based on the Google Caja
+          project. These solutions are rather complex and we did
+          not see them commonly used in the projects we analyzed.
+          This approach corresponds to level L2.<br />
+        </li>
+        <li id="list9" label="•">Similar to using third-party
+        sanitization functions, some frameworks may include plugins
+        that enhance the functionality of the framework. However,
+        for the use case studied in this paper and the JavaScript
+        frameworks examined, we did not find any plugins that would
+        correspond to level L3.<br /></li>
+        <li id="list10" label="•">Instead of completely turning off
+        the built-in output encoding function, use a sanitization
+        function provided by the framework that only returns a safe
+        subset of HTML, preventing any XSS. This approach
+        corresponds to level L4.<br /></li>
+      </ul>
+      <p>Therefore, these mitigation levels demonstrate the
+      distance of the solution from the framework, where L1 is
+      farthest away and not connected to the framework at all, and
+      L4 is the closest, since the solution is built into the
+      framework itself. We would like to study the impact of each
+      of these solutions on the number of mistakes a developer
+      makes and, correspondingly, the number of vulnerabilities the
+      developer introduces in the code. Our
+      <strong>hypothesis</strong> is that <em>the closer the
+      mitigation is located to the framework itself, the fewer
+      vulnerabilities the code will have</em>, since the framework
+      will provide an out-of-the-box solution and a developer would
+      not need to make additional decisions on how to implement a
+      mitigation using a third-party or a homebred function each
+      time user input needs to contain HTML tags.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Approach</h2>
+        </div>
+      </header>
+      <section id="sec-6">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Template
+            Engines</h3>
+          </div>
+        </header>
+        <p>Using <em>templates</em> or <em>template engines</em> is
+        a popular mechanism for JavaScript frameworks to separate
+        server-side data from client-side code. Naturally, it can
+        be used to prevent XSS as well. For our study, we selected
+        the three most popular template engines used by JavaScript
+        applications – Jade/Pug, EJS, and AngularJS (version 1.2 or
+        older, not Angular 2.X) templates. All these templates have
+        some protection from XSS built into them:</p>
+        <ul class="list-no-style">
+          <li id="list11" label="•">In Jade/Pug, any variable put
+          into curly braces is automatically HTML-escaped, as well
+          as a variable assigned to a tag using the equals sign
+          (e.g., h1=title).<br /></li>
+          <li id="list12" label="•">EJS uses HTML format with
+          additional syntax. Any variable included using the
+          <%=variable%> tag will be automatically
+          HTML-escaped.<br /></li>
+          <li id="list13" label="•">AngularJS performs escaping
+          automatically for any variable included in curly braces
+          and for the right context (HTML, URL, CSS, etc.) without
+          requiring a developer to use special syntax. Therefore,
+          it performs automatic contextually-aware escaping
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0001">1</a>].<br />
+          </li>
+        </ul>
+        <p>While all three frameworks have built-in protection from
+        XSS, we examined the specific use case described in the
+        Introduction section, where a developer needs to output
+        user inputs but keep some HTML tags in it. That is, the
+        application must output ”safe” HTML by sanitizing the
+        incoming user input.</p>
+        <p>Jade/Pug has the functionality to maintain HTML in user
+        input. This is accomplished by using an exclamation point
+        syntax (!value or tag!=value). However, Jade/Pug does not
+        automatically perform sanitization of the output and the
+        user input would be reflected as is. To output only the
+        safe subset of the user input, developers need to either
+        call an external function to perform the needed
+        sanitization (L2) or write a custom function (L1). Jade/Pug
+        does not have any framework plugins that would do the
+        safe-HTML sanitization (L3).</p>
+        <p>EJS provides a functionality to keep raw HTML in user
+        input with the <%- value %> syntax. However, similar to
+        Jade/Pug, it does not include any sanitization of the
+        output to keep the safe HTML subset in it. Since it does
+        not have any plugins to do the safe-HTML sanitization (L3),
+        developers also have to either write a custom function (L1)
+        or use a third-party library (L2).</p>
+        <p>AngulaJSr, on the other hand, has a built-in feature
+        that automatically outputs a safe subset of HTML when HTML
+        content needs to be maintained in the user input. That is
+        done by using a different tag in the AngularJS template
+        (<tt>ng-bind-html</tt> vs. <tt>ng-bind</tt> or the
+        curly-brace markup). When a developer needs to include some
+        HTML tags in the user input, the developer uses a built-in
+        framework feature (L4); and the output then contains ”safe”
+        HTML tags and the application is still protected from XSS.
+        The most common way to output unsafe HTML in AngularJS is
+        to explicitly turn off the sanitization by calling the
+        <font style="normal">$</font>sce.trustAsHtml() function on
+        the variable content and use <tt>ngBindHtml</tt> directive
+        in the template. Another way is to override the
+        <font style="normal">$</font>sceDelegate() service by
+        configuring the <font style=
+        "normal">$</font>sceDelegateProvider(). However, this
+        approach is used extremely rarely, therefore we concentrate
+        on the first approach (the use of <font style=
+        "normal">$</font>sce.trustAsHtml()).</p>
+        <p>Consequently, our goal is to compare applications
+        written in Jade/Pug, EJS, and AngularJS and the number of
+        vulnerabilities they have in the case when an application
+        needs to output user-provided HTML in a safe manner. To do
+        this, we need to get a good sample of applications that
+        require outputting HTML tags safely in the user input. We
+        decided to concentrate on blogs and content management
+        systems (CMS) since they both satisfy this requirement and
+        represent popular needs in practice. We used GitHub to
+        obtain a set of applications written using each
+        framework.</p>
+      </section>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> Selection
+            Criteria</h3>
+          </div>
+        </header>
+        <p>As mentioned above, we concentrated on full-stack
+        JavaScript applications available on GitHub. Our search
+        conditions included the following: (1) application type is
+        blog or CMS (in terms of functionality), (2) server-side
+        technology is Express.js and Node.js, and (3) client-side
+        technology is Jade/Pug, EJS, or AngularJS.</p>
+        <p>Further, we refined our search to include contemporary
+        and more popular applications by introducing several
+        specifically designed filtering conditions, including (4)
+        last commit date is no later than 2013; (5) a repository
+        has at least 1 star (”stars” in GitHub mark how popular the
+        application is); (6) the language of the repository is
+        JavaScript, HTML, CSS, TypeScript (since GitHub only allows
+        to specify one language, and developers do not always
+        select JavaScript, even when it is a JavaScript
+        application)</p>
+        <p>Based on these six selection criteria we identified 65
+        Jade/Pug projects, 54 EJS projects, and 51 AngularJS
+        project.</p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.3</span> Analysis
+            Pipeline</h3>
+          </div>
+        </header>
+        <p>For each type of template engine we created the
+        following analysis pipeline: (1) built a parser or extended
+        an existing open source parser for the template engine; (2)
+        built an analyzer or extended an existing open source
+        analyzer for the template engine; (3) extended the analyzer
+        ruleset to automatically identify the XSS vulnerability.
+        Our source code and modifications to the open source
+        projects can be found at [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0015">15</a>].</p>
+        <p>After identifying the subset of applications for each
+        framework we executed the following steps for each group of
+        applications:</p>
+        <ol class="list-no-style">
+          <li id="list14" label="(1)">automatically downloaded from
+          GitHub information about project owners (developers) and
+          the template files needed for analysis (.jade, .ejs,
+          .html, depending on the template engine);<br /></li>
+          <li id="list15" label="(2)">ran the parser-analyzer pair
+          for that template engine on the downloaded files and
+          recorded the reported potential
+          vulnerabilities;<br /></li>
+          <li id="list16" label="(3)">manually analyzed the
+          automatically reported vulnerabilities in each project
+          and filtered out false positives;<br /></li>
+          <li id="list17" label="(4)">performed statistical
+          analysis of results.<br /></li>
+        </ol>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.4</span> Parsers and
+            Analyzers</h3>
+          </div>
+        </header>
+        <p><strong>Jade/Pug.</strong> For Jade/Pug templates we
+        used two open source packages utilized by a popular
+        JavaScript linting utility ESLint [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0006">6</a>]: pug-lexer [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0025">25</a>] and
+        pug-parser [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0026">26</a>]. We extended the pug-lexer package
+        with a rule that analyzes unescaped handlebars syntax, for
+        example, !{variable}. This rule outputs lexemes with the
+        type ”interpolated-code” and with an attribute ”mustEscape:
+        false”. Then we created a script that combines our improved
+        pug-lexer with pug-parser, similar to how eslint-plugin-pug
+        operates [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0007">7</a>]. With our modifications, the
+        pug-parser adds the ”Code” token with the attribute
+        ”mustEscape: false” into the produced AST for all elements
+        that were not automatically escaped by the template engine.
+        These elements constitute potential XSS
+        vulnerabilities<a class="fn" href="#fn1" id=
+        "foot-fn1"><sup>1</sup></a>, which are then reported using
+        our jadeFilesAnalyzer script.</p>
+        <p><strong>EJS.</strong> For EJS templates we looked at a
+        few open source projects, such as fis-parser-ejs [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0009">9</a>], ejs-lint
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0005">5</a>], and then
+        decided to extend the EJS core project [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0004">4</a>], because it offers most
+        versatile access to the generated document structure. We
+        added a new model to EJS that builds a list of unescaped
+        elements from the parsed EJS template, that constitute
+        potential XSS vulnerabilities. These elements are then
+        reported using our ejsFilesAnalyzer script.</p>
+        <p><strong>AngularJS.</strong> For AngularJS templates we
+        decided to extend the ESLint tool [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0006">6</a>] by adding a specific
+        rule called ”trust_Angular” that identifies calls to
+        AngularJS <font style="normal">$</font>sce service that
+        return unescaped input, such as <font style=
+        "normal">$</font>sce.trustAs() and <font style=
+        "normal">$</font>sce.trustAsHtml(). To programmatically run
+        the modified ESLint code, we used the Node API for ESLint
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0002">2</a>] and
+        modified the code to only report one type of finding to
+        minimize the noise in the output. The potential XSS
+        vulnerabilities are then reported using our
+        angularFilesAnalyzer script.</p>
+      </section>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Research
+          Findings</h2>
+        </div>
+      </header>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span>
+            Limitations</h3>
+          </div>
+        </header>
+        <p>To ensure the accuracy of our results, we performed
+        manual analysis of the automatically reported potential
+        vulnerabilities. If we compare the numbers of
+        vulnerabilities discovered by our automated analysis and by
+        the manual analysis, we can see that some of the template
+        types yield a higher accuracy rate, while others have a
+        lower accuracy rate, demonstrating the fact that some
+        template formats are easier to parse automatically, while
+        others present more complex structures (see Table <a class=
+        "tbl" href="#tab1">1</a>).</p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Accuracy of Automated Analysis</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:center;">Template Engine</td>
+                <td style="text-align:center;">Vulnerabilities
+                discovered automatically</td>
+                <td style="text-align:center;">True positives</td>
+                <td style="text-align:center;">Accuracy Rate</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Jade/Pug</td>
+                <td style="text-align:center;">212</td>
+                <td style="text-align:center;">72</td>
+                <td style="text-align:center;">33.96%</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">EJS</td>
+                <td style="text-align:center;">140</td>
+                <td style="text-align:center;">96</td>
+                <td style="text-align:center;">68.57%</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">AngularJS</td>
+                <td style="text-align:center;">26</td>
+                <td style="text-align:center;">12</td>
+                <td style="text-align:center;">46.15%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The accuracy rates show that the fully automated
+        analysis of applications (without manual triage) does not
+        provide exact results. We identified the following three
+        reasons for that:</p>
+        <ul class="list-no-style">
+          <li id="list18" label="•"><em>Inaccuracy of the parsing
+          tools.</em> While working on modifying the open source
+          engines for parsing Jade/Pug and EJS templates we
+          improved them by catching several types of exceptions and
+          adding logic to parse corner cases.<br /></li>
+          <li id="list19" label="•">
+            <em>Lack of dataflow analysis.</em> All the tools used
+            in this research do not perform any dataflow analysis
+            of JavaScript. In some cases our tools will flag a sink
+            function that does not perform proper encoding.
+            However, after manually analyzing the dataflow, we
+            discovered that the source of data is a static file,
+            such as a configuration file or a hard-coded blog post.
+            Data from that source cannot be influenced by an
+            attacker, and therefore, the finding is a false
+            positive. This result is in line with the findings of
+            other researchers stating that dataflow analysis
+            improves the accuracy of automated security defects
+            discovery [<a class="bib" data-trigger="hover"
+            data-toggle="popover" data-placement="top" href=
+            "#BibPLXBIB0027">27</a>].<br />
+          </li>
+          <li id="list20" label="•"><em>Use of third-party
+          libraries to perform HTML sanitization.</em> Since EJS
+          and Jade/Pug do not have built-in functionality to
+          sanitize HTML output, some developers do use third-party
+          libraries, such as <em>markdown</em>, that is, they use
+          the solution level L2. Since our tools do not perform
+          dataflow analysis and do not have any knowledge of
+          sanitization routines, they would flag variables that
+          have been previously sanitized with <em>markdown</em> as
+          sources of taint, resulting in a false positive. However,
+          such cases were very rare in our set of
+          applications.<br /></li>
+        </ul>
+        <p>Based on these findings, we conclude that any future
+        static analysis of JavaScript applications vulnerabilities
+        must include manual verification of results. Although
+        dataflow analysis would improve the accuracy of the
+        automated analysis, automated dataflow in JavaScript
+        remains a challenging problem, due to the flexibility of
+        the language. Specifically, JavaScript is dynamically and
+        loosely typed, uses prototypes to implement inheritance,
+        and has a very forgiving syntax. The problem of automated
+        dataflow analysis in JavaScript is currently being explored
+        by several researchers [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0016">16</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0029">29</a>].</p>
+      </section>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span>
+            Findings</h3>
+          </div>
+        </header>
+        <p>After validating all findings with manual analysis, we
+        counted the number of XSS vulnerabilities in each subset of
+        applications, based on the template engine used (see Table
+        <a class="tbl" href="#tab2">2</a>). The 65 Jade/Pug
+        projects contained a total of 72 vulnerabilities that
+        occurred in 25 projects, resulting in 38% of all Jade/Pug
+        applications being vulnerable. Out of 54 EJS projects, 23
+        contained at least one vulnerability, with the total number
+        of vulnerabilities equal to 96. Thus 43% of all EJS
+        applications were vulnerable to cross-site scripting. Out
+        of 51 AngularJS projects 6 had vulnerabilities, with a
+        total of 12 vulnerabilities discovered, resulting in only
+        12% of projects being vulnerable.</p>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Number of Vulnerable Projects Based on
+            Template (After Manual Analysis)</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:center;">Template Engine</td>
+                <td style="text-align:center;">Num. of
+                Projects</td>
+                <td style="text-align:center;">Num. of
+                Vulnerabilities</td>
+                <td style="text-align:center;">Num. of Vuln.
+                Projects</td>
+                <td style="text-align:center;">% of Vuln.
+                projects</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Jade/Pug</td>
+                <td style="text-align:center;">65</td>
+                <td style="text-align:center;">72</td>
+                <td style="text-align:center;">25</td>
+                <td style="text-align:center;">38.46%</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">EJS</td>
+                <td style="text-align:center;">54</td>
+                <td style="text-align:center;">96</td>
+                <td style="text-align:center;">23</td>
+                <td style="text-align:center;">42.59%</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">AngularJS</td>
+                <td style="text-align:center;">51</td>
+                <td style="text-align:center;">12</td>
+                <td style="text-align:center;">6</td>
+                <td style="text-align:center;">11.76%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>As we mentioned in section 2, all three frameworks do
+        not have any plugins that support safe-sanitization (L3),
+        and Jade/Pug and EJS also do not have any built-in controls
+        for safely outputting HTML on the page (L4). Therefore, in
+        EJS and Jade/Pug developers are bound to either write
+        custom sanitization routines (mitigation level L1) or use
+        third-party libraries (mitigation level L2). Below is an
+        example of using the <em>markdown</em> library to prevent
+        XSS attacks found in one of the Jade/Pug applications we
+        analyzed:</p>
+        <p><img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3188736/images/www18companion-242-img1.svg"
+        class="img-responsive" alt="" longdesc="" /></p>
+        <p>In this case, the post.content is returned in an
+        insecure way using the ”!=” syntax. However, the value of
+        post.content is already sanitized with <em>markdown</em>.
+        Nevertheless, the majority of the analyzed applications did
+        not use any sanitization routines. For example, the
+        application below returned the value of article.body
+        without any sanitization using the insecure !{} syntax.</p>
+        <p><img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3188736/images/www18companion-242-img2.svg"
+        class="img-responsive" alt="" longdesc="" /></p>
+        <p>These examples demonstrate that using mitigation level
+        L2 requires extra steps taken by a developer. On the other
+        hand, the AngularJS template engine has L4 mitigation
+        implemented – it outputs a safe subset of HTML as a
+        built-in feature, which does not require any additional
+        work performed by a developer. This is demonstrated in one
+        of the AngularJS applications we analyzed, where the
+        content of post.title and post.description will be
+        automatically sanitized.</p>
+        <p><img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3188736/images/www18companion-242-img3.svg"
+        class="img-responsive" alt="" longdesc="" /></p>
+        <p>The results of our study demonstrate that when a
+        framework has a security control built-in (mitigation level
+        L4), the percentage of vulnerable projects written using
+        this framework is considerably lower (12% in AngularJS vs.
+        38% in Jade/Pug or 43% in EJS). Although security controls
+        that perform sanitization based on a safe HTML subset can
+        be used with Jade/Pug and EJS as external third-party
+        libraries (for example, using <em>markdown</em> [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0017">17</a>] or
+        Google Caja Sanitizer [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0028">28</a>]), they are not part of the
+        framework itself and require additional effort on the
+        developers’ side to implement the control as level L2. When
+        such mitigations are built into the framework itself, as
+        defined in the L4 approach, the applications created on top
+        of the framework tend to be inherently more secure. Our
+        data proves our hypothesis: the closer the implementation
+        of the security control is to the framework itself, the
+        fewer vulnerabilities the applications would have.</p>
+        <p>After obtaining these results we also ran ANOVA
+        statistical tests on the application sample that we
+        selected. We performed confounding variables analysis to
+        ensure that the numbers of vulnerabilities we obtained were
+        not a result of a different factor. We analyzed the
+        following factors: 1) developer's overall experience
+        (measured by the number of projects on GitHub); 2)
+        developer's JavaScript experience (number of
+        JavaScript-related projects on GitHub); 3) project size; 4)
+        project popularity (number of stars); project reuse (number
+        of forks). ANOVA tests for each of these factors
+        demonstrated that none of these factors have statistically
+        significant impact on the number of vulnerabilities that
+        the projects have. The only factor that did show
+        statistically significant difference was the type of the
+        template engine used by the application, and consequently,
+        the choice of the mitigation level: L4 vs. L1 or L2 (see
+        Table <a class="tbl" href="#tab3">3</a>).</p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">P-values for Confounding Variables</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:center;">Criteria</td>
+                <td style="text-align:center;">p-value</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Developer's overall
+                experience</td>
+                <td style="text-align:center;">0.319279</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Developer's
+                JavaScript experience</td>
+                <td style="text-align:center;">0.132049%</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Project size</td>
+                <td style="text-align:center;">0.431335%</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Project
+                popularity</td>
+                <td style="text-align:center;">0.200649%</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Project reuse</td>
+                <td style="text-align:center;">0.211615%</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Template engine</td>
+                <td style="text-align:center;">0.001021%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Based on our hypothesis, proved by data, our
+        recommendation to the framework developers and maintainers
+        is that security controls must be implemented into the
+        framework itself and also must be turned on by default, if
+        possible. Having security controls implemented as plugins
+        or as third-party libraries makes them less likely to be
+        used at all or used correctly be the developers. If we look
+        at XSS vulnerability specifically, AngularJS implements
+        output encoding for all fields out of the box (using the
+        <tt>ngBind</tt> directive or double curly braces syntax).
+        For fields that need to output HTML constructs AngularJS
+        turns on the safe HTML sanitization by default, when the
+        <tt>ngBindHtml</tt> directive is used. And only when
+        developers need to output all HTML without any sanitization
+        or filtering, they have to explicitly call the
+        <tt><font style="normal">$</font>sce.trustAsHtml()</tt>
+        function and then send its output to the
+        <tt>ngBindHtml</tt> directive. Therefore, the framework
+        protects applications from XSS and developers from making
+        mistakes inherently. These recommendations for creating
+        secure frameworks should be used not just for XSS
+        protection, but for other vulnerabilities, such as
+        cross-site request forgery (CSRF) and different injection
+        issues (SQL injection, OS command injection, mail
+        injection, etc.).</p>
+        <p>The main message to developers choosing a framework for
+        their applications is to evaluate the security of the
+        framework by the number of mitigations or security controls
+        already build into the framework. If a framework inherently
+        implements protections from injection issues, CSRF, XSS,
+        authentication and authorization controls, and these
+        features have secure default settings, i.e. they are turned
+        on by default, it is highly likely that applications
+        developed on top of these frameworks will have fewer
+        vulnerabilities.</p>
+      </section>
+    </section>
+    <section id="sec-13">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>Previous work on the security of JavaScript applications
+      and frameworks concentrated in the following three areas.</p>
+      <p><strong>JavaScript Security.</strong> Studying security of
+      JavaScript applications themselves regardless of the
+      frameworks used often focused on client-side JavaScript,
+      identifying JavaScript inclusions, dynamic generation, and
+      other bugs [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0018">18</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0020">20</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0030">30</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0033">33</a>]. Not much
+      attention has been paid to the security of server-side
+      JavaScript code written with frameworks like Node.js or
+      Express.js.</p>
+      <p><strong>JavaScript Analysis and Testing.</strong> Saxena
+      and Li researched symbolic execution approach for testing
+      JavaScript code [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0029">29</a>]. Artzi and Jensen analyzed automated
+      testing of client-side JavaScript [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0003">3</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0013">13</a>]. However, these
+      approaches did not concentrate on the security aspects.</p>
+      <p><strong>Frameworks Analysis</strong> with security focus
+      includes analysis of frameworks for other languages, not
+      including JavaScript. For example, J. Wenberger analyzed XSS
+      sanitization in web frameworks in PHP, Ruby, Python, Java
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0031">31</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0032">32</a>]. Previous
+      analysis of JavaScript frameworks looks at performance,
+      quality, and documentation, but not at security features
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0010">10</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0011">11</a>].</p>
+      <p>Therefore, to the best of our knowledge, this is the first
+      study investigating the impact of a framework choice on the
+      security of a full-stack JavaScript application.</p>
+    </section>
+    <section id="sec-14">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>In this paper, we considered four possible levels of
+      mitigation for XSS vulnerabilities that can be implemented in
+      web applications. We focused our analysis on JavaScript
+      frameworks, selecting three popular template engines
+      implementing security controls at different levels: Jade/Pug
+      and EJS applications require controls at level L1 (custom
+      function) and L2 (third-party library), where AngularJS has
+      the control at level L4 (built-in feature). We analyzed how
+      the choice of the framework and, in turn, the level of
+      mitigation control, influences the number of XSS
+      vulnerabilities found in open source projects. We used
+      statistical analysis to confirm that no other confounding
+      variables affected the produced results.</p>
+      <p>The results we achieved demonstrate that the level of the
+      mitigation control has a significant impact on the security
+      of the application. When the mitigating control is built into
+      the framework itself, the applications built on top of that
+      framework have a much lower rate of vulnerabilities. In the
+      use case studied in this paper, i.e., when a developer needs
+      to output only ”safe” HTML tags in user input (in order to
+      avoid XSS), only 11.76% of analyzed AngularJS projects had
+      XSS vulnerabilities, compared to 38.46% of Jade/Pug projects
+      and 42.59% of EJS projects.</p>
+      <p>For the use-case studied in this paper, our preliminary
+      results suggest that framework maintainers should consider
+      building security controls into their frameworks to improve
+      the overall security of applications, instead of putting the
+      burden of choosing security controls on the developers.
+      Nevertheless, our results cover only one common web
+      vulnerability (XSS) and only in a rather specific scenario.
+      To demonstrate this point on a wider range of applications,
+      vulnerabilities, and security controls, and to make broader
+      conclusions on how the choice of a framework affects the
+      security of an application, we need to perform broader
+      research that covers other security vulnerabilities and a
+      broader range of mitigation strategies.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">AngularJS. 2017.
+        Documentation: <font style="normal">$</font>sce. (2017).
+        <a class="link-inline force-break" href=
+        "http://delivery.acm.org/10.1145/3190000/3188736/Retrieved%20October%2015,%202017%20from%20https://docs.angularjs.org/api/ng/service/$sce"
+          target="_blank">Retrieved October 15, 2017 from
+          https://docs.angularjs.org/api/ng/service/<font style=
+          "normal">$</font>sce</a>
+        </li>
+        <li id="BibPLXBIB0002" label="[2]">ESLint&nbsp;Node.js API.
+        2017. <a class="link-inline force-break" href=
+        "http://delivery.acm.org/10.1145/3190000/3188736/(2017).%20Retrieved%20October%2017,%202017%20from%20http://eslint.org/docs/developer-guide/nodejs-api"
+          target="_blank">(2017). Retrieved October 17, 2017 from
+          http://eslint.org/docs/developer-guide/nodejs-api</a>
+        </li>
+        <li id="BibPLXBIB0003" label="[3]">S. Artzi, J. Dolby, S.
+        Jensen, A. Moeller, and F. Tip. 2011. A framework for
+        automated testing of JavaScript web applications. In
+        <em><em>Proc. of the 33rd International Conference on
+        Software Engineering</em></em> . 571–580.</li>
+        <li id="BibPLXBIB0004" label="[4]">EJS. 2017. <a class=
+        "link-inline force-break" href=
+        "http://delivery.acm.org/10.1145/3190000/3188736/(2017).%20Retrieved%20October%2017,%202017%20from%20https://github.com/mde/ejs"
+          target="_blank">(2017). Retrieved October 17, 2017 from
+          https://github.com/mde/ejs</a>
+        </li>
+        <li id="BibPLXBIB0005" label="[5]">EJS-Lint. 2017.
+          <a class="link-inline force-break" href=
+          "http://delivery.acm.org/10.1145/3190000/3188736/(2017).%20Retrieved%20October%2017,%202017%20from%20https://github.com/RyanZim/EJS-Lint"
+          target="_blank">(2017). Retrieved October 17, 2017 from
+          https://github.com/RyanZim/EJS-Lint</a>
+        </li>
+        <li id="BibPLXBIB0006" label="[6]">ESLint. 2017.
+          <a class="link-inline force-break" href=
+          "http://delivery.acm.org/10.1145/3190000/3188736/(2017).%20Retrieved%20October%2017,%202017%20from%20https://github.com/eslint/eslint"
+          target="_blank">(2017). Retrieved October 17, 2017 from
+          https://github.com/eslint/eslint</a>
+        </li>
+        <li id="BibPLXBIB0007" label="[7]">ESLint-plugin-pug. 2017.
+        <a class="link-inline force-break" href=
+        "http://delivery.acm.org/10.1145/3190000/3188736/(2017).%20Retrieved%20October%2015,%202017%20from%20https://github.com/myfreeweb/eslint-plugin-pug"
+          target="_blank">(2017). Retrieved October 15, 2017 from
+          https://github.com/myfreeweb/eslint-plugin-pug</a>
+        </li>
+        <li id="BibPLXBIB0008" label="[8]">XSS Filter. 2017.
+        <a class="link-inline force-break" href=
+        "http://delivery.acm.org/10.1145/3190000/3188736/(2017).%20Retrieved%20October%2015,%202017%20from%20https://msdn.microsoft.com/en-us/library/dd565647(v=vs.85).aspx"
+          target="_blank">(2017). Retrieved October 15, 2017 from
+          https://msdn.microsoft.com/en-us/library/dd565647(v=vs.85).aspx</a>
+        </li>
+        <li id="BibPLXBIB0009" label="[9]">Fis-parser-ejs. 2013.
+        <a class="link-inline force-break" href=
+        "http://delivery.acm.org/10.1145/3190000/3188736/(2013).%20Retrieved%20October%2017,%202017%20from%20https://github.com/fouber/fis-parser-ejs"
+          target="_blank">(2013). Retrieved October 17, 2017 from
+          https://github.com/fouber/fis-parser-ejs</a>
+        </li>
+        <li id="BibPLXBIB0010" label="[10]">A. Gizas, S.
+        Christodoulou, and T. Papatheodorou. 2012. Comparative
+        evaluation of JavaScript frameworks. In <em><em>Proc. of
+        the 21st International Conference on World Wide
+        Web</em></em> . 513–514.</li>
+        <li id="BibPLXBIB0011" label="[11]">D. Graziotin and P.
+        Abrahamsson. 2013. Making sense out of a jungle of
+        JavaScript frameworks: towards a practitioner-friendly
+        comparative analysis. In <em><em>Proc. of the 14th
+        International Conference on Product-Focused Software
+        Process Improvement (PROFES)</em></em> . 334–337.</li>
+        <li id="BibPLXBIB0012" label="[12]">C. Heinrich. 2017.
+        Comparison of 2003, 2004, 2007, 2010 and 2013 Releases.
+        <a class="link-inline force-break" href=
+        "http://delivery.acm.org/10.1145/3190000/3188736/(2017).%20Retrieved%20October%2015,%202017%20from%20https://raw.githubusercontent.com/cmlh/OWASP-Top-Ten-2010/Release_Candidate/OWASP_Top_Ten_-_Comparison_of_2003,_2004,_2007,_2010_and_2013_Releases-RC1.pdf"
+          target="_blank">(2017). Retrieved October 15, 2017 from
+          https://raw.githubusercontent.com/cmlh/OWASP-Top-Ten-2010/Release_Candidate/OWASP_Top_Ten_-_Comparison_of_2003,_2004,_2007,_2010_and_2013_Releases-RC1.pdf</a>
+        </li>
+        <li id="BibPLXBIB0013" label="[13]">C. Jensen, A. Moeller,
+        and Z. Su. 2013. Server interface descriptions for
+        automated testing of JavaScript web applications. In
+        <em><em>Proc. of the 9th Joint Meeting on Foundations of
+        Software Engineering</em></em> . 510–520.</li>
+        <li id="BibPLXBIB0014" label="[14]">V. Kashyap and others.
+        2014. JSAI: a static analysis platform for JavaScript. In
+        <em><em>Proc. of the 22nd ACM SIGSOFT International
+        Symposium on Foundations of Software Engineering</em></em>
+        . 121–132.</li>
+        <li id="BibPLXBIB0015" label="[15]">ksdmitrieva. 2017.
+        Analysis Pipeline. <a class="link-inline force-break"
+          href="http://delivery.acm.org/10.1145/3190000/3188736/(2017).%20Retrieved%20December%2010,%202017%20from%20https://github.com/ksdmitrieva/AnalysisPipeline"
+          target="_blank">(2017). Retrieved December 10, 2017 from
+          https://github.com/ksdmitrieva/AnalysisPipeline</a>
+        </li>
+        <li id="BibPLXBIB0016" label="[16]">G. Li, E. Andreasen,
+        and I. Ghosh. 2014. SymJS: automatic symbolic testing of
+        JavaScript web applications. In <em><em>Proc. of the 22nd
+        ACM SIGSOFT International Symposium on Foundations of
+        Software Engineering</em></em> . 449–459.</li>
+        <li id="BibPLXBIB0017" label="[17]">Markdown. 2017.
+        <a class="link-inline force-break" href=
+        "http://delivery.acm.org/10.1145/3190000/3188736/(2017).%20Retrieved%20October%2015,%202017%20from%20https://github.com/evilstreak/markdown-js"
+          target="_blank">(2017). Retrieved October 15, 2017 from
+          https://github.com/evilstreak/markdown-js</a>
+        </li>
+        <li id="BibPLXBIB0018" label="[18]">N. Nikiforakis and
+        others. 2012. You are what you include: large-scale
+        evaluation of remote JavaScript inclusions. In
+        <em><em>Proc. of the ACM Conference on Computer and
+        Communications Security</em></em> . 736–747.</li>
+        <li id="BibPLXBIB0019" label="[19]">NoScript. 2017.
+        <a class="link-inline force-break" href=
+        "http://delivery.acm.org/10.1145/3190000/3188736/(2017).%20Retrieved%20October%2015,%202017%20from%20https://noscript.net/"
+          target="_blank">(2017). Retrieved October 15, 2017 from
+          https://noscript.net/</a>
+        </li>
+        <li id="BibPLXBIB0020" label="[20]">F. Ocariza, K. Bajaj,
+        K. Pattabiraman, and A. Mesbah. 2013. An empirical study of
+        client-side JavaScript bugs. In <em><em>IEEE International
+        Symposium on Empirical Software Engineering and
+        Measurement</em></em> .</li>
+        <li id="BibPLXBIB0021" label="[21]">F. Ocariza, K. Bajaj,
+        K. Pattabiraman, and A. Mesbah. 2015. Detecting
+        inconsistencies in JavaScript MVC applications. In
+        <em><em>ACM 37th IEEE International Conference on Software
+        Engineering (ICSE)</em></em> .</li>
+        <li id="BibPLXBIB0022" label="[22]">OWASP. 2017. Top 10 -
+        2017 Release Candidate. <a class="link-inline force-break"
+          href=
+          "http://delivery.acm.org/10.1145/3190000/3188736/(2017).%20Retrieved%20May%2015,%202017%20from%20https://github.com/OWASP/Top10/raw/master/2017/OWASP%20Top%2010%20-%202017%20RC1-English.pdf"
+          target="_blank">(2017). Retrieved May 15, 2017 from
+          https://github.com/OWASP/Top10/raw/master/2017/OWASP%20Top%2010%20-%202017%20RC1-English.pdf</a>
+        </li>
+        <li id="BibPLXBIB0023" label="[23]">OWASP. 2017. Top Ten
+        Project. <a class="link-inline force-break" href=
+        "http://delivery.acm.org/10.1145/3190000/3188736/(2017).%20Retrieved%20September%2029,%202017%20from%20https://www.owasp.org/index.php/Category:OWASP_Top_Ten_Project"
+          target="_blank">(2017). Retrieved September 29, 2017 from
+          https://www.owasp.org/index.php/Category:OWASP_Top_Ten_Project</a>
+        </li>
+        <li id="BibPLXBIB0024" label="[24]">I. Parameshvaran, E.
+        Budianto, and S. Shinde. 2015. Auto-patching DOM-based XSS
+        at scale. In <em><em>Proc. of the 10th Joint Meeting on
+        Foundations of Software Engineering</em></em> .
+        272–283.</li>
+        <li id="BibPLXBIB0025" label="[25]">Pug-lexer. 2016.
+        <a class="link-inline force-break" href=
+        "http://delivery.acm.org/10.1145/3190000/3188736/(2016).%20Retrieved%20October%2015,%202017%20from%20https://github.com/pugjs/pug-lexer"
+          target="_blank">(2016). Retrieved October 15, 2017 from
+          https://github.com/pugjs/pug-lexer</a>
+        </li>
+        <li id="BibPLXBIB0026" label="[26]">Pug-parser. 2017.
+        <a class="link-inline force-break" href=
+        "http://delivery.acm.org/10.1145/3190000/3188736/(2017).%20Retrieved%20October%2015,%202017%20from%20https://github.com/pugjs/pug-parser"
+          target="_blank">(2017). Retrieved October 15, 2017 from
+          https://github.com/pugjs/pug-parser</a>
+        </li>
+        <li id="BibPLXBIB0027" label="[27]">Donald Ray and Jay
+        Ligatti. 2012. Defining Code-injection Attacks. In <em><em>
+          Proceedings of the 39th Annual ACM SIGPLAN-SIGACT
+          Symposium on Principles of Programming
+          Languages</em></em> (<em>POPL ’12</em>). ACM, New York,
+          NY, USA, 179–190. <a class="link-inline force-break"
+          href="https://doi.org/10.1145/2103656.2103678" target=
+          "_blank">https://doi.org/10.1145/2103656.2103678</a>
+        </li>
+        <li id="BibPLXBIB0028" label="[28]">Caja&nbsp;HTML
+        Sanitizer. 2017. <a class="link-inline force-break" href=
+        "http://delivery.acm.org/10.1145/3190000/3188736/(2017).%20Retrieved%20October%2015,%202017%20from%20https://github.com/theSmaw/Caja-HTML-Sanitizer"
+          target="_blank">(2017). Retrieved October 15, 2017 from
+          https://github.com/theSmaw/Caja-HTML-Sanitizer</a>
+        </li>
+        <li id="BibPLXBIB0029" label="[29]">P. Saxena and others.
+        2010. A symbolic execution framework for JavaScript. In
+        <em><em>Proc. of the IEEE Symposium on Security and
+        Privacy</em></em> . 513–528.</li>
+        <li id="BibPLXBIB0030" label="[30]">A. Taly, U. Erlingsson,
+        J. Mitchell, M. Miller, and J. Nagra. 2011. Automated
+        analysis of security-critical JavaScript APIs. In
+        <em><em>Proc. of the IEEE Symposium on Security and
+        Privacy</em></em> . 363–378.</li>
+        <li id="BibPLXBIB0031" label="[31]">Weinberger and others.
+        2011. An empirical analysis of XSS sanitization in web
+        application frameworks. In <em><em>EECS Department,
+        University of California, Berkeley, Technical Report No.
+        UCB/EECS-2011-11</em></em> .</li>
+        <li id="BibPLXBIB0032" label="[32]">Weinberger and others.
+        2011. A systematic analysis of XSS sanitization in web
+        application frameworks. In <em><em>Proc. of the 16th
+        European Conference on Research in Computer
+        Security</em></em> . 150–171.</li>
+        <li id="BibPLXBIB0033" label="[33]">C. Yue and H. Wang.
+        2009. Characterizing insecure JavaScript practices on the
+        web. In <em><em>Proc. of the 18th International Conference
+        on World Wide Web</em></em> . 961–970.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>Here and
+    further we call the reported findings ”potential
+    vulnerabilities” because our tools may include false positives
+    and, therefore, some reported findings may not be true
+    vulnerabilities.</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3188736">https://doi.org/10.1145/3184558.3188736</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

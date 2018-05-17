@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Relevant Document Discovery for Fact-Checking
+  Articles</title><!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Relevant Document Discovery for
+          Fact-Checking Articles</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Xuezhi</span> <span class=
+          "surName">Wang</span> Google Research NYC
+        </div>
+        <div class="author">
+          <span class="givenName">Cong</span> <span class=
+          "surName">Yu</span> Google Research NYC
+        </div>
+        <div class="author">
+          <span class="givenName">Simon</span> <span class=
+          "surName">Baumgartner</span> Google Research NYC
+        </div>
+        <div class="author">
+          <span class="givenName">Flip</span> <span class=
+          "surName">Korn</span> Google Research NYC, <a href=
+          "mailto:xuezhiw,%20congyu,%20simonba,%20flip@google.com">xuezhiw,
+          congyu, simonba, flip@google.com</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3188723"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3188723</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>With the support of major search platforms such
+        as Google and Bing, fact-checking articles, which can be
+        identified by their adoption of the schema.org ClaimReview
+        structured markup, have gained widespread recognition for
+        their role in the fight against digital misinformation. A
+        claim-relevant document is an online document that
+        addresses, and potentially expresses a stance towards, some
+        claim. The claim-relevance discovery problem, then, is to
+        find claim-relevant documents. Depending on the verdict
+        from the fact check, claim-relevance discovery can help
+        identify online misinformation.</small></p>
+        <p><small>In this paper, we provide an initial approach to
+        the claim-relevance discovery problem by leveraging various
+        information retrieval and machine learning techniques. The
+        system consists of three phases. First, we retrieve
+        candidate documents based on various features in the
+        fact-checking article. Second, we apply a relevance
+        classifier to filter away documents that do not address the
+        claim. Third, we apply a language feature based classifier
+        to distinguish documents with different stances towards the
+        claim. We experimentally demonstrate that our solution
+        achieves solid results on a large-scale dataset and beats
+        state-of-the-art baselines. Finally, we highlight a rich
+        set of case studies to demonstrate the myriad of remaining
+        challenges and that this problem is far from being
+        solved.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Information systems</strong> →
+        <em>Data mining;</em> • <strong>Computing
+        methodologies</strong> → <em>Classification and regression
+        trees;</em> <em>Clustering and
+        classification;</em></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Fact Checking; Digital
+          Misinformation; Claim-Relevance Discovery</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Xuezhi Wang, Cong Yu, Simon Baumgartner, and Flip Korn.
+          2018. Relevant Document Discovery for Fact-Checking
+          Articles. In <em>WWW '18 Companion: The 2018 Web
+          Conference Companion,</em> <em>April 23–27, 2018,</em>
+          <em>Lyon, France. ACM, New York, NY, USA</em> 9 Pages.
+          <a href="https://doi.org/10.1145/3184558.3188723" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3188723</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-2">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Fact checking<a class="fn" href="#fn1" id=
+      "foot-fn1"><sup>1</sup></a> is a type of journalism where a
+      journalist examines claims published by others for the
+      veracity and accuracy of those claims. The claims can range
+      from a statement made by a politician to a story reported by
+      another publisher to a rumor circulating in social networks.
+      The goal of fact checking is to provide a verdict on whether
+      the claim is true, false, or mixed, based on a methodology
+      agreed upon by the fact checking community&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0016">16</a>]. Fact
+      checking provides context for users to understand information
+      better and is key to the fight against digital disinformation
+      and misinformation and to the overall trust and credibility
+      of journalism&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>]. While fact checking has been around
+      since early 2000s, it came to a broader public consciousness
+      in 2016.</p>
+      <p>The adoption of the open standard ClaimReview
+      markup<a class="fn" href="#fn2" id=
+      "foot-fn2"><sup>2</sup></a> by many fact checking
+      organizations has enabled major search engines, including
+      Google and Bing, to provide additional support for fact
+      checking content across their products&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0004">4</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0012">12</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0017">17</a>], because the markup makes
+      it easy to correctly identify fact checking articles via
+      structured data; the support from search engines in turn
+      spurred the growth of the fact checking community
+      globally&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0019">19</a>]. The data encoded within ClaimReview
+      markup provides three key fields on top of the content of the
+      fact-checking articles, which are: 1) <em>claim</em>, the
+      statement that is being fact checked; 2) <em>claimant</em>,
+      the person or organization making the claim; and 3)
+      <em>verdict</em>, the conclusion on the veracity of the claim
+      according to the fact checker. This alleviates the need to
+      extract those fields from the text, a long standing challenge
+      in information extraction which can now be bypassed thanks to
+      the contributions of fact checkers.</p>
+      <p>What the structured data fields cannot reliably provide,
+      however, are the documents across the Web that are relevant
+      to the claim(s) which are examined in the fact-checking
+      article. This is not due to the limitation of the markup: the
+      fact checker can indeed provide the URL(s) of the page(s)
+      repeating the claim<a class="fn" href="#fn3" id=
+      "foot-fn3"><sup>3</sup></a>. However, this is rarely done for
+      several reasons. First, many fact checkers are concerned
+      about the spread of fringe content and thus reluctant to
+      provide the URLs for fear that they might be misused. Second,
+      a popular claim may be discussed by hundreds of different
+      articles and it is impossible for the fact checker to find
+      all such articles. Third, a relevant document may be created
+      long after the fact-checking article was written and it is
+      infeasible for fact checkers to routinely go back to all the
+      fact-checking articles they have written and update the
+      list.</p>
+      <p>Meanwhile, identifying claim-relevant documents is
+      extremely useful. It provides a means to identify potential
+      misinformation when the stance towards the claim in the
+      claim-relevant document differs from the verdict of a
+      fact-checking article.<a class="fn" href="#fn4" id=
+      "foot-fn4"><sup>4</sup></a>&nbsp; Note that the
+      claim-relevance discovery problem does not require the
+      literal or precise claim to appear in the document but rather
+      aims to find ones that seem to align in spirit. Thus, our
+      goal is not to identify articles that are being debunked by
+      the fact-checking article, but rather to identify as
+      comprehensive a set of claim-relevant documents as possible
+      and classify their stances toward the given claim.</p>
+      <p>Figure&nbsp;<a class="fig" href="#fig1">1</a> illustrates
+      a fact-checking article by Snopes examining the claim,
+      “Recently discovered satellite photos from Google Earth show
+      that an ancient civilization built pyramids in Antarctica 100
+      million years ago,”<a class="fn" href="#fn5" id=
+      "foot-fn5"><sup>5</sup></a> with the title of the article
+      being “Were Enormous Pyramids Just Discovered In Antarctica?”
+      and the verdict being “false.” A quick Google search reveals
+      that at least ten documents are relevant to this claim and
+      express positive stance. Figure&nbsp;<a class="fig" href=
+      "#fig2">2</a> illustrates one such example<a class="fn" href=
+      "#fn6" id="foot-fn6"><sup>6</sup></a> amid many. And there
+      are a similar number of documents that, like Snopes,
+      contradict<a class="fn" href="#fn7" id=
+      "foot-fn7"><sup>7</sup></a> the claim or discuss it without
+      passing judgment.<a class="fn" href="#fn8" id=
+      "foot-fn8"><sup>8</sup></a></p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3188723/images/www18companion-231-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">A fact-checking article with a
+          claim.</span>
+        </div>
+      </figure>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3188723/images/www18companion-231-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">Example claim-relevant document w.r.t. the
+          claim in Figure&nbsp;<a class="fig" href=
+          "#fig1">1</a>.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>These examples illustrate several challenges for the
+      claim-relevance discovery problem, which is formalized in
+      Section&nbsp;<a class="sec" href="#sec-4">3</a>. First, it is
+      not clear how to find candidate documents, especially when
+      the claim can be expressed in multiple ways. We propose
+      methods to craft well-designed queries that capture the claim
+      and leverage a search engine to identify candidates. Second,
+      while modern search engines do a good job of returning
+      lexically related results, not all of the results actually
+      address the claim statement because search engines do not
+      have semantic understanding of it. Indeed, our experiments
+      show that most of the top-100 returned results tend to be
+      irrelevant to the claim, despite our best efforts to
+      formulate the right queries. To solve this challenge, we
+      design a classification model to predict, given a claim and a
+      candidate document, whether the document is relevant to the
+      claim. Finally, the most difficult challenge is how to tell
+      apart which stance each document, among the relevant ones,
+      has towards the claim. This is similar to the so-called
+      “stance detection” problem from the Fake News Challenge
+      (FNC)&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0026">26</a>]
+      and explored in&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0021">21</a>].</p>
+      <p>To tackle these three challenges, we propose a three-stage
+      system consisting of: 1) a candidate generation phase that
+      retrieves candidate documents based on signals generated from
+      the fact-checking article and its claim
+      (Section&nbsp;<a class="sec" href="#sec-6">4</a>); 2) a
+      relevance classification phase that filters away documents
+      that are unlikely to be relevant to the claim
+      (Section&nbsp;<a class="sec" href="#sec-9">5</a>); and 3) a
+      stance classification phase that predicts the stance a
+      relevant document has towards the claim
+      (Section&nbsp;<a class="sec" href="#sec-13">6</a>).</p>
+      <p>Finally, in Section&nbsp;<a class="sec" href=
+      "#sec-18">7</a>, we experimentally demonstrate that: 1) we
+      are able to automatically find a comprehensive candidate
+      dataset of related documents with 80% recall compared to
+      intensive manual effort; 2) we build a relevance classifier
+      that achieves 81.7% accuracy, surpassing the winning method
+      from FNC (trained on our data) by almost 5%; and 3) we build
+      a stance classifier with 91.6% accuracy, outperforming the
+      winning method from FNC by more than 6%.</p>
+    </section>
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>Research related to fact checking fall into a few general
+      categories. First, a rich body of works on information
+      veracity in the context of information extraction, especially
+      in the big data era where multiple sources can provide
+      conflicting information, starting with [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0032">32</a>]. The key research topics
+      include determining what is the correct information and which
+      sources are more credible. The information being studied in
+      these works, however, are simple facts represented by
+      knowledge base triples and very different from the general
+      claims with complex semantics we study in this paper. Second,
+      semi-automated fact checking is an emerging research field
+      aimed at producting tools to assist journalists in performing
+      fact checking more efficiently&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0011">11</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0015">15</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0030">30</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0031">31</a>]. Some of the topics
+      include identifying true but misleading statements, using
+      query perturbation techniques against a given knowledge
+      source, and predicting which statements are worthy of fact
+      checking based on features generated from just the statements
+      themselves. Our work is complementary to this thread. Third,
+      rumor detection on microblogs has also received a lot of
+      attention&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0027">27</a>], where the focus has been leveraging
+      the social graph structure to detect the emergence of
+      misinformation in social networks like Twitter. Many of those
+      techniques can be considered as lead generation techniques
+      for fact checkers. Finally, [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0028">28</a>] proposed an algorithm to make
+      connections between news articles to help users form a better
+      understanding of the stories, which is a general goal we
+      share. Their specific problem, however, is different in that
+      the connections they try to make between the news articles do
+      not have to form a supporting or contradicting relationship
+      and can be tangential.</p>
+      <p>Text similarity techniques are widely used in text
+      classification, sentiment analysis, document clustering, etc.
+      For our task specifically, text similarity is crucial in
+      determining whether a document we found is actually relevant
+      to the claim in the fact-checking article. Traditional
+      word-based models (bag-of-words or bag-of-n-grams) suffer
+      from data sparsity and high dimensionality. They usually fail
+      to capture the semantics of texts, hence two pieces of texts
+      with few overlapping words will have low similarity even if
+      some of the words share similar semantic meanings. Recent
+      works on text embeddings&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0018">18</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0023">23</a>] prove to be highly effective in
+      identifying the similarity between short texts. In [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0022">22</a>], the
+      authors computed continuous vector representations of words
+      from very large datasets and show that the neural network
+      based language models significantly outperform N-gram models.
+      In [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0018">18</a>], the
+      authors propose Paragraph Vector that learns continuous
+      distributed vector representations for pieces of texts, which
+      can capture both the word ordering and the semantics in
+      texts. We adopt some of those techniques in our relevance
+      classification phase.</p>
+      <p>The problem of <em>stance detection</em>, or <em>stance
+      classification</em>, has multiple definitions in the NLP
+      literature including targeted entity sentiment
+      in&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0024">24</a>],
+      agreement with a controversial topic in&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0003">3</a>] and agreement with a rumor
+      in the Fake News Challenge&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0026">26</a>]. The last of these is closest to our
+      problem, and is similar to the textual entailment problem in
+      natural language inference. For this task, [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0005">5</a>] collected a large dataset
+      (SNLI)&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0006">6</a>]
+      with 570<em>k</em> human-written English sentence pairs. Each
+      sentence pair includes a premise and a hypothesis with labels
+      entailment, contradiction, and neutral. Many models have also
+      been developed to advance the state-of-the-art results on
+      natural language inference and text understanding, including
+      feature-based models&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>], sentence encoding-based
+      models&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0007">7</a>],
+      and general neural network models&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0008">8</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0025">25</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0029">29</a>]. Among those, [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0025">25</a>] built an
+      attention model to decompose the problem into sub-problems
+      that can be solved separately, and achieved 86.8% accuracy on
+      the SNLI dataset with almost an order of magnitude fewer
+      parameters than previous work. More recently, [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0008">8</a>] built an enhanced LSTM
+      model and achieves 88.6% accuracy on the SNLI dataset.
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0013">13</a>] introduces
+      an Densely Interactive Inference Network (DIIN) to achieve
+      high-level text understanding by hierarchically extracting
+      semantic features from interaction space, and achieves
+      state-of-the-art results on the SNLI dataset with 88.9%
+      accuracy.</p>
+    </section>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Definitions and
+          Overall System</h2>
+        </div>
+      </header>
+      <p></p>
+      <div class="definition" id="enc1">
+        <label>Definition 3.1.</label>
+        <p>A <strong>fact-checking article</strong> is defined as
+        an article that examines a single factual assertion, which
+        we refer to as the <strong>claim</strong>, and produces a
+        <strong>verdict</strong>, which judges the veracity of the
+        claim according to the research done by the authors.</p>
+      </div>
+      <p></p>
+      <p>Fact-checking articles are typically written by
+      professional journalists and fact checkers. In this paper, we
+      are only interested in those that are annotated with the
+      ClaimReview markup<a class="fn" href="#fn9" id=
+      "foot-fn9"><sup>9</sup></a>.</p>
+      <p></p>
+      <div class="definition" id="enc2">
+        <label>Definition 3.2.</label>
+        <p>Given a fact-checking article, a <strong>related
+        document</strong> is a document that bears some topical or
+        lexical similarity to the fact-checking article.</p>
+      </div>
+      <p></p>
+      <p>We rely on Google Search to fetch related documents based
+      on queries that we craft from the fact-checking articles. All
+      relevant documents (Definition&nbsp;<a class="enc" href=
+      "#enc3">3.3</a>) are selected from the set of related
+      documents.</p>
+      <p></p>
+      <div class="definition" id="enc3">
+        <label>Definition 3.3.</label>
+        <p>Given a fact-checking article with claim <em>c</em>, a
+        <strong>claim-relevant document</strong> is a related
+        document that addresses <em>c</em>.</p>
+      </div>
+      <p></p>
+      <p>Not all documents related to a fact-checking article are
+      relevant. The difference between the two is best illustrated
+      through an example. Consider a fact-checking article with the
+      claim “Recently discovered satellite photos from Google Earth
+      show that an ancient civilization built pyramids in
+      Antarctica 100 million years ago.”<a class="fn" href="#fn10"
+      id="foot-fn10"><sup>10</sup></a> and a related document
+      discussing “Pyramid-like structures spotted in the Egyptian
+      desert.”<a class="fn" href="#fn11" id=
+      "foot-fn11"><sup>11</sup></a> Although these two articles are
+      similar, the related document is <em>not</em> relevant to the
+      specific claim since it addresses pyramids in the desert
+      rather than those found in Antarctica. A relevant document
+      can address the claim in many different ways: some merely
+      report the claim or discuss it without passing judgment (“It
+      has been claimed by XYZ that ...”). Most, however, aim to
+      either support or contradict the claim.</p>
+      <p></p>
+      <div class="definition" id="enc4">
+        <label>Definition 3.4.</label>
+        <p>Given a claim <em>c</em>, a <strong>contradicting
+        document</strong> is defined as a relevant document that
+        contradicts <em>c</em>, and a <strong>supporting
+        document</strong> is defined as a relevant document that
+        supports <em>c</em>.</p>
+      </div>
+      <p></p>
+      <p>Both contradicting and supporting are terms that describe
+      the stance that a document has towards the <em>claim</em>,
+      and not (necessarily) with respect to the fact check
+      <em>verdict</em>. Importantly, we note that the literal or
+      precise claim is not required to appear in a claim-supporting
+      document; rather, the document aligns with the spirit of the
+      claim. Among the relevant documents, contradicting documents
+      are particularly interesting: when the fact check considers
+      the claim to be false, the contradicting documents represent
+      documents that refute the claim, which could potentially
+      provide more context or evidence for users to understand the
+      whole story better.</p>
+      <figure id="fig3">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3188723/images/www18companion-231-fig3.jpg"
+        class="img-responsive" alt="Figure 3" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 3:</span> <span class=
+          "figure-title">System Overview: finding claim-relevant
+          documents to fact-checking articles</span>
+        </div>
+      </figure>
+      <p></p>
+      <section id="sec-5">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Overall
+            System</h3>
+          </div>
+        </header>
+        <p>Our overall system works as follows. We start from a set
+        of fact-checking articles. For each article, we craft a set
+        of queries and use a search engine to find a set of related
+        articles. We then build a binary classifier to predict
+        whether a related document is a relevant document. Finally,
+        among all the relevant documents, we classify the stance of
+        each relevant document w.r.t. the fact-checking article and
+        its claim. An overview of the system is shown in
+        Figure.&nbsp;<a class="fig" href="#fig3">3</a>. The next
+        three sections dive into details about each of those
+        components.</p>
+      </section>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Candidate
+          Generation</h2>
+        </div>
+      </header>
+      <p>The goal of Candidate Generation is to find as
+      comprehensive a set of <em>related</em> documents as possible
+      so that the full set of <em>relevant</em> documents can be
+      discovered within this candidate set. We adopt two main
+      mechanisms for discovering related documents: navigation and
+      search.</p>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Candidate
+            Generation via Navigation</h3>
+          </div>
+        </header>
+        <p>Intuitively, we start by including outgoing links and
+        source articles cited in the fact-checking article as
+        candidate documents, assuming they are related by nature,
+        which they almost always are. However, most of those are
+        not <em>relevant</em>. For example, for the fact-checking
+        article on “Pyramids discovered in Antarctica,”<a class=
+        "fn" href="#fn10" id="foot-fn10"><sup>10</sup></a>, while
+        some outgoing links are relevant, including a supporting
+        document<a class="fn" href="#fn12" id=
+        "foot-fn12"><sup>12</sup></a> and a contradicting
+        document<a class="fn" href="#fn13" id=
+        "foot-fn13"><sup>13</sup></a>, most of them point to
+        related but irrelevant documents, such as documents on
+        “antarctic climate evolution” and “continental
+        drift.”<a class="fn" href="#fn14" id=
+        "foot-fn14"><sup>14</sup></a></p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Candidate
+            Generation via Search</h3>
+          </div>
+        </header>
+        <p>Recognizing the limited coverage through navigation, we
+        turn to search. The key challenge in generating candidates
+        via search is to formulate the right set of queries: we
+        want the queries to be as specific as possible without
+        losing potentially relevant documents. The three main
+        categories of queries we adopt include:</p>
+        <ol class="list-no-style">
+          <li id="list1" label="(1)"><em>Texts from the title of
+          the fact-checking article and the claim of the
+          ClaimReview markup</em>. This category is an obvious
+          choice: the article title typically summarizes the fact
+          check and the claim text summarizes the claim being fact
+          checked.<br /></li>
+          <li id="list2" label="(2)">
+            <em>Title and claim text transformed with entity
+            annotations</em>. In this category, we perform entity
+            resolution&nbsp;[<a class="bib" data-trigger="hover"
+            data-toggle="popover" data-placement="top" href=
+            "#BibPLXBIB0020">20</a>] on the text and transform the
+            text into an alternative form that contains only the
+            inferred entities. For example, given the claim “A
+            video documents that the shootings at Sandy Hook
+            Elementary School were a staged hoax,” we will generate
+            the query “video documents shootings Sandy Hook
+            Elementary School hoax,” which is a simple
+            concatenation of the five entities (video, documents,
+            shooting, Sandy Hook Elementary School, hoax)
+            discovered in the text. The main motivation behind this
+            is to extract important information only from long
+            texts.<br />
+          </li>
+          <li id="list3" label="(3)">
+            <em>Click graph queries&nbsp;[<a class="bib"
+            data-trigger="hover" data-toggle="popover"
+            data-placement="top" href="#BibPLXBIB0009">9</a>]</em>
+            associated with the fact-checking article, which are
+            popular search queries that led to the click on the
+            fact-checking article. We collect up to 50 most popular
+            click graph queries, which turns out to be a very
+            useful query source as we show empirically in
+            Section&nbsp;<a class="sec" href="#sec-18">7</a>.<br />
+          </li>
+        </ol>
+        <p>We issue each query to Google search and collect top-100
+        results. Duplicates across different query result sets of
+        the same fact-checking article are removed. Combining both
+        navigation and search, for each fact-checking article, we
+        generate about 2,400 related candidate documents for
+        further processing. As we detail in Section&nbsp;<a class=
+        "sec" href="#sec-18">7</a>, we are able to achieve 80%
+        recall over the golden data produced by skilled workers
+        performing open-ended research.</p>
+      </section>
+    </section>
+    <section id="sec-9">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Relevance
+          Classification</h2>
+        </div>
+      </header>
+      <p>The focus of the Candidate Generation component is recall,
+      namely, identifying as many related documents as possible
+      among which it is hoped are all the relevant documents. It is
+      the goal of the Relevance Classification component to prune
+      away irrelevant documents. Based on a labelled corpus of
+      8,000 (fact-checking article, related document) pairs as
+      described in Section&nbsp;<a class="sec" href=
+      "#sec-18">7</a>, we build a classification model
+      <em>M</em>(<em>f</em>, <em>d</em>) → {<em>relevant</em>,
+      <em>irrelevant</em>}, where <em>f</em>, <em>d</em> are the
+      fact-checking article and related document, respectively, to
+      predict relevance.</p>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span>
+            Evidence</h3>
+          </div>
+        </header>
+        <p>The fundamental task is to find out how similar the
+        related document is to the claim. In designing features for
+        the classification model, we collect evidence from both the
+        fact-checking article and the related document and build
+        features based on the combination of those evidence. We
+        find that sentence-level similarities often provide strong
+        evidence to help us determine document-level relevance.</p>
+        <p><strong>Evidence from the fact-checking
+        article</strong>:</p>
+        <ul class="list-no-style">
+          <li id="list4" label="•">Claim (<em>c</em>): the text of
+          claim as provided by the fact-checker is a very good
+          summary of what we are looking for in a relevant
+          document. (Unfortunately, no such structured data exists
+          for the related documents.)<br /></li>
+          <li id="list5" label="•">Article title
+          (<em>f<sub>t</sub></em> )<br /></li>
+          <li id="list6" label="•">Article headline
+          (<em>f<sub>h</sub></em> ): some fact checkers (e.g.,
+          Snopes) provide a more detailed headline summarizing the
+          fact check<br /></li>
+          <li id="list7" label="•">Selected sentences (<span class=
+          "inline-equation"><span class=
+          "tex">$f_{s_i}$</span></span> ): we further select
+          sentences in the fact-checking article that are similar
+          to the claim text, i.e., <span class=
+          "inline-equation"><span class="tex">$sim(c, f_{s_i})
+          {\gt} \theta$</span></span><br /></li>
+          <li id="list8" label="•">Entities annotated on the claim
+          text with associated confidence score a
+            la&nbsp;[<a class="bib" data-trigger="hover"
+            data-toggle="popover" data-placement="top" href=
+            "#BibPLXBIB0020">20</a>]<br />
+          </li>
+        </ul>
+        <p>Note for <span class="inline-equation"><span class=
+        "tex">$f_{s_i}$</span></span> , we specifically do not
+        include all sentences from the fact-checking article
+        because many sentences are not about the claim itself.</p>
+        <p><strong>Evidence from the related document</strong>:</p>
+        <ul class="list-no-style">
+          <li id="list9" label="•">Document title
+          (<em>d<sub>t</sub></em> )<br /></li>
+          <li id="list10" label="•">Document headline
+          (<em>d<sub>h</sub></em> ), if there is one<br /></li>
+          <li id="list11" label="•">Sentences (<span class=
+          "inline-equation"><span class=
+          "tex">$d_{s_i}$</span></span> ): all sentences from the
+          related document<br /></li>
+          <li id="list12" label="•">Paragraphs (<span class=
+          "inline-equation"><span class=
+          "tex">$d_{p_i}$</span></span> ): all paragraphs from the
+          related document<br /></li>
+          <li id="list13" label="•">Entities annotated on the
+          entire content with a confidence score<br /></li>
+        </ul>
+        <p>Note that we use all sentences from the related document
+        because, unlike in the case of fact-checking article, we
+        don't have a good selection mechanism to determine which
+        sentences are more useful. We also use paragraphs, which
+        are groups of sentences, because we believe a paragraph can
+        sometimes provide a more comprehensive set of key
+        information needed to be matched to the claim in the
+        fact-checking article.</p>
+      </section>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span>
+            Features</h3>
+          </div>
+        </header>
+        <p>For each pair of fact-checking article and related
+        document, we extract the following features:</p>
+        <p><strong>Entity similarity</strong>: Annotated entities
+        with confidence scores are collected from the claim text of
+        the fact-checking article and the entire content of the
+        related document. Let {<em>e</em> <sub>1</sub>, <em>e</em>
+        <sub>2</sub>, …, <em>e<sub>K</sub></em> } be the union of
+        the entities extracted from both sides, we then represent
+        the entities from each side as a vector of confidence
+        scores aligned with the entity vector, {<em>c</em>
+        <sub>1</sub>, <em>c</em> <sub>2</sub>, …,
+        <em>c<sub>K</sub></em> } (<em>c<sub>i</sub></em> is 0 if
+        the entity is not found on this side).</p>
+        <p>The entity similarity feature is computed as the cosine
+        similarity between the two entity confidence score
+        vectors.</p>
+        <p><strong>Core text similarity</strong>:
+        <em>sim</em>(<em>c</em>, <em>d<sub>t</sub></em> ) and
+        <em>sim</em>(<em>c</em>, <em>d<sub>h</sub></em> )</p>
+        <p><strong>Claim-to-sentence similarity</strong>:
+        <span class="inline-equation"><span class=
+        "tex">$max_i(sim(c, d_{s_i}))$</span></span></p>
+        <p><strong>Claim-to-paragraph similarity</strong>:
+        <span class="inline-equation"><span class=
+        "tex">$max_i(sim(c, d_{p_i}))$</span></span></p>
+        <p><strong>Sentence similarity</strong>: <span class=
+        "inline-equation"><span class="tex">$max_{i,j}(sim(f_i,
+        d_{s_j}))$</span></span> , where <em>f<sub>i</sub></em>
+        iterates over <span class="inline-equation"><span class=
+        "tex">$f_t, f_h, f_{s_i}$</span></span> .</p>
+        <p><strong>Content similarity</strong>:
+        <em>sim</em>(<em>c</em>, <em>d</em>) and
+        <em>sim</em>(<em>f</em>, <em>d</em>), i.e., the
+        similarities between the entire content of the related
+        document to either the claim or the entire content of the
+        fact-checking article</p>
+        <p>For each pair of texts, <em>sim</em>(<em>t</em>
+        <sub>1</sub>, <em>t</em> <sub>2</sub>) is computed as the
+        cosine similarity between the text embeddings. For each
+        piece of text, the text embedding is computed by taking a
+        weighted sum over the word embeddings and phrase embeddings
+        (by connecting two tokens), where the weight is computed
+        based on the inverted word/phrase frequency (i.e.,
+        less-frequent words/phrases get larger weights). The
+        word/phrase embeddings are pre-trained vectors on the
+        Google News dataset&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0022">22</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0023">23</a>].</p>
+        <p><strong>Publication order</strong>: We also extract the
+        publish date from both the fact-checking article and the
+        related document and compute the absolute difference (in
+        days) between the two dates. This captures that
+        fact-checking articles tend to appear around the same time
+        when a claim is published to counter misinformation.</p>
+      </section>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.3</span> Model</h3>
+          </div>
+        </header>
+        <p>We build a gradient boosted decision tree
+        model&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0010">10</a>], which combines all the features
+        described above and predicts whether a related document is
+        relevant to the fact-checking article. We select the hyper
+        parameters (max depth, learning rate, number of estimators
+        etc.) for the GBDT model based on 10-fold cross
+        validation.</p>
+      </section>
+    </section>
+    <section id="sec-13">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Stance
+          Classification</h2>
+        </div>
+      </header>
+      <p>In this phase, we build a model, <em>M</em>(<em>f</em>,
+      <em>d</em>) → {<em>contradict</em>, <em>support</em>}, where
+      <em>f</em>, <em>d</em> are the fact-checking article and
+      relevant document, respectively, to classify <em>d</em> into
+      the following two categories, given the fact-checking article
+      and its claim:</p>
+      <ul class="list-no-style">
+        <li id="list14" label="•"><strong>Contradicting
+        document</strong>: a relevant document that contradicts the
+        claim.<br /></li>
+        <li id="list15" label="•"><strong>Supporting
+        document</strong>: a relevant document that supports the
+        claim;<br /></li>
+      </ul>
+      <p>While we acknowledge the existence of a “neither /
+      discuss” category<a class="fn" href="#fn15" id=
+      "foot-fn15"><sup>15</sup></a>,&nbsp; the number of such
+      relevant documents is small within the fact checking domain
+      and thus it is not the main focus of this paper. Based on a
+      crowd-sourced labeling experiment, we found that roughly 80%
+      of the relevant documents fall into contradict or support
+      (see Section&nbsp;<a class="sec" href="#sec-18">7</a>); this
+      is quite different from the dataset used in&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0026">26</a>], where 66%
+      of the relevant documents fall into the “discuss” category.
+      Upon inspection of non-contradict/support documents, we found
+      most to contain user-generated content, such as those from
+      forums, social network posts and video<a class="fn" href=
+      "#fn16" id="foot-fn16"><sup>16</sup></a>,&nbsp; since these
+      documents include opposing statements by different users and
+      are therefore often too confusing or subjective, without a
+      single narrative, to classify correctly by human raters.</p>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">6.1</span> Overall
+            Intuition</h3>
+          </div>
+        </header>
+        <p>Similarity is not always a good proxy for stance
+        detection: two texts may have much lexical overlap yet
+        simply adding the word “not” in the right place completely
+        changes the stance status. Therefore, our main intuition in
+        building the stance classification model is to determine
+        whether a relevant document contains statements that are
+        contradictory to the claim. Technically, for each relevant
+        document, we would like to identify key contradicting
+        patterns in contexts that are similar to the claim. This
+        intuition is rooted in our observation that documents
+        spreading misinformation often attempt to report a false
+        claim in a non-rigorous manner unlike the usual
+        evidence-based discourse that journalists use in backing up
+        a report.</p>
+        <p>In designing features for contradiction, we noticed that
+        for many fact checkers (e.g., Snopes), when the verdict is
+        “false” (or “mostly false”) the headline of the
+        fact-checking article is often a perfect example of a
+        statement that contradicts the claim. For example, the
+        article<a class="fn" href="#fn17" id=
+        "foot-fn17"><sup>17</sup></a> that fact checks the claim
+        “Country star Willie Nelson has died” has the headline,
+        “Country music legend Willie Nelson is not dead; he's just
+        the target of a recirculated celebrity death hoax,” which
+        directly contradicts the claim.</p>
+      </section>
+      <section id="sec-15">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">6.2</span> Vocabulary
+            for Contradiction</h3>
+          </div>
+        </header>
+        <p>Based on the above observation, we decided to construct
+        a relatively small lexicon that can indicate contradicting
+        discourse. We collected around 3.1<em>k</em> (claim,
+        contradicting statement) pairs from fact-checking articles
+        where the headline can be easily extracted. We aggregate
+        uni-grams and bi-grams from the contradicting statements
+        and build a &nbsp;900-dim vocabulary using the grams with
+        highest frequency. Stopwords were removed except those
+        expressing negation like <em>no</em> and <em>not</em>. The
+        most-frequent uni-grams with contradicting intent include
+        <em>fake</em>, <em>purportedly</em>, <em>hoax</em>, and
+        <em>rumor</em> and bi-grams include <em>made up</em>,
+        <em>fact check</em>, <em>not true</em>, and <em>no
+        evidence</em>. Note there are other uni-grams and bi-grams
+        appearing as frequently with no contradicting intent such
+        as <em>Web</em>, <em>story</em> and <em>reported</em>,
+        which are likely to be given less weight in the classifier
+        by learning from examples from both supporting and
+        contradicting documents.</p>
+      </section>
+      <section id="sec-16">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">6.3</span>
+            Classifier</h3>
+          </div>
+        </header>
+        <p>Given a relevant document and a claim, we first collect
+        <em>key textual evidence</em> from the relevant document
+        for subsequent feature generation. As described in
+        Section&nbsp;<a class="sec" href="#sec-9">5</a>, textual
+        evidence from the relevant document include title
+        (<em>d<sub>t</sub></em> ), headline (<em>d<sub>h</sub></em>
+        ) and important sentences (<span class=
+        "inline-equation"><span class="tex">$d_{s_i}$</span></span>
+        ) and we use all of those. We then prune away any text
+        whose similarity with the claim is less than a predefined
+        threshold<a class="fn" href="#fn18" id=
+        "foot-fn18"><sup>18</sup></a>. We call those that remain
+        <em>key texts</em>.</p>
+        <p>For each key text, we further construct <em>key
+        components</em> by concatenating the sentence with its
+        surrounding text (one sentence each before and after the
+        key text). This is mainly because in a lot of cases a
+        contradicting document will first state the claim and then
+        followed by simple contradicting statements, e.g., “Does
+        ... really happen? No, it turns out to be false.”</p>
+        <p>We then extract uni-grams and bi-grams from the union of
+        the key components, based on the contradiction vocabulary
+        constructed in Section&nbsp;<a class="sec" href=
+        "#sec-15">6.2</a>. Both the uni-grams from the vocabulary
+        and those extracted from the key components are stemmed for
+        better matching. The final feature is a vector of n-gram
+        weights over the contradiction vocabulary where each weight
+        is the frequency of a particular vocabulary word that
+        appeared in the key components.</p>
+        <p>Finally, we build a gradient boosted decision tree model
+        based on those n-gram features to predict if a relevant
+        document is a supporting document or a contradicting
+        document. Similar to the relevance classifier, we select
+        hyper-parameters (max depth, learning rate, number of
+        estimators, etc.) for the GBDT model based on 10-fold cross
+        validation.</p>
+      </section>
+      <section id="sec-17">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">6.4</span>
+            Examples</h3>
+          </div>
+        </header>
+        <p>Here we highlight some examples to demonstrate the
+        importance of identifying key texts in the relevant
+        document, using a fact-checking article which debunks the
+        claim that “Shaving makes your hair grow back in thicker,
+        faster, and fuller”<a class="fn" href="#fn19" id=
+        "foot-fn19"><sup>19</sup></a>. Examples of contradicting
+        documents where the contradicting information (bolded) is
+        explicitly expressed in titles or headlines: (1) ”The
+        <strong>Debunker</strong>: Does Hair Grow in Thicker After
+        You Shave?”<a class="fn" href="#fn20" id=
+        "foot-fn20"><sup>20</sup></a>; (2) ”Shaving myths,
+        <strong>busted</strong>”<a class="fn" href="#fn21" id=
+        "foot-fn21"><sup>21</sup></a>. Examples where the title or
+        headline (”Does shaving make hair grow back thicker?”) does
+        not convey much information and key sentences and key
+        components from main texts are necessary for contradiction
+        detection: “Given the facts above, it can safely be said
+        that shaving actually does <strong>NOT</strong> make hair
+        thicker and grow faster,”<a class="fn" href="#fn22" id=
+        "foot-fn22"><sup>22</sup></a> and “If you shave your legs,
+        underarms or any other part of your body, it may appear
+        that your hair grows back thicker and coarser. <strong>But
+        it doesn't.</strong>”.<a class="fn" href="#fn23" id=
+        "foot-fn23"><sup>23</sup></a></p>
+        <p>While our current model works reasonably well, as our
+        experiments in Section&nbsp;<a class="sec" href=
+        "#sec-18">7</a> show, we do note that further improvements
+        will be necessary and challenging. Specifically, there are
+        more complex patterns like “<em>How on earth...?</em>”,
+        “<em>rules out..</em>”, “<em>...? Come on</em>”, “<em>...,
+        or was it?</em>”, etc., and patterns that only make sense
+        in specific context such as <em>reunited with</em> vs.
+        <em>not friends anymore</em>, <em>not acting
+        maliciously</em> vs <em>had intent to do harm</em>, etc.
+        Even more long tail patterns include particular usages of
+        quotes and question marks, sarcastic languages, etc. We
+        present some of those hard cases Section&nbsp;<a class=
+        "sec" href="#sec-27">7.3.3</a>.</p>
+        <p>We believe to build a model that is capable of capturing
+        the more complex and long tail contradicting semantics, we
+        will need to collect a dataset with comprehensive
+        contradicting language patterns and this is part of our
+        future work.</p>
+      </section>
+    </section>
+    <section id="sec-18">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">7</span>
+          Experiments</h2>
+        </div>
+      </header>
+      <section id="sec-19">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">7.1</span>
+            Datasets</h3>
+          </div>
+        </header>
+        <p>We used the following datasets for evaluation:</p>
+        <p><strong>Unlabeled Corpus</strong>: This corpus is
+        programmatically created based on the ClaimReview markup.
+        We crawled the Web for all the documents containing exactly
+        one ClaimReview in JSON or Microdata format. Being an open
+        standard, it is to be expected that there are misuses of
+        the markup. We therefore perform the following filtering to
+        ensure we have a corpus of valid and high quality fact
+        checks. First, we ignore any invalid markup where the
+        ClaimReview fails to parse or is missing any of the three
+        key fields (claimant, claim, verdict). Second, we ignore
+        any syndicated or plagiarized fact check where the article
+        containing the markup points to a fact-checking article
+        from a domain that is different. Third, we perform
+        deduplication such that if there are two identical fact
+        checks (same fact checker, claim, and verdict), only one is
+        retained. This can happen when the fact checker publishes a
+        periodic roundup article of prior fact checks. Last, we
+        leverage the IFCN list of signatories<a class="fn" href=
+        "#fn24" id="foot-fn24"><sup>24</sup></a> and retain fact
+        checks from only those considered by the fact checking
+        community as highly reputable. After all the filtering,
+        there were 14,731 fact-checking articles in this
+        corpus.</p>
+        <p><strong>Relevance-labeled Corpus</strong>: Using the
+        candidate generation algorithm we developed in
+        Section&nbsp;<a class="sec" href="#sec-6">4</a>, we found
+        roughly 2,400 related candidate documents per fact-checking
+        article from the Unlabeled Corpus for a total of
+        33.5<em>M</em> (fact-checking article, candidate document)
+        pairs. We then sampled from these pairs to determine
+        relevance labels using the Google crowd-sourcing platform
+        where the workers are ordinary Web users recruited from
+        across the English-speaking world. Given the fact-checking
+        article and its associated claim, each worker is asked to
+        answer the question “<em>Does the candidate document
+        address the claim?</em>” Each pair is rated by 3 workers
+        and each worker can rate up to 6 pairs. A pair is
+        considered as positive (i.e., the candidate document is
+        relevant to the claim) if a majority of the workers answer
+        “yes” to the question; otherwise, it is considered as
+        negative. We then subsampled to achieve a balance of
+        positive and negative examples. In total, 8,000
+        relevance-labeled pairs are collected for training and
+        evaluating the relevance classification described in
+        Section&nbsp;<a class="sec" href="#sec-9">5</a>.</p>
+        <p><strong>Stance-labeled Corpus</strong>: We further
+        randomly sampled 1,200 from the positive pairs of this
+        corpus for crowd-sourced stance labeling using the same
+        platform via the question, “<em>Does the candidate document
+        (1) support the claim (2) contradict the claim (3) neither
+        (4) can't tell?</em>.” Again, each pair is rated by 3
+        workers and each worker can rate up to 6 pairs. Each
+        category must be agreed to by at least two workers before
+        it is assigned as the label for the pair, otherwise, the
+        pair is labelled as unknown. For about 12% of pairs, the
+        workers did not achieve agreement and those pairs are
+        removed. This corpus is used for training and evaluating
+        stance classification described in Section&nbsp;<a class=
+        "sec" href="#sec-13">6</a>.</p>
+        <p><strong>Manual Corpus</strong>: The labeled corpora
+        above are useful for evaluating the performance of the
+        classifiers but cannot be used to measure the performance
+        of the candidate generation. For that, we randomly sampled
+        450 fact-checking articles from the Unlabeled Corpus and
+        trained more skilled (and expensive) crowd-source workers
+        to perform open-ended research tasks with the sampled
+        articles for the goal of discovering as many supporting
+        documents as they could find using whatever means they
+        deemed as useful. Most of the researchers used a search
+        engine with creatively crafted queries and then followed
+        the links on the search results. Each relevant (fact-check
+        article, supporting document) pair was further examined by
+        two human researchers for agreement before acceptance. In
+        total we obtain around 4,000 fact-checking article to
+        supporting-document pairs.</p>
+      </section>
+      <section id="sec-20">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">7.2</span>
+            Results</h3>
+          </div>
+        </header>
+        <section id="sec-21">
+          <p><em>7.2.1 Recall of Candidate Generation.</em> We use
+          the Manual Corpus as described above to evaluate the
+          coverage of our candidate generation algorithm. A simple
+          baseline method is to use (the top-100) search query
+          results based on claim text and/or title, as well as
+          outgoing links and cited-sources from the fact-check
+          article. This yielded recall less than 20%.
+          Table&nbsp;<a class="tbl" href="#tab1">1</a> shows how
+          various proposed query generation methods compare to the
+          baseline, where each line is additive of all previous
+          lines. Overall we achieved recall 80%. Note here the
+          upper bound in practice is about 90% since 10% of the
+          URLs have pages that are no longer accessible, which is
+          common for online documents spreading misinformation.</p>
+          <div class="table-responsive" id="tab1">
+            <div class="table-caption">
+              <span class="table-number">Table 1:</span>
+              <span class="table-title">Candidate Generation:
+              recall analysis</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:center;">Method</td>
+                  <td style="text-align:center;">Recall</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">claim-text, title,
+                  outgoing-links and cited-sources</td>
+                  <td style="text-align:center;">&lt;20%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">+ top-10
+                  click-graph queries</td>
+                  <td style="text-align:center;">53.8%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">+ top-50
+                  click-graph queries</td>
+                  <td style="text-align:center;">74.8%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">+ annotated
+                  entities from claim-text/title</td>
+                  <td style="text-align:center;">80.0%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-responsive" id="tab2">
+            <div class="table-caption">
+              <span class="table-number">Table 2:</span>
+              <span class="table-title">Relevance classification:
+              comparison between the proposed approach with
+              baselines</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:center;">Method</td>
+                  <td style="text-align:center;">Accuracy</td>
+                  <td style="text-align:center;">Precision</td>
+                  <td style="text-align:center;">Recall</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">Majority class
+                  label</td>
+                  <td style="text-align:center;">50%</td>
+                  <td style="text-align:center;">50%</td>
+                  <td style="text-align:center;">100%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">Entity
+                  resolution</td>
+                  <td style="text-align:center;">68.8%</td>
+                  <td style="text-align:center;">70.5%</td>
+                  <td style="text-align:center;">64.9%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">Text similarity
+                  (over embeddings, claim to title)</td>
+                  <td style="text-align:center;">68.7%</td>
+                  <td style="text-align:center;">70.3%</td>
+                  <td style="text-align:center;">65.3%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">Text similarity
+                  (over embeddings, claim to article)</td>
+                  <td style="text-align:center;">67.3%</td>
+                  <td style="text-align:center;">66.9%</td>
+                  <td style="text-align:center;">68.4%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">Text similarity
+                  (over embeddings, article to article)</td>
+                  <td style="text-align:center;">71.5%</td>
+                  <td style="text-align:center;">71.3%</td>
+                  <td style="text-align:center;">72.3%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">FNC winner trained
+                  on FNC data</td>
+                  <td style="text-align:center;">51.3%</td>
+                  <td style="text-align:center;">5.5%</td>
+                  <td style="text-align:center;">61.4%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">FNC winner trained
+                  on our data</td>
+                  <td style="text-align:center;">77.2%</td>
+                  <td style="text-align:center;">67.9%</td>
+                  <td style="text-align:center;">84.9%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">Our model</td>
+                  <td style="text-align:center;">
+                  <strong>81.7%</strong></td>
+                  <td style="text-align:center;">80.9%</td>
+                  <td style="text-align:center;">83.1%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section id="sec-22">
+          <p><em>7.2.2 Performance of Relevance
+          Classification.</em> Based on the Relevance-labeled
+          Corpus, our proposed relevance classifier achieved
+          <span class="inline-equation"><span class="tex">$81.7\%
+          \pm 1.8\%$</span></span> accuracy averaged over 10-fold
+          random train/test split on the entire dataset and handily
+          beat the majority class label baseline, which has 50%
+          accuracy due to the balance in the positive/negative
+          labels. We also note that simply taking all related
+          documents generated by the candidate generation phase
+          achieves much lower accuracy/precision because the
+          majority of related documents are not relevant.</p>
+          <p>Table&nbsp;<a class="tbl" href="#tab2">2</a> shows the
+          performance comparison between our classifier and the
+          various baseline classifiers. In particular, we compare
+          with the winning model of the Fake News
+          Challenge&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0002">2</a>]. Since the code made
+          available<a class="fn" href="#fn25" id=
+          "foot-fn25"><sup>25</sup></a> does not allow the CNN part
+          to be re-trained, we trained only the GBDT part on our
+          dataset and achieved 77.2% accuracy. It is worth noting
+          that if we apply the FNC winner model trained on the FNC
+          dataset, the accuracy drops to 51.3%. This highlights the
+          significant differences in the characteristics between
+          our dataset and the FNC dataset. Regarding running time,
+          our feature extraction operates independently on each
+          fact-checking article and related-document pair, which is
+          scalable for both training and testing on large datasets.
+          The FNC model uses a joint model on textual features from
+          all training and test data and might therefore not be as
+          scalable. In addition, their model needs to be re-trained
+          for prediction on new test examples, while our model does
+          not need to be re-trained for prediction.</p>
+          <p>We examined mis-classification cases and found they
+          were generally due to the following:</p>
+          <ul class="list-no-style">
+            <li id="list16" label="•">Incorrect extractions
+            resulting in poor titles, incorrect publication dates,
+            etc.<br /></li>
+            <li id="list17" label="•">UGC pages such as online
+            video pages, social network posts and forum
+            pages.<br /></li>
+          </ul>
+          <p>The impact of these resulted in either wrong text
+          being used as feature or not enough text to enable good
+          prediction.</p>
+          <div class="table-responsive" id="tab3">
+            <div class="table-caption">
+              <span class="table-number">Table 3:</span>
+              <span class="table-title">Stance classification:
+              comparison between proposed approach with
+              baselines</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:center;">Method</td>
+                  <td style="text-align:center;">Accuracy</td>
+                  <td style="text-align:center;">Precision</td>
+                  <td style="text-align:center;">Recall</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">Majority class
+                  label</td>
+                  <td style="text-align:center;">57%</td>
+                  <td style="text-align:center;">57%</td>
+                  <td style="text-align:center;">100%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">DIIN from claim to
+                  document</td>
+                  <td style="text-align:center;">53.8%</td>
+                  <td style="text-align:center;">62.4%</td>
+                  <td style="text-align:center;">40.4%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">DIIN from claim to
+                  sentence</td>
+                  <td style="text-align:center;">71.6%</td>
+                  <td style="text-align:center;">71.4%</td>
+                  <td style="text-align:center;">69.3%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">FNC winner trained
+                  on FNC data</td>
+                  <td style="text-align:center;">44.3%</td>
+                  <td style="text-align:center;">99.8%</td>
+                  <td style="text-align:center;">44.3%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">FNC winner trained
+                  on our data</td>
+                  <td style="text-align:center;">85.0%</td>
+                  <td style="text-align:center;">84.9%</td>
+                  <td style="text-align:center;">89.3%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">Our model</td>
+                  <td style="text-align:center;">
+                  <strong>91.6%</strong></td>
+                  <td style="text-align:center;">95.9%</td>
+                  <td style="text-align:center;">86.5%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section id="sec-23">
+          <p><em>7.2.3 Performance of Stance Classification.</em>
+          To ensure we have enough data for training the model, we
+          augmented the Stance-labeled Corpus with 4<em>k</em>
+          (fact-check article, supporting document) pairs from the
+          Manual Corpus and 3.1<em>k</em> (fact-checking article,
+          contradicting document) pairs automatically generated by
+          pairing claims taken from fact-checking articles having
+          “false / mostly false” verdicts with the fact-check
+          articles themselves as relevant documents. Overall, we
+          have a labeled dataset with 8,422 pairs, among which 57%
+          are supporting documents and 43% are contradicting
+          documents.</p>
+          <p>Table&nbsp;<a class="tbl" href="#tab3">3</a> shows a
+          comparison of our model and a few baselines and we
+          achieve the best accuracy (91.6%) among all the methods.
+          The main comparisons are made against the DIIN
+          model&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0013">13</a>], which achieves state-of-the-art
+          accuracy 88.9% on the SNLI dataset&nbsp;[<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0006">6</a>]. In our
+          dataset we do not have any pairs with neutral
+          relationships while one third of the SNLI dataset are
+          neutral. Thus, for fair comparison, if DIIN predicts
+          neutral, the pair is not counted when computing accuracy.
+          For claim-to-document pairs (original task), DIIN
+          achieves accuracy 53.8%. Since the DIIN model was
+          designed for pairs of short texts, we further cleaned the
+          dataset to best approximate the sentence pairs with known
+          entailment/contradiction relationships: 1) for entailment
+          we picked the sentence with highest similarity to the
+          claim from supporting documents (this could contain
+          errors since the most-similar sentence might not entail
+          the claim); 2) for contradiction we picked the (claim,
+          headline) pairs from the Snopes articles since we know
+          they directly contradict each other. The cleaned dataset
+          has 2,972 entailment pairs and 3,137 contradiction pairs.
+          Among all 6,109 pairs, DIIN predicted 4,446 as “neutral”
+          (which are wrong), 786 as “entailment” (561 of which are
+          correct), and 877 as “contradiction” (629 of which are
+          correct). The accuracy is 71.6% (if ”neutral” predictions
+          are counted the accuracy drops to 19%). We further
+          compared our method with the FNC model trained on our
+          dataset, where the accuracy is 85.0%. If we apply their
+          model trained on the FNC dataset, the accuracy drops to
+          44.3% (the pairs where the model predicts ”unrelated” or
+          ”discuss” are ignored, if they are counted the accuracy
+          drops further to 25.1%).</p>
+        </section>
+      </section>
+      <section id="sec-24">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">7.3</span> Case
+            Studies</h3>
+          </div>
+        </header>
+        <section id="sec-25">
+          <p><em>7.3.1 Coverage of Candidate Generation.</em> Here
+          are the two main reasons for coverage loss:</p>
+          <p><strong>Bad query construction</strong>: In some cases
+          the article title or the claim text does not serve as a
+          good summary of what being fact checked or lose important
+          information entailed in the fact-checking article. In
+          addition, in some cases there are better candidates in
+          the fact-checking article that serve as better queries
+          (e.g., quotes). For example, for the fact-checking
+          article talking about ”Steve Jobs deathbed
+          speech”<a class="fn" href="#fn26" id=
+          "foot-fn26"><sup>26</sup></a>, the exact quote “I reached
+          the pinnacle of success in the business world ...” turns
+          out to be a much better query candidate.</p>
+          <p><strong>Unfocused fact check</strong>: The
+          fact-checking article discusses too many issues and there
+          is a discrepancy on the focus between the raters and the
+          summaries we generated.</p>
+        </section>
+        <section id="sec-26">
+          <p><em>7.3.2 Relevance Classification.</em> Some relevant
+          document may include the claim as a small fraction of the
+          article content, e.g., this document<a class="fn" href=
+          "#fn27" id="foot-fn27"><sup>27</sup></a> “6 rock stars
+          people swore were dead hoax” has “Willie Nelson death
+          hoax” as one of the examples (with two paragraphs).
+          Overall the article does not share high similarity with
+          the claim text (and the title is not indicative). This
+          again demonstrates the importance of finding key
+          sentences in the document and using the similarity
+          between claim text and key sentences in the related
+          document as one of the features in the classifier.</p>
+          <p>In addition, the percentage of relevant documents in
+          the related document set varies greatly depending on the
+          claim and topics in the claim. For certain claims/topics
+          the precision on the search result can be quite low since
+          there are many other results on very related but
+          different issues. For example, for the fact-checking
+          article with the claim “The Internal Revenue Service
+          (IRS) is contacting taxpayers via e-mail to convey
+          important tax return information, complete paperwork for
+          a refund, or request payment on a balance owed”<a class=
+          "fn" href="#fn28" id="foot-fn28"><sup>28</sup></a>, using
+          queries like “IRS scam” will yield many search results
+          involving all kinds of scams related to IRS. The specific
+          issue discussed in this claim is for scams through
+          “email” while many related documents are discussing other
+          channels like “phone.”</p>
+        </section>
+        <section id="sec-27">
+          <p><em>7.3.3 Stance Classification.</em> We list some
+          tricky cases here, where <em>background and/or domain
+          knowledge</em> is needed to understand the whole story.
+          In this fact-checking article<a class="fn" href="#fn29"
+          id="foot-fn29"><sup>29</sup></a> where the claim “Andy
+          Murray is the first person ever to win two Olympic tennis
+          gold medals” is debunked, the fact is that “Murray is the
+          first to win two Olympic gold medals in singles tennis,
+          but 19 other men and women have won multiple gold medals
+          in all forms of Olympic tennis.” Here is a contradicting
+          document<a class="fn" href="#fn30" id=
+          "foot-fn30"><sup>30</sup></a> that talks about “Andy
+          Murray... just reminded a reporter that women's tennis is
+          still tennis,” and it requires some background knowledge
+          on this event as well as some reasoning in order to know
+          it contradicts the claim.</p>
+          <p>We also show a case where the contradiction is
+          expressed with sarcasm. The fact-checking
+          article<a class="fn" href="#fn31" id=
+          "foot-fn31"><sup>31</sup></a> checks the claim, “Placing
+          a raw, cut onion in contact with your foot overnight
+          ‘purifies your blood,’ removes ‘toxins’, and heals your
+          body.” Here is a contradicting article<a class="fn" href=
+          "#fn32" id="foot-fn32"><sup>32</sup></a> that debunks the
+          same claim, without explicitly expressing contradiction
+          in the document content. Instead, the author discusses
+          “six more things you will find by putting onions in
+          socks” where all six things are stated in obviously
+          ridiculous and funny ways, to imply that the author does
+          not believe the claim. These documents are extremely hard
+          cases and even the most state-of-the-art NLP techniques
+          are not able to handle them very well.</p>
+        </section>
+      </section>
+    </section>
+    <section id="sec-28">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">8</span> Conclusion and
+          Future Work</h2>
+        </div>
+      </header>
+      <p>In this paper we build an end-to-end system for automatic
+      relevant document discovery and claim-relevance
+      classification for fact-checking articles. Given a
+      fact-checking article, we generate a comprehensive candidate
+      set of related documents by automatically constructing
+      queries using information from the fact-checking document.
+      This is followed by building a classifier that determines
+      whether a related document is relevant (i.e. it addresses the
+      same claim as the one checked in the fact-checking article)
+      and distinguishes between the stances of the relevant
+      document towards the claim. Finally we build a classifier to
+      determine whether a relevant document expresses a potential
+      stance.</p>
+      <p>As future work we plan to include non-textual data as
+      features. One source of relevance classification error are
+      documents with insufficient text information. For example,
+      for videos we could leverage the transcript using speech
+      recognition techniques and for social network pages we could
+      utilize the image/graphic information encoded.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Sanjeev Arora, Yingyu
+        Liang, and Tengyu Ma. 2017. A Simple but Tough-to-Beat
+        Baseline for Sentence Embeddings. In <em><em>ICLR
+        2017</em></em> .</li>
+        <li id="BibPLXBIB0002" label="[2]">Sean Baird, Doug Sibley,
+        and Yuxi Pan. 2017. <em><em>Talos Targets Disinformation
+        with Fake News Challenge Victory</em></em> . <a class=
+        "link-inline force-break" href=
+        "https://blog.talosintelligence.com/2017/06/talos-fake-news-challenge.html"
+          target=
+          "_blank">https://blog.talosintelligence.com/2017/06/talos-fake-news-challenge.html</a>
+        </li>
+        <li id="BibPLXBIB0003" label="[3]">Roy Bar-Haim, Indrajit
+        Bhattacharya, Francesco Dinuzzo, Amrita Saha, and Noam
+        Slonim. 2017. Stance Classification of Context-Dependent
+        Claims. In <em><em>Proceedings of the 15th Conference of
+        the European Chapter of the Association for Computational
+        Linguistics, EACL 2017, Valencia, Spain, April 3-7, 2017,
+        Volume 1: Long Papers</em></em> . 251–261.</li>
+        <li id="BibPLXBIB0004" label="[4]">Microsoft Bing. 2017.
+        <em><em>Bing adds Fact Check label in SERP to support the
+        ClaimReview markup</em></em> . <a class=
+        "link-inline force-break" href=
+        "https://blogs.bing.com/Webmaster-Blog/September-2017/Bing-adds-Fact-Check-label-in-SERP-to-support-the-ClaimReview-markup">
+          https://blogs.bing.com/Webmaster-Blog/September-2017/Bing-adds-Fact-Check-label-in-SERP-to-support-the-ClaimReview-markup</a>.
+        </li>
+        <li id="BibPLXBIB0005" label="[5]">Samuel&nbsp;R. Bowman,
+        Gabor Angeli, Christopher Potts, and Christopher&nbsp;D.
+        Manning. 2015. A large annotated corpus for learning
+        natural language inference. In <em><em>2015 Conference on
+        Empirical Methods in Natural Language Processing
+        (EMNLP)</em></em> .</li>
+        <li id="BibPLXBIB0006" label="[6]">Samuel&nbsp;R. Bowman,
+        Gabor Angeli, Christopher Potts, and Christopher&nbsp;D.
+        Manning. 2015. A large annotated corpus for learning
+        natural language inference. In <em><em>Proceedings of the
+        2015 Conference on Empirical Methods in Natural Language
+        Processing, EMNLP 2015, Lisbon, Portugal, September 17-21,
+        2015</em></em> . 632–642.</li>
+        <li id="BibPLXBIB0007" label="[7]">Samuel&nbsp;R Bowman,
+        Jon Gauthier, Abhinav Rastogi, Raghav Gupta,
+        Christopher&nbsp;D Manning, and Christopher Potts. 2016. A
+        Fast Unified Model for Parsing and Sentence Understanding.
+        In <em><em>ACL 2016</em></em> .</li>
+        <li id="BibPLXBIB0008" label="[8]">Qian Chen, Xiaodan Zhu,
+        Zhenhua Ling, Si Wei, Hui Jiang, and Diana Inkpen. 2017.
+        Enhanced LSTM for Natural Language Inference. In
+        <em><em>ACL 2017</em></em> .</li>
+        <li id="BibPLXBIB0009" label="[9]">Nick Craswell and Martin
+        Szummer. 2007. Random Walks on the Click Graph. In
+        <em><em>SIGIR</em></em> .</li>
+        <li id="BibPLXBIB0010" label="[10]">Jerome&nbsp;H.
+        Friedman. 2001. Greedy function approximation: A gradient
+        boosting machine. In <em><em>The Annals of Statistics,
+        Volume 29, Number 5 (2001), 1189-1232</em></em> .</li>
+        <li id="BibPLXBIB0011" label="[11]">FullFact. 2016.
+        <em><em>The State of Automated Factchecking</em></em>
+        .</li>
+        <li id="BibPLXBIB0012" label="[12]">Richard Gingras. 2016.
+        <em><em>Labeling fact-check articles in Google
+        News</em></em> . <a class="link-inline force-break" href=
+        "https://www.blog.google/topics/journalism-news/labeling-fact-check-articles-google-news/">
+          https://www.blog.google/topics/journalism-news/labeling-fact-check-articles-google-news/</a>.
+        </li>
+        <li id="BibPLXBIB0013" label="[13]">Yichen Gong, Heng Luo,
+        and Jian Zhang. 2017. Natural Language Inference over
+        Interaction Space. In <em><em>arXiv:1709.04348</em></em>
+        .</li>
+        <li id="BibPLXBIB0014" label="[14]">Alan Greenblatt. 2017.
+        <em><em>The Future of Fact-Checking: Moving ahead in
+        political accountability journalism</em></em> . <a class=
+        "link-inline force-break" href=
+        "https://www.americanpressinstitute.org/publications/reports/white-papers/future-of-fact-checking/single-page/">
+          https://www.americanpressinstitute.org/publications/reports/white-papers/future-of-fact-checking/single-page/</a>.
+        </li>
+        <li id="BibPLXBIB0015" label="[15]">Naeemul Hassan, Bill
+        Adair, James&nbsp;T. Hamilton, Chengkai Li, Mark Tremayne,
+        Jun Yang, and Cong Yu. 2015. The Quest to Automate
+        Fact-Checking. In <em><em>Proceedings of the 2015
+        Computation+Journalism Symposium</em></em> .</li>
+        <li id="BibPLXBIB0016" label="[16]">IFCN. [n. d.]. <em><em>
+          International Fact-Checking Network fact-checkers’ code
+          of principles</em></em> . <a class=
+          "link-inline force-break" href=
+          "https://www.poynter.org/international-fact-checking-network-fact-checkers-code-principles">
+          https://www.poynter.org/international-fact-checking-network-fact-checkers-code-principles</a>.
+        </li>
+        <li id="BibPLXBIB0017" label="[17]">Justin Kosslyn and Cong
+        Yu. 2017. <em><em>Fact Check now available in Google Search
+        and News around the world</em></em> . <a class=
+        "link-inline force-break" href=
+        "https://www.blog.google/products/search/fact-check-now-available-google-search-and-news-around-world/">
+          https://www.blog.google/products/search/fact-check-now-available-google-search-and-news-around-world/</a>.
+        </li>
+        <li id="BibPLXBIB0018" label="[18]">Quoc Le and Tomas
+        Mikolov. 2014. Distributed Representations of Sentences and
+        Documents. In <em><em>ICML 2014</em></em> .</li>
+        <li id="BibPLXBIB0019" label="[19]">Michelle Ye&nbsp;Hee
+        Lee. 2017. <em><em>Fighting falsehoods around the world: A
+        dispatch on the growing global fact-checking
+        movement</em></em> . <a class="link-inline force-break"
+        href=
+        "https://www.washingtonpost.com/news/fact-checker/wp/2017/07/14/fighting-falsehoods-around-the-world-a-dispatch-on-the-global-fact-checking-movement/">
+          https://www.washingtonpost.com/news/fact-checker/wp/2017/07/14/fighting-falsehoods-around-the-world-a-dispatch-on-the-global-fact-checking-movement/</a>.
+        </li>
+        <li id="BibPLXBIB0020" label="[20]">Pablo&nbsp;N. Mendes,
+        Max Jakob, Andres Garcia-Silva, and Christian Bizer. 2011.
+        DBpedia Spotlight: Shedding Light on the Web of Documents.
+        In <em><em>Proceedings of the 7th International Conference
+        on Semantic Systems (I-Semantics)</em></em> .</li>
+        <li id="BibPLXBIB0021" label="[21]">Marcelo Mendoza,
+        Barbara Poblete, and Carlos Castillo. 2010. Twitter Under
+        Crisis: Can we trust what we RT?. In <em><em>Proceedings of
+        the first workshop on social media analytics</em></em> .
+        ACM, 71–79.</li>
+        <li id="BibPLXBIB0022" label="[22]">Tomas Mikolov, Kai
+        Chen, Greg Corrado, and Jeffrey Dean.2013. Efficient
+        Estimation of Word Representations in Vector Space. In
+        <em><em>Proceedings of Workshop at ICLR,
+        2013.</em></em></li>
+        <li id="BibPLXBIB0023" label="[23]">Tomas Mikolov, Ilya
+        Sutskever, Kai Chen, Greg Corrado, and Jeffrey Dean. 2013.
+        Distributed Representations of Words and Phrases and their
+        Compositionality.. In <em><em>NIPS 2013.</em></em></li>
+        <li id="BibPLXBIB0024" label="[24]">Saif Mohammad, Svetlana
+        Kiritchenko, Parinaz Sobhani, Xiao-Dan Zhu, and Colin
+        Cherry. 2016. SemEval-2016 Task 6: Detecting Stance in
+        Tweets. In <em><em>Proceedings of the 10th International
+        Workshop on Semantic Evaluation, SemEval@NAACL-HLT 2016,
+        San Diego, CA, USA, June 16-17, 2016</em></em> . 31–41.
+        <a class="link-inline force-break" href=
+        "http://aclweb.org/anthology/S/S16/S16-1003.pdf" target=
+        "_blank">http://aclweb.org/anthology/S/S16/S16-1003.pdf</a>
+        </li>
+        <li id="BibPLXBIB0025" label="[25]">Ankur&nbsp;P. Parikh,
+        Oscar Täckström, Dipanjan Das, and Jakob Uszkoreit. 2016. A
+        Decomposable Attention Model for Natural Language
+        Inference. In <em><em>EMNLP</em></em> .</li>
+        <li id="BibPLXBIB0026" label="[26]">Dean Pomerleau and
+        Delip Rao. [n. d.]. <em><em>Fake News Challenge</em></em> .
+        <a class="link-inline force-break" href=
+        "http://www.fakenewschallenge.org/" target=
+        "_blank">http://www.fakenewschallenge.org/</a>
+        </li>
+        <li id="BibPLXBIB0027" label="[27]">Vahed Qazvinian, Emily
+        Rosengren, Dragomir&nbsp;R. Radev, and Qiaozhu Mei. 2011.
+        Rumor has it: Identifying Misinformation in Microblogs. In
+        <em><em>Proceedings of the 2011 Conference on Empirical
+        Methods in Natural Language Processing, EMNLP 2011, 27-31
+        July 2011, John McIntyre Conference Centre, Edinburgh, UK,
+        A meeting of SIGDAT, a Special Interest Group of the
+        ACL</em></em> . 1589–1599. <a class=
+        "link-inline force-break" href=
+        "http://www.aclweb.org/anthology/D11-1147" target="_blank">
+          http://www.aclweb.org/anthology/D11-1147</a>
+        </li>
+        <li id="BibPLXBIB0028" label="[28]">Dafna Shahaf and Carlos
+        Guestrin. 2010. Connecting the dots between news articles.
+        In <em><em>Proceedings of the 16th ACM SIGKDD international
+        conference on Knowledge discovery and data mining</em></em>
+        . ACM, 623–632.</li>
+        <li id="BibPLXBIB0029" label="[29]">Shuohang Wang and Jing
+        Jiang. 2016. Learning Natural Language Inference with LSTM.
+        In <em><em>HLT-NAACL</em></em> .</li>
+        <li id="BibPLXBIB0030" label="[30]">You Wu, Pankaj&nbsp;K.
+        Agarwal, Chengkai Li, Jun Yang, and Cong Yu. 2014. Toward
+        Computational Fact-Checking. <em><em>PVLDB</em></em> 7, 7
+        (2014), 589–600. <a class="link-inline force-break" href=
+        "http://www.vldb.org/pvldb/vol7/p589-wu.pdf" target=
+        "_blank">http://www.vldb.org/pvldb/vol7/p589-wu.pdf</a>
+        </li>
+        <li id="BibPLXBIB0031" label="[31]">You Wu, Pankaj&nbsp;K.
+        Agarwal, Chengkai Li, Jun Yang, and Cong Yu. 2017.
+        Computational Fact Checking through Query Perturbations.
+        <em><em>ACM Trans. Database Syst.</em></em> 42, 1 (2017),
+        4:1–4:41. <a class="link-inline force-break" href=
+        "https://doi.org/10.1145/2996453" target=
+        "_blank">https://doi.org/10.1145/2996453</a>
+        </li>
+        <li id="BibPLXBIB0032" label="[32]">Xiaoxin Yin, Jiawei
+        Han, and Philip&nbsp;S. Yu. 2007. Truth discovery with
+        multiple conflicting information providers on the web. In
+        <em><em>Proceedings of the 13th ACM SIGKDD International
+        Conference on Knowledge Discovery and Data Mining, San
+        Jose, California, USA, August 12-15, 2007</em></em> .
+        1048–1052. <a class="link-inline force-break" href=
+        "https://doi.org/10.1145/1281192.1281309" target="_blank">
+          https://doi.org/10.1145/1281192.1281309</a>
+        </li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>In this paper,
+    we focus on <em>post hoc</em> fact checking, which is different
+    from <em>ante hoc</em> fact checking that a publisher does to
+    ensure their own stories are factually accurate.</p>
+    <p id="fn2"><a href=
+    "#foot-fn2"><sup>2</sup></a>http://schema.org/ClaimReview</p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "https://developers.google.com/search/docs/data-types/factcheck#creativework">https://developers.google.com/search/docs/data-types/factcheck#creativework</a></p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a>Here, we assume
+    the fact checking organizations that produce those
+    fact-checking articles are high quality and reputable
+    publishers. Evaluating the credibility of the fact checking
+    organizations is beyond the scope of this paper.</p>
+    <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.snopes.com/enormous-pyramids-just-discovered-in-antarctica/">https://www.snopes.com/enormous-pyramids-just-discovered-in-antarctica/</a></p>
+    <p id="fn6"><a href=
+    "#foot-fn6"><sup>6</sup></a>https://goo.gl/qQbM84</p>
+    <p id="fn7"><a href=
+    "#foot-fn7"><sup>7</sup></a>https://goo.gl/K3wy1u</p>
+    <p id="fn8"><a href="#foot-fn8"><sup>8</sup></a><a class=
+    "link-inline force-break" href=
+    "https://goo.gl/SuhkQD">https://goo.gl/SuhkQD</a></p>
+    <p id="fn9"><a href=
+    "#foot-fn9"><sup>9</sup></a>http://schema.org/ClaimReview</p>
+    <p id="fn10"><a href="#foot-fn10"><sup>10</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.snopes.com/enormous-pyramids-just-discovered-in-antarctica/">https://www.snopes.com/enormous-pyramids-just-discovered-in-antarctica/</a></p>
+    <p id="fn11"><a href=
+    "#foot-fn11"><sup>11</sup></a>https://goo.gl/etTKik</p>
+    <p id="fn12"><a href=
+    "#foot-fn12"><sup>12</sup></a>https://goo.gl/qQbM84</p>
+    <p id="fn13"><a href=
+    "#foot-fn13"><sup>13</sup></a>https://goo.gl/B6SHDJ</p>
+    <p id="fn14"><a href=
+    "#foot-fn14"><sup>14</sup></a>https://goo.gl/zA9tN4,
+    https://goo.gl/bGMU6P</p>
+    <p id="fn15"><a href="#foot-fn15"><sup>15</sup></a>An example
+    would be an article about how a politician made a specific
+    claim without passing judgment on the claim itself (though many
+    sources tend to call it out if the claim is obviously
+    false).</p>
+    <p id="fn16"><a href="#foot-fn16"><sup>16</sup></a>Our
+    techniques cannot yet analyze video content. We do, however,
+    recognize that digital misinformation is spread through online
+    videos and intend to tackle this challenge as future work.</p>
+    <p id="fn17"><a href="#foot-fn17"><sup>17</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.snopes.com/inboxer/hoaxes/willienelson.asp">https://www.snopes.com/inboxer/hoaxes/willienelson.asp</a></p>
+    <p id="fn18"><a href="#foot-fn18"><sup>18</sup></a>The
+    threshold we use is 0.8, which is chosen to be as high as
+    possible while ensuring enough evidence.</p>
+    <p id="fn19"><a href="#foot-fn19"><sup>19</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.snopes.com/oldwives/hairgrow.asp">https://www.snopes.com/oldwives/hairgrow.asp</a></p>
+    <p id="fn20"><a href=
+    "#foot-fn20"><sup>20</sup></a>https://goo.gl/rB3zS4</p>
+    <p id="fn21"><a href=
+    "#foot-fn21"><sup>21</sup></a>https://goo.gl/zpa4po</p>
+    <p id="fn22"><a href=
+    "#foot-fn22"><sup>22</sup></a>https://goo.gl/KFCJZH</p>
+    <p id="fn23"><a href=
+    "#foot-fn23"><sup>23</sup></a>https://goo.gl/ExRfze</p>
+    <p id="fn24"><a href="#foot-fn24"><sup>24</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.poynter.org/international-fact-checking-network-fact-checkers-code-principles">https://www.poynter.org/international-fact-checking-network-fact-checkers-code-principles</a></p>
+    <p id="fn25"><a href="#foot-fn25"><sup>25</sup></a>The code is
+    from https://github.com/Cisco-Talos/fnc-1/</p>
+    <p id="fn26"><a href="#foot-fn26"><sup>26</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.snopes.com/steve-jobs-deathbed-speech/">https://www.snopes.com/steve-jobs-deathbed-speech/</a></p>
+    <p id="fn27"><a href=
+    "#foot-fn27"><sup>27</sup></a>https://goo.gl/ARj7Nu</p>
+    <p id="fn28"><a href="#foot-fn28"><sup>28</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.snopes.com/irs-scam-season/">https://www.snopes.com/irs-scam-season/</a></p>
+    <p id="fn29"><a href=
+    "#foot-fn29"><sup>29</sup></a>https://goo.gl/4TgTkc</p>
+    <p id="fn30"><a href=
+    "#foot-fn30"><sup>30</sup></a>https://goo.gl/AQ1qVS</p>
+    <p id="fn31"><a href="#foot-fn31"><sup>31</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.snopes.com/onion-in-your-sock-cure/">http://www.snopes.com/onion-in-your-sock-cure/</a></p>
+    <p id="fn32"><a href=
+    "#foot-fn32"><sup>32</sup></a>https://goo.gl/nswXR2</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution-NonCommercial-NoDerivs 4.0 International
+      (CC-BY-NC-ND&nbsp;4.0) license. Authors reserve their rights
+      to disseminate the work on their personal and corporate Web
+      sites with the appropriate attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons
+      CC-BY-NC-ND&nbsp;4.0 License. ACM ISBN
+      978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3188723">https://doi.org/10.1145/3184558.3188723</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

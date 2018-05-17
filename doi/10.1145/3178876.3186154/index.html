@@ -1,0 +1,2444 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Latent Relational Metric Learning via Memory-based
+  Attention for Collaborative Ranking</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Latent Relational Metric Learning
+          via Memory-based Attention for Collaborative
+          Ranking</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Yi</span> <span class=
+          "surName">Tay</span>, Nanyang Technological University
+          Singapore, <a href=
+          "mailto:ytay017@e.ntu.edu.sg">ytay017@e.ntu.edu.sg</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Luu Anh</span> <span class=
+          "surName">Tuan</span>, Institute for Infocomm Research
+          Singapore, <a href=
+          "mailto:at.luu@i2r.a-star.edu.sg">at.luu@i2r.a-star.edu.sg</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Siu Cheung</span> <span class=
+          "surName">Hui</span>, Nanyang Technological University
+          Singapore, <a href=
+          "mailto:asschui@ntu.edu.sg">asschui@ntu.edu.sg</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3178876.3186154"
+        target=
+        "_blank">https://doi.org/10.1145/3178876.3186154</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3178876" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>This paper proposes a new neural architecture for
+        collaborative ranking with implicit feedback. Our model,
+        LRML (<em>Latent Relational Metric Learning</em>) is a
+        novel metric learning approach for recommendation. More
+        specifically, instead of simple push-pull mechanisms
+        between user and item pairs, we propose to learn latent
+        relations that describe each user item interaction. This
+        helps to alleviate the potential geometric inflexibility of
+        existing metric learning approaches. This enables not only
+        better performance but also a greater extent of modeling
+        capability, allowing our model to scale to a larger number
+        of interactions. In order to do so, we employ a augmented
+        memory module and learn to attend over these memory blocks
+        to construct latent relations. The memory-based attention
+        module is controlled by the user-item interaction, making
+        the learned relation vector specific to each user-item
+        pair. Hence, this can be interpreted as learning an
+        exclusive and optimal relational translation for each
+        user-item interaction. The proposed architecture
+        demonstrates the state-of-the-art performance across
+        multiple recommendation benchmarks. LRML outperforms other
+        metric learning models by <span class=
+        "inline-equation"><span class=
+        "tex">$6\%-7.5\%$</span></span> in terms of Hits@10 and
+        nDCG@10 on large datasets such as Netflix and MovieLens20M.
+        Moreover, qualitative studies also demonstrate evidence
+        that our proposed model is able to infer and encode
+        explicit sentiment, temporal and attribute information
+        despite being only trained on implicit feedback. As such,
+        this ascertains the ability of LRML to uncover hidden
+        relational structure within implicit datasets.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Collaborative Filtering;
+          Recommender Systems; Neural Networks</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Yi Tay, Luu Anh Tuan, and Siu Cheung Hui. 2018. Latent
+          Relational Metric Learning via Memory-based Attention for
+          Collaborative Ranking. In <em>WWW 2018: The 2018 Web
+          Conference,</em> <em>April 23–27, 2018,</em> <em>Lyon,
+          France. ACM, New York, NY, USA</em> 11 Pages. <a href=
+          "https://doi.org/10.1145/3178876.3186154" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3178876.3186154</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>The modern age is a world of information overload. The
+      explosion of information, also referred to as the era of big
+      data, is a huge motivator for the research and development of
+      practical recommender systems. Generally, the key problem
+      that these systems are aiming to solve is the inevitable
+      conundrum of ‘too much content, too little time’ that is
+      commonly faced by users. After all, there are easily million
+      of movies, thousands of songs and hundreds of books to choose
+      from at any given time. An effective recommender system
+      ameliorates this problem by delivering the most relevant
+      content to the user.</p>
+      <p>Our work is targeted at recommender systems that operate
+      on implicit data (e.g., clicks, likes, bookmarks) and are
+      known as collaborative filtering (CF) systems [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0027">27</a>]. In this setting, Matrix
+      Factorization (MF) remains as one of the most popular
+      baselines which has inspired a considerable number of
+      variations [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0007">7</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0008">8</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0013">13</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0025">25</a>]. The
+      general idea of MF is as follows: Users and items are
+      represented as a matrix and subsequently factorized into
+      latent components which can also be interpreted as modeling
+      the relationships between users and items using the inner
+      product. As such, this allows missing values to be inferred
+      which provides an approximate solution to the recommendation
+      problem.</p>
+      <p>Recently, Hseih et al. [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>] revealed the potential implications
+      pertaining to the usage of inner product to model user-item
+      relationships. Their argument is constructed upon the fact
+      that inner product violates the triangle inequality which is
+      essential to model the fine-grained preferences of users.
+      Instead, the authors proposed a metric-based learning scheme
+      that minimizes the distance between user and item vectors
+      (<em>p</em> and <em>q</em>) of positive interactions.
+      Simultaneously, this also learns user-user similarity and
+      item-item similarity in vector space. As evidence to their
+      assertions, their proposed algorithm, the collaborative
+      metric learning (CML) algorithm [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>] demonstrates highly competitive
+      performance on many benchmark datasets.</p>
+      <p>Despite the success of CML, it faces several weaknesses.
+      Firstly, the scoring function of CML is clearly
+      <em>geometrically restrictive</em>. Given a user-item
+      interaction, CML tries to fit the pair into the same point in
+      vector space. Considering the <em>many-to-many</em> nature of
+      the collaborative ranking problem, enforcing a good fit in
+      vector space can be really challenging from a geometric
+      perspective especially since the optimal point of each user
+      and item is now a single point in vector space. Intuitively,
+      this tries to fit a user and all his interacted items onto
+      the same point, i.e., geometrically congestive and
+      inflexible. While it is possible to learn user-user and
+      item-item similarity clusters, this comes at the expense of
+      precision and accuracy in ranking problems especially
+      pertaining to large datasets whereby there can be millions of
+      interactions. Secondly and by taking a more theoretically
+      grounded angle, CML is an <em>ill-posed algebraic system</em>
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0036">36</a>] which
+      further reinforces and aggravates the problem of geometric
+      inflexibility. A proof and more details are described in the
+      related work section.</p>
+      <p>In this work, we propose a flexible and adaptive metric
+      learning algorithm for collaborative filtering and ranking.
+      Our model, LRML (Latent Relational Metric Learning) learns
+      adaptive relation vectors between user and item interactions,
+      finding an optimal translation vector between each
+      interaction pair. Needless to say, our work is highly
+      inspired by recent advances in NLP which include the highly
+      celebrated word embeddings [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0018">18</a>] and knowledge graph embeddings
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0002">2</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0015">15</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0032">32</a>] which
+      popularized the concept of semantic translation in vector
+      space. In our proposed approach, we assume that there exist a
+      latent relational structure within the implicit interaction
+      data and therefore, we aim to model the latent relationships
+      between users and items by inducing relation vectors.</p>
+      <p>Overall, our key intuition can be described as follows:
+      For each user and item interaction, we learn a vector
+      <em>r</em> that explains this relationship, i.e., the
+      relation vector <em>r</em> connects the user vector to the
+      item vector. Ideally, this vector <em>r</em> should capture
+      the hidden semantics between each implicit interaction and is
+      learned over an auxiliary memory module via a neural
+      attention mechanism. The auxiliary memory module can be
+      interpreted as a memory store of concepts in which, upon
+      linear combination, constructs a relation vector. The content
+      addressing of this memory module is user and item dependent,
+      which ensures sufficient flexibility in geometric space.
+      Apart from the clear benefits of an interpretable attention
+      module, LRML can also be considered as an improvement to the
+      CML algorithm [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>]. Our approach solves the geometric
+      inflexibility problem by means of adaptive (user-item
+      specific) translations in vector space. This allows for a
+      greater extent of flexibility and modeling capability in
+      metric space which enables our model to scale to larger
+      datasets with easily millions of interactions.</p>
+      <section id="sec-5">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">1.1</span> Our
+            Contributions</h3>
+          </div>
+        </header>
+        <p>Motivated by the success of deep learning, both
+        generally and in the field of recommender systems, our
+        ideas are materialized in the form of a neural network
+        architecture that leverages the recent advancements of
+        neural attention mechanisms and augmented memory modules
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0028">28</a>].
+        Overall, the prime contributions of this paper are:</p>
+        <ul class="list-no-style">
+          <li id="list1" label="•">We present <font style=
+          "font-variant: small-caps">LRML</font> (Latent Relational
+          Metric Learning), a novel, end-to-end neural network
+          architecture for collaborative filtering and ranking on
+          implicit interaction data. For the first time, we adopt
+          <em>user and item specific</em> latent relation vectors
+          to model the relationship between user-item
+          interactions.<br /></li>
+          <li id="list2" label="•">We propose a novel <em>Latent
+          Relational Attentive Memory</em> (LRAM) module in order
+          to generate the latent relation vectors. The LRAM module
+          provides improvements in terms of flexibility and
+          modeling capability of the algorithm. Moreover, the
+          neural attention also gives greater insight and
+          interpretability of the model.<br /></li>
+          <li id="list3" label="•">We evaluate our proposed
+          <font style="font-variant: small-caps">LRML</font> on
+          <strong>ten</strong> publicly available benchmark
+          datasets. This includes large, web-scale datasets like
+          Netflix Prize and MovieLens20M. Our proposed approach
+          demonstrates highly competitive results on all datasets,
+          outperforming not only CML but many other strong
+          baselines such as NeuMF [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top"
+            href="#BibPLXBIB0007">7</a>]. Moreover, on large
+            datasets, we obtain <span class=
+            "inline-equation"><span class=
+            "tex">$6\%-7.5\%$</span></span> gain in performance
+            over CML and other models.<br />
+          </li>
+          <li id="list4" label="•">We performed extensive
+          qualitative analysis. Upon inspection of the attention
+          weights, our proposed <font style=
+          "font-variant: small-caps">LRML</font> is capable of
+          inferring explicit information such as ratings (e.g., 1-5
+          stars), temporal and item attribute information despite
+          being only trained on implicit binary data. This
+          ascertains the capability of <font style=
+          "font-variant: small-caps">LRML</font> in unraveling
+          hidden latent structure within seemingly non-relational
+          datasets.<br /></li>
+        </ul>
+      </section>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Background</h2>
+        </div>
+      </header>
+      <p>Our work is concerned with collaborative
+      filtering<a class="fn" href="#fn1" id=
+      "foot-fn1"><sup>1</sup></a> with implicit feedback. We first
+      formulate the problem and discuss the existing algorithms
+      that are aimed at solving this problem. Then, we elaborate on
+      the potential weaknesses of the collaborative metric learning
+      algorithm.</p>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Implicit
+            Collaborative Filtering</h3>
+          </div>
+        </header>
+        <p>The task of implicit collaborative filtering is
+        concerned with learning via implicit interaction data,
+        e.g., clicks, bookmarks, likes, etc. Let <strong>P</strong>
+        be the set of all users and <strong>Q</strong> be the set
+        of all items. The problem of implicit CF can be described
+        as follows:</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} y_{ui} =
+            {\left\lbrace \begin{array}{@{}l@{\quad }l@{}}1 \:,
+            \text{if interaction ${\lt}$user,item${\gt}$ exists} \\
+            0 \: , \text{otherwise}\\ \end{array}\right.}
+            \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>where <span class="inline-equation"><span class=
+        "tex">${\bf Y} \in \mathbb {R}^{{P} \times
+        {Q}}$</span></span> is the user-item interaction matrix.
+        Implicit CF models the interaction of users and items and
+        on that note, it is good to bear in mind that a value of 0
+        does not necessarily imply negative feedback. In most
+        cases, the user is unaware of the existence of the item
+        which forms the cornerstone of the recommendation problem,
+        i.e., estimating the scores of the unobserved entries in
+        <strong>Y</strong>. Across the past decade, Matrix
+        Factorization (MF) techniques are highly popular algorithms
+        for collaborative filtering and have spurred on a huge
+        number of variations [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0008">8</a>]. Since MF does not belong to the
+        core focus of our work, we omit the technical descriptions
+        of MF for the sake of brevity and refer interested readers
+        to [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href="#BibPLXBIB0007">7</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0009">9</a>] for more
+        details.
+        <p></p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span>
+            Collaborative Metric Learning (CML)</h3>
+          </div>
+        </header>
+        <p>CML [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href="#BibPLXBIB0009">9</a>]
+        is a recently incepted algorithm for CF and has, despite
+        its simplicity, demonstrated highly competitive performance
+        on several benchmarks. The key intuition is that CML
+        operates in metric space, i.e., it minimizes the distance
+        between each user-item interaction in Euclidean space. The
+        scoring function of CML is defined as:</p>
+        <div class="table-responsive" id="Xeq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} s(p,q) =
+            {\:p-q\:}^{2}_{2} \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>where <em>p</em>, <em>q</em> are the user and item
+        vectors respectively. CML learns via a pairwise hinge loss,
+        which is reminiscent of the Bayesian Personalized Ranking
+        (BPR) [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0025">25</a>]. CML obeys the triangle inequality
+        which, according to the authors, is a prerequisite for
+        fine-grained fitting of users and items in vector space.
+        <p></p>
+        <p>CML, however, is not without flaws. As mentioned, the
+        scoring function of CML is <em>geometrically
+        restrictive</em> since the objective function tries to fit
+        each user-item pair into the same point in vector space.
+        Unfortunately, this intrinsic geometric inflexibility
+        causes adverse repercussions when the dataset is large or
+        dense since CML tries to force all of a user's item
+        interactions onto the same point. Secondly and by taking a
+        more theoretically grounded angle, we show that CML is an
+        <em>ill-posed algebraic system</em> [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0036">36</a>] which further
+        reinforces and aggravates the problem of geometric
+        inflexibility. The following proof elaborates on this
+        issue.</p>
+        <div class="theorem" id="enc1">
+          <label>Theorem 2.1.</label>
+          <p>The objective function of CML: <span class=
+          "inline-equation"><span class="tex">$s(p,q) =
+          {p-q}^{2}_{2}$</span></span> can be considered as an
+          ill-posed algebraic system when there is a large number
+          of interactions.</p>
+        </div>
+        <div class="proof" id="proof1">
+          <label>Proof.</label>
+          <p>Let <em>d</em> be the dimensions of vectors <em>p</em>
+          and <em>q</em>. From an algebraic perspective, each
+          user-item interaction can be regarded as the equation
+          <em>p</em> − <em>q</em> = 0. By considering
+          <em>p<sub>i</sub></em> − <em>q<sub>i</sub></em> , where
+          <em>i</em> is the index of the vectors <em>p</em> and
+          <em>q</em>, the number of equations for each interaction
+          is <em>d</em>. Let <em>N</em> be the total number of
+          interactions, the total number of equations is therefore
+          <em>N</em> × <em>d</em>. On the other hand, the number of
+          free variables is only (<em>P</em> + <em>Q</em>) ×
+          <em>d</em>. Since <em>N</em>⋙<em>d</em>(<em>P</em> +
+          <em>Q</em>) in most settings, CML is an ill-posed
+          algebraic system.</p>
+        </div>
+        <p>Since it is not uncommon for implicit recommendation
+        datasets to contain millions of interactions while having
+        significantly much lesser unique items and users, we can
+        consider, from a mathematical perspective, that CML
+        proposes an ill-posed algebraic system. This introduces
+        instability when training and optimizing the objective
+        function of CML.</p>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.3</span> Translating
+            in Vector Space</h3>
+          </div>
+        </header>
+        <p>Our proposed approach, <font style=
+        "font-variant: small-caps">LRML</font>, ameliorates the
+        flaws of CML by means of adaptive translation. Since our
+        adaptive translation is learned as a weighted
+        representation (over an augmented memory via neural
+        attention), this introduces an extremely large number of
+        possibilities for the user and item vectors to be
+        translated in vector space. More specifically, the
+        attention vector (learned via a softmax function) learns a
+        continuous weighted representation of the augmented memory.
+        As such, this significantly expands the flexibility of the
+        metric learning algorithm. In LRML, the user vector is now
+        adaptively translated based on the target item (and vice
+        versa). As such, this allows <font style=
+        "font-variant: small-caps">LRML</font> to avoid the
+        above-mentioned flaws of CML, and enables more precise and
+        fine-grained fitting in vector space.</p>
+        <p>Translating in vector space takes inspiration from NLP
+        and in particular, reasoning over semantics (knowledge
+        graphs). In this area, a highly seminal work by Bordes et
+        al. (TransE) [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0002">2</a>] proposed translations in vector
+        space to model the relationships between entities in a
+        knowledge graph. Word embeddings [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0018">18</a>] are also known to
+        exhibit <em>semantic translation</em> in vector space
+        whereby the relationships between two words can be
+        explained by a relation vector. The domain of CF that
+        models users and items, and represents them as an
+        interaction matrix is highly related to graph and network
+        embeddings [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0017">17</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0021">21</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0029">29</a>].</p>
+        <p>To the best of our knowledge, our work is the first work
+        that extends the 2D structure of user-item CF into a 3D
+        structure by assuming a latent relational (3D) structure.
+        Intuitively, this can be also interpreted as inducing a
+        latent knowledge graph from the user-item interaction
+        graph.</p>
+        <p>Figure <a class="fig" href="#fig1">1</a> depicts the key
+        difference between <font style=
+        "font-variant: small-caps">LRML</font> and CML - while CML
+        tries to place user and item into the same spot in vector
+        space, <font style="font-variant: small-caps">LRML</font>
+        learns to fit user and item with adaptive, trainable latent
+        vectors. More specifically, <font style=
+        "font-variant: small-caps">LRML</font> learns an optimal
+        translation between each user-item interaction. Recall in
+        Section <a class="sec" href="#sec-8">2.2</a>, we have
+        previously established that CML suffers from instability
+        (due to being an ill-posed algebraic system) along with
+        geometric inflexibility, i.e., the push-pull effects from
+        too many interactions. In order to alleviate this weakness,
+        our proposed approach adopts attentive and adaptive
+        user-item specific translations that benefit from the vast
+        number of possibilities of learning weighted (linearly
+        combined) representations.</p>
+        <p>Finally, we note that another translation-based
+        recommendation model, TransRec was recently proposed by He
+        et al. [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href="#BibPLXBIB0006">6</a>]
+        in which the authors proposed to use translations to model
+        sequential data. While TransRec also utilizes the
+        translation principle, LRML is a completely different
+        model. Firstly, TransRec learns translations for sequential
+        recommendation, e..g, the 2nd item a user interacts with is
+        represented by a translation of the first. Secondly, the
+        overall goals of LRML is different, i.e., LRML utilizes
+        translations for flexible and adaptive metric learning.
+        Thirdly, LRML uses neural attention to learn latent
+        relations, which is also an feature that is absent in
+        TransRec.</p>
+        <figure id="fig1">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186154/images/www2018-163-fig1.jpg"
+          class="img-responsive" alt="Figure 1" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 1:</span>
+            <span class="figure-title">Geometric Comparisons of
+            Latent Relational Metric Learning (LRML) and CML
+            (Collaborative Metric Learning) for Modeling User-Item
+            Relationships in Metric Space.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.4</span> Deep
+            Learning</h3>
+          </div>
+        </header>
+        <p>In this section, we provide some preliminaries about
+        deep learning for recommendation.</p>
+        <section id="sec-11">
+          <p><em>2.4.1 Deep Learning for Recommendation.</em> In
+          the recent years we can easily observe the emerging
+          numbers of neural network models that have been designed
+          for a diverse range of recommendation tasks. Notably,
+          Recurrent neural networks [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0038">38</a>] and convolutional neural
+          networks [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0030">30</a>] have been exploited for sequence
+          aware recommendations. There is also an emerging line of
+          work focusing on representation learning using reviews,
+          e.g., Deep Co-operative Networks (DeepCoNN) [<a class=
+          "bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0043">43</a>]. A
+          recent work, the Multi-Pointer Co-Attention Networks
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0035">35</a>] is the state-of-the-art
+          review-based CF model that uses pointer-based attention
+          for representation learning. Autoencoder based models
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0014">14</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0042">42</a>] have also been proposed for CF.
+          In the more closely related domain of collaborative
+          filtering on implicit feedback, Neural Matrix
+          Factorization (NeuMF) [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0007">7</a>] is a recent state-of-the-art deep
+          learning model that learns the interaction function
+          between user and item using deep neural networks. NeuMF
+          is a combined framework that concatenates the
+          inner-product-based MF with a multi-layered perceptron
+          (MLP). A comprehensive review can be found at [<a class=
+          "bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0041">41</a>].</p>
+        </section>
+        <section id="sec-12">
+          <p><em>2.4.2 Neural Attention.</em> Our work borrows
+          inspiration from the recent advances in deep learning.
+          Specifically, <font style=
+          "font-variant: small-caps">LRML</font> uses a neural
+          attention mechanism over an augmented memory module to
+          generate latent vectors. Neural attention mechanisms are
+          popular in the fields of computer vision [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0020">20</a>,
+          <a class="bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0039">39</a>] and
+          NLP [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0016">16</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0023">23</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0026">26</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0031">31</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0034">34</a>] and are known to improve
+          performance and interpretability of deep learning models.
+          The key idea of attention is to learn a weighted
+          representation across multiple samples (or embeddings),
+          reducing noise and selecting more informative features
+          for the final prediction. Attention operates using a
+          <em>softmax</em> function, which converts the attention
+          vector into a probability distribution. Subsequently,
+          this vector is then used to learn a weighted sum of a
+          sequence of vectors.</p>
+          <p>Notably, attention mechanisms have been also recently
+          adopted for collaborative filtering problems particularly
+          for content-based recommendations such as multimedia
+          recommendation [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0003">3</a>]. However, the novelty of our
+          model lies in the difference whereby our model adopts
+          neural attention to generate latent relation vectors over
+          an augmented memory module. This is fundamentally
+          different from content-based attention models which learn
+          to attend over features and learn to predict. While the
+          key idea of attentive selection is similar, the goal of
+          our model is to find hidden relational structure by
+          leveraging attention mechanisms. Moreover, the inner
+          mechanism of our proposed LRAM is highly reminiscent of
+          end-to-end memory networks [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0028">28</a>] and key-value memory networks
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0019">19</a>] which are the competitive models
+          for question answering, machine comprehension and
+          aspect-aware sentiment analysis [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0033">33</a>].</p>
+        </section>
+      </section>
+    </section>
+    <section id="sec-13">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Our Proposed
+          Model</h2>
+        </div>
+      </header>
+      <p>In this section, we introduce <font style=
+      "font-variant: small-caps">LRML</font>, our novel deep
+      learning recommendation architecture. The overall model
+      architecture is described in Figure <a class="fig" href=
+      "#fig2">2</a>. <font style=
+      "font-variant: small-caps">LRML</font> aims to model user and
+      item pairs using relation vectors. This is what we refer to
+      as the translational principle, i.e., <em>p</em> + <em>r</em>
+      ≈ <em>q</em>. Note that the relation vector <em>r</em> is
+      what separates our model from simple metric learning
+      approaches like CML which operate via <em>p</em> ≈
+      <em>q</em>. Let us begin with a simple high-level overview of
+      our model:</p>
+      <ol class="list-no-style">
+        <li id="list5" label="(1)">Users and items are converted to
+        dense vector representations using an Embedding Layer (a
+        look-up layer). <em>p</em> and <em>q</em> are the user and
+        item vectors respectively.<br /></li>
+        <li id="list6" label="(2)">Given <em>p</em> and <em>q</em>,
+        a relation vector <em>r</em> is generated using a neural
+        attention mechanism over an augmented memory matrix
+        <strong>M</strong>. The relation vector, <em>r</em>, is a
+        weighted representation over a trainable LRAM module.
+        <em>r</em> is dependent on user and item, and is learned to
+        best explain the relationship between user and
+        item.<br /></li>
+        <li id="list7" label="(3)">Our model optimizes for
+         <em>p</em> + <em>r</em> − <em>q</em>  ≈ 0 using pairwise
+        ranking (hinge loss) and negative sampling.<br /></li>
+      </ol>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186154/images/www2018-163-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">Illustration of our proposed <font style=
+          "font-variant: small-caps">LRML</font> architecture, an
+          end-to-end differentiable neural architecture. LRML is
+          characterized by its key-addressed LRAM module which
+          learns user-item specific relation vectors. The size of
+          the memory <strong>N</strong>=6 slices in this
+          example.</span>
+        </div>
+      </figure>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Embedding
+            Layer</h3>
+          </div>
+        </header>
+        <p><font style="font-variant: small-caps">LRML</font>
+        accepts a user-item pair <em>&lt; user,item &gt;</em> as an
+        input. Inputs of users and items are represented as vectors
+        encoded via one-hot encoding corresponding to a unique
+        index key belonging to each user and item. At the embedding
+        layer, this one-hot encoded vector is converted into a
+        low-dimensional real-valued dense vector representation. In
+        order to do so, this one hot vector is multiplied with the
+        embedding matrices <span class=
+        "inline-equation"><span class="tex">${\bf P} \in \mathbb
+        {R}^{d \times |U|}$</span></span> and <span class=
+        "inline-equation"><span class="tex">${\bf Q} \in \mathbb
+        {R}^{d \times |I|}$</span></span> which store the user and
+        item embeddings respectively. <em>d</em> is the
+        dimensionality of the user and item embeddings while
+        |<em>U</em>| and |<em>I</em>| are the total number of users
+        and items respectively. The output of this layer is a pair
+        of embeddings <span class="inline-equation"><span class=
+        "tex">${\lt}\vec{p},\vec{q}{\gt}$</span></span> which are
+        the user and item embeddings respectively.</p>
+      </section>
+      <section id="sec-15">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> LRAM -
+            Latent Relational Attentive Memory Module</h3>
+          </div>
+        </header>
+        <p>One of the primary goals of our <font style=
+        "font-variant: small-caps">LRML</font> model is to induce
+        latent relations between user-item pairs. However, explicit
+        semantic relations between user-item pairs are not
+        available in traditional CF. As such, we introduce the
+        <em>Latent Relational Attentive Memory</em> (LRAM) module.
+        The LRAM module is a centralized memory store in which
+        latent relations are built upon. The memory matrix of the
+        LRAM module is represented as <span class=
+        "inline-equation"><span class="tex">${\bf M} \in \mathbb
+        {R}^{N \times d}$</span></span> where <em>d</em> is the
+        dimensionality of the user-item embeddings and <em>N</em>
+        is a user-specified hyperparameter that controls the
+        expressiveness and capacity of the LRAM module. In matrix
+        <strong>M</strong>, we refer to each row slice <span class=
+        "inline-equation"><span class="tex">$m_{i} \in \mathbb
+        {R}^{d}$</span></span> as a memory slice. The input to LRAM
+        is a user-item pair &lt; <em>p</em>, <em>q</em> &gt; . The
+        LRAM module returns the vector <em>r</em> of equal
+        dimensionality as p and q.</p>
+        <section id="sec-16">
+          <p><em>3.2.1 Joint User-Item Embedding.</em> Given the
+          user-item pair, <span class=
+          "inline-equation"><span class="tex">${\lt}\vec{p},\vec{q}{\gt}$</span></span>
+          , the LRAM module first applies the following steps to
+          learn a joint embedding of users and items:</p>
+          <div class="table-responsive" id="Xeq3">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} s = p \:
+              \odot \: q \end{equation}</span><br />
+              <span class="equation-number">(3)</span>
+            </div>
+          </div>where ⊙ is simply the Hadamard product (or
+          element-wise multiplication). The generated vector
+          <span class="inline-equation"><span class="tex">$s \in
+          \mathbb {R}^{d}$</span></span> is of the same dimension
+          of <em>p</em> and <em>q</em>. Note that while other
+          functions such as the multi-layered perceptron
+          <em>MLP</em>(<em>p</em>, <em>q</em>) are also viable, we
+          found that a simple Hadamard product performs better.
+          <p></p>
+        </section>
+        <section id="sec-17">
+          <p><em>3.2.2 User-Item Key Addressing.</em> Next, using
+          the joint user-item embedding, we aim to learn an
+          attention vector <em>a</em>. The attention vector is
+          learned from <span class="inline-equation"><span class=
+          "tex">${\bf K} \in \mathbb {R}^{N \times
+          d}$</span></span> which we refer to as the key matrix.
+          Each element of the attention vector <em>a</em> can be
+          defined as:</p>
+          <div class="table-responsive" id="Xeq4">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} a_i = s^{T}
+              k_i \end{equation}</span><br />
+              <span class="equation-number">(4)</span>
+            </div>
+          </div>where <span class="inline-equation"><span class=
+          "tex">$k_i \in {\bf K} \in \mathbb {R}^{N \times
+          d}$</span></span> and the generated vector <span class=
+          "inline-equation"><span class="tex">$a \in \mathbb
+          {R}^{d}$</span></span> is of the same dimensions of
+          <em>p</em>, <em>q</em> and <em>s</em>. In order to
+          normalize <em>a</em> to a probability distribution, we
+          can simply use the Softmax function:
+          <div class="table-responsive" id="Xeq5">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} Softmax(a_i)
+              = \frac{e^{a_i}}{\sum _{j}e^{a_j}}.
+              \end{equation}</span><br />
+              <span class="equation-number">(5)</span>
+            </div>
+          </div>Since our attention mechanism utilizes the softmax
+          function, it ensures that our network is end-to-end
+          differentiable.
+          <p></p>
+        </section>
+        <section id="sec-18">
+          <p><em>3.2.3 Generating Latent Relations via Memory-based
+          Attention.</em> Finally, in order to generate the latent
+          relation vector <em>r</em>, we use the attention vector
+          <em>a</em> to generate a weighted representation of
+          <strong>M</strong>, i.e., adaptively selecting relevant
+          pieces of information from the memory matrix
+          <strong>M</strong>.</p>
+          <div class="table-responsive" id="Xeq6">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} r = \sum
+              _{i} a_i m_i \end{equation}</span><br />
+              <span class="equation-number">(6)</span>
+            </div>
+          </div>The output of the LRAM module is a user and item
+          specific latent relation vector <em>r</em>. The latent
+          relation vector is a weighted representation of
+          <strong>M</strong>. Intuitively, the memory matrix
+          <strong>M</strong> can be interpreted as a store of
+          conceptual building blocks that can be used to describe
+          the relationships between users and items. The mechanism
+          design of the LRAM module is inspired by Memory Networks
+          and can also be interpreted as neural attentions which
+          give our model improved interpretability. Note that the
+          LRAM module is part of <font style=
+          "font-variant: small-caps">LRML</font> and is trained
+          end-to-end. Finally, the total number of parameters added
+          by the LRAM module is merely 2 × <em>N</em> × <em>d</em>
+          parameters and since typically we set <em>N</em> &lt; 100
+          in our experiments, the parameter cost incurred by the
+          LRAM module is negligible.
+          <p></p>
+        </section>
+      </section>
+      <section id="sec-19">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span>
+            Optimization and Learning</h3>
+          </div>
+        </header>
+        <p>In this section, we introduce the final layer of the
+        network, the objective function and the regularization
+        employed in our training scheme. <font style=
+        "font-variant: small-caps">LRML</font> is end-to-end
+        differentiable since it utilizes soft attention over the
+        LRAM module. As such, we are able to simply train it via
+        stochastic gradient descent (SGD) methods.</p>
+        <section id="sec-20">
+          <p><em>3.3.1 Relational Modeling Layer.</em> For each
+          user-item pair <em>p</em> and <em>q</em>, the scoring
+          function is defined as:</p>
+          <div class="table-responsive" id="Xeq7">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} s(p,q) = ||
+              \: p + r - q \: ||^{2}_{2}
+              \end{equation}</span><br />
+              <span class="equation-number">(7)</span>
+            </div>
+          </div>where <em>r</em> is the latent relation vector
+          constructed from the LRAM module and <span class=
+          "inline-equation"><span class=
+          "tex">$||.||^{2}_{2}$</span></span> is essentially the L2
+          norm of the vector <em>p</em> + <em>r</em> − <em>q</em>.
+          Intuitively, this score function penalizes any deviation
+          of (p+r) from the vector q.
+          <p></p>
+        </section>
+        <section id="sec-21">
+          <p><em>3.3.2 Objective Function.</em> <font style=
+          "font-variant: small-caps">LRML</font> adopts the
+          pairwise ranking loss or hinge loss for optimization. For
+          each positive user-item pair &lt; <em>p</em>, <em>q</em>
+          &gt; , we sample a corrupted pair which we denote as &lt;
+          <em>p</em>′, <em>q</em>′ &gt; . Similar to the positive
+          example, the corrupted pair of user and item goes through
+          the same user and item embedding layer respectively. The
+          pairwise ranking / hinge loss is defined as follows:</p>
+          <div class="table-responsive" id="Xeq8">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} L = \sum
+              _{(p,q) \in \Delta } \sum _{(p^{\prime },q^{\prime })
+              \not\in \Delta } max(0,s(p,q) + \lambda - s(p^{\prime
+              },q^{\prime })) \end{equation}</span><br />
+              <span class="equation-number">(8)</span>
+            </div>
+          </div>where <em>Δ</em> is the set of all user-item pairs,
+          <em>λ</em> is the margin that separates the golden pairs
+          and corrupted samples. <em>max</em>(0, <em>x</em>) is
+          also known as the <em>relu</em> function. Note that we
+          use the same (generated) latent relation vector for the
+          negative example. This is motivated by our early
+          empirical results whereby performance was much better
+          over generating a separate relation vector for the
+          negative example.
+          <p></p>
+        </section>
+        <section id="sec-22">
+          <p><em>3.3.3 Regularization.</em> Finally, we apply
+          regularization by normalizing all user and item
+          embeddings to be constrained within the Euclidean ball.
+          At the end of each mini-batch, we apply a constraint of
+          <em>p</em> <sub>*</sub> <sub>2</sub> ≤ 1 and <em>q</em>
+          <sub>*</sub> <sub>2</sub> ≤ 1 for regularization and
+          preventing overfitting. In order to enforce this, we can
+          manually project all embeddings to the unit ball either
+          at the beginning or after each training iteration.</p>
+        </section>
+      </section>
+    </section>
+    <section id="sec-23">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Performance
+          Evaluation</h2>
+        </div>
+      </header>
+      <p>In this section, we evaluate our proposed <font style=
+      "font-variant: small-caps">LRML</font> against other
+      state-of-the-art algorithms. Our experimental evaluation is
+      designed to answer several research questions
+      (<strong>RQs</strong>).</p>
+      <ul class="list-no-style">
+        <li id="list8" label="•"><strong>RQ1:</strong> Does LRML
+        outperform other baselines and state-of-the-art methods for
+        collaborative ranking?<br /></li>
+        <li id="list9" label="•"><strong>RQ2:</strong> How does the
+        relative performance of LRML and CML differ across
+        different dataset sizes?<br /></li>
+        <li id="list10" label="•"><strong>RQ3:</strong> What is the
+        scalability and runtime of LRML compared to other
+        baselines?<br /></li>
+        <li id="list11" label="•"><strong>RQ4:</strong> What is the
+        LRAM module learning? Are we able to derive qualitative
+        insights about the inner workings of LRML?<br /></li>
+        <li id="list12" label="•"><strong>RQ5:</strong> What do the
+        relation vectors represent? Are they meaningful?<br /></li>
+      </ul>
+      <section id="sec-24">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span>
+            Datasets</h3>
+          </div>
+        </header>
+        <p>In the spirit of experimental rigor, we conduct our
+        evaluation across a wide spectrum of datasets.</p>
+        <ul class="list-no-style">
+          <li id="list13" label="•"><strong>Netflix Prize</strong>
+          - Since the entire Netflix Prize dataset is extremely
+          large, we construct a subset of the famous Netflix Prize
+          dataset. Specifially, we only considered movie-item
+          ratings from the year 2005 and filtered users who had
+          less than 100 interactions.<br /></li>
+          <li id="list14" label="•">
+            <strong>MovieLens</strong> - A widely adopted benchmark
+            dataset<a class="fn" href="#fn2" id=
+            "foot-fn2"><sup>2</sup></a> for collaborative filtering
+            in the application domain of recommending movies to
+            users. Specifically, we use two configurations of this
+            benchmark dataset, namely MovieLens1M and MovieLens20M
+            [<a class="bib" data-trigger="hover" data-toggle=
+            "popover" data-placement="top" href=
+            "#BibPLXBIB0005">5</a>].<br />
+          </li>
+          <li id="list15" label="•">
+            <strong>IMDb</strong> - A movie recommendation dataset
+            obtained from IMDb that was introduced in [<a class=
+            "bib" data-trigger="hover" data-toggle="popover"
+            data-placement="top" href=
+            "#BibPLXBIB0004">4</a>].<br />
+          </li>
+          <li id="list16" label="•">
+            <strong>LastFM</strong> - This dataset contains social
+            networking, tagging, and music artist listening
+            information from Last.fm online music system<a class=
+            "fn" href="#fn3" id="foot-fn3"><sup>3</sup></a>.<br />
+          </li>
+          <li id="list17" label="•">
+            <strong>Books</strong> - This is a book recommendation
+            dataset that was used in [<a class="bib" data-trigger=
+            "hover" data-toggle="popover" data-placement="top"
+            href="#BibPLXBIB0044">44</a>].<br />
+          </li>
+          <li id="list18" label="•">
+            <strong>Delicious</strong> - This dataset contains
+            social networking, bookmarking, and tagging information
+            from a set of 2K users from Delicious Social
+            Bookmarking System<a class="fn" href="#fn4" id=
+            "foot-fn4"><sup>4</sup></a>. This dataset, along with
+            the lastFM dataset, originated from the Hetrec 2011
+            workshop<a class="fn" href="#fn5" id=
+            "foot-fn5"><sup>5</sup></a>.<br />
+          </li>
+          <li id="list19" label="•">
+            <strong>Meetup</strong> - An event-based social
+            network<a class="fn" href="#fn6" id=
+            "foot-fn6"><sup>6</sup></a>. We use the datasets
+            provided by [<a class="bib" data-trigger="hover"
+            data-toggle="popover" data-placement="top" href=
+            "#BibPLXBIB0022">22</a>] which include event-user pairs
+            from NYC.<br />
+          </li>
+          <li id="list20" label="•">
+            <strong>Twitter</strong> - This is a check-in dataset
+            constructed by [<a class="bib" data-trigger="hover"
+            data-toggle="popover" data-placement="top" href=
+            "#BibPLXBIB0040">40</a>] which contains users and their
+            check-ins. There are two subsets of this dataset,
+            namely Twitter (WW) and Twitter (USA).<br />
+          </li>
+        </ul>
+        <p>In total, we evaluate our proposed algorithm on
+        <strong>ten</strong> different datasets with diverse sizes
+        and interaction densities, i.e., the percentage of non-zero
+        values in the user-item interaction matrix. For all
+        datasets, with the exception of the Netflix Prize dataset,
+        we ensured that each user has at least 20 interactions. The
+        statistics of all datasets are reported in Table <a class=
+        "tbl" href="#tab1">1</a>.</p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Statistics of all datasets used in our
+            experimental evaluation.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">
+                <strong>Dataset</strong></th>
+                <th style="text-align:center;">
+                <strong>Interactions</strong></th>
+                <th style="text-align:center;"><span class=
+                "inline-equation"><span class=
+                "tex">$\#$</span></span>
+                <strong>Users</strong></th>
+                <th style="text-align:center;"><span class=
+                "inline-equation"><span class=
+                "tex">$\#$</span></span>
+                <strong>Items</strong></th>
+                <th><span class="inline-equation"><span class=
+                "tex">$\%$</span></span>
+                <strong>Density</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-top: solid 2px">
+                <td style="text-align:center;">Netflix Prize</td>
+                <td style="text-align:center;">44M</td>
+                <td style="text-align:center;">75K</td>
+                <td style="text-align:center;">13K</td>
+                <td style="text-align:center;">4.5</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">MovieLens20M</td>
+                <td style="text-align:center;">16M</td>
+                <td style="text-align:center;">53K</td>
+                <td style="text-align:center;">27K</td>
+                <td style="text-align:center;">1.1</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">MovieLens1M</td>
+                <td style="text-align:center;">1M</td>
+                <td style="text-align:center;">6K</td>
+                <td style="text-align:center;">4K</td>
+                <td style="text-align:center;">4.2</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">IMDb</td>
+                <td style="text-align:center;">117K</td>
+                <td style="text-align:center;">0.8K</td>
+                <td style="text-align:center;">114K</td>
+                <td style="text-align:center;">0.13</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">LastFM</td>
+                <td style="text-align:center;">92K</td>
+                <td style="text-align:center;">1.9K</td>
+                <td style="text-align:center;">175K</td>
+                <td style="text-align:center;">0.28</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Books</td>
+                <td style="text-align:center;">285K</td>
+                <td style="text-align:center;">7.4K</td>
+                <td style="text-align:center;">291K</td>
+                <td style="text-align:center;">0.01</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Delicious</td>
+                <td style="text-align:center;">43K</td>
+                <td style="text-align:center;">1.7K</td>
+                <td style="text-align:center;">69K</td>
+                <td style="text-align:center;">0.36</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Meetup</td>
+                <td style="text-align:center;">11K</td>
+                <td style="text-align:center;">2.6K</td>
+                <td style="text-align:center;">16K</td>
+                <td style="text-align:center;">0.26</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Twitter (WW)</td>
+                <td style="text-align:center;">18K</td>
+                <td style="text-align:center;">4K</td>
+                <td style="text-align:center;">36K</td>
+                <td style="text-align:center;">0.01</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Twitter (USA)</td>
+                <td style="text-align:center;">171K</td>
+                <td style="text-align:center;">4K</td>
+                <td style="text-align:center;">36K</td>
+                <td style="text-align:center;">0.12</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Experimental results on ten benchmark
+            datasets. Best performance is in boldface and second
+            best is underlined. <font style=
+            "font-variant: small-caps">LRML</font> achieves best
+            performance on all datasets, outperforming many strong
+            neural baselines. Improvement is much larger on large
+            datasets such as Netflix Prize or MovieLens20M.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;"></th>
+                <th colspan="2" style="text-align:center;">
+                  BPR
+                  <hr />
+                </th>
+                <th colspan="2" style="text-align:center;">
+                  MLP
+                  <hr />
+                </th>
+                <th colspan="2" style="text-align:center;">
+                  MF
+                  <hr />
+                </th>
+                <th colspan="2" style="text-align:center;">
+                  NEUMF
+                  <hr />
+                </th>
+                <th colspan="2" style="text-align:center;">
+                  CML
+                  <hr />
+                </th>
+                <th colspan="2" style="text-align:center;">
+                  <font style=
+                  "font-variant: small-caps">LRML</font>
+                  <hr />
+                </th>
+              </tr>
+              <tr>
+                <th style="text-align:center;"></th>
+                <th style="text-align:center;">H@10</th>
+                <th style="text-align:center;">nDCG@10</th>
+                <th style="text-align:center;">H@10</th>
+                <th style="text-align:center;">nDCG@10</th>
+                <th style="text-align:center;">H@10</th>
+                <th style="text-align:center;">nDCG@10</th>
+                <th style="text-align:center;">H@10</th>
+                <th style="text-align:center;">nDCG@10</th>
+                <th style="text-align:center;">H@10</th>
+                <th style="text-align:center;">nDCG@10</th>
+                <th style="text-align:center;">H@10</th>
+                <th style="text-align:center;">nDCG@10</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-top: solid 2px">
+                <td style="text-align:center;">Netflix</td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">48.67</span></td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">31.97</span></td>
+                <td style="text-align:center;">33.77</td>
+                <td style="text-align:center;">22.34</td>
+                <td style="text-align:center;">47.07</td>
+                <td style="text-align:center;">30.25</td>
+                <td style="text-align:center;">32.27</td>
+                <td style="text-align:center;">22.59</td>
+                <td style="text-align:center;">46.12</td>
+                <td style="text-align:center;">29.48</td>
+                <td style="text-align:center;">
+                <strong>53.71</strong></td>
+                <td style="text-align:center;">
+                <strong>35.78</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">MovieLens20M</td>
+                <td style="text-align:center;">69.68</td>
+                <td style="text-align:center;">46.68</td>
+                <td style="text-align:center;">75.81</td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">54.38</span></td>
+                <td style="text-align:center;">72.98</td>
+                <td style="text-align:center;">49.01</td>
+                <td style="text-align:center;">75.82</td>
+                <td style="text-align:center;">54.37</td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">77.64</span></td>
+                <td style="text-align:center;">53.01</td>
+                <td style="text-align:center;">
+                <strong>84.47</strong></td>
+                <td style="text-align:center;">
+                <strong>61.52</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">MovieLens1M</td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">72.37</span></td>
+                <td style="text-align:center;">53.33</td>
+                <td style="text-align:center;">48.59</td>
+                <td style="text-align:center;">33.11</td>
+                <td style="text-align:center;">68.87</td>
+                <td style="text-align:center;">49.17</td>
+                <td style="text-align:center;">68.61</td>
+                <td style="text-align:center;">50.65</td>
+                <td style="text-align:center;">72.16</td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">54.13</span></td>
+                <td style="text-align:center;">
+                <strong>73.97</strong></td>
+                <td style="text-align:center;">
+                <strong>54.53</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">IMDb</td>
+                <td style="text-align:center;">4.62</td>
+                <td style="text-align:center;">4.23</td>
+                <td style="text-align:center;">4.11</td>
+                <td style="text-align:center;">3.79</td>
+                <td style="text-align:center;">5.26</td>
+                <td style="text-align:center;">4.89</td>
+                <td style="text-align:center;">4.87</td>
+                <td style="text-align:center;">4.55</td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">9.47</span></td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">7.16</span></td>
+                <td style="text-align:center;">
+                <strong>11.92</strong></td>
+                <td style="text-align:center;">
+                <strong>8.45</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">LastFM</td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">20.73</span></td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">13.58</span></td>
+                <td style="text-align:center;">7.36</td>
+                <td style="text-align:center;">3.75</td>
+                <td style="text-align:center;">18.17</td>
+                <td style="text-align:center;">12.02</td>
+                <td style="text-align:center;">14.89</td>
+                <td style="text-align:center;">9.61</td>
+                <td style="text-align:center;">19.75</td>
+                <td style="text-align:center;">12.03</td>
+                <td style="text-align:center;">
+                <strong>21.71</strong></td>
+                <td style="text-align:center;">
+                <strong>14.38</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Books</td>
+                <td style="text-align:center;">22.07</td>
+                <td style="text-align:center;">16.13</td>
+                <td style="text-align:center;">12.89</td>
+                <td style="text-align:center;">10.03</td>
+                <td style="text-align:center;">15.61</td>
+                <td style="text-align:center;">10.75</td>
+                <td style="text-align:center;">12.54</td>
+                <td style="text-align:center;">7.65</td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">25.86</span></td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">18.70</span></td>
+                <td style="text-align:center;">
+                <strong>26.72</strong></td>
+                <td style="text-align:center;">
+                <strong>19.43</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Delicious</td>
+                <td style="text-align:center;">78.50</td>
+                <td style="text-align:center;">77.78</td>
+                <td style="text-align:center;">77.05</td>
+                <td style="text-align:center;">73.80</td>
+                <td style="text-align:center;">78.91</td>
+                <td style="text-align:center;">78.09</td>
+                <td style="text-align:center;">78.79</td>
+                <td style="text-align:center;">78.11</td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">79.31</span></td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">78.43</span></td>
+                <td style="text-align:center;">
+                <strong>80.31</strong></td>
+                <td style="text-align:center;">
+                <strong>79.01</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Meetup</td>
+                <td style="text-align:center;">44.91</td>
+                <td style="text-align:center;">36.08</td>
+                <td style="text-align:center;">31.33</td>
+                <td style="text-align:center;">23.19</td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">47.23</span></td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">38.29</span></td>
+                <td style="text-align:center;">32.76</td>
+                <td style="text-align:center;">25.79</td>
+                <td style="text-align:center;">47.04</td>
+                <td style="text-align:center;">36.64</td>
+                <td style="text-align:center;">
+                <strong>50.19</strong></td>
+                <td style="text-align:center;">
+                <strong>40.48</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Twitter (WW)</td>
+                <td style="text-align:center;">76.39</td>
+                <td style="text-align:center;">75.27</td>
+                <td style="text-align:center;">53.33</td>
+                <td style="text-align:center;">35.68</td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">76.93</span></td>
+                <td style="text-align:center;">75.43</td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">76.66</span></td>
+                <td style="text-align:center;">74.86</td>
+                <td style="text-align:center;">75.86</td>
+                <td style="text-align:center;">74.72</td>
+                <td style="text-align:center;">
+                <strong>78.92</strong></td>
+                <td style="text-align:center;">
+                <strong>77.17</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Twitter (USA)</td>
+                <td style="text-align:center;">75.88</td>
+                <td style="text-align:center;">75.04</td>
+                <td style="text-align:center;">77.91</td>
+                <td style="text-align:center;">76.23</td>
+                <td style="text-align:center;">76.47</td>
+                <td style="text-align:center;">75.62</td>
+                <td style="text-align:center;">70.75</td>
+                <td style="text-align:center;">69.79</td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">78.30</span></td>
+                <td style="text-align:center;"><span style=
+                "text-decoration: underline;">76.50</span></td>
+                <td style="text-align:center;">
+                <strong>79.36</strong></td>
+                <td style="text-align:center;">
+                <strong>77.85</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-25">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span>
+            Baselines</h3>
+          </div>
+        </header>
+        <p>In this section, we introduce the key baselines for
+        comparison against our proposed <font style=
+        "font-variant: small-caps">LRML</font>.</p>
+        <ul class="list-no-style">
+          <li id="list21" label="•">
+            <strong>Bayesian Personalized Ranking</strong> (BPR)
+            [<a class="bib" data-trigger="hover" data-toggle=
+            "popover" data-placement="top" href=
+            "#BibPLXBIB0025">25</a>] is a strong CF baseline that
+            minimizes <span class="inline-equation"><span class=
+            "tex">$\sum _{i} \sum _{j,k} -\log \sigma (p_i^T q_j -
+            p_i^T q_k)$</span></span> +
+            <em>λ<sub>v</sub>u<sub>i</sub></em> <sup>2</sup> +
+            <em>λ<sub>q</sub>q<sub>j</sub></em> <sup>2</sup>, where
+            (<em>p<sub>i</sub></em> , <em>q<sub>j</sub></em> ) is a
+            positive interaction and (<em>p<sub>i</sub></em> ,
+            <em>q<sub>k</sub></em> ) is a negative sample.<br />
+          </li>
+          <li id="list22" label="•">
+            <strong>Matrix Factorization</strong> (MF) is a
+            standard baseline for CF that models the relationship
+            between user and item using inner products. We use the
+            generalized version from [<a class="bib" data-trigger=
+            "hover" data-toggle="popover" data-placement="top"
+            href="#BibPLXBIB0007">7</a>] which scores user item
+            pairs with <em>s</em>(<em>p</em>, <em>q</em>) =
+            <em>σ</em>(<em>h<sup>T</sup></em>
+            (<em>p</em>⊙<em>q</em>)).<br />
+          </li>
+          <li id="list23" label="•">
+            <strong>Multi-layered Perceptron</strong> (MLP) is the
+            baseline neural architecture proposed in [<a class=
+            "bib" data-trigger="hover" data-toggle="popover"
+            data-placement="top" href="#BibPLXBIB0007">7</a>] in
+            which the authors proposed to use multiple layers of
+            nonlinearities to model the relationships between users
+            and items.<br />
+          </li>
+          <li id="list24" label="•">
+            <strong>Neural Matrix Factorization</strong> (NeuMF)
+            [<a class="bib" data-trigger="hover" data-toggle=
+            "popover" data-placement="top" href=
+            "#BibPLXBIB0007">7</a>] is the state-of-the-art unified
+            framework combining MF with MLP. NeuMF concatenates the
+            output of MF and MLP, and uses a regression layer to
+            predict the user item rating. Note that NeuMF uses
+            separate embedding representations of users and items
+            for MF and MLP.<br />
+          </li>
+          <li id="list25" label="•">
+            <strong>Collaborative Metric Learning (CML)</strong>
+            [<a class="bib" data-trigger="hover" data-toggle=
+            "popover" data-placement="top" href=
+            "#BibPLXBIB0009">9</a>] can be considered as the
+            baseline of our model which does not include relational
+            translations between user and item vectors.<br />
+          </li>
+        </ul>
+        <p>Since CML and NeuMF have surpassed many other baselines
+        such as WMF [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0010">10</a>], eALS [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0008">8</a>] and Factorization
+        Machines [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0024">24</a>], we do not further report them.
+        Additionally, for fair comparison and due to scalability
+        issues, we do not use WARP [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0037">37</a>] for both CML and <font style=
+        "font-variant: small-caps">LRML</font>.</p>
+      </section>
+      <section id="sec-26">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span> Evaluation
+            Protocol and Metrics</h3>
+          </div>
+        </header>
+        <p>Our evaluation protocol follows He et al. [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0007">7</a>] very
+        closely. Similarly, we adopt the <em>leave-one-out</em>
+        evaluation protocol, i.e., the testing set comprises the
+        last item of all users. If there are no timestamps
+        available in the dataset (e.g., <em>Delicious</em> and
+        <em>LastFM</em>), then the test sample is randomly sampled.
+        A single item from each user is also sampled to form the
+        development set. Since it is too time consuming to rank all
+        items for every user, we randomly sampled 100 items that
+        have no interactions with the target user and ranked the
+        test item with respect to these 100 items. This is in
+        concert with many works [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0008">8</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0025">25</a>]. Since our problem is essentially
+        formulated as learning-to-rank, we judge the performance of
+        our model based on the popular and widely adopted standard
+        metrics used in information retrieval and recommender
+        systems: <strong>normalized discounted cumulative
+        gain</strong> (nDCG@10) [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0011">11</a>] and <strong>Hit Ratio</strong>
+        (H@10). Intuitively, the nDCG@10 metric is a position-aware
+        ranking metric while H@10 metric simply considers whether
+        the ground truth is ranked amongst the top 10 items. For
+        more detailed explanations, we refer readers to [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0007">7</a>].</p>
+      </section>
+      <section id="sec-27">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.4</span>
+            Implementation Details</h3>
+          </div>
+        </header>
+        <p>We implemented all models in
+        <em>TensorFlow</em><a class="fn" href="#fn7" id=
+        "foot-fn7"><sup>7</sup></a> on a Linux machine. For tuning
+        the hyperparameters, we select the model that performs best
+        on the development set based on the nDCG metric and report
+        the result of that model on the test set. Model parameters
+        are saved every 50 epochs. All models are trained until
+        convergence, i.e., if the performance (nDCG metric) on the
+        development set does not improve after 50 epochs. Models
+        are trained for a maximum of 500 epochs. For large datasets
+        like <em>MovieLens20M</em> and <em>Netflix Prize</em>, we
+        stop the training at 100 epochs. The dimensionality of user
+        and item embeddings <em>d</em> is tuned amongst {20, 50,
+        100}. The number of batches <em>B</em> is tuned amongst
+        {10, 100, 1000}. The minimum number of batches for
+        NetflixPrize and MovieLens20M is 100 in order to fit into
+        the GPU RAM. We optimize all models using the Adam
+        optimizer [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0012">12</a>]. The learning rate for all models
+        are tuned amongst {0.01, 0.005, 0.001}. For models that
+        minimize the hinge loss, the margin <em>λ</em> is tuned
+        amongst {0.1, 0.2, 0.25, 0.5}. For NeuMF and MLP models, we
+        follow the configuration and architecture proposed in He et
+        al. [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0007">7</a>], i.e., 3 fully-connected layers
+        with a pyramid architecture. However, for fair comparison
+        of all models, we do not use pretrained MLP and MF models
+        in the NeuMF model since this effectively acts as an
+        ensemble classifier. For <font style=
+        "font-variant: small-caps">LRML</font>, the number of
+        memory slices in <strong>M</strong> is tuned amongst
+        <em>N</em> = {5, 10, 20, 25, 50, 100}. For simplicity, each
+        training instance is paired with only a single negative
+        sample. All embeddings and parameters are normally
+        initialized with a standard deviation of 0.01.</p>
+        <p>For most datasets and baselines, we found that the
+        following hyperparameters work well: learning rate = 0.001,
+        number of batches <em>B</em> = 10 and <em>λ</em> = 0.2. A
+        larger embedding size always performs better, i.e.,
+        <em>d</em> = 100. The size of LRAM is dataset dependent. We
+        found that setting <em>N</em> = 20 works well for most
+        datasets (performance does not degrade going beyond 50 but
+        does not improve either). However, we found that setting
+        <em>N</em> = 100 works better on large datasets such as
+        <em>Netflix Prize</em> and <em>MovieLens20M</em>.</p>
+      </section>
+      <section id="sec-28">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.5</span>
+            Experimental Results</h3>
+          </div>
+        </header>
+        <p>The empirical results of our proposed model and
+        baselines on 10 benchmark datasets are reported in Table
+        <a class="tbl" href="#tab2">2</a>. Our proposed
+        <font style="font-variant: small-caps">LRML</font> performs
+        extremely competitively on all datasets and obtain the best
+        performance on both nDCG@10 and H@10 metrics on
+        <strong>all</strong> datasets. This answers
+        <strong>RQ1</strong>, showing that our proposed
+        <font style="font-variant: small-caps">LRML</font> is
+        capable of effective collaborative ranking. Moreover, the
+        ranking of many of the competitor baselines is fluctuating
+        across datasets as we see the second best performance is
+        scattered amongst different models.</p>
+        <section id="sec-29">
+          <p><em>4.5.1 Comparison against CML.</em> In general,
+          <font style="font-variant: small-caps">LRML</font>
+          outperforms CML on all datasets on both H@10 and nDCG@10
+          metric. We would like to draw the reader's attention to
+          the two datasets, namely <em>Netflix Prize</em> and
+          <em>MovieLens20M</em> datasets in which <font style=
+          "font-variant: small-caps">LRML</font> obtained a clear
+          margin in performance gain over the competitor models.
+          This ascertains our earlier claim about the flaws of CML
+          (not being able to scale to large datasets) and
+          empirically proves the advantages of our proposed
+          approach. Specifically, <font style=
+          "font-variant: small-caps">LRML</font> outperforms CML by
+          performance gains about 7.5% on <em>MovieLens20M</em> and
+          about 6% on <em>Netflix Prize</em> on the nDCG@10 metric.
+          The performance gains on the hit ratio (H@10) metric is
+          also similarly high. When the dataset is smaller, the
+          performance gains are less distinct. For example, the
+          performance gain in MovieLens20M is much larger than in
+          MovieLens1M. The performance gains on smaller datasets
+          range from a marginal <span class=
+          "inline-equation"><span class=
+          "tex">$1\%-2\%$</span></span> , (e.g., <em>Books</em> and
+          <em>Delicious</em>) to reasonably large, e.g.,
+          <span class="inline-equation"><span class=
+          "tex">$3\%-4\%$</span></span> on the <em>Meetup</em> or
+          <em>Twitter (WW)</em> datasets. As such, the concluding
+          findings pertaining to the comparison of <font style=
+          "font-variant: small-caps">LRML</font> and CML can be
+          drawn as follows: On large datasets, the performance gain
+          of <font style="font-variant: small-caps">LRML</font>
+          over CML is large. However, on smaller datasets,
+          <font style="font-variant: small-caps">LRML</font> at
+          least performs equally well or sometimes reasonably
+          better. This answers <strong>RQ2</strong> on the effect
+          of dataset size on relative performance of LRML and CML.
+          Our experimental evidence shows that our proposed
+          <font style="font-variant: small-caps">LRML</font> is
+          effective and ascertains our usage of adaptive
+          translations in metric learning.</p>
+        </section>
+        <section id="sec-30">
+          <p><em>4.5.2 Comparison against Other Baselines.</em>
+          Pertaining to the performance of the other baselines, we
+          found that the performance of MF and BPR is extremely
+          competitive, i.e., both MF and BPR outperform CML on
+          several datasets. The performance of MLP, on the other
+          hand, seem to perform reasonably well only on
+          <em>MovieLens20M</em> and performs horribly on most
+          datasets. Note that we also tried a non-pyramid
+          architecture but that did not improve the performance.
+          The performance of the model NeuMF (that combines MLPs
+          with MF) is often better than vanilla MLP but falls short
+          of MF in most cases. Notably, NeuMF performs reasonably
+          well on <em>MovieLens20M</em>, <em>Netflix Prize</em> and
+          <em>MovieLens1M</em>. This could possibly mean that the
+          usage of dual embedding spaces (one for MF and one for
+          MLP) might be overfitting on the smaller datasets.</p>
+        </section>
+        <section id="sec-31">
+          <p><em>4.5.3 Comparison on Runtime.</em> Figure <a class=
+          "fig" href="#fig3">3</a> reports the runtime (seconds
+          taken to run a single epoch) of all models on <em>Netflix
+          Prize</em> and <em>MovieLens20M</em>. We make several
+          observations. First, the difference in runtime between
+          <font style="font-variant: small-caps">LRML</font> and
+          CML is quite insignificant, i.e., <font style=
+          "font-variant: small-caps">LRML</font> only spends ≈
+          10<em>s</em> − 15<em>s</em> extra per epoch which is only
+          a <span class="inline-equation"><span class=
+          "tex">$5\%-10\%$</span></span> increase in runtime on
+          both datasets. On the other hand, it is still faster than
+          models such as NeuMF and MLP. Notably, this is also
+          contributed by the fact that MLP and NeuMF are point-wise
+          models which do not pair negative samples with positive
+          samples during training. Next, we also compare the
+          runtime of <font style=
+          "font-variant: small-caps">LRML</font> with different
+          <em>N</em> (LRAM size) values and found that there is
+          only minimal observable difference in runtime with
+          <em>N</em> = 50 or <em>N</em> = 100. This was probably
+          made insignificant by the highly optimized GPU operations
+          and also due to the fact that the size of the
+          matrix-vector operations in LRAM is relatively small. To
+          answer <strong>RQ3</strong>, we have shown that
+          <font style="font-variant: small-caps">LRML</font> only
+          incurs a slight computation cost over CML.</p>
+          <figure id="fig3">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186154/images/www2018-163-fig3.jpg"
+            class="img-responsive" alt="Figure 3" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 3:</span>
+              <span class="figure-title">Runtime (seconds/epoch) of
+              all models on Netflix Prize and MovieLens20M.
+              Experiments were run with batch size of 100 on a
+              Nvidia P100 GPU. LRML only incurs a small
+              computational cost over CML. <em>(Best viewed in
+              color.)</em></span>
+            </div>
+          </figure>
+          <p></p>
+        </section>
+      </section>
+    </section>
+    <section id="sec-32">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Discussion and
+          Analysis</h2>
+        </div>
+      </header>
+      <p>In this section, we derive qualitative insights regarding
+      our proposed model. This section describes the discoveries
+      that we have made while trying to understand and gain some
+      intuition behind the performance of <font style=
+      "font-variant: small-caps">LRML</font>.</p>
+      <section id="sec-33">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span> RQ4: What
+            is the LRAM module learning?</h3>
+          </div>
+        </header>
+        <p>A key advantage to neural attention mechanisms is an
+        improved interpretability since we are able to visualize
+        the weighted importance of each memory slice with respect
+        to any given attribute value <em>v</em>. This helps us to
+        understand how the model is learning. Specifically, we
+        investigate the attributes of <em>explicit rating
+        information</em> and <em>explicit temporal
+        information</em>, and show empirically via visualisation
+        that the LRAM model learns to encode these attributes. Note
+        that both attributes are not provided to our model at
+        training time. In this experiment, the following steps were
+        taken:</p>
+        <ol class="list-no-style">
+          <li id="list26" label="(1)">First, we categorized all
+          user-item pairs (<em>p</em>, <em>q</em>) according to the
+          target attribute value <em>v</em>.<br /></li>
+          <li id="list27" label="(2)">Using (<em>p</em>,
+          <em>q</em>) as an input, we generated the attention
+          vector <em>a</em> for each user-item pair. Recall that
+          this attention vector<a class="fn" href="#fn8" id=
+          "foot-fn8"><sup>8</sup></a> is a probability distribution
+          that depicts how much the model is looking at each memory
+          slice of the LRAM module.<br />
+          </li>
+          <li id="list28" label="(3)">For each attribute class
+          <em>c<sub>i</sub></em> ∈ <em>v</em>, we take the mean
+          attention vector for all user-item pairs in the
+          category.<br /></li>
+          <li id="list29" label="(4)">We visualise the mean
+          attribute vector of each attribute class to observe the
+          correlation between attribute class and which memory
+          slice <font style="font-variant: small-caps">LRML</font>
+          is looking at.<br /></li>
+        </ol>
+        <section id="sec-34">
+          <p><em>5.1.1 LRAM Encodes Explicit Rating
+          Information.</em> On datasets like MovieLens1M, explicit
+          ratings (1-5 stars) exist but are not provided to
+          <font style="font-variant: small-caps">LRML</font>.
+          Surprisingly, we empirically discovered that, despite
+          being only trained on implicit interactions, explicit
+          rating information is actually being encoded in LRAM.
+          Figure <a class="fig" href="#fig4">4</a> shows the mean
+          attention vector (i.e., <em>a</em>) for each rating class
+          (1-5).</p>
+          <figure id="fig4">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186154/images/www2018-163-fig4.jpg"
+            class="img-responsive" alt="Figure 4" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 4:</span>
+              <span class="figure-title">Attention weights over
+              LRAM for user-item pairs of different ratings on
+              MovieLens1M. <font style=
+              "font-variant: small-caps">LRML</font> is able to
+              model explicit rating information despite being only
+              trained on implicit data. <em>(Best viewed in
+              color.)</em></span>
+            </div>
+          </figure>
+          <p></p>
+          <p>The color scale represents the strength of the
+          attention weights and each column of Figure <a class=
+          "fig" href="#fig4">4</a> represents the mean attention
+          vector for each rating class. As such, we are able to
+          observe patterns and trends across different ratings by
+          looking at the rows (from left to right). For example,
+          the mean attention vector of rating=1 is the first
+          vertical slice in Figure <a class="fig" href=
+          "#fig4">4</a> and the intensity denoted by the color
+          scale represents the attention weights.</p>
+          <p>Clearly, we observe that there is a pattern between
+          the explicit rating score and the memory slice in which
+          <font style="font-variant: small-caps">LRML</font> is
+          looking at. We observe that slices M2-M4 are mostly
+          associated with bad ratings (1-2 stars) while having a
+          high attention weight over M6, M7 and M9 signifies a good
+          rating (4-5 stars). Moreover, there is a correlation
+          between how much the model looks at M6, M7 and M9 and the
+          explicit rating score. As such, it seems we are able to
+          infer explicit rating scores solely based on how much our
+          model is looking at each memory slice.</p>
+          <p>We believe this can be explained as follows: The goal
+          of <font style="font-variant: small-caps">LRML</font> is
+          to find a latent relational structure between the user
+          and item interactions. As such, while <font style=
+          "font-variant: small-caps">LRML</font> is trying to
+          assign relations between users and items via neural
+          attention, it has learned to identify and model explicit
+          rating sentiment from the implicit structure of the
+          dataset.</p>
+        </section>
+        <section id="sec-35">
+          <p><em>5.1.2 LRAM encodes temporal information.</em> The
+          second discovery is that the LRAM module actually encodes
+          temporal information. Similar to ratings, timestamps are
+          available on the MovieLens1M dataset but are not used to
+          train the model. To facilitate clear visualization, we
+          binned the timestamps into 10 separate bins in ascending
+          order. Figure <a class="fig" href="#fig5">5</a> shows the
+          visualized attention weights of LRAM with respect to
+          time. Similar to explicit rating scores, we notice that
+          certain memory slices model the chronological order of
+          user-item interactions. On M8, we see that the intensity
+          of the attention weights increase along with time, i.e.,
+          by viewing the row M8 from left to right, we can observe
+          an increasing attention weight on M8 based on the
+          intensity scale. Moreover, the converse is true for M6
+          which when observed from left to right, it decreases in
+          intensity instead. In short, there is a clear pattern in
+          which we can quite safely ascertain that LRAM has learned
+          to encode temporal information. Once again, it is worthy
+          to note that <font style=
+          "font-variant: small-caps">LRML</font> was not given any
+          temporal information to begin with.</p>
+          <figure id="fig5">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186154/images/www2018-163-fig5.jpg"
+            class="img-responsive" alt="Figure 5" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 5:</span>
+              <span class="figure-title">Attention weights over
+              LRAM for user-item pairs for different time bins on
+              MovieLens1M. A clear trend is found in M6 which shows
+              that the LRAM module encodes temporal information
+              even when no such information is provided during
+              training. <em>(Best viewed in color.)</em></span>
+            </div>
+          </figure>
+          <p></p>
+        </section>
+      </section>
+      <section id="sec-36">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> RQ5: What
+            do the relation vectors represent? Are they
+            meaningful?</h3>
+          </div>
+        </header>
+        <p>For each user-item pair in the test set, we generated
+        the latent relation vector <em>r</em>. Next, we computed
+        the cosine similarity between the relation vectors of all
+        user-item pairs and selected the user-item pairs in which
+        the cosine similarity between their relation vectors is the
+        highest. Intuitively, this is to investigate <strong>if
+        similar user-item pairs might have similar relation
+        vectors</strong>. In order to characterize user-item pairs,
+        we selected attributes that are available in the
+        MovieLens1M dataset. The user attributes provided include
+        Age, Job and Gender while only category and movie title
+        were provided for the items. Once again, note that these
+        attributes were not provided to our model during training.
+        For each user-item pair, we computed the attribute matches
+        with respect to the user-item pair with the
+        <strong>closest</strong> relation vector, e.g., if &lt;
+        User1,Item1 &gt; and &lt; User2,Item2 &gt; have the most
+        similar relation vector, we compute the matches between
+        <strong>each</strong> attribute of both user-item pairs.
+        For example, we check for matches between User1 and User2
+        within the list of attributes such as user age, user gender
+        and user job and item category. Ideally, the model should
+        learn a similar relation vector for similar user-item
+        pairs. In order to determine if the result is significant,
+        we computed the probability of a match by random chance
+        taking into consideration the distribution of attributes.
+        Table <a class="tbl" href="#tab3">3</a> reports the results
+        of this experiment.</p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Matches between user-item attributes of
+            user-item pairs with the closest relation vector.
+            Relation vectors encode user-item attributes without
+            being trained on them.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">User-Item
+                Attribute</th>
+                <th style="text-align:center;">Match (<span class=
+                "inline-equation"><span class=
+                "tex">$\%$</span></span> )</th>
+                <th style="text-align:center;">Random (<span class=
+                "inline-equation"><span class=
+                "tex">$\%$</span></span> )</th>
+                <th style="text-align:center;">Diff (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-top: solid 2px">
+                <td style="text-align:center;">User Age</td>
+                <td style="text-align:center;">25.81</td>
+                <td style="text-align:center;">22.17</td>
+                <td style="text-align:center;">3.64</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">User Job</td>
+                <td style="text-align:center;">20.06</td>
+                <td style="text-align:center;">13.71</td>
+                <td style="text-align:center;">6.35</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">User Gender</td>
+                <td style="text-align:center;">65.73</td>
+                <td style="text-align:center;">59.43</td>
+                <td style="text-align:center;">6.30</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Item Category</td>
+                <td style="text-align:center;">51.19</td>
+                <td style="text-align:center;">43.87</td>
+                <td style="text-align:center;">7.32</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Category AND
+                Job</td>
+                <td style="text-align:center;">15.07</td>
+                <td style="text-align:center;">5.56</td>
+                <td style="text-align:center;">9.51</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>We observe that the percentage of getting an attribute
+        match is often higher than that of random chance which
+        might signal that <em>similar user-item pairs have similar
+        relation vectors</em>. In particular, the item category
+        (movie genre) has the most prominent improvement over
+        random chance (7.32%) individually while a considerable
+        percentage of user-item pairs (15.07%) have an exact match
+        of item category <strong>and</strong> job. This is 9.51%
+        more than random chance. Additionally, we also found that
+        (by manual inspection) there is a prominent number of
+        job-category matches such as <em>(programmer,
+        thriller)</em> and <em>(technician/engineer,
+        thriller)</em>. This is intuitive since engineers and
+        programmers can be considered as semantically related
+        professions.</p>
+        <p>Overall, we believe that, the user and movie attributes
+        characterize the behavior of users and therefore, there
+        might be a hidden structure within simple implicit
+        interaction data. By imposing and inducing architectural
+        bias, our model learns to capture this fine-grained
+        behavior even from simple implicit feedback data.</p>
+      </section>
+    </section>
+    <section id="sec-37">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>In this paper, we proposed <font style=
+      "font-variant: small-caps">LRML</font> (Latent Relational
+      Metric Learning), a novel attention-based memory-augmented
+      neural architecture that models the relationship between
+      users and items in metric space using latent relation
+      vectors. <font style="font-variant: small-caps">LRML</font>
+      demonstrates the state-of-the-art performance on 10 publicly
+      available benchmark datasets for implicit collaborative
+      ranking. Empirical results show that relative improvement is
+      significantly greater when the dataset is large, e.g.,
+      Netflix Prize and MovieLens20M, which is due to the geometric
+      inflexibility of the CML algorithm. Additionally,
+      <font style="font-variant: small-caps">LRML</font> leverages
+      the hidden and latent relational structure in the implicit
+      user-item interaction matrix. Via qualitative analysis of the
+      attention weights, we discovered that explicit rating
+      information, temporal information and even item attributes
+      are encoded within the LRAM module and relation vectors even
+      when these information are not provided during training.</p>
+    </section>
+    <section id="sec-38">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">7</span>
+          Acknowledgements</h2>
+        </div>
+      </header>
+      <p>The authors would like to thank anonymous reviewers of WWW
+      2018 for their time and effort in reviewing this paper. We
+      also thank Matt Yang and Kang KyungPhil for feedback on some
+      typo errors in previous preprint versions.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Immanuel Bayer, Xiangnan
+        He, Bhargav Kanagal, and Steffen Rendle. 2017. A Generic
+        Coordinate Descent Framework for Learning from Implicit
+        Feedback. In <em><em>Proceedings of the 26th International
+        Conference on World Wide Web, WWW 2017, Perth, Australia,
+        April 3-7, 2017</em></em> . 1341–1350. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/3038912.3052694" target="_blank">
+          https://doi.org/10.1145/3038912.3052694</a>
+        </li>
+        <li id="BibPLXBIB0002" label="[2]">Antoine Bordes, Nicolas
+        Usunier, Alberto García-Durán, Jason Weston, and Oksana
+        Yakhnenko. 2013. Translating Embeddings for Modeling
+        Multi-relational Data. In <em><em>Advances in Neural
+        Information Processing Systems 26: 27th Annual Conference
+        on Neural Information Processing Systems 2013. Proceedings
+        of a meeting held December 5-8, 2013, Lake Tahoe, Nevada,
+        United States.</em></em> 2787–2795.</li>
+        <li id="BibPLXBIB0003" label="[3]">Jingyuan Chen, Hanwang
+        Zhang, Xiangnan He, Liqiang Nie, Wei Liu, and Tat-Seng
+        Chua. 2017. Attentive Collaborative Filtering: Multimedia
+        Recommendation with Item- and Component-Level Attention. In
+        <em><em>Proceedings of the 40th International ACM SIGIR
+        Conference on Research and Development in Information
+        Retrieval, Shinjuku, Tokyo, Japan, August 7-11,
+        2017</em></em> . 335–344. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/3077136.3080797" target="_blank">
+          https://doi.org/10.1145/3077136.3080797</a>
+        </li>
+        <li id="BibPLXBIB0004" label="[4]">Qiming Diao, Minghui
+        Qiu, Chao-Yuan Wu, Alexander&nbsp;J. Smola, Jing Jiang, and
+        Chong Wang. 2014. Jointly modeling aspects, ratings and
+        sentiments for movie recommendation (JMARS). In <em><em>The
+        20th ACM SIGKDD International Conference on Knowledge
+        Discovery and Data Mining, KDD ’14, New York, NY, USA -
+        August 24 - 27, 2014</em></em> . 193–202. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/2623330.2623758" target="_blank">
+          https://doi.org/10.1145/2623330.2623758</a>
+        </li>
+        <li id="BibPLXBIB0005" label="[5]">F.&nbsp;Maxwell Harper
+        and Joseph&nbsp;A. Konstan. 2016. The MovieLens Datasets:
+        History and Context. <em><em>TiiS</em></em> 5, 4 (2016),
+        19:1–19:19. <a class="link-inline force-break" href=
+        "https://doi.org/10.1145/2827872" target=
+        "_blank">https://doi.org/10.1145/2827872</a>
+        </li>
+        <li id="BibPLXBIB0006" label="[6]">Ruining He, Wang-Cheng
+        Kang, and Julian McAuley. 2017. Translation-based
+        Recommendation. In <em><em>Proceedings of the Eleventh ACM
+        Conference on Recommender Systems</em></em> (RecSys ’17).
+        ACM, New York, NY, USA, 161–169. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/3109859.3109882" target="_blank">
+          https://doi.org/10.1145/3109859.3109882</a>
+        </li>
+        <li id="BibPLXBIB0007" label="[7]">Xiangnan He, Lizi Liao,
+        Hanwang Zhang, Liqiang Nie, Xia Hu, and Tat-Seng Chua.
+        2017. Neural Collaborative Filtering. In
+        <em><em>Proceedings of the 26th International Conference on
+        World Wide Web</em></em> (WWW ’17). International World
+        Wide Web Conferences Steering Committee, Republic and
+        Canton of Geneva, Switzerland, 173–182. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/3038912.3052569" target="_blank">
+          https://doi.org/10.1145/3038912.3052569</a>
+        </li>
+        <li id="BibPLXBIB0008" label="[8]">Xiangnan He, Hanwang
+        Zhang, Min-Yen Kan, and Tat-Seng Chua. 2016. Fast Matrix
+        Factorization for Online Recommendation with Implicit
+        Feedback. In <em><em>Proceedings of the 39th International
+        ACM SIGIR conference on Research and Development in
+        Information Retrieval, SIGIR 2016, Pisa, Italy, July 17-21,
+        2016</em></em> . 549–558. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/2911451.2911489" target="_blank">
+          https://doi.org/10.1145/2911451.2911489</a>
+        </li>
+        <li id="BibPLXBIB0009" label="[9]">Cheng-Kang Hsieh, Longqi
+        Yang, Yin Cui, Tsung-Yi Lin, Serge&nbsp;J. Belongie, and
+        Deborah Estrin. 2017. Collaborative Metric Learning. In
+        <em><em>Proceedings of the 26th International Conference on
+        World Wide Web, WWW 2017, Perth, Australia, April 3-7,
+        2017</em></em> . 193–201. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/3038912.3052639" target="_blank">
+          https://doi.org/10.1145/3038912.3052639</a>
+        </li>
+        <li id="BibPLXBIB0010" label="[10]">Yifan Hu, Yehuda Koren,
+        and Chris Volinsky. 2008. Collaborative Filtering for
+        Implicit Feedback Datasets. In <em><em>Proceedings of the
+        8th IEEE International Conference on Data Mining (ICDM
+        2008), December 15-19, 2008, Pisa, Italy</em></em> .
+        263–272. <a class="link-inline force-break" href=
+        "https://doi.org/10.1109/ICDM.2008.22" target=
+        "_blank">https://doi.org/10.1109/ICDM.2008.22</a>
+        </li>
+        <li id="BibPLXBIB0011" label="[11]">Kalervo Järvelin and
+        Jaana Kekäläinen. 2002. Cumulated gain-based evaluation of
+        IR techniques. <em><em>ACM Trans. Inf. Syst.</em></em> 20,
+        4 (2002), 422–446. <a class="link-inline force-break"
+          href="https://doi.org/10.1145/582415.582418" target=
+          "_blank">https://doi.org/10.1145/582415.582418</a>
+        </li>
+        <li id="BibPLXBIB0012" label="[12]">Diederik&nbsp;P. Kingma
+        and Jimmy Ba. 2014. Adam: A Method for Stochastic
+        Optimization. <em><em>CoRR</em></em>
+        abs/1412.6980(2014).</li>
+        <li id="BibPLXBIB0013" label="[13]">Yehuda Koren. 2008.
+        Factorization meets the neighborhood: a multifaceted
+        collaborative filtering model. In <em><em>Proceedings of
+        the 14th ACM SIGKDD International Conference on Knowledge
+        Discovery and Data Mining, Las Vegas, Nevada, USA, August
+        24-27, 2008</em></em> . 426–434. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/1401890.1401944" target="_blank">
+          https://doi.org/10.1145/1401890.1401944</a>
+        </li>
+        <li id="BibPLXBIB0014" label="[14]">Xiaopeng Li and James
+        She. 2017. Collaborative Variational Autoencoder for
+        Recommender Systems. In <em><em>Proceedings of the 23rd ACM
+        SIGKDD International Conference on Knowledge Discovery and
+        Data Mining, Halifax, NS, Canada, August 13 - 17,
+        2017</em></em> . 305–314. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/3097983.3098077" target="_blank">
+          https://doi.org/10.1145/3097983.3098077</a>
+        </li>
+        <li id="BibPLXBIB0015" label="[15]">Yankai Lin, Zhiyuan
+        Liu, Maosong Sun, Yang Liu, and Xuan Zhu. 2015. Learning
+        Entity and Relation Embeddings for Knowledge Graph
+        Completion. In <em><em>Proceedings of the Twenty-Ninth AAAI
+        Conference on Artificial Intelligence, January 25-30, 2015,
+        Austin, Texas, USA.</em></em> 2181–2187.</li>
+        <li id="BibPLXBIB0016" label="[16]">Minh-Thang Luong, Hieu
+        Pham, and Christopher&nbsp;D Manning. 2015. Effective
+        approaches to attention-based neural machine translation.
+        <em><em>arXiv preprint arXiv:1508.04025</em></em>
+        (2015).</li>
+        <li id="BibPLXBIB0017" label="[17]">Yao Ma, Zhaochun Ren,
+        Ziheng Jiang, Jiliang Tang, and Dawei Yin. 2018.
+        Multi-Dimensional Network Embedding with Hierarchical
+        Structure. In <em><em>Proceedings of the Eleventh ACM
+        International Conference on Web Search and Data
+        Mining</em></em> (WSDM ’18).</li>
+        <li id="BibPLXBIB0018" label="[18]">Tomas Mikolov, Ilya
+        Sutskever, Kai Chen, Gregory&nbsp;S. Corrado, and Jeffrey
+        Dean. 2013. Distributed Representations of Words and
+        Phrases and their Compositionality. In <em><em>Advances in
+        Neural Information Processing Systems 26: 27th Annual
+        Conference on Neural Information Processing Systems 2013.
+        Proceedings of a meeting held December 5-8, 2013, Lake
+        Tahoe, Nevada, United States.</em></em> 3111–3119.</li>
+        <li id="BibPLXBIB0019" label="[19]">Alexander Miller, Adam
+        Fisch, Jesse Dodge, Amir-Hossein Karimi, Antoine Bordes,
+        and Jason Weston. 2016. Key-value memory networks for
+        directly reading documents. <em><em>arXiv preprint
+        arXiv:1606.03126</em></em> (2016).</li>
+        <li id="BibPLXBIB0020" label="[20]">Volodymyr Mnih, Nicolas
+        Heess, Alex Graves, and Koray Kavukcuoglu. 2014. Recurrent
+        Models of Visual Attention. In <em><em>Advances in Neural
+        Information Processing Systems 27: Annual Conference on
+        Neural Information Processing Systems 2014, December 8-13
+        2014, Montreal, Quebec, Canada</em></em> . 2204–2212.</li>
+        <li id="BibPLXBIB0021" label="[21]">Bryan Perozzi, Rami
+        Al-Rfou, and Steven Skiena. 2014. DeepWalk: online learning
+        of social representations. In <em><em>The 20th ACM SIGKDD
+        International Conference on Knowledge Discovery and Data
+        Mining, KDD ’14, New York, NY, USA - August 24 - 27,
+        2014</em></em> . 701–710. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/2623330.2623732" target="_blank">
+          https://doi.org/10.1145/2623330.2623732</a>
+        </li>
+        <li id="BibPLXBIB0022" label="[22]">Tuan-Anh&nbsp;Nguyen
+        Pham, Xutao Li, Gao Cong, and Zhenjie Zhang. 2015. A
+        general graph-based model for recommendation in event-based
+        social networks. In <em><em>31st IEEE International
+        Conference on Data Engineering, ICDE 2015, Seoul, South
+        Korea, April 13-17, 2015</em></em> . 567–578. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1109/ICDE.2015.7113315" target=
+        "_blank">https://doi.org/10.1109/ICDE.2015.7113315</a>
+        </li>
+        <li id="BibPLXBIB0023" label="[23]">Minh&nbsp;C. Phan,
+        Aixin Sun, Yi Tay, Jialong Han, and Chenliang Li. 2017.
+        NeuPL: Attention-based Semantic Matching and Pair-Linking
+        for Entity Disambiguation. In <em><em>Proceedings of the
+        2017 ACM on Conference on Information and Knowledge
+        Management, CIKM 2017, Singapore, November 06 - 10,
+        2017</em></em> . 1667–1676. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/3132847.3132963" target="_blank">
+          https://doi.org/10.1145/3132847.3132963</a>
+        </li>
+        <li id="BibPLXBIB0024" label="[24]">Steffen Rendle. 2010.
+        Factorization Machines. In <em><em>ICDM 2010, The 10th IEEE
+        International Conference on Data Mining, Sydney, Australia,
+        14-17 December 2010</em></em> . 995–1000. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1109/ICDM.2010.127" target=
+        "_blank">https://doi.org/10.1109/ICDM.2010.127</a>
+        </li>
+        <li id="BibPLXBIB0025" label="[25]">Steffen Rendle,
+        Christoph Freudenthaler, Zeno Gantner, and Lars
+        Schmidt-Thieme. 2009. BPR: Bayesian Personalized Ranking
+        from Implicit Feedback. In <em><em>UAI 2009, Proceedings of
+        the Twenty-Fifth Conference on Uncertainty in Artificial
+        Intelligence, Montreal, QC, Canada, June 18-21,
+        2009</em></em> . 452–461.</li>
+        <li id="BibPLXBIB0026" label="[26]">Tim Rocktäschel, Edward
+        Grefenstette, Karl&nbsp;Moritz Hermann, Tomáš Kočiskỳ, and
+        Phil Blunsom. 2015. Reasoning about entailment with neural
+        attention. <em><em>arXiv preprint
+        arXiv:1509.06664</em></em> (2015).</li>
+        <li id="BibPLXBIB0027" label="[27]">Badrul&nbsp;M. Sarwar,
+        George Karypis, Joseph&nbsp;A. Konstan, and John Riedl.
+        2001. Item-based collaborative filtering recommendation
+        algorithms. In <em><em>Proceedings of the Tenth
+        International World Wide Web Conference, WWW 10, Hong Kong,
+        China, May 1-5, 2001</em></em> . 285–295. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/371920.372071" target=
+        "_blank">https://doi.org/10.1145/371920.372071</a>
+        </li>
+        <li id="BibPLXBIB0028" label="[28]">Sainbayar Sukhbaatar,
+        Arthur Szlam, Jason Weston, and Rob Fergus. 2015.
+        End-To-End Memory Networks. In <em><em>Advances in Neural
+        Information Processing Systems 28: Annual Conference on
+        Neural Information Processing Systems 2015, December 7-12,
+        2015, Montreal, Quebec, Canada</em></em> . 2440–2448.</li>
+        <li id="BibPLXBIB0029" label="[29]">Jian Tang, Meng Qu,
+        Mingzhe Wang, Ming Zhang, Jun Yan, and Qiaozhu Mei. 2015.
+        LINE: Large-scale Information Network Embedding. In
+        <em><em>Proceedings of the 24th International Conference on
+        World Wide Web, WWW 2015, Florence, Italy, May 18-22,
+        2015</em></em> . 1067–1077. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/2736277.2741093" target="_blank">
+          https://doi.org/10.1145/2736277.2741093</a>
+        </li>
+        <li id="BibPLXBIB0030" label="[30]">Jiaxi Tang and Ke Wang.
+        2018. Personalized Top-N Sequential Recommendation via
+        Convolutional Sequence Embedding. In <em><em>Proceedings of
+        the Eleventh ACM International Conference on Web Search and
+        Data Mining</em></em> (WSDM ’18).</li>
+        <li id="BibPLXBIB0031" label="[31]">Yi Tay, Anh&nbsp;Tuan
+        Luu, and Siu&nbsp;Cheung Hui. 2017. Learning to Attend via
+        Word-Aspect Associative Fusion for Aspect-based Sentiment
+        Analysis. (2017). arXiv:arXiv:1712.05403</li>
+        <li id="BibPLXBIB0032" label="[32]">Yi Tay, Anh&nbsp;Tuan
+        Luu, and Siu&nbsp;Cheung Hui. 2017. Non-Parametric
+        Estimation of Multiple Embeddings for Link Prediction on
+        Dynamic Knowledge Graphs. In <em><em>Proceedings of the
+        Thirty-First AAAI Conference on Artificial Intelligence,
+        February 4-9, 2017, San Francisco, California,
+        USA.</em></em> 1243–1249.</li>
+        <li id="BibPLXBIB0033" label="[33]">Yi Tay, Luu&nbsp;Anh
+        Tuan, and Siu&nbsp;Cheung Hui. 2017. Dyadic Memory Networks
+        for Aspect-based Sentiment Analysis. In <em><em>Proceedings
+        of the 2017 ACM on Conference on Information and Knowledge
+        Management, CIKM 2017, Singapore, November 06 - 10,
+        2017</em></em> .</li>
+        <li id="BibPLXBIB0034" label="[34]">Yi Tay, Luu&nbsp;Anh
+        Tuan, and Siu&nbsp;Cheung Hui. 2018. A Compare-Propagate
+        Architecture with Alignment Factorization for Natural
+        Language Inference. <em><em>CoRR</em></em>
+        abs/1801.00102(2018). <a class="link-inline force-break"
+        href="arxiv:1801.00102" target=
+        "_blank">arxiv:1801.00102</a> <a class=
+        "link-inline force-break" href=
+        "http://arxiv.org/abs/1801.00102" target=
+        "_blank">http://arxiv.org/abs/1801.00102</a>
+        </li>
+        <li id="BibPLXBIB0035" label="[35]">Yi Tay, Luu&nbsp;Anh
+        Tuan, and Siu&nbsp;Cheung Hui. 2018. Multi-Pointer
+        Co-Attention Networks for Recommendation.
+        <em><em>CoRR</em></em> abs/1801.09251(2018). <a class=
+        "link-inline force-break" href="arxiv:1801.09251" target=
+        "_blank">arxiv:1801.09251</a> <a class=
+        "link-inline force-break" href=
+        "http://arxiv.org/abs/1801.09251" target=
+        "_blank">http://arxiv.org/abs/1801.09251</a>
+        </li>
+        <li id="BibPLXBIB0036" label="[36]">A.&nbsp;N. Tikhonov and
+        V.&nbsp;Y. Arsenin. 1977. Solutions of ill-posed problems.
+        In <em><em>Mathematics of Computation 32(144)</em></em> .
+        491–491.</li>
+        <li id="BibPLXBIB0037" label="[37]">Jason Weston, Samy
+        Bengio, and Nicolas Usunier. 2010. Large scale image
+        annotation: learning to rank with joint word-image
+        embeddings. <em><em>Machine Learning</em></em> 81, 1
+        (2010), 21–35. <a class="link-inline force-break" href=
+        "https://doi.org/10.1007/s10994-010-5198-3" target=
+        "_blank">https://doi.org/10.1007/s10994-010-5198-3</a>
+        </li>
+        <li id="BibPLXBIB0038" label="[38]">Chao-Yuan Wu, Amr
+        Ahmed, Alex Beutel, Alexander&nbsp;J. Smola, and How Jing.
+        2017. Recurrent Recommender Networks. In
+        <em><em>Proceedings of the Tenth ACM International
+        Conference on Web Search and Data Mining, WSDM 2017,
+        Cambridge, United Kingdom, February 6-10, 2017</em></em> .
+        495–503.</li>
+        <li id="BibPLXBIB0039" label="[39]">Kelvin Xu, Jimmy Ba,
+        Ryan Kiros, Kyunghyun Cho, Aaron&nbsp;C. Courville, Ruslan
+        Salakhutdinov, Richard&nbsp;S. Zemel, and Yoshua Bengio.
+        2015. Show, Attend and Tell: Neural Image Caption
+        Generation with Visual Attention. In <em><em>Proceedings of
+        the 32nd International Conference on Machine Learning, ICML
+        2015, Lille, France, 6-11 July 2015</em></em> .
+        2048–2057.</li>
+        <li id="BibPLXBIB0040" label="[40]">Quan Yuan, Gao Cong,
+        Zongyang Ma, Aixin Sun, and Nadia Magnenat-Thalmann. 2013.
+        Who, where, when and what: discover spatio-temporal topics
+        for twitter users. In <em><em>The 19th ACM SIGKDD
+        International Conference on Knowledge Discovery and Data
+        Mining, KDD 2013, Chicago, IL, USA, August 11-14,
+        2013</em></em> . 605–613. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/2487575.2487576" target="_blank">
+          https://doi.org/10.1145/2487575.2487576</a>
+        </li>
+        <li id="BibPLXBIB0041" label="[41]">Shuai Zhang, Lina Yao,
+        and Aixin Sun. 2017. Deep learning based recommender
+        system: A survey and new perspectives. <em><em>arXiv
+        preprint arXiv:1707.07435</em></em> (2017).</li>
+        <li id="BibPLXBIB0042" label="[42]">Shuai Zhang, Lina Yao,
+        and Xiwei Xu. 2017. AutoSVD++: An Efficient Hybrid
+        Collaborative Filtering Model via Contractive
+        Auto-encoders. In <em><em>Proceedings of the 40th
+        International ACM SIGIR Conference on Research and
+        Development in Information Retrieval</em></em> (SIGIR ’17).
+        ACM, New York, NY, USA, 957–960. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/3077136.3080689" target="_blank">
+          https://doi.org/10.1145/3077136.3080689</a>
+        </li>
+        <li id="BibPLXBIB0043" label="[43]">Lei Zheng, Vahid
+        Noroozi, and Philip&nbsp;S. Yu. 2017. Joint Deep Modeling
+        of Users and Items Using Reviews for Recommendation. In
+        <em><em>Proceedings of the Tenth ACM International
+        Conference on Web Search and Data Mining, WSDM 2017,
+        Cambridge, United Kingdom, February 6-10, 2017</em></em> .
+        425–434.</li>
+        <li id="BibPLXBIB0044" label="[44]">Cai-Nicolas Ziegler,
+        Sean&nbsp;M. McNee, Joseph&nbsp;A. Konstan, and Georg
+        Lausen. 2005. Improving recommendation lists through topic
+        diversification. In <em><em>Proceedings of the 14th
+        international conference on World Wide Web, WWW 2005,
+        Chiba, Japan, May 10-14, 2005</em></em> . 22–32.
+          <a class="link-inline force-break" href=
+          "https://doi.org/10.1145/1060745.1060754" target=
+          "_blank">https://doi.org/10.1145/1060745.1060754</a>
+        </li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>In this paper,
+    we use the terms collaborative filtering and collaborative
+    ranking interchangeably.</p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "https://grouplens.org/datasets/movielens/" target=
+    "_blank">https://grouplens.org/datasets/movielens/</a></p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href="http://last.fm" target=
+    "_blank">http://last.fm</a></p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.delicious.com">http://www.delicious.com</a></p>
+    <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a><a class=
+    "link-inline force-break" href=
+    "https://grouplens.org/datasets/hetrec-2011/" target=
+    "_blank">https://grouplens.org/datasets/hetrec-2011/</a></p>
+    <p id="fn6"><a href="#foot-fn6"><sup>6</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.meetup.com/">https://www.meetup.com/</a></p>
+    <p id="fn7"><a href="#foot-fn7"><sup>7</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.tensorflow.org/">https://www.tensorflow.org/</a></p>
+    <p id="fn8"><a href="#foot-fn8"><sup>8</sup></a>It is good to
+    note that, at initialization, this attention vector looks at
+    all memory slices <em>almost</em> equally irregardless of
+    <em>v</em>.</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5639-8/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3178876.3186154">https://doi.org/10.1145/3178876.3186154</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

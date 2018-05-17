@@ -1,0 +1,2796 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Finding Needles in an Encyclopedic Haystack: Detecting
+  Classes Among Wikipedia Articles</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Finding Needles in an
+          Encyclopedic Haystack: Detecting Classes Among Wikipedia
+          Articles</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Marius</span> <span class=
+          "surName">Paşca</span>, Google, Mountain View,
+          California, <a href=
+          "mailto:mars@google.com">mars@google.com</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3178876.3186025"
+        target=
+        "_blank">https://doi.org/10.1145/3178876.3186025</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3178876" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>A lightweight method distinguishes articles
+        within Wikipedia that are classes (<em>“Novel”</em>,
+        <em>“Book”</em>) from other articles (<em>“Three Men in a
+        Boat”</em>, <em>“Diary of a Pilgrimage”</em>). It exploits
+        clues available within the article text and within
+        categories associated with articles in Wikipedia, while not
+        requiring any linguistic preprocessing tools such as part
+        of speech taggers, named entity recognizers or syntactic
+        parsers. Experimental results show that classes can be
+        identified among Wikipedia articles in multiple languages,
+        at aggregate precision and recall generally above 0.9 and
+        0.6 respectively.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span><br />
+        • <strong>Information systems</strong> → Content analysis
+        and feature selection;<br />
+        • <strong>Computing methodologies</strong> → Information
+        extraction; Lexical semantics;</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Knowledge
+          acquisition</small>,</span> <span class=
+          "keyword"><small>concepts</small>,</span> <span class=
+          "keyword"><small>classes</small>,</span> <span class=
+          "keyword"><small>unstructured text</small>,</span>
+          <span class="keyword"><small>topic
+          classification</small>,</span> <span class=
+          "keyword"><small>open-domain information
+          extraction</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Marius Paşca. 2018. Finding Needles in an Encyclopedic
+          Haystack: Detecting Classes Among Wikipedia Articles. In
+          <em>WWW 2018: The 2018 Web Conference,</em> <em>April
+          23–27, 2018,</em> <em>Lyon, France.</em> ACM, New York,
+          NY, USA 10 Pages. <a href=
+          "https://doi.org/10.1145/3178876.3186025" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3178876.3186025</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-2">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p><strong>Motivation</strong>: Concepts represent the
+      building blocks in virtually all resources of open-domain
+      human knowledge, from dictionaries (WordNet&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0010">10</a>]) through
+      semi-structured encyclopedia (Wikipedia&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0026">26</a>]) to structured knowledge
+      repositories (Freebase&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>]). Concepts can be either instances or
+      classes. The latter (<em>“International airport”</em>) are
+      effectively placeholders for sets of instances (<em>“Charles
+      de Gaulle Airport”</em>, <em>“Incheon International
+      Airport”</em>) that share common properties. Instances and
+      classes logically belong to conceptual hierarchies containing
+      IsA relations, which connect instances (<em>“Charles de
+      Gaulle Airport”</em>) upwards to classes (<em>“International
+      airport”</em>), which are in turn connected upwards to
+      iteratively more general classes (<em>“Airport”</em>). The
+      conceptual hierarchies may be available explicitly (e.g.,
+      hypernymy relations in WordNet) or not (e.g., Wikipedia).
+      WordNet distinguishes concepts that are instances, by linking
+      them up to their more general concepts through
+      <em>Instance</em> rather than hypernymy
+      relations&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0018">18</a>], with the accompanying implicit
+      assumptions that any concepts linked up through hypernymy
+      relations are classes, and that any concepts that are
+      hypernyms of some other concepts are also classes. Wikipedia
+      does not distinguish articles that are classes from other
+      articles. Research efforts aiming at organizing
+      categories&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0023">23</a>] and articles&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0011">11</a>] in Wikipedia into
+      conceptual hierarchies implicitly distinguish any articles
+      connected down to more specific concepts in the hierarchies
+      as being classes. But the assertions are implicit rather than
+      explicit. More importantly, their quality is limited by the
+      quality of the extracted IsA relations that together form the
+      extracted hierarchies. In practice, incorrectly extracted IsA
+      relations, such as IsA(<em>“Sur Kamod”</em>, <em>“Sur
+      (magazine)”</em>) and IsA(<em>“Jack Murnighan”</em>,
+      <em>“Nick Tuzzolino”</em>), lead to similarly incorrect
+      implicit assertions that the respective more general concepts
+      (<em>“Sur (magazine)”</em>, <em>“Nick Tuzzolino”</em>) are
+      classes.</p>
+      <p><strong>Contributions</strong>: This paper proposes a
+      method to automatically identify a subset of articles within
+      Wikipedia that are classes. The identification of classes is
+      beneficial to Wikipedia and transitively to other
+      repositories derived from it, including
+      DBpedia&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>], Yago&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0014">14</a>], Wikidata&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0032">32</a>],
+      Freebase&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>], Knowledge Graph&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0029">29</a>] or Concept
+      Graph&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0035">35</a>],
+      as well as information extraction techniques operating over
+      Wikipedia data. The method exploits clues available within
+      the article text, and within categories associated with
+      articles in Wikipedia. It requires no linguistic
+      preprocessing tools such as part of speech taggers, named
+      entity recognizers, syntactic or semantic parsers or any
+      other, making it robust, inexpensive and simple to port to
+      other languages. Experimental results demonstrate that
+      classes can be identified among Wikipedia articles in
+      multiple languages at aggregate precision and recall
+      generally above 0.9 and 0.6 respectively.</p>
+    </section>
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p><strong>Availability of Classes vs. Instances</strong>:
+      Developed by a few experts, WordNet addresses the need to
+      distinguish classes from other concepts, by manually
+      connecting instance concepts (synsets) up to their more
+      general concepts through an (<em>Instance</em>) relation
+      rather than a general-purpose hypernymy relation. Implicitly,
+      WordNet concepts linked up through hypernymy rather than
+      <em>Instance</em> relations are classes, just as concepts
+      that are hypernyms of some other concepts are also
+      classes.</p>
+      <p>Also created by experts, in this case through many
+      person-years of manual efforts&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0016">16</a>], Cyc distinguishes
+      between <em>Individual</em>s, or instances; and
+      <em>SetOrCollection</em>s, or classes. Likely due to
+      difficulties and costs in maintaining and adding concepts,
+      the enormous human commitment still does not translate into
+      adequate conceptual coverage: even considering both instances
+      and classes, only thousands of Cyc concepts are equivalent to
+      any Wikipedia articles&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0037">37</a>]. In contrast, collaborative
+      contributions by non-expert human editors have allowed
+      Wikipedia to scale more easily.</p>
+      <p>Wikipedia does not distinguish articles that are classes.
+      It does organize articles into fine-grained categories, which
+      in turn are organized into iteratively coarser-grained
+      categories. But simply collecting Wikipedia categories as
+      classes is far from being an adequate solution to the problem
+      of identifying classes in Wikipedia, for several reasons.
+      First, Wikipedia categories often do not correspond to
+      classes (<em>“Category: U2”</em>, <em>“Category: Dublin
+      (city)”</em>). Second, many categories that do appear to
+      correspond to useful classes (<em>“Category: Irish
+      alternative rock groups”</em>) do not have corresponding,
+      similarly titled articles. Third, without a corresponding
+      article, a Wikipedia category has little utility. Indeed,
+      resources derived from Wikipedia&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0004">4</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0029">29</a>] try to include concepts
+      equivalent to most Wikipedia articles, but not to categories;
+      and when Wikipedia serves as the reference resource, for
+      example in concept disambiguation and linking&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0002">2</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0006">6</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0012">12</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0021">21</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0025">25</a>], mentions
+      of concepts occurring in text are disambiguated to their
+      corresponding Wikipedia articles, and not to any categories.
+      Other larger knowledge repositories, including Wikipedia
+      derivatives, do not distinguish classes.</p>
+      <p><strong>Extraction of Classes vs. Instances</strong>: Few
+      previous methods, specifically&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0037">37</a>] and&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0020">20</a>], address the problem of
+      distinguishing classes in Wikipedia. They require access to a
+      part of speech tagger and syntactic parser, also to a named
+      entity recognizer, rely heavily on word capitalization, and
+      apply to English data only. In contrast, our method refrains
+      from using capitalization, and does not need access to any
+      linguistic processing tools. It is more robust, less
+      expensive, and produces classes in multiple languages. The
+      method from&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0037">37</a>] operates over Wikipedia categories,
+      and requires them to have been organized into a conceptual
+      hierarchy of IsA relations. While approaches to extracting
+      hierarchies over Wikipedia categories do
+      exist&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0011">11</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0022">22</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0023">23</a>], the
+      requirement is not only a non-trivial pre-requisite, but also
+      subjects the resulting extractions of classes to additional
+      noise already affecting the input hierarchy of categories.
+      Because most Wikipedia categories either do not correspond to
+      classes or, when they do, have no corresponding Wikipedia
+      articles, the resulting annotations have relatively little
+      utility. In comparison, Wikipedia articles taken as input by
+      our method need no pre-filtering nor pre-organization into
+      intermediate structures.</p>
+      <p><strong>Open-Domain Information Extraction</strong>: By
+      making assertions regarding open-domain concepts (articles in
+      Wikipedia), the proposed method falls under the larger area
+      of open-domain information extraction&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0008">8</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0009">9</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0014">14</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0017">17</a>]. Within that area,
+      previous work proposes extraction methods operating over
+      Wikipedia data&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0008">8</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0031">31</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0033">33</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0034">34</a>]; or illustrate Wikipedia's role in
+      knowledge acquisition&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0019">19</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0034">34</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0036">36</a>], information
+      retrieval&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0027">27</a>], and construction of structured
+      knowledge repositories&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0032">32</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0035">35</a>].</p>
+    </section>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Finding Topics
+          That are Classes</h2>
+        </div>
+      </header>
+      <p><strong>Problem Definition</strong>: The task being
+      addressed is the acquisition (i.e., selection) of a subset of
+      Wikipedia articles that are classes. The acquisition is
+      equivalent to attaching annotations to Wikipedia articles,
+      whenever they are classes.</p>
+      <p><strong>Intuitions</strong>: A class is a placeholder for
+      a set of instances that share common properties. Since
+      Wikipedia is an encyclopedia, its articles are assumed to
+      satisfy the following hypotheses.</p>
+      <p><span style="text-decoration: underline;">Hypothesis
+      1a</span>: An article about a class is likely to explicitly
+      mention the class, as it introduces at least some, if not
+      all, of its defining properties.</p>
+      <p><span style="text-decoration: underline;">Hypothesis
+      2a</span>: Properties relevant to the definition of a class
+      are likely to be introduced in the article along with
+      mentions of the class that are either references to the set
+      of its instances; or references to generic instances of the
+      set of instances.</p>
+      <p>The hypotheses can be further specified into:</p>
+      <p><span style="text-decoration: underline;">Hypothesis
+      1b</span>: As it introduces properties of the class, an
+      article about a class is likely to mention the class in a
+      form where the class appears in singular form and is preceded
+      by an indefinite article.</p>
+      <p><span style="text-decoration: underline;">Hypothesis
+      2b</span>: An article about (or some other reference to) a
+      class is likely to mention the class in both singular and
+      plural form.</p>
+      <p>The two specific hypotheses are applicable to languages in
+      which nouns take different singular vs. plural forms, and
+      accept indefinite or definite articles. This is the case for
+      more than 200 of the around 6000 known
+      languages&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>], including Romance and Germanic
+      languages, among them English. These languages are well
+      represented - along with others like Cebuano, Russian or
+      Japanese - among the larger of the 288 language editions
+      currently in Wikipedia. According to the first hypothesis,
+      the occurrence of <em>“an inn”</em> or <em>“a steel
+      building”</em>, in the text of the articles <em>“Inn”</em>
+      and <em>“Steel building”</em>, suggests that the articles are
+      classes. In the second hypothesis, the presence of
+      <em>“inn”</em> vs. <em>“inns”</em>, and <em>“steel
+      building”</em> vs. <em>“steel buildings”</em> is also
+      indicative of classes. In both hypotheses, the titles of the
+      articles are likely countable nouns.</p>
+      <p><strong>Targeted Types of Evidence</strong>: Following the
+      two hypotheses from above, the decision whether a Wikipedia
+      article is a class relies on three <strong>types of
+      evidence</strong> available in, or associated with, the
+      article:</p>
+      <p><span style="text-decoration: underline;">Lexical patterns
+      (Lex)</span>: If any fragment of a sentence from the article
+      matches (case insensitively) one of the following patterns,
+      each targeting articles in a specific language, then the
+      article is a class:</p>
+      <div class="table-responsive" id="inltbl1">
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:left;">( <span style=
+              "text-decoration: underline;"><em>En</em></span>
+              ):</td>
+              <td style="text-align:left;">[a|an] <em>T</em>
+              [was|is]</td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;">( <span style=
+              "text-decoration: underline;"><em>Pt</em></span>
+              ):</td>
+              <td style="text-align:left;">[um|uma] <em>T</em>
+              [foi|é]</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">( <span style=
+              "text-decoration: underline;"><em>Fr</em></span>
+              ):</td>
+              <td style="text-align:left;">[un|une] <em>T</em>
+              [était|est]</td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;">( <span style=
+              "text-decoration: underline;"><em>De</em></span>
+              ):</td>
+              <td style="text-align:left;">[ein|eine] <em>T</em>
+              [war|ist]</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">( <span style=
+              "text-decoration: underline;"><em>Es</em></span>
+              ):</td>
+              <td style="text-align:left;">[un|una] <em>T</em>
+              [fue|es]</td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;">( <span style=
+              "text-decoration: underline;"><em>Sv</em></span>
+              ):</td>
+              <td style="text-align:left;">[en|ett] <em>T</em>
+              [war|är]</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">( <span style=
+              "text-decoration: underline;"><em>It</em></span>
+              ):</td>
+              <td style="text-align:left;">[uno|una|un’] <em>T</em>
+              [fu|è stato|è]</td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;">( <span style=
+              "text-decoration: underline;"><em>Nl</em></span>
+              ):</td>
+              <td style="text-align:left;">[een] <em>T</em>
+              [was|is]</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>where <em>T</em> is identical to the article title, after
+      normalization to: a) remove fragments within pairs of
+      parentheses (<em>“Teddy (garment)”</em> → <em>“Teddy”</em>);
+      b) remove all but the first element of what might be a
+      disjunction immediately after the mention of the article
+      title (<em>“[..] canonical visitation or apostolic visitation
+      [..]”</em> → <em>“canonical visitation”</em>), as detected
+      with keywords indicative of disjunctions (<em>“or”</em> in
+      <span style="text-decoration: underline;"><em>En</em></span>
+      glish); and c) convert to lowercase.</p>
+      <p>The lexical patterns are a simple, precision-oriented
+      embodiment of the first hypothesis. Due to the requirement
+      that the <em>be</em> verb immediately follow the mention of
+      the title, sentence fragments matching the patterns (<em>“a
+      <span style="text-decoration: underline;">city</span>
+      is”</em>) are more likely, although not necessary, to be part
+      of longer definitions (<em>“A <span style=
+      "text-decoration: underline;">city</span> is a large and
+      permanent human settlement”</em>) of the concept being
+      described in the article (<em>“City”</em>). Similarly to the
+      popular lexical patterns introduced in&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0013">13</a>] and still in widespread
+      use in extracting IsA relations from text&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0011">11</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0028">28</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0030">30</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0035">35</a>], the set
+      of patterns proposed here is meant to be indicative in
+      extracting classes, although not exhaustive.</p>
+      <p><span style="text-decoration: underline;">Morphology
+      (Mph)</span>: If the article title, after normalization as
+      described earlier, appears in the article text in both
+      singular and plural form, then the article is a class.</p>
+      <p>Morphological variation, as in <em>“inn”</em> vs.
+      <em>“inns”</em> and <em>“steel building”</em> vs. <em>“steel
+      buildings”</em>, extracts articles like <em>“Inn”</em> and
+      <em>“Steel building”</em> as classes. Practical
+      approximations of detecting morphological variation may
+      consist in verifying that the article title and ngrams from
+      the article text are different but become identical after a)
+      fully-fledged lemmatization; b) simpler, addition or removal
+      of common plural suffixes; or c) stemming.</p>
+      <p><span style="text-decoration: underline;">Categories
+      (Ctg)</span>: If the article title is in singular form, one
+      of the Wikipedia categories associated with the article is in
+      plural form, and the article title and the category are
+      identical after normalization as described earlier, then the
+      article is a class.</p>
+      <p>As with morphology, using categories as evidence embodies
+      the second hypothesis, but based on data (i.e., categories)
+      associated with the article instead of available within the
+      article text. The articles <em>“Bishop of Newcastle
+      (Australia)”</em> and <em>“Double acting ship”</em> are
+      extracted as classes, thanks to their categories
+      <em>“Category: Bishops of Newcastle (Australia)”</em> and
+      <em>“Category: Double acting ships”</em>.</p>
+      <p><strong>Acquisition from Wikipedia</strong>: The targeted
+      types of evidence are required to be satisfied disjunctively
+      rather than conjunctively, before extracting the article as a
+      class. To put it differently, combining multiple types of
+      evidence means extracting the union of the sets of classes
+      extracted by the individual types of evidence.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Experimental
+          Setting</h2>
+        </div>
+      </header>
+      <p><strong>Data Source</strong>: The experiments rely on a
+      snapshot of multiple language editions of Wikipedia, as
+      available in February 2017. After discarding entries such as
+      disambiguation or redirect pages, the snapshot contains 5.1
+      (<em>En</em>), 1.7 (<em>Fr</em>), 1.2 (<em>Es</em>), 1.3
+      (<em>It</em>), 0.9 (<em>Pt</em>), 1.8 (<em>De</em>), 3.5
+      (<em>Sv</em>) and 1.8 (<em>Nl</em>) million articles
+      respectively.</p>
+      <p><strong>Extraction Parameters</strong>: When it is
+      morphological variation (<em>Mph</em>) that serves as
+      evidence, the approximation of plural forms consists in
+      simply adding or removing a small, incomplete set of popular
+      plural suffixes in that language (<em>“-s”</em>,
+      <em>“-es”</em> for English) from either side. The title must
+      appear within the article text at least three times in each
+      of its singular vs. plural forms, when extracting via
+      morphology (<em>Mph</em>); and with any frequency, via
+      patterns (<em>Lex</em>).</p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">Counts and examples of gold class (C) and
+          non-class (NC) Wikipedia articles in the evaluation
+          sets.</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;">Class or
+              Non-Class</span> (Count): Examples of Articles</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Evaluation set: S
+              <sub><em>W</em></sub> (total count: 5,735):</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;">C</span> (count: 547):
+              Admiral, Biochemist, Coach (baseball), Computer
+              scientist, Dependent territory, Federal district,
+              Goldsmith, Illustrator, Monk, Prince, Scribe, Web
+              browser</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;">NC</span> (count:
+              5,188): André Maurois, Dustin Hoffman, Jan Smuts,
+              John Glenn, Netscape (web browser), Orly, Potomac
+              River, Richard J. Roberts, Saint Timothy, Sunda
+              Islands</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Evaluation set: S
+              <sub><em>D</em></sub> (total count: 2,000):</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;">C</span> (count: 73):
+              Buyer (fashion), Cave salamander, Gnatcatcher, Master
+              aircrew, Metropolitan municipality, Open-circuit
+              voltage, Overhead crane, Patristica Sorbonensia,
+              Prelate of the Order of St Michael and St George,
+              Referral chain, Road food, Works of authority on the
+              United Kingdom constitution</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;">NC</span> (count:
+              1,927): Alpine Valley Music Theatre, BlackTV247, Dora
+              Carr, Fulton Walker, Grimm (musical), North Korea
+              men's national junior ice hockey team, Nouzonville,
+              Robert J. Bulkley, Robin Bain, Stara Zagora Zoo</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Evaluation set: S
+              <sub><em>Q</em></sub> (total count: 1,000):</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;">C</span> (count: 362):
+              Brittle star, Node (physics), Pickup truck, Real
+              estate transaction, Stemware, Verse (poetry), Video
+              game publisher, Viscometer, Webisode, Yacht</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;">NC</span> (count: 638):
+              Airport (EP), Best (Chicosci album), Capital (novel),
+              Closer (Travis song), Justice (2006 TV series),
+              Supernova (Today Is the Day album), Teaching
+              Philosophy</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Evaluation Sets</strong>: Three evaluation sets
+      (Table&nbsp;<a class="tbl" href="#tab1">1</a>) allow for the
+      assessment of articles identified as classes by a particular
+      run.</p>
+      <p><span style="text-decoration: underline;">Eval Set
+      <strong>S <sub><em>W</em></sub></strong></span> : The bulk of
+      IsA relations connecting synonym sets (“synsets”) in
+      WordNet&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0010">10</a>] are general-purpose IsA relations
+      (or “hypernymy” relations). A smaller number of relations are
+      marked in WordNet as InstanceOf relations (or
+      <em>Instance</em> relations or, in the opposite direction,
+      <em>HasInstance</em> relations)&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0018">18</a>]. To illustrate, the more
+      specific synset {<em>“Netscape”</em>}, corresponding to the
+      first sense of the phrase <em>“Netscape”</em>, is connected
+      in WordNet through an <em>Instance</em> relation to a more
+      general synset corresponding to the second sense of the
+      phrase <em>“browser”</em>, that is, {“browser”, “web
+      browser”}. The construction of the first evaluation set,
+      <strong>S <sub><em>W</em></sub></strong> , relies precisely
+      on <em>Instance</em> relations available within WordNet. For
+      each of the thousands of <em>Instance</em> relations in
+      WordNet version 3.0, the first argument (i.e., more specific
+      synset) of the relation is collected as a gold non-class (an
+      instance); whereas the second argument (i.e., more general
+      synset) is collected as a gold class. The collected gold
+      class synsets ({“browser”, “web browser”}) and gold non-class
+      synsets ({<em>“Netscape”</em>}) are automatically converted
+      into their equivalent gold class (<em>“Web browser”</em>) and
+      gold non-class (<em>“Netscape (web browser)”</em>) Wikipedia
+      articles. The conversion relies on a separate, pre-existing
+      set of about 50,000 manually-created mappings from a WordNet
+      synset to its equivalent Wikipedia article in English, if
+      any. Thus, the S <sub><em>W</em></sub> evaluation set is
+      populated automatically with gold class vs. gold non-class
+      Wikipedia articles, which are equivalent to WordNet synsets
+      that are first vs. second arguments of some <em>Instance</em>
+      relations within WordNet. Evaluation sets
+      elsewhere&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>] also rely on WordNet
+      <em>Instance</em> relations.</p>
+      <p>Because the S <sub><em>W</em></sub> evaluation set is
+      populated automatically from WordNet, it has occasional
+      errors. Examples are <em>“Jupiter (mythology)”</em> and
+      <em>“Apollo”</em>, corresponding to the second and first
+      sense of the respective phrases in WordNet, being incorrectly
+      collected as gold classes. The manual inspection of the gold
+      classes in S <sub><em>W</em></sub> identifies 16 such
+      erroneous gold classes that should have been gold
+      non-classes. Given that the number of errors is small and to
+      minimize human intervention, the automatically collected gold
+      classes vs. gold non-classes in S <sub><em>W</em></sub> are
+      retained without changes.</p>
+      <p><span style="text-decoration: underline;">Eval Set
+      <strong>S <sub><em>D</em></sub></strong></span> : The second
+      evaluation set, <strong>S <sub><em>D</em></sub></strong> , is
+      constructed by manually annotating a random sample of English
+      articles from Wikipedia. Since Wikipedia is first and
+      foremost an encyclopedia, non-class articles are expected to
+      be more frequent than class articles. Indeed, only 73 of the
+      2,000 articles in the S <sub><em>D</em></sub> evaluation set
+      are manually annotated as classes (as opposed to
+      non-classes).</p>
+      <p><span style="text-decoration: underline;">Eval Set
+      <strong>S <sub><em>Q</em></sub></strong></span> : To increase
+      the expected number of classes being annotated in a sample
+      still selected from Wikipedia, the set of all Wikipedia
+      articles in English is automatically filtered to retain only
+      articles whose titles, after normalization, are identical to
+      some fragment <em>“X”</em> from a sample of around 400,000
+      Web search queries in the form <em>“list of X”</em>.
+      Normalization consists in stemming&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0024">24</a>], lowercasing and removal
+      of fragments within pairs of parentheses. For example, the
+      presence of the queries <em>“list of pickup trucks”</em> and
+      <em>“list of airports”</em> would cause Wikipedia articles
+      such as <em>“Pickup truck”</em> or <em>“Airport (EP)”</em>,
+      <em>“Airport (OC Transpo)”</em>, <em>“Airport”</em>,
+      <em>“Airport (MBTA station)”</em> to satisfy the filter. Of
+      these articles, only <em>“Pickup truck”</em> and
+      <em>“Airport”</em> would be manually annotated as gold
+      classes, whereas the other articles would be manually
+      annotated as gold non-classes. The manual annotation of a
+      random sample of Wikipedia articles that satisfy the filter
+      gives the third evaluation set <strong>S
+      <sub><em>Q</em></sub></strong> of 362 gold classes and 638
+      gold non-classes.</p>
+      <p>The three evaluation sets uniformly contain Wikipedia
+      articles in English. The sets follow different intuitions,
+      data sources (created by experts vs. collaboratively) and
+      criteria (exhaustive vs. random selection) for populating the
+      sets and different requirements for whether gold items do or
+      do not require manual annotation before they populate the
+      sets. As such, they serve as complementary tools providing a
+      more thorough evaluation. Table&nbsp;<a class="tbl" href=
+      "#tab1">1</a> gives the counts and examples of articles
+      listed in the evaluation sets as either gold classes, which
+      should ideally be extracted as classes by any well-performing
+      experimental run; or gold non-classes, which should ideally
+      not be extracted as classes. Although in the thousands, the
+      cardinality of the evaluation sets is a fraction of not more
+      than about 0.1% of the total count of Wikipedia articles in
+      English.</p>
+      <p><strong>Baseline Runs</strong>: The same, separate set of
+      manually-created mappings from a WordNet synset to its
+      equivalent Wikipedia article, if any, already used in the
+      construction of one of the evaluation sets, also enables the
+      extraction of a set of Wikipedia articles as classes in the
+      first baseline run, denoted <strong>B
+      <sub><em>Ewn</em></sub></strong> . Concretely, run B
+      <sub><em>Ewn</em></sub> extracts a set of classes that is the
+      set of Wikipedia articles known to be equivalent to WordNet
+      synsets that are not first arguments of any <em>Instance</em>
+      relations within WordNet. For example, the article
+      <em>“Netscape (web browser)”</em> is not extracted by run B
+      <sub><em>Ewn</em></sub> , because its equivalent WordNet
+      synset is the first argument of an <em>Instance</em> relation
+      in WordNet with the synset equivalent to <em>“Web
+      browser”</em>. Comparatively, since the WordNet equivalent
+      synset of the Wikipedia article <em>“Web browser”</em> is not
+      the first argument of any <em>Instance</em> relation in
+      WordNet, <em>“Web browser”</em> is one of the articles
+      extracted by run B <sub><em>Ewn</em></sub> .</p>
+      <p>The method introduced in&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0011">11</a>] extracts pairs of
+      Wikipedia articles that are IsA relations. The second
+      arguments (i.e., the more general concepts), from the IsA
+      relations among Wikipedia articles in English extracted
+      in&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0011">11</a>],
+      constitutes the set of classes in the second baseline,
+      denoted <strong>B <sub><em>Wibi</em></sub></strong> . For
+      example, from the IsA relations IsA(<em>“39 Andromedae”</em>,
+      <em>“Double star”</em>) and IsA(<em>“Doctor Spektor”</em>,
+      <em>“Occult detective fiction”</em>) produced
+      by&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0011">11</a>],
+      the Wikipedia articles <em>“Double star”</em> and <em>“Occult
+      detective fiction”</em> are extracted as output classes by
+      run B <sub><em>Wibi</em></sub> .</p>
+      <p>The method from&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0037">37</a>] identifies a subset of Wikipedia
+      categories that are classes, based on a variety of heuristics
+      (Capitalization, Named Entity, Page, Plural, Structure)
+      computed over Wikipedia data and combined through a voting
+      scheme (for details on heuristics and their combination,
+      see&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href=
+      "#BibPLXBIB0037">37</a>]). The application of the method to
+      the Wikipedia category network&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0023">23</a>], followed by the
+      automatic mapping of the selected Wikipedia categories to
+      their equivalent Wikipedia articles, if any, corresponds to
+      the third baseline method, denoted <strong>B
+      <sub><em>Zctg</em></sub></strong> . Adjustments to the method
+      from&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0037">37</a>],
+      to make it applicable to Wikipedia articles rather than just
+      categories, give the fourth baseline, denoted <strong>B
+      <sub><em>Zart</em></sub></strong> . The adjustments consist
+      in no longer applying the Structure and Page heuristics,
+      since necessary data (i.e., hyponyms) is available for
+      Wikipedia categories but not for Wikipedia articles; and no
+      longer deeming a Wikipedia item (an article, in this case) to
+      be a class, as the default, catch-all decision, when all
+      other heuristics have failed to make a decision between class
+      vs. instance (cf.&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0037">37</a>]). The fifth baseline, <strong>B
+      <sub><em>Wknt</em></sub></strong> , identifies a subset of
+      Wikipedia articles that are classes based on a combination of
+      two heuristics (Capitalization, Named Entity), as introduced
+      in&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0020">20</a>]
+      as part of the larger WikiNet project.</p>
+      <div class="table-responsive" id="tab2">
+        <div class="table-caption">
+          <span class="table-number">Table 2:</span> <span class=
+          "table-title">Notation and condensed description of
+          baseline runs.</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;">Run</span>: Description
+              (Source of Extracted Classes)</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">
+                <span style="text-decoration: underline;">B
+                <sub><em>Ewn</em></sub></span> : Wikipedia articles
+                equivalent to WordNet synsets that are not listed
+                in WordNet as hyponyms within <em>Instance</em>
+                relations&nbsp;[<a class="bib" data-trigger="hover"
+                data-toggle="popover" data-placement="top" href=
+                "#BibPLXBIB0010">10</a>]
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">
+                <span style="text-decoration: underline;">B
+                <sub><em>Wibi</em></sub></span> : Wikipedia
+                articles that are hypernyms within IsA relations
+                extracted in&nbsp;[<a class="bib" data-trigger=
+                "hover" data-toggle="popover" data-placement="top"
+                href="#BibPLXBIB0011">11</a>]
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">
+                <span style="text-decoration: underline;">B
+                <sub><em>Zctg</em></sub></span> : Wikipedia
+                articles equivalent to Wikipedia categories
+                identified as classes in&nbsp;[<a class="bib"
+                data-trigger="hover" data-toggle="popover"
+                data-placement="top" href="#BibPLXBIB0037">37</a>]
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">
+                <span style="text-decoration: underline;">B
+                <sub><em>Zart</em></sub></span> : Wikipedia
+                articles identified as classes by a variant
+                of&nbsp;[<a class="bib" data-trigger="hover"
+                data-toggle="popover" data-placement="top" href=
+                "#BibPLXBIB0037">37</a>]
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">
+                <span style="text-decoration: underline;">B
+                <sub><em>Wknt</em></sub></span> : Wikipedia
+                articles identified as classes in WikiNet via
+                capitalization and named entity
+                recognition&nbsp;[<a class="bib" data-trigger=
+                "hover" data-toggle="popover" data-placement="top"
+                href="#BibPLXBIB0020">20</a>]
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Table&nbsp;<a class="tbl" href="#tab2">2</a> summarizes
+      the baseline runs used in the experiments. Note that, for the
+      second and subsequent baseline runs, their underlying methods
+      from&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>],&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0037">37</a>] and&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0020">20</a>] rely on part of speech
+      tagging and syntactic parsing of Wikipedia articles.
+      Table&nbsp;<a class="tbl" href="#tab3">3</a> illustrates
+      Wikipedia articles extracted as classes by the baselines.
+      (Articles with a <sup>(*)</sup> immediately to their right
+      are manually found to be incorrect; more on that later.)</p>
+      <div class="table-responsive" id="tab3">
+        <div class="table-caption">
+          <span class="table-number">Table 3:</span> <span class=
+          "table-title">Examples of Wikipedia articles extracted as
+          classes by baseline runs.</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;">Run</span>: Examples of
+              Extracted Classes</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;">B
+              <sub><em>Ewn</em></sub></span> : Aboriginal
+              Australians, Bight (geography), Canker, Chordate,
+              Galvanism<sup>(*)</sup>, Nemean lion<sup>(*)</sup>,
+              Orbital node, Orthopedic cast</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;">B
+              <sub><em>Wibi</em></sub></span> : County
+              Cork<sup>(*)</sup>, Filmography, Metro
+              Naga<sup>(*)</sup>, Occult detective fiction, Omnibus
+              bill, Oscar Cove<sup>(*)</sup>, Pseudofossil, Sur
+              (magazine)<sup>(*)</sup></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;">B
+              <sub><em>Zctg</em></sub></span> : Bicycle wheel,
+              Industrial railway, Military Merit Order (Bavaria),
+              New Jersey elections, Palace of
+              Capodimonte<sup>(*)</sup></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;">B
+              <sub><em>Zart</em></sub></span> : Genes to Cognition
+              Project<sup>(*)</sup>, Healthcare Professionals for
+              Healthcare Reform<sup>(*)</sup>, Slaves in
+              Bondage<sup>(*)</sup>, Supramolecular polymers</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;">B
+              <sub><em>Wknt</em></sub></span> : Betel nut beauty,
+              Bethesda station<sup>(*)</sup>, MV Regent
+              Sky<sup>(*)</sup></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Experimental Runs</strong>: The method proposed
+      here is evaluated via a variety of experimental runs, denoted
+      as variants of the more general notation
+      <strong>E<sub>[<em>Language</em>,
+      <em>Evidence</em>]</sub></strong> . The runs vary from one
+      another with respect to which language editions of Wikipedia
+      they extract classes from; and what type of evidence they use
+      towards extracting classes. The first argument in the
+      subscript of the notation of a run, <em>Language</em>, is a
+      combination of one or more of {<em>En</em>, <em>Fr</em>,
+      <em>Es</em>, <em>It</em>, <em>Pt</em>, <em>De</em>,
+      <em>Sv</em>, <em>Nl</em>}, for extraction from English vs.
+      French vs. Spanish vs. Italian vs. Portuguese vs. German vs.
+      Swedish vs. Dutch articles respectively. The second argument,
+      <em>Evidence</em>, is a combination of one or more of
+      {<em>Lex</em>, <em>Mph</em>, <em>Ctg</em>}, for extraction
+      based on patterns vs. morphological variation vs. categories.
+      For example, whereas run E<sub>[<em>En</em> + <em>Fr</em>,
+      <em>Lex</em>]</sub> extracts classes from English and French
+      articles based on patterns, E<sub>[<em>En</em>, <em>Lex</em>
+      + <em>Mph</em>]</sub> extracts from English articles based on
+      patterns and morphology. When enabling multiple languages or
+      multiple types of evidence, they are required to be satisfied
+      disjunctively (any) rather than conjunctively (all), before
+      extracting an article as a class. In other words, runs using
+      a combination of types of evidence (E<sub>[<em>En</em>,
+      <em>Lex</em> + <em>Mph</em>]</sub>) extract the union of the
+      sets of classes extracted when enabling the respective types
+      of evidence individually (E<sub>[<em>En</em>,
+      <em>Lex</em>]</sub>, E<sub>[<em>En</em>,
+      <em>Mph</em>]</sub>). For brevity, the combination of all
+      languages may also be denoted as the more compact
+      <em>AllLang</em>, as in E<sub>[<em>AllLang</em>,
+      <em>Lex</em>]</sub> being equivalent to E<sub>[<em>En</em> +
+      <em>Fr</em> + <em>Es</em> + <em>It</em> + <em>Pt</em> +
+      <em>De</em> + <em>Sv</em> + <em>Nl</em>, <em>Lex</em>]</sub>.
+      Similarly, the combination of all types of evidence
+      <em>Lex+Mph+Ctg</em> may also be denoted as the more compact
+      <em>AllEvid</em>, with E<sub>[<em>En</em>,
+      <em>AllEvid</em>]</sub> being equivalent to
+      E<sub>[<em>En</em>, <em>Lex</em> + <em>Mph</em> +
+      <em>Ctg</em>]</sub>. Only for the purpose of evaluation,
+      unless stated differently, when an article, in a language
+      edition other than English (e.g., <em>“Glande endocrine”</em>
+      in French), is extracted as a class by any experimental run,
+      it is automatically either mapped to its equivalent English
+      article in Wikipedia, if any (e.g., <em>“Endocrine
+      gland”</em>); or discarded.</p>
+      <p>Baseline and experimental runs uniformly extract sets of
+      Wikipedia articles in English, where the articles are
+      supposed to be classes whose quality and coverage are to be
+      evaluated.</p>
+      <div class="table-responsive" id="tab4">
+        <div class="table-caption">
+          <span class="table-number">Table 4:</span> <span class=
+          "table-title">Precision and recall of the experimental
+          run E<sub>[<em>X</em>?, <em>Lex</em>]</sub> over the
+          evaluation sets, when enabling (√) or disabling (-)
+          extraction from a particular language (X?) such as
+          English (<em>En</em>); and using only patterns
+          (<em>Lex</em>) as evidence (Lang=language; P=precision;
+          R=recall; F=balanced F-score).</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:center;">Lang</th>
+              <th colspan="3" style="text-align:center;">
+                Scores over
+                <hr />
+              </th>
+              <th colspan="3" style="text-align:center;">
+                Scores over
+                <hr />
+              </th>
+              <th colspan="3" style="text-align:center;">
+                Scores over
+                <hr />
+              </th>
+            </tr>
+            <tr>
+              <th style="text-align:center;">(X?)</th>
+              <th colspan="3" style="text-align:center;">
+                Eval Set S <sub><em>W</em></sub>
+                <hr />
+              </th>
+              <th colspan="3" style="text-align:center;">
+                Eval Set S <sub><em>D</em></sub>
+                <hr />
+              </th>
+              <th colspan="3" style="text-align:center;">
+                Eval Set S <sub><em>Q</em></sub>
+                <hr />
+              </th>
+            </tr>
+            <tr>
+              <th style="text-align:center;"></th>
+              <th style="text-align:center;">P</th>
+              <th style="text-align:center;">R</th>
+              <th style="text-align:center;">F</th>
+              <th style="text-align:center;">P</th>
+              <th style="text-align:center;">R</th>
+              <th style="text-align:center;">F</th>
+              <th style="text-align:center;">P</th>
+              <th style="text-align:center;">R</th>
+              <th style="text-align:center;">F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:center;"><em>En</em></td>
+              <td style="text-align:right;">0.966</td>
+              <td style="text-align:right;">0.638</td>
+              <td style="text-align:right;">0.768</td>
+              <td style="text-align:right;">0.933</td>
+              <td style="text-align:right;">0.384</td>
+              <td style="text-align:right;">0.544</td>
+              <td style="text-align:right;">0.989</td>
+              <td style="text-align:right;">0.517</td>
+              <td style="text-align:right;">0.679</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>Fr</em></td>
+              <td style="text-align:right;">0.981</td>
+              <td style="text-align:right;">0.396</td>
+              <td style="text-align:right;">0.564</td>
+              <td style="text-align:right;">0.800</td>
+              <td style="text-align:right;">0.055</td>
+              <td style="text-align:right;">0.103</td>
+              <td style="text-align:right;">0.985</td>
+              <td style="text-align:right;">0.182</td>
+              <td style="text-align:right;">0.307</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>Es</em></td>
+              <td style="text-align:right;">0.981</td>
+              <td style="text-align:right;">0.300</td>
+              <td style="text-align:right;">0.459</td>
+              <td style="text-align:right;">0.667</td>
+              <td style="text-align:right;">0.027</td>
+              <td style="text-align:right;">0.053</td>
+              <td style="text-align:right;">1.000</td>
+              <td style="text-align:right;">0.141</td>
+              <td style="text-align:right;">0.247</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>It</em></td>
+              <td style="text-align:right;">0.974</td>
+              <td style="text-align:right;">0.215</td>
+              <td style="text-align:right;">0.352</td>
+              <td style="text-align:right;">1.000</td>
+              <td style="text-align:right;">0.027</td>
+              <td style="text-align:right;">0.053</td>
+              <td style="text-align:right;">1.000</td>
+              <td style="text-align:right;">0.099</td>
+              <td style="text-align:right;">0.180</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>Pt</em></td>
+              <td style="text-align:right;">0.990</td>
+              <td style="text-align:right;">0.192</td>
+              <td style="text-align:right;">0.322</td>
+              <td style="text-align:right;">1.000</td>
+              <td style="text-align:right;">0.014</td>
+              <td style="text-align:right;">0.027</td>
+              <td style="text-align:right;">1.000</td>
+              <td style="text-align:right;">0.091</td>
+              <td style="text-align:right;">0.167</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>De</em></td>
+              <td style="text-align:right;">1.000</td>
+              <td style="text-align:right;">0.208</td>
+              <td style="text-align:right;">0.344</td>
+              <td style="text-align:right;">1.000</td>
+              <td style="text-align:right;">0.027</td>
+              <td style="text-align:right;">0.053</td>
+              <td style="text-align:right;">0.974</td>
+              <td style="text-align:right;">0.105</td>
+              <td style="text-align:right;">0.190</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>Sv</em></td>
+              <td style="text-align:right;">0.976</td>
+              <td style="text-align:right;">0.249</td>
+              <td style="text-align:right;">0.397</td>
+              <td style="text-align:right;">1.000</td>
+              <td style="text-align:right;">0.041</td>
+              <td style="text-align:right;">0.079</td>
+              <td style="text-align:right;">1.000</td>
+              <td style="text-align:right;">0.099</td>
+              <td style="text-align:right;">0.180</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>Nl</em></td>
+              <td style="text-align:right;">0.976</td>
+              <td style="text-align:right;">0.391</td>
+              <td style="text-align:right;">0.558</td>
+              <td style="text-align:right;">0.750</td>
+              <td style="text-align:right;">0.041</td>
+              <td style="text-align:right;">0.078</td>
+              <td style="text-align:right;">0.986</td>
+              <td style="text-align:right;">0.196</td>
+              <td style="text-align:right;">0.327</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>En+Fr</em></td>
+              <td style="text-align:right;">0.967</td>
+              <td style="text-align:right;">0.723</td>
+              <td style="text-align:right;">0.827</td>
+              <td style="text-align:right;">0.909</td>
+              <td style="text-align:right;">0.411</td>
+              <td style="text-align:right;">0.566</td>
+              <td style="text-align:right;">0.986</td>
+              <td style="text-align:right;">0.580</td>
+              <td style="text-align:right;">0.730</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>En+Es</em></td>
+              <td style="text-align:right;">0.965</td>
+              <td style="text-align:right;">0.681</td>
+              <td style="text-align:right;">0.798</td>
+              <td style="text-align:right;">0.935</td>
+              <td style="text-align:right;">0.397</td>
+              <td style="text-align:right;">0.558</td>
+              <td style="text-align:right;">0.990</td>
+              <td style="text-align:right;">0.555</td>
+              <td style="text-align:right;">0.711</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>En+It</em></td>
+              <td style="text-align:right;">0.962</td>
+              <td style="text-align:right;">0.665</td>
+              <td style="text-align:right;">0.786</td>
+              <td style="text-align:right;">0.935</td>
+              <td style="text-align:right;">0.397</td>
+              <td style="text-align:right;">0.558</td>
+              <td style="text-align:right;">0.989</td>
+              <td style="text-align:right;">0.539</td>
+              <td style="text-align:right;">0.698</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>En+Pt</em></td>
+              <td style="text-align:right;">0.967</td>
+              <td style="text-align:right;">0.660</td>
+              <td style="text-align:right;">0.785</td>
+              <td style="text-align:right;">0.935</td>
+              <td style="text-align:right;">0.397</td>
+              <td style="text-align:right;">0.558</td>
+              <td style="text-align:right;">0.989</td>
+              <td style="text-align:right;">0.530</td>
+              <td style="text-align:right;">0.690</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>En+De</em></td>
+              <td style="text-align:right;">0.967</td>
+              <td style="text-align:right;">0.672</td>
+              <td style="text-align:right;">0.793</td>
+              <td style="text-align:right;">0.935</td>
+              <td style="text-align:right;">0.397</td>
+              <td style="text-align:right;">0.558</td>
+              <td style="text-align:right;">0.985</td>
+              <td style="text-align:right;">0.541</td>
+              <td style="text-align:right;">0.698</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>En+Sv</em></td>
+              <td style="text-align:right;">0.968</td>
+              <td style="text-align:right;">0.685</td>
+              <td style="text-align:right;">0.802</td>
+              <td style="text-align:right;">0.935</td>
+              <td style="text-align:right;">0.397</td>
+              <td style="text-align:right;">0.558</td>
+              <td style="text-align:right;">0.990</td>
+              <td style="text-align:right;">0.541</td>
+              <td style="text-align:right;">0.700</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>En+Nl</em></td>
+              <td style="text-align:right;">0.964</td>
+              <td style="text-align:right;">0.706</td>
+              <td style="text-align:right;">0.815</td>
+              <td style="text-align:right;">0.906</td>
+              <td style="text-align:right;">0.397</td>
+              <td style="text-align:right;">0.552</td>
+              <td style="text-align:right;">0.986</td>
+              <td style="text-align:right;">0.580</td>
+              <td style="text-align:right;">0.730</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>AllLang</em></td>
+              <td style="text-align:right;">0.957</td>
+              <td style="text-align:right;">0.798</td>
+              <td style="text-align:right;">0.870</td>
+              <td style="text-align:right;">0.912</td>
+              <td style="text-align:right;">0.425</td>
+              <td style="text-align:right;">0.579</td>
+              <td style="text-align:right;">0.979</td>
+              <td style="text-align:right;">0.662</td>
+              <td style="text-align:right;">0.790</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Evaluation
+          Results</h2>
+        </div>
+      </header>
+      <p><strong>Evaluation Metrics</strong>: Given the output set
+      of classes extracted by a particular run, where the classes
+      are Wikipedia articles, its quality and coverage are computed
+      automatically relative to one of the evaluation sets.
+      Precision is the fraction of extracted classes that also
+      appear in the evaluation set (as gold classes or gold
+      non-classes), which are gold classes. Recall is the fraction
+      of gold classes from the evaluation set, which are
+      extracted.</p>
+      <div class="table-responsive" id="tab5">
+        <div class="table-caption">
+          <span class="table-number">Table 5:</span> <span class=
+          "table-title">Examples of English Wikipedia articles not
+          already extracted as classes by run E<sub>[<em>En</em>,
+          <em>Lex</em>]</sub>, but whose equivalent Wikipedia
+          articles in another language (X?) are extracted as
+          classes by run E<sub>[<em>X</em>?,
+          <em>Lex</em>].</sub></span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;">Language (X?)</span>:
+              Examples of Equivalent Classes in English (via:
+              Classes Extracted in Language X?)</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;"><em>Fr</em></span> :
+              Coil (chemistry) (via: Serpentin (chimie)), Complete
+              partial order (via: Ordre partiel complet
+              (informatique)), Compote (via: Compote), Endocrine
+              gland (via: Glande endocrine), Ileostomy (via:
+              Iléostomie)</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;"><em>Es</em></span> :
+              Balanced-arm lamp (via: Flexo), Fuel gas (via: Gas
+              combustible), Lagrangian (field theory) (via:
+              Lagrangiano), Oximinotransferase (via:
+              Oximinotransferasa), Toad (comics)<sup>(*)</sup>
+              (via: Sapo (cómic)<sup>(*)</sup>)</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;"><em>It</em></span> :
+              Computational science (via: Scienza computazionale),
+              Ecolabel (via: Marchio ecologico),
+              Lamia<sup>(*)</sup> (via: Lamia<sup>(*)</sup>),
+              Mathematical table (via: Tavola matematica), Matrix
+              exponential (via: Matrice esponenziale)</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;"><em>Pt</em></span> :
+              Eugène de Rastignac<sup>(*)</sup> (via:
+              Rastignac<sup>(*)</sup>), Paladin (via: Paladino),
+              Saudi riyal (via: Riyal), Shortwave bands (via: Banda
+              (rádio)), Statesman (via: Estadista), Suicide (via:
+              Suicídio)</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;"><em>De</em></span> :
+              National Intelligence Estimate (via: National
+              Intelligence Estimate), Negau helmet (via: Negauer
+              Helm), Pallet jack (via: Hubwagen), Process
+              identifier (via: Process identifier),
+              Sewerage<sup>(*)</sup> (via: Kanalisation)</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;"><em>Sv</em></span> :
+              Astronomical object (via: Himlakropp), Encore (via:
+              Extranummer), Heat lightning<sup>(*)</sup> (via:
+              Kornblixt), Isogloss (via: Isogloss), Politburo (via:
+              Politbyrå), Pseudocardinal (via: Pseudokardinal)</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;"><em>Nl</em></span> :
+              Aridisol (via: Aridisol), Bogeyman (via: Boeman),
+              Conversion of units (via: Herleidingsfactor), Major
+              religious groups (via: Wereldreligie), Win-win game
+              (via: Win-winsituatie)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Choice of Languages</strong>: Table&nbsp;<a class=
+      "tbl" href="#tab4">4</a> shows the impact on the performance
+      of the experimental run using only patterns as evidence, when
+      extracting from various combinations of languages. In the
+      upper part of the table, English gives significantly higher
+      coverage than any of the other languages. Nevertheless,
+      languages other than English do contribute to the overall
+      coverage, when either individually added to English, in the
+      middle part of the table; or simultaneously added to English,
+      in the lower part of the figure. The effect is least
+      pronounced for the second evaluation set, S
+      <sub><em>D</em></sub> , which also exhibits higher variation
+      among scores in different languages. These are likely due to
+      S <sub><em>D</em></sub> containing fewer gold classes than
+      the other evaluation sets, as illustrated earlier in
+      Table&nbsp;<a class="tbl" href="#tab1">1</a>. As for the
+      other two evaluation sets, relative to extracting from
+      English only (E<sub>[<em>En</em>, <em>Lex</em>]</sub>),
+      adding French (E<sub>[<em>En</em> + <em>Fr</em>,
+      <em>Lex</em>]</sub>) increases recall by 13% (over the S
+      <sub><em>W</em></sub> evaluation set) and 12% (over S
+      <sub><em>Q</em></sub> ); and then by another 10% (S
+      <sub><em>W</em></sub> ) and 14% (S <sub><em>Q</em></sub> ),
+      when adding the other languages
+      (<em>En+Fr+Es+It+Pt+De+Sv+Nl</em>). Recall scores are
+      consistently higher over S <sub><em>W</em></sub> than over S
+      <sub><em>Q</em></sub> , which in turn are higher than over S
+      <sub><em>D</em></sub> , suggesting that random samples of
+      Wikipedia articles, especially when not further filtered
+      based on queries, offer a more challenging evaluation of
+      coverage. Precision scores in Table&nbsp;<a class="tbl" href=
+      "#tab4">4</a> exceed 0.90, the few exceptions being over the
+      S <sub><em>D</em></sub> evaluation set.</p>
+      <p>Table&nbsp;<a class="tbl" href="#tab5">5</a> is an
+      alternative view on the impact on coverage of the
+      experimental runs, when adding languages other than English.
+      Articles such as <em>“Endocrine gland”</em>,
+      <em>“Balanced-arm lamp”</em> and <em>“Mathematical
+      table”</em> are not extracted as classes by run
+      E<sub>[<em>En</em>, <em>Lex</em>]</sub>. However, they are
+      extracted by runs E<sub>[<em>Fr</em>, <em>Lex</em>]</sub>
+      (via <em>“Glande endocrine”</em>), E<sub>[<em>Es</em>,
+      <em>Lex</em>]</sub> (via <em>“Flexo”</em>) and
+      E<sub>[<em>It</em>, <em>Lex</em>]</sub> (via <em>“Tavola
+      matematica”</em>) respectively.</p>
+      <div class="table-responsive" id="tab6">
+        <div class="table-caption">
+          <span class="table-number">Table 6:</span> <span class=
+          "table-title">Examples of Wikipedia articles extracted as
+          classes by run E<sub>[<em>X</em>?, <em>Lex</em>]</sub>,
+          for example from French (<em>Fr</em>), where the articles
+          have no equivalent English articles in Wikipedia. Only
+          patterns (<em>Lex</em>) are used as evidence for
+          extraction.</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:left;"><span style=
+              "text-decoration: underline;">Language (X?)</span>:
+              Examples of Extracted Classes</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"><span style=
+              "text-decoration: underline;"><em>Fr</em></span> :
+              Coopérative agricole suisse, Malayophone</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"><span style=
+              "text-decoration: underline;"><em>Es</em></span> :
+              Coautor (derecho), Escudo de red, Escuela Naval</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"><span style=
+              "text-decoration: underline;"><em>It</em></span> :
+              Masso avello, Megacomputer, Pompa root</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"><span style=
+              "text-decoration: underline;"><em>Pt</em></span> :
+              Aquitardo, Music Ticket, Núcleo urbano</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"><span style=
+              "text-decoration: underline;"><em>De</em></span> :
+              Bergunfall, Feuerknopf, Grundsieb, Seilbremse</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"><span style=
+              "text-decoration: underline;"><em>Sv</em></span> :
+              Gräddtjuv, Hacka (kortspel), Steksten,
+              Stridsvagnsofficer</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"><span style=
+              "text-decoration: underline;"><em>Nl</em></span> :
+              Cross-integraalhelm, Stoomgenerator,
+              Zijschuiving</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>In a temporary departure from the rest of the evaluation,
+      when an article, in a language other than English, is
+      extracted as a class by an experimental run, it is no longer
+      discarded if it does not have an equivalent English article.
+      Instead, such articles are also retained. The fraction of
+      classes extracted in a given language but in no other
+      languages, out of classes extracted in that same given
+      language and possibly simultaneously in other languages, is
+      not trivial for several of the languages in the experiments.
+      It varies from, e.g., 11% for French (<em>Fr</em>), to 3% for
+      Italian (<em>It</em>), to 17% for German (<em>De</em>), to
+      11% for Dutch (<em>Nl</em>), with an average of 11% per
+      language. In Table&nbsp;<a class="tbl" href="#tab6">6</a>,
+      articles such as <em>“Coopérative agricole suisse”</em>,
+      <em>“Coautor (derecho)”</em> and <em>“Masso avello”</em>
+      would in fact be impossible to extract as classes in another
+      language, simply because the articles have no equivalent
+      articles not just in English, but in any other language
+      editions in Wikipedia. Besides increasing extraction coverage
+      for “universal” classes that transcend borders, extraction in
+      other languages can uncover classes that more closely reflect
+      the culture or customs specific to a particular country or
+      region.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186025/images/www2018-34-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Relative recall of the experimental run
+          E<sub>[<em>X</em>?, <em>AllEvid</em>]</sub>. Computed
+          independently from and disregarding any of the evaluation
+          sets, as the fraction of the classes extracted in certain
+          languages, out of the classes extracted in all languages.
+          Computed when initially enabling extraction only in the
+          language producing the largest (solid line) or smallest
+          (dotted line) number of classes; then incrementally
+          adding languages.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>In addition to the examples in Table&nbsp;<a class="tbl"
+      href="#tab6">6</a>, other metrics similarly demonstrate that
+      extraction in languages other than English is useful. To
+      illustrate, relative recall can be computed as the fraction
+      of articles extracted as classes from all languages used in
+      the experiments; which are extracted as classes from only one
+      and then from incrementally more languages. To avoid double
+      or multiple counting, each cluster of one or more articles
+      connected to one another via Wikipedia inter-lingua links is
+      counted only once for the entire cluster, rather than once
+      for each article. In the solid line in Figure&nbsp;<a class=
+      "fig" href="#fig1">1</a>, the next language being
+      incrementally enabled is chosen such that, in combination
+      with already enabled languages, it produces the largest
+      number of classes. As productive as English turns out to be,
+      a quarter of all classes in all languages are only extracted
+      in languages other than English. Specifically, relative
+      recall increases from 0.74, when extracting classes only from
+      English (<em>En</em>); to 0.85, when adding German
+      (<em>De</em>); to 0.90, when further adding Dutch
+      (<em>Nl</em>); up to 1.00, when adding the last language,
+      namely Portuguese (<em>Pt</em>). The dotted line in
+      Figure&nbsp;<a class="fig" href="#fig1">1</a> also shows
+      relative recall, but when incrementally choosing languages
+      that together produce the smallest (rather than largest)
+      number of classes. In this case, relative recall starts at
+      0.22, for Swedish (<em>Sv</em>) only; grows to 0.32 and then
+      0.40, when adding Portuguese (<em>Pt</em>) and Italian
+      (<em>It</em>) respectively; then up to 1.00, when adding the
+      last language, namely English (<em>En</em>).</p>
+      <div class="table-responsive" id="tab7">
+        <div class="table-caption">
+          <span class="table-number">Table 7:</span> <span class=
+          "table-title">Precision and recall of the experimental
+          run E<sub>[<em>En</em>, <em>Y</em>?]</sub> over the
+          evaluation sets. Computed when enabling extraction only
+          from English (<em>En</em>); and enabling or disabling
+          various types of evidence (Y?), namely patterns
+          (<em>Lex</em>), morphology (<em>Mph</em>) or categories
+          (<em>Ctg</em>) (P=precision; R=recall; F=balanced
+          F-score).</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th colspan="3" style="text-align:center;">
+                Evidence
+                <hr />
+              </th>
+              <th colspan="3" style="text-align:center;">
+                Scores over
+                <hr />
+              </th>
+              <th colspan="3" style="text-align:center;">
+                Scores over
+                <hr />
+              </th>
+              <th colspan="3" style="text-align:center;">
+                Scores over
+                <hr />
+              </th>
+            </tr>
+            <tr>
+              <th colspan="3" style="text-align:center;">
+                (Y?)
+                <hr />
+              </th>
+              <th colspan="3" style="text-align:center;">
+                Eval Set S <sub><em>W</em></sub>
+                <hr />
+              </th>
+              <th colspan="3" style="text-align:center;">
+                Eval Set S <sub><em>D</em></sub>
+                <hr />
+              </th>
+              <th colspan="3" style="text-align:center;">
+                Eval Set S <sub><em>Q</em></sub>
+                <hr />
+              </th>
+            </tr>
+            <tr>
+              <th style="text-align:center;"><em>Lex</em></th>
+              <th style="text-align:center;"><em>Mph</em></th>
+              <th style="text-align:center;"><em>Ctg</em></th>
+              <th style="text-align:center;">P</th>
+              <th style="text-align:center;">R</th>
+              <th style="text-align:center;">F</th>
+              <th style="text-align:center;">P</th>
+              <th style="text-align:center;">R</th>
+              <th style="text-align:center;">F</th>
+              <th style="text-align:center;">P</th>
+              <th style="text-align:center;">R</th>
+              <th style="text-align:center;">F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:center;">√</td>
+              <td style="text-align:center;">-</td>
+              <td style="text-align:center;">-</td>
+              <td style="text-align:right;">0.966</td>
+              <td style="text-align:right;">0.638</td>
+              <td style="text-align:right;">0.768</td>
+              <td style="text-align:right;">0.933</td>
+              <td style="text-align:right;">0.384</td>
+              <td style="text-align:right;">0.544</td>
+              <td style="text-align:right;">0.989</td>
+              <td style="text-align:right;">0.517</td>
+              <td style="text-align:right;">0.679</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">-</td>
+              <td style="text-align:center;">√</td>
+              <td style="text-align:center;">-</td>
+              <td style="text-align:right;">0.976</td>
+              <td style="text-align:right;">0.387</td>
+              <td style="text-align:right;">0.554</td>
+              <td style="text-align:right;">0.875</td>
+              <td style="text-align:right;">0.096</td>
+              <td style="text-align:right;">0.173</td>
+              <td style="text-align:right;">0.975</td>
+              <td style="text-align:right;">0.213</td>
+              <td style="text-align:right;">0.349</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">-</td>
+              <td style="text-align:center;">-</td>
+              <td style="text-align:center;">√</td>
+              <td style="text-align:right;">0.961</td>
+              <td style="text-align:right;">0.515</td>
+              <td style="text-align:right;">0.671</td>
+              <td style="text-align:right;">1.000</td>
+              <td style="text-align:right;">0.068</td>
+              <td style="text-align:right;">0.128</td>
+              <td style="text-align:right;">0.984</td>
+              <td style="text-align:right;">0.174</td>
+              <td style="text-align:right;">0.296</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">√</td>
+              <td style="text-align:center;">√</td>
+              <td style="text-align:center;">-</td>
+              <td style="text-align:right;">0.961</td>
+              <td style="text-align:right;">0.692</td>
+              <td style="text-align:right;">0.805</td>
+              <td style="text-align:right;">0.938</td>
+              <td style="text-align:right;">0.411</td>
+              <td style="text-align:right;">0.571</td>
+              <td style="text-align:right;">0.981</td>
+              <td style="text-align:right;">0.561</td>
+              <td style="text-align:right;">0.714</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">√</td>
+              <td style="text-align:center;">-</td>
+              <td style="text-align:center;">√</td>
+              <td style="text-align:right;">0.951</td>
+              <td style="text-align:right;">0.736</td>
+              <td style="text-align:right;">0.830</td>
+              <td style="text-align:right;">0.935</td>
+              <td style="text-align:right;">0.397</td>
+              <td style="text-align:right;">0.558</td>
+              <td style="text-align:right;">0.986</td>
+              <td style="text-align:right;">0.570</td>
+              <td style="text-align:right;">0.722</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">-</td>
+              <td style="text-align:center;">√</td>
+              <td style="text-align:center;">√</td>
+              <td style="text-align:right;">0.957</td>
+              <td style="text-align:right;">0.630</td>
+              <td style="text-align:right;">0.760</td>
+              <td style="text-align:right;">0.917</td>
+              <td style="text-align:right;">0.151</td>
+              <td style="text-align:right;">0.259</td>
+              <td style="text-align:right;">0.984</td>
+              <td style="text-align:right;">0.331</td>
+              <td style="text-align:right;">0.496</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">√</td>
+              <td style="text-align:center;">√</td>
+              <td style="text-align:center;">√</td>
+              <td style="text-align:right;">0.946</td>
+              <td style="text-align:right;">0.762</td>
+              <td style="text-align:right;">0.844</td>
+              <td style="text-align:right;">0.939</td>
+              <td style="text-align:right;">0.425</td>
+              <td style="text-align:right;">0.585</td>
+              <td style="text-align:right;">0.982</td>
+              <td style="text-align:right;">0.610</td>
+              <td style="text-align:right;">0.753</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Choice of Types of Evidence</strong>: By setting
+      the language to English and varying the types of evidence
+      used for extraction instead, the upper part of
+      Table&nbsp;<a class="tbl" href="#tab7">7</a> shows that
+      patterns (<em>Lex</em>) alone give higher recall than
+      categories (<em>Ctg</em>) alone or morphology (<em>Mph</em>)
+      alone. In the middle part of the table, recall increases more
+      over S <sub><em>W</em></sub> and S <sub><em>Q</em></sub> and
+      less over S <sub><em>D</em></sub> , when adding categories
+      than when adding morphology, on top of patterns alone. All
+      types of evidence are useful, and differ enough for one to
+      contribute when the others cannot. This is illustrated by
+      examples of classes that can be extracted based on only one
+      of the types of evidence, in Table&nbsp;<a class="tbl" href=
+      "#tab8">8</a>; and demonstrated by the recall being highest
+      when extracting classes from all types of evidence
+      simultaneously, in the lower part of Table&nbsp;<a class=
+      "tbl" href="#tab7">7</a>. Recall scores over S
+      <sub><em>D</em></sub> are again the lowest, followed by S
+      <sub><em>Q</em></sub> , which are lower than over S
+      <sub><em>W</em></sub> . Precision scores are above 0.87 when
+      extracting based on morphology alone (<em>Mph</em>), and
+      exceed 0.91 across other combinations of types of evidence in
+      Table&nbsp;<a class="tbl" href="#tab7">7</a>.</p>
+      <div class="table-responsive" id="tab8">
+        <div class="table-caption">
+          <span class="table-number">Table 8:</span> <span class=
+          "table-title">Examples of Wikipedia articles extracted as
+          classes by run E<sub>[<em>En</em>, <em>Y</em>?]</sub>
+          when enabling extraction only from English (<em>En</em>),
+          only when using a particular type of evidence (Y?),
+          namely patterns (<em>Lex</em>), morphology (<em>Mph</em>)
+          or categories (<em>Ctg</em>).</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:left;"><span style=
+              "text-decoration: underline;">Evidence (Y?)</span>:
+              Examples of Extracted Classes</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;"><em>Lex</em></span> :
+              ATM Controller, Badge of shame, Banach bundle,
+              Controlled parking zone, Dollar van, Locate
+              (finance), Moo box, Munger-Moss Motel<sup>(*)</sup>,
+              Quine (computing), Unfunded mandate, Winding machine,
+              Woodbine (cigarette)</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;"><em>Mph</em></span> :
+              Bridge, Dynamometer, Filipino Canadian, Grand Tour
+              (cycling), Hero, International court, Mother,
+              Peddler, Raider Fighter (Babylon 5), Spline
+              (mechanical), Teddy (garment), UFO (1956
+              film)<sup>(*)</sup>, Yaw system</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><span style=
+              "text-decoration: underline;"><em>Ctg</em></span> :
+              Bishop of Newcastle (Australia), Double acting ship,
+              Duke of Franco, Duke of Miranda do Corvo, Flag of the
+              Philippines<sup>(*)</sup>, Inverse hyperbolic
+              function, Non-vascular plant, President of
+              Bangladesh, Protease inhibitor (pharmacology),
+              Slender salamander, Town-class cruiser (1936)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Comparison to Baseline Methods</strong>:
+      Table&nbsp;<a class="tbl" href="#tab9">9</a> compares the
+      performance over the evaluation sets, for baseline runs and
+      for various experimental runs. At the top of
+      Table&nbsp;<a class="tbl" href="#tab9">9</a>, a special case
+      is the WordNet-derived B <sub><em>Ewn</em></sub> baseline,
+      when run over the WordNet-derived evaluation set S
+      <sub><em>W</em></sub> . The descriptions of the B
+      <sub><em>Ewn</em></sub> baseline and the S
+      <sub><em>W</em></sub> evaluation set, from the earlier
+      Section&nbsp;<a class="sec" href="#sec-5">4</a>, illustrate
+      how the evaluation set and the baseline are effectively
+      aligned by design, as they are assembled following the same
+      intuitions applied to the same data from WordNet. Therefore,
+      the high precision and very high recall of the B
+      <sub><em>Ewn</em></sub> over S <sub><em>W</em></sub> are
+      meaningless and should be ignored.</p>
+      <p>The WiBi-derived baseline, B <sub><em>Wibi</em></sub> ,
+      has high recall over the same evaluation set, exceeding 0.90,
+      at the expense of precision falling below 0.25. Examples of
+      gold non-classes from the S <sub><em>W</em></sub> evaluation
+      set, which are incorrectly extracted as classes by run B
+      <sub><em>Wibi</em></sub> , include <em>“Abraham
+      Lincoln”</em>, <em>“Acapulco”</em> and <em>“Air Force
+      Research Laboratory”</em>. Another baseline, B
+      <sub><em>Wknt</em></sub> , behaves similarly. Recall scores
+      in Table&nbsp;<a class="tbl" href="#tab9">9</a> over the
+      query-driven sample-based evaluation set, S
+      <sub><em>Q</em></sub> , are lowest for the B
+      <sub><em>Zart</em></sub> baseline and the WordNet-derived B
+      <sub><em>Ewn</em></sub> baseline, and highest for the
+      WikiNet-based B <sub><em>Wknt</em></sub> baseline. The B
+      <sub><em>Wibi</em></sub> baseline has recall higher than the
+      single-language single-evidence E<sub>[<em>En</em>,
+      <em>Lex</em>]</sub> experimental run; and higher (over S
+      <sub><em>W</em></sub> ) or lower (over S
+      <sub><em>D</em></sub> and S <sub><em>Q</em></sub> ) than
+      experimental runs using combinations of either languages or
+      types of evidence.</p>
+      <p>Consistently over all evaluation sets, any of the
+      experimental runs, e.g., E<sub>[<em>AllLang</em>,
+      <em>AllEvid</em>]</sub>, has significantly higher precision
+      and balanced F-scores than any of the baseline runs.</p>
+      <div class="table-responsive" id="tab9">
+        <div class="table-caption">
+          <span class="table-number">Table 9:</span> <span class=
+          "table-title">Precision and recall over the evaluation
+          sets. Computed for baseline runs, as well as for
+          experimental runs with extraction from English
+          (<em>En</em>) or from all languages (<em>AllLang</em>,
+          i.e., <em>En+Fr+Es+It+Pt+De+Sv+Nl</em>); and using
+          various combinations of patterns (<em>Lex</em>),
+          morphology (<em>Mph</em>) or categories (<em>Ctg</em>) or
+          all of them (<em>AllEvid</em>, i.e.,
+          <em>Lex+Mph+Ctg</em>) as evidence (P=precision; R=recall;
+          F=balanced F-score).</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Run</th>
+              <th colspan="3" style="text-align:center;">
+                Scores over
+                <hr />
+              </th>
+              <th colspan="3" style="text-align:center;">
+                Scores over
+                <hr />
+              </th>
+              <th colspan="3" style="text-align:center;">
+                Scores over
+                <hr />
+              </th>
+            </tr>
+            <tr>
+              <th style="text-align:center;"></th>
+              <th colspan="3" style="text-align:center;">
+                Eval Set S <sub><em>W</em></sub>
+                <hr />
+              </th>
+              <th colspan="3" style="text-align:center;">
+                Eval Set S <sub><em>D</em></sub>
+                <hr />
+              </th>
+              <th colspan="3" style="text-align:center;">
+                Eval Set S <sub><em>Q</em></sub>
+                <hr />
+              </th>
+            </tr>
+            <tr>
+              <th style="text-align:center;"></th>
+              <th style="text-align:center;">P</th>
+              <th style="text-align:center;">R</th>
+              <th style="text-align:center;">F</th>
+              <th style="text-align:center;">P</th>
+              <th style="text-align:center;">R</th>
+              <th style="text-align:center;">F</th>
+              <th style="text-align:center;">P</th>
+              <th style="text-align:center;">R</th>
+              <th style="text-align:center;">F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="10" style="text-align:left;">
+                Baseline runs:
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">B
+              <sub><em>Ewn</em></sub></td>
+              <td style="text-align:center;">0.942</td>
+              <td style="text-align:center;">0.960</td>
+              <td style="text-align:center;">0.951</td>
+              <td style="text-align:center;">0.769</td>
+              <td style="text-align:center;">0.137</td>
+              <td style="text-align:center;">0.233</td>
+              <td style="text-align:center;">0.970</td>
+              <td style="text-align:center;">0.351</td>
+              <td style="text-align:center;">0.515</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">B
+              <sub><em>Wibi</em></sub></td>
+              <td style="text-align:center;">0.223</td>
+              <td style="text-align:center;">0.913</td>
+              <td style="text-align:center;">0.358</td>
+              <td style="text-align:center;">0.286</td>
+              <td style="text-align:center;">0.137</td>
+              <td style="text-align:center;">0.185</td>
+              <td style="text-align:center;">0.881</td>
+              <td style="text-align:center;">0.533</td>
+              <td style="text-align:center;">0.664</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">B
+              <sub><em>Zctg</em></sub></td>
+              <td style="text-align:center;">0.192</td>
+              <td style="text-align:center;">0.645</td>
+              <td style="text-align:center;">0.296</td>
+              <td style="text-align:center;">0.300</td>
+              <td style="text-align:center;">0.164</td>
+              <td style="text-align:center;">0.212</td>
+              <td style="text-align:center;">0.836</td>
+              <td style="text-align:center;">0.254</td>
+              <td style="text-align:center;">0.390</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">B
+              <sub><em>Zart</em></sub></td>
+              <td style="text-align:center;">0.228</td>
+              <td style="text-align:center;">0.025</td>
+              <td style="text-align:center;">0.045</td>
+              <td style="text-align:center;">0.075</td>
+              <td style="text-align:center;">0.068</td>
+              <td style="text-align:center;">0.071</td>
+              <td style="text-align:center;">0.313</td>
+              <td style="text-align:center;">0.058</td>
+              <td style="text-align:center;">0.098</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">B
+              <sub><em>Wknt</em></sub></td>
+              <td style="text-align:center;">0.311</td>
+              <td style="text-align:center;">0.862</td>
+              <td style="text-align:center;">0.457</td>
+              <td style="text-align:center;">0.085</td>
+              <td style="text-align:center;">0.904</td>
+              <td style="text-align:center;">0.156</td>
+              <td style="text-align:center;">0.417</td>
+              <td style="text-align:center;">0.936</td>
+              <td style="text-align:center;">0.577</td>
+            </tr>
+            <tr>
+              <td colspan="10" style="text-align:left;">
+                Experimental runs:
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">E<sub>[<em>En</em>,
+              <em>Lex</em>]</sub></td>
+              <td style="text-align:center;">0.966</td>
+              <td style="text-align:center;">0.638</td>
+              <td style="text-align:center;">0.768</td>
+              <td style="text-align:center;">0.933</td>
+              <td style="text-align:center;">0.384</td>
+              <td style="text-align:center;">0.544</td>
+              <td style="text-align:center;">0.989</td>
+              <td style="text-align:center;">0.517</td>
+              <td style="text-align:center;">0.679</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">
+              E<sub>[<em>AllLang</em>,</sub></td>
+              <td style="text-align:center;">0.957</td>
+              <td style="text-align:center;">0.798</td>
+              <td style="text-align:center;">0.870</td>
+              <td style="text-align:center;">0.912</td>
+              <td style="text-align:center;">0.425</td>
+              <td style="text-align:center;">0.579</td>
+              <td style="text-align:center;">0.979</td>
+              <td style="text-align:center;">0.662</td>
+              <td style="text-align:center;">0.790</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">&nbsp;
+              <sub><em>Lex</em>]</sub></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">
+              E<sub>[<em>En</em>,</sub></td>
+              <td style="text-align:center;">0.946</td>
+              <td style="text-align:center;">0.762</td>
+              <td style="text-align:center;">0.844</td>
+              <td style="text-align:center;">0.939</td>
+              <td style="text-align:center;">0.425</td>
+              <td style="text-align:center;">0.585</td>
+              <td style="text-align:center;">0.982</td>
+              <td style="text-align:center;">0.610</td>
+              <td style="text-align:center;">0.753</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">&nbsp;
+              <sub><em>AllEvid</em>]</sub></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">
+              E<sub>[<em>AllLang</em>,</sub></td>
+              <td style="text-align:center;">0.938</td>
+              <td style="text-align:center;">0.824</td>
+              <td style="text-align:center;">0.877</td>
+              <td style="text-align:center;">0.914</td>
+              <td style="text-align:center;">0.438</td>
+              <td style="text-align:center;">0.593</td>
+              <td style="text-align:center;">0.973</td>
+              <td style="text-align:center;">0.702</td>
+              <td style="text-align:center;">0.816</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">&nbsp;
+              <sub><em>AllEvid</em>]</sub></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Difficulty of Evaluation Sets</strong>: Earlier in
+      Table&nbsp;<a class="tbl" href="#tab4">4</a>, the lower
+      recall scores over S <sub><em>D</em></sub> suggested that
+      that particular evaluation set may contain gold classes that
+      are significantly more difficult to extract automatically.
+      Table&nbsp;<a class="tbl" href="#tab9">9</a> provides
+      additional supporting evidence: recall scores computed not
+      just for experimental runs but also for baseline runs are
+      consistently lower over S <sub><em>D</em></sub> than over S
+      <sub><em>W</em></sub> and S <sub><em>Q</em></sub> . A look at
+      the example of gold classes listed earlier in
+      Table&nbsp;<a class="tbl" href="#tab1">1</a> offers some
+      intuition as to why that may be the case. In comparison to S
+      <sub><em>W</em></sub> and S <sub><em>Q</em></sub> , gold
+      classes in S <sub><em>D</em></sub> do seem to be relatively
+      more specific (e.g., <em>“Biochemist”</em> in S
+      <sub><em>W</em></sub> , vs. <em>“Works of authority on the
+      United Kingdom constitution”</em> in S <sub><em>D</em></sub>
+      ) if not obscure (<em>“Patristica Sorbonensia”</em> in S
+      <sub><em>D</em></sub> ).</p>
+      <p>Despite the significant manual annotation effort involved
+      in creating it, S <sub><em>D</em></sub> contains a relatively
+      smaller number of gold classes, as expected given the
+      encyclopedic nature of Wikipedia. The hypothetical annotation
+      of a much larger sample should lead to a commensurately
+      larger number of gold classes in a hypothetical, future
+      version of S <sub><em>D</em></sub> . The proportion of gold
+      classes that are relatively specific or obscure may or may
+      not decrease in the process. Whether that is the case or not,
+      experimental results all suggest that gold classes in the
+      current version of S <sub><em>D</em></sub> , as used in the
+      experiments, are significantly more difficult, and thus might
+      make the evaluation of coverage unusually challenging.</p>
+      <div class="table-responsive" id="tab10">
+        <div class="table-caption">
+          <span class="table-number">Table 10:</span> <span class=
+          "table-title">Evaluation scores computed through manual
+          annotation of the correctness of either separate random
+          samples of classes extracted individually by each run,
+          one sample per run (left column); or a single, combined
+          random sample assembled from the separate random samples
+          (right columns). Computed for baseline runs, as well as
+          for experimental runs with extraction from various
+          languages such as English (<em>En</em>) or from all
+          languages (<em>AllLang</em>, i.e.,
+          <em>En+Fr+Es+It+Pt+De+Sv+Nl</em>); and using various
+          sources of evidence such as patterns (<em>Lex</em>) or
+          all sources of evidence (<em>AllEvid</em>, i.e.,
+          <em>Lex+Mph+Ctg</em>) (P=precision; R=recall; F=balanced
+          F-score).</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Run</th>
+              <th colspan="4" style="text-align:center;">
+                Choice of Random Samples
+                <hr />
+              </th>
+            </tr>
+            <tr>
+              <th style="text-align:center;"></th>
+              <th style="text-align:center;">Separate</th>
+              <th colspan="3" style="text-align:center;">
+                Combined
+                <hr />
+              </th>
+            </tr>
+            <tr>
+              <th style="text-align:center;"></th>
+              <th style="text-align:center;">(One per Run)</th>
+              <th colspan="3" style="text-align:center;">
+                (One for All Runs)
+                <hr />
+              </th>
+            </tr>
+            <tr>
+              <th style="text-align:center;"></th>
+              <th style="text-align:center;">P</th>
+              <th style="text-align:center;">P</th>
+              <th style="text-align:center;">R</th>
+              <th style="text-align:center;">F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="5" style="text-align:left;">
+                Baseline runs:
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">B
+              <sub><em>Ewn</em></sub></td>
+              <td style="text-align:center;">0.680</td>
+              <td style="text-align:center;">0.733</td>
+              <td style="text-align:center;">0.310</td>
+              <td style="text-align:center;">0.436</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">B
+              <sub><em>Wibi</em></sub></td>
+              <td style="text-align:center;">0.360</td>
+              <td style="text-align:center;">0.675</td>
+              <td style="text-align:center;">0.409</td>
+              <td style="text-align:center;">0.509</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">B
+              <sub><em>Zctg</em></sub></td>
+              <td style="text-align:center;">0.380</td>
+              <td style="text-align:center;">0.560</td>
+              <td style="text-align:center;">0.251</td>
+              <td style="text-align:center;">0.347</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">B
+              <sub><em>Zart</em></sub></td>
+              <td style="text-align:center;">0.280</td>
+              <td style="text-align:center;">0.302</td>
+              <td style="text-align:center;">0.094</td>
+              <td style="text-align:center;">0.143</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">B
+              <sub><em>Wknt</em></sub></td>
+              <td style="text-align:center;">0.160</td>
+              <td style="text-align:center;">0.532</td>
+              <td style="text-align:center;">0.901</td>
+              <td style="text-align:center;">0.669</td>
+            </tr>
+            <tr>
+              <td colspan="5" style="text-align:left;">
+                Experimental runs:
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">E<sub>[<em>En</em>,
+              <em>Lex</em>]</sub></td>
+              <td style="text-align:center;">0.900</td>
+              <td style="text-align:center;">0.955</td>
+              <td style="text-align:center;">0.419</td>
+              <td style="text-align:center;">0.582</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">E<sub>[<em>AllLang</em>,
+              <em>Lex</em>]</sub></td>
+              <td style="text-align:center;">0.920</td>
+              <td style="text-align:center;">0.951</td>
+              <td style="text-align:center;">0.571</td>
+              <td style="text-align:center;">0.714</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">E<sub>[<em>En</em>,
+              <em>AllEvid</em>]</sub></td>
+              <td style="text-align:center;">0.920</td>
+              <td style="text-align:center;">0.959</td>
+              <td style="text-align:center;">0.685</td>
+              <td style="text-align:center;">0.799</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">E<sub>[<em>AllLang</em>,
+              <em>AllEvid</em>]</sub></td>
+              <td style="text-align:center;">0.920</td>
+              <td style="text-align:center;">0.949</td>
+              <td style="text-align:center;">0.729</td>
+              <td style="text-align:center;">0.825</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Alternative Assessment of Precision</strong>: In
+      an effort to further assess the precision of extracted
+      classes, beyond results reported so far over multiple
+      evaluation sets, random samples of 100 Wikipedia articles
+      extracted by each of various baseline and experimental runs
+      are manually annotated for correctness. An extracted class
+      receives full credit if it is manually annotated to be indeed
+      a class, or no credit otherwise. Over a sample of 200
+      articles assessed by two annotators, the inter-annotator
+      agreement is 86%. Examples of classes extracted by various
+      runs are marked in earlier tables (e.g., Table&nbsp;<a class=
+      "tbl" href="#tab3">3</a>) with a <sup>(*)</sup> immediately
+      to their right, whenever the extracted classes are later
+      found to be incorrect during the manual annotation of random
+      samples.</p>
+      <p>The first numerical column in Table&nbsp;<a class="tbl"
+      href="#tab10">10</a> shows the resulting precision scores (P)
+      over the manually-annotated random samples. Three conclusions
+      can be drawn from the results. First, switching from
+      precision computed over evaluation sets, as reported earlier
+      in Table&nbsp;<a class="tbl" href="#tab9">9</a>, to precision
+      over random samples actually extracted by the respective runs
+      in Table&nbsp;<a class="tbl" href="#tab10">10</a>, can reveal
+      otherwise hidden weaknesses in the accuracy of the respective
+      runs. Concretely, the precision scores of most baseline runs,
+      reported earlier in Table&nbsp;<a class="tbl" href=
+      "#tab9">9</a>, shrink when switching to random samples. An
+      example is the B <sub><em>Wibi</em></sub> baseline, where
+      about two in three extracted classes are in fact incorrect,
+      as indicated in the first numerical column in
+      Table&nbsp;<a class="tbl" href="#tab10">10</a>. Since classes
+      extracted by run B <sub><em>Wibi</em></sub> are selected from
+      among the more general concepts in IsA relations extracted
+      in&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0011">11</a>],
+      classes incorrectly extracted by run B
+      <sub><em>Wibi</em></sub> point back to errors in extracted
+      IsA relations. Some examples of such erroneous IsA relations
+      are IsA(<em>“Naga Airport”</em>, <em>“Metro Naga”</em>);
+      IsA(<em>“Due diligence”</em>, <em>“County Courts Act
+      1984”</em>); IsA(<em>“Garzón Point”</em>, <em>“Oscar
+      Cove”</em>); IsA(<em>“Sur Kamod”</em>, <em>“Sur
+      (magazine)”</em>). About as many of the extracted classes are
+      in fact incorrect for the baseline B <sub><em>Zctg</em></sub>
+      , as for the baseline B <sub><em>Wibi</em></sub> ; and many
+      more are incorrect, for the baselines B
+      <sub><em>Zart</em></sub> and especially B
+      <sub><em>Wknt</em></sub> . Second, while precision scores of
+      experimental runs are also lower when computed after manual
+      annotation in Table&nbsp;<a class="tbl" href="#tab10">10</a>
+      than when computed automatically in earlier tables over the
+      evaluation sets, they remain encouragingly high, above 0.90.
+      Third, corroborating earlier results from
+      Table&nbsp;<a class="tbl" href="#tab7">7</a>, different types
+      of evidence contribute towards extracting more classes when
+      used in combination (E<sub>[<em>En</em>,
+      <em>AllEvid</em>]</sub>) than separately.</p>
+      <p>Whereas the random samples used in the first numerical
+      column in Table&nbsp;<a class="tbl" href="#tab10">10</a> are
+      separate from one another (and therefore different) among
+      individual runs, the remaining numerical columns show scores
+      computed over a single, combined random sample that is shared
+      among all runs. Since identical for all runs, the combined
+      sample allows for comparing the runs in terms of recall
+      besides precision. The combined sample is the union of random
+      samples from individual runs. To keep the distribution of
+      gold classes vs. gold non-classes balanced rather than
+      allowing gold classes to dominate, the combined sample
+      incorporates the individual random samples from all baseline
+      runs, but from only some (i.e., the first few) of the
+      experimental runs, since experimental evidence so far
+      indicates that the latter tend to extract classes with high
+      precision. The resulting distribution of gold classes vs.
+      non-classes in the manually-annotated combined sample is
+      50.7% vs. 49.3%.</p>
+      <p>Over the combined sample, experimental runs give the
+      highest balanced F-scores. They also give higher precision
+      and even recall than most baseline runs or, in cases when a
+      baseline run does have a higher recall, it also has much
+      lower precision.</p>
+      <p><strong>Extraction from Snapshots over Time</strong>: In
+      an additional experiment, run E<sub>[<em>En</em>,
+      <em>Lex</em>]</sub> temporarily extracts classes from a
+      September 2016 and separately from an August 2015 snapshot,
+      rather than the February 2017 snapshot of Wikipedia used
+      elsewhere in the evaluation. The other snapshots produce 1.7%
+      and 2.5% fewer classes respectively than the more recent
+      snapshot. The ratios suggest that coverage scores reported in
+      the evaluation, for baseline runs and for experimental runs,
+      should incrementally benefit from, although not significantly
+      change after, extraction from incrementally larger snapshots
+      of Wikipedia.</p>
+      <p><strong>Error Analysis</strong>: The three types of
+      evidence - patterns (Lex) vs. morphological variation (Mph)
+      vs. categories (Ctg) - all give relatively high precision.
+      Besides each of them occasionally incorrectly extracting
+      articles as classes due to misleading clues, a separate
+      analysis of a set of incorrectly extracted classes tracks
+      down the more interesting and frequent error cases to two
+      phenomena.</p>
+      <p>The occurrences within the article text of the phrase that
+      gives the title of the article do not always consistently
+      refer to the same sense of the phrase. In the article
+      <em>“UFO (1956 film)”</em>, the phrase <em>“UFO”</em> refers
+      to the name of a movie, in the title; but to flying objects,
+      in the sentence fragment <em>“[..] claimed to have filmed two
+      UFOs flying [..]”</em> from the article. Evidence collected
+      around occurrences (e.g., <em>“UFOs”</em>) of a sense other
+      than in the title may be incorrectly taken as evidence that
+      the article is a class.</p>
+      <p>The same Wikipedia article sometimes conflates the
+      presentation of discussion of multiple topics with the same
+      name, where some but not all of the topics may be classes.
+      The article <em>“Harley-Davidson”</em> refers primarily to
+      the vehicle maker, as in <em>“Harley-Davidson, Inc. (H-D), or
+      Harley, is an American motorcycle manufacturer [..]”</em>;
+      and secondarily also to the vehicles it produces, as in
+      <em>“[..] then in 1929, Harley-Davidsons were produced in
+      Japan under license [..]”</em>. Occurrences like the latter
+      are incorrectly taken to suggest that the article is a class,
+      when that in fact applies to the secondary but not the
+      primary topic of the article.</p>
+      <p>If evidence were combined conjunctively rather than
+      disjunctively, by taking the intersection rather than union
+      of the classes extracted when enabling multiple languages or
+      multiple types of evidence, the error rate would further
+      decrease at the cost of lower recall. For example, relative
+      to scores for <em>En+Fr</em> reported earlier in
+      Table&nbsp;<a class="tbl" href="#tab4">4</a>, conjunctively
+      combining extracted classes, as in <em>En∧Fr</em>, would give
+      precision and recall of 0.988 and 0.311 (over S
+      <sub><em>W</em></sub> ); 1.000 and 0.027 (over S
+      <sub><em>D</em></sub> ); and 1.000 and 0.119 (over S
+      <sub><em>Q</em></sub> ) respectively.</p>
+      <p>The precision and coverage of the extracted classes would
+      likely be affected by setting the extraction parameters in
+      the earlier Section&nbsp;<a class="sec" href="#sec-5">4</a>
+      to different values; or by extending the approximation of
+      plural forms to handle irregular plural forms, e.g.,
+      <em>“Jeu”</em> to <em>“Jeux”</em> (for <em>Fr</em>) or
+      <em>“Arzt”</em> to <em>“Ärzte”</em> (for <em>De</em>).</p>
+      <div class="table-responsive" id="tab11">
+        <div class="table-caption">
+          <span class="table-number">Table 11:</span> <span class=
+          "table-title">Examples of Wikipedia articles in various
+          languages X (English, French or German) that may or may
+          not be inter-connected to equivalent Wikipedia articles
+          in other languages via Wikipedia inter-lingua links; and
+          may or may not be extracted as classes by run
+          E<sub>[<em>X</em>?, <em>Lex</em>]</sub> (C=Wikipedia
+          category; none=no equivalent Wikipedia article available
+          in that language; †=not extracted as a class).</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:center;">English</td>
+              <td style="text-align:center;">French</td>
+              <td style="text-align:center;">German</td>
+            </tr>
+            <tr>
+              <td colspan="3" style="text-align:left;">
+                Equivalent Wikipedia categories:
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">C:Healthcare
+              occupations</td>
+              <td style="text-align:left;">C:Métier de la
+              santé</td>
+              <td style="text-align:left;">C:Heilberuf</td>
+            </tr>
+            <tr>
+              <td colspan="3" style="text-align:left;">
+                Equivalent articles in Wikipedia under the
+                categories from above:
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Birth attendant (†)</td>
+              <td style="text-align:left;">(none)</td>
+              <td style="text-align:left;">(none)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Pharmaconomist</td>
+              <td style="text-align:left;">(none)</td>
+              <td style="text-align:left;">(none)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Emergency medical</td>
+              <td style="text-align:left;">Ambulancier</td>
+              <td style="text-align:left;">Notfall-</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">technician</td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;">sanitäter (†)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">(none)</td>
+              <td style="text-align:left;">Hospitalier</td>
+              <td style="text-align:left;">(none)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Prosector</td>
+              <td style="text-align:left;">Prosecteur</td>
+              <td style="text-align:left;">Prosektor (†)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">(none)</td>
+              <td style="text-align:left;">Audioprothésiste</td>
+              <td style="text-align:left;">(none)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">(none)</td>
+              <td style="text-align:left;">Chef de clinique
+              (Suisse)</td>
+              <td style="text-align:left;">(none)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Emergency physician</td>
+              <td style="text-align:left;">Urgentiste</td>
+              <td style="text-align:left;">Notarzt</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Barefoot doctor (†)</td>
+              <td style="text-align:left;">Médecins aux pieds nus
+              (†)</td>
+              <td style="text-align:left;">Barfußarzt (†)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">(none)</td>
+              <td style="text-align:left;">(none)</td>
+              <td style="text-align:left;">Privatarzt</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">(none)</td>
+              <td style="text-align:left;">Médecin spécialiste</td>
+              <td style="text-align:left;">Facharzt (†)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Impact on Resources Derived from
+      Wikipedia</strong>: Extracting from Wikipedia articles in
+      multiple languages can and does fill in coverage gaps that
+      would otherwise be caused by either the presence of some
+      topics in some language edition of Wikipedia but not in
+      another; or by limitations of the proposed method.</p>
+      <p>Table&nbsp;<a class="tbl" href="#tab11">11</a> shows
+      examples of articles whose parent categories in Wikipedia
+      include the category <em>“Healthcare occupations”</em> in
+      English or its equivalent categories in French and German.
+      Cases where the proposed method does not identify any of
+      equivalent articles in any language as classes (<em>“Barefoot
+      doctor”</em>) are clear coverage losses. In contrast, cases
+      where all equivalent articles (<em>“Emergency
+      physician”</em>) are identified as classes are clear coverage
+      wins. In-between, cases where one or more (but not all)
+      equivalent articles are identified as classes may count as
+      wins for practical purposes. Indeed, for knowledge resources
+      whose entries are aligned with Wikipedia articles (e.g.,
+      Freebase, Wikidata, Knowledge Graph), class annotations over
+      Wikipedia articles can be immediately transferred into class
+      annotations over aligned entries in the other knowledge
+      resource. In the process, it is sufficient for class
+      annotations to be available for some (but not all) of
+      equivalent Wikipedia articles in multiple languages, in order
+      to annotate the corresponding entry in the other knowledge
+      resource as being a class.</p>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186025/images/www2018-34-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">Fragments of the sub-hierarchy rooted at
+          the article <em>“Vehicle”</em>, taken out from the larger
+          hierarchy constructed by&nbsp;[<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0011">11</a>], over
+          articles extracted as classes by E<sub>[<em>AllLang</em>,
+          <em>AllEvid</em>].</sub></span>
+        </div>
+      </figure>
+      <p></p>
+      <p>In a separate illustration of the benefits and practical
+      coverage of the proposed method, Figure&nbsp;<a class="fig"
+      href="#fig2">2</a> shows the partial result of restricting an
+      hierarchy among Wikipedia articles derived based on the
+      method from&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>], to articles extracted as classes by
+      run E<sub>[<em>AllLang</em>, <em>AllEvid</em>]</sub>.</p>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>As Web search evolves, it expands away from retrieval of
+      hyperlinks and closer to retrieval of concepts relevant to
+      search queries. The concepts may be served from knowledge
+      repositories, whose initial construction and subsequent
+      development crucially depend on Wikipedia data. By
+      distinguishing concepts that are classes within Wikipedia,
+      this paper addresses a basic need towards the better
+      understanding and representation of concepts, of their
+      granularity and their interactions.</p>
+      <p>Current work explores additional types of evidence towards
+      identifying classes, including additional patterns assembled
+      manually or learned through distant supervision; the explicit
+      identification of non-classes (instances), in addition to
+      classes; and the role of classes extracted from few or only
+      one language edition of Wikipedia, in erasing the boundaries
+      between language (and culture)-independent vs.
+      language-specific knowledge.</p>
+    </section>
+    <section id="sec-8">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">7</span>
+          Acknowledgments</h2>
+        </div>
+      </header>
+      <p>The author would like to thank Susanne Riehemann and
+      Travis Wolfe, for comments on earlier versions of the paper;
+      Mike Daichik, for suggestions on evaluation, choice of
+      languages and lexical patterns for a few of them; and Alex
+      MacBride, for manually-created mappings from WordNet synsets
+      to equivalent Wikipedia articles.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">C. Bizer, J. Lehmann, G.
+        Kobilarov, S. Auer, C. Becker, R. Cyganiak, and S.
+        Hellmann. 2009. DBpedia - a Crystallization Point for the
+        Web of Data. <em><em>Journal of Web Semantics</em></em> 7,
+        3 (2009), 154–165.</li>
+        <li id="BibPLXBIB0002" label="[2]">R. Blanco, G. Ottaviano,
+        and E. Meij. 2015. Fast and Space-Efficient Entity Linking
+        in Queries. In <em><em>Proceedings of the 8th ACM
+        Conference on Web Search and Data Mining
+        (WSDM-15).</em></em> Shanghai, China, 179–188.</li>
+        <li id="BibPLXBIB0003" label="[3]">G. Boleda, A. Gupta, and
+        S. Padó. 2017. Instances and Concepts in Distributional
+        Space. In <em><em>Proceedings of the 15th Conference of the
+        European Chapter of the Association for Computational
+        Linguistics (EACL-17).</em></em> Valencia, Spain,
+        79–85.</li>
+        <li id="BibPLXBIB0004" label="[4]">K. Bollacker, C. Evans,
+        P. Paritosh, T. Sturge, and J. Taylor. 2008. Freebase: A
+        Collaboratively Created Graph Database for Structuring
+        Human Knowledge. In <em><em>Proceedings of the 2008
+        International Conference on Management of Data
+        (SIGMOD-08).</em></em> Vancouver, Canada, 1247–1250.</li>
+        <li id="BibPLXBIB0005" label="[5]">D. Chen, A. Fisch, J.
+        Weston, and A. Bordes. 2017. Reading Wikipedia to Answer
+        Open-Domain Questions. In <em><em>Proceedings of the 55th
+        Annual Meeting of the Association for Computational
+        Linguistics (ACL-17).</em></em> Vancouver, Canada,
+        1870–1879.</li>
+        <li id="BibPLXBIB0006" label="[6]">A. Chisholm and B.
+        Hachey. 2015. Entity disambiguation with Web links.
+        <em><em>Transactions of the Association for Computational
+        Linguistics</em></em> 3 (2015), 145–156.</li>
+        <li id="BibPLXBIB0007" label="[7]">M. Dryer and M.
+        Haspelmath (Eds.). 2013. <em><em>World Atlas of Language
+        Structures.</em></em> Max Planck Institute for Evolutionary
+        Anthropology.</li>
+        <li id="BibPLXBIB0008" label="[8]">O. Etzioni, A. Fader, J.
+        Christensen, S. Soderland, and Mausam. 2011. Open
+        Information Extraction: The Second Generation. In
+        <em><em>Proceedings of the 22nd International Joint
+        Conference on Artificial Intelligence (IJCAI-11).</em></em>
+        Barcelona, Spain, 3–10.</li>
+        <li id="BibPLXBIB0009" label="[9]">A. Fader, S. Soderland,
+        and O. Etzioni. 2011. Identifying Relations for Open
+        Information Extraction. In <em><em>Proceedings of the 2011
+        Conference on Empirical Methods in Natural Language
+        Processing (EMNLP-11).</em></em> Edinburgh, Scotland,
+        1535–1545.</li>
+        <li id="BibPLXBIB0010" label="[10]">C. Fellbaum (Ed.).
+        1998. <em><em>WordNet: An Electronic Lexical Database and
+        Some of its Applications.</em></em> MIT Press.</li>
+        <li id="BibPLXBIB0011" label="[11]">T. Flati, D. Vannella,
+        T. Pasini, and R. Navigli. 2014. Two Is Bigger (and Better)
+        Than One: the Wikipedia Bitaxonomy Project. In
+        <em><em>Proceedings of the 52nd Annual Meeting of the
+        Association for Computational Linguistics
+        (ACL-14).</em></em> Baltimore, Maryland, 945–955.</li>
+        <li id="BibPLXBIB0012" label="[12]">O. Ganea, M. Ganea, A.
+        Lucchi, C. Eickhoff, and T. Hofmann. 2016. Probabilistic
+        Bag-Of-Hyperlinks Model for Entity Linking. In
+        <em><em>Proceedings of the 25th World Wide Web Conference
+        (WWW-16).</em></em> Montreal, Canada, 927–938.</li>
+        <li id="BibPLXBIB0013" label="[13]">M. Hearst. 1992.
+        Automatic acquisition of hyponyms from large text corpora.
+        In <em><em>Proceedings of the 14th International Conference
+        on Computational Linguistics (COLING-92).</em></em> Nantes,
+        France, 539–545.</li>
+        <li id="BibPLXBIB0014" label="[14]">J. Hoffart, F.
+        Suchanek, K. Berberich, and G. Weikum. 2013. YAGO2: a
+        Spatially and Temporally Enhanced Knowledge Base from
+        Wikipedia. <em><em>Artificial Intelligence Journal. Special
+        Issue on Artificial Intelligence, Wikipedia and
+        Semi-Structured Resources</em></em> 194 (2013), 28–61.</li>
+        <li id="BibPLXBIB0015" label="[15]">J. Hu, G. Wang, F.
+        Lochovsky, J. Sun, and Z. Chen. 2009. Understanding User's
+        Query Intent with Wikipedia. In <em><em>Proceedings of the
+        18th World Wide Web Conference (WWW-09).</em></em> Madrid,
+        Spain, 471–480.</li>
+        <li id="BibPLXBIB0016" label="[16]">D. Lenat. 1995. CYC: a
+        Large-Scale Investment in Knowledge Infrastructure.
+        <em><em>Commun. ACM</em></em> 38, 11 (1995), 32–38.</li>
+        <li id="BibPLXBIB0017" label="[17]">Mausam, M. Schmitz, S.
+        Soderland, R. Bart, and O. Etzioni. 2012. Open Language
+        Learning for Information Extraction. In <em><em>Proceedings
+        of the 2012 Joint Conference on Empirical Methods in
+        Natural Language Processing and Computational Natural
+        Language Learning (EMNLP-CoNLL-12).</em></em> Jeju Island,
+        Korea, 523–534.</li>
+        <li id="BibPLXBIB0018" label="[18]">G. Miller and F.
+        Hristea. 2006. WordNet Nouns: Classes and Instances.
+        <em><em>Computational Linguistics</em></em> 32, 1 (2006),
+        1–3.</li>
+        <li id="BibPLXBIB0019" label="[19]">V. Nastase and M.
+        Strube. 2008. Decoding Wikipedia Categories for Knowledge
+        Acquisition. In <em><em>Proceedings of the 23rd National
+        Conference on Artificial Intelligence (AAAI-08).</em></em>
+        Chicago, Illinois, 1219–1224.</li>
+        <li id="BibPLXBIB0020" label="[20]">V. Nastase and M.
+        Strube. 2013. Transforming Wikipedia into a Large Scale
+        Multilingual Concept Network. <em><em>Artificial
+        Intelligence</em></em> 194 (2013), 62–85.</li>
+        <li id="BibPLXBIB0021" label="[21]">X. Pan, T. Cassidy, U.
+        Hermjakob, H. Ji, and K. Knight. 2015. Unsupervised Entity
+        Linking with Abstract Meaning Representation. In
+        <em><em>Proceedings of the 2015 Conference of the North
+        American Association for Computational Linguistics
+        (NAACL-HLT-15).</em></em> Denver, Colorado, 1130–1139.</li>
+        <li id="BibPLXBIB0022" label="[22]">S. Ponzetto and R.
+        Navigli. 2009. Large-Scale Taxonomy Mapping for
+        Restructuring and Integrating Wikipedia. In
+        <em><em>Proceedings of the 21st International Joint
+        Conference on Artificial Intelligence (IJCAI-09).</em></em>
+        Pasadena, California, 2083–2088.</li>
+        <li id="BibPLXBIB0023" label="[23]">S. Ponzetto and M.
+        Strube. 2007. Deriving a Large Scale Taxonomy from
+        Wikipedia. In <em><em>Proceedings of the 22nd National
+        Conference on Artificial Intelligence (AAAI-07).</em></em>
+        Vancouver, British Columbia, 1440–1447.</li>
+        <li id="BibPLXBIB0024" label="[24]">M. Porter. 1980. An
+        algorithm for suffix stripping. <em><em>Program</em></em>
+        14, 3 (1980), 130–137.</li>
+        <li id="BibPLXBIB0025" label="[25]">L. Ratinov, D. Roth, D.
+        Downey, and M. Anderson. 2011. Local and Global Algorithms
+        for Disambiguation to Wikipedia. In <em><em>Proceedings of
+        the 49th Annual Meeting of the Association for
+        Computational Linguistics (ACL-11).</em></em> Portland,
+        Oregon, 1375–1384.</li>
+        <li id="BibPLXBIB0026" label="[26]">M. Remy. 2002.
+        Wikipedia: The Free Encyclopedia. <em><em>Online
+        Information Review</em></em> 26, 6 (2002), 434.</li>
+        <li id="BibPLXBIB0027" label="[27]">U. Scaiella, P.
+        Ferragina, A. Marino, and M. Ciaramita. 2012. Topical
+        Clustering of Search Results. In <em><em>Proceedings of the
+        5th ACM Conference on Web Search and Data Mining
+        (WSDM-12).</em></em> Seattle, Washington, 223–232.</li>
+        <li id="BibPLXBIB0028" label="[28]">J. Seitner, C. Bizer,
+        K. Eckert, S. Faralli, R. Meusel, H. Paulheim, and S.
+        Ponzetto. 2016. A Large Database of Hypernymy Relations
+        Extracted from the Web. In <em><em>Proceedings of the 10th
+        Conference on Language Resources and Evaluation
+        (LREC-16).</em></em> Portoroz, Slovenia, 360–367.</li>
+        <li id="BibPLXBIB0029" label="[29]">A. Singhal. 2012.
+        Introducing the Knowledge Graph: Things, not Strings.
+        Corporate blog.</li>
+        <li id="BibPLXBIB0030" label="[30]">Y. Sun, A. Singla, D.
+        Fox, and A. Krause. 2015. Building Hierarchies of Concepts
+        via Crowdsourcing. In <em><em>Proceedings of the 24th
+        International Joint Conference on Artificial Intelligence
+        (IJCAI-15).</em></em> Buenos Aires, Argentina,
+        844–851.</li>
+        <li id="BibPLXBIB0031" label="[31]">D. Tsurel, D. Pelleg,
+        I. Guy, and D. Shahaf. 2017. Fun Facts: Automatic Trivia
+        Fact Extraction from Wikipedia. In <em><em>Proceedings of
+        the 10th ACM Conference on Web Search and Data Mining
+        (WSDM-17).</em></em> Cambridge, United Kingdom,
+        345–354.</li>
+        <li id="BibPLXBIB0032" label="[32]">D. Vrandec̆ić and M.
+        Krötzsch. 2014. Wikidata: A Free Collaborative Knowledge
+        Base. <em><em>Commun. ACM</em></em> 57(2014), 78–85.</li>
+        <li id="BibPLXBIB0033" label="[33]">Z. Wang, Z. Li, J. Li,
+        J. Tang, and J. Pan. 2013. Transfer Learning Based
+        Cross-lingual Knowledge Extraction for Wikipedia. In
+        <em><em>Proceedings of the 51st Annual Meeting of the
+        Association for Computational Linguistics
+        (ACL-13).</em></em> Sofia, Bulgaria, 641–650.</li>
+        <li id="BibPLXBIB0034" label="[34]">F. Wu and D. Weld.
+        2010. Open Information Extraction using Wikipedia. In
+        <em><em>Proceedings of the 48th Annual Meeting of the
+        Association for Computational Linguistics
+        (ACL-10).</em></em> Uppsala, Sweden, 118–127.</li>
+        <li id="BibPLXBIB0035" label="[35]">W. Wu, H. Li, H. Wang,
+        and K. Zhu. 2012. Probase: a Probabilistic Taxonomy for
+        Text Understanding. In <em><em>Proceedings of the 2012
+        International Conference on Management of Data
+        (SIGMOD-12).</em></em> Scottsdale, Arizona, 481–492.</li>
+        <li id="BibPLXBIB0036" label="[36]">Y. Yan, N. Okazaki, Y.
+        Matsuo, Z. Yang, and M. Ishizuka. 2009. Unsupervised
+        Relation Extraction by Mining Wikipedia Texts Using
+        Information from the Web. In <em><em>Proceedings of the
+        47th Annual Meeting of the Association for Computational
+        Linguistics (ACL-IJCNLP-09).</em></em> Singapore,
+        1021–1029.</li>
+        <li id="BibPLXBIB0037" label="[37]">C. Zirn, V. Nastase,
+        and M. Strube. 2008. Distinguishing Between Instances and
+        Classes in the Wikipedia Taxonomy. In <em><em>Proceedings
+        of the 5th European Semantic Web Conference
+        (ESWC-08).</em></em> Tenerife, Spain, 376–387.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution-NonCommercial-NoDerivs 4.0 International
+      (CC-BY-NC-ND&nbsp;4.0) license. Authors reserve their rights
+      to disseminate the work on their personal and corporate Web
+      sites with the appropriate attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons
+      CC-BY-NC-ND&nbsp;4.0 License. ACM ISBN
+      978-1-4503-5639-8/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3178876.3186025">https://doi.org/10.1145/3178876.3186025</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

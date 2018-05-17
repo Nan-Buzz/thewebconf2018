@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Session-based News Recommendations</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Session-based News
+          Recommendations</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Gabriele</span> <span class=
+          "surName">Sottocornola</span> Free University of Bolzano,
+          Bolzano, Italy, <a href=
+          "mailto:gsottocornola@unibz.it">gsottocornola@unibz.it</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Panagiotis</span> <span class=
+          "surName">Symeonidis</span> Free University of Bolzano,
+          Bolzano, Italy, <a href=
+          "mailto:psymeonidis@unibz.it">psymeonidis@unibz.it</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Markus</span> <span class=
+          "surName">Zanker</span> Free University of Bolzano,
+          Bolzano, Italy, <a href=
+          "mailto:markus.zanker@unibz.it">markus.zanker@unibz.it</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191582"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191582</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>In the context of news recommendations, many
+        time-aware approaches were proposed. These approaches have
+        tried to capture the recency of news with respect to their
+        short life span, by using either decaying weights on past
+        articles or even forgetting them. However, most of these
+        approaches have missed to consider sessions, which
+        encapsulate inside them the articles that a user has
+        interacted with in a short time period. In this paper, we
+        provide news recommendations based on user sessions to
+        reveal their short-term intentions. We also combine
+        content-based with collaborative filtering to deal with the
+        severe data sparsity problem that exists in our real-life
+        data set. We have experimentally seen that the users’
+        interests evolve over time and that our strategies can
+        adapt fast to these changes.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> <strong>Information systems Collaborative
+        filtering;</strong> <em>Information systems Data
+        streams;</em></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Session-based
+          recommendation; Time-aware recommendation; News
+          recommendation</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Gabriele Sottocornola, Panagiotis Symeonidis, and Markus
+          Zanker. 2018. Session-based News Recommendations. In
+          <em>WWW '18 Companion: The 2018 Web Conference
+          Companion,</em> <em>April 23–27, 2018,</em> <em>Lyon,
+          France. ACM, New York, NY, USA</em> 5 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3191582" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191582</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Content-based (CB) news recommendations build a user's
+      profile based on the news articles that she has read in the
+      past, and recommend to her similar articles. The main
+      advantage of CB is that it alleviates the “cold start”
+      problem (i.e. recommendations for new incoming items/users
+      without ratings). However, CB cannot provide diversified
+      recommendations, because it favors only articles similar to
+      the user's historical profile. To overcome the aforementioned
+      problem, Collaborative Filtering (CF) recommends articles
+      that other similar users to the target user have read in the
+      past. Another CF variation is the item-based CF algorithm
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0008">8</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0012">12</a>], where
+      given a target user and her positively rated news articles,
+      the algorithm relies on the items’ similarities for the
+      formation of a neighborhood of nearest items. For news
+      recommendation, there are hybrid approaches that combine CB
+      with CF algorithms [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>] to deal with the aforementioned
+      problems. However, even if these works take into account the
+      time dimension (e.g., decay the weight of articles that are
+      old, etc.), they miss to take under consideration the
+      sessions, which can reveal the short term preferences of a
+      user.</p>
+      <p>In this paper, we provide news recommendations that use
+      these short user sessions. The advantage of the session-based
+      recommendation is that we concentrate mostly on the
+      short-term intentions of a user. First, we formulate the
+      problem of news recommendation and we present the main
+      dynamics that govern it, such as recency of news, the life
+      span of a news article or topic category, and the usage of a
+      sliding time window to forget news articles that are old. Our
+      proposed method builds a CB user profile, by identifying the
+      main categories of news articles that a user is interested in
+      (e.g., politics, sports, etc.). We also use a sliding time
+      window to reduce the impact of news articles that have been
+      clicked earlier in the past. Moreover, to reveal the
+      short-term user's profile, we analyze the latest news
+      articles that a user has read (i.e. in his last
+      sessions).</p>
+      <p>The rest of this paper is organized as follows. Section
+      <a class="sec" href="#sec-5">2</a> summarizes the related
+      work. Section <a class="sec" href="#sec-6">3</a> formulates
+      the problem and describes our proposed algorithm.
+      Experimental results are given in Section <a class="sec"
+      href="#sec-11">4</a>. Finally, Section <a class="sec" href=
+      "#sec-14">5</a> concludes the paper.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>In this Section, we will present the main work in
+      session-based recommenders and news recommender systems.</p>
+      <p>Session-based recommendation usually refers to the case
+      scenario, where we have only anonymous sessions and we are
+      not able to build a user's profile [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0003">3</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0013">13</a>]. Recently, session-based
+      recommendations have been modeled with Recurrent Neural
+      Networks (RNNs). Hidasi et al. [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>] presented a recommender system based
+      on Gated Recurrent Unit (GRU), which learns when and how much
+      to update the hidden state of the GRU model. However, a more
+      recent study [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>] have shown that a simple
+      <em>k</em>-nearest neighbor (kNN) scheme adapted for
+      session-based recommendations often outperforms the GRU
+      model. The authors claim that best results are achieved when
+      a session-based kNN model is combined with GRU model in a
+      weighted hybrid approach. Nevertheless, several adjustments
+      were proposed during last years in order to improve the
+      performances of the initial GRU model [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0005">5</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0011">11</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0014">14</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0015">15</a>].</p>
+      <p>For the news recommendation task based on short user
+      sessions, Epure et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>] considered three levels of reading
+      interests based on time dimension: short-, medium-, and
+      long-term. They also explored different combinations of these
+      three levels to increase either the accuracy of stories
+      recommendations or the diversity of the recommendation list.
+      They have experimentally shown that recommendations based on
+      combined short-term and long-term interests result in
+      increased accuracy while recommendations based on combined
+      short-term and medium-term interests can increase the
+      diversity of the recommendations.</p>
+      <p>Liu et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>] combined the content-based method
+      with the collaborative filtering method to generate
+      personalized news recommendations. The hybrid method develops
+      a Bayesian framework for predicting users’ current news
+      interests based on profiles learned (i) from the target
+      user's activity and (ii) the news trends demonstrated in the
+      activity of all users. Li et al. [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0007">7</a>] proposed a novel
+      recommendation approach, in which the long-term and
+      short-term reading preferences of users are combined to
+      recommend news stories. In particular, their method is based
+      on a hierarchy of news stories (i.e. news categories) that a
+      user might prefer. Ludmann's recommender system [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0010">10</a>], denoted
+      as Ody4, won the CLEF NewsREEL 2017 contest, which was about
+      recommending effectively and efficiently news articles. Ody4
+      is a stream-based recommender system, which relies on the
+      open source data stream management system Odysseus. Ody4
+      continuously calculated the most popular and recent articles
+      based on a stream of interaction events.</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Proposed
+          Method</h2>
+        </div>
+      </header>
+      <p>We are interested in providing recommendations for news
+      web sites. These media provide news articles to interested
+      content consumers (anonymous or registered users). For
+      anonymous users, we do not have a user profile, instead, we
+      store anonymous sessions together with the articles accessed
+      during them. For registered users or those who have accepted
+      cookies requests, we can keep track of all the interactions
+      that they did in the past (i.e., we can build a user
+      profile).</p>
+      <p>Our recommender consists of two modules. The first is the
+      profile updater, and the second is the recommender that runs
+      on top of the profile updater to deliver the top-<em>N</em>
+      recommended items to each user. The profile updater module
+      reads instances from the stream of user sessions combining
+      them with earlier recorded information on the participating
+      entities (users, items, sessions). Thus, it assigns validity
+      intervals to elements of the sessions stream <em>S</em>.
+      Then, a sliding time window of size <em>w</em> states that
+      the processing at a point in time <em>t</em> should consider
+      all events not older than <em>t</em> − <em>w</em>. Therefore,
+      the profile updater sets a validity interval [<em>t</em> −
+      <em>w</em>, <em>t</em>) in which it computes the similarity
+      among items based on either articles-sessions interactions
+      (CF) or articles’ topic categories (CB). Then, this
+      information is provided to the recommender module, to suggest
+      top-<em>N</em> items to each user.</p>
+      <p>For the news recommendation scenario, whenever a user
+      reads one or more articles in a short time period (i.e., 30
+      minutes), we store these interactions as a user's session.
+      Formally, a session <span class=
+      "inline-equation"><span class="tex">$S_n^u$</span></span> for
+      a user <em>u</em> is defined as a set of items, that the user
+      has interacted with, within a short time period, <span class=
+      "inline-equation"><span class="tex">$S_n^u = (i_1, i_2,
+      \ldots , i_m)$</span></span> . Since user-item interactions
+      arrive at any time, a session is a stream. New users and new
+      items may also arrive at any time. To further clear out our
+      idea, we will use the running example shown in Figure
+      <a class="fig" href="#fig1">1</a>. In this running example,
+      we have 4 users and we want to recommend the next story to
+      user 3, who has an unfinished session (i.e. session
+      <em>S</em> <sub>8</sub>). For computing the similarities
+      between the session of the target user <em>U</em>
+      <sub>3</sub> with the sessions of the other 3 users, please
+      notice that sessions <em>S</em> <sub>1</sub>, <em>S</em>
+      <sub>2</sub>, and <em>S</em> <sub>3</sub> cannot be
+      considered, because they are outside of the sliding time
+      window that we have set [<em>t</em> − <em>w</em>,
+      <em>t</em>). This sliding time window captures the notion of
+      recency of news stories. That is, as a news article has a
+      short life span, which obsoletes fast, then, we should try to
+      recommend more recent articles. The main idea of our paper is
+      that items which are selected in the same sessions can be
+      considered as more similar than those items that are selected
+      from the same user in different sessions. For example, taking
+      into account actions of user 3 (i.e., <em>U</em>
+      <sub>3</sub>) we can infer that similarity between item
+      <em>i</em> <sub>6</sub> with <em>i</em> <sub>3</sub> is
+      bigger than the similarity between item <em>i</em>
+      <sub>6</sub> with <em>i</em> <sub>1</sub> since they were
+      selected within the same session <em>S</em> <sub>5</sub>.
+      This methodology reveals also the short-term preference of
+      the user and his intentions inside a session. We consider two
+      aspects of similarity between item-session interactions and
+      item-category correlations. In the following, we describe
+      these two different types of similarity among items, and we
+      explain how we can combine them into a single similarity
+      function.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191582/images/www18companion-321-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">A visual representation of our running
+          example.</span>
+        </div>
+      </figure>
+      <p></p>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span>
+            Session-based CF Similarity</h3>
+          </div>
+        </header>
+        <p>In this Section, instead of using the classical
+        user-item matrix we use the session-item matrix. The
+        advantage of inferring item similarities from session
+        interactions, instead of user interactions, is that we
+        focus in the short term intentions of the user. Since we
+        perform collaborative filtering on a stream of sessions and
+        items, we slide a window of length <em>w</em> over the
+        stream of interactions and consider at each time point
+        <em>t</em> only the set of interactions inside the time
+        window <em>t<sub>p</sub></em> = [<em>t</em> − <em>w</em>,
+        <em>t</em>). We encode the session as a binary vector: For
+        each session which is active in time period
+        <em>t<sub>p</sub></em> , we set <em>r</em> <sub><em>s</em>,
+        <em>i</em></sub> = 1 if item <em>i</em> is accessed inside
+        section <em>s</em>, otherwise <em>r</em> <sub><em>s</em>,
+        <em>i</em></sub> = 0. Thus, the similarity between item
+        <em>i</em> and <em>j</em> is computed as follows:</p>
+        <div class="table-responsive" id="eq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} simCF(t_p,i,j)
+            = \frac{\sum _{s\in S_{t_p,i}\cap {}S_{t_p,j}} (r_{s,i}
+            \cdot r_{s,j})}{\sqrt {\sum _{s\in
+            {}S_{t_p,i}}(r_{s,i})^2}\sqrt {\sum _{s\in
+            {}S_{t_p,j}}(r_{s,j})^2}} \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>where <span class="inline-equation"><span class=
+        "tex">$S_{t_p,i}$</span></span> and <span class=
+        "inline-equation"><span class=
+        "tex">$S_{t_p,j}$</span></span> are the set of sessions in
+        which item <em>i</em> and <em>j</em> appeared,
+        respectively, within time period <em>t<sub>p</sub></em> .
+        In our running example, <em>i</em> <sub>7</sub> would be
+        recommended because it is more similar than <em>i</em>
+        <sub>4</sub> to the items of the last session (<em>S</em>
+        <sub>8</sub>) of <em>U</em> <sub>3</sub>.
+        <p></p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span>
+            Content-based Similarity</h3>
+          </div>
+        </header>
+        <p>In this Section, we describe a content-based method to
+        recommend news articles according to their topic
+        categories. Based on the articles’ text, we train a topic
+        model and we create for each article its topic category
+        profile. That is, an article is represented by a
+        probability distribution vector over the set of topic
+        categories. Based on the user's news reading history within
+        a specific time period <em>t<sub>p</sub></em> the profile
+        updater computes the similarity matrix among items, based
+        on the cosine similarity of each pair of article-category
+        profiles. Let <em>f</em> <sub><em>c</em>, <em>i</em></sub>
+        be the probability that an item <em>i</em> belongs to a
+        topic category <em>c</em>. Then, the similarity between
+        items <em>i</em> and <em>j</em> is computed as:</p>
+        <div class="table-responsive" id="eq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} simCB(t_p,i,j)
+            = \frac{\sum _{c\in C_{t_p,i}\cap {}C_{t_p,j}}(f_{c,i}
+            \cdot f_{c,j})}{\sqrt {\sum _{c\in
+            {}C_{t_p,i}}(f_{c,i})^2}\sqrt {\sum _{c\in
+            {}C_{t_p,j}}(f_{c,j})^2}} \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>where <span class="inline-equation"><span class=
+        "tex">$C_{t_p,i}$</span></span> and <span class=
+        "inline-equation"><span class=
+        "tex">$C_{t_p,j}$</span></span> are the set of categories
+        that articles <em>i</em> and <em>j</em> may belong to
+        within time period <em>t<sub>p</sub></em> .
+        <p></p>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span> Combining
+            CB with Session-based CF</h3>
+          </div>
+        </header>
+        <p><em>simCF</em> matrix captures the interactions of
+        sessions with articles. However, when sessions do not have
+        many items, it is difficult to provide accurate
+        recommendations. On the other hand, <em>simCB</em> matrix
+        captures the topic categories profile of the articles.
+        Thus, it is able to detect those items that belong to the
+        same categories with those of the target item, alleviating
+        the aforementioned problem. As our objective is to provide
+        more accurate news recommendations, we combine the two
+        similarity measures into a single one, which is given in
+        Eq. <a class="eqn" href="#eq3">3</a>:</p>
+        <div class="table-responsive" id="eq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            simCBCF(t_p,i,j) = \alpha * simCB(t_p,i,j) + (1-\alpha)
+            * simCF(t_p, i,j) \end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>Please notice that in several cases the distribution of
+        the similarity values between <em>simCF</em> and
+        <em>simCB</em> may differ significantly. Therefore, in that
+        case, we have to normalize in the interval [0,1] the values
+        of the two similarity matrices before combining them.</p>
+      </section>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.4</span> Providing
+            Recommendations</h3>
+          </div>
+        </header>
+        <p>Our recommender module provides recommendations based on
+        the similarity matrices presented in previous sections. For
+        each target user <em>u</em>, the recommender checks the set
+        of her recently viewed items <span class=
+        "inline-equation"><span class=
+        "tex">$I_{t_p,u}$</span></span> (i.e., the ones she has
+        interacted with in the current time period
+        <em>t<sub>p</sub></em> ) and computes
+        <em>K<sub>i</sub></em> , which is the set of the <em>k</em>
+        nearest items to each item <em>i</em> that belongs in
+        <span class="inline-equation"><span class=
+        "tex">$I_{t_p,u}$</span></span> . Next, for each target
+        user <em>u</em> in <em>t<sub>p</sub></em> and for each item
+        <em>j</em> we compute a ranking score
+        <em>score</em>(<em>t<sub>p</sub></em> , <em>u</em>,
+        <em>j</em>) as follows:</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} score(t_p,u,j)
+            = \sum _{i \in I_{t_p,u}} simCBCF(i,j) * {\bf
+            1}_{(j,K_i)} \end{equation}</span><br />
+            <span class="equation-number">(4)</span>
+          </div>
+        </div>where <span class="inline-equation"><span class=
+        "tex">${\bf 1}_{({j,K_i})}$</span></span> is an indicator
+        function that is equal to 1 if the item <em>j</em> is
+        present within the <em>k</em>-nearest neighbors of item
+        <em>i</em>, and 0 otherwise. Then, for each user we sort
+        the items in decreasing score and recommend to her the
+        top-<em>N</em> ones.
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-11">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Experimental
+          Evaluation</h2>
+        </div>
+      </header>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191582/images/www18companion-321-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">A visual representation that shows the
+          number of interaction per Session.</span>
+        </div>
+      </figure>
+      <figure id="fig3">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191582/images/www18companion-321-fig3.jpg"
+        class="img-responsive" alt="Figure 3" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 3:</span> <span class=
+          "figure-title">A visual representation that shows how the
+          public interest evolves among the 5 topics over the last
+          12 months (1/4/2016 - 30/3/2017).</span>
+        </div>
+      </figure>
+      <figure id="fig4">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191582/images/www18companion-321-fig4.jpg"
+        class="img-responsive" alt="Figure 4" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 4:</span> <span class=
+          "figure-title">Precision vs. different window sizes
+          (<em>w</em> = 1, 2, 3) for (a) item-based CB with 12
+          timepoints, (b) item-based CF with 12 timepoints, (d)
+          item-based CB with 24 timepoints and (e) item-based CF
+          with 24 timepoints. Moreover, Precision for CBCF vs.
+          different weighting schemes (<em>α</em> = 1, 0.5, 0) for
+          (c) 12 timepoints, (f) for 24 timepoints.</span>
+        </div>
+      </figure>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Data
+            Description and Log Analysis</h3>
+          </div>
+        </header>
+        <p>The data set is provided by an Italian news publisher
+        that accommodated 14367 interactions/events on 2081
+        articles of 14047 unique users in one year (i.e. from 1st
+        April 2016 to 30th March 2017). An interaction is logged
+        when an article is accessed on the news publisher's
+        website. The interactions of each session are logged with
+        the following information: the user session's identifier,
+        the interaction's time stamp and duration, the article's
+        textual content. Based on the articles’ text, we train a
+        Latent Dirichlet Allocation (LDA) [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0001">1</a>] model and found five
+        topic categories in which an article may belong to. The
+        topic categories that were found are “education”,
+        “politics”, “sports”, “local news” and “justice”. Most of
+        the user sessions have a very small number of interactions
+        (i.e., 84% of sessions have only one interaction) as shown
+        in Figure <a class="fig" href="#fig2">2</a>, which should
+        have a negative impact in the effectiveness of all
+        recommendations algorithms. This explains the poor results
+        for all methods in terms of precision@<em>N</em> that will
+        be shown later. In addition, we have noticed big
+        fluctuations of the crowd's reading trends during the year.
+        Figure <a class="fig" href="#fig3">3</a> shows how the
+        public interest evolves over the year, for the 5 topic
+        categories (politics, education, sports, justice and local
+        news). Please notice that some news categories (e.g., local
+        news, education and politics) have greater variation than
+        others (e.g. Sports and Justice). This happens because of
+        some big events, e.g., the local elections of Alto Adige
+        region in Italy was performed on May 2016, and politics
+        attracted the people's interest, as shown in Figure
+        <a class="fig" href="#fig3">3</a>. Based on the above
+        considerations, by using a smaller sliding time window
+        size, we may identify faster when a topic category will
+        attract the crowd's interest (concept drift), as will be
+        later experimentally shown.</p>
+      </section>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span>
+            Recommendation Results</h3>
+          </div>
+        </header>
+        <p>In this Section, we evaluate the precision@5 (i.e., the
+        ratio of correctly predicted articles to the number of
+        recommended ones) we get when we recommend top-5 articles
+        to each user that was active in <em>t<sub>p</sub></em> and
+        has at least one session in time period [<em>t</em>,
+        <em>t</em> + 1), denoted also as <em>t</em> <sub><em>p</em>
+        + 1</sub>. In other words, we evaluate item recommendations
+        against the interactions appearing in <em>t</em>
+        <sub><em>p</em> + 1</sub>, which we consider as future to
+        evaluate our experiments. An important parameter for news
+        recommendation is the window size of the interaction
+        events. If this sliding time window is too large the system
+        is not sensitive to changes (concept drifts), if it is too
+        small there is not enough data to build a model for items
+        or sessions.</p>
+        <p>Next, we study the accuracy performance of CB and CF
+        methods with different time period splits:
+        <em>n<sub>t</sub></em> = 12, 24 and with various time
+        window sizes: <em>w</em> = 1, 2, 3. We set the nearest
+        neighbors <em>k</em>-nn = 20 for CF and <em>k</em>-nn = 30
+        for CB, according to the best results achieved during the
+        preliminary evaluation. In Figures <a class="fig" href=
+        "#fig4">4</a> a, <a class="fig" href="#fig4">4</a> b,
+        <a class="fig" href="#fig4">4</a> d, and <a class="fig"
+        href="#fig4">4</a> e, we can see that the smallest window
+        size <em>w</em> = 1 achieves the best result for almost all
+        timepoints. As far as the time period splits is concerned,
+        the best results are attained with 24 time splits, which
+        means that forgetting fast older news is better. Please
+        notice that when we run experiments with
+        <em>n<sub>t</sub></em> = 52, precision decreased. As
+        expected, CB is on average 40% better than CF, due to the
+        extreme data sparsity (i.e. cold start problem) that exists
+        in our real-life data set, as it is also shown in Figure
+        <a class="fig" href="#fig2">2</a>. Next, we evaluate the
+        combination of CB with CF (i.e. CBCF) with different
+        weighting schemes: <em>α</em> = 1, 0.5, 0. As shown in
+        Figures <a class="fig" href="#fig4">4</a> c and <a class=
+        "fig" href="#fig4">4</a> f, for the 12 and 24 time splits,
+        respectively, CBCF (i.e. the red dotted line) give us
+        better results than those of simple CF and CB at least in
+        some time points. This is an encouraging result, which
+        could be further optimized by learning a model for
+        parameter <em>α</em> using either a regression model or a
+        neural network. Finally, in Table <a class="tbl" href=
+        "#tab1">1</a> we report the average precision results over
+        the whole year for CBCF against the popularity baseline
+        (POP), which recommends the most popular articles in the
+        time window <em>t<sub>p</sub></em> . To include also a
+        static variation of both algorithms, we run experiments
+        with <em>n<sub>t</sub></em> = 2, in addition to the
+        <em>n<sub>t</sub></em> = 12 and <em>n<sub>t</sub></em> =
+        24. As shown in Table <a class="tbl" href="#tab1">1</a>,
+        CBCF outperforms POP baseline in all cases. As expected,
+        both static models perform poorly, because they recommend
+        articles published during a time period of six months,
+        ignoring the fact that articles have a short lifespan
+        (e.g., some weeks).</p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Average precision@5 results over the
+            whole year (%) for <em>n<sub>t</sub></em> = 2,
+            <em>n<sub>t</sub></em> = 12, and <em>n<sub>t</sub></em>
+            = 24, with <em>w</em> = 1.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:center;"><strong>time
+                splits</strong></td>
+                <td style="text-align:center;">
+                <strong>CBCF</strong></td>
+                <td><strong>POP</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">
+                <em>n<sub>t</sub></em> = 2</td>
+                <td style="text-align:center;">0.2</td>
+                <td>0.0</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">
+                <em>n<sub>t</sub></em> = 12</td>
+                <td style="text-align:center;">0.44</td>
+                <td>0.21</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">
+                <em>n<sub>t</sub></em> = 24</td>
+                <td style="text-align:center;">0.71</td>
+                <td>0.39</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+    <section id="sec-14">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>In this paper, we have used short user sessions and topic
+      categories to infer similarities among news stories. We have
+      performed experiments on a real-life data set and proved that
+      the combination of CB with CF could be effective when data
+      sparsity is huge. In future, we want to predict the next item
+      inside a session, which is more suitable for evaluating
+      online recommender systems.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">David&nbsp;M Blei. 2012.
+        Probabilistic topic models. <em><em>Commun. ACM</em></em>
+        55, 4 (2012), 77–84.</li>
+        <li id="BibPLXBIB0002" label="[2]">Elena&nbsp;Viorica
+        Epure, Benjamin Kille, Jon&nbsp;Espen Ingvaldsen, Rebecca
+        Deneckere, Camille Salinesi, and Sahin Albayrak. 2017.
+        Recommending Personalized News in Short User Sessions. In
+        <em><em>Proceedings of the Eleventh ACM Conference on
+        Recommender Systems</em></em> (<em>RecSys ’17</em>). ACM,
+        New York, NY, USA, 121–129. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/3109859.3109894" target="_blank">
+          https://doi.org/10.1145/3109859.3109894</a>
+        </li>
+        <li id="BibPLXBIB0003" label="[3]">Asnat
+        Greenstein-Messica, Lior Rokach, and Michael Friedman.
+        2017. Session-Based Recommendations Using Item Embedding.
+        In <em><em>Proceedings of the 22Nd International Conference
+        on Intelligent User Interfaces</em></em> (<em>IUI
+        ’17</em>). ACM, New York, NY, USA, 629–633. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/3025171.3025197" target="_blank">
+          https://doi.org/10.1145/3025171.3025197</a>
+        </li>
+        <li id="BibPLXBIB0004" label="[4]">Balázs Hidasi,
+        Alexandros Karatzoglou, Linas Baltrunas, and Domonkos Tikk.
+        2016. Session-based Recommendations with Recurrent Neural
+        Networks. In <em><em>Proceedings of the International
+        Conference on Learning Representations (ICLR ’16)</em></em>
+        . arxiv:1511.06939<a class="link-inline force-break"
+          href="http://arxiv.org/abs/1511.06939" target=
+          "_blank">http://arxiv.org/abs/1511.06939</a>
+        </li>
+        <li id="BibPLXBIB0005" label="[5]">Balázs Hidasi, Massimo
+        Quadrana, Alexandros Karatzoglou, and Domonkos Tikk. 2016.
+        Parallel Recurrent Neural Network Architectures for
+        Feature-rich Session-based Recommendations. In
+        <em><em>Proceedings of the 10th ACM Conference on
+        Recommender Systems</em></em> (<em>RecSys ’16</em>). ACM,
+        New York, NY, USA, 241–248. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/2959100.2959167" target="_blank">
+          https://doi.org/10.1145/2959100.2959167</a>
+        </li>
+        <li id="BibPLXBIB0006" label="[6]">Dietmar Jannach and
+        Malte Ludewig. 2017. When Recurrent Neural Networks Meet
+        the Neighborhood for Session-Based Recommendation. In <em>
+          <em>Proceedings of the Eleventh ACM Conference on
+          Recommender Systems</em></em> (<em>RecSys ’17</em>). ACM,
+          New York, NY, USA, 306–310. <a class=
+          "link-inline force-break" href=
+          "https://doi.org/10.1145/3109859.3109872" target=
+          "_blank">https://doi.org/10.1145/3109859.3109872</a>
+        </li>
+        <li id="BibPLXBIB0007" label="[7]">Lei Li, Li Zheng, Fan
+        Yang, and Tao Li. 2014. Modeling and broadening temporal
+        user interest in personalized news recommendation.
+        <em><em>Expert Systems with Applications</em></em> 41, 7
+        (2014), 3168 – 3177.</li>
+        <li id="BibPLXBIB0008" label="[8]">Greg Linden, Brent
+        Smith, and Jeremy York. 2003. Amazon.Com Recommendations:
+        Item-to-Item Collaborative Filtering. <em><em>IEEE Internet
+        Computing</em></em> 7, 1 (Jan. 2003), 76–80. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1109/MIC.2003.1167344" target="_blank">
+          https://doi.org/10.1109/MIC.2003.1167344</a>
+        </li>
+        <li id="BibPLXBIB0009" label="[9]">Jiahui Liu, Peter Dolan,
+        and Elin&nbsp;Rønby Pedersen. 2010. Personalized news
+        recommendation based on click behavior. In
+        <em><em>Proceedings of the 15th international conference on
+        Intelligent user interfaces (IUI’10)</em></em> . ACM,
+        31–40.</li>
+        <li id="BibPLXBIB0010" label="[10]">Cornelius&nbsp;A
+        Ludmann. 2017. Recommending News Articles in the CLEF News
+        Recommendation Evaluation Lab with the Data Stream
+        Management System Odysseus. In <em><em>8th International
+        Conference of the CLEF Initiative, Dublin, Ireland. CEUR
+        Workshop Proceedings</em></em> .</li>
+        <li id="BibPLXBIB0011" label="[11]">Massimiliano Ruocco,
+        Ole Steinar&nbsp;Lillestøl Skrede, and Helge Langseth.
+        2017. Inter-Session Modeling for Session-Based
+        Recommendation. In <em><em>Proceedings of the 2Nd Workshop
+        on Deep Learning for Recommender Systems</em></em>
+        (<em>DLRS 2017</em>). ACM, New York, NY, USA, 24–31.
+        <a class="link-inline force-break" href=
+        "https://doi.org/10.1145/3125486.3125491" target="_blank">
+          https://doi.org/10.1145/3125486.3125491</a>
+        </li>
+        <li id="BibPLXBIB0012" label="[12]">Badrul Sarwar, George
+        Karypis, Joseph Konstan, and John Riedl. 2001. Item-based
+        Collaborative Filtering Recommendation Algorithms. In <em>
+          <em>Proceedings of the 10th International Conference on
+          World Wide Web</em></em> (<em>WWW ’01</em>). ACM, New
+          York, NY, USA, 285–295. <a class=
+          "link-inline force-break" href=
+          "https://doi.org/10.1145/371920.372071" target=
+          "_blank">https://doi.org/10.1145/371920.372071</a>
+        </li>
+        <li id="BibPLXBIB0013" label="[13]">Guy Shani, David
+        Heckerman, and Ronen&nbsp;I. Brafman. 2005. An MDP-Based
+        Recommender System. <em><em>J. Mach. Learn. Res.</em></em>
+        6 (Dec. 2005), 1265–1295. <a class=
+        "link-inline force-break" href=
+        "http://dl.acm.org/citation.cfm?id=1046920.1088715"
+          target="_blank">http://dl.acm.org/citation.cfm?id=1046920.1088715</a>
+        </li>
+        <li id="BibPLXBIB0014" label="[14]">Elena Smirnova and
+        Flavian Vasile. 2017. Contextual Sequence Modeling for
+        Recommendation with Recurrent Neural Networks. In <em><em>
+          Proceedings of the 2Nd Workshop on Deep Learning for
+          Recommender Systems</em></em> (<em>DLRS 2017</em>). ACM,
+          New York, NY, USA, 2–9. <a class=
+          "link-inline force-break" href=
+          "https://doi.org/10.1145/3125486.3125488" target=
+          "_blank">https://doi.org/10.1145/3125486.3125488</a>
+        </li>
+        <li id="BibPLXBIB0015" label="[15]">Yong&nbsp;Kiam Tan,
+        Xinxing Xu, and Yong Liu. 2016. Improved Recurrent Neural
+        Networks for Session-based Recommendations. In
+        <em><em>Proceedings of the 1st Workshop on Deep Learning
+        for Recommender Systems</em></em> (<em>DLRS 2016</em>).
+        ACM, New York, NY, USA, 17–22. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/2988450.2988452" target="_blank">
+          https://doi.org/10.1145/2988450.2988452</a>
+        </li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191582">https://doi.org/10.1145/3184558.3191582</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

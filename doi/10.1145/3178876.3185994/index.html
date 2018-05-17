@@ -1,0 +1,2469 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>DRN: A Deep Reinforcement Learning Framework for News
+  Recommendation</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">DRN: A Deep Reinforcement
+          Learning Framework for News Recommendation</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Guanjie</span> <span class=
+          "surName">Zheng</span>, Pennsylvania State University,
+          University Park, USA, <a href=
+          "mailto:gjz5038@ist.psu.edu">gjz5038@ist.psu.edu</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Fuzheng</span> <span class=
+          "surName">Zhang</span>, Microsoft Research Asia, Beijing,
+          China, <a href=
+          "mailto:fuzzhang@microsoft.com">fuzzhang@microsoft.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Zihan</span> <span class=
+          "surName">Zheng</span>, Microsoft Research Asia, Beijing,
+          China, <a href=
+          "mailto:v-zihanzhe@microsoft.com">v-zihanzhe@microsoft.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Yang</span> <span class=
+          "surName">Xiang</span>, Microsoft Research Asia, Beijing,
+          China, <a href=
+          "mailto:yaxian@microsoft.com">yaxian@microsoft.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Nicholas Jing</span> <span class=
+          "surName">Yuan</span>, Microsoft Research Asia, Beijing,
+          China, <a href=
+          "mailto:nicholas.yuan@microsoft.com">nicholas.yuan@microsoft.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Xing</span> <span class=
+          "surName">Xie</span>, Microsoft Research Asia, Beijing,
+          China, <a href=
+          "mailto:xingx@microsoft.com">xingx@microsoft.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Zhenhui</span> <span class=
+          "surName">Li</span>, Pennsylvania State University,
+          University Park, USA, <a href=
+          "mailto:jessieli@ist.psu.edu">jessieli@ist.psu.edu</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3178876.3185994"
+        target=
+        "_blank">https://doi.org/10.1145/3178876.3185994</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3178876" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>In this paper, we propose a novel Deep
+        Reinforcement Learning framework for news recommendation.
+        Online personalized news recommendation is a highly
+        challenging problem due to the dynamic nature of news
+        features and user preferences. Although some online
+        recommendation models have been proposed to address the
+        dynamic nature of news recommendation, these methods have
+        three major issues. First, they only try to model current
+        reward (e.g., Click Through Rate). Second, very few studies
+        consider to use user feedback other than click / no click
+        labels (e.g., how frequent user returns) to help improve
+        recommendation. Third, these methods tend to keep
+        recommending similar news to users, which may cause users
+        to get bored. Therefore, to address the aforementioned
+        challenges, we propose a Deep Q-Learning based
+        recommendation framework, which can model future reward
+        explicitly. We further consider user return pattern as a
+        supplement to click / no click label in order to capture
+        more user feedback information. In addition, an effective
+        exploration strategy is incorporated to find new attractive
+        news for users. Extensive experiments are conducted on the
+        offline dataset and online production environment of a
+        commercial news recommendation application and have shown
+        the superior performance of our methods.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Reinforcement
+          learning</small>,</span> <span class=
+          "keyword"><small>Deep Q-Learning</small>,</span>
+          <span class="keyword"><small>News
+          recommendation</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Guanjie Zheng, Fuzheng Zhang, Zihan Zheng, Yang Xiang
+          Nicholas Jing Yuan, Xing Xie, and Zhenhui Li. 2018. DRN:
+          A Deep Reinforcement Learning Framework for News
+          Recommendation. In <em>WWW 2018: The 2018 Web
+          Conference,</em> <em>April 23–27, 2018,</em> <em>Lyon,
+          France. ACM, New York, NY, USA</em> 10 Pages. <a href=
+          "https://doi.org/10.1145/3178876.3185994" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3178876.3185994</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>The explosive growth of online content and services has
+      provided tons of choices for users. For instance, one of the
+      most popular online services, news aggregation services, such
+      as Google News&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>] can provide overwhelming volume of
+      content than the amount that users can digest. Therefore,
+      personalized online content recommendation are necessary to
+      improve user experience.</p>
+      <p>Several groups of methods are proposed to solve the online
+      personalized news recommendation problem, including content
+      based methods &nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0019">19</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0033">33</a>], collaborative filtering based
+      methods &nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0028">28</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0034">34</a>], and hybrid methods &nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0012">12</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0024">24</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0025">25</a>]. Recently,
+      as an extension and integration of previous methods, deep
+      learning models&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0008">8</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0045">45</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0052">52</a>] have become the new state-of-art
+      methods due to its capability of modeling complex user item
+      (i.e., news) interactions. However, these methods can not
+      effectively address the following three challenges in news
+      recommendation.</p>
+      <p><em>First, the dynamic changes in news recommendations are
+      difficult to handle.</em> The dynamic change of news
+      recommendation can be shown in two folds. First, news become
+      outdated very fast. In our dataset, the average time between
+      the time that one piece of news is published and the time of
+      its last click is 4.1 hours. Therefore, news features and
+      news candidate set are changing rapidly. Second, users’
+      interest on different news might evolve during time. For
+      instance, Figure&nbsp;<a class="fig" href="#fig1">1</a>
+      displays the categories of news that one user has read in 10
+      weeks. During the first few weeks, this user prefers to read
+      about “Politics” (green bar in Figure&nbsp;<a class="fig"
+      href="#fig1">1</a>), but his interest gradually moves to
+      “Entertainment” (purple bar in Figure&nbsp;<a class="fig"
+      href="#fig1">1</a>) and “Technology” (grey bar in
+      Figure&nbsp;<a class="fig" href="#fig1">1</a>) over time.
+      Therefore, it is necessary to update the model periodically.
+      Although there are some online recommendation
+      methods&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0024">24</a>] that can capture the dynamic change
+      of news features and user preference through online model
+      updates, they only try to optimize the current reward (e.g.,
+      Click Through Rate), and hence ignore what effect the current
+      recommendation might bring to the future. An example showing
+      the necessity of considering future is given in
+      Example&nbsp;<a class="enc" href="#enc1">1.1</a>.</p>
+      <p></p>
+      <div class="example" id="enc1">
+        <label>Example 1.1.</label>
+        <p>When a user Mike requests for news, the recommendation
+        agent foresees that he has almost the same probability to
+        click on two pieces of news: one about a thunderstorm
+        alert, and the other about a basketball player Kobe Bryant.
+        However, according to Mike's reading preference, features
+        of the news, and reading patterns of other users, our agent
+        speculates that, after reading about the thunderstorm, Mike
+        will not need to read news about this alert anymore, but he
+        will probably read more about basketball after reading the
+        news about Kobe. This suggests, recommending the latter
+        piece of news will introduce larger future reward.
+        Therefore, considering future rewards will help to improve
+        recommendation performance in the long run.</p>
+      </div>
+      <p></p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3185994/images/www2018-3-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Distribution of clicked categories of an
+          active user in ten weeks. User interest is evolving over
+          time.</span>
+        </div>
+      </figure>
+      <p><em>Second, current recommendation methods
+      &nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0023">23</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0035">35</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0036">36</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0043">43</a>] usually
+      only consider the click / no click labels or ratings as
+      users’ feedback.</em> However, how soon one user will return
+      to this service &nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0048">48</a>] will also indicate how satisfied
+      this user is with the recommendation. Nevertheless, there has
+      been little work in trying to incorporate user return pattern
+      to help improve recommendation.</p>
+      <p><em>The third major issue of current recommendation
+      methods is its tendency to keep recommending similar items to
+      users, which might decrease users’ interest in similar
+      topics.</em> In the literature, some reinforcement learning
+      methods have already proposed to add some randomness (i.e.,
+      exploration) into the decision to find new items.
+      State-of-art reinforcement learning methods usually apply the
+      simple ϵ-<em>greedy</em> strategy &nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0031">31</a>] or <em>Upper Confidence
+      Bound</em> (<em>UCB</em>) &nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0023">23</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0043">43</a>] (mainly for Multi-Armed Bandit
+      methods). However, both strategies could harm the
+      recommendation performance to some extent in a short period.
+      ϵ-<em>greedy</em> strategy may recommend the customer with
+      totally unrelated items, while <em>UCB</em> can not get a
+      relatively accurate reward estimation for an item until this
+      item has been tried several times. Hence, it is necessary to
+      do more effective exploration.</p>
+      <p>Therefore, in this paper, we propose a Deep Reinforcement
+      Learning framework that can help to address these three
+      challenges in online personalized news recommendation.
+      <em>First, in order to better model the dynamic nature of
+      news characteristics and user preference, we propose to use
+      Deep Q-Learning (DQN) &nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0031">31</a>] framework.</em> This framework can
+      consider current reward and future reward simultaneously.
+      Some recent attempts using reinforcement learning in
+      recommendation either do not model the future reward
+      explicitly (MAB-based works&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0023">23</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0043">43</a>]), or use discrete user
+      log to represent state and hence can not be scaled to large
+      systems (MDP-based works &nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0035">35</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0036">36</a>]). In contrast, our framework uses a
+      DQN structure and can easily scale up. <em>Second, we
+      consider user return as another form of user feedback
+      information, by maintaining an activeness score for each
+      user</em>. Different from existing work&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0048">48</a>] that can only consider
+      the most recent return interval, we consider multiple
+      historical return interval information to better measure the
+      user feedback. In addition, different from &nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0048">48</a>], our model
+      can estimate user activeness at any time (not just when user
+      returns). This property enables the experience replay update
+      used in DQN. <em>Third, we propose to apply a Dueling Bandit
+      Gradient Descent(DBGD) method&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0016">16</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0017">17</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0049">49</a>] for exploration, by
+      choosing random item candidates in the neighborhood of the
+      current recommender.</em> This exploration strategy can avoid
+      recommending totally unrelated items and hence maintain
+      better recommendation accuracy.</p>
+      <p>Our deep reinforcement recommender system can be shown as
+      Figure&nbsp;<a class="fig" href="#fig2">2</a>. We follow the
+      common terminologies in reinforcement
+      learning&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0037">37</a>] to describe the system. In our
+      system, user pool and news pool make up the environment, and
+      our recommendation algorithms play the role of agent. The
+      state is defined as feature representation for users and
+      action is defined as feature representation for news. Each
+      time when a user requests for news, a state representation
+      (i.e., features of users) and a set of action representations
+      (i.e., features of news candidates) are passed to the agent.
+      The agent will select the best action (i.e., recommending a
+      list of news to user) and fetch user feedback as reward.
+      Specifically, the reward is composed of click labels and
+      estimation of user activeness. All these recommendation and
+      feedback log will be stored in the memory of the agent. Every
+      one hour, the agent will use the log in the memory to update
+      its recommendation algorithm.</p>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3185994/images/www2018-3-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">Deep Reinforcement Recommendation
+          System.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>Our contribution can be summarized as below:</p>
+      <ul class="list-no-style">
+        <li id="list1" label="•">We propose a reinforcement
+        learning framework to do online personalized news
+        recommendation. Unlike previous studies, this framework
+        applies a DQN structure and can take care of both immediate
+        and future reward. Although we focus on news
+        recommendation, our framework can be generalized to many
+        other recommendation problems.<br /></li>
+        <li id="list2" label="•">We consider user activeness to
+        help improve recommendation accuracy, which can provide
+        extra information than simply using user click
+        labels.<br /></li>
+        <li id="list3" label="•">A more effective exploration
+        method <em>Dueling Bandit Gradient Descent</em> is applied,
+        which avoids the recommendation accuracy drop induced by
+        classical exploration methods, e.g., ϵ-<em>greedy</em> and
+        <em>Upper Confidence Bound</em>.<br /></li>
+        <li id="list4" label="•">Our system has been deployed
+        online in a commercial news recommendation application.
+        Extensive offline and online experiments have shown the
+        superior performance of our methods.<br /></li>
+      </ul>
+      <p>The rest of the paper is organized as follows. Related
+      work is discussed in Section&nbsp;<a class="sec" href=
+      "#sec-4">2</a>. Then, in Section&nbsp;<a class="sec" href=
+      "#sec-9">3</a> we present the problem definitions. Our method
+      is introduced in Section&nbsp;<a class="sec" href=
+      "#sec-10">4</a>. After that, the experimental results are
+      shown in Section&nbsp;<a class="sec" href="#sec-16">5</a>.
+      Finally, brief conclusions are given in
+      Section&nbsp;<a class="sec" href="#sec-27">6</a>.</p>
+    </section>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          work</h2>
+        </div>
+      </header>
+      <section id="sec-5">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> News
+            recommendation algorithms</h3>
+          </div>
+        </header>
+        <p>Recommender systems&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0004">4</a>] have been investigated extensively
+        because of its direct connection to profits of products.
+        Recently, due to the explosive grow of online content, more
+        and more attention has been drawn to a special application
+        of recommendation – online personalized news
+        recommendation. Conventional news recommendation methods
+        can be divided into three categories. Content-based methods
+        &nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0019">19</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0022">22</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0033">33</a>] will maintain news term frequency
+        features (e.g., TF-IDF) and user profiles (based on
+        historical news). Then, recommender will select news that
+        is more similar to user profile. In contrast, collaborative
+        filtering methods&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0011">11</a>] usually make rating prediction
+        utilizing the past ratings of current user or similar users
+        &nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0028">28</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0034">34</a>], or the combination of these
+        two&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0011">11</a>]. To combine the advantages of the
+        former two groups of methods, hybrid
+        methods&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0012">12</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0024">24</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0025">25</a>] are further proposed to improve
+        the user profile modeling. Recently, as an extension and
+        integration of previous methods, deep learning
+        models&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0008">8</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0045">45</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0052">52</a>] have shown much superior
+        performance than previous three categories of models due to
+        its capability of modeling complex user-item relationship.
+        <em>Different from the effort for modeling the complex
+        interaction between user and item, our algorithm focuses on
+        dealing with the dynamic nature of online news
+        recommendation, and modeling of future reward. However,
+        these feature construction and user-item modeling
+        techniques can be easily integrated into our
+        methods.</em></p>
+      </section>
+      <section id="sec-6">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span>
+            Reinforcement learning in recommendation</h3>
+          </div>
+        </header>
+        <section id="sec-7">
+          <p><em>2.2.1 Contextual Multi-Armed Bandit models.</em> A
+          group of work &nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0005">5</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0007">7</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0023">23</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0040">40</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0044">44</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0050">50</a>] begin to formulate the problem
+          as a Contextual Multi-Armed Bandit (MAB) problem, where
+          the context contains user and item features. [<a class=
+          "bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0023">23</a>]
+          assumes the expected reward is a linear function of the
+          context. [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0039">39</a>] uses an ensemble of bandits to
+          improve the performance, [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0040">40</a>] proposes a parameter-free model,
+          and [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0050">50</a>] addresses the time-varying
+          interest of users. Recently, some people try to combine
+          bandit with clustering based collaborative filtering
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0014">14</a>], and matrix factorization
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0006">6</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0021">21</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0032">32</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0042">42</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0043">43</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0051">51</a>], in order to model more complex
+          user and item relationship, and utilize the social
+          network relationship in determining the reward function.
+          <em>However, our model is significantly different from
+          these works, because by applying Markov Decision Process,
+          our model is able to explicitly model future rewards.
+          This will benefit the recommendation accuracy
+          significantly in the long run.</em></p>
+        </section>
+        <section id="sec-8">
+          <p><em>2.2.2 Markov Decision Process models.</em> There
+          are also some literature trying to use Markov Decision
+          Process to model the recommendation process. In contrast
+          to MAB-based methods, MDP-based methods can not only
+          capture the reward of current iteration, but also the
+          potential reward in the future iterations. [<a class=
+          "bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0026">26</a>,
+          <a class="bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0027">27</a>,
+          <a class="bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0035">35</a>,
+          <a class="bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0036">36</a>,
+          <a class="bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0038">38</a>] try to
+          model the item or n-gram of items as state (or
+          observation in Partially Observed MDP), and the
+          transition between items (recommendation for the next
+          item) as the action. However, this can not scale to large
+          dataset, because when the item candidate set becomes
+          larger, the size of state space will grow exponentially.
+          In addition, the state transitions data is usually very
+          sparse, and can only be used to learn the model
+          parameters corresponding to certain state transitions.
+          Therefore, the model is really hard to learn.
+          <em>Different from the literature, we propose a MDP
+          framework with continuous state and action
+          representation, which enables the system to scale up and
+          the effective learning of model parameters by using all
+          the state, action, reward tuples.</em></p>
+        </section>
+      </section>
+    </section>
+    <section id="sec-9">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Problem
+          definition</h2>
+        </div>
+      </header>
+      <p>We define our problem as follows:</p>
+      <p>When a user <span class="inline-equation"><span class=
+      "tex">$\mathsf {u}$</span></span> sends a news request to the
+      recommendation agent <span class=
+      "inline-equation"><span class="tex">$\mathsf
+      {G}$</span></span> at time <em>t</em>, given a candidate set
+      <span class="inline-equation"><span class="tex">$\mathsf
+      {I}$</span></span> of news, our algorithm is going to select
+      a list <span class="inline-equation"><span class=
+      "tex">$\mathsf {L}$</span></span> of top-k appropriate news
+      for this user. The notations used in this paper are
+      summarized in Table&nbsp;<a class="tbl" href=
+      "#tab1">1</a>.</p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">Notations</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Notation</th>
+              <th style="text-align:left;">Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:left;"><span class=
+              "inline-equation"><span class="tex">$\mathsf
+              {G}$</span></span></td>
+              <td style="text-align:left;">Agent</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"><span class=
+              "inline-equation"><span class="tex">$\mathsf
+              {u}$</span></span> , <span class=
+              "inline-equation"><span class="tex">$\mathsf
+              {U}$</span></span></td>
+              <td style="text-align:left;">User, User set</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"><span class=
+              "inline-equation"><span class="tex">$\mathsf
+              {a}$</span></span></td>
+              <td style="text-align:left;">Action</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"><span class=
+              "inline-equation"><span class="tex">$\mathsf
+              {s}$</span></span></td>
+              <td style="text-align:left;">State</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"><span class=
+              "inline-equation"><span class="tex">$\mathsf
+              {r}$</span></span></td>
+              <td style="text-align:left;">Reward</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"><span class=
+              "inline-equation"><span class="tex">$\mathsf
+              {i}$</span></span> , <span class=
+              "inline-equation"><span class="tex">$\mathsf
+              {I}$</span></span></td>
+              <td style="text-align:left;">News, Candidate news
+              pool</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"><span class=
+              "inline-equation"><span class="tex">$\mathsf
+              {L}$</span></span></td>
+              <td style="text-align:left;">List of news to
+              recommend</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"><span class=
+              "inline-equation"><span class="tex">$\mathsf
+              {B}$</span></span></td>
+              <td style="text-align:left;">List of feedback from
+              users</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"><span class=
+              "inline-equation"><span class="tex">$\mathsf
+              {Q}$</span></span></td>
+              <td style="text-align:left;">Deep Q-Network</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"><span class=
+              "inline-equation"><span class="tex">$\mathsf
+              {W}$</span></span></td>
+              <td style="text-align:left;">Parameters of Deep
+              Q-Network</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Method</h2>
+        </div>
+      </header>
+      <p>Personalized news recommendation has attracted a lot of
+      attention in recent years&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0023">23</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0045">45</a>]. The current methods can be
+      generally categorized as content based methods
+      &nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0019">19</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0022">22</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0033">33</a>],
+      collaborative filtering based methods &nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0011">11</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0028">28</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0034">34</a>], and hybrid methods
+      &nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0012">12</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0024">24</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0025">25</a>]. Recently,
+      many deep learning models&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0008">8</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0045">45</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0052">52</a>] are further proposed in order to
+      model more complex user item interactions. News
+      recommendation problem becomes even more challenging when it
+      happens in an online scenario due to three reasons. First,
+      online learning are needed due to the highly dynamic nature
+      of news characteristics and user preference. Second, only
+      using click / no click labels will not capture users’ full
+      feedback towards news. Third, traditional recommendation
+      methods tend to recommend similar items and will narrow down
+      user's reading choices. This will make users bored and lead
+      to decrease of user satisfaction in the long run.</p>
+      <p>To address these three challenges, we propose a DQN-based
+      Deep Reinforcement Learning framework to do online
+      personalized news recommendation. Specifically, we use a
+      continuous state feature representation of users and
+      continuous action feature representation of items as the
+      input to a multi-layer Deep Q-Network to predict the
+      potential reward (e.g., whether user will click on this piece
+      of news). First, this framework can deal with the highly
+      dynamic nature of news recommendation due to the online
+      update of DQN. Meanwhile, DQN is different from common online
+      methods, because of its capability to speculate future
+      interaction between user and news. Second, we propose to
+      combine user activeness (i.e., how frequent a user returns to
+      the App after one recommendation) and click labels as the
+      feedback from users. Third, we propose to apply <em>Dueling
+      Bandit Gradient Descent</em> exploration
+      strategy&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0049">49</a>] to our algorithm which can both
+      improve recommendation diversity and avoid the harm to
+      recommendation accuracy induced by classical exploration
+      strategies like ϵ-<em>greedy</em> &nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0031">31</a>] and <em>Upper Confidence
+      Bound</em> &nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0023">23</a>].</p>
+      <p>Our method is significantly different from the MAB group
+      of methods&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0023">23</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0040">40</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0044">44</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0050">50</a>] due to its explicit modeling of
+      future rewards, and different from previous MDP
+      methods&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0027">27</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0035">35</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0036">36</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0038">38</a>] using user log due to its continuous
+      representation of state and action, and the capability to
+      scale to large systems.</p>
+      <p>In this section, we will first introduce the model
+      framework in Section&nbsp;<a class="sec" href=
+      "#sec-11">4.1</a>. Then, we will illustrate the feature
+      construction in Section&nbsp;<a class="sec" href=
+      "#sec-12">4.2</a> and the deep reinforcement learning model
+      in Section&nbsp;<a class="sec" href="#sec-13">4.3</a>. After
+      that, the design of user activeness consideration is
+      discussed in Section&nbsp;<a class="sec" href=
+      "#sec-14">4.4</a>. Finally, the exploration module is
+      introduced in Section&nbsp;<a class="sec" href=
+      "#sec-15">4.5</a>.</p>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Model
+            framework</h3>
+          </div>
+        </header>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3185994/images/www2018-3-fig3.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">Model framework.</span>
+          </div>
+        </figure>
+        <p>As shown in Figure&nbsp;<a class="fig" href=
+        "#fig3">3</a>, our model is composed of offline part and
+        online part. In offline stage, four kinds of features (will
+        be discussed in Section&nbsp;<a class="sec" href=
+        "#sec-12">4.2</a>) are extracted from news and users. A
+        multi-layer Deep Q-Network is used to predict the reward
+        (i.e., a combination of user-news click label and user
+        activeness) from these four kinds of features. This network
+        is trained using the offline user-news click logs. Then,
+        during the online learning part, our recommendation agent
+        <span class="inline-equation"><span class="tex">$\mathsf
+        {G}$</span></span> will interact with users and update the
+        network in the following way:</p>
+        <ol class="list-no-style">
+          <li id="list5" label="(1)">
+            <strong>PUSH:</strong> In each timestamp (<em>t</em>
+            <sub>1</sub>, <em>t</em> <sub>2</sub>, <em>t</em>
+            <sub>3</sub>, <em>t</em> <sub>4</sub>, <em>t</em>
+            <sub>5</sub>, ...), when a user sends a news request to
+            the system, the recommendation agent <span class=
+            "inline-equation"><span class="tex">$\mathsf
+            {G}$</span></span> will take the feature representation
+            of the current user and news candidates as input, and
+            generate a top-k list of news to recommend <span class=
+            "inline-equation"><span class="tex">$\mathsf
+            {L}$</span></span> . <span class=
+            "inline-equation"><span class="tex">$\mathsf
+            {L}$</span></span> is generated by combining the
+            exploitation of current model (will be discussed in
+            Section&nbsp;<a class="sec" href="#sec-13">4.3</a>) and
+            exploration of novel items (will be discussed in
+            Section&nbsp;<a class="sec" href=
+            "#sec-15">4.5</a>).<br />
+          </li>
+          <li id="list6" label="(2)"><strong>FEEDBACK:</strong>
+          User <span class="inline-equation"><span class=
+          "tex">$\mathsf {u}$</span></span> who has received
+          recommended news <span class=
+          "inline-equation"><span class="tex">$\mathsf
+          {L}$</span></span> will give their feedback <span class=
+          "inline-equation"><span class="tex">$\mathsf
+          {B}$</span></span> by his clicks on this set of
+          news.<br /></li>
+          <li id="list7" label="(3)">
+            <strong>MINOR UPDATE:</strong> After each timestamp
+            (e.g., after timestamp <em>t</em> <sub>1</sub>), with
+            the feature representation of the previous user
+            <span class="inline-equation"><span class=
+            "tex">$\mathsf {u}$</span></span> and news list
+            <span class="inline-equation"><span class=
+            "tex">$\mathsf {L}$</span></span> , and the feedback
+            <span class="inline-equation"><span class=
+            "tex">$\mathsf {B}$</span></span> , agent <span class=
+            "inline-equation"><span class="tex">$\mathsf
+            {G}$</span></span> will update the model by comparing
+            the recommendation performance of exploitation network
+            <span class="inline-equation"><span class=
+            "tex">$\mathsf {Q}$</span></span> and exploration
+            network <span class="inline-equation"><span class=
+            "tex">$\tilde{\mathsf {Q}}$</span></span> (will be
+            discussed in Section&nbsp;<a class="sec" href=
+            "#sec-15">4.5</a>). If <span class=
+            "inline-equation"><span class="tex">$\tilde{\mathsf
+            {Q}}$</span></span> gives better recommendation result,
+            the current network will be updated towards
+            <span class="inline-equation"><span class=
+            "tex">$\tilde{\mathsf {Q}}$</span></span> . Otherwise,
+            <span class="inline-equation"><span class=
+            "tex">$\mathsf {Q}$</span></span> will be kept
+            unchanged. Minor update can happen after every
+            recommendation impression happens.<br />
+          </li>
+          <li id="list8" label="(4)">
+            <strong>MAJOR UPDATE:</strong> After certain period of
+            time <em>T<sub>R</sub></em> (e.g., after timestamp
+            <em>t</em> <sub>3</sub>), agent <span class=
+            "inline-equation"><span class="tex">$\mathsf
+            {G}$</span></span> will use the user feedback
+            <span class="inline-equation"><span class=
+            "tex">$\mathsf {B}$</span></span> and user activeness
+            stored in the memory to update the network <span class=
+            "inline-equation"><span class="tex">$\mathsf
+            {Q}$</span></span> . Here, we use the experience replay
+            technique&nbsp;[<a class="bib" data-trigger="hover"
+            data-toggle="popover" data-placement="top" href=
+            "#BibPLXBIB0031">31</a>] to update the network.
+            Specifically, agent <span class=
+            "inline-equation"><span class="tex">$\mathsf
+            {G}$</span></span> maintains a memory with recent
+            historical click and user activeness records. When each
+            update happens, agent <span class=
+            "inline-equation"><span class="tex">$\mathsf
+            {G}$</span></span> will sample a batch of records to
+            update the model. Major update usually happens after a
+            certain time interval, like one hour, during which
+            thousands of recommendation impressions are conducted
+            and their feedbacks are collected.<br />
+          </li>
+          <li id="list9" label="(5)">Repeat step
+          (1)-(4).<br /></li>
+        </ol>
+      </section>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Feature
+            construction</h3>
+          </div>
+        </header>
+        <p>In order to predict whether user will click one specific
+        piece of news or not, we construct four categories of
+        features:</p>
+        <ul class="list-no-style">
+          <li id="list10" label="•"><strong>News features</strong>
+          includes 417 dimension one hot features that describe
+          whether certain property appears in this piece of news,
+          including headline, provider, ranking, entity name,
+          category, topic category, and click counts in last 1
+          hour, 6 hours, 24 hours, 1 week, and 1 year
+          respectively.<br /></li>
+          <li id="list11" label="•"><strong>User features</strong>
+          mainly describes the features (i.e., headline, provider,
+          ranking, entity name, category, and topic category) of
+          the news that the user clicked in 1 hour, 6 hours, 24
+          hours, 1 week, and 1 year respectively. There is also a
+          total click count for each time granularity. Therefore,
+          there will be totally 413 × 5 = 2065
+          dimensions.<br /></li>
+          <li id="list12" label="•"><strong>User news
+          features</strong>. These 25-dimensional features describe
+          the interaction between user and one certain piece of
+          news, i.e., the frequency for the entity (also category,
+          topic category and provider) to appear in the history of
+          the user's readings.<br /></li>
+          <li id="list13" label="•"><strong>Context
+          features</strong>. These 32-dimensional features describe
+          the context when a news request happens, including time,
+          weekday, and the freshness of the news (the gap between
+          request time and news publish time).<br /></li>
+        </ul>
+        <p>In order to focus on the analysis of the reinforcement
+        learning recommendation framework, we did not try to add
+        more features, e.g., textual features&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0045">45</a>]. But they can be easily
+        integrated into our framework for better performance.</p>
+      </section>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span> Deep
+            Reinforcement Recommendation</h3>
+          </div>
+        </header>
+        <p>Considering the previous mentioned dynamic feature of
+        news recommendation and the need to estimate future reward,
+        we apply a Deep Q-Network (DQN) &nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0031">31</a>] to model the
+        probability that one user may click on one specific piece
+        of news. Under the setting of reinforcement learning, the
+        probability for a user to click on a piece of news (and
+        future recommended news) is essentially the reward that our
+        agent can get. Therefore, we can model the total reward as
+        Equation&nbsp;<a class="eqn" href="#eq1">1</a>.</p>
+        <div class="table-responsive" id="eq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} y_{\mathsf
+            {s}, \mathsf {a}} = Q(\mathsf {s}, \mathsf {a}) =
+            \mathsf {r}_{immediate} + \gamma \mathsf {r}_{future}
+            \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>where state <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {s}$</span></span> is represented by context features and
+        user features, action <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {a}$</span></span> is represented by news features and
+        user-news interaction features, <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {r}_{immediate}$</span></span> represents the rewards
+        (e.g., whether user click on this piece of news) for
+        current situation, and <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {r}_{future}$</span></span> represents the agent's
+        projection of future rewards. <em>γ</em> is a discount
+        factor to balance the relative importance of immediate
+        rewards and future rewards. Specifically, given
+        <span class="inline-equation"><span class="tex">$\mathsf
+        {s}$</span></span> as the current state, we use the
+        <em>DDQN</em> &nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0041">41</a>] target to predict the total reward
+        by taking action <span class="inline-equation"><span class=
+        "tex">$\mathsf {a}$</span></span> at timestamp <em>t</em>
+        as in Equation&nbsp;<a class="eqn" href="#eq2">2</a>.
+        <div class="table-responsive" id="eq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} y_{\mathsf
+            {s}, \mathsf {a}, t} = \mathsf {r}_{\mathsf {a}, t+1} +
+            \gamma \mathsf {Q}(\mathsf {s}_{\mathsf {a}, t+1}, \arg
+            \max _{\mathsf {a}^{\prime }} \mathsf {Q}(\mathsf
+            {s}_{\mathsf {a}, t+1}, \mathsf {a}^{\prime }; \mathsf
+            {W}_t); \mathsf {W}_t^{\prime })
+            \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>where <span class="inline-equation"><span class=
+        "tex">$\mathsf {r}_{\mathsf {a}, t+1}$</span></span>
+        represents the immediate reward by taking action
+        <span class="inline-equation"><span class="tex">$\mathsf
+        {a}$</span></span> (the subscript <em>t</em> + 1 is because
+        the reward is always delayed 1 timeslot than the action).
+        Here, <span class="inline-equation"><span class=
+        "tex">$\mathsf {W}_t$</span></span> and <span class=
+        "inline-equation"><span class="tex">$\mathsf {W}_t^{\prime
+        }$</span></span> are two different sets of parameters of
+        the DQN. In this formulation, our agent <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {G}$</span></span> will speculate the next state
+        <span class="inline-equation"><span class="tex">$\mathsf
+        {s}_{\mathsf {a}, t+1}$</span></span> , given action
+        <span class="inline-equation"><span class="tex">$\mathsf
+        {a}$</span></span> is selected. Based on this, given a
+        candidate set of actions <span class=
+        "inline-equation"><span class="tex">$\lbrace \mathsf
+        {a}^{\prime }\rbrace$</span></span> , the action
+        <span class="inline-equation"><span class="tex">$\mathsf
+        {a}^{\prime }$</span></span> that gives the maximum future
+        reward is selected according to parameter <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {W}_t$</span></span> . After this, the estimated future
+        reward given state <span class=
+        "inline-equation"><span class="tex">$\mathsf {s}_{\mathsf
+        {a}, t+1}$</span></span> is calculated based on
+        <span class="inline-equation"><span class="tex">$\mathsf
+        {W}_t^{\prime }$</span></span> . Every a few iterations,
+        <span class="inline-equation"><span class="tex">$\mathsf
+        {W}_t$</span></span> and <span class=
+        "inline-equation"><span class="tex">$\mathsf {W}_t^{\prime
+        }$</span></span> will be switched. This strategy has been
+        proven to eliminate the overoptimistic value estimates of
+        <em>Q</em> &nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0041">41</a>]. Through this process, DQN will be
+        able to make decision considering both immediate and future
+        situations.
+        <p></p>
+        <p>As shown in Figure&nbsp;<a class="fig" href=
+        "#fig4">4</a>, we feed the four categories of features into
+        the network. <strong>User features</strong> and
+        <strong>Context features</strong> are used as state
+        features, while <strong>User news features</strong> and
+        <strong>Context features</strong> are used as action
+        features. On one hand, the reward for taking action
+        <span class="inline-equation"><span class="tex">$\mathsf
+        {a}$</span></span> at certain state <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {s}$</span></span> is closely related to all the features.
+        On the other hand, the reward that determined by the
+        characteristics of the user himself (e.g., whether this
+        user is active, whether this user has read enough news
+        today) is more impacted by the status of the user and the
+        context only. Based on this observation,
+        like&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0047">47</a>], we divide the Q-function into
+        value function <span class="inline-equation"><span class=
+        "tex">$V(\mathsf {s})$</span></span> and advantage function
+        <span class="inline-equation"><span class="tex">$A(\mathsf
+        {s}, \mathsf {a})$</span></span> , where <span class=
+        "inline-equation"><span class="tex">$V(\mathsf
+        {s})$</span></span> is only determined by the state
+        features, and <span class="inline-equation"><span class=
+        "tex">$A(\mathsf {s}, \mathsf {a})$</span></span> is
+        determined by both the state features and the action
+        features.</p>
+        <figure id="fig4">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3185994/images/www2018-3-fig4.jpg"
+          class="img-responsive" alt="Figure 4" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 4:</span>
+            <span class="figure-title">Q network.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.4</span> User
+            Activeness</h3>
+          </div>
+        </header>
+        <p>Traditional recommender systems only focus on optimizing
+        CTR-like metrics (i.e., only utilizing click / no click
+        labels), which only depicts part of the feedback
+        information from users. The performance of recommendation
+        might also influence whether users want to use the
+        application again, i.e., better recommendation will
+        increase the frequency for users to interact with the
+        application. Therefore, the change of user activeness
+        should also be considered properly.</p>
+        <p>Users request for news in a non-uniform pattern. Users
+        usually read news for a short period (e.g., 30 minutes),
+        during which they will request or click news with high
+        frequency. Then they might leave the application and return
+        to the application when they want to read more news after
+        several hours. A user return happens when a user requests
+        for news (users will always request for news before they
+        click on news, therefore, user click is also implicitly
+        considered).</p>
+        <p>We use survival models&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0018">18</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0030">30</a>] to model user return
+        and user activeness. Survival analysis&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0018">18</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0030">30</a>] has been applied in the
+        field of estimating user return time &nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0020">20</a>]. Suppose <em>T</em> is
+        the time until next event (i.e., user return) happens, then
+        the hazard function (i.e., instantaneous rate for the event
+        to happen) can be defined as Equation&nbsp;<a class="eqn"
+        href="#eq3">3</a> &nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0030">30</a>]</p>
+        <div class="table-responsive" id="eq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \lambda (t) =
+            \lim _{dt \rightarrow 0} \frac{Pr\lbrace t \le T {\lt}
+            t + dt | T \ge t \rbrace }{dt}
+            \end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>Then the probability for the event to happen after
+        <em>t</em> can be defined as Equation&nbsp;<a class="eqn"
+        href="#eq4">4</a>&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0030">30</a>]
+        <div class="table-responsive" id="eq4">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} S(t) =
+            e^{-\int _0^t \lambda (x) dx}
+            \end{equation}</span><br />
+            <span class="equation-number">(4)</span>
+          </div>
+        </div>and the expected life span <em>T</em> <sub>0</sub>
+        can be calculated as&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0030">30</a>]
+        <div class="table-responsive" id="eq5">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} T_0 = \int
+            _0^\infty S(t)dt \end{equation}</span><br />
+            <span class="equation-number">(5)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>In our problem, we simply set <em>λ</em>(<em>t</em>) =
+        <em>λ</em> <sub>0</sub>, which means each user has a
+        constant probability to return. Every time we detect a
+        return of user, we will set <em>S</em>(<em>t</em>) =
+        <em>S</em>(<em>t</em>) + <em>S<sub>a</sub></em> for this
+        particular user. The user activeness score will not exceed
+        1. For instance, as shown in Figure&nbsp;<a class="fig"
+        href="#fig5">5</a>, user activeness for this specific user
+        starts to decay from <em>S</em> <sub>0</sub> at time 0. At
+        timestamp <em>t</em> <sub>1</sub>, the user returns and
+        this results in a <em>S<sub>a</sub></em> increase in the
+        user activeness. Then, the user activeness continues to
+        decay after <em>t</em> <sub>1</sub>. Similar things happen
+        at <em>t</em> <sub>2</sub>, <em>t</em> <sub>3</sub>,
+        <em>t</em> <sub>4</sub> and <em>t</em> <sub>5</sub>. Note
+        that, although this user has a relatively high request
+        frequency during <em>t</em> <sub>4</sub> to <em>t</em>
+        <sub>9</sub>, the maximum user activeness is truncated to
+        1.</p>
+        <p>The parameters <em>S</em> <sub>0</sub>,
+        <em>S<sub>a</sub></em> , <em>λ</em> <sub>0</sub>,
+        <em>T</em> <sub>0</sub> are determined according to the
+        real user pattern in our dataset. <em>S</em> <sub>0</sub>
+        is set to 0.5 to represent the random initial state of a
+        user (i.e., he or she can be either active or inactive). We
+        can observe the histogram of the time interval between
+        every two consecutive requests of users as shown in
+        Figure&nbsp;<a class="fig" href="#fig6">6</a>. We observe
+        that besides reading news multiple times in a day, people
+        usually return to the application on a daily regular basis.
+        So we set <em>T</em> <sub>0</sub> to 24 hours. The decaying
+        parameter <em>λ</em> <sub>0</sub> is set to 1.2 × 10<sup>−
+        5</sup> <em>second</em> <sup>− 1</sup> according to
+        Equation&nbsp;<a class="eqn" href="#eq4">4</a> and
+        Equation&nbsp;<a class="eqn" href="#eq5">5</a>. In
+        addition, the user activeness increase
+        <em>S<sub>a</sub></em> for each click is set to 0.32 to
+        make sure user will return to the initial state after one
+        daily basis request, i.e., <span class=
+        "inline-equation"><span class="tex">$S_0 e^{-\lambda _0
+        T_0} + S_a = S_0$</span></span> .</p>
+        <p>The click / no click label <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {r}_{click}$</span></span> and the user activeness
+        <span class="inline-equation"><span class="tex">$\mathsf
+        {r}_{active}$</span></span> are combined as in
+        Equation&nbsp;<a class="eqn" href="#eq6">6</a>.</p>
+        <div class="table-responsive" id="eq6">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mathsf
+            {r}_{total} = \mathsf {r}_{click} + \beta \mathsf
+            {r}_{active} \end{equation}</span><br />
+            <span class="equation-number">(6)</span>
+          </div>
+        </div>Although we use survival models here to estimate the
+        user activeness, other alternatives like Poisson point
+        process &nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0013">13</a>] can also be applied and should
+        serve similar function.
+        <figure id="fig5">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3185994/images/www2018-3-fig5.jpg"
+          class="img-responsive" alt="Figure 5" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 5:</span>
+            <span class="figure-title">User activeness
+            estimation.</span>
+          </div>
+        </figure>
+        <figure id="fig6">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3185994/images/www2018-3-fig6.jpg"
+          class="img-responsive" alt="Figure 6" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 6:</span>
+            <span class="figure-title">Time interval between two
+            consecutive requests of one week request data.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-15">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.5</span>
+            Explore</h3>
+          </div>
+        </header>
+        <figure id="fig7">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3185994/images/www2018-3-fig7.jpg"
+          class="img-responsive" alt="Figure 7" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 7:</span>
+            <span class="figure-title">Exploration by <em>Dueling
+            Bandit Gradient Descent</em>.</span>
+          </div>
+        </figure>
+        <p>The most straightforward strategies to do exploration in
+        reinforcement learning are ϵ-<em>greedy</em>
+        &nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0031">31</a>] and <em>UCB</em> &nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0023">23</a>].
+        ϵ-<em>greedy</em> will randomly recommend new items with a
+        probability of ϵ, while <em>UCB</em> will pick items that
+        have not been explored for many times (because these items
+        may have larger variance). It is evident that these trivial
+        exploration techniques will harm the recommendation
+        performance in a short period. Therefore, rather than doing
+        random exploration, we apply a <em>Dueling Bandit Gradient
+        Descent</em> algorithm&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0016">16</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0017">17</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0049">49</a>] to do the exploration.
+        Intuitively, as shown in Figure&nbsp;<a class="fig" href=
+        "#fig7">7</a>, the agent <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {G}$</span></span> is going to generate a recommendation
+        list <span class="inline-equation"><span class=
+        "tex">$\mathsf {L}$</span></span> using the current network
+        <span class="inline-equation"><span class="tex">$\mathsf
+        {Q}$</span></span> and another list <span class=
+        "inline-equation"><span class="tex">$\tilde{\mathsf
+        {L}}$</span></span> using an explore network <span class=
+        "inline-equation"><span class="tex">$\tilde{\mathsf
+        {Q}}$</span></span> . The parameters <span class=
+        "inline-equation"><span class="tex">$\tilde{\mathsf
+        {W}}$</span></span> of network <span class=
+        "inline-equation"><span class="tex">$\tilde{\mathsf
+        {Q}}$</span></span> can be obtained by adding a small
+        disturb <span class="inline-equation"><span class="tex">$
+        \mathsf {\Delta }\mathsf {W}$</span></span>
+        (Equation&nbsp;<a class="eqn" href="#eq7">7</a>) to the
+        parameters <span class="inline-equation"><span class=
+        "tex">$\mathsf {W}$</span></span> of the current network
+        <span class="inline-equation"><span class="tex">$\mathsf
+        {Q}$</span></span> .</p>
+        <div class="table-responsive" id="eq7">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mathsf
+            {\Delta }\mathsf {W}= \alpha \cdot rand(-1, 1) \cdot
+            \mathsf {W}\end{equation}</span><br />
+            <span class="equation-number">(7)</span>
+          </div>
+        </div>where <em>α</em> is the explore coefficient, and
+        <em>rand</em>(− 1, 1) is a random number between -1 and 1.
+        Then, the agent <span class="inline-equation"><span class=
+        "tex">$\mathsf {G}$</span></span> will do a probabilistic
+        interleave&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0016">16</a>] to generate the merged
+        recommendation list <span class=
+        "inline-equation"><span class="tex">$\hat{\mathsf
+        {L}}$</span></span> using <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {L}$</span></span> and <span class=
+        "inline-equation"><span class="tex">$\tilde{\mathsf
+        {L}}$</span></span> . To determine the item for each
+        position in the recommendation list <span class=
+        "inline-equation"><span class="tex">$\hat{\mathsf
+        {L}}$</span></span> , the probabilistic interleave approach
+        basically will first randomly select between list
+        <span class="inline-equation"><span class="tex">$\mathsf
+        {L}$</span></span> and <span class=
+        "inline-equation"><span class="tex">$\tilde{\mathsf
+        {L}}$</span></span> . Suppose <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {L}$</span></span> is selected, then an item <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {i}$</span></span> from <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {L}$</span></span> will be put into <span class=
+        "inline-equation"><span class="tex">$\hat{\mathsf
+        {L}}$</span></span> with a probability determined by its
+        ranking in <span class="inline-equation"><span class=
+        "tex">$\mathsf {L}$</span></span> (items with top rankings
+        will be selected with higher probability). Then, list
+        <span class="inline-equation"><span class=
+        "tex">$\hat{\mathsf {L}}$</span></span> will be recommended
+        to user <span class="inline-equation"><span class=
+        "tex">$\mathsf {u}$</span></span> and agent <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {G}$</span></span> will obtain the feedback <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {B}$</span></span> . If the items recommended by the
+        explore network <span class="inline-equation"><span class=
+        "tex">$\tilde{\mathsf {Q}}$</span></span> receive a better
+        feedback, the agent <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {G}$</span></span> will update the network <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {Q}$</span></span> towards <span class=
+        "inline-equation"><span class="tex">$\tilde{\mathsf
+        {Q}}$</span></span> , with the parameters of the network
+        being updated as Equation&nbsp;<a class="eqn" href=
+        "#eq8">8</a>
+        <div class="table-responsive" id="eq8">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mathsf
+            {W}^{\prime } = \mathsf {W}+ \eta \tilde{\mathsf {W}}.
+            \end{equation}</span><br />
+            <span class="equation-number">(8)</span>
+          </div>
+        </div>Otherwise, the agent <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {G}$</span></span> will keep network <span class=
+        "inline-equation"><span class="tex">$\mathsf
+        {Q}$</span></span> unchanged. Through this kind of
+        exploration, the agent can do more effective exploration
+        without losing too much recommendation accuracy.
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-16">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Experiment</h2>
+        </div>
+      </header>
+      <section id="sec-17">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span>
+            Dataset</h3>
+          </div>
+        </header>
+        <p>We conduct experiment on a sampled offline dataset
+        collected from a commercial news recommendation application
+        and deploy our system online to the App for one month. Each
+        recommendation algorithm will give out its recommendation
+        when a news request arrives and user feedback will be
+        recorded (click or not). The basic statistics for the
+        sampled data is as in Table&nbsp;<a class="tbl" href=
+        "#tab2">2</a>. In the first offline stage, the training
+        data and testing data are separated by time order (the last
+        two weeks are used as testing data), to enable the online
+        models to learn the sequential information between
+        different sessions better. During the second online
+        deploying stage, we use the offline data to pre-train the
+        model, and run all the compared methods in the real
+        production environment.</p>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Statistics of the sampled dataset</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Stage</th>
+                <th style="text-align:left;">Duration</th>
+                <th style="text-align:left;"># of users</th>
+                <th style="text-align:left;"># of news</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Offline stage</td>
+                <td style="text-align:left;">6 months</td>
+                <td style="text-align:left;">541,337</td>
+                <td style="text-align:left;">1,355,344</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Online stage</td>
+                <td style="text-align:left;">1 month</td>
+                <td style="text-align:left;">64,610</td>
+                <td style="text-align:left;">157,088</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>As shown in Figure&nbsp;<a class="fig" href=
+        "#fig8">8</a>, the dataset is very skewed. The number of
+        requests for each user follows a long tail distribution and
+        most users only request news for less than 500 times. The
+        number of times each news are pushed also follow a long
+        tail distribution and most news are pushed to user less
+        than 200 times.</p>
+        <figure id="fig8">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3185994/images/www2018-3-fig9.jpg"
+          class="img-responsive" alt="Figure 8" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 8:</span>
+            <span class="figure-title">User and news basic
+            illustration.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-18">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> Evaluation
+            measures</h3>
+          </div>
+        </header>
+        <ul class="list-no-style">
+          <li id="list14" label="•">CTR. &nbsp;[<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+            data-placement="top" href="#BibPLXBIB0010">10</a>]
+            Click through rate is calculated as Equation
+            &nbsp;<a class="eqn" href="#eq9">9</a>.
+            <div class="table-responsive" id="eq9">
+              <div class="display-equation">
+                <span class="tex mytex">\begin{equation} CTR =
+                \frac{\text{number of clicked items}}{\text{number
+                of total items}} \end{equation}</span><br />
+                <span class="equation-number">(9)</span>
+              </div>
+            </div><br />
+          </li>
+          <li id="list15" label="•">Precision@k &nbsp;[<a class=
+          "bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0010">10</a>].
+          Precision at k is calculated as Equation&nbsp;<a class=
+          "eqn" href="#eq10">10</a>
+            <div class="table-responsive" id="eq10">
+              <div class="display-equation">
+                <span class="tex mytex">\begin{equation}
+                Precision@k = \frac{\text{number of clicks in top-k
+                recommended items}}{k} \end{equation}</span><br />
+                <span class="equation-number">(10)</span>
+              </div>
+            </div><br />
+          </li>
+          <li id="list16" label="•">nDCG. We apply the standard
+          Normalized Discounted Cumulative Gain proved in
+          &nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0046">46</a>] as Equation&nbsp;<a class="eqn"
+            href="#eq11">11</a>, where <em>r</em> is the rank of
+            items in the recommendation list, <em>n</em> is the
+            length of the recommendation list, <em>f</em> is the
+            ranking function or algorithm, <span class=
+            "inline-equation"><span class=
+            "tex">$y_r^f$</span></span> is the 1 or 0 indicating
+            whether a click happens and <em>D</em>(<em>r</em>) is
+            the discount.
+            <div class="table-responsive" id="eq11">
+              <div class="display-equation">
+                <span class="tex mytex">\begin{equation} DCG(f) =
+                \sum _{r = 1}^n y_r^f D(r)
+                \end{equation}</span><br />
+                <span class="equation-number">(11)</span>
+              </div>
+            </div>with
+            <div class="table-responsive" id="Xeq1">
+              <div class="display-equation">
+                <span class="tex mytex">\begin{equation} D(r) =
+                \frac{1}{log(1+r)} \end{equation}</span><br />
+                <span class="equation-number">(12)</span>
+              </div>
+            </div><br />
+          </li>
+        </ul>
+      </section>
+      <section id="sec-19">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.3</span> Experiment
+            setting</h3>
+          </div>
+        </header>
+        <p>In our experiment, the parameters are determined by grid
+        search of parameter space to find the ones with best CTR.
+        The detailed settings are shown in Table&nbsp;<a class=
+        "tbl" href="#tab3">3</a>.</p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Parameter setting</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Parameter</th>
+                <th style="text-align:left;">Setting</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">
+                  Future reward discount <em>γ</em>
+                  (Equation&nbsp;<a class="eqn" href="#eq1">1</a>)
+                </td>
+                <td style="text-align:left;">0.4</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                  User activeness coefficient <em>β</em>
+                  (Equation&nbsp;<a class="eqn" href="#eq6">6</a>)
+                </td>
+                <td style="text-align:left;">0.05</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                  Explore coefficient <em>α</em>
+                  (Equation&nbsp;<a class="eqn" href="#eq7">7</a>)
+                </td>
+                <td style="text-align:left;">0.1</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                  Exploit coefficient <em>η</em>
+                  (Equation&nbsp;<a class="eqn" href="#eq8">8</a>)
+                </td>
+                <td style="text-align:left;">0.05</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Major update period
+                <em>T<sub>R</sub></em> (for DQN experience
+                replay)</td>
+                <td style="text-align:left;">60 minutes</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Minor update period
+                <em>T<sub>D</sub></em> (for <em>DBGD</em>)</td>
+                <td style="text-align:left;">30 minutes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-20">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.4</span> Compared
+            methods</h3>
+          </div>
+        </header>
+        <p><strong>Variations of our model.</strong> Our basic
+        model is named as “<em>DN</em>”, which uses a
+        dueling-structure&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0047">47</a>] Double Deep
+        Q-network&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0041">41</a>] without considering future reward.
+        Then, by adding future reward into consideration, this
+        becomes “<em>DDQN</em>”. After that, we add more components
+        to “<em>DDQN</em>”. “<em>U</em>” stands for user
+        activeness, “<em>EG</em>” stands for ϵ-<em>greedy</em>, and
+        “<em>DBGD</em>” stands for <em>Dueling Bandit Gradient
+        Descent</em>.</p>
+        <p><strong>Baseline algorithms.</strong> We compared our
+        algorithms with following five baseline methods. All these
+        five methods will conduct online update during the testing
+        stage. Some state-of-art methods can not be applied due to
+        their inapplicability to our problem, like &nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0043">43</a>] (user
+        graph and item graph is oversized and can not be updated
+        incrementally), &nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0045">45</a>] (similar with <em>W&amp;D</em>
+        when textual features are removed), and [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0048">48</a>] (user return is not
+        applicable to experience replay update).</p>
+        <ul class="list-no-style">
+          <li id="list17" label="•">
+            <em>LR</em>. <em>Logistic Regression</em> is widely
+            used in industry as baseline methods due to its easy
+            implementation and high efficiency. It takes all the
+            four categories of features as input. It is implemented
+            using Keras&nbsp;[<a class="bib" data-trigger="hover"
+            data-toggle="popover" data-placement="top" href=
+            "#BibPLXBIB0009">9</a>].<br />
+          </li>
+          <li id="list18" label="•">
+            <em>FM</em> &nbsp;[<a class="bib" data-trigger="hover"
+            data-toggle="popover" data-placement="top" href=
+            "#BibPLXBIB0029">29</a>, <a class="bib" data-trigger=
+            "hover" data-toggle="popover" data-placement="top"
+            href="#BibPLXBIB0034">34</a>]. <em>Factorization
+            Machines</em> is a state-of-art context-aware
+            recommendation methods. It takes all the four
+            categories of features as input, use the combination of
+            features and their interactions to do the click
+            prediction.<br />
+          </li>
+          <li id="list19" label="•">
+            <em>W&amp;D</em> [<a class="bib" data-trigger="hover"
+            data-toggle="popover" data-placement="top" href=
+            "#BibPLXBIB0008">8</a>]. <em>Wide &amp; Deep</em> is a
+            widely used state-of-art deep learning model combining
+            the memorization (through a logistic regression on wide
+            combinations of categorical features) and
+            generalization (through a deep neural network embedding
+            of the raw features) to predict the click label.<br />
+          </li>
+          <li id="list20" label="•">
+            <em>LinUCB</em> &nbsp;[<a class="bib" data-trigger=
+            "hover" data-toggle="popover" data-placement="top"
+            href="#BibPLXBIB0023">23</a>]. <em>Linear Upper
+            Confidence Bound</em> &nbsp;[<a class="bib"
+            data-trigger="hover" data-toggle="popover"
+            data-placement="top" href="#BibPLXBIB0023">23</a>] can
+            select an arm (i.e., recommend a piece of news)
+            according to the estimated upper confidence bound of
+            the potential reward. Due to the long tail distribution
+            of news request and click counts, we apply the same set
+            of parameters for different news, which actually
+            performs better than the original setting in
+            &nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+            "popover" data-placement="top" href=
+            "#BibPLXBIB0023">23</a>] on our dataset.(An improved
+            version of the original <em>LinUCB</em>–
+            <em>HLinUCB</em> will also be compared.)<br />
+          </li>
+          <li id="list21" label="•">
+            <em>HLinUCB</em> &nbsp;[<a class="bib" data-trigger=
+            "hover" data-toggle="popover" data-placement="top"
+            href="#BibPLXBIB0042">42</a>] is another state-of-art
+            bandit-based approach in recommendation problem.
+            <em>Hidden Linear Upper Confidence Bound</em>
+            &nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+            "popover" data-placement="top" href=
+            "#BibPLXBIB0042">42</a>] further allows learned hidden
+            feature to model the reward. We follow the original
+            setting of keeping different sets of parameters for
+            different users and different news. However, under this
+            case, only <strong>News features</strong> introduced in
+            Section&nbsp;<a class="sec" href="#sec-12">4.2</a> can
+            be directly applied, while the other features
+            describing the interaction between user and news are
+            expected to be learned in the hidden features.<br />
+          </li>
+        </ul>
+        <p>For all compared algorithms, the recommendation list is
+        generated by selecting the items with top-k estimated
+        potential reward (for <em>LinUCB</em>, <em>HLinUCB</em> and
+        our methods) or probability of click (for <em>LR</em>,
+        <em>FM</em> and <em>W&amp;D</em>) of each item.</p>
+      </section>
+      <section id="sec-21">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.5</span> Offline
+            evaluation</h3>
+          </div>
+        </header>
+        <p>We first compare our methods with other baselines on the
+        offline dataset. The offline dataset is static and only
+        certain pairs of user-news interaction have been recorded.
+        As a result, we can not observe the change of user
+        activeness due to different recommendation decisions.
+        Similarly, the exploration strategy can not explore well
+        due to the limited candidate news set (i.e., only the click
+        labels of a few candidate news are recorded). Hence, the
+        benefit of considering user activeness and exploration is
+        not very evident in the offline setting. Therefore, we only
+        show the comparison of recommendation accuracy under this
+        situation.</p>
+        <p>For the offline experiment, we down-sample the click /
+        no-click to approximately 1:11 for better model fitting
+        purpose.</p>
+        <p>We design the algorithm to recommend the top-5 news, and
+        show the results in terms of CTR and nDCG (we omit top-5
+        precision because it will be the same with CTR).</p>
+        <section id="sec-22">
+          <p><em>5.5.1 Accuracy.</em> The accuracy result is shown
+          in Table&nbsp;<a class="tbl" href="#tab4">4</a>. As
+          expected, our algorithms outperform all the baseline
+          algorithms. Our base model <em>DN</em> already achieves
+          very good results compared with the baselines. This is
+          because the dueling network structure can better model
+          the interaction between user and news. Adding future
+          reward consideration (<em>DDQN</em>), we achieve another
+          significant improvement. Then, incorporating user
+          activeness and exploration do not necessarily improve the
+          performance under the offline setting, which might
+          because under offline setting, the algorithm can not make
+          the best interaction with user due to the limited static
+          set of candidate news. (It is possible that our agent
+          <span class="inline-equation"><span class="tex">$\mathsf
+          {G}$</span></span> want to recommend user <span class=
+          "inline-equation"><span class="tex">$\mathsf
+          {u}$</span></span> a news <span class=
+          "inline-equation"><span class="tex">$\mathsf
+          {i}$</span></span> for user activeness or exploration
+          consideration, but actually the information about whether
+          user <span class="inline-equation"><span class=
+          "tex">$\mathsf {u}$</span></span> will click on news
+          <span class="inline-equation"><span class="tex">$\mathsf
+          {i}$</span></span> or not does not exist in the offline
+          log.) In addition, naive random exploration like ϵ-greedy
+          will harm the recommendation accuracy.</p>
+          <div class="table-responsive" id="tab4">
+            <div class="table-caption">
+              <span class="table-number">Table 4:</span>
+              <span class="table-title">Offline recommendation
+              accuracy</span>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="text-align:left;">Method</th>
+                  <th style="text-align:center;">CTR</th>
+                  <th style="text-align:center;">nDCG</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:left;"><em>LR</em></td>
+                  <td style="text-align:center;">0.1262</td>
+                  <td style="text-align:center;">0.3659</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>FM</em></td>
+                  <td style="text-align:center;">0.1489</td>
+                  <td style="text-align:center;">0.4338</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">
+                  <em>W&amp;D</em></td>
+                  <td style="text-align:center;">0.1554</td>
+                  <td style="text-align:center;">0.4534</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>LinUCB</em></td>
+                  <td style="text-align:center;">0.1447</td>
+                  <td style="text-align:center;">0.4173</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">
+                  <em>HLinUCB</em></td>
+                  <td style="text-align:center;">0.1194</td>
+                  <td style="text-align:center;">0.3491</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>DN</em></td>
+                  <td style="text-align:center;">0.1587</td>
+                  <td style="text-align:center;">0.4671</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>DDQN</em></td>
+                  <td style="text-align:center;">
+                  <strong>0.1662</strong></td>
+                  <td style="text-align:center;">
+                  <strong>0.4877</strong></td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>DDQN +
+                  U</em></td>
+                  <td style="text-align:center;">
+                  <strong>0.1662</strong></td>
+                  <td style="text-align:center;">
+                  <strong>0.4878</strong></td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>DDQN + U +
+                  EG</em></td>
+                  <td style="text-align:center;">0.1609</td>
+                  <td style="text-align:center;">0.4723</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>DDQN + U +
+                  DBGD</em></td>
+                  <td style="text-align:center;">
+                  <strong>0.1663</strong></td>
+                  <td style="text-align:center;">
+                  <strong>0.4854</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section id="sec-23">
+          <p><em>5.5.2 Model converge process.</em> We further show
+          the cumulative CTR of different methods in
+          Figure&nbsp;<a class="fig" href="#fig9">9</a> to
+          illustrate the convergence process. The offline data are
+          ordered by time and simulate the process that users send
+          news request as time goes by. All the compared methods
+          will update their models every 100 request sessions. As
+          expected, our algorithm (<em>DDQN + U + DBGD</em>)
+          converges to a better CTR faster than other methods.</p>
+          <figure id="fig9">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3185994/images/www2018-3-fig10.jpg"
+            class="img-responsive" alt="Figure 9" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 9:</span>
+              <span class="figure-title">Offline cumulative CTR of
+              different methods.</span>
+            </div>
+          </figure>
+          <p></p>
+        </section>
+      </section>
+      <section id="sec-24">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.6</span> Online
+            evaluation</h3>
+          </div>
+        </header>
+        <p>In the online evaluation stage, we deployed our models
+        and compared algorithms on a commercial news recommendation
+        application. Users are divided evenly to different
+        algorithms. In online setting, we can not only measure the
+        accuracy of recommendation, but also observe the
+        recommendation diversity for different algorithms. All the
+        algorithms are designed to recommend the top-20 news to a
+        user when a news request is received.</p>
+        <section id="sec-25">
+          <p><em>5.6.1 Accuracy.</em> We compare different
+          algorithms in terms of CTR, Precision@5, and nDCG. As
+          shown in Table&nbsp;<a class="tbl" href="#tab5">5</a>,
+          our full model <em>DDQN + U + DBGD</em> outperforms all
+          the other models significantly in terms of CTR,
+          Precision@5 and nDCG. Here are the observations for
+          adding each component. Adding future reward
+          (<em>DDQN</em>) does improve the recommendation accuracy
+          over basic <em>DN</em>. However, further adding user
+          activeness consideration <em>U</em> seems not very
+          helpful in terms of recommendation accuracy. (But this
+          component is helpful for improving user activeness and
+          recommendation diversity. This will be demonstrated
+          later.) In addition, using <em>DBGD</em> as exploration
+          methods will help avoid the performance loss induced by
+          classic ϵ-greedy methods.</p>
+          <div class="table-responsive" id="tab5">
+            <div class="table-caption">
+              <span class="table-number">Table 5:</span>
+              <span class="table-title">Online recommendation
+              accuracy</span>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="text-align:left;">Method</th>
+                  <th style="text-align:center;">CTR</th>
+                  <th style="text-align:center;">Precision@5</th>
+                  <th style="text-align:center;">nDCG</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:left;"><em>LR</em></td>
+                  <td style="text-align:center;">0.0059</td>
+                  <td style="text-align:center;">0.0082</td>
+                  <td style="text-align:center;">0.0326</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>FM</em></td>
+                  <td style="text-align:center;">0.0072</td>
+                  <td style="text-align:center;">0.0078</td>
+                  <td style="text-align:center;">0.0353</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">
+                  <em>W&amp;D</em></td>
+                  <td style="text-align:center;">0.0052</td>
+                  <td style="text-align:center;">0.0067</td>
+                  <td style="text-align:center;">0.0258</td>
+                </tr>
+                <tr>
+                  <td colspan="4" style="text-align:left;">
+                    <hr />
+                  </td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>LinUCB</em></td>
+                  <td style="text-align:center;">0.0075</td>
+                  <td style="text-align:center;">0.0091</td>
+                  <td style="text-align:center;">0.0383</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">
+                  <em>HLinUCB</em></td>
+                  <td style="text-align:center;">0.0085</td>
+                  <td style="text-align:center;">0.0128</td>
+                  <td style="text-align:center;">0.0449</td>
+                </tr>
+                <tr>
+                  <td colspan="4" style="text-align:left;">
+                    <hr />
+                  </td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>DN</em></td>
+                  <td style="text-align:center;">0.0100</td>
+                  <td style="text-align:center;">0.0135</td>
+                  <td style="text-align:center;">0.0474</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>DDQN</em></td>
+                  <td style="text-align:center;">0.0111</td>
+                  <td style="text-align:center;">0.0139</td>
+                  <td style="text-align:center;">0.0477</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>DDQN +
+                  U</em></td>
+                  <td style="text-align:center;">0.0089</td>
+                  <td style="text-align:center;">0.0110</td>
+                  <td style="text-align:center;">0.0425</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>DDQN + U +
+                  EG</em></td>
+                  <td style="text-align:center;">0.0083</td>
+                  <td style="text-align:center;">0.0100</td>
+                  <td style="text-align:center;">0.03391</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>DDQN + U +
+                  DBGD</em></td>
+                  <td style="text-align:center;">
+                  <strong>0.0113</strong></td>
+                  <td style="text-align:center;">
+                  <strong>0.0149</strong></td>
+                  <td style="text-align:center;">
+                  <strong>0.0492</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section id="sec-26">
+          <p><em>5.6.2 Recommendation diversity.</em> Finally, in
+          order to evaluate the effectiveness of exploration, we
+          calculate the recommendation diversity of different
+          algorithms using <em>ILS</em>. [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0002">2</a>,
+          <a class="bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0053">53</a>]. It is
+          calculated by Equation&nbsp;<a class="eqn" href=
+          "#eq12">13</a></p>
+          <div class="table-responsive" id="eq12">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} ILS(\mathsf
+              {L}) = \frac{\sum _{b_i \in \mathsf {L}} \sum _{b_j
+              \in \mathsf {L}, b_j \ne b_i} S(b_i, b_j)}{\sum _{b_i
+              \in \mathsf {L}} \sum _{b_j \in \mathsf {L}, b_j \ne
+              b_i} 1} \end{equation}</span><br />
+              <span class="equation-number">(13)</span>
+            </div>
+          </div>where <em>S</em>(<em>b<sub>i</sub></em> ,
+          <em>b<sub>j</sub></em> ) represents the cosine similarity
+          between item <em>b<sub>i</sub></em> and item
+          <em>b<sub>j</sub></em> . We show the diversity for the
+          news clicked by users as in Table&nbsp;<a class="tbl"
+          href="#tab6">6</a>. In general, users in our algorithm
+          <em>DDQN + U + DBGD</em> achieves the best click
+          diversity. Interestingly, adding <em>EG</em> seems not
+          improving the recommendation diversity. This is probably
+          because, when random exploration (i.e., <em>EG</em>) is
+          conducted, the recommender might recommend some totally
+          unrelated items to users. Although these items have high
+          diversity, users might be not interested in reading them
+          and turn back to read more about the items that fit their
+          interest better. This way, this exploration will not help
+          improve the recommendation diversity. To our surprise,
+          some baseline methods, like <em>HLinUCB</em>, also
+          achieve comparable recommendation diversity, which
+          indicates that <em>UCB</em> can also achieve reasonable
+          exploration result (but this kind of unguided exploration
+          will harm the recommendation accuracy).
+          <p></p>
+          <div class="table-responsive" id="tab6">
+            <div class="table-caption">
+              <span class="table-number">Table 6:</span>
+              <span class="table-title">Diversity of user clicked
+              news in the online experiment. Smaller <em>ILS</em>
+              indicates better diversity. Similarity between news
+              is measured by the cosine similarity between the
+              bag-of-words vectors of news.</span>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="text-align:left;">Method</th>
+                  <th style="text-align:left;">ILS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:left;"><em>LR</em></td>
+                  <td style="text-align:left;">0.1833</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>FM</em></td>
+                  <td style="text-align:left;">0.2014</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">
+                  <em>W&amp;D</em></td>
+                  <td style="text-align:left;">0.1647</td>
+                </tr>
+                <tr>
+                  <td colspan="2" style="text-align:left;">
+                    <hr />
+                  </td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>LinUCB</em></td>
+                  <td style="text-align:left;">0.2636</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">
+                  <em>HLinUCB</em></td>
+                  <td style="text-align:left;">0.1323</td>
+                </tr>
+                <tr>
+                  <td colspan="2" style="text-align:left;">
+                    <hr />
+                  </td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>DN</em></td>
+                  <td style="text-align:left;">0.1546</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>DDQN</em></td>
+                  <td style="text-align:left;">0.1935</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>DDQN +
+                  U</em></td>
+                  <td style="text-align:left;">0.1713</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>DDQN + U +
+                  EG</em></td>
+                  <td style="text-align:left;">0.1907</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><em>DDQN + U +
+                  DBGD</em></td>
+                  <td style="text-align:left;">
+                  <strong>0.1216</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </section>
+    <section id="sec-27">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>In this paper, we propose a DQN-based reinforcement
+      learning framework to do online personalized news
+      recommendation. Different from previous methods, our method
+      can effectively model the dynamic news features and user
+      preferences, and plan for future explicitly, in order to
+      achieve higher reward (e.g., CTR) in the long run. We further
+      consider user return pattern as a supplement to click / no
+      click label in order to capture more user feedback
+      information. In addition, we apply an effective exploration
+      strategy into our framework to improve the recommendation
+      diversity and look for potential more rewarding
+      recommendations. Experiments have shown that our method can
+      improve the recommendation accuracy and recommendation
+      diversity significantly. Our method can be generalized to
+      many other recommendation problems.</p>
+      <p>For the future work, it will be more meaningful to design
+      models for different users correspondingly (e.g., heavy users
+      and one-time users), especially the user-activeness measure.
+      It can bring more insights if different patterns are observed
+      for different groups of users.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="sec-28">
+      <header>
+        <div class="title-info">
+          <h2>ACKNOWLEDGMENTS</h2>
+        </div>
+      </header>
+      <p>The work was supported in part by NSF awards #1639150,
+      #1544455, #1652525, and #1618448. The views and conclusions
+      contained in this paper are those of the authors and should
+      not be interpreted as representing any funding agencies.</p>
+    </section>
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">2007. Lecture Notes on
+        Generalized Linear Models.
+        http://data.princeton.edu/wws509/notes/. (2007).</li>
+        <li id="BibPLXBIB0002" label="[2]">Gediminas Adomavicius
+        and YoungOk Kwon. 2012. Improving aggregate recommendation
+        diversity using ranking-based techniques. <em><em>IEEE
+        Transactions on Knowledge and Data Engineering</em></em>
+        24, 5(2012), 896–911.</li>
+        <li id="BibPLXBIB0003" label="[3]">Gediminas Adomavicius
+        and Alexander Tuzhilin. 2005. Toward the next generation of
+        recommender systems: A survey of the state-of-the-art and
+        possible extensions. <em><em>IEEE transactions on knowledge
+        and data engineering</em></em> 17, 6(2005), 734–749.</li>
+        <li id="BibPLXBIB0004" label="[4]">Jesús Bobadilla,
+        Fernando Ortega, Antonio Hernando, and Abraham Gutiérrez.
+        2013. Recommender systems survey. <em><em>Knowledge-based
+        systems</em></em> 46 (2013), 109–132.</li>
+        <li id="BibPLXBIB0005" label="[5]">Djallel Bouneffouf, Amel
+        Bouzeghoub, and Alda Gançarski. 2012. A contextual-bandit
+        algorithm for mobile context-aware recommender system. In
+        <em><em>Neural Information Processing</em></em> . Springer,
+        324–331.</li>
+        <li id="BibPLXBIB0006" label="[6]">Nicolo Cesa-Bianchi,
+        Claudio Gentile, and Giovanni Zappella. 2013. A gang of
+        bandits. In <em><em>Advances in Neural Information
+        Processing Systems</em></em> . 737–745.</li>
+        <li id="BibPLXBIB0007" label="[7]">Olivier Chapelle and
+        Lihong Li. 2011. An empirical evaluation of thompson
+        sampling. In <em><em>Advances in neural information
+        processing systems</em></em> . 2249–2257.</li>
+        <li id="BibPLXBIB0008" label="[8]">Heng-Tze Cheng, Levent
+        Koc, Jeremiah Harmsen, Tal Shaked, Tushar Chandra, Hrishi
+        Aradhye, Glen Anderson, Greg Corrado, Wei Chai, Mustafa
+        Ispir, <em>et al.</em> 2016. Wide &amp; deep learning for
+        recommender systems. In <em><em>Proceedings of the 1st
+        Workshop on Deep Learning for Recommender Systems</em></em>
+        . ACM, 7–10.</li>
+        <li id="BibPLXBIB0009" label="[9]">François Chollet <em>et
+        al.</em> 2015. Keras. https://github.com/fchollet/keras.
+        (2015).</li>
+        <li id="BibPLXBIB0010" label="[10]">D&nbsp;Manning
+        Christopher, Raghavan Prabhakar, and SCHÜTZE Hinrich. 2008.
+        Introduction to information retrieval. <em><em>An
+        Introduction To Information Retrieval</em></em> 151 (2008),
+        177.</li>
+        <li id="BibPLXBIB0011" label="[11]">Abhinandan&nbsp;S Das,
+        Mayur Datar, Ashutosh Garg, and Shyam Rajaram. 2007. Google
+        news personalization: scalable online collaborative
+        filtering. In <em><em>Proceedings of the 16th international
+        conference on World Wide Web</em></em> . ACM, 271–280.</li>
+        <li id="BibPLXBIB0012" label="[12]">Gianmarco
+        De&nbsp;Francisci&nbsp;Morales, Aristides Gionis, and
+        Claudio Lucchese. 2012. From chatter to headlines:
+        harnessing the real-time web for personalized news
+        recommendation. In <em><em>Proceedings of the fifth ACM
+        international conference on Web search and data
+        mining</em></em> . ACM, 153–162.</li>
+        <li id="BibPLXBIB0013" label="[13]">Nan Du, Yichen Wang,
+        Niao He, Jimeng Sun, and Le Song. 2015. Time-sensitive
+        recommendation from recurrent user activities. In
+        <em><em>Advances in Neural Information Processing
+        Systems</em></em> . 3492–3500.</li>
+        <li id="BibPLXBIB0014" label="[14]">Claudio Gentile, Shuai
+        Li, and Giovanni Zappella. 2014. Online Clustering of
+        Bandits.. In <em><em>ICML</em></em> . 757–765.</li>
+        <li id="BibPLXBIB0015" label="[15]">Google. 2017. Google
+        News. https://news.google.com/. (2017).</li>
+        <li id="BibPLXBIB0016" label="[16]">Artem Grotov and
+        Maarten de Rijke. 2016. Online learning to rank for
+        information retrieval: SIGIR 2016 tutorial. In
+        <em><em>Proceedings of the 39th International ACM SIGIR
+        conference on Research and Development in Information
+        Retrieval</em></em> . ACM, 1215–1218.</li>
+        <li id="BibPLXBIB0017" label="[17]">Katja Hofmann, Anne
+        Schuth, Shimon Whiteson, and Maarten de Rijke. 2013.
+        Reusing historical interaction data for faster online
+        learning to rank for IR. In <em><em>Proceedings of the
+        sixth ACM international conference on Web search and data
+        mining</em></em> . ACM, 183–192.</li>
+        <li id="BibPLXBIB0018" label="[18]">Joseph&nbsp;G Ibrahim,
+        Ming-Hui Chen, and Debajyoti Sinha. 2005. <em><em>Bayesian
+        survival analysis</em></em> . Wiley Online Library.</li>
+        <li id="BibPLXBIB0019" label="[19]">Wouter IJntema, Frank
+        Goossen, Flavius Frasincar, and Frederik Hogenboom. 2010.
+        Ontology-based news recommendation. In <em><em>Proceedings
+        of the 2010 EDBT/ICDT Workshops</em></em> . ACM, 16.</li>
+        <li id="BibPLXBIB0020" label="[20]">How Jing and
+        Alexander&nbsp;J Smola. 2017. Neural survival recommender.
+        In <em><em>Proceedings of the Tenth ACM International
+        Conference on Web Search and Data Mining</em></em> . ACM,
+        515–524.</li>
+        <li id="BibPLXBIB0021" label="[21]">Jaya Kawale,
+        Hung&nbsp;H Bui, Branislav Kveton, Long Tran-Thanh, and
+        Sanjay Chawla. 2015. Efficient Thompson Sampling for Online
+        Matrix-Factorization Recommendation. In <em><em>Advances in
+        Neural Information Processing Systems</em></em> .
+        1297–1305.</li>
+        <li id="BibPLXBIB0022" label="[22]">Michal Kompan and Mária
+        Bieliková. 2010. Content-Based News Recommendation.. In
+        <em><em>EC-Web</em></em> , Vol.&nbsp;61. Springer,
+        61–72.</li>
+        <li id="BibPLXBIB0023" label="[23]">Lihong Li, Wei Chu,
+        John Langford, and Robert&nbsp;E Schapire. 2010. A
+        contextual-bandit approach to personalized news article
+        recommendation. In <em><em>Proceedings of the 19th
+        international conference on World wide web</em></em> . ACM,
+        661–670.</li>
+        <li id="BibPLXBIB0024" label="[24]">Lei Li, Dingding Wang,
+        Tao Li, Daniel Knox, and Balaji Padmanabhan. 2011. SCENE: a
+        scalable two-stage personalized news recommendation system.
+        In <em><em>Proceedings of the 34th international ACM SIGIR
+        conference on Research and development in Information
+        Retrieval</em></em> . ACM, 125–134.</li>
+        <li id="BibPLXBIB0025" label="[25]">Jiahui Liu, Peter
+        Dolan, and Elin&nbsp;Rønby Pedersen. 2010. Personalized
+        news recommendation based on click behavior. In
+        <em><em>Proceedings of the 15th international conference on
+        Intelligent user interfaces</em></em> . ACM, 31–40.</li>
+        <li id="BibPLXBIB0026" label="[26]">Zhongqi Lu and Qiang
+        Yang. 2016. Partially Observable Markov Decision Process
+        for Recommender Systems. <em><em>arXiv preprint
+        arXiv:1608.07793</em></em> (2016).</li>
+        <li id="BibPLXBIB0027" label="[27]">Tariq Mahmood and
+        Francesco Ricci. 2007. Learning and adaptivity in
+        interactive recommender systems. In <em><em>Proceedings of
+        the ninth international conference on Electronic
+        commerce</em></em> . ACM, 75–84.</li>
+        <li id="BibPLXBIB0028" label="[28]">Benjamin Marlin and
+        Richard&nbsp;S Zemel. 2004. The multiple multiplicative
+        factor model for collaborative filtering. In
+        <em><em>Proceedings of the twenty-first international
+        conference on Machine learning</em></em> . ACM, 73.</li>
+        <li id="BibPLXBIB0029" label="[29]">Alexander&nbsp;Novikov
+        Mikhail&nbsp;Trofimov. 2016. tffm: TensorFlow
+        implementation of an arbitrary order Factorization Machine.
+        https://github.com/geffy/tffm. (2016).</li>
+        <li id="BibPLXBIB0030" label="[30]">Rupert&nbsp;G
+        Miller&nbsp;Jr. 2011. <em><em>Survival analysis</em></em> .
+        Vol.&nbsp;66. John Wiley &amp; Sons.</li>
+        <li id="BibPLXBIB0031" label="[31]">Volodymyr Mnih, Koray
+        Kavukcuoglu, David Silver, Andrei&nbsp;A Rusu, Joel Veness,
+        Marc&nbsp;G Bellemare, Alex Graves, Martin Riedmiller,
+        Andreas&nbsp;K Fidjeland, Georg Ostrovski, <em>et al.</em>
+        2015. Human-level control through deep reinforcement
+        learning. <em><em>Nature</em></em> 518, 7540 (2015),
+        529–533.</li>
+        <li id="BibPLXBIB0032" label="[32]">Atsuyoshi Nakamura.
+        2015. A ucb-like strategy of collaborative filtering. In
+        <em><em>Asian Conference on Machine Learning</em></em> .
+        315–329.</li>
+        <li id="BibPLXBIB0033" label="[33]">Owen Phelan, Kevin
+        McCarthy, Mike Bennett, and Barry Smyth. 2011. Terms of a
+        feather: Content-based news recommendation and discovery
+        using twitter. <em><em>Advances in Information
+        Retrieval</em></em> (2011), 448–459.</li>
+        <li id="BibPLXBIB0034" label="[34]">Steffen Rendle. 2010.
+        Factorization machines. In <em><em>Data Mining (ICDM), 2010
+        IEEE 10th International Conference on</em></em> . IEEE,
+        995–1000.</li>
+        <li id="BibPLXBIB0035" label="[35]">Pornthep Rojanavasu,
+        Phaitoon Srinil, and Ouen Pinngern. 2005. New
+        recommendation system using reinforcement learning.
+        <em><em>Special Issue of the Intl. J. Computer, the
+        Internet and Management</em></em> 13, SP 3(2005).</li>
+        <li id="BibPLXBIB0036" label="[36]">Guy Shani, David
+        Heckerman, and Ronen&nbsp;I Brafman. 2005. An MDP-based
+        recommender system. <em><em>Journal of Machine Learning
+        Research</em></em> 6, Sep (2005), 1265–1295.</li>
+        <li id="BibPLXBIB0037" label="[37]">Richard&nbsp;S Sutton
+        and Andrew&nbsp;G Barto. 1998. <em><em>Reinforcement
+        learning: An introduction</em></em> . Vol.&nbsp;1. MIT
+        press Cambridge.</li>
+        <li id="BibPLXBIB0038" label="[38]">Nima Taghipour, Ahmad
+        Kardan, and Saeed&nbsp;Shiry Ghidary. 2007. Usage-based web
+        recommendations: a reinforcement learning approach. In
+        <em><em>Proceedings of the 2007 ACM conference on
+        Recommender systems</em></em> . ACM, 113–120.</li>
+        <li id="BibPLXBIB0039" label="[39]">Liang Tang, Yexi Jiang,
+        Lei Li, and Tao Li. 2014. Ensemble contextual bandits for
+        personalized recommendation. In <em><em>Proceedings of the
+        8th ACM Conference on Recommender Systems</em></em> . ACM,
+        73–80.</li>
+        <li id="BibPLXBIB0040" label="[40]">Liang Tang, Yexi Jiang,
+        Lei Li, Chunqiu Zeng, and Tao Li. 2015. Personalized
+        recommendation via parameter-free contextual bandits. In
+        <em><em>Proceedings of the 38th International ACM SIGIR
+        Conference on Research and Development in Information
+        Retrieval</em></em> . ACM, 323–332.</li>
+        <li id="BibPLXBIB0041" label="[41]">Hado Van&nbsp;Hasselt,
+        Arthur Guez, and David Silver. 2016. Deep Reinforcement
+        Learning with Double Q-Learning.. In <em><em>AAAI</em></em>
+        . 2094–2100.</li>
+        <li id="BibPLXBIB0042" label="[42]">Huazheng Wang, Qingyun
+        Wu, and Hongning Wang. 2016. Learning Hidden Features for
+        Contextual Bandits. In <em><em>Proceedings of the 25th ACM
+        International on Conference on Information and Knowledge
+        Management</em></em> . ACM, 1633–1642.</li>
+        <li id="BibPLXBIB0043" label="[43]">Huazheng Wang, Qingyun
+        Wu, and Hongning Wang. 2017. Factorization Bandits for
+        Interactive Recommendation.. In <em><em>AAAI</em></em> .
+        2695–2702.</li>
+        <li id="BibPLXBIB0044" label="[44]">Xinxi Wang, Yi Wang,
+        David Hsu, and Ye Wang. 2014. Exploration in interactive
+        personalized music recommendation: a reinforcement learning
+        approach. <em><em>ACM Transactions on Multimedia Computing,
+        Communications, and Applications (TOMM)</em></em> 11, 1
+        (2014), 7.</li>
+        <li id="BibPLXBIB0045" label="[45]">Xuejian Wang, Lantao
+        Yu, Kan Ren, Guanyu Tao, Weinan Zhang, Yong Yu, and Jun
+        Wang. 2017. Dynamic Attention Deep Model for Article
+        Recommendation by Learning Human Editors’ Demonstration. In
+        <em><em>Proceedings of the 23rd ACM SIGKDD International
+        Conference on Knowledge Discovery and Data Mining</em></em>
+        . ACM, 2051–2059.</li>
+        <li id="BibPLXBIB0046" label="[46]">Yining Wang, Liwei
+        Wang, Yuanzhi Li, Di He, and Tie-Yan Liu. 2013. A
+        theoretical analysis of ndcg type ranking measures. In
+        <em><em>Conference on Learning Theory</em></em> .
+        25–54.</li>
+        <li id="BibPLXBIB0047" label="[47]">Ziyu Wang, Tom Schaul,
+        Matteo Hessel, Hado Van&nbsp;Hasselt, Marc Lanctot, and
+        Nando De&nbsp;Freitas. 2015. Dueling network architectures
+        for deep reinforcement learning. <em><em>arXiv preprint
+        arXiv:1511.06581</em></em> (2015).</li>
+        <li id="BibPLXBIB0048" label="[48]">Qingyun Wu, Hongning
+        Wang, Liangjie Hong, and Yue Shi. 2017. Returning is
+        Believing: Optimizing Long-term User Engagement in
+        Recommender Systems. (2017).</li>
+        <li id="BibPLXBIB0049" label="[49]">Yisong Yue and Thorsten
+        Joachims. 2009. Interactively optimizing information
+        retrieval systems as a dueling bandits problem. In
+        <em><em>Proceedings of the 26th Annual International
+        Conference on Machine Learning</em></em> . ACM,
+        1201–1208.</li>
+        <li id="BibPLXBIB0050" label="[50]">Chunqiu Zeng, Qing
+        Wang, Shekoofeh Mokhtari, and Tao Li. 2016. Online
+        Context-Aware Recommendation with Time Varying Multi-Armed
+        Bandit. In <em><em>Proceedings of the 22nd ACM SIGKDD
+        International Conference on Knowledge Discovery and Data
+        Mining</em></em> . ACM, 2025–2034.</li>
+        <li id="BibPLXBIB0051" label="[51]">Xiaoxue Zhao, Weinan
+        Zhang, and Jun Wang. 2013. Interactive collaborative
+        filtering. In <em><em>Proceedings of the 22nd ACM
+        international conference on Conference on information &amp;
+        knowledge management</em></em> . ACM, 1411–1420.</li>
+        <li id="BibPLXBIB0052" label="[52]">Lei Zheng, Vahid
+        Noroozi, and Philip&nbsp;S Yu. 2017. Joint deep modeling of
+        users and items using reviews for recommendation. In
+        <em><em>Proceedings of the Tenth ACM International
+        Conference on Web Search and Data Mining</em></em> . ACM,
+        425–434.</li>
+        <li id="BibPLXBIB0053" label="[53]">Cai-Nicolas Ziegler,
+        Sean&nbsp;M McNee, Joseph&nbsp;A Konstan, and Georg Lausen.
+        2005. Improving recommendation lists through topic
+        diversification. In <em><em>Proceedings of the 14th
+        international conference on World Wide Web</em></em> . ACM,
+        22–32.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5639-8/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3178876.3185994">https://doi.org/10.1145/3178876.3185994</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

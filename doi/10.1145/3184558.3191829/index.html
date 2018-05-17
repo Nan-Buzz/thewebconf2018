@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Financial Aspect and Sentiment Predictions with Deep
+  Neural Networks: An Ensemble Approach</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Financial Aspect and Sentiment
+          Predictions with Deep Neural Networks: An Ensemble
+          Approach</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+        <header class="authorGroup">
+          <div class="author">
+            <span class="givenName">Guangyuan</span> <span class=
+            "surName">Piao</span>, Insight Centre for Data
+            Analytics, Data Science Institute, National University
+            of Ireland, Galway, Galway, Ireland, <a href=
+            "mailto:guangyuan.piao@insight-centre.org">guangyuan.piao@insight-centre.org</a>
+          </div>
+          <div class="author">
+            <span class="givenName">John G.</span> <span class=
+            "surName">Breslin</span>, Insight Centre for Data
+            Analytics, Data Science Institute, National University
+            of Ireland, Galway, Galway, Ireland, <a href=
+            "mailto:john.breslin@nuigalway.ie">john.breslin@nuigalway.ie</a>
+          </div><br />
+          <div class="pubInfo">
+            <p>DOI: <a href=
+            "https://doi.org/10.1145/3184558.3191829" target=
+            "_blank">https://doi.org/10.1145/3184558.3191829</a><br />
+
+            WWW '18: <a href="https://doi.org/10.1145/3184558"
+            target="_blank">Proceedings of The Web Conference
+            2018</a>, Lyon, France, April 2018</p>
+          </div>
+          <div class="abstract">
+            <p><small>In this paper, we describe our ensemble
+            approach for sentiment and aspect predictions in the
+            financial domain for a given text. This ensemble
+            approach uses Convolutional Neural Networks (CNNs) and
+            Recurrent Neural Networks (RNNs) with a ridge
+            regression and a voting strategy for sentiment and
+            aspect predictions, and therefore, does not rely on any
+            handcrafted feature. Based on 5-cross validation on the
+            released training set, the results show that CNNs
+            overall perform better than RNNs on both tasks, and the
+            ensemble approach can boost the performance further by
+            leveraging different types of deep learning
+            approaches.</small></p>
+          </div>
+          <div class="classifications">
+            <div class="author">
+              <span style=
+              "font-weight:bold;"><small>Keywords:</small></span>
+              <span class="keyword"><small>Sentiment Analysis;
+              Financial Aspect Prediction; Deep
+              Learning</small></span>
+            </div><br />
+            <div class="AcmReferenceFormat">
+              <p><small><span style="font-weight:bold;">ACM
+              Reference Format:</span><br />
+              Guangyuan Piao and John G. Breslin. 2018. Financial
+              Aspect and Sentiment Predictions with Deep Neural
+              Networks: An Ensemble Approach. In <em>WWW '18
+              Companion: The 2018 Web Conference Companion,</em>
+              <em>April 23–27, 2018,</em> <em>Lyon, France</em>.
+              ACM, New York, NY, USA 5 Pages. <a href=
+              "https://doi.org/10.1145/3184558.3191829" class=
+              "link-inline force-break" target=
+              "_blank">https://doi.org/10.1145/3184558.3191829</a></small></p>
+            </div>
+          </div>
+        </header>
+      </header>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Deep learning [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0010">10</a>] techniques such as Convolutional
+      Neural Networks (CNNs) [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>] for processing data in the form of
+      multiple arrays, or Recurrent Neural Networks (RNNs) such as
+      Long Short-Term Memory neural networks (LSTMs) [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0005">5</a>] for tasks
+      with sequential inputs, have been widely adopted in various
+      research domains such as computer vision [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0004">4</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0009">9</a>], natural language
+      processing (NLP) [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>] including sentiment analysis
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0003">3</a>],
+      recommender systems [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>] etc.</p>
+      <p>More recently, [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>] proposed an ensemble approach using
+      several deep neural networks (DNNs) such as CNNs and LSTMs
+      for one of the tasks at the sentiment analysis challenge
+      SemEval2017<a class="fn" href="#fn1" id=
+      "foot-fn1"><sup>1</sup></a>, and their approach outperforms
+      other methods for the sentiment analysis task on
+      Twitter<a class="fn" href="#fn2" id=
+      "foot-fn2"><sup>2</sup></a>. Deep learning approaches have
+      also been applied to the sentiment analysis in the financial
+      domain which plays a significant role in predicting the
+      market reaction [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>]. Motivated by the state-of-the-art
+      results on different tasks including sentiment analysis, we
+      introduce our ensemble approach with different types of DNNs
+      for tackling the first task at the Financial Opinion Mining
+      and Question Answering (FIQA) challenge<a class="fn" href=
+      "#fn3" id="foot-fn3"><sup>3</sup></a>, which is co-located
+      with the Web Conference 2018.</p>
+      <section id="sec-4">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">1.1</span> Task1:
+            Sentiment and Aspect Predictions in the Financial
+            Domain</h3>
+          </div>
+        </header>
+        <p>Given a text <em>t</em> and a target as an input, the
+        task is to predict its sentiment score
+        <em>y<sub>s</sub></em> and its aspect labels
+        <em>y<sub>a</sub></em> at the level two of an financial
+        aspect tree. An example of a training instance is shown as
+        below:</p>
+        <p><img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191829/images/www18companion-406-img1.jpg"
+        class="img-responsive" alt="" longdesc="" />Table <a class=
+        "tbl" href="#tab1">1</a> shows the details of the dataset
+        for task 1. There are two types of text; one is Twitter
+        posts and the other is news headlines in the financial
+        domain. Overall, there are 28 distinct aspects for all
+        posts and headlines in the released training dataset.</p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Dataset statistics for task 1.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;"></th>
+                <th style="text-align:center;">
+                <strong>Posts</strong></th>
+                <th style="text-align:center;">
+                <strong>Headlines</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;"><strong># of
+                examples</strong></td>
+                <td style="text-align:center;">675</td>
+                <td style="text-align:center;">436</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><strong># of
+                multi-labeled</strong></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">30</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><strong>max
+                length</strong></td>
+                <td style="text-align:center;">40</td>
+                <td style="text-align:center;">19</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><strong>distinct
+                aspects</strong></td>
+                <td colspan="2" style="text-align:center;">28</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Deep Neural
+          Networks</h2>
+        </div>
+      </header>
+      <p>In order to feed into DNNs such as CNNs, we first convert
+      each text as a sequence of words, and map each word to its
+      corresponding embedding. Therefore, a text is represented as
+      a matrix of size <em>m</em>′ × <em>d</em>, where <em>m</em>′
+      is the number of words in the text and <em>d</em> is the
+      dimension of the word embedding space. We used the
+      zero-padding strategy in order to make all texts have the
+      same length <em>m</em>. The final matrix of a given text
+      <span class="inline-equation"><span class="tex">$T \in
+      \mathbb {R}^{m \times d}$</span></span> (<em>m</em> = 50 for
+      our approach) is used as an input to one of the DNNs which we
+      will describe below.</p>
+      <section id="sec-6">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span>
+            Convolutional Neural Networks</h3>
+          </div>
+        </header>
+        <p>CNNs apply convolutional filters to the input matrix
+        with a filtering matrix <span class=
+        "inline-equation"><span class="tex">$f \in \mathbb {R}^{h
+        \times d}$</span></span> where <em>h</em> is the filter
+        size which denotes the number of words it spans. This
+        operation can be defined as follows:</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} c_i = a(\sum
+            _{j,k}f_{j,k}(T_{[i:i+h-1]})_{j,k} + b)
+            \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>where <span class="inline-equation"><span class=
+        "tex">$b \in \mathbb {R}$</span></span> denotes the bias
+        term, and <em>a</em>(·) is a non-linear activation
+        function. We used the well-known ReLu activation here.
+        Different filter sizes such as [1, 2, 3] or [3, 4, 5] can
+        be used for CNNs, and there can be multiple filters for
+        each filter size.
+        <p></p>
+        <p>Next, CNNs can apply a pooling operation to each
+        convolution with the hope to extract the most important
+        feature for each convolution. For example, the max-pooling
+        <em>c<sub>max</sub></em> = <em>max</em>(<em>c</em>) retains
+        the maximum value for each convolution. Finally, the output
+        from each convolution is concatenated into a single vector
+        which can be seen as the text embedding for a given text
+        learned by CNNs.</p>
+        <p>For CNNs, we used the following settings for their
+        hyperparameters for training:</p>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Hyperparameter settings for CNNs.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">
+                <strong>Hyperparameter</strong></th>
+                <th style="text-align:center;">
+                <strong>Settings</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">
+                <strong>pooling</strong></td>
+                <td style="text-align:center;">max pooling</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><strong>filter
+                sizes</strong></td>
+                <td style="text-align:center;">[1, 2, 3], [3, 4, 5]
+                or [5, 6, 7]</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><strong># of
+                filters</strong></td>
+                <td style="text-align:center;">200 - 300</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> Long-Short
+            Term Memory Networks</h3>
+          </div>
+        </header>
+        <p>The first step in LSTM is going through a <em>forget
+        gate layer</em>. This layer decides what information to
+        keep from the cell state by looking at <em>h</em>
+        <sub><em>t</em> − 1</sub> and <em>x<sub>t</sub></em> , as
+        shown in Equation <a class="eqn" href="#eq1">2</a>:</p>
+        <div class="table-responsive" id="eq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} f_t = \sigma
+            (W_f\cdot [h_{t-1}, x_t] + b_f)
+            \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>where [<em>h</em> <sub><em>t</em> − 1</sub>,
+        <em>x<sub>t</sub></em> ] denotes the concatenated vector of
+        <em>h</em> <sub><em>t</em> − 1</sub> and
+        <em>x<sub>t</sub></em> , <em>σ</em> is is a sigmoid
+        function: <span class="inline-equation"><span class=
+        "tex">$\sigma (x)=\frac{1}{1+e^{-x}}$</span></span> , and
+        <em>b<sub>f</sub></em> denotes a bias term.
+        <em>W<sub>f</sub></em> is a weight vector to be learned for
+        the forget gate layer.
+        <p></p>
+        <p>Next, LSTM decides what new information to store in the
+        cell state, which consists of two parts. The first part is
+        an <em>input gate layer</em>, which is defined as
+        below:</p>
+        <div class="table-responsive" id="Xeq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} i_t = \sigma
+            (W_i\cdot [h_{t-1}, x_t] + b_i).
+            \end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>The second part is a tanh layer (Equation <a class=
+        "eqn" href="#eq2">4</a>), which creates a vector of new
+        candidate values, <span class=
+        "inline-equation"><span class="tex">$\tilde{C}_t$</span></span>
+        , that could be added into the cell state.
+        <div class="table-responsive" id="eq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            \tilde{C}_t=\mathrm{tanh}(W_C\cdot [h_{t-1}, x_t]+b_C)
+            \end{equation}</span><br />
+            <span class="equation-number">(4)</span>
+          </div>
+        </div>Finally, the new cell state <em>C<sub>t</sub></em>
+        will be created based on linear interactions of the
+        previous cell state <em>C</em> <sub><em>t</em> − 1</sub>,
+        <em>f<sub>t</sub></em> , <em>i<sub>t</sub></em> , and
+        <span class="inline-equation"><span class=
+        "tex">$\tilde{C}_t$</span></span> as follows.
+        <div class="table-responsive" id="Xeq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} C_t = f_t *
+            C_{t-1} + i_t * \tilde{C}_t \end{equation}</span><br />
+            <span class="equation-number">(5)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>The last step is filtering the cell state to generate
+        the final output, which can be formulated as below:</p>
+        <div class="table-responsive" id="eq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            \begin{aligned} &amp; o_t = \sigma (W_o\cdot [h_{t-1},
+            x_t] + b_o) , \\ &amp; h_t = o_t * \mathrm{tanh}(C_t)
+            \end{aligned} \end{equation}</span><br />
+            <span class="equation-number">(6)</span>
+          </div>
+        </div>Here, <em>o<sub>t</sub></em> decides what parts of
+        the cell state to keep for the final output, and the cell
+        state goes through a tanh layer before multiplying by
+        <em>o<sub>t</sub></em> .
+        <p></p>
+        <p>Another RNNs we used for Gated Recurrent Unit (GRU)
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0001">1</a>] is a
+        variant of LSTMs which has less parameters to tune.</p>
+        <p>For DNNs, we used the following hyperparameter settings
+        for training:</p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Hyperparameter settings for training
+            DNNs.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">
+                <strong>Hyperparameter</strong></th>
+                <th style="text-align:center;">
+                <strong>Settings</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;"><strong>embedding
+                dimension</strong></td>
+                <td style="text-align:center;">200</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><strong>dropout
+                rate</strong></td>
+                <td style="text-align:center;">0.5</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><strong>batch
+                size</strong></td>
+                <td style="text-align:center;">40</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                <strong>epoches</strong></td>
+                <td style="text-align:center;">100 - 300</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.3</span>
+            Regularization and Training</h3>
+          </div>
+        </header>
+        <p>For regularization, we use the dropout [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0012">12</a>] in the same way as
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0013">13</a>].
+        Dropout, which refers to dropping out units in a neural
+        network, is one of the widely used regularization
+        techniques for preventing overfitting in training neural
+        networks. Individual nodes are either “disabled” with
+        probability 1 − <em>p</em> or kept with probability
+        <em>p</em>. The “thinned” outputs of a hidden layer are
+        then used as an input to the next layer. In this way, it
+        prevents units from co-adapting and forces them to learn
+        useful features individually.</p>
+        <p>We also constrain <em>l</em> <sub>2</sub>-norms of the
+        weight vectors to a threshold ϵ as below, which normalizes
+        a word vector <em>w</em> so that its <em>l</em>
+        <sub>2</sub>-norm is equal to ϵ, and will be performed
+        whenever the <em>l</em> <sub>2</sub>-norm of <em>w</em> is
+        bigger than ϵ (ϵ = 3 for our approach).</p>
+        <div class="table-responsive" id="eq4">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \left\Vert
+            w\right\Vert _2 = \epsilon , \mbox{ } if \left\Vert
+            w\right\Vert _2 {\gt} \epsilon .
+            \end{equation}</span><br />
+            <span class="equation-number">(7)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>To learn the parameters for minimizing the loss, we use
+        a Stochastic Gradient Descent (SGD) with the Adam update
+        rule [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href="#BibPLXBIB0008">8</a>]
+        to train the model until the loss has converged.</p>
+      </section>
+    </section>
+    <section id="sec-9">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Proposed
+          Approach</h2>
+        </div>
+      </header>
+      <p>In this section, we describe our proposed approach for the
+      Financial Aspect and Sentiment Prediction task with Deep
+      neural networks (Deep-FASP).</p>
+      <p>Figure <a class="fig" href="#fig1">1</a> shows an overview
+      of our proposed approach for predicting the aspects and the
+      sentiment score of a given text. It consists of five steps
+      from an input to the predicted output.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191829/images/www18companion-406-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">An overview of our proposed approach
+          Deep-FASP.</span>
+        </div>
+      </figure>
+      <ul class="list-no-style">
+        <li id="list1" label="•"><strong>Input.</strong> Each
+        headline and post is a sequence of words.<br /></li>
+        <li id="list2" label="•"><strong>Look up.</strong> Those
+        words are represented as word embeddings.<br /></li>
+        <li id="list3" label="•"><strong>DNNs</strong>. The
+        sequence of word embeddings is used as an input to multiple
+        DNNs such as CNNs, LSTMs, and GRUs. Each DNN outputs their
+        predicted labels for the aspect classification task, and
+        outputs their measured sentiment scores for the task of
+        sentiment prediction.<br /></li>
+        <li id="list4" label="•"><strong>Prediction.</strong>
+        Finally, the outputs from multiple DNNs are aggregated for
+        predicting the final results. The output of aspect
+        classification is the predicted label with the highest
+        votes based on the votes from all DNNs. For sentiment score
+        prediction, we use a ridge regression to combine the
+        outputs from different DNNs to produce the final sentiment
+        score.<br /></li>
+      </ul>
+      <p>For both tasks, each DNN model (e.g., CNNs or LSTMs) has
+      the same archietecture for retrieving the representation of a
+      given text. Given the text representation learned by a DNN,
+      we design a customized fully connected and output layer for
+      each task, which will be described in the following.</p>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Sentiment
+            Prediction</h3>
+          </div>
+        </header>
+        <p>Figure <a class="fig" href="#fig2">2</a> illustrates the
+        model architecture for predicting the sentiment score of a
+        given text. The fully connected layer for this task has 30
+        units as the settings in [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0002">2</a>], and the final sentiment score is
+        predicted with a linear regression on those 30 units.</p>
+        <figure id="fig2">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191829/images/www18companion-406-fig2.jpg"
+          class="img-responsive" alt="Figure 2" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 2:</span>
+            <span class="figure-title">The Deep-FASP architecture
+            for sentiment prediction.</span>
+          </div>
+        </figure>
+        <p>We use the mean squared error as below for the loss
+        function of sentiment prediction.</p>
+        <div class="table-responsive" id="Xeq4">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} L_s =
+            \frac{\sum _{i=1}^n(y^{\prime }_s(i) - y_s(i))^2}{n}
+            \end{equation}</span><br />
+            <span class="equation-number">(8)</span>
+          </div>
+        </div>where <em>n</em> is the number of training instances,
+        <span class="inline-equation"><span class="tex">$y^{\prime
+        }_s(i)$</span></span> and <em>y<sub>s</sub></em>
+        (<em>i</em>) denote the predicted and ground truth
+        sentiment scores for <em>i</em>-th instance, respectively.
+        <p></p>
+      </section>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Aspect
+            Prediction</h3>
+          </div>
+        </header>
+        <p>Figure <a class="fig" href="#fig3">3</a> shows the
+        architecture for predicting aspect labels. As we can see
+        form the figure, the fully connected layer for this task
+        has 80 units, and the final output layer has the same
+        number of units as the distinct aspect labels.</p>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191829/images/www18companion-406-fig3.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">The Deep-FASP architecture
+            for aspect prediction.</span>
+          </div>
+        </figure>
+        <p>The <em>sigmoid</em> or <em>softmax</em> function is
+        applied at the end in order to transform the output layer
+        into a boolean vector where ones denote corresponding
+        aspects. Applying the sigmoid or softmax function denotes
+        that we treat the problem as multi-label or multi-class
+        problem, respectively. Although the first released dataset
+        was a multi-labeled dataset, the final one has only one
+        multi-labeled instance which is closer to a multi-class
+        problem. In this regard, we tested both sigmoid and softmax
+        layers for the final prediction.</p>
+        <p>For the aspect prediction task, we use the cross-entropy
+        loss as our loss function to optimize, which is defined as
+        below:</p>
+        <div class="table-responsive" id="Xeq5">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} L_a =
+            -\frac{1}{n} \sum _{i=1}^n [y_a(i) \log y^{\prime
+            }_a(i) + (1 - y_a(i)) log (1 - y^{\prime }_a(i))]
+            \end{equation}</span><br />
+            <span class="equation-number">(9)</span>
+          </div>
+        </div>where <span class="inline-equation"><span class=
+        "tex">$y^{\prime }_a(i)$</span></span> and
+        <em>y<sub>a</sub></em> (<em>i</em>) denote the predicted
+        and ground truth aspect vectors for <em>i</em>-th instance,
+        respectively.
+        <p></p>
+        <p>Note that when the final layer is a sigmoid layer for
+        predicting aspects on the test set, the values in the final
+        aspect vector are rounded to 0 or 1 (e.g., [0, 1, ..., 0]).
+        In contrast, when the final layer is a softmax layer, only
+        the label with the highest value will be remained.</p>
+      </section>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span>
+            Pre-processing Texts</h3>
+          </div>
+        </header>
+        <p>We pre-process the raw data (headlines and posts) as
+        follows before the training stage.</p>
+        <ul class="list-no-style">
+          <li id="list5" label="•">Converts both texts and targets
+          as lowercase.<br /></li>
+          <li id="list6" label="•">Targets are replaced by the
+          <font style="normal">$</font>target<font style=
+          "normal">$</font> token.<br /></li>
+          <li id="list7" label="•">URLs are replaced by the
+          <font style="normal">$</font>URL<font style=
+          "normal">$</font> token.<br /></li>
+          <li id="list8" label="•">@mentions are replaced by the
+          <font style="normal">$</font>mention<font style=
+          "normal">$</font> token.<br /></li>
+          <li id="list9" label="•">Any letter repeated more than
+          two times in a text is replaced by two repetitions of
+          that letter, e.g., “fooooo” is replaced by
+          “foo”.<br /></li>
+        </ul>
+      </section>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.4</span> Pre-trained
+            Word Embeddings</h3>
+          </div>
+        </header>
+        <p>Considering the training set is not large for the given
+        task, we used a Twitter corpus<a class="fn" href="#fn4" id=
+        "foot-fn4"><sup>4</sup></a> for sentiment analysis to
+        pre-train word embeddings. We used a CNN with the filter
+        sizes [1, 2, 3] to pre-train these word embeddings.</p>
+        <p>Figure <a class="fig" href="#fig4">4</a> shows nearest
+        words of the word “good” based on pre-trained word
+        embeddings. As we can see from the figure, similar words in
+        terms of sentiment are nearby each other in the latent
+        space. These embeddings were used to initialize the word
+        embeddings for both sentiment and aspect prediction
+        tasks.</p>
+        <figure id="fig4">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191829/images/www18companion-406-fig4.jpg"
+          class="img-responsive" alt="Figure 4" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 4:</span>
+            <span class="figure-title">Nearest words of the word
+            “good” from the pre-trained word embeddings.</span>
+          </div>
+        </figure>
+      </section>
+    </section>
+    <section id="sec-14">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Results</h2>
+        </div>
+      </header>
+      <p>In this section, we describe the experimental results
+      based on 5-cross validation on the released training set for
+      sentiment and aspect prediction tasks.</p>
+      <section id="sec-15">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Sentiment
+            Prediction</h3>
+          </div>
+        </header>
+        <p>Table <a class="tbl" href="#tab4">4</a> shows the
+        results for predicting sentiment scores based on DNNs and
+        two simple baselines. The results are obtained by using
+        5-cross validation. PredictZero always predicts zero for
+        any given text, and SVR is a SVM model for regression where
+        each word is denoted as a boolean feature.</p>
+        <div class="table-responsive" id="tab4">
+          <div class="table-caption">
+            <span class="table-number">Table 4:</span> <span class=
+            "table-title">The results of financial sentiment
+            prediction based on 5-cross validation in terms of MSE
+            and R2 score. The values in [] denotes filter sizes
+            used for CNNs.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">
+                <strong>No.</strong></th>
+                <th style="text-align:left;">
+                <strong>Approach</strong></th>
+                <th style="text-align:center;">
+                <strong>MSE</strong></th>
+                <th style="text-align:center;">
+                <strong>R2</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">1</td>
+                <td style="text-align:left;">
+                <strong>SVR</strong></td>
+                <td style="text-align:center;">0.1566</td>
+                <td style="text-align:center;">0.0115</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">2</td>
+                <td style="text-align:left;">
+                <strong>PredictZero</strong></td>
+                <td style="text-align:center;">0.1737</td>
+                <td style="text-align:center;">-0.0984</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">3</td>
+                <td style="text-align:left;"><strong>CNN [1, 2,
+                3]</strong></td>
+                <td style="text-align:center;">0.0973</td>
+                <td style="text-align:center;">0.3841</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">4</td>
+                <td style="text-align:left;"><strong>CNN [3, 4,
+                5]</strong></td>
+                <td style="text-align:center;">0.0996</td>
+                <td style="text-align:center;">0.3705</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">5</td>
+                <td style="text-align:left;"><strong>CNN [5, 6,
+                7]</strong></td>
+                <td style="text-align:center;">0.1064</td>
+                <td style="text-align:center;">0.3278</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">6</td>
+                <td style="text-align:left;">
+                <strong>Bi-GRU</strong></td>
+                <td style="text-align:center;">0.1110</td>
+                <td style="text-align:center;">0.2985</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">7</td>
+                <td style="text-align:left;">
+                <strong>Bi-LSTM</strong></td>
+                <td style="text-align:center;">0.1076</td>
+                <td style="text-align:center;">0.3196</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">8</td>
+                <td style="text-align:left;">
+                <strong>GRU</strong></td>
+                <td style="text-align:center;">0.1067</td>
+                <td style="text-align:center;">0.3262</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">9</td>
+                <td style="text-align:left;">
+                <strong>Deep-FASP</strong>
+                (<strong>Ensemble</strong>)</td>
+                <td style="text-align:center;">
+                <strong>0.0926</strong></td>
+                <td style="text-align:center;">
+                <strong>0.4144</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>As we can see from the table, CNN [1, 2, 3] provides the
+        best performance as a single predictor followed by CNN [3,
+        4, 5] and CNN [5, 6, 7]. Overall, CNNs perform better than
+        RNNs in our experiment with 5-cross validation. The
+        ensemble approach using a ridge regression (the
+        regularization parameter is tuned to 95 based on the
+        results with 5-cross validation) for different models with
+        different settings in the table except Bi-GRU outperforms
+        any single model, with 0.0837 and 0.4683 for MSE and R2
+        score respectively.</p>
+        <p>Finally, we trained this ensemble model based on the
+        whole training dataset in order to predict the sentiment
+        scores for the texts in the test dataset.</p>
+      </section>
+      <section id="sec-16">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Aspect
+            Prediction</h3>
+          </div>
+        </header>
+        <p>Table <a class="tbl" href="#tab5">5</a> shows the
+        results for aspect prediction based on DNNs and two simple
+        baselines using Ridge Regression and Random Forest for
+        aspect classification where each word is denoted as a
+        boolean feature. The results are obtained by using 5-cross
+        validation.</p>
+        <p>Similar to the results for sentiment prediction, CNNs
+        perform better than RNNs in the aspect prediction task as
+        well. The voting strategy with those models in the table
+        did not yield better performance compared to using CNN[1,
+        2, 3]. We also observe that using the sigmoid layer (CNN[1,
+        2, 3] - ML), i.e., treat the problem as a multi-label
+        classification task, did not improve the performance but
+        decrease the performance significantly. Therefore, we
+        assume the aspect prediction task as a multi-class problem,
+        and used several CNN[1, 2, 3] models with different
+        settings for aspect prediction without incorporating other
+        models. As a result, the voting strategy has slightly
+        better performance with 0.6530 for the accuracy.</p>
+        <p>Finally, we trained this voting approach based on the
+        whole training dataset in order to predict the aspect
+        labels for the texts in the test dataset.</p>
+        <div class="table-responsive" id="tab5">
+          <div class="table-caption">
+            <span class="table-number">Table 5:</span> <span class=
+            "table-title">The results of financial aspect
+            prediction based on 5-cross validation in terms of
+            accuracy. The values in [] denotes filter sizes used
+            for CNNs. ML denotes multi-label.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">
+                <strong>No.</strong></th>
+                <th style="text-align:left;">
+                <strong>Approach</strong></th>
+                <th style="text-align:center;">
+                <strong>Accuracy</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">1</td>
+                <td style="text-align:left;"><strong>Ridge
+                Regression</strong></td>
+                <td style="text-align:center;">0.3634</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">2</td>
+                <td style="text-align:left;"><strong>Random
+                Forest</strong></td>
+                <td style="text-align:center;">0.2749</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">3</td>
+                <td style="text-align:left;"><strong>CNN [1, 2,
+                3]</strong></td>
+                <td style="text-align:center;">0.6436</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">4</td>
+                <td style="text-align:left;"><strong>CNN [3, 4,
+                5]</strong></td>
+                <td style="text-align:center;">0.6180</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">5</td>
+                <td style="text-align:left;"><strong>CNN [5, 6,
+                7]</strong></td>
+                <td style="text-align:center;">0.5940</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">6</td>
+                <td style="text-align:left;">
+                <strong>Bi-GRU</strong></td>
+                <td style="text-align:center;">0.5085</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">7</td>
+                <td style="text-align:left;">
+                <strong>Bi-LSTM</strong></td>
+                <td style="text-align:center;">0.4915</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">8</td>
+                <td style="text-align:left;">
+                <strong>GRU</strong></td>
+                <td style="text-align:center;">0.5274</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">9</td>
+                <td style="text-align:left;"><strong>CNN [1, 2, 3]
+                - ML</strong></td>
+                <td style="text-align:center;">0.5581</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">10</td>
+                <td style="text-align:left;">
+                <strong>Voting</strong></td>
+                <td style="text-align:center;">
+                <strong>0.6530</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+    <section id="sec-17">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Conclusions and
+          Future Work</h2>
+        </div>
+      </header>
+      <p>This paper descried Deep-FASP which is an ensemble
+      approach for sentiment and aspect prediction tasks in the
+      financial domain using deep learning approaches such as CNNs
+      without handcrafted features. The results based on 5-cross
+      validation on the training dataset show that CNNs perform
+      better than RNNs such as LSTMs or GRUs, and the ensemble
+      approach provides the best performance in both tasks compared
+      to any single model. As the final results of the challenge is
+      not available at the time of writing, more details of our
+      approach and the performance compared to other participated
+      teams will be updated on <a class="link-inline force-break"
+      href=
+      "https://github.com/parklize/FIQA">https://github.com/parklize/FIQA</a>.</p>
+    </section>
+    <section id="sec-18">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span>
+          Acknowledgments</h2>
+        </div>
+      </header>
+      <p>This publication has emanated from research conducted with
+      the financial support of Science Foundation Ireland (SFI)
+      under Grant Number SFI/12/RC/2289 (Insight Centre for Data
+      Analytics).</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Kyunghyun Cho, Bart Van
+        Merriënboer, Caglar Gulcehre, Dzmitry Bahdanau, Fethi
+        Bougares, Holger Schwenk, and Yoshua Bengio. 2014. Learning
+        phrase representations using RNN encoder-decoder for
+        statistical machine translation. <em><em>arXiv preprint
+        arXiv:1406.1078</em></em> (2014).</li>
+        <li id="BibPLXBIB0002" label="[2]">Mathieu Cliche. 2017.
+        BB_twtr at SemEval-2017 Task 4: Twitter Sentiment Analysis
+        with CNNs and LSTMs. <em><em>CoRR</em></em>
+        abs/1704.0(2017). arxiv:1704.06125<a class=
+        "link-inline force-break" href=
+        "http://arxiv.org/abs/1704.06125" target=
+        "_blank">http://arxiv.org/abs/1704.06125</a>
+        </li>
+        <li id="BibPLXBIB0003" label="[3]">Keith Cortis, André
+        Freitas, Tobias Daudert, Manuela Huerlimann, Manel Zarrouk,
+        Siegfried Handschuh, and Brian Davis. 2017. Semeval-2017
+        task 5: Fine-grained sentiment analysis on financial
+        microblogs and news. <em>In <em>Proceedings of the 11th
+        International Workshop on Semantic Evaluation
+        (SemEval-2017)</em></em> . 519–535.</li>
+        <li id="BibPLXBIB0004" label="[4]">Clement Farabet, Camille
+        Couprie, Laurent Najman, and Yann LeCun. 2013. Learning
+        Hierarchical Features for Scene Labeling. <em><em>IEEE
+        Transactions on Pattern Analysis and Machine
+        Intelligence</em></em> 35, 8(2013), 1915–1929.</li>
+        <li id="BibPLXBIB0005" label="[5]">Sepp Hochreiter and
+        Jürgen Schmidhuber. 1997. Long Short-Term Memory. <em><em>
+          Neural Computation</em></em> 9, 8 (nov 1997), 1735–1780.
+          <a class="link-inline force-break" href=
+          "https://doi.org/10.1162/neco.1997.9.8.1735" target=
+          "_blank">https://doi.org/10.1162/neco.1997.9.8.1735</a>
+        </li>
+        <li id="BibPLXBIB0006" label="[6]">Nal Kalchbrenner, Edward
+        Grefenstette, and Phil Blunsom. 2014. A convolutional
+        neural network for modelling sentences. <em>In <em>The 52nd
+        Annual Meeting of the Association for Computational
+        Linguistics</em></em> .</li>
+        <li id="BibPLXBIB0007" label="[7]">Yoon Kim. 2014.
+        Convolutional neural networks for sentence classification.
+        <em>In <em>Conference on Empirical Methods on Natural
+        Language Processing</em></em> .</li>
+        <li id="BibPLXBIB0008" label="[8]">Diederik Kingma and
+        Jimmy Ba. 2014. Adam: A method for stochastic optimization.
+        <em><em>arXiv preprint arXiv:1412.6980</em></em>
+        (2014).</li>
+        <li id="BibPLXBIB0009" label="[9]">Alex Krizhevsky, Ilya
+        Sutskever, and Geoffrey&nbsp;E Hinton. 2012. Imagenet
+        Classification with Deep Convolutional Neural Networks.
+        <em>In <em>Advances in Neural Information Processing
+        Systems</em></em> . 1097–1105.</li>
+        <li id="BibPLXBIB0010" label="[10]">Yann LeCun, Yoshua
+        Bengio, and Geoffrey Hinton. 2015. Deep learning.
+        <em><em>Nature</em></em> 521, 7553 (2015), 436–444.</li>
+        <li id="BibPLXBIB0011" label="[11]">Yann LeCun,
+        Bernhard&nbsp;E Boser, John&nbsp;S Denker, Donnie
+        Henderson, Richard&nbsp;E Howard, Wayne&nbsp;E Hubbard, and
+        Lawrence&nbsp;D Jackel. 1990. Handwritten Digit Recognition
+        with a Back-propagation Network. <em>In <em>Advances in
+        Neural Information Processing Systems</em></em> .
+        396–404.</li>
+        <li id="BibPLXBIB0012" label="[12]">Nitish Srivastava,
+        Geoffrey&nbsp;E Hinton, Alex Krizhevsky, Ilya Sutskever,
+        and Ruslan Salakhutdinov. 2014. Dropout: A Simple Way to
+        Prevent Neural Networks from Overfitting. <em><em>Journal
+        of Machine Learning Research</em></em> 15, 1 (2014),
+        1929–1958.</li>
+        <li id="BibPLXBIB0013" label="[13]">Qi Zhang, Yeyun Gong,
+        Jindou Wu, Haoran Huang, and Xuanjing Huang. 2016. Retweet
+        Prediction with Attention-based Deep Neural Network. <em>In
+        <em>Proceedings of the 25th ACM International on Conference
+        on Information and Knowledge Management - CIKM
+        ’16</em></em> (<em>CIKM ’16</em>). ACM, New York, NY, USA,
+        75–84. <a class="link-inline force-break" href=
+        "https://doi.org/10.1145/2983323.2983809" target="_blank">
+          https://doi.org/10.1145/2983323.2983809</a>
+        </li>
+        <li id="BibPLXBIB0014" label="[14]">Shuai Zhang, Lina Yao,
+        and Aixin Sun. 2017. Deep Learning based Recommender
+        System: A Survey and New Perspectives.
+        <em><em>CoRR</em></em> abs/1707.0(2017). arxiv:1707.07435
+        <a class="link-inline force-break" href=
+        "http://arxiv.org/abs/1707.07435" target=
+        "_blank">http://arxiv.org/abs/1707.07435</a>
+        </li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "http://alt.qcri.org/semeval2017/index.php?id=tasks">http://alt.qcri.org/semeval2017/index.php?id=tasks</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "https://twitter.com">https://twitter.com</a></p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "https://sites.google.com/view/fiqa">https://sites.google.com/view/fiqa</a></p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a><a class=
+    "link-inline force-break" href=
+    "http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/">http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, Companion, April 23–27, 2018, Lyon,
+      France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191829">https://doi.org/10.1145/3184558.3191829</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

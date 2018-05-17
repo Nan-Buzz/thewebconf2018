@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Human-level Multiple Choice Question Guessing Without
+  Domain Knowledge: Machine-Learning of Framing Effects</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Human-level Multiple Choice
+          Question Guessing Without Domain Knowledge:
+          Machine-Learning of Framing Effects</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Patrick</span> <span class=
+          "surName">Watson</span>, IBM Research, 1101 Kitchawan
+          Road, Yorktown Heights, New York, <a href=
+          "mailto:pwatson@us.ibm.com">pwatson@us.ibm.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">TengFei</span> <span class=
+          "surName">Ma</span>, IBM Research, 1101 Kitchawan Road,
+          Yorktown Heights, New York, <a href=
+          "mailto:tengfei.ma1@ibm.com">tengfei.ma1@ibm.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Ravi</span> <span class=
+          "surName">Tejwani</span>, IBM Research, 1101 Kitchawan
+          Road, Yorktown Heights, New York, <a href=
+          "mailto:rtejwan@us.ibm.com">rtejwan@us.ibm.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Maria</span> <span class=
+          "surName">Chang</span>, IBM Research, 1101 Kitchawan
+          Road, Yorktown Heights, New York, <a href=
+          "mailto:maria.chang@us.ibm.com">maria.chang@us.ibm.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">JaeWook</span> <span class=
+          "surName">Ahn</span>, IBM Research, 1101 Kitchawan Road,
+          Yorktown Heights, New York, <a href=
+          "mailto:jaewook.ahn@us.ibm.com">jaewook.ahn@us.ibm.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Sharad</span> <span class=
+          "surName">Sundararajan</span>, IBM Research, 1101
+          Kitchawan Road, Yorktown Heights, New York, <a href=
+          "mailto:sharads@us.ibm.com">sharads@us.ibm.com</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186340"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186340</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>The availability of open educational resources
+        (OER) has enabled educators and researchers to access a
+        variety of learning assessments online. OER communities are
+        particularly useful for gathering multiple choice questions
+        (MCQs), which are easy to grade, but difficult to design
+        well. To account for this, OERs often rely on crowd-sourced
+        data to validate the quality of MCQs. However, because
+        crowds contain many non-experts, and are susceptible to
+        question framing effects, they may produce ratings driven
+        by guessing on the basis of surface-level linguistic
+        features, rather than deep topic knowledge. Consumers of
+        OER multiple choice questions (and authors of original
+        multiple choice questions) would benefit from a tool that
+        automatically provided feedback on assessment quality, and
+        assessed the degree to which OER MCQs are susceptible to
+        framing effects. This paper describes a model that is
+        trained to use domain-naive strategies to guess which
+        multiple choice answer is correct. The extent to which this
+        model can predict the correct answer to an MCQ is an
+        indicator that the MCQ is a poor measure of domain-specific
+        knowledge. We describe an integration of this model with a
+        front-end visualizer and MCQ authoring tool.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Applied computing</strong> →
+        <strong>Learning management systems;</strong></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>OER</small>,</span>
+          <span class="keyword"><small>MCQs</small>,</span>
+          <span class="keyword"><small>Deep
+          Learning</small>,</span> <span class=
+          "keyword"><small>Blind Guessing</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Patrick Watson, TengFei Ma, Ravi Tejwani, Maria Chang,
+          JaeWook Ahn, and Sharad Sundararajan. 2018. Human-level
+          Multiple Choice Question Guessing Without Domain
+          Knowledge: Machine-Learning of Framing Effects. In
+          <em>WWW '18 Companion: The 2018 Web Conference
+          Companion,</em> <em>April 23–27, 2018 (WWW’18
+          Companion),</em> <em>Lyon, France. ACM, New York, NY,
+          USA</em> 5 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3186340" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3186340</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Multiple choice questions (MCQs) are ubiquitously used for
+      assessing learners and are easy to grade, but hard to design
+      well. Open educational resources (OER) have provided
+      educators and researchers with a wide variety of freely
+      accessible, openly licensed, MCQs, which reduces the burden
+      of having to design them. Many on line communities exist for
+      exchanging OER assessments.<a class="fn" href="#fn1" id=
+      "foot-fn1"><sup>1</sup></a><a class="fn" href="#fn2" id=
+      "foot-fn2"><sup>2</sup></a><a class="fn" href="#fn3" id=
+      "foot-fn3"><sup>3</sup></a> However, the quality of the MCQs
+      shared in these communities is not guaranteed. Potential
+      users of these materials are often left having to adapt them
+      or re-write them entirely. This dilutes the value of OER
+      resources and introduces variations among exams that can harm
+      validity [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0005">5</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0009">9</a>]. These
+      risks are familiar to the expert psychometricians who take
+      pains to ensure their tests are well validated, but as OER
+      resources on the web allow more and more educators to design
+      their own tests, there is a critical need to provide tools to
+      ensure that tests are fair, valid, and accurate assessments
+      of knowledge.</p>
+      <p>To this end, we present a web-based tool that visualizes
+      the output from a machine-learning based model trained to
+      guess strategically on a corpus multiple choice questions
+      based solely on domain-general linguistic features. We
+      specifically exclude any topic-knowledge beyond vocabulary
+      knowledge [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0007">7</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0011">11</a>] . Our goal
+      is to help identify ”gameable” questions within a
+      well-validated and high-quality bank of OER MCQs. Because our
+      model lacks domain-specific knowledge, it allows us to filter
+      OER MCQs to identify how much they rely upon domain-specific
+      knowledge, and how much performance on them could be driven
+      by surface-level linguistic features.</p>
+    </section>
+    <section id="sec-8">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Naive-feature
+          based guessing</h2>
+        </div>
+      </header>
+      <p>Learners who lack necessary domain knowledge to complete
+      an assessment fail gracefully, falling back on plausible
+      guessing strategies such as choosing the longest answer,
+      making logical comparisons among answers, and using
+      surface-level linguistic similarity between sentences. We
+      modeled this ”naive features” guessing behavior by training a
+      classifier to identify the correct answer solely on the basis
+      of textual and linguistic features derived from
+      domain-general language corpora. Additionally, we trained a
+      classifier to estimate the distribution of answers across
+      alternatives to model the guessing behavior of a population
+      of students.</p>
+      <p>We constructed a classifier <em>f</em> that is trained to
+      select from the among the alternative responses of a
+      multiple-choice item <em>A<sub>i</sub></em> ∋[1, 2, ..n],
+      based on the linguistic features of stem
+      <em>L</em>(<em>s</em>), the linguistic features of each
+      alternative <em>L</em>(<em>A<sub>i</sub></em> ), and of the
+      pair-wise relations between each pair of alternatives and
+      between the stem and each alternative.</p>
+      <ol class="list-no-style">
+        <li id="list1" label="(1)">Answer-Answer similarity:<br />
+
+          <ul class="list-no-style">
+            <li id="list2" label="•">For each answer, we calculated
+            its similarity with all other answers. We use the
+            average word embedding of all words in each answer as
+            the vector representation of that answer, and then
+            compute cosine similarity between these answer vectors.
+            We create the vector representations using the
+            pre-trained wikipedia word vectors from
+              Glove[<a class="bib" data-trigger="hover"
+              data-toggle="popover" data-placement="top" href=
+              "#BibPLXBIB0011">11</a>]. Beyond word embedding based
+              similarity, we also used Wordnet based
+              similarity.<br />
+            </li>
+            <li id="list3" label="•">Mean and Variance. In addition
+            to the raw similarity score, the static information of
+            an answer compared to others could create a basis for
+            selecting that answer alternative (i.e., an ”odd answer
+            out” could draw attention). Thus, we also used mean and
+            variance of the answer similarities as features for
+            each answer.<br /></li>
+          </ul>
+        </li>
+        <li id="list4" label="(2)">Question-Answer
+        similarity:<br />
+          <ul class="list-no-style">
+            <li id="list5" label="•">Relevance, i.e. the semantic
+            similarity between a question and the
+            answer.<br /></li>
+            <li id="list6" label="•">Distance. Sometimes the
+            average word embedding of a sentence fails to capture
+            the importance of certain keywords. To account for
+            keyword position we use a simplified version of the
+            sentence distance calculation. Given the word vectors
+            for the question {<em>q</em> <sub>1</sub>, ...,
+            <em>q<sub>n</sub></em> } and the answer {<em>a</em>
+            <sub>1</sub>, ..., <em>a<sub>m</sub></em> }. The
+            distance is calculated as follows: <span class=
+            "inline-equation"><span class="tex">$dis= 1/n \sum
+            _{i=1}^n \min _{j=1}^{m}(q_i,
+            a_j)$</span></span><br /></li>
+          </ul>
+        </li>
+        <li id="list7" label="(3)">Logical language<br />
+          <ul class="list-no-style">
+            <li id="list8" label="•">We additionally used presence
+            of the logical keywords: ”and”,”or”,”not,” which are
+            frequently used by question authors and serve to rule
+            out certain answer combinations.<br /></li>
+          </ul>
+        </li>
+        <li id="list9" label="(4)">Question and answer alternative
+        length: the number of characters present in the question
+        and answer alternatives, as well as the mean and variance
+        between these. This allows us to identify which questions
+        and answers contain the most details, which sometimes
+        points to the correct answer.<br /></li>
+      </ol>
+      <p>To control for item-level variation among features, we
+      scale each of these features by the variance at the level of
+      the item as a whole (i.e., the variance of the stem and each
+      alternative).</p>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> The
+            Classifier</h3>
+          </div>
+        </header>
+        <p>We then trained two variants of this classifier, using
+        multi-layer perceptron (MLP). The first classifier (the
+        ”guesser”) was trained to classify correct answers
+        according to the ground-truth labeled answers. The second
+        classifier (the ”student distribution”), was trained to
+        match the distribution of student answers. Both the
+        classifiers are implemented in Keras [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0002">2</a>]. The hyperparameters are
+        as follows: 1. Above the embedding layer, we have two
+        layers for MLP. The dimension for the first layer is 32,
+        and the second layer is associated with a softmax function
+        for prediction. 2. We used dropout for regularization with
+        dropout rate 0.3. 3. The classifiers are trained by Adam
+        with initial learning rate 0.01.</p>
+        <p>We trained both classifiers using two forms of cross
+        validation, 10-fold random stratified cross validation
+        using the scikit-learn package [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0010">10</a>], and leave-one-group
+        out cross validation, using each question topic (e.g.,
+        ”cells”, ”plate tectonics”) as the hold-back test set to
+        ensure that the model was domain-general. This produced a
+        2x2 matrix of model variants (rows: guesser vs. student
+        distribution, columns: random-stratified vs.
+        domain-hold-back), performance ranges are reported in the
+        Evaluation section.</p>
+      </section>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> The Data
+            Set</h3>
+          </div>
+        </header>
+        <p>Our data set consists of openly available MCQs from AAAS
+        Project 2061.<a class="fn" href="#fn4" id=
+        "foot-fn4"><sup>4</sup></a> Out of the 775 available
+        questions, 26 contained pictorial or numerical answers and
+        were excluded from this analysis. The remaining 749
+        questions covered topics in life sciences, physical
+        science, earth science, and the nature of science. These
+        questions were designed for use with middle school and high
+        school students (typically ages 11-18 in the US). Each MCQ
+        has a question stem, 4 answer options, student performance
+        data, and misconception information (when available). In
+        addition to provided the correct answer for each MCQ, this
+        dataset also identifies the answer options that are most
+        commonly selected by students. These questions were
+        identified by AAAS as being especially conceptually complex
+        and appropriate for assessing science knowledge.</p>
+        <p>However, this OER question set has an unbalanced
+        distribution of correct responses across the four answer
+        choices with an over-representation of ”A” correct answers,
+        and an under-representation of ”D” correct answers.
+        Students answers however, are uniformly distributed across
+        the four responses. Since an unbalanced distribution
+        enhances model guessing, we also trained a version of the
+        model on a random sub-set of the questions with a uniform
+        distribution of correct answers. As an additional control
+        we trained and tested our model on the AI2 data set
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0001">1</a>], a set of
+        middle school science questions used to assess the domain
+        knowledge of machine learning solutions. AI2’s answer set
+        is uniformly distributed.</p>
+      </section>
+    </section>
+    <section id="sec-11">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Evaluation</h2>
+        </div>
+      </header>
+      <p>To evaluate our model of guessing, we examined the
+      accuracy for guessing correct answers using linguistic
+      features alone on the hold-back test set in our cross
+      validation. We additionally examined both correct the modal
+      answers of a hold-back set of multiple choice questions that
+      were unseen in model training.</p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">Guessing Model Accuracy.</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:center;">Cross Validation</th>
+              <th style="text-align:center;">Mean Accuracy</th>
+              <th style="text-align:left;">Range</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:center;">StratifiedKfold</td>
+              <td style="text-align:center;">52.88%</td>
+              <td style="text-align:left;">(+/- 5.57%)</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Domain excluded</td>
+              <td style="text-align:center;">47.60%</td>
+              <td style="text-align:left;">(+/- 18.15%)</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Balanced correct
+              answers</td>
+              <td style="text-align:center;">43.93%</td>
+              <td style="text-align:left;">(+/- 5.63%)</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">AI2 questions</td>
+              <td style="text-align:center;">27.02%</td>
+              <td style="text-align:left;">(+/- 3.19%)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Importantly, the two different data sets (AAAS and AI2),
+      produced radically different performance on naive-feature
+      guessing. In the OER AAAS set, the unbalanced distribution of
+      answers and the presence of naive features resulted in a
+      guessing rate above observed student performance (see
+      Evaluation). While in the AI2 question set, our model
+      performed only slightly above chance guessing. This
+      highlights the importance of different selection criteria for
+      inclusion in OER datasets. The AI2 question set was a
+      challenge set for ML solutions and relies heavily on short,
+      factual answers [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>]. In contrast the AAAS data set was
+      selected on the basis of conceptual difficulty [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0008">8</a>], and is
+      meant to assess student's understanding of the topic. This
+      difference could help explain the large difference between
+      guessing accuracies within these two question domains.</p>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span>
+            Feature-level contributions</h3>
+          </div>
+        </header>
+        <p>We also evaluated the relative feature contributions via
+        a jackknife analysis. We compared the relative
+        contributions to accuracy of three categories of features
+        1) linguistic similarity among answer alternatives
+        (ans-ans), 2) linguistic similarity between the question
+        and the answer alternatives (ans-quest), and 3) low-level
+        textual features (text features).</p>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Feature-jackknife analysis.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Feature
+                Jackknife</th>
+                <th style="text-align:center;">accuracy</th>
+                <th style="text-align:left;">Range</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">All features
+                included</td>
+                <td style="text-align:center;">52.88%</td>
+                <td style="text-align:left;">(+/- 5.57%)</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Ans-Ans
+                excluded</td>
+                <td style="text-align:center;">51.83%</td>
+                <td style="text-align:left;">(+/- 3.30%)</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Ans-Quest
+                excluded</td>
+                <td style="text-align:center;">50.80%</td>
+                <td style="text-align:left;">(+/- 4.53%)</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Text features
+                excluded</td>
+                <td style="text-align:center;">41.19%</td>
+                <td style="text-align:left;">(+/- 2.11%)</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Ans-Quest and Text
+                excluded</td>
+                <td style="text-align:center;">41.31%</td>
+                <td style="text-align:left;">(+/- 1.26%)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Both linguistic similarity and textual features were
+        important contributors to model accuracy, although
+        inclusion of both the Ans-Ans and the Ans-Quest features
+        resulted in a small marginal improvement, suggesting that
+        these two groups of features contained similar
+        information.</p>
+      </section>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Comparison
+            to student performance</h3>
+          </div>
+        </header>
+        <p>These numbers compare favorably to the sample of
+        6th-12th graders assessed using these questions. The mean
+        accuracy (computed from the percent of the student
+        population selecting the correct answer) was 44.2%. This
+        was lower than our naive-features model's rate of correct
+        guessing: 52.9%.</p>
+        <p>The variant of the model trained to match the student
+        distribution also captured a broadly similar pattern of
+        performance Figure&nbsp;<a class="fig" href="#fig1">1</a>.
+        However, students exhibited some spatial clumping of their
+        answers (tending to choose B when C was the correct answer
+        and vice versa). This represents a possible domain of
+        improvement of the model's predictive performance.</p>
+        <figure id="fig1">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186340/images/www18companion-102-fig1.jpg"
+          class="img-responsive" alt="Figure 1" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 1:</span>
+            <span class="figure-title">The model's predicted answer
+            pattern, vs. the students observed answer pattern by
+            correlation with correct answer.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>While the model's guessing based on naive features is
+        below the state-of-the-art approach to middle school
+        science questions using machine learning [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0001">1</a>], it actually exceeds the
+        observed performance of middle-schoolers. This has
+        important consequences for the interpretation of the
+        difficulty of items in this OER question set.</p>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span>
+            Chance-level Guessing with language knowledge</h3>
+          </div>
+        </header>
+        <p>Item response theory estimates the probability of a
+        correct answer via:</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} p(\Theta) =
+            c+\frac{1-c}{1 - e^{-a(\Theta -b)}}
+            \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>Where <em>Θ</em> is an estimate of student skill,
+        <em>a</em> is the item discrimination (i.e., the slope of
+        the sigmoid), <em>b</em> is the item difficulty, and
+        <em>c</em> is the base rate of correct answers assuming a
+        uniform multinomial guessing distribution. We extend this
+        by identifying two components to a test-taker's skill,
+        <em>p</em>(<em>Θ</em>|<em>n<sub>i</sub></em> ) and
+        <em>p</em>(<em>Θ</em>|<em>k<sub>i</sub></em> ) where
+        <em>n<sub>i</sub></em> are the naive, linguistic features
+        associated with item <em>i</em> and <em>k<sub>i</sub></em>
+        are the domain knowledge features associated with item
+        <em>i</em>. In the current sample, we observe that:</p>
+        <div class="table-responsive" id="Xeq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} p(\Theta _i |
+            n_i \cup k_i) {\lt} p(\Theta _i | n_i).
+            \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>Since:</p>
+        <div class="table-responsive" id="Xeq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} p(\Theta _i |
+            n_i) + p(\Theta _i |k_i) - p(\Theta _i | n_i \cap k_i).
+            \end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>Therefore:</p>
+        <div class="table-responsive" id="Xeq4">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} p(\Theta _i |
+            k_i) - p(\Theta _i | n_i \cap k_i) {\lt} (p(\Theta _i |
+            n_i). \end{equation}</span><br />
+            <span class="equation-number">(4)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>To unpack this, we explore the conditional probabilities
+        of each case comparing cases where the student is correct
+        <em>S<sub>c</sub></em> and where the classifier is correct
+        <em>f<sub>c</sub></em> , and where the student is wrong
+        <em>S<sub>w</sub></em> or the classifier is wrong
+        <em>f<sub>w</sub></em> . For the classifier, we have the
+        ground-truth of guessing, but for the students, we can only
+        infer this from the population distribution. We chose a
+        cut-off of two standard deviations above model guessing
+        performance (64%) to select the sub-set of questions on
+        which student population performance was best. These would
+        be classified as ”easy” questions by IRT, and performance
+        on them is too high to be explained by naive-feature
+        guessing alone. Additionally we selected questions where
+        student performance was below the chance floor (25%) to
+        serve as our test-set for the model on ”hard”
+        questions.</p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Student's correct answer rate by model
+            guess rate.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Condition</th>
+                <th style="text-align:center;">Accuracy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">
+                <em>p</em>(<em>S<sub>c</sub></em>
+                |<em>f<sub>c</sub></em> )</td>
+                <td style="text-align:center;">45.2%</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">
+                <em>p</em>(<em>S<sub>c</sub></em>
+                |<em>f<sub>w</sub></em> )</td>
+                <td style="text-align:center;">42.8%</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">
+                <em>p</em>(<em>f<sub>c</sub></em>
+                |<em>S<sub>c</sub></em> )</td>
+                <td style="text-align:center;">56.9%</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">
+                <em>p</em>(<em>f<sub>c</sub></em>
+                |<em>S<sub>w</sub></em> )</td>
+                <td style="text-align:center;">58.2%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Interestingly, students perform slightly better within
+        the subset of questions correctly guessed by the
+        naive-feature model possibly suggesting some use of
+        naive-feature guessing by students. However, the model
+        performs above average in both ”easy” and ”hard” pool of
+        questions.</p>
+        <p>While this suggests that a naive-features based guessing
+        strategy is compatible with a knowledge-based decision
+        strategy, it also implies that on the hardest questions in
+        this test set, domain knowledge is actually harmful to
+        student performance.</p>
+      </section>
+    </section>
+    <section id="sec-15">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Assessment
+          Design</h2>
+        </div>
+      </header>
+      <p>Resources for best-practice creation of test items exist
+      in the literature [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0013">13</a>], these urge care in creation of
+      items such that distractors are plausible, answers are short,
+      there is only one correct answer etc. We wish to add to this
+      list the requirement ”cannot be guessed by a machine trained
+      on information that excludes a model of the topic purportedly
+      being tested on.” To that end, in this section we describe
+      and deploy a web-based interface that allows instructors and
+      assessment designers to check the likely distribution of
+      guessing based on naive features.</p>
+      <p>We deployed a system that helps individuals design
+      assessments by using shallow NLP techniques to model novice
+      guessing. Figure&nbsp;<a class="fig" href="#fig2">2</a> shows
+      an application that exposes the classifier via an API and
+      user interface to allow users vet multiple choice questions,
+      surveys, or exams. Using the interface, a user feeds a
+      question and a set of multiple choices to the system. When
+      the <strong>Inkle!</strong> button is clicked the backend API
+      calculates 0-to-1 scores of the choices and returns them to
+      the UI where it displays the scores and draws bar charts
+      based on the algorithm described in the previous sections. In
+      the Figure&nbsp;<a class="fig" href="#fig2">2</a> example,
+      the user enters a question “<em>Which of the following parts
+      of an animal's body are made of cells?</em>” and four
+      choices. The correct answer to this question is the third
+      choice “<em>The brain, but not the muscles.</em>” and
+      Inklebot correctly estimates that the choice has the highest
+      score of 0.44. The fourth choice receives the lowest score
+      0.14 even though it has the similar sentence structure and
+      words with the third choice, because of its unique linguistic
+      term “<em>Neither</em>.” The remaining two choices mark
+      similar scores 0.22 and 0.2 as their linguistic features are
+      almost identical with each other, except the order of the
+      words.</p>
+      <p>By observing the calculated scores and reviewing the
+      sentences and the expressions of the questions and the
+      choices she has provided to the system, the user can
+      understand how the linguistic features contribute to the
+      estimation of the correct answer, which can be done by human
+      students in a similar way. At the same time, the Inklebot
+      backend calculates the scores instantly, so that she can
+      freely experiment with variations of the question and the
+      choices that embed different linguistic features. It allows
+      her to interactively edit and improve these questions with
+      the help of the model to harden them against guessing
+      strategies that rely on surface features rather than deeper
+      domain knowledge.</p>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186340/images/www18companion-102-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">The front-end of ”inklebot” the MCQ
+          guesser.</span>
+        </div>
+      </figure>
+      <p></p>
+    </section>
+    <section id="sec-16">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Discussion
+          &amp; Future Work</h2>
+        </div>
+      </header>
+      <p>The model reported acts as an expert system for guessing
+      multiple choice questions without knowledge of the question's
+      topic. It can distinguish correct answers slightly better
+      than a large sample students across a wide range of middle-
+      and high school scientific subjects. Further, the
+      distribution of it's guessing behavior provides some insight
+      into the distribution of student responses, and can serve as
+      a rough estimate of how a population of responders might
+      perform on such an exam. While accurate on the AAAS dataset,
+      this accuracy did not extend to the AI2 dataset, suggesting
+      that this later data set relies more heavily on
+      domain-dependent information.</p>
+      <p>It is somewhat surprising that this guessing behavior does
+      not involve a model of the underlying disciplines nor require
+      factual knowledge in common between subjects. We suggest
+      three possibilities.</p>
+      <p>First, the model may be able to leverage framing effects
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0014">14</a>]. In
+      decision making, framing of a question (i.e., context, word
+      choice, and alternatives) strongly influences users’ choices.
+      The features used by the model are just such surface-level
+      linguistic features. Our principle contribution with this
+      technique is to distinguish the relative contributions of
+      framing and domain knowledge to student performance. This is
+      critical information to assess the quality of OER content,
+      and ultimately more accurately estimate and improve student
+      ability. The solution provided here helps independent
+      educators to distinguish between a good guesser, and a
+      knowledgeable learner.</p>
+      <p>Second, the fact that the model is robust to question
+      difficulty suggests that the ”hardest” questions in the data
+      set are in part difficult due to semantic, textual, and
+      logical complexity, rather than domain complexity. Put
+      differently, each item in the AAAS bank is both a science
+      question and an abstract-reasoning question. Items that may
+      require identical levels of science knowledge can be vary
+      substantially in student performance due to variations in the
+      the difficulty of reasoning required to answer the question.
+      Low-knowledge, high-difficulty questions are therefore
+      similar to test items for general fluid intelligence or IQ
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0003">3</a>], and assess
+      higher-level, non-domain dependent cognitive abilities.</p>
+      <p>Finally, there is the possibility of adversarial question
+      generation. Many of the AAAS questions target common
+      misconceptions in student knowledge. In these cases, students
+      factual knowledge actually hurts their overall performance.
+      The naive features model is immune to such ”trick” questions
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0012">12</a>].</p>
+      <p>This model clarifies a possible danger present in OER MCQ
+      content. Not all questions sets are generated for the same
+      purpose. The AAAS set strongly differentiates students on the
+      basis of naive features. This may be desirable in predictive
+      instruments that attempt to estimate student performance
+      across multiple domains. The AI2 test strongly differentiates
+      on factual knowledge, this is desirable in identifying the
+      complexity of domain knowledge mastered by ML models. These
+      sets of assessment materials are specifically adapted to
+      specific contexts and goals, and are not applicable in
+      general. The model presented here helps to support educators
+      who wish to make use of OER assessments by identifying the
+      information upon which the assessments depend.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">2015. Allen AI2 Science
+        Question Challenge. <a class="link-inline force-break"
+          href="http://data.allenai.org/ai2-science-questions/">http://data.allenai.org/ai2-science-questions/</a>.
+          (2015).
+        </li>
+        <li id="BibPLXBIB0002" label="[2]">François Chollet <em>et
+        al.</em> 2015. Keras. <a class="link-inline force-break"
+        href=
+        "https://github.com/fchollet/keras">https://github.com/fchollet/keras</a>.
+        (2015).
+        </li>
+        <li id="BibPLXBIB0003" label="[3]">Andrew R&nbsp;A Conway,
+        Nelson Cowan, Michael&nbsp;F Bunting, David&nbsp;J
+        Therriault, and Scott R&nbsp;B Minkoff. 2002. A latent
+        variable analysis of working memory capacity, short-term
+        memory capacity, processing speed, and general fluid
+        intelligence. <em><em>Intelligence</em></em> 30, 2 (March
+        2002), 163–183.</li>
+        <li id="BibPLXBIB0004" label="[4]">Robert&nbsp;J Dufresne,
+        William&nbsp;J Leonard, and William&nbsp;J Gerace. 2002.
+        Marking sense of students’ answers to multiple-choice
+        questions. <em><em>Phys. Teach.</em></em> 40, 3 (March
+        2002), 174–180.</li>
+        <li id="BibPLXBIB0005" label="[5]">Thomas&nbsp;M Haladyna.
+        2015. <em><em>Developing and Validating Multiple-choice
+        Test Items</em> (3 edition ed.)</em>. Routledge.</li>
+        <li id="BibPLXBIB0006" label="[6]">Moeen-Uz-Zafar Khan and
+        Badr&nbsp;Muhammad Aljarallah. 2011. Evaluation of Modified
+        Essay Questions (MEQ) and Multiple Choice Questions (MCQ)
+        as a tool for Assessing the Cognitive Skills of
+        Undergraduate Medical Students. <em><em>Int. J. Health
+        Sci.</em></em> 5, 1 (Jan. 2011), 39–43.</li>
+        <li id="BibPLXBIB0007" label="[7]">Matt Kusner, Yu Sun,
+        Nicholas Kolkin, and Kilian Weinberger. 2015. From word
+        embeddings to document distances. In <em><em>International
+        Conference on Machine Learning</em></em> . 957–966.</li>
+        <li id="BibPLXBIB0008" label="[8]">William&nbsp;F McComas.
+        2014. Benchmarks for Science Literacy. In <em><em>The
+        Language of Science Education</em></em> . SensePublishers,
+        Rotterdam, 12–12.</li>
+        <li id="BibPLXBIB0009" label="[9]">Paul McCoubrie. 2004.
+        Improving the fairness of multiple-choice questions: a
+        literature review. <em><em>Medical Teacher</em></em> 26, 8
+        (2004), 709–712. <a class="link-inline force-break" href=
+        "https://doi.org/10.1080/01421590400013495" target=
+        "_blank">https://doi.org/10.1080/01421590400013495</a>arXiv:<a class="link-inline force-break"
+          href=
+          "http://dx.doi.org/10.1080/01421590400013495">http://dx.doi.org/10.1080/01421590400013495</a>
+          PMID: 15763874.
+        </li>
+        <li id="BibPLXBIB0010" label="[10]">F. Pedregosa, G.
+        Varoquaux, A. Gramfort, V. Michel, B. Thirion, O. Grisel,
+        M. Blondel, P. Prettenhofer, R. Weiss, V. Dubourg, J.
+        Vanderplas, A. Passos, D. Cournapeau, M. Brucher, M.
+        Perrot, and E. Duchesnay. 2011. Scikit-learn: Machine
+        Learning in Python. <em><em>Journal of Machine Learning
+        Research</em></em> 12 (2011), 2825–2830.</li>
+        <li id="BibPLXBIB0011" label="[11]">Jeffrey Pennington,
+        Richard Socher, and Christopher Manning. 2014. Glove:
+        Global vectors for word representation. In
+        <em><em>Proceedings of the 2014 conference on empirical
+        methods in natural language processing (EMNLP)</em></em> .
+        1532–1543.</li>
+        <li id="BibPLXBIB0012" label="[12]">Dennis&nbsp;M Roberts.
+        1993. An empirical study on the nature of trick test
+        questions. <em><em>Journal of educational
+        measurement</em></em> 30, 4 (1993), 331–344.</li>
+        <li id="BibPLXBIB0013" label="[13]">Michael Rodriguez and
+        Anthony Albano. 2017. <em><em>The College Instructor's
+        Guide to Writing Test Items: Measuring Student
+        Learning</em> (1 editioned.)</em>. Routledge.</li>
+        <li id="BibPLXBIB0014" label="[14]">Amos Tversky and Daniel
+        Kahneman. 1985. The framing of decisions and the psychology
+        of choice. In <em><em>Environmental Impact assessment,
+        technology assessment, and risk analysis</em></em> .
+        Springer, 107–129.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.oercommons.org">www.oercommons.org</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "https://sparcopen.org/">https://sparcopen.org/</a></p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "https://open4us.org/find-oer">https://open4us.org/find-oer</a></p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.aaas.org/page/assessment-resources">https://www.aaas.org/page/assessment-resources</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution-NonCommercial-NoDerivs 4.0 International
+      (CC-BY-NC-ND&nbsp;4.0) license. Authors reserve their rights
+      to disseminate the work on their personal and corporate Web
+      sites with the appropriate attribution.</p>
+      <p><em>WWW '18 Companion, April 23-27, 2018, Lyon,
+      France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons
+      CC-BY-NC-ND&nbsp;4.0 License. ACM ISBN
+      978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186340">https://doi.org/10.1145/3184558.3186340</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

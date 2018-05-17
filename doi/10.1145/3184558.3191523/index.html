@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Towards Interpretation of Node Embeddings</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Towards Interpretation of Node
+          Embeddings</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Ayushi</span> <span class=
+          "surName">Dalmia*</span> IBM Research, India, <a href=
+          "mailto:ayushidalmia@in.ibm.com">ayushidalmia@in.ibm.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Ganesh</span> <span class=
+          "surName">J*</span> IIIT Hyderabad, India, <a href=
+          "mailto:ganesh.j@research.iiit.ac.in">ganesh.j@research.iiit.ac.in</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Manish</span> <span class=
+          "surName">Gupta</span> Microsoft, India, <a href=
+          "mailto:gmanish@microsoft.com">gmanish@microsoft.com</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191523"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191523</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Recently there have been a large number of
+        studies on embedding large-scale information networks using
+        low-dimensional, neighborhood and community aware node
+        representations. Though the performance of these embedding
+        models have been better than traditional methods for graph
+        mining applications, little is known about what these
+        representations encode, or why a particular node
+        representation works better for certain tasks. Our work
+        presented here constitutes the first step in decoding the
+        black-box of vector embeddings of nodes by evaluating their
+        effectiveness in encoding elementary properties of a node
+        such as page rank, degree, closeness centrality, clustering
+        coefficient, etc.</small></p>
+        <p><small>We believe that a node representation is
+        effective for an application only if it encodes the
+        application-specific elementary properties of nodes. To
+        unpack the elementary properties encoded in a node
+        representation, we evaluate the representations on the
+        accuracy with which they can model each of these
+        properties. Our extensive study of three state-of-the-art
+        node representation models (DeepWalk, node2vec and LINE) on
+        four different tasks and six diverse graphs reveal that
+        node2vec and LINE best encode the network properties of
+        sparse and dense graphs respectively. We correlate the
+        model performance obtained for elementary property
+        prediction tasks with the high-level downstream
+        applications such as link prediction and node
+        classification, and visualize the task performance vector
+        of each model to understand the semantic similarity between
+        the embeddings learned by various models. Our first study
+        of the node embedding models for outlier detection reveals
+        that node2vec and DeepWalk identify outliers well for
+        sparse and dense graphs respectively. Our analysis
+        highlights that the proposed elementary property prediction
+        tasks help in unearthing the important features responsible
+        for the given node embedding model to perform well for a
+        given downstream task. This understanding would facilitate
+        in picking the right model for a given downstream
+        task.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Graph Representation; Model
+          Interpretability; Neural Networks</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Ayushi Dalmia<sup>*</sup>, Ganesh J<sup>*</sup>, and
+          Manish Gupta. 2018. Towards Interpretation of Node
+          Embeddings. In <em>WWW '18 Companion: The 2018 Web
+          Conference Companion,</em> <em>April 23–27, 2018,</em>
+          <em>Lyon, France. ACM, New York, NY, USA</em> 9 Pages.
+          <a href="https://doi.org/10.1145/3184558.3191523" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191523</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Research on graph mining is experiencing a recent surge of
+      interest in applying network embedding (or representation)
+      models for applications such as node
+      classification&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>], link prediction&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0005">5</a>] and
+      recommendation&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>]. Though these representation learning
+      models are hard to interpret, they have several advantages
+      over traditional models: (1) they work well in practice, (2)
+      they reduce manual effort of feature engineering, which
+      sometimes introduces errors, (3) they generalize across
+      different domains, and (4) they are generally
+      scalable&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>] for large networks. Despite the
+      success of representation learning for information networks,
+      to the best of our knowledge, there exists no work on
+      interpreting these node representations. Our aim is to
+      understand the reason why a particular embedding model works
+      better for certain graph mining tasks.</p>
+      <p>Our work constitutes the first step in opening the
+      black-box of vector embedding of nodes. Essentially we answer
+      the following question: “What are the core properties encoded
+      in the given node representation that makes it perform well
+      for a given downstream task?” Traditional feature engineering
+      methods have exploited various elementary properties of nodes
+      for high-level downstream tasks. We believe that a node
+      representation is effective for an application only if it
+      encodes the application-specific elementary properties of
+      nodes meticulously. To unpack the elementary properties
+      encoded in a node representation, we evaluate the
+      representations on the accuracy with which they can model
+      each of those properties such as page rank, degree, closeness
+      centrality, clustering coefficient, etc. This is effectively
+      done by building an elementary property prediction classifier
+      for each property which consumes the node representation as
+      input and outputs the prediction for the property value. We
+      assume that <em>if the accuracy of the classifier in
+      predicting a property based on its node representation is
+      low, then this property is not encoded in the
+      representation</em>. This idea is inspired
+      from&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0006">6</a>],
+      which focused on interpreting the sentence
+      representations.</p>
+      <p>In this study, we attempt to understand the node
+      representations generated by the state-of-the-art
+      unsupervised network embedding models:
+      DeepWalk&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>], LINE&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0002">2</a>] and
+      node2vec&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>]. We perform analysis on six graphs: a
+      word co-occurrence network&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>], a citation network&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0002">2</a>], a
+      co-authorship network&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>] and three social networks,
+      BlogCatalog&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0017">17</a>], Flickr&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0017">17</a>] and
+      YouTube&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0016">16</a>], for four downstream tasks: node
+      classification, clustering, link prediction and outlier
+      detection. Specifically, we perform our analysis at three
+      levels. First, we identify the elementary node properties
+      best predicted by each network embedding model for each of
+      the graphs. Second, we consider the winning model for a given
+      downstream task and graph pair, and correlate the elementary
+      node properties best predicted by the winning model with the
+      best performing features for the same downstream task
+      reported in the literature. Finally, we analyze the
+      relationship between the models by visualizing the task
+      performance vector of each model across all graphs and
+      downstream tasks. This study holistically highlights the
+      reason behind the performance of the network embedding model
+      for a given high-level application.</p>
+      <p>We summarize our main contributions below.</p>
+      <ul class="list-no-style">
+        <li id="list1" label="•">We present the first work towards
+        interpreting the node embeddings in a fine-grained fashion.
+        To this end, we propose a set of node-specific elementary
+        property prediction tasks which help in understanding the
+        basic characteristics of different node
+        representations.<br /></li>
+        <li id="list2" label="•">Effectiveness of various node
+        representations in predicting such properties, and
+        knowledge of properties that act as important features in
+        learning traditional feature engineering models for
+        particular applications, helps us understand why certain
+        node representations are good for those
+        applications.<br /></li>
+        <li id="list3" label="•">We verify our hypothesis by
+        building property prediction models for fifteen node
+        properties using three node representation learning models
+        for four diverse applications and six graphs. We provide
+        the first analysis of node embedding models for the outlier
+        detection task.<br /></li>
+      </ul>
+      <p>The paper is organized as follows. In
+      Section&nbsp;<a class="sec" href="#sec-5">2</a>, we present
+      the set of network-specific elementary property prediction
+      tasks to identify the characteristics of the node embeddings.
+      Next, in Section&nbsp;<a class="sec" href="#sec-8">3</a>, we
+      discuss in brief the set of unsupervised node representation
+      learning models considered in this study. In
+      Section&nbsp;<a class="sec" href="#sec-9">4</a>, we present
+      the details of our six graph datasets. In
+      Section&nbsp;<a class="sec" href="#sec-10">5</a>, we present
+      the details of the downstream tasks considered in this study.
+      In Section&nbsp;<a class="sec" href="#sec-11">6</a>, we
+      perform empirical analysis linking elementary property
+      prediction tasks, node representations and downstream tasks.
+      We conclude with a brief summary in Section&nbsp;<a class=
+      "sec" href="#sec-16">7</a>.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Elementary
+          Property Prediction Tasks</h2>
+        </div>
+      </header>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191523/images/www18companion-262-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Elementary Property Prediction Task
+          Classifier. Only the hidden linear layers (light blue)
+          are learned.</span>
+        </div>
+      </figure>
+      <p>In this section we present the set of network-specific
+      elementary property prediction tasks to identify the
+      characteristics of the node embeddings. These properties
+      correspond to the most popular features used in multiple
+      papers on feature engineering for various network mining
+      applications such as link prediction, clustering, etc. We
+      build the elementary property prediction task classifier
+      using a neural network based model. We propose fifteen
+      elementary property prediction tasks, which are classified
+      into two categories: point-wise and pair-wise tasks, based on
+      the number of inputs considered by the task. We will discuss
+      these tasks next.</p>
+      <section id="sec-6">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Point-wise
+            Tasks</h3>
+          </div>
+        </header>
+        <p>As depicted in Fig. <a class="fig" href="#fig1">1</a>
+        (a), the model underlying a point-wise task takes a
+        representation corresponding to a single node as input.
+        Essentially, it measures the degree to which a particular
+        network property is captured by the given node
+        representation.</p>
+        <p><strong>(a) <span style=
+        "text-decoration: underline;">Degree Task
+        (DEG)</span></strong> : This measures how well connected is
+        the node with the rest of the graph. For example, in a
+        social network, nodes with high degree can be of interest
+        for advertisement agencies for effective influence
+        propagation. Given a node embedding, the task is to predict
+        the number of nodes to which the node is connected to.</p>
+        <p><strong>(b) <span style=
+        "text-decoration: underline;">Average Neighbor Degree Task
+        (AND)</span></strong> : The average neighbor degree of the
+        node indicates how well connected the node's neighbors are.
+        Given a node embedding, the task is to predict the mean
+        degree of the nodes’ neighbors.</p>
+        <p><strong>(c) <span style=
+        "text-decoration: underline;">Degree Centrality Task
+        (DEGCEN)</span></strong> : Degree centrality is one of the
+        ways to identify the most important vertices within a
+        graph. Applications include identifying the most
+        influential person(s) in a social network, key
+        infrastructure nodes in the Internet or urban networks, and
+        super-spreaders of diseases. Nodes with high degree
+        centrality are most influential in a network. Given a node
+        embedding, the task is to predict the degree centrality of
+        the node.</p>
+        <p><strong>(d) <span style=
+        "text-decoration: underline;">Indegree Task
+        (IDEG)</span></strong> : In case of a directed network, the
+        indegree indicates how much of inflow happens in the node.
+        As an example, consider a traffic network where the nodes
+        are junctions in the road and the edges indicate the flow
+        of traffic. A node with high indegree would indicate a lot
+        of traffic movement from other sources to the node.
+        Analyzing the indegree in such a case could help in urban
+        planning. Given a node embedding, the task is to predict
+        the number of incoming links of the node. This task is
+        applicable only for directed graphs.</p>
+        <p><strong>(e) <span style=
+        "text-decoration: underline;">Outdegree Task
+        (ODEG)</span></strong> : In case of a directed network, the
+        outdegree indicates how much of outflow happens from the
+        node. High outdegree nodes include hub pages like manuals
+        or product list pages, which act as important junctions of
+        information. Given a node embedding, the task is to predict
+        the number of outgoing links of the node. Similar to the
+        indegree task, this task is applicable only for directed
+        graphs.</p>
+        <p><strong>(f) <span style=
+        "text-decoration: underline;">Clustering Coefficient Task
+        (CLCO)</span></strong> : The clustering coefficient is a
+        measure of the degree to which the nodes in a graph tend to
+        cluster together. Given a node embedding, the task is to
+        predict the clustering coefficient of the node.</p>
+        <p><strong>(g) <span style=
+        "text-decoration: underline;">Community Count Task
+        (COC)</span></strong> : The number of communities in which
+        the node belongs reflects the semantic nature of the node.
+        For example, in a social network like Facebook, where the
+        nodes are users of the network and the communities are the
+        groups in the network, a node with a high community count
+        would indicate a very social person while a low community
+        count would indicate an introvert. Given a node embedding,
+        the task is to predict the nodes’ membership (or community)
+        count. This task is only applicable to the graphs where at
+        least some of the nodes belong to more than one
+        community.</p>
+        <p><strong>(h) <span style=
+        "text-decoration: underline;">Page Rank Task
+        (PAGRK)</span></strong> : The page rank of a node is
+        another measure to capture influential nodes in a graph.
+        Given a node embedding, the task is to predict the page
+        rank score of the node.</p>
+        <p><strong>(i) <span style=
+        "text-decoration: underline;">Closeness Centrality Task
+        (CLCEN)</span></strong> : The closeness centrality of a
+        node is a measure of how central is the node with respect
+        to the other nodes in the graph. It is calculated as the
+        sum of the length of the shortest paths between the node
+        and all the other nodes in the graph. Thus, the more
+        central a node is, the closer it is to all the other nodes.
+        Given a node embedding, the task is to predict the
+        closeness centrality of the node.</p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Statistics of the Graph Datasets</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Name</td>
+                <td style="text-align:center;">
+                <strong>WIKIPEDIA</strong></td>
+                <td style="text-align:center;">
+                <strong>PAPERCITATION</strong></td>
+                <td style="text-align:center;">
+                <strong>COAUTHORSHIP</strong></td>
+                <td style="text-align:center;">
+                <strong>BLOGCATALOG</strong></td>
+                <td style="text-align:center;">
+                <strong>FLICKR</strong></td>
+                <td style="text-align:center;">
+                <strong>YOUTUBE</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Node type</td>
+                <td style="text-align:center;">Word</td>
+                <td style="text-align:center;">Document</td>
+                <td style="text-align:center;">Author</td>
+                <td style="text-align:center;">Blogger</td>
+                <td style="text-align:center;">User</td>
+                <td style="text-align:center;">User</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Directed?</td>
+                <td style="text-align:center;">✗</td>
+                <td style="text-align:center;">✓</td>
+                <td style="text-align:center;">✗</td>
+                <td style="text-align:center;">✗</td>
+                <td style="text-align:center;">✗</td>
+                <td style="text-align:center;">✗</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Weighted?</td>
+                <td style="text-align:center;">✓</td>
+                <td style="text-align:center;">✗</td>
+                <td style="text-align:center;">✓</td>
+                <td style="text-align:center;">✗</td>
+                <td style="text-align:center;">✗</td>
+                <td style="text-align:center;">✗</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">#Nodes</td>
+                <td style="text-align:center;">4,777</td>
+                <td style="text-align:center;">7,08,497</td>
+                <td style="text-align:center;">4,73,638</td>
+                <td style="text-align:center;">10,312</td>
+                <td style="text-align:center;">80,513</td>
+                <td style="text-align:center;">11,38,499</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">#Edges</td>
+                <td style="text-align:center;">1,84,812</td>
+                <td style="text-align:center;">11,66,376</td>
+                <td style="text-align:center;">14,59,085</td>
+                <td style="text-align:center;">3,33,983</td>
+                <td style="text-align:center;">58,99,882</td>
+                <td style="text-align:center;">29,90,443</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Average Degree</td>
+                <td style="text-align:center;">38</td>
+                <td style="text-align:center;">3</td>
+                <td style="text-align:center;">6</td>
+                <td style="text-align:center;">64</td>
+                <td style="text-align:center;">146</td>
+                <td style="text-align:center;">5</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Network Density</td>
+                <td style="text-align:center;">1.62 × 10<sup>−
+                2</sup></td>
+                <td style="text-align:center;">4.6 × 10<sup>−
+                6</sup></td>
+                <td style="text-align:center;">1 × 10<sup>−
+                5</sup></td>
+                <td style="text-align:center;">6.3 × 10<sup>−
+                3</sup></td>
+                <td style="text-align:center;">1.8 × 10<sup>−
+                3</sup></td>
+                <td style="text-align:center;">4.6 × 10<sup>−
+                6</sup></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">#Labels</td>
+                <td style="text-align:center;">40</td>
+                <td style="text-align:center;">24</td>
+                <td style="text-align:center;">24</td>
+                <td style="text-align:center;">39</td>
+                <td style="text-align:center;">195</td>
+                <td style="text-align:center;">47</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Labels</td>
+                <td style="text-align:center;">Stanford POS
+                tags</td>
+                <td style="text-align:center;">CS Field</td>
+                <td style="text-align:center;">CS Field</td>
+                <td style="text-align:center;">Interests</td>
+                <td style="text-align:center;">Groups</td>
+                <td style="text-align:center;">Groups</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> Pair-wise
+            Tasks</h3>
+          </div>
+        </header>
+        <p>As depicted in Fig. <a class="fig" href="#fig1">1</a>
+        (b), the model underlying a pair-wise task takes two
+        representations, corresponding to a pair of nodes, as
+        input. The subsequent layer in the model uses concatenation
+        as the compositionality technique to combine the inputs.
+        Essentially, the task measures the degree to which a
+        particular network property is captured through the
+        interaction of the representations corresponding to the two
+        nodes of interest.</p>
+        <p><strong>(j) <span style=
+        "text-decoration: underline;">Edge Weight Task
+        (EDGWT)</span></strong> : The edge weight of a node
+        indicates how strong is the connection between two nodes.
+        Given embeddings of two nodes, the task is to predict the
+        strength of the link connecting them. This task is
+        applicable only for weighted graphs.</p>
+        <p><strong>(k) <span style="text-decoration: underline;">Is
+        First Degree Task (IFDEG)</span></strong> : The first
+        degree neighbors indicates the one-hop neighbors of a node.
+        Given embeddings of two nodes, the task is to predict
+        whether the nodes are neighbors of each other or not. To
+        generate negative instances for this binary classification
+        task, we generate a random pair of nodes which are not
+        direct neighbors.</p>
+        <p><strong>(l) <span style="text-decoration: underline;">Is
+        Second Degree Task (ISDEG)</span></strong> : The two-hop
+        neighbors of a node are used to indicate the second degree
+        neighbors. Given embeddings of two nodes, the task is to
+        predict whether the nodes are second hop neighbors of each
+        other or not. To generate negative instances for this
+        binary classification task, we generate a random pair of
+        nodes which are not 2-hop neighbors.</p>
+        <p><strong>(m) <span style="text-decoration: underline;">Is
+        Same Community Task (ISCO)</span></strong> : This metric
+        gives an indication of semantic similarity between two
+        nodes. If two nodes belong to the same community, then they
+        are semantically related to each other. Given embeddings of
+        two nodes, the task is to predict whether nodes belong to
+        the same community or not. To generate negative instances
+        for this binary classification task, we generate a random
+        pair of nodes which belong to different communities.</p>
+        <p><strong>(n) <span style=
+        "text-decoration: underline;">Jaccard Coefficient Task
+        (JC)</span></strong> : The Jaccard Coefficient measures the
+        similarity between two nodes with respect to the common
+        neighbors shared by them. An example application is to
+        measure similarity between two genes in a gene interaction
+        network. Given embeddings of two nodes, the task is to
+        predict the Jaccard Coefficient between the nodes.</p>
+        <p><strong>(o) <span style=
+        "text-decoration: underline;">Shortest Path Length Task
+        (SPL)</span></strong> : The shortest path length task
+        indicates the minimum number of hops needed to reach a node
+        from another node. An example application where this
+        feature is useful is urban planning. In a road network, if
+        two places have an extremely large shortest-path-length,
+        planners should take initiative to enhance the connectivity
+        between the nodes by say building flyovers. Given
+        embeddings of two nodes, the task is to predict the
+        shortest path length between two nodes.</p>
+        <p>Note that all the prediction tasks (excluding tasks (g),
+        (h) and (i)) are posed as multi-class classification
+        problems after binning the input. Specifically, we use
+        equal frequency binning to arrive at reasonably balanced
+        bins by using variable ranges.</p>
+      </section>
+    </section>
+    <section id="sec-8">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Node
+          Representation Learning Models</h2>
+        </div>
+      </header>
+      <p>In this section we discuss in brief the set of
+      unsupervised node representation learning models considered
+      in this study.</p>
+      <p><strong><span style=
+      "text-decoration: underline;">DeepWalk&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0007">7</a>]</span></strong> : DeepWalk
+      model learns node embeddings by exploring local neighborhood
+      of the nodes using truncated random walks. Since the strategy
+      of the random walk is uniform (also Depth-First Search (DFS)
+      style), it gives us no control over the explored
+      neighborhoods. Also, this model works only for unweighted,
+      undirected graphs. We consider the parameter settings for
+      DeepWalk as suggested by the authors.</p>
+      <p><strong><span style=
+      "text-decoration: underline;">LINE&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0002">2</a>]</span></strong> : LINE
+      model learns a <em>d</em>-dimensional feature representation
+      in two separate phases. The first phase begins by learning
+      <em>d</em>/2 dimensions by Breadth-First Search (BFS)-style
+      simulations over immediate neighbors of nodes followed by
+      learning the other <em>d</em>/2 dimensions by sampling nodes
+      strictly at a 2-hop distance from the source nodes. Such an
+      exploration strategy provides no flexibility in exploring
+      nodes at further depths. Unlike DeepWalk, this model works
+      for all types of graphs. We consider three configurations of
+      LINE: ‘LINE-1st’, ‘LINE-2nd’ and ‘LINE-both’, where we
+      consider the dimensions learned through 1-hop only, 2-hop
+      only and both respectively.</p>
+      <p><strong><span style="text-decoration: underline;">node2vec
+      (n2v)&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>]</span></strong> : node2vec model
+      explores diverse network neighborhoods by designing a
+      sampling strategy that allows us to smoothly interpolate
+      between BFS and DFS, through two parameters <em>p</em> and
+      <em>q</em>. Parameter <em>p</em> controls the likelihood of
+      immediately revisiting a node in the walk while parameter
+      <em>q</em> allows the search to differentiate between
+      “inward” and “outward” nodes. The core assumption is that BFS
+      and DFS are extreme sampling paradigms suited for structural
+      equivalence (nodes sharing similar roles) and homophily
+      (nodes from the sample network community) respectively.
+      node2vec's sampling strategy accommodates for the fact that
+      these notions of equivalence are not competing or exclusive,
+      and real-world networks commonly exhibit a mixture of both.
+      To find the best model, we perform a grid-search for the
+      <em>p</em> and <em>q</em> values in the search space as
+      suggested by the authors.</p>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191523/images/www18companion-262-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">Performance Comparison of Node
+          Representation Models across Elementary Property
+          Prediction Tasks</span>
+        </div>
+      </figure>
+      <p></p>
+    </section>
+    <section id="sec-9">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Graphs</h2>
+        </div>
+      </header>
+      <p>In this section we present the details of the graphs
+      considered in this study. The statistics of the graphs are
+      given in Table&nbsp;<a class="tbl" href="#tab1">1</a>.</p>
+      <p><strong><span style=
+      "text-decoration: underline;">WIKIPEDIA&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0005">5</a>]</span></strong> : This is
+      a word co-occurrence network extracted from the first million
+      bytes of the Wikipedia dump. The labels represent the
+      Part-Of-Speech (POS) tags inferred using the Stanford
+      POS-Tagger. The downstream tasks for this dense graph are POS
+      tagging of words and predicting if two words will co-occur or
+      not.</p>
+      <p><strong><span style=
+      "text-decoration: underline;">PAPERCITATION&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href=
+      "#BibPLXBIB0008">8</a>]</span></strong> : This is a citation
+      graph where the node represents research paper (or article)
+      and the directed edge represents the citation relationship.
+      Each paper is tagged with one of the 24 computer science
+      fields. The downstream tasks for this sparse graph are paper
+      classification, prediction of link between two papers,
+      clustering of all the papers and outlier detection.</p>
+      <p><strong><span style=
+      "text-decoration: underline;">COAUTHORSHIP&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href=
+      "#BibPLXBIB0008">8</a>]</span></strong> : This is a
+      co-authorship graph where the nodes represent authors. Two
+      authors are connected if they co-author at least one research
+      article. Each author can belong to one or more computer
+      science fields in which she publishes her paper. The
+      downstream tasks for this sparse graph are author
+      classification, predicting if two authors will collaborate in
+      future or not, clustering of all the authors and outlier
+      detection.</p>
+      <p><strong><span style=
+      "text-decoration: underline;">BLOGCATALOG&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href=
+      "#BibPLXBIB0017">17</a>]</span></strong> : This is a social
+      network where node represents the blogger and edge defines
+      their social relationship. Each blogger is associated with
+      one or more topic categories identified by her interests. The
+      downstream tasks for this graph are classifying a blogger
+      with respect to her interests and predicting whether two
+      bloggers are connected to each other or not.</p>
+      <p><strong><span style=
+      "text-decoration: underline;">FLICKR&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0017">17</a>]</span></strong> : In this
+      social network, each user is tagged with the set of interest
+      groups she has subscribed to. The downstream tasks for this
+      social network are classifying the users based on their
+      groups and predicting whether two users are connected to each
+      other in the graph or not.</p>
+      <p><strong><span style=
+      "text-decoration: underline;">YOUTUBE&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0016">16</a>]</span></strong> : This is
+      an extremely large network drawn from YouTube where the node
+      represents the user and the edge defines their social
+      relationship. The labels indicate the video genres enjoyed by
+      a user. The downstream tasks for this popular network are
+      classifying users based on the video genres they are
+      interested in and predicting whether two users are connected
+      to each other or not.</p>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Downstream
+          Tasks</h2>
+        </div>
+      </header>
+      <p>In this section we present the details of the downstream
+      tasks considered in this study. We use the node embeddings
+      obtained after training the model for each graph as input
+      features.</p>
+      <p><strong><span style=
+      "text-decoration: underline;">Multi-Label
+      Classification</span></strong> : In a real world network, we
+      do not have the label information for all the nodes. Further,
+      when a new node comes in, predicting the labels can be of
+      important value. For instance, in case of a user-caller
+      network, the telecommunication company is keen on classifying
+      new users as high value customer or not. Hence, we consider
+      the problem of node classification&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0020">20</a>] as one of the downstream
+      applications. In this task, we predict the node labels using
+      a one-vs-rest logistic regression classifier <a class="fn"
+      href="#fn1" id="foot-fn1"><sup>1</sup></a>. We report the
+      average micro and macro <em>F</em> <sub>1</sub> score after
+      performing training on the 70% of the nodes and testing on
+      30% instances.</p>
+      <p><strong><span style="text-decoration: underline;">Link
+      Prediction</span></strong> : Inferring missing
+      link&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0013">13</a>]
+      or predicting whether there would be a link between two nodes
+      is an interesting task for inferring new interactions among
+      the nodes in a graph. We pose this task as a binary
+      classification problem which predicts whether a link (or
+      edge) exists between two given nodes. We use the Hadamard
+      operator (as suggested by&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>]) to compute the edge feature based on
+      the embeddings of two nodes. We then feed the edge feature to
+      a logistic regression classifier <a class="fn" href="#fn2"
+      id="foot-fn2"><sup>2</sup></a> with <em>L</em>2
+      regularization and report the accuracy score.</p>
+      <p><strong><span style=
+      "text-decoration: underline;">Clustering</span></strong> :
+      Clustering in graphs&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>] is a popular problem as it allows to
+      analyze large-scale networks by looking at individual
+      clusters. We perform this analysis for graphs having
+      non-overlapping clusters only. For this task, we use the node
+      embeddings as data points and run <em>k</em>-means with
+      <em>k</em> as 24 for both COAUTHORSHIP and PAPERCITATION
+      graphs, and report the Normalized Mutual Information score.
+      We set <em>k</em> to 24 since both the graphs have 24
+      labels.</p>
+      <p><strong><span style="text-decoration: underline;">Outlier
+      Detection</span></strong> : Detecting outliers is an
+      important task with numerous high-impact applications in the
+      areas of security, finance and healthcare. While outlier
+      detection has been a well researched problem, outlier
+      detection in graphs has been a recent active area of
+      research&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0018">18</a>]. Outliers in graphs are detected at
+      various granularity levels – nodes, edges, subgraphs, cuboids
+      and graphs. Our work is the first to analyze and interpret
+      the use of node embeddings for outlier detection. As we
+      interpret node embeddings, we focus on node-based outlier
+      detection for different graphs discussed in
+      Section&nbsp;<a class="sec" href="#sec-9">4</a>. We consider
+      each node in the graph as a point in the
+      <em>n</em>-dimensional space represented using node
+      embeddings. We quantify the outlierness of a node using Local
+      Outlier Factor (LOF)&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0019">19</a>]. Next, we rank these nodes based on
+      the LOF score. To understand the performance of different
+      node embedding models, we perform qualitative analysis using
+      the top five nodes as ranked using the LOF score obtained
+      using different embeddings. We showcase the different case
+      studies in Section&nbsp;<a class="sec" href=
+      "#sec-11">6</a>.</p>
+    </section>
+    <section id="sec-11">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Analysis</h2>
+        </div>
+      </header>
+      <figure id="fig3">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191523/images/www18companion-262-fig3.jpg"
+        class="img-responsive" alt="Figure 3" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 3:</span> <span class=
+          "figure-title">Performance Comparison of Node
+          Representation Learning Models across Downstream
+          Tasks</span>
+        </div>
+      </figure>
+      <p>In this section we perform empirical analysis to answer
+      the following questions.</p>
+      <ul class="list-no-style">
+        <li id="list4" label="•">Can we identify the node embedding
+        model that best encodes a particular network
+        property?<br /></li>
+        <li id="list5" label="•">Can we correlate the model
+        performance for a downstream task with the set of network
+        properties it best encodes?<br /></li>
+        <li id="list6" label="•">Can we understand the model
+        relationships through visualization technique for a given
+        task and a graph pair?<br /></li>
+      </ul>
+      <p>We end the section with a summary of useful insights
+      obtained from the work.</p>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">6.1</span> Analyzing
+            Elementary Properties of Node Embedding Models</h3>
+          </div>
+        </header>
+        <p>We now present the performance of different node
+        embedding models (discussed in Section&nbsp;<a class="sec"
+        href="#sec-8">3</a>) on their ability to encode various
+        elementary properties (discussed in Section&nbsp;<a class=
+        "sec" href="#sec-5">2</a>). The results are illustrated in
+        Fig.&nbsp;<a class="fig" href="#fig2">2</a>.</p>
+        <p><strong><span style=
+        "text-decoration: underline;">Average Neighbor Degree Task
+        (AND)</span></strong> : We find that the behavior of the
+        node embedding models vary with respect to the network
+        density. For dense graphs like WIKIPEDIA, we observe that
+        LINE-both is able to perform breadth-first walk and capture
+        the neighborhood to give the best performance. In case of
+        moderately dense graphs like BLOGCATALOG and FLICKR, we see
+        that the node embeddings obtained from DeepWalk perform the
+        best. Finally, for sparse graphs like PAPERCITATION and
+        YOUTUBE, we see that node2vec is able to capture the
+        average neighbor degree due to its ability to explore the
+        graph in a flexible manner.</p>
+        <p><strong><span style=
+        "text-decoration: underline;">Clustering Coefficient Task
+        (CLCO)</span></strong> : In case of CLCO property we find
+        that as the density of the graph increases, we need to
+        shift from node2vec to LINE based node embeddings. In case
+        of dense and moderately dense graphs like WIKIPEDIA and
+        FLICKR, LINE performs best. However, node2vec performs best
+        for a sparse graph like PAPERCITATION. We find that
+        DeepWalk is not able to capture this property for any of
+        these graphs. Further, for BLOGCATALOG and YOUTUBE, the
+        performance of all the node embeddings are approximately
+        similar.</p>
+        <p><strong><span style=
+        "text-decoration: underline;">Community Count Task
+        (COC)</span></strong> : We find that the performance for
+        the dense WIKIPEDIA graph is best using the LINE based
+        model. node2vec and DeepWalk both give a similar
+        performance for the sparse YOUTUBE network. The performance
+        of the node embeddings for different models for
+        BLOGCATALOG, FLICKR and COAUTHORSHIP graphs are similar.
+        For PAPERCITATION graph, this property is not applicable as
+        every node is associated with one community only.</p>
+        <p><strong><span style="text-decoration: underline;">Degree
+        Centrality Task (DEGCEN) and Degree (DEG)</span></strong> :
+        Both DEGCEN and DEG are similar properties as DEGCEN is
+        normalised DEG. We find that for graphs with low average
+        degrees such as YOUTUBE, AUTHOR and PAPER, node2vec
+        performs good while LINE based node embeddings give the
+        best performance for graphs having high average degree such
+        as BLOGCATALOG, FLICKR and WIKIPEDIA. DeepWalk does not
+        give any better performance compared to the other models
+        for any of the graphs.</p>
+        <p><strong><span style="text-decoration: underline;">Page
+        Rank Task (PAGRK)</span></strong> : For this property we
+        find that the ability of node2vec to explore the
+        neighborhood is an overkill for dense graphs. We find that
+        node2vec performs best for sparse and medium dense graphs
+        such as COAUTHORSHIP, PAPERCITATION and YOUTUBE. On the
+        other hand LINE-both is the model of choice for dense
+        graphs like BLOGCATALOG, FLICKR and WIKIPEDIA. Going
+        deeper, we find LINE-both performs well when average degree
+        of a dense graph is high. This is observed in case of
+        BLOGCATALOG and FLICKR where LINE-both is the best
+        performing model. In case of WIKIPEDIA, LINE-1st beats
+        LINE-both marginally. Further we empirically find that
+        modeling one hop neighbors is fruitful for this property.
+        This is consistently observed across all the six graphs
+        where LINE-1st beats LINE-2nd.</p>
+        <p><strong><span style=
+        "text-decoration: underline;">Closeness Centrality Task
+        (CLCEN)</span></strong> : We find that LINE performs well
+        for dense graphs such as COAUTHORSHIP, WIKIPEDIA,
+        BLOGCATALOG and FLICKR. node2vec gives good performance for
+        sparse graphs like YOUTUBE and PAPERCITATION.</p>
+        <p><strong><span style=
+        "text-decoration: underline;">Indegree Task (IDEG) and
+        Outdegree Task (ODEG)</span></strong> : We analyze both
+        these properties for PAPERCITATION graph and find that for
+        this sparse graph, node2vec beats all the other models.
+        DeepWalk is able to beat LINE implying that strict
+        exploration strategies employed by LINE are sub-optimal for
+        capturing both these properties.</p>
+        <p><strong><span style="text-decoration: underline;">Is
+        Same Community Task (ISCO)</span></strong> : Due to
+        DFS-based random walks, DeepWalk is able to capture the
+        community information of a node well. The performance of
+        DeepWalk is consistently best across all our graphs except
+        COAUTHORSHIP. In case of the COAUTHORSHIP graph, we
+        hypothesize that it is critical to give more importance to
+        the neighborhood information as authors with similar
+        neighborhood structure work in similar research areas. For
+        the PAPERCITATION graph, all the models perform equally
+        well.</p>
+        <p><strong><span style="text-decoration: underline;">Edge
+        Weight Task (EDGWT)</span></strong> : The ability of all
+        the node embedding models is almost similar in capturing
+        this feature.</p>
+        <p><strong><span style="text-decoration: underline;">Is
+        First Degree Task (IFDEG) and Is Second Degree
+        Task</span></strong></p>
+        <p><strong><span style=
+        "text-decoration: underline;">(ISDEG)</span></strong> : Due
+        to the flexible exploration capability of node2vec, this
+        model is able to perform competitively across all graphs
+        for both the features.</p>
+        <p><strong><span style=
+        "text-decoration: underline;">Jaccard Coefficient Task
+        (JC)</span></strong> : JC requires understanding the
+        neigborhood information of nodes. As LINE is known to
+        capture the neighborhood, we find that the node embeddings
+        generated from LINE perform best across all the graphs.</p>
+        <p><strong><span style=
+        "text-decoration: underline;">Shortest Path Length Task
+        (SPL)</span></strong> : We find that DeepWalk is able to
+        capture this property well for dense graphs like
+        BLOGCATALOG, FLICKR and WIKIPEDIA graphs. In case of medium
+        dense and sparse graphs like COAUTHORSHIP, PAPERCITATION
+        and YOUTUBE we find that LINE-1st is the best performing
+        model. Both DeepWalk and LINE-1st exploit DFS-based
+        exploration of the graph which helps in capturing this
+        property well.</p>
+      </section>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">6.2</span> Connecting
+            Observations with Downstream Tasks</h3>
+          </div>
+        </header>
+        <p>Having identified the elementary network properties that
+        are best encoded by the node representation models, we now
+        seek to explain the reason behind the superior performance
+        of a particular model for an application and a graph pair.
+        To this end, we present accuracy of various node
+        representations for multiple downstream tasks (excluding
+        outlier detection) in Fig.&nbsp;<a class="fig" href=
+        "#fig3">3</a>. Further, we consider the winning model for
+        every downstream task and correlate the best performing
+        features (in terms of the properties it encodes) of the
+        winning model with that of the best performing features for
+        the same downstream task reported in the literature for
+        different types of graphs.</p>
+        <p><strong><span style="text-decoration: underline;">Node
+        Classification</span></strong> : We analyzed the best
+        performing classification models for different types of
+        graphs and identified the features that are best encoded in
+        these models. For sparse graphs such as PAPERCITATION and
+        YOUTUBE, LINE and node2vec model outperform other models
+        respectively since they best capture important task
+        specific properties such as DEG and DEGCEN. In case of a
+        medium dense graph like COAUTHORSHIP, node2vec is the only
+        model to capture all the relevant properties such as CLCO,
+        DEGCEN, DEG, PAGRK and CLCEN, and hence outperforms other
+        models that fail to capture these properties. LINE-2nd
+        beats other models for WIKIPEDIA since it is the only model
+        to capture CLCO and SPL features very accurately. DeepWalk
+        captures these features well for dense graphs like
+        BLOGCATALOG and FLICKR. This explains why DeepWalk performs
+        best for node classification for dense graphs. Our
+        observations are supported by&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0021">21</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0022">22</a>] where the authors have
+        claimed the importance of these features for the task of
+        node classification.</p>
+        <p><strong><span style="text-decoration: underline;">Link
+        Prediction</span></strong> : Link prediction has been
+        extensively studied in a supervised setting&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0012">12</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0013">13</a>] where
+        handcrafted topological features of the nodes in the graph
+        are used. We find that the features presented in these
+        works are in correlation with features best captured by the
+        winning models for this task. Similar to the previous task,
+        LINE and node2vec models outperform other models for sparse
+        graphs like PAPERCITATION and YOUTUBE thanks to their
+        ability to best capture ISCO (an important feature for link
+        prediction). In case of a medium dense graph like
+        COAUTHORSHIP, most relevant features such as AND, CLCO, JC
+        and CLCEN are captured best by LINE-both. For dense graphs
+        like BLOGCATALOG and FLICKR, CLCO, IFDN, ISDN being the
+        most important features are captured best by LINE-both
+        thereby enabling it to beat other models. This can be
+        attributed to the training objective of LINE which directly
+        optimizes its representation to capture observed and
+        unobserved links.</p>
+        <p><strong><span style=
+        "text-decoration: underline;">Clustering</span></strong> :
+        We perform the task of clustering on PAPERCITATION and
+        COAUTHORSHIP graphs<a class="fn" href="#fn3" id=
+        "foot-fn3"><sup>3</sup></a>. We find that for a sparse
+        graph like PAPERCITATION, degree and community based
+        features like IFDN, ISDN and ISCO are important and
+        LINE-1st is the only model to encode all these features. In
+        case of sparse graphs the one hop neighborhood of a node
+        modeled is important to generate clusters. On the other
+        hand, for a medium dense COAUTHORSHIP graph we find
+        centrality based measures like CLCO, DEGCEN, DEG, PR and
+        CLCEN help node2vec to achieve the best performance. Since
+        the number of edges are high for this graph, these
+        centrality based measures give a positive signal in
+        performing clustering.</p>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Outlier Detection for COAUTHORSHIP Graph:
+            Top Five Outliers based on LOF Score. Authors
+            highlighted in green color publish in many different
+            fields while authors highlighted in blue color have
+            less than four papers in total.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;"><img src=
+                "../../../data/deliveryimages.acm.org/10.1145/3200000/3191523/images/www18companion-262-graphic15.jpg"
+                class="img-responsive" alt="" longdesc="" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Outlier Detection for PAPERCITATION
+            graph: Top Five Outliers based on LOF Score. Papers
+            highlighted in blue color has less than three citations
+            in total. The results for other models are omitted due
+            to space constraints.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;"><img src=
+                "../../../data/deliveryimages.acm.org/10.1145/3200000/3191523/images/www18companion-262-graphic16.jpg"
+                class="img-responsive" alt="" longdesc="" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong><span style=
+        "text-decoration: underline;">Outlier
+        Detection</span></strong> : We perform outlier detection
+        task for PAPERCITATION and COAUTHORSHIP graphs only as the
+        node-id to name information is absent in the datasets
+        corresponding to the rest of the graphs. Outliers for
+        COAUTHORSHIP graphs typically correspond to authors who
+        have published very less or those who publish in many
+        disparate computer science fields. For a dense graph like
+        COAUTHORSHIP (as shown in Table&nbsp;<a class="tbl" href=
+        "#tab2">2</a>), we find DeepWalk to be more precise than
+        the other models in ranking the outliers. In case of the
+        PAPERCITATION graph, papers with unusually high or low
+        citations are considered to be outliers. For a sparse graph
+        like PAPERCITATION (as shown in Table&nbsp;<a class="tbl"
+        href="#tab3">3</a>), we find node2vec to be more precise
+        upon inspection of the top five results. We find that the
+        elementary properties which are captured by these models
+        for the respective graphs are important for outlier
+        detection as discussed in the survey paper&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0018">18</a>].</p>
+        <figure id="fig4">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191523/images/www18companion-262-fig4.jpg"
+          class="img-responsive" alt="Figure 4" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 4:</span>
+            <span class="figure-title">Principal Component Analysis
+            of Models based on Node Classification Accuracy across
+            Testing Instances</span>
+          </div>
+        </figure>
+        <figure id="fig5">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191523/images/www18companion-262-fig5.jpg"
+          class="img-responsive" alt="Figure 5" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 5:</span>
+            <span class="figure-title">Principal Component Analysis
+            of Models based on Link Prediction Accuracy across
+            Testing Instances</span>
+          </div>
+        </figure>
+        <figure id="fig6">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191523/images/www18companion-262-fig6.jpg"
+          class="img-responsive" alt="Figure 6" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 6:</span>
+            <span class="figure-title">Principal Component Analysis
+            of Models based on Clustering Accuracy across Testing
+            Instances</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">6.3</span> Visualizing
+            Similar Performing Models</h3>
+          </div>
+        </header>
+        <p>To understand the semantic similarity between the
+        embeddings learned by various models, we compare the
+        per-instance performance across all the models. We assume
+        that for a given task and graph pair, similar models should
+        perform similarly for the same test instances. We represent
+        a node embedding model as a vector where each position of
+        the vector contains the performance of the model on a
+        different test instance. We perform this analysis for all
+        the downstream tasks except for the outlier detection task
+        (which is non-quantitative) and each dimension of a given
+        model is set to 1 if the model's prediction for a test
+        instance is correct with assignment of 0 otherwise. To aid
+        visualization, we perform two-dimensional projection of the
+        set of model performance vectors using principal component
+        analysis (as shown in Fig.&nbsp;<a class="fig" href=
+        "#fig4">4</a>,&nbsp;<a class="fig" href="#fig5">5</a>,
+        and&nbsp;<a class="fig" href="#fig6">6</a>). For node
+        classification, we find that all LINE methods perform
+        similarly. This performance is consistent across graphs
+        because the performance is node-based thereby making it not
+        relevant to the density of the graph. For link prediction,
+        we find that node2vec behaves similar to LINE-both and
+        DeepWalk for COAUTHORSHIP and PAPERCITATION respectively.
+        Unlike node classification, the LINE methods behave
+        differently as the performance is edge-based wherein
+        density of the graph does matter. Hence, performance is
+        different with respect to WIKIPEDIA graph which is denser
+        than the PAPERCITATION or COAUTHORSHIP graphs. Similar
+        scenario is observed for the clustering task where the
+        results are different across graphs as the task requires
+        both node and edge information. For COAUTHORSHIP graph,
+        node2vec behaves similar to LINE-both. For PAPERCITATION
+        graph, LINE-1st, LINE-both, DeepWalk perform similarly
+        while node2vec is very distinctive.</p>
+      </section>
+      <section id="sec-15">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">6.4</span> Overall
+            Insights</h3>
+          </div>
+        </header>
+        <p>Our extensive experimentation with many node embedding
+        models across diverse graphs for important network features
+        provides the following insights.</p>
+        <ul class="list-no-style">
+          <li id="list7" label="•">node2vec seems to capture the
+          network features that are effective for sparse graphs
+          while LINE performs well for dense graphs by capturing
+          the important network features. For medium dense graphs
+          like COAUTHORSHIP, there is no clear winner between
+          node2vec and LINE.<br /></li>
+          <li id="list8" label="•">Though LINE representation is
+          directly optimized for capturing observed and unobserved
+          links, it does well in link prediction task only when the
+          graph is dense.<br /></li>
+          <li id="list9" label="•">For outlier detection task, one
+          should prefer using node2vec for sparse graphs and
+          DeepWalk for dense graphs.<br /></li>
+          <li id="list10" label="•">Model performance is
+          semantically consistent across graphs for node
+          classification task while its different for link
+          prediction and clustering task.<br /></li>
+        </ul>
+        <p>All the above-mentioned experiments can be reproduced
+        using the publicly available code at <a class=
+        "link-inline force-break" href=
+        "https://github.com/ganeshjawahar/interpretNode">https://github.com/ganeshjawahar/interpretNode</a>.</p>
+      </section>
+    </section>
+    <section id="sec-16">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">7</span> Conclusions and
+          Future Work</h2>
+        </div>
+      </header>
+      <p>In the growing field of representation learning,
+      researchers are exploring network embedding methods to push
+      the frontier for several graph mining tasks. We presented the
+      first work towards interpreting the network embedding models
+      in a fine-grained fashion. Our study of the state-of-the-art
+      models on diverse graphs illustrated the efficacy of the
+      proposed methods in holistically understanding the reason
+      behind the effectiveness of various models for diverse tasks.
+      In future, we wish to understand models that embed
+      heterogeneous graphs such as word-document
+      networks&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>], document-label
+      networks&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>], document-image
+      networks&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>], word-POI networks&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0004">4</a>] and so on.
+      Similar to the work&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0024">24</a>] that identifies which dimensions of
+      word embeddings are most correlated with different linguistic
+      properties, we would like to unpack the important dimensions
+      within node embeddings. We also wish to compare the
+      distributed node embeddings with the node representations
+      generated by traditional statistical latent
+      methods&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0023">23</a>].</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">J.&nbsp;Tang,
+        M.&nbsp;Qu, and Q.&nbsp;Mei, “PTE: predictive text
+        embedding through large-scale heterogeneous text networks,”
+        in <em>KDD</em>, 2015, pp. 1165–1174.</li>
+        <li id="BibPLXBIB0002" label="[2]">J.&nbsp;Tang,
+        M.&nbsp;Qu, M.&nbsp;Wang, M.&nbsp;Zhang, J.&nbsp;Yan, and
+        Q.&nbsp;Mei, “LINE: large-scale information network
+        embedding,” in <em>WWW</em>, 2015, pp. 1067–1077.</li>
+        <li id="BibPLXBIB0003" label="[3]">S.&nbsp;Wang,
+        J.&nbsp;Tang, C.&nbsp;C. Aggarwal, and H.&nbsp;Liu, “Linked
+        Document Embedding for Classification,” in <em>CIKM</em>,
+        2016, pp. 115–124.</li>
+        <li id="BibPLXBIB0004" label="[4]">M.&nbsp;Xie,
+        H.&nbsp;Yin, H.&nbsp;Wang, F.&nbsp;Xu, W.&nbsp;Chen, and
+        S.&nbsp;Wang, “Learning Graph-based POI Embedding for
+        Location-based Recommendation,” in <em>CIKM</em>, 2016, pp.
+        15–24.</li>
+        <li id="BibPLXBIB0005" label="[5]">A.&nbsp;Grover and
+        J.&nbsp;Leskovec, “node2vec: Scalable Feature Learning for
+        Networks,” in <em>KDD</em>, 2016, pp. 855–864.</li>
+        <li id="BibPLXBIB0006" label="[6]">Y.&nbsp;Adi,
+        E.&nbsp;Kermany, Y.&nbsp;Belinkov, O.&nbsp;Lavi, and
+        Y.&nbsp;Goldberg, “Fine-grained Analysis of Sentence
+        Embeddings Using Auxiliary Prediction Tasks,”
+        <em>ICLR</em>, 2017.</li>
+        <li id="BibPLXBIB0007" label="[7]">B.&nbsp;Perozzi,
+        R.&nbsp;Al-Rfou, and S.&nbsp;Skiena, “DeepWalk: Online
+        Learning of Social Representations,” in <em>KDD</em>, 2014,
+        pp. 701–710.</li>
+        <li id="BibPLXBIB0008" label="[8]">T.&nbsp;Chakraborty,
+        S.&nbsp;Sikdar, V.&nbsp;Tammana, N.&nbsp;Ganguly, and
+        A.&nbsp;Mukherjee, “Computer Science Fields as Ground-truth
+        Communities: Their Impact, Rise and Fall,” in
+        <em>ASONAM</em>, 2013, pp. 426–433.</li>
+        <li id="BibPLXBIB0009" label="[9]">S.&nbsp;E. Schaeffer,
+        “Graph Clustering,” <em>Computer Science Review</em>,
+        vol.&nbsp;1, no.&nbsp;1, pp. 27–64, 2007.</li>
+        <li id="BibPLXBIB0010" label="[10]">S.&nbsp;Bhagat,
+        G.&nbsp;Cormode, and S.&nbsp;Muthukrishnan, “Node
+        Classification in Social Networks,” in <em>Social Network
+        Data Analytics</em>.&nbsp;&nbsp;&nbsp;Springer, 2011, pp.
+        115–148.</li>
+        <li id="BibPLXBIB0011" label="[11]">G.&nbsp;Chaudhari,
+        V.&nbsp;Avadhanula, and S.&nbsp;Sarawagi, “A Few Good
+        Predictions: Selective Node Labeling in a Social Network,”
+        in <em>WSDM</em>, 2014, pp. 353–362.</li>
+        <li id="BibPLXBIB0012" label="[12]">D.&nbsp;Liben-Nowell
+        and J.&nbsp;M. Kleinberg, “The Link-Prediction Problem for
+        Social Networks,” <em>JASIST</em>, vol.&nbsp;58,
+        no.&nbsp;7, pp. 1019–1031, 2007.</li>
+        <li id="BibPLXBIB0013" label="[13]">M.&nbsp;A. Hasan and
+        M.&nbsp;J. Zaki, “A Survey of Link Prediction in Social
+        Networks,” in <em>Social Network Data Analytics</em>, 2011,
+        pp. 243–275.</li>
+        <li id="BibPLXBIB0014" label="[14]">M.&nbsp;Al&nbsp;Hasan,
+        V.&nbsp;Chaoji, S.&nbsp;Salem, and M.&nbsp;Zaki, “Link
+        Prediction using Supervised Learning,” in <em>Proceedings
+        of the Workshop on Link Discovery: Issues, Approaches and
+        Applications</em>, 2005.</li>
+        <li id="BibPLXBIB0015" label="[15]">S.&nbsp;Chang,
+        W.&nbsp;Han, J.&nbsp;Tang, G.&nbsp;Qi, C.&nbsp;C. Aggarwal,
+        and T.&nbsp;S. Huang, “Heterogeneous Network Embedding via
+        Deep Architectures,” in <em>KDD</em>, 2015, pp.
+        119–128.</li>
+        <li id="BibPLXBIB0016" label="[16]">L. Tang, and L. Huan,
+        “Scalable learning of collective behavior based on sparse
+        social dimensions,” in <em>CIKM</em>, 2009, pp.
+        1107–1116.</li>
+        <li id="BibPLXBIB0017" label="[17]">L. Tang, and L. Huan,
+        “Relational learning via latent social dimensions,” in
+        <em>KDD</em>, 2009, pp. 817–826.</li>
+        <li id="BibPLXBIB0018" label="[18]">L. Akoglu, H. Tong, D.
+        Koutra “Graph based anomaly detection and description: a
+        survey,” in <em>Data Mining and Knowledge Discovery</em>,
+        2015, pp. 626–688.</li>
+        <li id="BibPLXBIB0019" label="[19]">M. M. Breunig, H. P.
+        Kriegel, R. .T. Ng, and J. Sander, “LOF: identifying
+        density-based local outliers,” in <em>SIGMOD</em>, 2000,
+        pp. 93-104.</li>
+        <li id="BibPLXBIB0020" label="[20]">S. Bhagat, G. Cormode,
+        S. Muthukrishnan, “Node classification in social networks,”
+        in <em>SNDA</em>, 2011, pp. 115-148.</li>
+        <li id="BibPLXBIB0021" label="[21]">G. Li, M. Semerci, B.
+        Yener, and M. J. Zaki, “Graph classification via
+        topological and label attributes,” in <em>MLG</em>, 2011,
+        Vol. 2.</li>
+        <li id="BibPLXBIB0022" label="[22]">W. M. Campbell, E.
+        Baseman, and K. Greenfield, “Content+ context networks for
+        user classification in Twitter,” in <em>NIPS</em>,
+        2013.</li>
+        <li id="BibPLXBIB0023" label="[23]">P. D. Hoff, A.E.
+        Raftery, and M. S. Handcock, “Latent space approaches to
+        social network analysis,” in <em>JASA</em>, 2002.</li>
+        <li id="BibPLXBIB0024" label="[24]">S. Rothe, S. Ebert, and
+        H. Schutze, “Ultradense word embeddings by orthogonal
+        transformation,” in <em>arXiv:1602.07572</em>, 2016.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "https://github.com/phanein/deepwalk/blob/master/example_graphs/scoring.py">https://github.com/phanein/deepwalk/blob/master/example_graphs/scoring.py</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html">http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html</a></p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a>Graphs such as
+    WIKIPEDIA, BLOGCATALOG, FLICKR and YOUTUBE have overlapping
+    cluster labels and hence we ignore them for this
+    application.</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution-NonCommercial-NoDerivs 4.0 International
+      (CC-BY-NC-ND&nbsp;4.0) license. Authors reserve their rights
+      to disseminate the work on their personal and corporate Web
+      sites with the appropriate attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons
+      CC-BY-NC-ND&nbsp;4.0 License. ACM ISBN
+      978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191523">https://doi.org/10.1145/3184558.3191523</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

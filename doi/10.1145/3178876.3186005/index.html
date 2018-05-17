@@ -1,0 +1,2486 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Large-Scale Hierarchical Text Classification with
+  Recursively Regularized Deep Graph-CNN</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Large-Scale Hierarchical Text
+          Classification with Recursively Regularized Deep
+          Graph-CNN</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Hao</span> <span class=
+          "surName">Peng</span>, Beijing Advanced Innovation Center
+          for Big Data and Brain Computing, Beihang University,
+          Beijing, China<br />
+          State Key Laboratory of Software Development Environment,
+          Beihang University, Beijing, China, <a href=
+          "mailto:penghao@act.buaa.edu.cn">penghao@act.buaa.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Jianxin</span> <span class=
+          "surName">Li</span>, Beijing Advanced Innovation Center
+          for Big Data and Brain Computing, Beihang University,
+          Beijing, China<br />
+          State Key Laboratory of Software Development Environment,
+          Beihang University, Beijing, China, <a href=
+          "mailto:lijx@act.buaa.edu.cn">lijx@act.buaa.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Yu</span> <span class=
+          "surName">He</span>, Beijing Advanced Innovation Center
+          for Big Data and Brain Computing, Beihang University,
+          Beijing, China<br />
+          State Key Laboratory of Software Development Environment,
+          Beihang University, Beijing, China, <a href=
+          "mailto:heyu@act.buaa.edu.cn">heyu@act.buaa.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Yaopeng</span> <span class=
+          "surName">Liu</span>, Beijing Advanced Innovation Center
+          for Big Data and Brain Computing, Beihang University,
+          Beijing, China<br />
+          State Key Laboratory of Software Development Environment,
+          Beihang University, Beijing, China, <a href=
+          "mailto:liuyp@act.buaa.edu.cn">liuyp@act.buaa.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Mengjiao</span> <span class=
+          "surName">Bao</span>, Beijing Advanced Innovation Center
+          for Big Data and Brain Computing, Beihang University,
+          Beijing, China<br />
+          State Key Laboratory of Software Development Environment,
+          Beihang University, Beijing, China, <a href=
+          "mailto:baomj@act.buaa.edu.cn">baomj@act.buaa.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Lihong</span> <span class=
+          "surName">Wang</span>, National Computer Network
+          Emergency Response Technical Team/Coordination Center of
+          China, Beijing, China, <a href=
+          "mailto:wlh@isc.org.cn">wlh@isc.org.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Yangqiu</span> <span class=
+          "surName">Song</span>, Department of Computer Science and
+          Engineering, HKUST, Clear Water Bay, Hong Kong, <a href=
+          "mailto:yqsong@cse.ust.hk">yqsong@cse.ust.hk</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Qiang</span> <span class=
+          "surName">Yang</span>, Department of Computer Science and
+          Engineering, HKUST, Clear Water Bay, Hong Kong, <a href=
+          "mailto:qyang@cse.ust.hk">qyang@cse.ust.hk</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3178876.3186005"
+        target=
+        "_blank">https://doi.org/10.1145/3178876.3186005</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3178876" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Text classification to a hierarchical taxonomy of
+        topics is a common and practical problem. Traditional
+        approaches simply use bag-of-words and have achieved good
+        results. However, when there are a lot of labels with
+        different topical granularities, bag-of-words
+        representation may not be enough. Deep learning models have
+        been proven to be effective to automatically learn
+        different levels of representations for image data. It is
+        interesting to study what is the best way to represent
+        texts. In this paper, we propose a graph-CNN based deep
+        learning model to first convert texts to graph-of-words,
+        and then use graph convolution operations to convolve the
+        word graph. Graph-of-words representation of texts has the
+        advantage of capturing non-consecutive and long-distance
+        semantics. CNN models have the advantage of learning
+        different level of semantics. To further leverage the
+        hierarchy of labels, we regularize the deep architecture
+        with the dependency among labels. Our results on both RCV1
+        and NYTimes datasets show that we can significantly improve
+        large-scale hierarchical text classification over
+        traditional hierarchical text classification and existing
+        deep models.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Information retrieval</strong>
+        <strong>Retrieval tasks and goals;</strong> <em>Design
+        Methodology; Clustering and classification; Natural
+        Language Processing;</em> • <strong>Machine Learning
+        Supervised learning;</strong> • <strong>Machine learning
+        approaches</strong> <em>Deep Convolutional Neural
+        Networks</em>;</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Hierarchical Text
+          Classification; Recursive Regularization; Graph-of-words;
+          Deep Learning; Deep Convolutional Neural
+          Networks;</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Hao Peng, Jianxin Li, Yu He, Yaopeng Liu, Mengjiao Bao,
+          Lihong Wang, Yangqiu Song, and Qiang Yang. 2018.
+          Large-Scale Hierarchical Text Classification with
+          Recursively Regularized Deep Graph-CNN. In <em>WWW 2018:
+          The 2018 Web Conference,</em> <em>April 23–27, 2018,
+          Lyon, France</em>. ACM, New York, NY, USA, 10 pages.
+          <a href="https://doi.org/10.1145/3178876.3186005" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3178876.3186005</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-14">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Topical text classification is a fundamental text mining
+      problem for many applications, such as news
+      classification&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0018">18</a>], question answering&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0028">28</a>], search
+      result organization&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>], online advertising&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0002">2</a>], etc. When
+      there are many labels, hierarchical categorization of texts
+      has been recognized as a natural and effective way to
+      organize texts and it has been well studied in the past two
+      decades&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0030">30</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0039">39</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0043">43</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0044">44</a>]. Most of the above traditional
+      approaches represent text as sparse lexical features such as
+      bag-of-words (BOW) and/or n-grams due to simplicity and
+      effectiveness&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>]. Different kinds of feature
+      engineering, such as none-phrases or key-phrases, were shown
+      no significant improvement on themselves, while the majority
+      voting over the results of different features are
+      significantly better&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0036">36</a>].</p>
+      <p>Recently, deep learning has been proven to be effective to
+      perform end-to-end learning of hierarchical feature
+      representations, and has made groundbreaking progress on
+      object recondition in computer vision and speech recognition
+      problems&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0024">24</a>]. Two popular deep learning
+      architectures have attracted more attention for text data,
+      i.e., recurrent neural networks (RNNs)&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0003">3</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0017">17</a>]<a class="fn" href="#fn1"
+      id="foot-fn1"><sup>1</sup></a> and convolutional neural
+      networks (CNNs)&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0008">8</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0025">25</a>]. RNNs are more powerful on short
+      messages or word level syntactics or
+      semantics&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>]. When they are applied to long
+      documents, hierarchical RNNs can be developed&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0040">40</a>]. However,
+      hierarchical RNNs assume that the documents and sentences are
+      considered as natural boundaries for the definition of the
+      hierarchy where only regular texts and formal languages
+      satisfy this constraint. Different from RNNs, CNNs use
+      convolutional masks to sequentially convolve over the data.
+      For texts, a simple mechanism is to recursively convolve the
+      nearby lower-level vectors in the sequence to compose
+      higher-level vectors&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0008">8</a>]. This way of using CNNs simply
+      evaluates the semantic compositionality of consecutive words,
+      which corresponds to the n-grams used in traditional text
+      modeling&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>]. Similar to images, such convolution
+      can naturally represent different levels of semantics shown
+      by the text data. Higher level represents semantics captured
+      by larger “n”-grams.</p>
+      <p>For document-level topical classification of texts, the
+      sequential information of words might not be as important as
+      it is for language models&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>] or sentiment analysis&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0045">45</a>]. For
+      example, when we write “I love this restaurant! I think it is
+      good. It has great sandwich. But the service may not be very
+      efficient sine there are always a lot of people...”, we can
+      easily identify it's topic as “food” but sentiment analysis
+      should be conducted more carefully since there is a word
+      “but.” For topic classification, the key words, phrases, and
+      their composition are more important. In this case, rather
+      than sequential information, the <em>non-consecutive
+      phrases</em> and <em>long-distance word dependency</em> are
+      more important for computing the composition of semantics.
+      For example, in a document, the words “restaurant” and
+      “sandwich” may not co-occur in a small window. However,
+      “menu” may co-occur with both of them somewhere else in the
+      document, and the composition of all of three words is a very
+      strong signal to classify the document to be “food” related
+      topics. Therefore, a more appropriate way of modeling
+      non-consecutive and long-distance semantics is expected for
+      text topical classification.</p>
+      <p>In this paper, we propose a Hierarchically Regularized
+      Deep Graph-CNN (HR-DGCNN) framework to tackle the above
+      problems with the following considerations.</p>
+      <p><strong>Input.</strong> Instead of viewing long documents
+      as sequences, we first convert them to graphs. A natural way
+      to construct the graph is based on word co-occurrence, i.e.,
+      if two words co-occur in a small window of texts, we build an
+      edge between them. Then given a constructed graph, any
+      sub-graphs can be regarded as long distance
+      n-grams&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0034">34</a>]. For each node of the graph, we use
+      a pre-trained vector based on word2vec&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0032">32</a>] as input features. In
+      this way, our input can be regarded as a graph of vectors.
+      Although word2vec optimization has been proven to be
+      identical to co-occurrence matrix factorization under mild
+      conditions&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0026">26</a>], it is still preferable to
+      explicitly represent documents as graphs, since for upper
+      level convolution, the longer distance co-occurrence of words
+      (which corresponds convolution over sub-graphs) can be
+      explicitly computed and evaluated.</p>
+      <p><strong>Convolution Layers.</strong> For lower
+      intermediate layers, we follow the graph normalization
+      approach&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0033">33</a>] to make the following convolution
+      operators possible. This graph normalization can be regarded
+      as a local operator to convert a graph to a sorted sequence,
+      where the order is based on the importance of the node on the
+      graph. Other graph convolution approaches are discussed in
+      the related work (Section&nbsp;<a class="sec" href=
+      "#sec-15">2</a>). For the upper intermediate layers, we
+      generally follow the well defined AlexNet&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0022">22</a>] and
+      VGG&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0037">37</a>]
+      networks for ImageNet classification. Different from image
+      data, which at most has three channels, i.e., RGB values,
+      word embeddings have much more channels. A typical word
+      embedding can have 50 dimensions. In this way, the input
+      tensor for convolution is slightly different from images, and
+      thus, we coordinately modify the configuration of all the
+      following convolution layers to make the feature
+      representation more effective.</p>
+      <p><strong>Output.</strong> For large scale hierarchical text
+      classification, there have been many existing studies to
+      design better output cost functions&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0012">12</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0046">46</a>]. Here, we use the cross
+      entropy objective function to determine labels and adopt the
+      simple but effective recursive regularization framework
+      proposed in&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0013">13</a>]. The idea is if the two labels are
+      parent and child in the hierarchy, we assume that the
+      classification from these two labels to other labels are
+      similar. In the global view of the hierarchy, it means the
+      children label classifiers should inherit the parent
+      classifier. To handle large-scale labels, we also use a tree
+      cut algorithm to automatically divide the trees into parts,
+      and conquer the regularized models for different parts.</p>
+      <p>In the experiments, we compare our proposed approach with
+      state-of-the-art methods, including traditional algorithms
+      and deep learning approaches. We use two benchmark datasets
+      to demonstrate both effectiveness and efficiency.
+      RCV1&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0027">27</a>]
+      dataset contains 23,149 training news articles and 784,446
+      testing news articles with 103 classes. NYTimes<a class="fn"
+      href="#fn2" id="foot-fn2"><sup>2</sup></a> contains 1,855,658
+      news articles in 2,318 categories. The results showed that
+      our approach is very promising to work on large scale
+      hierarchical text topical classification problems.</p>
+      <p>The contributions of this paper can be highlighted as
+      follows. First, we introduce a Deep Graph-CNN approach to
+      text classification. There have been proof that bag-of-graph
+      representation&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0034">34</a>] and CNN
+      representation&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0008">8</a>] are effective for text topic
+      classification. However, this is the first attempt to show
+      Graph-CNN is even more effective. Second, for large scale
+      hierarchical text classification, we demonstrate that
+      recursive regularization can also be applied to deep
+      learning. This can be a general framework for deep learning
+      applied to classifications problems when classifying data
+      into a hierarchy of labels. Third, we use two benchmark
+      datasets to demonstrate the efficiency and effectiveness of
+      our algorithm. They are with either large test set, large
+      label set, or large training set.</p>
+      <p>The rest of the paper is organized as follows. We first
+      review the related work in Section&nbsp;<a class="sec" href=
+      "#sec-15">2</a>. Then we introduce the detailed input and
+      architecture of our algorithm in Sections&nbsp;<a class="sec"
+      href="#sec-18">3</a> and <a class="sec" href="#sec-22">4</a>.
+      Then we show the experiments in Section&nbsp;<a class="sec"
+      href="#sec-27">5</a>. Finally, we conclude this paper in
+      Section&nbsp;<a class="sec" href="#sec-35">6</a>. Our system
+      is publicly available at <a class="link-inline force-break"
+      href=
+      "https://github.com/HKUST-KnowComp/DeepGraphCNNforTexts">https://github.com/HKUST-KnowComp/DeepGraphCNNforTexts</a>.</p>
+    </section>
+    <section id="sec-15">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>In this section, we briefly review the related work in
+      following two categories.</p>
+      <section id="sec-16">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Traditional
+            Text Classification</h3>
+          </div>
+        </header>
+        <p>Tradition text classification uses feature engineering
+        (e.g., extracting features beyond BOW) and feature
+        selection to obtain good features for text
+        classification&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0001">1</a>]. Dimensionality reduction can also
+        be used to reduce the feature space. For example, Latent
+        Dirichlet Allocation&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0004">4</a>] has been used to extract “topics”
+        from corpus, and then represent documents in the topic
+        space. It can be better than BOW when the feature numbers
+        are small. However, when the size of words in vocabulary
+        increases, it does not show advantage over BOW on text
+        classification task&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0004">4</a>]. There is also existing work on
+        converting texts to graphs&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0034">34</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0042">42</a>]. Similar to us, they
+        used co-occurrence to construct graphs from texts, and then
+        they either applied similarity measure on graph to define
+        new document similarities&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0042">42</a>] or applied graph mining
+        algorithms to find frequent sub-graphs in the corpus to
+        define new features for text&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0034">34</a>]. Both of them showed
+        some positive results for small label space classification
+        problems, and the cost of graph mining is more than our
+        approach which simply performs breadth-first search.</p>
+        <p>For hierarchical classification with large label space,
+        many efforts have been put on how to leverage the hierarchy
+        of labels to reduce to time complexity or improve the
+        classification results. For example, top-down
+        classification mechanism has been shown to be more
+        efficient than bottom-up classification (or flat
+        classification which treats each label in the leaf as a
+        category) when there are many labels&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0030">30</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0044">44</a>]. Moreover, the
+        parent-child dependency of labels in the hierarchy can also
+        be used to improve the model. For example, some
+        hierarchical cost-sensitive loss can be
+        developed&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0005">5</a>]. The idea of transfer learning can
+        also be borrowed to improve each of the classifiers in the
+        hierarchy&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0043">43</a>]. Recently, a simpler recursive
+        regularization of weight vectors of linear classifiers in
+        the hierarchical model has been developed, and shown to be
+        the state-of-the-arts in large-scale hierarchical text
+        classification problems&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0013">13</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0014">14</a>].</p>
+      </section>
+      <section id="sec-17">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> Deep
+            Learning for Text Classification</h3>
+          </div>
+        </header>
+        <p>As the introduction mentioned, there have been RNN and
+        CNN models applied to texts. Most of them are language
+        models, which are inspired by&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0003">3</a>]. The advantage of
+        working with language models is that it can be trained in
+        an unsupervised manner, and then the features extracted for
+        words can be used for many downstream NLP
+        tasks&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0008">8</a>]. For text classification, both RNNs
+        and CNNs have been applied. For example, hierarchal RNN has
+        been proposed for long document
+        classification&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0040">40</a>] and later attention model is also
+        introduced to emphasize important sentences and
+        words&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0045">45</a>]. CNNs have also been proposed to
+        perform text classification. For example, Kalchbrenner et
+        al.&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0019">19</a>] used a dynamic CNN for sentence
+        classification, and showed significant improvements over
+        traditional tasks such as sentiment and question type (raw
+        texts) classification. Then Kim&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0020">20</a>] applied a much simpler
+        CNN to sentences classification and got competitive
+        results. Zhang et al.&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0048">48</a>] and Conneau et al.&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0009">9</a>] used a
+        character level CNN with very deep architecture to compete
+        with traditional BOW or n-gram models. The combination of
+        CNNs and RNNs are also developed which shows improvements
+        over topical and sentiment classification
+        problems&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0023">23</a>]. All of the above text
+        classification models still dealt with small label space,
+        i.e., at most 20 labels. Two recent papers mentioned that
+        they can handle large scale label space. [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0029">29</a>] used similar way to
+        convert multi-label classification problem to be a set of
+        multiple binary classification problems and they still used
+        simple CNN model as&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0020">20</a>] did. [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0047">47</a>] adopted a general setting for
+        large-scale label set classification but the text data they
+        used have been preprocessed, which means the
+        characteristics of texts is not considered.</p>
+        <p>Graph-CNN has been developed recently inspired by the
+        success of CNN on object detection tasks&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0022">22</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0037">37</a>] since
+        one can imagine image lattice as a very regular graph.
+        However, extension to arbitrary graphs is not trivial,
+        since the convolution operator cannot be applied to any
+        size of sub-graphs. Thus, two general ways of Graph-CNN
+        have been considered. One way is to consider a global graph
+        which consists of all nodes for all data samples and
+        develop a global convolution operator for the
+        graph&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0010">10</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0016">16</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0021">21</a>]. However, this way requires a huge
+        input if the nodes of the graphs can be represented as high
+        dimensional vectors. The other way is to use a local
+        operator&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0033">33</a>] to convolve each sub-graph. This
+        is more similar to the idea of CNNs used for images. The
+        local operator requires the sub-graphs to be of fixed size
+        (or smaller than a size constraint) and the nodes in
+        arbitrary sub-graphs to be ordered, which could be
+        non-optimal. We introduce this local graph convolution
+        approach to texts, where the graph is constructed based on
+        word co-occurrence.</p>
+      </section>
+    </section>
+    <section id="sec-18">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Documents as
+          Graphs</h2>
+        </div>
+      </header>
+      <p>In this section, we introduce how we process text
+      documents into graphs, and represent each document as a graph
+      of vectors. Formally, we denote the set of labels as
+      <span class="inline-equation"><span class="tex">$\mathcal {L}
+      = \lbrace l_{i}| i = 1,2\ldots , K \rbrace$</span></span> ,
+      where <em>K</em> is the number of labels. Since we focus on
+      hierarchical classification, the labels have parent-children
+      relationship. Thus, we also denote label <span class=
+      "inline-equation"><span class="tex">$l_i^{(j)}$</span></span>
+      (<em>j</em> = 1, …, <em>K<sub>i</sub></em> ) as the children
+      of <em>l<sub>i</sub></em> and <em>K<sub>i</sub></em> is the
+      number of children of <em>l<sub>i</sub></em> . We denote the
+      training set as <span class="inline-equation"><span class=
+      "tex">$\mathcal {D}=\lbrace d_s,T_s\rbrace
+      _{s=1}^M$</span></span> , where <em>M</em> is the number of
+      instances in <span class="inline-equation"><span class=
+      "tex">$\mathcal {D}$</span></span> , <em>d<sub>s</sub></em>
+      is a document, <em>T<sub>s</sub></em> is the label set of
+      <em>d<sub>s</sub></em> and <span class=
+      "inline-equation"><span class="tex">$T_{s} \subseteq \mathcal
+      {L}$</span></span> .</p>
+      <section id="sec-19">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Word
+            Co-occurrence Graph</h3>
+          </div>
+        </header>
+        <p>To convert a document to a graph, a natural way is to
+        use the word co-occurrence. As Figure&nbsp;<a class="fig"
+        href="#fig1">1</a> shows, for a simple sentence, we convert
+        it as a graph using word co-occurrence. We split each
+        document to be sentences and further tokens using Stanford
+        CoreNLP tool<a class="fn" href="#fn3" id=
+        "foot-fn3"><sup>3</sup></a>. We also obtain the stems of
+        each token using Stanford CoreNLP. To remove noise, we
+        first remove stop words such as “the,” “a,” etc., provided
+        by the RCV1-v2 data&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0027">27</a>]. Then we use a fixed-size sliding
+        window to count the word co-occurrence. For example, for
+        the sentence in Figure&nbsp;<a class="fig" href=
+        "#fig1">1</a>, for the word “fitting,” we first perform
+        stemming to get “fit,” and check a window of two previous
+        words and build an edge from fit to each of the words in
+        the window.</p>
+        <figure id="fig1">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186005/images/www2018-14-fig1.jpg"
+          class="img-responsive" alt="Figure 1" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 1:</span>
+            <span class="figure-title">Illustration of document to
+            graph. Starting from original raw text, we first build
+            the graph of words based on word co-occurrence with
+            sliding window of size three words. Then we select a
+            sequence of nodes from the graph based on the rank of
+            each node. For each node in the sequence, we find a
+            sub-graph containing four nodes and normalize the
+            neighborhoods to make each sub-graph consistent for
+            further Graph-CNN operations.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-20">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Sub-graph
+            of Words</h3>
+          </div>
+        </header>
+        <p>When applying CNN to images, a convolution mask with
+        fixed size (e.g., 11 × 11 pixels used in
+        AlexNet&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0022">22</a>]) is applied to local patches on
+        the image to extract low-level features, e.g., edges. The
+        combinations of convolved features are further convolved to
+        obtain higher-level feature representations, e.g., parts
+        and objects. Similar to images, we want to apply
+        convolution masks to the sub-graphs on word co-occurrence
+        graph (corresponding to local image patches). The
+        combination of distant n-grams mined from word
+        co-occurrence graph can compose low-level semantics, e.g.,
+        sub-topics. By further convolving with the output of
+        convolution, we can obtain higher-level semantics, e.g.,
+        super-topics. To enable the convolution of sub-graphs, we
+        need to select and normalize all the potential sub-graphs
+        so that we can have a consistent way of convolution. Here
+        we follow the general approach proposed in&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0033">33</a>]. Given a
+        graph of words, we use the following two steps to obtain
+        the normalized the sub-graphs for further processing.</p>
+        <p><strong>Sub-graph Generation.</strong> We sort all nodes
+        in a graph based on their degrees (number of neighborhoods
+        of a node). If the degrees are the same, we sort the nodes
+        by their occurrences in the document. If the occurrences
+        are further the same, we use their connections with
+        neighbors to sort, i.e., the number of co-occurrence with
+        neighborhoods. In this case, we can sort all the nodes in
+        the graph and select <em>N</em> most important nodes that
+        we think may affect the topic classification. After
+        obtaining the nodes, we use a simple breadth-first-search
+        algorithm to expand a sub-graph for each selected node. We
+        set a number of least sub-graph size, i.e., <em>g</em>. If
+        at the current depth the sub-graph is smaller than size
+        <em>g</em>, we expand one more tier to see whether the size
+        is satisfied. After this step, we will obtain <em>N</em>
+        sub-graphs, each of which contains at least <em>g</em>
+        nodes (if exists). For example, in the middle of
+        Figure&nbsp;<a class="fig" href="#fig1">1</a> we generated
+        eight sub-graphs.</p>
+        <p><strong>Sub-graph Normalization.</strong> Given a
+        sub-graph, we want to have an order of nodes for a
+        convolution mask to convolve. Thus, a labeling of nodes is
+        expected to make the convolution consistent over all
+        sub-graphs and across documents. An optimal labeling is
+        defined as follows. Suppose graphs <em>G</em> and
+        <em>G</em>′ with <em>g</em> nodes are in a collection of
+        graphs <span class="inline-equation"><span class=
+        "tex">$\mathcal {G}$</span></span> . Given the labeling
+        <em>s</em> of a graph <em>G</em>, we can construct an
+        adjacency matrix <strong>A</strong> <sup><em>s</em></sup>
+        (<em>G</em>). Then an optimal labeling is defined as</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} s^* = \arg
+            \min _s E [ D_{\bf A}({\bf A}^s (G), {\bf A}^s
+            (G^{\prime })) - D_{G} (G, G^{\prime }) ],
+            \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>where <em>D</em> <sub><strong>A</strong></sub> (·, ·)
+        is a distance measure of two matrices, such as
+        ||<strong>A</strong> − <strong>A</strong>′||
+        <sub><em>L</em>1</sub>, and <em>D<sub>G</sub></em> (·, ·)
+        is a distance measure of two graphs, such as edit distance
+        on graphs. However, such labeling is NP-hard and thus we
+        follow&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0033">33</a>] to have an alternative labeling.
+        Starting from the root, which is the node that triggered
+        the sub-graph in previous step, we first follow
+        breadth-first-search to use the depth to rank the nodes.
+        Then in the same tier (depth) of the graph based spanning
+        tree, we use the degree to rank the nodes. Then if two
+        nodes in the same tier have the same degree, we further use
+        other factors to break the tier, such as the edges used in
+        previous step. Then after this step, we have <em>g</em>
+        nodes for each sub-graph. For the sub-graphs with more than
+        <em>g</em> nodes in the previous step, we simply use the
+        rank filter out them. For the sub-graphs with less than
+        <em>g</em> nodes, we add some dummy nodes disconnected to
+        any nodes in the graph. We can easily see that, in this
+        way, the normalization applied to a 2-D lattice such as an
+        image, will be exactly the same as the way CNN's first
+        layer is applied to images. The complexity of this
+        sub-graph normalization is given by&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0033">33</a>]. Practically, the
+        complexity can be at most <em>O</em>(<em>Ng</em>
+        <sup>2</sup>)&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0033">33</a>] where <em>N</em> is the selected
+        node number and <em>g</em> is the size of sub-graphs. The
+        example of graph normalization is also shown in the last
+        column of Figure&nbsp;<a class="fig" href="#fig1">1</a>.
+        <p></p>
+      </section>
+      <section id="sec-21">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span> Graphs of
+            Embeddings</h3>
+          </div>
+        </header>
+        <p>To incorporate as much semantic information as possible,
+        instead of representing each node in the graph (a word in a
+        document) as an ID, we follow other CNN and RNN algorithms
+        reviewed in Section&nbsp;<a class="sec" href=
+        "#sec-15">2</a> to use word embeddings as input. We use
+        word2vec&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0031">31</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0032">32</a>] trained by the larger corpus,
+        i.e., Wikipedia, with CBOW model, where the window size is
+        set to be five and the dimension of word embeddings is set
+        to be 50 for all the experiments in this paper. Other
+        parameters for word2vec are set to be default values. In
+        this way, we have a graph of embeddings as input. Then the
+        convolution introduced in the next section will be operated
+        over sub-graphs of embeddings.</p>
+      </section>
+    </section>
+    <section id="sec-22">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Hierarchically
+          Regularized Deep Graph-CNN</h2>
+        </div>
+      </header>
+      <p>We design the architecture with several convolutional
+      layers. The number of convolutional layers can be adjusted
+      and based on the size of datasets and total labels. Here we
+      illustrate the architecture with a typical configuration,
+      which is shown in Figure&nbsp;<a class="fig" href=
+      "#fig2">2</a>.</p>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186005/images/www2018-14-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">A typical configuration of Deep Graph-CNN
+          for text classification.</span>
+        </div>
+      </figure>
+      <p></p>
+      <section id="sec-23">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span>
+            Convolutional Layers</h3>
+          </div>
+        </header>
+        <p>The first convolutional layer takes the feature space of
+        size <em>N</em> × <em>g</em> × <em>D</em> as input, where
+        <em>N</em> number of selected and normalized sub-graphs,
+        <em>g</em> is the size of receptive field (size of the
+        sub-graphs), and <em>D</em> is the dimension of word
+        embeddings. For example, in Figure&nbsp;<a class="fig"
+        href="#fig2">2</a>, we have <em>g</em> = 5 and <em>D</em> =
+        50. We use a <em>g</em> × <em>D</em> kernel to convolve the
+        <em>N</em> × <em>g</em> × <em>D</em> input tensor. This
+        kernel serves as a composition of semantics of each input
+        sub-graph to have a higher level semantic meaning. Then for
+        all the <em>N</em> input sub-graphs, we use <em>k</em>1
+        kernels to convolve the same way to generate a <em>N</em> ×
+        <em>k</em>1 matrix. After that, we use a max pooling layer
+        to generate a <em>N</em>/2 × <em>k</em>1 matrix, which
+        means we select half of the sub-graphs which can better
+        represent the topics for further processing. Then we use a
+        5 × 1 kernel to convolve the <em>N</em>/2 sub-graphs to
+        obtain higher level of semantics (combination of
+        sub-graphs). Here we use <em>k</em>2 such 5 × 1 kernels to
+        generate <em>k</em>2 dimensions. Thus, we have a
+        <em>k</em>1 × <em>k</em>2 matrix. Till now, we have
+        successfully convolved over different dimensions of word
+        embeddings, different words in each sub-graph, and
+        different sub-graphs in the documents. Then we can further
+        convolve to have composition of higher-level semantics. For
+        example, in Figure&nbsp;<a class="fig" href="#fig2">2</a>,
+        we use a max polling layer after <em>k</em>1 × <em>k</em>2
+        matrix to generate a <em>k</em>1/2 × <em>k</em>2 matrix,
+        followed by <em>k</em>3 1 × 5 kernel with sliding step 3 to
+        generate a <em>S</em> × <em>k</em>3 matrix. This can be
+        regarded as a composition of the original <em>k</em>1
+        different <em>g</em> × <em>D</em> kernels applied to
+        <em>N</em> × <em>g</em> × <em>D</em> input tensor. Then we
+        apply a max pooling layer to generate a <em>S</em>/2 ×
+        <em>k</em>3 matrix as the input to the fully connected
+        layers. These two steps (<em>S</em> × <em>k</em>3 and
+        <em>S</em>/2 × <em>k</em>3 matrices) are empirically set.
+        Throughout the convolutional layers, we use ReLU as
+        activation function to speed up the process of training and
+        avoid over-fitting.</p>
+      </section>
+      <section id="sec-24">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Fully
+            Connected and Output Layers</h3>
+          </div>
+        </header>
+        <p>To perform classification, we add three fully connected
+        layers. These layers are mostly used to deal with
+        nonlinearity of classification. As shown in
+        Figure&nbsp;<a class="fig" href="#fig2">2</a>, we have
+        <em>F</em>1 = 2048, <em>F</em>2 = 1024, and <em>F</em>3 =
+        1024 (or 512) for the final three layers. Here we apply
+        dropout to avoid overfitting where the dropout rate is set
+        to be 0.5. Empirically dropout roughly doubled the number
+        of iteration of convergence, but it improves the robustness
+        of the network and boosts the prediction accuracy. The
+        final layer is further connected to a set of <em>K</em>
+        Sigmoid functions, which correspond to the <em>K</em>
+        labels in the hierarchy. Given a set of <em>M</em> labeled
+        documents and <em>m</em> = 1, …, <em>M</em>, our model
+        optimizes the cross-entropy between the true label
+        distribution and the predicted distribution:</p>
+        <div class="table-responsive" id="eq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} H=-\sum
+            _{m=1}^{M}\sum _{k=1}^{K}l_{k}(d_m) \log P_k(d_m) + (1
+            - l_{k}(d_m))\log (1 - P_k(d_m)),
+            \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>where <em>l<sub>k</sub></em> (<em>d<sub>m</sub></em>)
+        is binary label to indicate whether document
+        <em>d<sub>m</sub></em> belongs to label <em>k</em>, and
+        <em>P<sub>k</sub></em> (<em>d<sub>m</sub></em>) refers to
+        the probability of neural network prediction of label
+        <em>k</em>.
+        <p></p>
+        <p></p>
+      </section>
+      <section id="sec-25">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span> Recursive
+            Regularization</h3>
+          </div>
+        </header>
+        <p>If we simply treat each label as an independent
+        decision, we can use Eq.&nbsp;(<a class="eqn" href=
+        "#eq1">2</a>) to train the neural network. However, as we
+        mentioned, most of the practical problems have a hierarchy
+        of labels. In the hierarchy, the parent label is a
+        super-topic of the children labels. In this case,
+        introducing dependency among labels can significantly
+        improve the classification, because when the leaf nodes has
+        less training examples, the decision can be regularized by
+        its parent. Thus, similar to&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0013">13</a>], we use a recursive
+        regularization over the final fully connected layer. As a
+        simplification, the hierarchical dependencies between
+        labels encourage the parameters of labels to be similar, if
+        two labels are close in the hierarchy. For example, in
+        Figure&nbsp;<a class="fig" href="#fig3">3</a>, there is
+        edge between ‘Computing’ and “Artificial intelligence,” so
+        the parameters of the two labels could be similar to each
+        other. Formally, we denote <em>w<sub>i</sub></em> as
+        parameters in the final fully connected layer for label
+        <em>l<sub>i</sub></em> in the hierarchy, and we denote
+        <span class="inline-equation"><span class="tex">$\mathcal
+        {W} = \lbrace w_{l_i} : l_i\in \mathcal {L}
+        \rbrace$</span></span> . <span class=
+        "inline-equation"><span class=
+        "tex">$l_i^{(j)}$</span></span> refers to a children of
+        <em>l<sub>i</sub></em> . Then we use the following
+        regularization term to regularize the parameters of the
+        final fully connected layer:</p>
+        <div class="table-responsive" id="eq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \lambda
+            (\mathcal {W}) = \sum _{l_i \in \mathcal {L}}\sum
+            _{l_i^{(j)}} \frac{1}{2}||w_{l_i} - w_{l_i^{(j)}}||^2.
+            \end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>We denote our algorithm Hierarchically Regularized
+        Deep Graph-CNN (HR-DGCNN) using the following loss function
+        to optimize the parameters:
+        <div class="table-responsive" id="eq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} J = H +
+            {C}\lambda (\mathcal {W}), \end{equation}</span><br />
+            <span class="equation-number">(4)</span>
+          </div>
+        </div>where <em>C</em> is the penalty parameter.
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186005/images/www2018-14-fig3.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">Label hierarchies. The left
+            is a pure hierarchical structure of labels, and the
+            right is graph structure of labels but has no cycles in
+            the graph. Both are commonly used in practice and can
+            be handled by recursive regularization.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-26">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.4</span> Recursive
+            Hierarchical Segmentation</h3>
+          </div>
+        </header>
+        <p>To handle large-scale label hierarchies, we use a
+        recursive hierarchical segmentation to divide and conquer
+        the original problem. In this way, we can perform training
+        over each sub-problem separately and significantly reduce
+        the learning complexity for each sub-problem. An example of
+        recursive hierarchical segmentation is shown in
+        Figure&nbsp;<a class="fig" href="#fig4">4</a>. Suppose we
+        want to have a segmentation of sub-trees containing at most
+        five leaves. Then we perform depth-first and preorder
+        traversal from root to leaf nodes with following steps.
+        When traversing node A, the number of children leaf nodes
+        is 5, so the sub-tree (<em>i</em>) can be firstly
+        segmented. Then the sub-tree (<em>i</em>) is merged as one
+        logical label as a leaf. When we backtrack to node B, the
+        children leaf number also is 5. So it's divided into
+        sub-tree (<em>ii</em>) and merged into one logical label as
+        a leaf. According to the law of depth-first and preorder
+        traversal, the sub-graph (<em>iii</em>) will also be
+        divided, and merged into one logical label as a leaf. When
+        the number of children leaf nodes is less than the
+        threshold value, it will continue to traverse until no more
+        nodes. So the sub-graph <em>iv</em> is divided and merged
+        into one logical label. The children leaf nodes of F is 4,
+        so we combine the nodes E and F to meet the requirement of
+        having five leaf nodes. Although the hierarchy is divided
+        into sub-graphs for parallel and distributed deep CNN
+        models, the master program learns to classify top level
+        nodes, such as the B, E, and F in Figure&nbsp;<a class=
+        "fig" href="#fig4">4</a>, and recursively calls other deep
+        CNN models when testing.</p>
+        <figure id="fig4">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186005/images/www2018-14-fig4.jpg"
+          class="img-responsive" alt="Figure 4" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 4:</span>
+            <span class="figure-title">Illustration of Recursive
+            Hierarchical Segmentation. The leaf nodes refer to
+            class-labels, and the internal nodes are super topics.
+            The hierarchy is recursively divided into 5 parts of
+            sub-graphs.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-27">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span>
+          Experiments</h2>
+        </div>
+      </header>
+      <p>In the experiments, we compare our proposed algorithms
+      with state-of-the-art traditional hierarchical text
+      classification as well as recently developed deep learning
+      architectures on two datasets.</p>
+      <section id="sec-28">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span> Datasets
+            and Evaluation Metrics</h3>
+          </div>
+        </header>
+        <p>The two datasets we used are RCV1 and NYTimes datasets.
+        A summarization of statistics of these two datasets is
+        shown in Table&nbsp;<a class="tbl" href="#tab1">1</a>.</p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Dataset Statistics. The training/test
+            split for RCV1 is done by&nbsp;[<a class="bib"
+            data-trigger="hover" data-toggle="popover"
+            data-placement="top" href="#BibPLXBIB0027">27</a>]. The
+            training/test split for NYTimes is done by ourselves,
+            which is 90% for training and 10% for test. For both of
+            the data, we randomly sample 10% from the training data
+            as development sets.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Dataset</th>
+                <th style="text-align:center;">Training</th>
+                <th style="text-align:center;">Testing</th>
+                <th style="text-align:center;">Class-Labels</th>
+                <th style="text-align:center;">Depth</th>
+                <th style="text-align:center;">avg#Tokens</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">RCV1</td>
+                <td style="text-align:center;">23,149</td>
+                <td style="text-align:center;">784,446</td>
+                <td style="text-align:center;">103/137</td>
+                <td style="text-align:center;">6</td>
+                <td style="text-align:center;">240</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">NYTimes</td>
+                <td style="text-align:center;">1,670,093</td>
+                <td style="text-align:center;">185,566</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">10</td>
+                <td style="text-align:center;">629</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>• <strong>RCV1</strong>&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0027">27</a>]. RCV1 dataset is a
+        manually labeled newswire collection of Reuters News from
+        1996-1997. The news documents are categorized with respect
+        to three controlled vocabularies: industries, topics, and
+        regions. We use the topic-based hierarchical classification
+        as it has been most popular in evaluation. There are 103
+        categories including all classes except for root in the
+        hierarchy. According to [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0013">13</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0014">14</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0015">15</a>], we also consider the 137
+        categories by adding some virtual classes.<a class="fn"
+        href="#fn4" id="foot-fn4"><sup>4</sup></a> On average,
+        there are 225 documents per label for 103 labels for
+        training. The distribution of RCV1 labels is shown in
+        Figure&nbsp;<a class="fig" href="#fig5">5</a>.</p>
+        <figure id="fig5">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186005/images/www2018-14-fig5.jpg"
+          class="img-responsive" alt="Figure 5" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 5:</span>
+            <span class="figure-title">Label statistics of RCV1
+            training dataset.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>• <strong>NYTimes</strong>&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0035">35</a>]. This corpus contains
+        nearly every article published in the New York Times
+        between January 01, 1987 and June 19th, 2007. As a large
+        scale corpus, NYTimes was widely used in document routing,
+        document categorization, entity extraction, cross document
+        coreference resolution, and information retrieval, etc. We
+        use the standard of taxonomic classifier labeled in this
+        corpus to test large-scale hierarchical text
+        classification. On average, there are 720 documents per
+        label for 2,318 labels for training. The distribution of
+        NYTimes labels is shown in Figure&nbsp;<a class="fig" href=
+        "#fig6">6</a>.</p>
+        <figure id="fig6">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186005/images/www2018-14-fig6.jpg"
+          class="img-responsive" alt="Figure 6" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 6:</span>
+            <span class="figure-title">Label statistics of NYTimes
+            training dataset.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>We follow&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0013">13</a>] to use Micro-<em>F</em>
+        <sub>1</sub> and Macro-<em>F</em> <sub>1</sub> as our
+        evaluation metrics for hierarchical classification.</p>
+        <p>• <strong>Micro-<em>F</em> <sub>1</sub></strong> is a
+        <em>F</em> <sub>1</sub> score considering overall precision
+        and recall of all the labels. Let <em>TP<sub>t</sub></em> ,
+        <em>FP<sub>t</sub></em> , <em>FN<sub>t</sub></em> denote
+        the true-positives, false-positives, and false-negatives
+        for the <em>t</em>-<em>th</em> label in label set
+        <span class="inline-equation"><span class="tex">$\mathcal
+        {L}$</span></span> respectively. Then micro-averaged
+        <em>F</em> <sub>1</sub> is: <span class=
+        "inline-equation"><span class="tex">$P = \frac{\sum _{t\in
+        \mathcal {L}}TP_{t}}{\sum _{t\in \mathcal
+        {L}}TP_{t}+FP_{t}},$</span></span> <span class=
+        "inline-equation"><span class="tex">$R = \frac{\sum _{t\in
+        \mathcal {L}}TP_{t}}{\sum _{t\in \mathcal
+        {L}}TP_{t}+FN_{t}},$</span></span> <span class=
+        "inline-equation"><span class="tex">$Micro-F_{1} =
+        \frac{2PR}{P+R}.$</span></span></p>
+        <p>• <strong>Macro-<em>F</em> <sub>1</sub></strong> is
+        another <em>F</em> <sub>1</sub> which evaluates averaged
+        <em>F</em> <sub>1</sub> of all different class-labels in
+        the hierarchy. <em>Macro</em> − <em>F</em> <sub>1</sub>
+        gives equal weight to each label. Formally, macro-averaged
+        <em>F</em> <sub>1</sub> is defined as: <span class=
+        "inline-equation"><span class="tex">$P_{t} =
+        \frac{TP_{t}}{TP_{t}+FP_{t}},$</span></span> <span class=
+        "inline-equation"><span class="tex">$R_{t} =
+        \frac{TP_{t}}{TP_{t}+FN_{t}},$</span></span> <span class=
+        "inline-equation"><span class="tex">$Macro-F_{1} =
+        \frac{1}{|\mathcal {L}|}\sum _{t\in \mathcal
+        {L}}\frac{2P_{t}R_{t}}{P_{t}+R_{t}}.$</span></span></p>
+      </section>
+      <section id="sec-29">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> Methods for
+            Comparison</h3>
+          </div>
+        </header>
+        <p>We compare both traditional hierarchical text
+        classification baselines and modern deep learning based
+        classification algorithms.</p>
+        <p>• Flat baselines: We used both Logistic Regression
+        (<strong>LR</strong>) and Support Vector Machines
+        (<strong>SVM</strong>) to learn from data. We call them
+        flat baselines since we treat each leaf node as a label and
+        train a multi-class classifier. Then for the internal
+        nodes, we simply add all the ancestors of a leaf to be the
+        labels to the document in the leaf.</p>
+        <p>• Hierarchical SVMs. We use the implementation of
+        Hierarchical SVM (<strong>HSVM</strong>)&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0041">41</a>] released
+        by the authors and implement our version of Top-down
+        Support Vector Machines
+        (<strong>TD-SVM</strong>)&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0030">30</a>].</p>
+        <p>• Hierarchical Regularization. We implemented both
+        Hierarchically Regularized Logistic Regression
+        (<strong>HR-LR</strong>) and Hierarchically Regularized
+        Support Vector Machines
+        (<strong>HR-SVM</strong>)&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0013">13</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0014">14</a>] according to the
+        paper's introduction to the algorithms.</p>
+        <p>• Hierarchical RNN based Models. We compare two RNN
+        models, i.e., Hierarchical Long Short-term Memory Network
+        (<strong>HLSTM</strong>)&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0007">7</a>] and Hierarchical Attention Network
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0045">45</a>]
+        (<strong>HAN)</strong>. Both use RNN models to encode
+        sentence level representation based on words, and then use
+        RNN models to encode document level representation based on
+        sentence representation. HAN further uses a global
+        attention mechanism to attend useful words and sentences.
+        They are originally used for document level sentiment
+        classification. We used the implementation release
+        along&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0007">7</a>].</p>
+        <p>• CNNs based Models. We compare with
+        <strong>XML-CNN</strong> model&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0029">29</a>] which considered
+        multi-label text classification using simple
+        <strong>CNN</strong> model originally applied to sentence
+        classification&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0020">20</a>] and Recurrent Convolutional Neural
+        Network model (<strong>RCNN</strong>)&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0023">23</a>]. We also added
+        experiments to test whether deeper models help. Here, we
+        augment the simple CNN model&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0020">20</a>] to be three layers and
+        six layers, which we call deep CNN (<strong>DCNN-3</strong>
+        and <strong>DCNN-6</strong>). The window size for CNN is 3
+        (the best setting shown in&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0020">20</a>]), and for DCNN, all
+        following layers were set to have convolution windows of
+        size 5.</p>
+        <p>• Deep Graph-CNN Models. We implemented our proposed
+        methods, i.e., Deep Graph Convolutional Neural Networks
+        (<strong>DGCNN</strong>) and Hierarchically Regularized
+        Deep Graph Convolutional Neural Networks
+        (<strong>HR-DGCNN</strong>) with different numbers of
+        convolutional layers, such as 1, 3, 6 layers. To construct
+        the graph of words, we considered word co-occurrence in a
+        window of size 5 for all the experiments. The
+        configurations of different CNN layers are shown in
+        Table&nbsp;<a class="tbl" href="#tab2">2</a>,</p>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">DGCNN Configurations. The convolutional
+            layers parameters are denoted as “conv &lt; receptive
+            field size &gt; - &lt; number of channels &gt;
+            .”</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">1 Layer</th>
+                <th style="text-align:center;">3 Layers</th>
+                <th style="text-align:center;">6 Layers</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">conv5-64</td>
+                <td style="text-align:center;">conv5-64</td>
+                <td style="text-align:center;">conv5-64</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">maxpool2</td>
+                <td style="text-align:center;">maxpool2</td>
+                <td style="text-align:center;">maxpool2</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;">conv5-128</td>
+                <td style="text-align:center;">conv5-128</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;">maxpool2</td>
+                <td style="text-align:center;">maxpool2</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;">conv5-256</td>
+                <td style="text-align:center;">conv5-256</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;">maxpool2</td>
+                <td style="text-align:center;">maxpool2</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;">conv5-512</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;">maxpool2</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;">conv5-512</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;">maxpool2</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;">conv5-1024</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;">maxpool2</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">FC-1024</td>
+                <td style="text-align:center;">FC-2048</td>
+                <td style="text-align:center;">FC-2048</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">FC-1024</td>
+                <td style="text-align:center;">FC-1024</td>
+                <td style="text-align:center;">FC-1024</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">FC-512</td>
+                <td style="text-align:center;">FC-512</td>
+                <td style="text-align:center;">FC-1024</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-30">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.3</span>
+            Experimental Settings</h3>
+          </div>
+        </header>
+        <p>All of our experiments were run on 32 core Intel Xeon
+        E5-2650-v3@2.30GHz, with 256GB RAM cluster and K80 GPUs.
+        The operating system and software platforms are Debian 7.0,
+        TensorFlow r0.12 and Python 3.4. For all the deep learning
+        based models, we used public release of word2vec<a class=
+        "fn" href="#fn5" id="foot-fn5"><sup>5</sup></a> to train
+        50<a class="fn" href="#fn6" id="foot-fn6"><sup>6</sup></a>
+        dimensional word embeddings over the 100 billion words from
+        Wikipedia corpus based on CBOW model with window size of
+        five (with other default parameters). We also generated
+        vectors for both stemmed and original words for following
+        graph-of-words generation using the same data. The common
+        parameters of training the models were empirically set,
+        such as batch size = 128, MOMENTUM = 0.9, Dropout = 0.5,
+        moving average = 0.0005, and regularization weight decay =
+        0.00005, etc. Both data were trained on 90% of the training
+        data shown in Table&nbsp;<a class="tbl" href="#tab1">1</a>,
+        and terminated based on the other 10%. For deep learning
+        baselines, we used the same cost function as our DGCNN
+        model for the final layer. We tried our best to use the
+        best parameters either shown in the paper or the default
+        parameters in the software. However, since most of the
+        models were designed for sentiment classification, we found
+        sometimes they may not work well on the two datasets we
+        compared. Thus, we also put efforts on tuning the models
+        that did not work well. As a result, all the deep learning
+        baselines are the best results to our best efforts. Before
+        numerous experiments, we also fairly tested the difference
+        between stemmed and original words on RCV1 data
+        classification, under DGCNN with three convolutional layers
+        (DGCNN-3). It is shown in Table&nbsp;<a class="tbl" href=
+        "#tab3">3</a> that both Micro-<em>F</em> <sub>1</sub> and
+        Macro-<em>F</em> <sub>1</sub> are improved after stemming
+        for better quality of word representations. Thus, we will
+        present all the following classification results based on
+        stemmed words for all models (the word embeddings are also
+        trained based on stemmed words).</p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Comparison between stemmed and original
+            words on RCV1 dataset.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Types</th>
+                <th style="text-align:center;">Model</th>
+                <th style="text-align:center;">Classes</th>
+                <th style="text-align:center;">
+                Macro-<em>F</em><sub>1</sub></th>
+                <th style="text-align:center;">Micro-<em>F</em>
+                <sub>1</sub></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">Stemmed</td>
+                <td style="text-align:center;">DGCNN-3</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">
+                <strong>0.4322</strong></td>
+                <td style="text-align:center;">
+                <strong>0.7611</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Original</td>
+                <td style="text-align:center;">DGCNN-3</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.4143</td>
+                <td style="text-align:center;">0.7597</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-31">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.4</span> Performance
+            on RCV1</h3>
+          </div>
+        </header>
+        <p>For RCV1 data, with DGCNN and HR-DGCNN models, we set
+        the number of selected nodes in graph-of-words <em>N</em>
+        limited by 64, the size of selected and normalized
+        sub-graphs to be 5, dimensionality of word vectors as 50,
+        the other configurations to follow Table&nbsp;<a class=
+        "tbl" href="#tab2">2</a>, and the numbers of classification
+        neurons are 103/137 respectively, according to the
+        introduction in Section&nbsp;<a class="sec" href=
+        "#sec-28">5.1</a>. We tried different <em>N</em>’s and
+        <em>k</em>’s shown in Table&nbsp;<a class="tbl" href=
+        "#tab4">4</a> and it shows that <em>N</em> = 64 and
+        <em>k</em> = 5 can already show good enough results for
+        RCV1 data.</p>
+        <div class="table-responsive" id="tab4">
+          <div class="table-caption">
+            <span class="table-number">Table 4:</span> <span class=
+            "table-title">Comparison among different sub-graph
+            numbers (<em>N</em>) and normalized sub-graph sizes
+            (<em>d</em>) on RCV1 dataset.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Types</th>
+                <th style="text-align:center;">Model</th>
+                <th style="text-align:center;">Classes</th>
+                <th style="text-align:center;">Macro-<em>F</em>
+                <sub>1</sub></th>
+                <th style="text-align:center;">Micro-<em>F</em>
+                <sub>1</sub></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;"><em>N</em>=32</td>
+                <td style="text-align:center;">DGCNN-3</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3191</td>
+                <td style="text-align:center;">0.6971</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><em>N</em>=64</td>
+                <td style="text-align:center;">DGCNN-3</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">
+                <strong>0.4322</strong></td>
+                <td style="text-align:center;">
+                <strong>0.7611</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><em>N</em>=128</td>
+                <td style="text-align:center;">DGCNN-3</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.4326</td>
+                <td style="text-align:center;">0.7611</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><em>k</em>=3</td>
+                <td style="text-align:center;">DGCNN-3</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3919</td>
+                <td style="text-align:center;">0.7430</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><em>k</em>=5</td>
+                <td style="text-align:center;">DGCNN-3</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">
+                <strong>0.4322</strong></td>
+                <td style="text-align:center;">
+                <strong>0.7611</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><em>k</em>=7</td>
+                <td style="text-align:center;">DGCNN-3</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.4318</td>
+                <td style="text-align:center;">0.7546</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The comprehensive comparison is shown in
+        Table&nbsp;<a class="tbl" href="#tab5">5</a>. For
+        traditional text classification algorithms, we can see that
+        SVM is better than LR. HSVM is comparable to TD-SVM,
+        although HSVM uses more complicated structural output cost
+        function. It seems simple top-down mechanism can do well on
+        this dataset. HR-LR and HR-SVM are better than LR and SVM.
+        In our implementation, the HR-SVM improvement is greater
+        than HR-LR. Both show consistent results compared to the
+        numbers shown in&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0013">13</a>].</p>
+        <div class="table-responsive" id="tab5">
+          <div class="table-caption">
+            <span class="table-number">Table 5:</span> <span class=
+            "table-title">Comparison of results on RCV1
+            dataset.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Models</th>
+                <th style="text-align:center;">#Classes</th>
+                <th style="text-align:center;">
+                Macro-<em>F</em><sub>1</sub></th>
+                <th style="text-align:center;">
+                Micro-<em>F</em><sub>1</sub></th>
+                <th style="text-align:center;">Classes</th>
+                <th style="text-align:center;">
+                Macro-<em>F</em><sub>1</sub></th>
+                <th style="text-align:center;">
+                Micro-<em>F</em><sub>1</sub></th>
+                <th style="text-align:left;">Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">LR</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3281</td>
+                <td style="text-align:center;">0.6921</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">
+                0.5339<sup>*</sup></td>
+                <td style="text-align:center;">
+                0.8008<sup>*</sup></td>
+                <td style="text-align:left;" rowspan="6">
+                  We implemented TD-SVM and HR-LR/SVM. The numbers
+                  with *’s are the numbers directly copied
+                  from&nbsp;[<a class="bib" data-trigger="hover"
+                  data-toggle="popover" data-placement="top" href=
+                  "#BibPLXBIB0013">13</a>], which are mainly used
+                  to verify the correctness of our experiments.
+                  Note that the numbers of TD-SVM with 137 classes
+                  seem very similar to our TD-SVM results with 103
+                  classes and have different behavior compared to
+                  others reported by&nbsp;[<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0013">13</a>].
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">SVM</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3295</td>
+                <td style="text-align:center;">0.6905</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">
+                0.5472<sup>*</sup></td>
+                <td style="text-align:center;">
+                0.8082<sup>*</sup></td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">HSVM</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3329</td>
+                <td style="text-align:center;">0.6932</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">–</td>
+                <td style="text-align:center;">–</td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">TD-SVM</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3368</td>
+                <td style="text-align:center;">0.6964</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">
+                0.3415<sup>*</sup></td>
+                <td style="text-align:center;">
+                0.7134<sup>*</sup></td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">HR-LR</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3217</td>
+                <td style="text-align:center;">0.7159</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">
+                0.5581<sup>*</sup></td>
+                <td style="text-align:center;">
+                0.8123<sup>*</sup></td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">HR-SVM</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3858</td>
+                <td style="text-align:center;">0.7275</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">
+                0.5656<sup>*</sup></td>
+                <td style="text-align:center;">
+                0.8166<sup>*</sup></td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">HLSTM</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3102</td>
+                <td style="text-align:center;">0.6726</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">0.3201</td>
+                <td style="text-align:center;">0.7019</td>
+                <td style="text-align:left;" rowspan="6">
+                  For all the deep learning based baselines, we
+                  slightly modified the output as a set of binary
+                  classifications as Eq.&nbsp;(<a class="eqn" href=
+                  "#eq1">2</a>) shows to handle many labels. DCNN-3
+                  and DCNN-6 are models we developed to increase
+                  the depth of original architecture
+                  in&nbsp;[<a class="bib" data-trigger="hover"
+                  data-toggle="popover" data-placement="top" href=
+                  "#BibPLXBIB0020">20</a>] to see whether it helps.
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">HAN</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3268</td>
+                <td style="text-align:center;">0.6964</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">0.3411</td>
+                <td style="text-align:center;">0.7211</td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">RCNN</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.2931</td>
+                <td style="text-align:center;">0.6859</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">0.3219</td>
+                <td style="text-align:center;">0.6952</td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">XML-CNN</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3007</td>
+                <td style="text-align:center;">0.6955</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">0.3106</td>
+                <td style="text-align:center;">0.7149</td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">DCNN-3</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3987</td>
+                <td style="text-align:center;">0.7323</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">0.5843</td>
+                <td style="text-align:center;">0.8169</td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">DCNN-6</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3479</td>
+                <td style="text-align:center;">0.7158</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">0.5013</td>
+                <td style="text-align:center;">0.8072</td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">DGCNN-1</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3631</td>
+                <td style="text-align:center;">0.7418</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">0.5495</td>
+                <td style="text-align:center;">0.8168</td>
+                <td style="text-align:left;" rowspan="6">HR-based
+                models improve non-HR-based models. Our best
+                configuration (HR-DGCNN-3) improves the best
+                baseline model (DCNN-3) by about 3 points (both
+                <em>F</em> <sub>1</sub> scores) for 103 classes and
+                about 7 points on Macro-<em>F</em> <sub>1</sub> and
+                1 point on Micro-<em>F</em> <sub>1</sub> for 137
+                classes.</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">DGCNN-3</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.4322</td>
+                <td style="text-align:center;">0.7611</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">0.6182</td>
+                <td style="text-align:center;">0.8175</td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">DGCNN-6</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3905</td>
+                <td style="text-align:center;">0.7404</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">0.5637</td>
+                <td style="text-align:center;">0.8149</td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">HR-DGCNN-1</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3682</td>
+                <td style="text-align:center;">0.7481</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">0.5649</td>
+                <td style="text-align:center;">0.8166</td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">HR-DGCNN-3</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">
+                <strong>0.4334</strong></td>
+                <td style="text-align:center;">
+                <strong>0.7618</strong></td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">
+                <strong>0.6586</strong></td>
+                <td style="text-align:center;">
+                <strong>0.8255</strong></td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">HR-DGCNN-6</td>
+                <td style="text-align:center;">103</td>
+                <td style="text-align:center;">0.3992</td>
+                <td style="text-align:center;">0.7489</td>
+                <td style="text-align:center;">137</td>
+                <td style="text-align:center;">0.5623</td>
+                <td style="text-align:center;">0.8142</td>
+                <td style="text-align:left;"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>For deep learning based approaches, we can see that RNN
+        based algorithms, HLSTM and HAN, are comparable to SVM and
+        LR on 103 classes. However, they do not perform well on 137
+        classes. RCNN is even worse on both settings. We would
+        presume that for fine-grained topical classification,
+        recurrent models may not have advantage since it will
+        compress the whole sequence of words as a dense vector for
+        classification. RNNs have advantage for sentiment
+        classification since it can model the dependencies of words
+        like “very,” “but,” “not,” etc. However, when we want to
+        extract non-consecutive and long-distance semantics, it
+        cannot capture such information. Note that in our
+        experiments, HAN is better than HLSTM. This means that
+        attention to particular topical words and boosting their
+        weights can help final classification decision. For
+        baseline CNN models, it is shown that XML-CNN does not
+        perform very well on our tasks. However, deeper CNN models
+        can significantly improve the performance (by 9 points of
+        Macro-<em>F</em> <sub>1</sub> with 103 classes and 27
+        points with 137 classes).</p>
+        <p>For our DGCNN models, we tried different configurations
+        shown in Table&nbsp;<a class="tbl" href="#tab2">2</a>. From
+        the results we can see that, hierarchical regularization
+        indeed helps. For the 137 classes case, the improvement is
+        very significant (by 4 points on Macro-<em>F</em>
+        <sub>1</sub>). This again verifies why the authors
+        of&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0013">13</a>] used an extended problem of RCV1
+        rather than the original 103 classes to apply recursive
+        regularization. The DGCNN without hierarchical
+        regularization is also better than XML-CNN and deeper CNN
+        we implemented. The improvements are around 1-7 points for
+        different settings and metrics. This shows that by
+        representing the original text as a graph instead of a
+        sequence, we can gain benefit from non-consecutive and
+        long-distance semantics for topical text
+        classification.</p>
+      </section>
+      <section id="sec-32">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.5</span> Performance
+            on NYTimes</h3>
+          </div>
+        </header>
+        <p>For NYTimes dataset, since the label space of NYTimes is
+        large (Table&nbsp;<a class="tbl" href="#tab1">1</a>), we
+        divided the original problem by constraining the
+        sub-problems to be at least 300 labels but no more than 600
+        labels. Then we got 9 such sub-problems. We applied this
+        divide and conquer strategy for all the deep learning based
+        models, while keeping SVM based models working on the
+        original problem. For our DGCNN models, we set the number
+        of selected nodes as 192, since from Table&nbsp;<a class=
+        "tbl" href="#tab1">1</a> we can see that on average there
+        are more tokens in NYTimes than in RCV1 data. The size of
+        sub-graphs of words is still limited to 5. The
+        dimensionality of word embeddings is 50, and all the other
+        configurations follow Table&nbsp;<a class="tbl" href=
+        "#tab2">2</a>. The results shown in Table&nbsp;<a class=
+        "tbl" href="#tab7">7</a> have consistent conclusion as RCV1
+        dataset. The difference of NYTimes dataset is that it has
+        much larger training data. Thus, we observe that the deeper
+        models perform better on this data (DCNN-6 and DGCNN-6 are
+        better than DCNN-3 and DGCNN-3). Moreover, by comparing
+        Figures&nbsp;<a class="fig" href="#fig5">5</a>
+        and&nbsp;<a class="fig" href="#fig6">6</a>, we can see that
+        RCV1 dataset is more balanced. This is why the
+        Macro-<em>F</em> <sub>1</sub>’s of NYTimes data are less
+        than the ones of RCV1 data even when the Macro-<em>F</em>
+        <sub>1</sub> scores are similar.</p>
+        <p>We also compare the results with and without
+        hierarchical segmentation on NTYimes dataset, which is
+        shown in Table&nbsp;<a class="tbl" href="#tab8">8</a>.
+        Although the Macro-<em>F</em> <sub>1</sub> and
+        Micro-<em>F</em> <sub>1</sub> are close between recursive
+        hierarchical segmentation and stand-alone DGCNN-6 models.
+        The training time of stand-alone DGCNN-6 takes several
+        days. The DGCNN-6 model can have up to 7.5 times speedup
+        with our recursive hierarchical segmentation process.</p>
+        <div class="table-responsive" id="tab6">
+          <div class="table-caption">
+            <span class="table-number">Table 6:</span> <span class=
+            "table-title">Comparison of training time based on GPU
+            and CPU. (Test evaluations for all the models were
+            performed by CPU.)</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Types</th>
+                <th style="text-align:center;">Model</th>
+                <th style="text-align:center;">Datasets</th>
+                <th style="text-align:center;">1-Batch Time
+                (sec.)</th>
+                <th style="text-align:center;">Train Time
+                (hr.)</th>
+                <th style="text-align:center;">Test Time (hr.)</th>
+                <th style="text-align:center;">
+                Macro-<em>F</em><sub>1</sub></th>
+                <th style="text-align:center;">
+                Micro-<em>F</em><sub>1</sub></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">CPU</td>
+                <td style="text-align:center;">DGCNN-3</td>
+                <td style="text-align:center;">RCV1</td>
+                <td style="text-align:center;">1.416</td>
+                <td style="text-align:center;">12</td>
+                <td style="text-align:center;">2.5</td>
+                <td style="text-align:center;">0.4320</td>
+                <td style="text-align:center;">0.7611</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">GPU</td>
+                <td style="text-align:center;">DGCNN-3</td>
+                <td style="text-align:center;">RCV1</td>
+                <td style="text-align:center;">0.767</td>
+                <td style="text-align:center;">6</td>
+                <td style="text-align:center;">2.5</td>
+                <td style="text-align:center;">0.4322</td>
+                <td style="text-align:center;">0.7611</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">CPU</td>
+                <td style="text-align:center;">DGCNN-6</td>
+                <td style="text-align:center;">NYTimes</td>
+                <td style="text-align:center;">1.437</td>
+                <td style="text-align:center;">168</td>
+                <td style="text-align:center;">0.6</td>
+                <td style="text-align:center;">0.2985</td>
+                <td style="text-align:center;">0.6566</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">GPU</td>
+                <td style="text-align:center;">DGCNN-6</td>
+                <td style="text-align:center;">NYTimes</td>
+                <td style="text-align:center;">0.401</td>
+                <td style="text-align:center;">48</td>
+                <td style="text-align:center;">0.6</td>
+                <td style="text-align:center;">0.2991</td>
+                <td style="text-align:center;">0.6566</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-responsive" id="tab7">
+          <div class="table-caption">
+            <span class="table-number">Table 7:</span> <span class=
+            "table-title">Comparison of results on NYtimes
+            dataset.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Models</th>
+                <th style="text-align:center;">Classes</th>
+                <th style="text-align:center;">
+                Macro-<em>F</em><sub>1</sub></th>
+                <th style="text-align:center;">
+                Micro-<em>F</em><sub>1</sub></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">SVM</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">0.2158</td>
+                <td style="text-align:center;">0.5217</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">HSVM</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">0.2187</td>
+                <td style="text-align:center;">0.5213</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">TD-SVM</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">0.2249</td>
+                <td style="text-align:center;">0.5404</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">HR-SVM</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">0.2571</td>
+                <td style="text-align:center;">0.6123</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">HLSTM</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">0.2141</td>
+                <td style="text-align:center;">0.5271</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">HAN</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">0.2217</td>
+                <td style="text-align:center;">0.5395</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">RCNN</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">0.2019</td>
+                <td style="text-align:center;">0.5311</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">XML-CNN</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">0.2001</td>
+                <td style="text-align:center;">0.5292</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">DCNN-3</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">0.2471</td>
+                <td style="text-align:center;">0.5793</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">DCNN-6</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">0.2669</td>
+                <td style="text-align:center;">0.6055</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">DGCNN-1</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">0.2147</td>
+                <td style="text-align:center;">0.5195</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">DGCNN-3</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">0.2791</td>
+                <td style="text-align:center;">0.6030</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">DGCNN-6</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">0.2991</td>
+                <td style="text-align:center;">0.6566</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">HR-DGCNN-1</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">0.2209</td>
+                <td style="text-align:center;">0.5293</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">HR-DGCNN-3</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">0.2807</td>
+                <td style="text-align:center;">0.6146</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">HR-DGCNN-6</td>
+                <td style="text-align:center;">2,318</td>
+                <td style="text-align:center;">
+                <strong>0.2995</strong></td>
+                <td style="text-align:center;">
+                <strong>0.6612</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-responsive" id="tab8">
+          <div class="table-caption">
+            <span class="table-number">Table 8:</span> <span class=
+            "table-title">Comparsion of training time and results
+            on NYTimes dataset. The evaluations for stand-alone
+            (Native) and recursive hierarchical segmentation (RHS)
+            programs were performed by DGCNN-6 and GPU.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Model</th>
+                <th style="text-align:center;">
+                Macro-<em>F</em><sub>1</sub></th>
+                <th style="text-align:center;">
+                Micro-<em>F</em><sub>1</sub></th>
+                <th style="text-align:center;">Training Time
+                (days)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">Native</td>
+                <td style="text-align:center;">0.2993</td>
+                <td style="text-align:center;">0.6481</td>
+                <td style="text-align:center;">15</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">RHS</td>
+                <td style="text-align:center;">0.2991</td>
+                <td style="text-align:center;">0.6566</td>
+                <td style="text-align:center;">2</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-33">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.6</span> Time
+            Consumption</h3>
+          </div>
+        </header>
+        <p>We compared our models trained with different devices
+        with different configurations, shown in
+        Table&nbsp;<a class="tbl" href="#tab6">6</a>. It results in
+        that GPU can speed up the training time by about 2 times
+        for RCV1 and 3.5 times for NYTimes, while the test errors
+        are almost the same. Moreover, test time for RCV1 data is
+        much more than NYTimes, because the test data of RCV1 is
+        larger than NYTimes, according to Table&nbsp;<a class="tbl"
+        href="#tab1">1</a>. We also tested whether recursive
+        hierarchical segmentation can help improve the efficiency
+        of the model. As Table&nbsp;<a class="tbl" href=
+        "#tab8">8</a> shown, we can improve NYTimes training time
+        more than seven times while maintaining the classification
+        performance almost the same or even better.</p>
+      </section>
+      <section id="sec-34">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.7</span> Number of
+            Parameters</h3>
+          </div>
+        </header>
+        <p>In Table&nbsp;<a class="tbl" href="#tab9">9</a>, we
+        report the number of parameters for each dataset. All
+        configurations follow the generic design presented in
+        Table&nbsp;<a class="tbl" href="#tab2">2</a>, while the
+        size of graph-of-words employs the best performance in
+        experiments. Specifically, here we have <em>N</em> = 64,
+        <em>k</em> = 5 in RCV1 and <em>N</em> = 192, <em>k</em> = 5
+        in NYTimes. The number of parameters are shown in
+        Table&nbsp;<a class="tbl" href="#tab9">9</a>. Note that we
+        divide the large-scale of label hierarchies of NYTimes
+        dataset into 9 sub-problems. The scale of parameters of
+        stand-alone DGCNN-6 in NYTimes was up to 105 millions.</p>
+        <div class="table-responsive" id="tab9">
+          <div class="table-caption">
+            <span class="table-number">Table 9:</span> <span class=
+            "table-title">Number of parameters (in
+            millions).</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Dataset</th>
+                <th style="text-align:center;">1 Layer</th>
+                <th style="text-align:center;">3 Layers</th>
+                <th style="text-align:center;">6 Layers</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">RCV1</td>
+                <td style="text-align:center;">3.73</td>
+                <td style="text-align:center;">4.99</td>
+                <td style="text-align:center;">9.57</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">NYTimes</td>
+                <td style="text-align:center;">3.92</td>
+                <td style="text-align:center;">5.21</td>
+                <td style="text-align:center;">12.32</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+    <section id="sec-35">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span>
+          Conclusions</h2>
+        </div>
+      </header>
+      <p>In this paper, we present a deep graph CNN model to
+      perform large-scale hierarchical text classification. We
+      first convert bag-of-words to graph of words. Then we
+      leverage the convolution power of semantic composition to
+      generate text document representation for topic
+      classification. The experiments compared to both traditional
+      state-of-the-art text classification models as well as
+      recently developed deep learning models show that our
+      approach can significantly improve the results on two
+      datasets, RCV1 and NYTimes. In the future, we plan to extend
+      our deep graph CNN model to other complex text classification
+      datasets and applications.</p>
+    </section>
+    <section id="sec-36">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">7</span>
+          Acknowledgments</h2>
+        </div>
+      </header>
+      <p>The corresponding author is Jianxin Li. This work is
+      supported by NSFC program (No.61472022,61772151,61421003) and
+      partly by the Beijing Advanced Innovation Center for Big Data
+      and Brain Computing. Yangqiu Song is supported by China 973
+      Fundamental R&amp;D Program (No. 2014CB340304) and the
+      Research Grants Council of the Hong Kong Special
+      Administrative Region, China (Project No. 26206717). Qiang
+      Yang is supported by China 973 Fundamental R&amp;D Program
+      (No. 2014CB340304) and Hong Kong CERG projects 16211214,
+      16209715 and 16244616. We also thank the anonymous reviewers
+      for their valuable comments and suggestions that help improve
+      the quality of this manuscript.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Charu&nbsp;C. Aggarwal
+        and ChengXiang Zhai. 2012. A Survey of Text Classification
+        Algorithms. In <em><em>Mining Text Data</em></em> .
+        163–222.</li>
+        <li id="BibPLXBIB0002" label="[2]">Rahul Agrawal, Archit
+        Gupta, Yashoteja Prabhu, and Manik Varma. 2013. Multi-label
+        Learning with Millions of Labels: Recommending Advertiser
+        Bid Phrases for Web Pages. In <em><em>WWW</em></em> .
+        13–24.</li>
+        <li id="BibPLXBIB0003" label="[3]">Yoshua Bengio, Réjean
+        Ducharme, Pascal Vincent, and Christian Janvin. 2003. A
+        Neural Probabilistic Language Model. <em><em>Journal of
+        Machine Learning Research</em></em> 3 (2003),
+        1137–1155.</li>
+        <li id="BibPLXBIB0004" label="[4]">David&nbsp;M. Blei,
+        Andrew&nbsp;Y. Ng, and Michael&nbsp;I. Jordan. 2003. Latent
+        Dirichlet Allocation. <em><em>Journal of Machine Learning
+        Research</em></em> 3 (2003), 993–1022.</li>
+        <li id="BibPLXBIB0005" label="[5]">Lijuan Cai and Thomas
+        Hofmann. 2004. Hierarchical Document Categorization with
+        Support Vector Machines. In <em><em>CIKM</em></em> .
+        78–87.</li>
+        <li id="BibPLXBIB0006" label="[6]">Hao Chen and Susan
+        Dumais. 2000. Bringing Order to the Web: Automatically
+        Categorizing Search Results. In <em><em>CHI</em></em> .
+        145–152.</li>
+        <li id="BibPLXBIB0007" label="[7]">Huimin Chen, Maosong
+        Sun, Cunchao Tu, Yankai Lin, and Zhiyuan Liu. 2016. Neural
+        sentiment classification with user and product attention.
+        In <em><em>EMNLP</em></em> . 1650–1659.</li>
+        <li id="BibPLXBIB0008" label="[8]">Ronan Collobert, Jason
+        Weston, Léon Bottou, Michael Karlen, Koray Kavukcuoglu, and
+        Pavel&nbsp;P. Kuksa. 2011. Natural Language Processing
+        (Almost) from Scratch. <em><em>Journal of Machine Learning
+        Research</em></em> 12 (2011), 2493–2537.</li>
+        <li id="BibPLXBIB0009" label="[9]">Alexis Conneau, Holger
+        Schwenk, Loïc Barrault, and Yann Lecun. 2016. Very Deep
+        Convolutional Networks for Text Classification.
+        (2016).</li>
+        <li id="BibPLXBIB0010" label="[10]">Michaël Defferrard,
+        Xavier Bresson, and Pierre Vandergheynst. 2016.
+        Convolutional Neural Networks on Graphs with Fast Localized
+        Spectral Filtering. In <em><em>NIPS</em></em> .
+        3837–3845.</li>
+        <li id="BibPLXBIB0011" label="[11]">Susan Dumais and Hao
+        Chen. 2000. Hierarchical classification of Web content. In
+        <em><em>SIGIR</em></em> . ACM, 256–263.</li>
+        <li id="BibPLXBIB0012" label="[12]">Eva Gibaja and
+        Sebastián Ventura. 2015. A tutorial on multilabel learning.
+        <em><em>ACM Computing Surveys (CSUR)</em></em> 47, 3
+        (2015), 52.</li>
+        <li id="BibPLXBIB0013" label="[13]">Siddharth Gopal and
+        Yiming Yang. 2013. Recursive regularization for large-scale
+        classification with hierarchical and graphical
+        dependencies. In <em><em>KDD</em></em> . 257–265.</li>
+        <li id="BibPLXBIB0014" label="[14]">Siddharth Gopal and
+        Yiming Yang. 2015. Hierarchical Bayesian inference and
+        recursive regularization for large-scale classification.
+        <em><em>ACM Transactions on Knowledge Discovery from Data
+        (TKDD)</em></em> 9, 3(2015), 18.</li>
+        <li id="BibPLXBIB0015" label="[15]">Siddharth Gopal, Yiming
+        Yang, Bing Bai, and Alexandru Niculescu-Mizil. 2012.
+        Bayesian models for large-scale hierarchical
+        classification. In <em><em>NIPS</em></em> . 2411–2419.</li>
+        <li id="BibPLXBIB0016" label="[16]">Mikael Henaff, Joan
+        Bruna, and Yann LeCun. 2015. Deep Convolutional Networks on
+        Graph-Structured Data. <em><em>CoRR</em></em>
+        abs/1506.05163(2015). <a class="link-inline force-break"
+        target="_blank" href=
+        "http://arxiv.org/abs/1506.05163">http://arxiv.org/abs/1506.05163</a>
+        </li>
+        <li id="BibPLXBIB0017" label="[17]">Sepp Hochreiter and
+        Jürgen Schmidhuber. 1997. Long Short-Term Memory.
+        <em><em>Neural Computation</em></em> 9, 8 (1997),
+        1735–1780.</li>
+        <li id="BibPLXBIB0018" label="[18]">Thorsten Joachims.
+        1998. Text Categorization with Support Vector Machines:
+        Learning with Many Relevant Features. In
+        <em><em>ECML</em></em> . 137–142.</li>
+        <li id="BibPLXBIB0019" label="[19]">Nal Kalchbrenner,
+        Edward Grefenstette, and Phil Blunsom. 2014. A
+        Convolutional Neural Network for Modelling Sentences. In
+        <em><em>ACL</em></em> . 655–665.</li>
+        <li id="BibPLXBIB0020" label="[20]">Yoon Kim. 2014.
+        Convolutional Neural Networks for Sentence Classification.
+        In <em><em>EMNLP</em></em> . 1746–1751.</li>
+        <li id="BibPLXBIB0021" label="[21]">Thomas&nbsp;N. Kipf and
+        Max Welling. 2017. Semi-Supervised Classification with
+        Graph Convolutional Networks. In <em><em>ICLR</em></em>
+        .</li>
+        <li id="BibPLXBIB0022" label="[22]">Alex Krizhevsky, Ilya
+        Sutskever, and Geoffrey&nbsp;E Hinton. 2012. Imagenet
+        classification with deep convolutional neural networks. In
+        <em><em>NIPS</em></em> . 1097–1105.</li>
+        <li id="BibPLXBIB0023" label="[23]">Siwei Lai, Liheng Xu,
+        Kang Liu, and Jun Zhao. 2015. Recurrent Convolutional
+        Neural Networks for Text Classification. In
+        <em><em>AAAI</em></em> . 2267–2273.</li>
+        <li id="BibPLXBIB0024" label="[24]">Yann LeCun, Yoshua
+        Bengio, and Geoffrey Hinton. 2015. Deep Learning.
+        <em><em>Nature</em></em> 521(2015), 436–444.</li>
+        <li id="BibPLXBIB0025" label="[25]">Yann Lecun, Léon
+        Bottou, Yoshua Bengio, and Patrick Haffner. 1998.
+        Gradient-based learning applied to document recognition. In
+        <em><em>Proceedings of the IEEE</em></em> . 2278–2324.</li>
+        <li id="BibPLXBIB0026" label="[26]">Omer Levy and Yoav
+        Goldberg. 2014. Neural word embedding as implicit matrix
+        factorization. In <em><em>NIPS</em></em> . 2177–2185.</li>
+        <li id="BibPLXBIB0027" label="[27]">David&nbsp;D Lewis,
+        Yiming Yang, Tony&nbsp;G Rose, and Fan Li. 2004. RCV1: A
+        new benchmark collection for text categorization research.
+        <em><em>Journal of Machine Learning Research</em></em> 5,
+        Apr (2004), 361–397.</li>
+        <li id="BibPLXBIB0028" label="[28]">Xin Li and Dan Roth.
+        2002. Learning question classifiers. In
+        <em><em>ACL</em></em> . 1–7.</li>
+        <li id="BibPLXBIB0029" label="[29]">Jingzhou Liu, Wei-Cheng
+        Chang, Yuexin Wu, and Yiming Yang. 2017. Deep Learning for
+        Extreme Multi-label Text Classification. In
+        <em><em>SIGIR</em></em> . 115–124.</li>
+        <li id="BibPLXBIB0030" label="[30]">Tie-Yan Liu, Yiming
+        Yang, Hao Wan, Hua-Jun Zeng, Zheng Chen, and Wei-Ying Ma.
+        2005. Support vector machines classification with a very
+        large-scale taxonomy. <em><em>ACM SIGKDD Explorations
+        Newsletter</em></em> 7, 1 (2005), 36–43.</li>
+        <li id="BibPLXBIB0031" label="[31]">Tomas Mikolov, Kai
+        Chen, Greg Corrado, and Jeffrey Dean. 2013. Efficient
+        Estimation of Word Representations in Vector Space.
+        <em><em>Computer Science</em></em> (2013).</li>
+        <li id="BibPLXBIB0032" label="[32]">Tomas Mikolov, Ilya
+        Sutskever, Kai Chen, Greg&nbsp;S Corrado, and Jeff Dean.
+        2013. Distributed representations of words and phrases and
+        their compositionality. In <em><em>NIPS</em></em> .
+        3111–3119.</li>
+        <li id="BibPLXBIB0033" label="[33]">Mathias Niepert,
+        Mohamed Ahmed, and Konstantin Kutzkov. 2016. Learning
+        Convolutional Neural Networks for Graphs. In
+        <em><em>ICML</em></em> . 2014–2023.</li>
+        <li id="BibPLXBIB0034" label="[34]">François Rousseau,
+        Emmanouil Kiagias, and Michalis Vazirgiannis. 2015. Text
+        categorization as a graph classification problem. In
+        <em><em>ACL</em></em> , Vol.&nbsp;15. 107.</li>
+        <li id="BibPLXBIB0035" label="[35]">Evan Sandhaus. 2008.
+        The New York Times Annotated Corpus LDC2008T19. In
+        <em><em>Linguistic Data Consortium</em></em> .</li>
+        <li id="BibPLXBIB0036" label="[36]">Sam Scott and Stan
+        Matwin. 1999. Feature Engineering for Text Classification.
+        In <em><em>ICML</em></em> . 379–388.</li>
+        <li id="BibPLXBIB0037" label="[37]">Karen Simonyan and
+        Andrew Zisserman. 2015. Very deep convolutional networks
+        for large-scale image recognition. In
+        <em><em>ICLR</em></em> .</li>
+        <li id="BibPLXBIB0038" label="[38]">Richard Socher,
+        Eric&nbsp;H. Huang, Jeffrey Pennington, Andrew&nbsp;Y. Ng,
+        and Christopher&nbsp;D. Manning. 2011. Dynamic Pooling and
+        Unfolding Recursive Autoencoders for Paraphrase Detection.
+        In <em><em>NIPS</em></em> . 801–809.</li>
+        <li id="BibPLXBIB0039" label="[39]">Aixin Sun and Ee-Peng
+        Lim. 2001. Hierarchical Text Classification and Evaluation.
+        In <em><em>ICDM</em></em> . 521–528.</li>
+        <li id="BibPLXBIB0040" label="[40]">Duyu Tang, Bing Qin,
+        and Ting Liu. 2015. Document Modeling with Gated Recurrent
+        Neural Network for Sentiment Classification. In
+        <em><em>EMNLP</em></em> . 1422–1432.</li>
+        <li id="BibPLXBIB0041" label="[41]">Ioannis Tsochantaridis,
+        Thorsten Joachims, Thomas Hofmann, and Yasemin Altun. 2005.
+        Large margin methods for structured and interdependent
+        output variables. <em><em>Journal of Machine Learning
+        Research</em></em> 6, Sep (2005), 1453–1484.</li>
+        <li id="BibPLXBIB0042" label="[42]">Wei Wang,
+        Diep&nbsp;Bich Do, and Xuemin Lin. 2005. Term graph model
+        for text classification. In <em><em>International
+        Conference on Advanced Data Mining and
+        Applications</em></em> . Springer, 19–30.</li>
+        <li id="BibPLXBIB0043" label="[43]">Lin Xiao, Dengyong
+        Zhou, and Mingrui Wu. 2011. Hierarchical classification via
+        orthogonal transfer. In <em><em>ICML</em></em> .
+        801–808.</li>
+        <li id="BibPLXBIB0044" label="[44]">Gui-Rong Xue, Dikan
+        Xing, Qiang Yang, and Yong Yu. 2008. Deep classification in
+        large-scale text hierarchies. In <em><em>SIGIR</em></em> .
+        619–626.</li>
+        <li id="BibPLXBIB0045" label="[45]">Zichao Yang, Diyi Yang,
+        Chris Dyer, Xiaodong He, Alexander&nbsp;J. Smola, and
+        Eduard&nbsp;H. Hovy. 2016. Hierarchical Attention Networks
+        for Document Classification. In <em><em>NAACL–HLT</em></em>
+        . 1480–1489.</li>
+        <li id="BibPLXBIB0046" label="[46]">Min-Ling Zhang and
+        Zhi-Hua Zhou. 2014. A review on multi-label learning
+        algorithms. <em><em>IEEE Transactions on Knowledge and Data
+        Engineering</em></em> 26, 8(2014), 1819–1837.</li>
+        <li id="BibPLXBIB0047" label="[47]">Wenjie Zhang, Liwei
+        Wang, Junchi Yan, Xiangfeng Wang, and Hongyuan Zha. 2017.
+        Deep Extreme Multi-label Learning. <em><em>CoRR</em></em>
+        abs/1704.03718(2017).</li>
+        <li id="BibPLXBIB0048" label="[48]">Xiang Zhang, Junbo
+        Zhao, and Yann LeCun. 2015. Character-level convolutional
+        networks for text classification. In <em><em>NIPS</em></em>
+        . 649–657.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>Here we ignore
+    the discussion of recursive neural networks&nbsp;[<a class=
+    "bib" data-trigger="hover" data-toggle="popover"
+    data-placement="top" href="#BibPLXBIB0038">38</a>] since it
+    requires knowing the tree structure of text, which is not as
+    efficient as the others when dealing with large scale data.</p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "https://catalog.ldc.upenn.edu/ldc2008t19">https://catalog.ldc.upenn.edu/ldc2008t19</a></p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" target="_blank" href=
+    "http://stanfordnlp.github.io/CoreNLP/">http://stanfordnlp.github.io/CoreNLP/</a></p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a>If any internal
+    node in the hierarchy had positive examples, we created a new
+    leaf under it and re-assigned all instances to the leaf node.
+    For all graph based dependencies, if there are two adjacent
+    nodes both of which have training examples, we created an empty
+    dummy node in between them. This is to prevent classes from
+    getting directly regularized towards each other, but regularize
+    towards their mean (the parameters of the dummy node)
+    instead.</p>
+    <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a><a class=
+    "link-inline force-break" href=
+    "https://github.com/dav/word2vec">https://github.com/dav/word2vec</a></p>
+    <p id="fn6"><a href="#foot-fn6"><sup>6</sup></a>Here, we
+    consider balancing the computational complexity of deep
+    learning model and the integrity of the word semantic
+    expression.</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23–27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License.<br />
+      ACM ISBN 978-1-4503-5639-8/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3178876.3186005">https://doi.org/10.1145/3178876.3186005</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,2078 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Strategies for Geographical Scoping and Improving a
+  Gazetteer</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Strategies for Geographical
+          Scoping and Improving a Gazetteer</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Sanket Kumar</span> <span class=
+          "surName">Singh</span>, University of Alberta, <a href=
+          "mailto:sanketku@ualberta.ca">sanketku@ualberta.ca</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Davood</span> <span class=
+          "surName">Rafiei</span>, University of Alberta, <a href=
+          "mailto:drafiei@ualberta.ca">drafiei@ualberta.ca</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3178876.3186078"
+        target=
+        "_blank">https://doi.org/10.1145/3178876.3186078</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3178876" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Many applications that use geographical databases
+        (a.k.a. gazetteers) rely on the accuracy of the information
+        in the database. However, poor data quality is an issue
+        when data is integrated from multiple sources with
+        different quality constraints and sometimes with little
+        information about the sources. One major consequence of
+        this is that the geographical scope of a location and/or
+        its position may not be known or may not be
+        accurate.</small></p>
+        <p><small>In this paper, we study the problem of detecting
+        the scope of locations in a geographical database and its
+        applications in identifying inconsistencies and improving
+        the quality of a gazetteer. We develop novel strategies,
+        including probabilistic and geometric approaches, to
+        accurately derive the geographical scope of places based on
+        the spatial hierarchy of a gazetteer as well as other
+        public information (such as area) that may be available. We
+        show how the boundary information derived here can be
+        useful in identifying inconsistencies, enhancing the
+        location hierarchy and improving the applications that rely
+        on gazetteers. Our experimental evaluation on two
+        public-domain gazetteers reveals that the proposed
+        approaches significantly outperform, in terms of the
+        accuracy of the geographical bounding boxes, a baseline
+        that is based on the parent-child relationship of a
+        gazetteer. Among applications, we show that the boundary
+        information derived here can move more than 20% of
+        locations in a public gazetteer to better positions in the
+        hierarchy and that the accuracy of those moves is over
+        90%.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Information systems</strong> →
+        <em>Geographic information systems;</em> <em>Probabilistic
+        retrieval models;</em> Global positioning
+        systems;</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Geographical
+          scoping</small>,</span> <span class=
+          "keyword"><small>gazetteer improvement</small>,</span>
+          <span class="keyword"><small>geotagging</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Sanket Kumar Singh and Davood Rafiei. 2018. Strategies
+          for Geographical Scoping and Improving a Gazetteer. In
+          <em>WWW 2018: The 2018 Web Conference,</em> <em>April
+          23–27, 2018,</em> <em>Lyon, France. ACM, New York, NY,
+          USA</em> 10 Pages. <a href=
+          "https://doi.org/10.1145/3178876.3186078" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3178876.3186078</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Gazetteers are extensively used in many different domains
+      and applications because of their wide coverage and detailed
+      information about places. For example, an incoming tweet may
+      have the GPS coordinates of the capturing device but to
+      detect a populated place the tweet is coming from, one may
+      use a gazetteer such as GeoNames [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0031">31</a>] to map those coordinates
+      to an actual location entity. There is an increasing number
+      of different devices that record GPS coordinates (e.g.
+      phones, cars, cameras, etc.), and mapping the GPS coordinates
+      to a an administrative location or a populated place can be a
+      useful service, for example, in dispatching services such as
+      ambulance, police, etc. The literature also reports numerous
+      domains where gazetteers are used, including toponym
+      resolution in text [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>], geotagging tweets&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0035">35</a>],
+      documents&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>] and entities&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0033">33</a>], etc. To support many of
+      these applications, one needs to both effectively and
+      efficiently join a gazetteer with other geo-coded data.
+      GeoNames reports serving over 150 million web service
+      requests per day (as of October 2017), and many of those
+      services can benefit from more accurate information about
+      places and their boundaries.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186078/images/www2018-87-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Examples of inconsistencies between a
+          gazetteer and other sources. (a) MBR of the US state
+          Maryland is overestimated due to outliers, (b) MBR of
+          Malaita, a province in Solomon Islands, is underestimated
+          due to less data coverage, and (c) the given center is
+          far from the center of the MBR. (childrenMBR is the
+          bounding box of the children, as listed in Geonames for
+          the quoted place, and googleMBR is the MBR returned by
+          Google Maps; the child count for each place is indicated,
+          and the center and the children are shown with a blue and
+          pink dots respectively.)</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>However, there are a few challenges that hinder progress
+      in this area: (1) most public gazetteers either do not have
+      bounding boxes for many of their locations (e.g. GeoNames) or
+      their bounding boxes are not accurate (e.g. OSMNames<a class=
+      "fn" href="#fn1" id="foot-fn1"><sup>1</sup></a>, see Section
+      <a class="sec" href="#sec-17">5.1</a> for details). In the
+      absence of a bounding box, there is no direct way of checking
+      if an entity falls inside or outside a region
+      boundary<a class="fn" href="#fn2" id=
+      "foot-fn2"><sup>2</sup></a>, and applications have to
+      implement their own ad-hoc solutions; (2) data in a gazetteer
+      is prepared by public and is not necessarily accurate
+      especially for less populated places [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0001">1</a>]; (3) there are
+      inconsistencies within gazetteers and in relationship with
+      other sources (see Fig. <a class="fig" href=
+      "#fig1">1</a>).</p>
+      <p>Our approach to address those challenges is through
+      maintaining bounding boxes for places. Attaching a bounding
+      box to each place has a number of benefits, including more
+      efficient support for reverse geo-coding queries and better
+      monitoring and enforcement of consistency constraints in the
+      form of relationships between bounding boxes. Since
+      boundaries change due to growths, splits and mergers,
+      maintaining bounding boxes is a continuous process.</p>
+      <p>The problem to be studied in this paper is if a bounding
+      box can be accurately constructed for each place based on
+      incomplete and sometimes erroneous information that is
+      available, and if those bounding boxes improve the quality of
+      a gazetteer. We take, as a bounding box, the minimum bounding
+      rectangle (MBR) that satisfy all stated constraints in a
+      gazetteer including the parent-child relationships. Despite
+      their imprecision in some cases, for example, compared to
+      polygons, MBRs provide a simple abstraction that is more
+      efficient for querying&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>] and enforcing
+      constraints&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>]. Sometimes the stated constraints
+      cannot all be satisfied when creating MBRs. We formalize the
+      search for an MBR as a probabilistic optimization, which
+      tries to find the most likely MBR by dropping the least
+      likely constraints.</p>
+      <p>Our contributions can be summarized as: (1) We provide a
+      systematic study of the problem of improving and enriching a
+      gazetteer using bounding boxes of places; to the best of our
+      knowledge, this is the first time such a study over millions
+      of places is conducted. (2) We propose strategies for
+      detecting and resolving inconsistencies in a gazetteer. (3)
+      We evaluate our strategies and report their accuracy in
+      detecting the boundaries of places and in improving the
+      places hierarchy. (4) We report on the effectiveness of our
+      bounding boxes in refining the places hierarchy and in
+      augmenting the gazetteer with other data sources including
+      YFCC100M&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0030">30</a>].</p>
+      <p>The rest of this paper is organized as follows: Section
+      <a class="sec" href="#sec-4">2</a> reviews the related work,
+      and Section <a class="sec" href="#sec-5">3</a> presents our
+      proposed strategies for constructing minimum bounding
+      rectangles of places. Section <a class="sec" href=
+      "#sec-12">4</a> lists some application areas and settings.
+      Our algorithms are evaluated in Section <a class="sec" href=
+      "#sec-16">5</a>. Section <a class="sec" href="#sec-19">6</a>
+      concludes the paper.</p>
+    </section>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>The literature related to our work can be grouped into (1)
+      estimation of the spatial extent of geographic entities, (2)
+      conflict resolution and data cleansing techniques, and (3)
+      automatic gazetteer expansion and enrichment.</p>
+      <p><strong>Estimation of the spatial extent of geographic
+      entities</strong>The geographic boundary of a place can be
+      estimated using geo-tagged entities such as
+      photos&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0014">14</a>],
+      videos, and online documents. Chen et al. [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0008">8</a>] develop a method to find
+      the spatial extent of places with vague boundaries. They
+      define geographical boundary of a place using the density of
+      Flickr photos mapped to a region. The authors use Kernel
+      Density Estimation to interpolate the boundary for regions
+      where photos are sparse. Parker and Downs [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0019">19</a>] cluster points before
+      forming a minimum convex envelope to enclose each cluster. A
+      drawback of both approaches is that if a place is widely
+      spread and have disjoint regions (e.g. places containing
+      islands such as Hawaii), then each region forms its own
+      boundary instead of forming a boundary at a particular level
+      such as country, province or district. For polygonal
+      boundaries of places, Voronoi diagrams are used to
+      approximate the extent of places from their
+      centroids[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0002">2</a>].
+      Also a notion of fuzzy MBR to model the spatial extent of a
+      geographical location is introduced by Somodevilla et al.
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0028">28</a>], though no
+      evaluation on the quality or the accuracy is provided.</p>
+      <p><strong>Conflict resolution and data
+      cleaning</strong>Conflict resolution can be viewed as making
+      decisions between different versions of data to determine a
+      golden record. There is a large body of work in this area
+      (e.g. see the survey by Bleiholder and
+      Naumann&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>] and the tutorial note by Dong and
+      Naumann&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0010">10</a>]). In a more recent work, Prokoshyna
+      et al. [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0023">23</a>]
+      combine logical reasoning and a quantitative method to
+      develop a data cleansing approach. The quantitative method in
+      this work involves setting some constraints based on the
+      statistical properties of attribute values and flagging an
+      inconsistency if such constraints are violated. The authors
+      propose a minimal-set repair algorithm to find attribute
+      values that minimize a statistical distortion. Volha et al.
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0005">5</a>] resolve
+      conflicts in the context of dbpedia using a fusion function,
+      which is learned from labeled data. The set of fusion
+      functions are manually defined in advance by domain experts.
+      As a generic cleaning technique, outlier detection may be
+      used to filter objects which do not follow the general
+      expected underlying distribution. Two commonly used
+      techniques in spatial domains are Boxplot [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0013">13</a>] and Bagplot [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0025">25</a>], which are
+      evaluated as part of our proposed heuristic approaches.</p>
+      <p><strong>Automatic gazetteer expansion and
+      enrichment</strong> Automatic gazetteer creation or
+      enrichment involves adding new records or attributes, in the
+      form of a new place or a missing feature of an existing
+      place. Popescu et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0020">20</a>] create a gazetteer using diverse
+      information sources and different algorithms for entity
+      extraction, categorization, coordinate discovery and ranking.
+      More recently, Oliveira et al. [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0018">18</a>] attempt to enrich the GeoSEn
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0007">7</a>] gazetteer
+      using the geographical information gathered through crowd
+      sourcing. The authors augment the spatial hierarchy of the
+      gazetteer by adding places at what appears to be district and
+      street granularity. These works can be seen as orthogonal to
+      ours.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Geographical
+          Scoping</h2>
+        </div>
+      </header>
+      <p>Given a set of containment relationships and constraints
+      for places in a gazetteer, we want to construct a bounding
+      box for each place such that ideally all stated or known
+      constraints are satisfied. We take as the bounding box of a
+      place, any minimum bounding rectangle (MBR) that is parallel
+      to the latitude and the longitude axes and satisfy the
+      constraints. This does not necessarily give the most accurate
+      bounding box especially if the true bounding box is not
+      convex; however, compared to arbitrary polygons, MBRs are
+      more efficient for checking containment relationships and
+      constraints. A challenge in detecting the spatial extent of a
+      place is that often there is not sufficient information about
+      a place and the relationships can be conflicting or
+      contradictory. For example, the recorded center for Hawaii in
+      GeoNames, as shown in Figure <a class="fig" href=
+      "#fig1">1</a>(c), is quite far from the center of its MBR.
+      Also, as shown in Figure <a class="fig" href=
+      "#fig1">1</a>(b), there are no child locations in the
+      northern region of googleMBR and it is difficult to construct
+      this MBR based on parent-child relationships alone.</p>
+      <section id="sec-6">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span>
+            Hierarchical Approach</h3>
+          </div>
+        </header>
+        <p>One strategy for building an MBR is to enforce the
+        containment relationships, i.e. each parent MBR must
+        contain the MBRs of its children. Gazetteers are good at
+        describing the containment relationships between places.
+        For example, GeoNames places each location into an
+        administrative level such as country or state and allows
+        queries to retrieve the children within an administrative
+        level. The bounds of the MBR of a place can be calculated
+        in a bottom-up approach by taking the minimum of south-west
+        coordinates and the maximum of north-east coordinates of
+        all children of the place in the spatial hierarchy. A major
+        problem with this strategy is that the number of children
+        can vary greatly for different places. For example, more
+        populated places tend to have more children than rural
+        towns, water bodies, natural regions, etc. Another problem
+        is the skewed distribution of the children and that the
+        children are not always spread over the whole region
+        boundary (as shown in Fig.&nbsp;<a class="fig" href=
+        "#fig1">1</a>(b) and&nbsp;<a class="fig" href=
+        "#fig1">1</a>(c)).</p>
+      </section>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Geometric
+            Approach</h3>
+          </div>
+        </header>
+        <p>A major drawback of the hierarchical approach is that
+        for places that have either very few or no children in the
+        gazetteer, no good geographical extent can be obtained. For
+        example, the area of an MBR for Malaita province,
+        constructed from points in GeoNames (as shown in
+        Fig.&nbsp;<a class="fig" href="#fig1">1</a>(b)), is
+        approximately 19 times smaller than that of the bounding
+        box obtained from Google Maps. Our geometric approach aims
+        at addressing this problem.</p>
+        <p>Given the center point <em>c</em> and the area
+        <em>a</em> of a place, one can construct an infinite number
+        of rectangles, all centered at <em>c</em> with an area
+        <em>a</em>; with no additional information, it is hard to
+        predict which rectangle is more likely. That said, our next
+        statement gives some evidence that maybe a square is a
+        better choice.</p>
+        <p></p>
+        <div class="conjecture" id="enc1">
+          <label>Conjecture 3.1.</label> <em>Let R be the set of
+          all rectangles with a center point c and area a and
+          <em>r</em> ∈ <em>R</em>. Assuming that all rectangles are
+          equally likely, the expected area of overlap between R
+          and r is maximized when r is a square.</em>
+        </div>
+        <p></p>
+        <p>Our geometric approach constructs as the MBR of the
+        place a square centered at <em>C</em> and with an area
+        <em>A</em>. The bounds of the MBR can be obtained as
+        follows: the latitudes of north-east (NE
+        <sub><em>lat</em></sub> ) and south-west (SW
+        <sub><em>lat</em></sub> ) points are obtained by shifting
+        the latitude of the center in north and south by a factor
+        <em>F</em> given as</p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation*} { \bf
+            NE_{lat}} = C_{lat} + F \quad \textrm {and} \quad {\bf
+            SW_{lat}} = C_{lat} - F\end{equation*}</span><br />
+          </div>
+        </div>where <span class="inline-equation"><span class=
+        "tex">$F = (\sqrt {A})/ (2*L)$</span></span> , L is the
+        distance between two consecutive latitudes (≈ 111 km) and
+        <em>C<sub>lat</sub></em> and <em>C<sub>long</sub></em> are
+        the latitude and longitude of center C. The longitudes of
+        the endpoints are obtained similarly except that the
+        distance between two consecutive longitudes shrinks as we
+        move toward the poles. Hence we first obtain the distance
+        between two longitudes at a given latitude
+        <em>D<sub>lat</sub></em> before shifting the longitude of
+        the center by <em><em>F<sub>ne</sub></em></em> and
+        <em><em>F<sub>sw</sub></em></em> , defined as:
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation*} F_{ne} =
+            (\sqrt {A})/ (2 * D_{nelat}) \quad \textrm {and} \quad
+            F_{sw} = (\sqrt {A})/ (2 *
+            D_{swlat})\end{equation*}</span><br />
+          </div>
+        </div>where <em>D<sub>nelat</sub></em> =
+        <em>L</em>*<em>cosine</em>((<em>NE<sub>lat</sub></em>
+        *<em>π</em>)/180) (see [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0029">29</a>] for details), and
+        <em>D<sub>swlat</sub></em> =
+        <em>L</em>*<em>cosine</em>((<em>SW<sub>lat</sub></em>
+        *<em>π</em>)/180). Thus
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation*} {\bf
+            NE_{long}} = C_{long} + F_{ne} \quad \textrm {and}
+            \quad {\bf SW_{long}} = C_{long} -
+            F_{sw}.\end{equation*}</span><br />
+          </div>
+        </div>Note that the accuracy of the coordinates of the
+        endpoints depends on the accuracy of <em>L</em> and that of
+        the given center <em>C</em>.
+        <p></p>
+        <p>The bounding box estimated using this approach is
+        expected to be accurate when the child locations are
+        distributed uniformly around the given center. However,
+        this approach may not perform well if the child locations
+        include outliers or the given center is away from the mass
+        of child locations.</p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span>
+            Probabilistic Approach</h3>
+          </div>
+        </header>
+        <p>Geographic information in a gazetteer can be both
+        incomplete and inaccurate, and this can lead to
+        inconsistencies. Some of those inconsistencies may be
+        detected using a rule-based method, but the main challenge
+        which still remains is how to handle the uncertainty in
+        spatial data. If each fact or statement in a gazetteer can
+        be assigned a probability that it is true, then detecting a
+        bounding box for a place can be treated as a constraint
+        optimization problem.</p>
+        <section id="sec-9">
+          <header>
+            <div class="title-info">
+              <h4><span class="section-number">3.3.1</span>
+              <strong>The Model</strong></h4>
+            </div>
+          </header>
+          <p>Locations in a gazetteer are described by a latitude
+          and a longitude; public gazetteers often do not provide
+          much detail on how the coordinates are obtained and if
+          the given coordinate is actually near the center point of
+          the MBR of the place. To test this, we randomly selected
+          1000 places each from GeoNames and OSMNames. The
+          coordinates of these places were checked against the
+          center point of the bounding box obtained from a
+          different source (in our case MBR obtained from Google
+          Maps referred to as googleMBR). We found that only 63% of
+          places in GeoNames and about 97% of the places in
+          OSMNames had a coordinate within 10 km of the center
+          obtained from googleMBR.</p>
+          <p><strong>Modeling the center point</strong>: Let
+          <em>d<sub>c</sub></em> denote the distance between a
+          given center <em>c</em> of a place and its true MBR
+          center. If we assume <em>d<sub>c</sub></em> follows the
+          normal distribution with parameters <em>μ</em> and
+          <em>σ</em>, then</p>
+          <div class="table-responsive" id="eq1">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}
+              Pr(d_c|\mu,\sigma) = \frac{1}{{\sigma \sqrt {2\pi }
+              }}e^{{{ - \left( {d_c - \mu } \right)^2 }
+              \mathord{\left/ {\vphantom {{ - \left( {d_C - \mu }
+              \right)^2 } {2\sigma ^2 }}} \right.} {2\sigma ^2
+              }}}\end{equation}</span><br />
+              <span class="equation-number">(1)</span>
+            </div>
+          </div>where <em>μ</em> and <em>σ</em> are respectively
+          the mean and the standard deviation of
+          <em>d<sub>c</sub></em> . Let <em>P<sub>center</sub></em>
+          denote this probability for fixed values of <em>μ</em>
+          and <em>σ</em>. The parameters of the distribution can be
+          easily estimated from the data. In our random sample of
+          1000 places, <em>μ</em> and <em>σ</em> are 88.894 and
+          408.760 for GeoNames and 2.057 and 7.09 for OSMNames
+          respectively.
+          <p></p>
+          <p><strong>Modeling children</strong>: Let <em>q</em> be
+          the probability that an arbitrary location is placed
+          under a correct parent in the gazetteer. The value of
+          <em>q</em> can be estimated by checking for each place in
+          a sample whether its children are assigned a correct
+          parent node. In our sample of 1000 places, the value of
+          <em>q</em> is calculated as 0.968 for GeoNames and 0.882
+          for OSMNames respectively. One may observe that the
+          probability that an arbitrary location is placed under a
+          correct parent is relatively high; hence based on this
+          empirical result and without much additional knowledge of
+          which places may be correct or incorrect children, an
+          arbitrarily chosen child is more likely to be correct
+          than incorrect hence better be included in the parent
+          MBR. In other words, for a parent place with <em>n</em>
+          children and an MBR that includes <em>i</em> (<em>i</em>
+          ≤ <em>n</em>) of its children, the probability that a
+          random child location of the parent is enclosed in the
+          MBR can be written as</p>
+          <div class="table-responsive" id="eq2">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} P_{children}
+              = \frac{i}{n}. \end{equation}</span><br />
+              <span class="equation-number">(2)</span>
+            </div>
+          </div><strong>Putting it together</strong>: Assuming
+          independence for the two events in
+          Equations&nbsp;<a class="eqn" href="#eq1">1</a> and
+          <a class="eqn" href="#eq2">2</a>, we can put together the
+          two probabilities into an objective function. Given a
+          place with center <em>c</em>, MBR area <em>A</em> and
+          children set <em>S</em>, we want to find a set
+          <em>S</em>′⊆<em>S</em> of children such that
+          <div class="table-responsive" id="eq3">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}
+              \begin{aligned} &amp; \underset{S^{\prime } \subseteq
+              S}{\text{argmax}} &amp; &amp; (P_{children} \cdot
+              P_{center}) \\ &amp; \text{subject to} &amp; &amp;
+              area(MBR(S^{\prime })) \le A \end{aligned}
+              \end{equation}</span><br />
+              <span class="equation-number">(3)</span>
+            </div>
+          </div>where area(MBR(<em>S</em>′)) refers to the area of
+          MBR formed from places in <em>S</em>′. Everything equal,
+          the model selects an MBR with a center point closest to
+          the given center <em>c</em>. Equation <a class="eqn"
+          href="#eq3">3</a> provides a way to model the inclusion
+          and exclusion of locations under an MBR and to estimate
+          the center of the MBR with high certainty.
+          <p></p>
+        </section>
+        <section id="sec-10">
+          <header>
+            <div class="title-info">
+              <h4><span class="section-number">3.3.2</span>
+              <strong>Optimization</strong></h4>
+            </div>
+          </header>
+          <p>Optimizing Eq. <a class="eqn" href="#eq3">3</a> can be
+          computationally intensive since the number of possible
+          MBRs is only bounded by the size of the power set of
+          <em>S</em>. The problem may be broken down into two
+          cases: (1) there is an MBR that includes all points and
+          rectangles in <em>S</em> and the area of the MBR is not
+          larger than <em>A</em>, (2) there is an MBR that includes
+          all points and rectangles in <em>S</em> and has an area
+          larger than <em>A</em>. For (1), the MBR that includes
+          all points in <em>S</em> with an area not exceeding
+          <em>A</em> will maximize <em>P<sub>children</sub></em> .
+          As noted in our sample of 1000 places, there is more
+          uncertainty in finding a correct center than including a
+          correct child, hence one may maximize the term
+          <em>P<sub>children</sub></em> before maximizing
+          <em>P<sub>center</sub></em> . This means the MBR that
+          includes all points in <em>S</em> can simply be expanded
+          (if needed), moving the center of the MBR to the given
+          center and maximizing the objective function, without
+          violating the area constraint.</p>
+          <p>Now consider the case where there is no MBR that
+          includes all children with an area less than or equal to
+          <em>A</em>. With the same reasoning, we may optimize
+          <em>P<sub>children</sub></em> before plugging in
+          <em>P<sub>center</sub></em> .</p>
+          <p><strong>Naive algorithm</strong>: A naive approach to
+          perform this optimization is to enumerate all possible
+          MBRs and select the one that maximizes the objective
+          function in Eq. <a class="eqn" href="#eq3">3</a>. With
+          <em>n</em> data points, there are <em>n</em> possible
+          choices for each side of an MBR; hence there are
+          <span class="inline-equation"><span class="tex">$\mathcal
+          {O}(n^4)$</span></span> MBRs to choose from. Among those
+          MBRs, the algorithm selects the MBR that maximizes the
+          objective function. This is an expensive process for
+          large values of <em>n</em>. Our next algorithm prunes the
+          search space without affecting the correctness of the
+          result.</p>
+          <p><img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186078/images/www2018-87-img1.svg"
+          class="img-responsive" alt="" longdesc="" /></p>
+          <p><strong>Improved algorithm</strong>: To further prune
+          the search space, one may only consider MBRs where the
+          constraint on the area is not violated. Our improved
+          algorithm first finds an initial solution by dropping
+          extreme points in each direction until the area
+          constraint is met. The algorithm then tries to improve
+          upon the initial solution while making sure the area
+          constraint is satisfied. Let <em>m</em> be the number of
+          points that are dropped to find the initial solution.
+          This sets a limit on the number of points in each side
+          that an MBR can pass through. There are <span class=
+          "inline-equation"><span class="tex">$\mathcal
+          {O}(m^4)$</span></span> such MBRs. The number of wrong
+          entries in a gazetteer is expected to be a small
+          fraction, hence <em>m</em> is expected to be much smaller
+          than <em>n</em>. In our experiments with GeoNames and
+          OSMNames, the maximum respective value of <em>m</em> was
+          62 and 78 while that for <em>n</em> was 74765 and 708. In
+          terms of the running time, the improved algorithm was
+          faster by up to 6 orders of magnitude for <em>n</em> &lt;
+          100, and the gap was getting bigger for places that had
+          more children to a point where it was not possible to run
+          the naive algorithm on an Intel Core i5 machine running
+          at 2.7GHz with 8GB RAM. One can also do a binary search
+          when selecting the last side of the MBR, reducing the
+          complexity of the naive algorithm to <span class=
+          "inline-equation"><span class="tex">$\mathcal {O}(n^3
+          log(n))$</span></span> and that of the improved algorithm
+          to <span class="inline-equation"><span class=
+          "tex">$\mathcal {O}(m^3 log(m))$</span></span> . The full
+          details of the improved algorithm are given in
+          Algorithm&nbsp;1 .</p>
+          <p>A limitation of our probabilistic optimization model
+          (also referred to as POM in our experiments) is that the
+          optimization does not kick in unless the area of children
+          MBR is greater than or equal to the known area of the
+          place. This is addressed in our next approach.</p>
+        </section>
+      </section>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.4</span> Heuristic
+            Approaches</h3>
+          </div>
+        </header>
+        <p>The MBR of children (as discussed in Section <a class=
+        "sec" href="#sec-6">3.1</a>) can vary dramatically in shape
+        and size due to uneven distribution or lack of enough child
+        locations under the parent. To construct an MBR for such
+        places, heuristic approaches may be used. Our first
+        heuristic is based on detecting outlier children.</p>
+        <p><strong>Outliers removed</strong>Gazetteers sometimes
+        have locations that are wrongly placed. Such placements may
+        show as an outlier especially if the wrong child is quite
+        far from other children listed under the same parent.
+        Hence, an outlier detection method may be used to identify
+        and remove such places before constructing an MBR. Two
+        approaches that are used in geographical contexts are
+        Boxplot&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0032">32</a>] and Bagplot&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0025">25</a>]. Since boxplot is a
+        univariate method, it can be applied across the latitude
+        and longitude dimensions independently. A point may be
+        deemed an outlier if it is classified as an outlier in any
+        one of the two dimensions. Bagplot is a bivariate extension
+        of boxplot, which generates a convex hull with 50% of the
+        points (called a ‘bag’) and an outer loop (known as
+        ‘fence’), which can vary in size depending on the number of
+        points one wants to include. We expand the outer loop till
+        the area of the MBR formed by the enclosed points is
+        closest or equal to the given area of the place. All points
+        outside the outer loop are excluded from the MBR.</p>
+        <p><strong>Hybrid MBR</strong>An MBR of a place may be
+        obtained using its center point and area; an MBR of a place
+        may also be obtained based on the children listed. If we
+        treat each MBR as a random variable which is 1 for points
+        inside the MBR and 0 for points that fall outside, the
+        region where the two MBRs overlap is where both random
+        variables are taking the value of 1. The rectangle marked
+        by the intersection of the two MBRs is expected to give a
+        more reliable description of the boundary. However, the
+        region of overlap can be much smaller than the actual MBR.
+        We next discuss how this intersection region can be
+        expanded such that its area matches the given area.</p>
+        <p><em>(1) Hybrid MBR with uniform enlargement
+        (H-enlarge)</em>Let <em>l</em> and <em>w</em> denote the
+        length and the width of an MBR. One way to enlarge the MBR
+        is to enlarge both <em>l</em> and <em>w</em> by a constant
+        <em>s</em>. Given an area <em>a</em>, we want (<em>l</em> +
+        <em>s</em>)(<em>w</em> + <em>s</em>) to be close to
+        <em>a</em>. In other words, the value of <em>s</em> can be
+        obtained by solving the following quadratic equation:</p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation*}
+            s^{2}+(l+w)s+(lw-a) = 0 \quad \text{ where
+            }s{\gt}0.\end{equation*}</span><br />
+          </div>
+        </div>The coordinates of the expanded MBR are obtained by
+        shifting the latitude and longitude of north-east and
+        south-west corners by <em>s</em>/2 degree in each direction
+        (as in Section <a class="sec" href="#sec-7">3.2</a>).
+        <p></p>
+        <p><em>(2) Hybrid MBR with scaling (H-scale)</em>The sides
+        of the intersection region can be scaled by a factor
+        <em>s</em> such that the area of the expanded MBR becomes
+        <em>a</em>. Hence, the value of <em>s</em> can be obtained
+        as</p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation*} s = \sqrt
+            {(a/lw)}.\end{equation*}</span><br />
+          </div>
+        </div>It should be noted that outliers may be removed
+        before performing any of the above expansions. Also, when
+        there is no intersection between the two MBRs, the
+        expansion may be applied to the MBR that is expected to be
+        more accurate (our experiments use children MBR in those
+        cases).
+        <p></p>
+        <p>As an example, Figure <a class="fig" href="#fig2">2</a>
+        depicts the MBRs for Budapest, Hungary, obtained using
+        different methods discussed in this section.</p>
+        <figure id="fig2">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186078/images/www2018-87-fig2.jpg"
+          class="img-responsive" alt="Figure 2" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 2:</span>
+            <span class="figure-title">The MBRs for Budapest,
+            Hungary, obtained using different methods. (The blue
+            and cyan dots represent the given center and the center
+            obtained from the POM approach respectively. The MBR
+            for H-enlarge overlaps with that of H-scale, hence not
+            visible, and the yellow MBR obtained from the geometric
+            approach is expected to be square but it doesn't look
+            like one because of the way endpoint coordinates are
+            calculated on the spherical surface of earth and the
+            varying distance between longitudes, as discussed in
+            Section <a class="sec" href="#sec-7">3.2</a>.)</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-12">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Improving a
+          gazetteer</h2>
+        </div>
+      </header>
+      <p>Maintaining the spatial footprints of places in a
+      gazetteer can both improve the quality of the database and
+      offer benefits to other applications that use it. We study
+      three such areas of improvements (see Sections <a class="sec"
+      href="#sec-13">4.1</a>, <a class="sec" href="#sec-14">4.2</a>
+      and <a class="sec" href="#sec-18">5.2</a> for our
+      experimental evaluation).</p>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Gazetteer
+            Refinement</h3>
+          </div>
+        </header>
+        <p>The hierarchy of a gazetteer may be refined based on the
+        spatial footprints of places to improve its overall
+        accuracy. Here are two such refinements that we have
+        experimented with.</p>
+        <p><strong>Change of parent</strong>The MBR of each parent
+        node in a gazetteer is expected to contain the MBR of its
+        children. A child node <em>c</em> listed under a parent
+        node <em>p</em> may be considered for a possible parent
+        change if this containment relationship is violated. In
+        such cases, there can be multiple locations that can
+        contain the MBR of <em>c</em> and they may or may not be
+        true parent places. One approach to reduce the likelihood
+        of selecting a wrong parent is through setting some
+        constraints. For example, one may change the parent from
+        <em>p</em> to <em>p</em>′ if <em>p</em>′ is the only place
+        that can contain <em>c</em>.</p>
+        <p><strong>Restructuring children</strong> Sometimes
+        locations are not placed at the right level or granularity;
+        ideally we want to place each child at the lowest level of
+        the hierarchy. A restructuring can check for each place
+        <em>c</em> in level <em>l</em> if its MBR is fully
+        contained in the MBR of another place <em>p</em> at the
+        same level. If one such relationship holds and <em>p</em>
+        is the only node that has this relationship with
+        <em>c</em>, then it is likely that <em>c</em> is a child of
+        <em>p</em> and better be placed under <em>p</em>. This
+        process may continue until no more move is possible.</p>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Gazetteer
+            Enrichment via Geotagging</h3>
+          </div>
+        </header>
+        <p>A gazetteer may be enriched by including or integrating
+        information about geographic locations, such as tags,
+        tweets, news, photos, etc. Since many resources on the Web
+        are not geotagged, a related question is if using the
+        geographical extent of places can improve geotagging; we
+        study this in the context of geotagging photos and videos
+        from Flickr.</p>
+        <p>One approach for geotagging is to divide the earth
+        surface into a grid of equal-sized cells [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0016">16</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0026">26</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0027">27</a>] and to predict the most
+        probable cell for a given photo or video. A problem with
+        fixed-sized cells is that the spatial scope of a place can
+        be distributed over several cells (when the cells are too
+        small) or multiple geographical boundaries can be collapsed
+        into one cell (when the cells are too large), affecting the
+        accuracy. An alternative is to use MBRs to better maintain
+        the locality relationships and place boundaries A
+        geotagging using MBRs can be carried out in two steps as
+        follows:</p>
+        <p><strong>(1) MBR prediction</strong> Based on the
+        hypothesis that different users inside the boundaries of a
+        place may use similar tags to describe the place, one may
+        first predict an MBR for a photo/video using the textual
+        annotations attached. The relevance of a tag <em>t</em> to
+        an MBR can be expressed in terms of the probability that a
+        user inside the MBR <em>m<sub>j</sub></em> uses <em>t</em>
+        to tag his/her photos, i.e.</p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation*} p(t_i|M_j) =
+            \frac{\text{# of users who use tag } t_i \text{ in MBR
+            } m_j}{\text{# of users in mbr }
+            m_j}\end{equation*}</span><br />
+          </div>
+        </div>where <em>M<sub>j</sub></em> is the model of MBR
+        <em>m<sub>j</sub></em> . To avoid zeroing the score in case
+        a tag is not seen in <em>m<sub>j</sub></em> , a smoothing
+        function may be used. Using Jelinek-Mercer smoothing
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0034">34</a>], we have
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation*} p(t_i|m_{j})
+            = \alpha p(t_i|M_j) + (1-\alpha)
+            p(t_i|M_{mbrs})\end{equation*}</span><br />
+          </div>
+        </div>where <em>α</em> is the smoothing factor with a value
+        in the range (0, 1) and <em>p</em>(<em>t<sub>i</sub></em>
+        |<em>M<sub>mbrs</sub></em> ) is the model for all MBRs,
+        defined as
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation*}
+            p(t_i|M_{mbrs}) = \frac{\text{# of users who use tag }
+            t_i \text{ over all MBRs}}{\text{# of users over all
+            MBRs}}.\end{equation*}</span><br />
+          </div>
+        </div>In our experiment, we set the value of <em>α</em> at
+        0.8. In general, <em>α</em> can be set using a validation
+        set, trying different values of the smoothing factor and
+        selecting a value that gives the best MBR prediction over
+        the validation set. Assuming independence between the tags
+        inside an MBR, the relevance score of a test instance T
+        with tags <em>t</em> <sub>1</sub>, …,
+        <em>t<sub>n</sub></em> is given as
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation*} p(T|m_{j}) =
+            \prod _{i=1}^{n}
+            p(t_i|m_j).\end{equation*}</span><br />
+          </div>
+        </div>In our experiments, we use the log of
+        <em>p</em>(<em>T</em>|<em>m<sub>j</sub></em> ) as our
+        scoring function for numerical stability. One may note that
+        the relevance score can be biased toward user-specific
+        tags, which often do not carry any location information
+        (e.g. person name). To avoid such ambiguity, we remove all
+        tags which are used just by a single user. Furthermore, to
+        allow a locality of the tags, the same user in different
+        cells or MBRs is considered as a new user. Finally, the MBR
+        with the maximum score is selected. In case no MBR is found
+        (which will happen if none of the tags of the test instance
+        is seen during training), one may predict the MBR which has
+        the maximum number of photos or videos assigned.
+        <p></p>
+        <p><strong>(2) Coordinate estimation</strong> Given the MBR
+        of a photo or a video, the actual coordinate within the MBR
+        can be predicted based on the same technique that finds the
+        coordinates within a grid cell [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0027">27</a>].</p>
+      </section>
+      <section id="sec-15">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span> Enforcing
+            topological constraints</h3>
+          </div>
+        </header>
+        <p>The accuracy and correctness of a gazetteer may be
+        warranted through topological constraints, which can
+        harness the relationships between MBRs such as containment,
+        disjointness, overlap, etc. Such constraints may be
+        classified into <em>hard constraints</em> (those which
+        cannot be violated) and <em>soft constraints</em> (those
+        which can be violated but the violations are rare). An
+        example of the former, expressed in terms of MBRs, is “if
+        the MBR of place A does not contain the MBR of place B,
+        then location A is not part-of or doesn't contain location
+        B.”</p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Expected area of overlap between MBRs at
+            each level (ADM1 = province, ADM2 = district or large
+            city, ADM3 = locality or small town) and the respective
+            thresholds at each level of significance.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Level</th>
+                <th style="text-align:center;"># of places</th>
+                <th style="text-align:center;"><em>μ</em></th>
+                <th style="text-align:center;"><em>σ</em></th>
+                <th colspan="2" style="text-align:center;">
+                  Threshold
+                  <hr />
+                </th>
+              </tr>
+              <tr>
+                <th style="text-align:center;"></th>
+                <th style="text-align:center;"></th>
+                <th style="text-align:center;"></th>
+                <th style="text-align:center;"></th>
+                <th style="text-align:center;"><em>α</em> =
+                0.05</th>
+                <th style="text-align:center;"><em>α</em> =
+                0.01</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">ADM1</td>
+                <td style="text-align:center;">2000</td>
+                <td style="text-align:center;">0.2756</td>
+                <td style="text-align:center;">0.1451</td>
+                <td style="text-align:center;">0.514</td>
+                <td style="text-align:center;">0.613</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">ADM2</td>
+                <td style="text-align:center;">2000</td>
+                <td style="text-align:center;">0.1819</td>
+                <td style="text-align:center;">0.1655</td>
+                <td style="text-align:center;">0.454</td>
+                <td style="text-align:center;">0.566</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">ADM3</td>
+                <td style="text-align:center;">2000</td>
+                <td style="text-align:center;">0.1634</td>
+                <td style="text-align:center;">0.1462</td>
+                <td style="text-align:center;">0.403</td>
+                <td style="text-align:center;">0.503</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Soft constraints may be enforced, based on parameters
+        such as the expected area of overlap between MBRs, whcih
+        may be estimated from data. For example, Table <a class=
+        "tbl" href="#tab1">1</a> shows a few statistics for the
+        normalized overlap area of MBRs at different administrative
+        levels, each based on a random sample of 2000 places from
+        GeoNames. While <em>μ</em> and <em>σ</em> are the mean and
+        the standard deviation of the normalized overlap areas of
+        places, the column threshold gives an upper bound on the
+        mean normalized overlap area of a place, calculated using
+        one-tailed critical values of z-score (Z = 1.645 and 2.326
+        corresponding to <em>α</em> = 0.05 and 0.01 respectively)
+        at different levels of significance and setting the sample
+        size ‘n’ as one. Examples of soft constraints based on
+        Table <a class="tbl" href="#tab1">1</a> are: (SC1) “for any
+        location at ADM2 level, its average normalized overlap area
+        with all other places cannot be much below or higher than
+        the mean normalized overlap area (0.1819),” and (SC2) “if
+        an update at ADM3 level makes the mean normalized overlap
+        area of a place greater than 0.403, then the null
+        hypothesis that the update follows the data distribution
+        can be rejected at <em>α</em> = 0.05.”</p>
+      </section>
+    </section>
+    <section id="sec-16">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Experimental
+          Evaluation</h2>
+        </div>
+      </header>
+      <p>We evaluate the proposed approaches in terms of both the
+      accuracy and the effectiveness of the bounding boxes that are
+      constructed.</p>
+      <section id="sec-17">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span> Accuracy of
+            an MBR</h3>
+          </div>
+        </header>
+        <p>The accuracy of a bounding box of a place may be
+        measured against published data from authoritative sources
+        such as government agencies and international organization
+        bodies. One such official dataset that we are aware of, and
+        is used in our experiments, is the US Census
+        dataset<a class="fn" href="#fn3" id=
+        "foot-fn3"><sup>3</sup></a> which provides cartographic
+        boundary files for places in the US. An MBR of a place from
+        the boundary data can be obtained by finding the maximum
+        and the minimum of all the given coordinates. We are not
+        aware of similar comprehensive list of boundary regions for
+        places outside the US, but there are sources that provide
+        data on a best-effort basis. As one such source, we use
+        Google Reverse Geocoding API<a class="fn" href="#fn4" id=
+        "foot-fn4"><sup>4</sup></a> to fetch the ‘true’ bounding
+        box for a location. Google Maps has been used in similar
+        context in the literature [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0012">12</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0017">17</a>]. In our experiments, we evaluate
+        the accuracy of an MBR for places in the US using both the
+        US Census data and Google Maps as baselines; for each place
+        outside the US, the MBR obtained from Google Maps is used
+        as a baseline.</p>
+        <p><strong>Dataset and Preprocessing</strong> Our
+        evaluation is conducted using the two large public
+        gazetteers, namely GeoNames and OSMNames. The features used
+        in our evaluation are (1) the latitude and longitude of
+        each place, which we assume as the center of the MBR of the
+        place, and (2) the parent-child relationship expressed in
+        the spatial hierarchy. After removing all locations with
+        non-unique geo-coordinates, we put together the following
+        datasets. From GeoNames, we extracted (1) the set of 50 USA
+        states (Geo-50), (2) 540 random world locations each with
+        at least one child (Geo-540), and (3) 140 random world
+        places each with at least one child and with the area of
+        its children MBR larger than the given area of the place
+        (Geo-140). From OSMNames, we similarly extracted (1) 1500
+        random locations each with at least one child (OSM-1500)
+        and (2) 160 random locations (referred to as OSM-160) with
+        the same constraints as those for Geo-140. As the MBR area
+        of a place, we used the area of the MBR returned by Google
+        and from the US Census dataset. In our experiments, the
+        radius of the earth is taken as 6371 km and the distance
+        between consecutive longitudes at equator is 111.0 km.</p>
+        <p><strong>Evaluation Measure</strong> The accuracy of a
+        bounding box is measured in terms of its coverage of the
+        actual area of the place and the fraction of child places
+        it encloses. For a predicted MBR P and true MBR T, the
+        following measures of accuracy are used:</p>
+        <ul class="list-no-style">
+          <li id="list1" label="•">
+            <em>Area Overlap Accuracy (AOA)</em> - The ratio of the
+            area of the region covered by the intersection of P and
+            T to the area of the region covered by the union of P
+            and T. As an evaluation metric, AOA is used in other
+            domains (e.g. image segmentation&nbsp;[<a class="bib"
+            data-trigger="hover" data-toggle="popover"
+            data-placement="top" href=
+            "#BibPLXBIB0011">11</a>]).<br />
+          </li>
+          <li id="list2" label="•"><em>False Negative for area
+          overlap (</em>FN<sub>area</sub> ) - The ratio of the area
+          of T not covered by P and the area of T.<br /></li>
+          <li id="list3" label="•"><em>False Positive for area
+          overlap (</em>FP<sub>area</sub> ) - The ratio of the area
+          of P not part of T and the area of P.<br /></li>
+          <li id="list4" label="•"><em>Point Overlap Accuracy
+          (POA)</em> - The ratio of the number of points in the
+          intersection region of P and T over the number of points
+          in the union region.<br /></li>
+          <li id="list5" label="•"><em>False Negative for point
+          overlap (</em>FN<sub>point</sub> ) - The ratio of the
+          number of points in T which are not covered by P over the
+          number of points covered by T.<br /></li>
+          <li id="list6" label="•"><em>False Positive for point
+          overlap (</em>FP<sub>point</sub> ) - The ratio of the
+          number of points in P which are not covered by T over the
+          number of points in P.<br /></li>
+        </ul>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Evaluation result for
+            <strong>Geo-50</strong> dataset using US Census dataset
+            as baseline in (%).</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Methods</th>
+                <th style="text-align:center;">AOA</th>
+                <th style="text-align:center;">
+                <em>FP<sub>area</sub></em></th>
+                <th style="text-align:center;">
+                <em>FN<sub>area</sub></em></th>
+                <th style="text-align:center;">POA</th>
+                <th style="text-align:center;">
+                <em>FP<sub>point</sub></em></th>
+                <th style="text-align:center;">
+                <em>FN<sub>point</sub></em></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">Children</td>
+                <td style="text-align:center;">68.90</td>
+                <td style="text-align:center;">29.94</td>
+                <td style="text-align:center;">
+                <strong>1.26</strong></td>
+                <td style="text-align:center;">
+                <strong>97.94</strong></td>
+                <td style="text-align:center;">2.05</td>
+                <td style="text-align:center;">
+                <strong>2.0</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Center</td>
+                <td style="text-align:center;">63.49</td>
+                <td style="text-align:center;">25.91</td>
+                <td style="text-align:center;">19.68</td>
+                <td style="text-align:center;">87.65</td>
+                <td style="text-align:center;">
+                <strong>2.02</strong></td>
+                <td style="text-align:center;">12.32</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">
+                Children_woOutlier</td>
+                <td style="text-align:center;">
+                <strong>92.44</strong></td>
+                <td style="text-align:center;">
+                <strong>3.24</strong></td>
+                <td style="text-align:center;">4.61</td>
+                <td style="text-align:center;">97.33</td>
+                <td style="text-align:center;">2.03</td>
+                <td style="text-align:center;">2.63</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">H-enlarge</td>
+                <td style="text-align:center;">74.55</td>
+                <td style="text-align:center;">17.10</td>
+                <td style="text-align:center;">13.15</td>
+                <td style="text-align:center;">91.97</td>
+                <td style="text-align:center;">2.03</td>
+                <td style="text-align:center;">7.99</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">H-scale</td>
+                <td style="text-align:center;">75.78</td>
+                <td style="text-align:center;">16.26</td>
+                <td style="text-align:center;">13.83</td>
+                <td style="text-align:center;">92.65</td>
+                <td style="text-align:center;">2.03</td>
+                <td style="text-align:center;">7.31</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Evaluation result for
+            <strong>Geo-50</strong> dataset using Google Maps as
+            baseline in (%).</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Methods</th>
+                <th style="text-align:center;">AOA</th>
+                <th style="text-align:center;">
+                <em>FP<sub>area</sub></em></th>
+                <th style="text-align:center;">
+                <em>FN<sub>area</sub></em></th>
+                <th style="text-align:center;">POA</th>
+                <th style="text-align:center;">
+                <em>FP<sub>point</sub></em></th>
+                <th style="text-align:center;">
+                <em>FN<sub>point</sub></em></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">Children</td>
+                <td style="text-align:center;">68.03</td>
+                <td style="text-align:center;">29.06</td>
+                <td style="text-align:center;">
+                <strong>3.25</strong></td>
+                <td style="text-align:center;">97.95</td>
+                <td style="text-align:center;">2.04</td>
+                <td style="text-align:center;">
+                <strong>2.0</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Center</td>
+                <td style="text-align:center;">64.58</td>
+                <td style="text-align:center;">23.88</td>
+                <td style="text-align:center;">20.83</td>
+                <td style="text-align:center;">77.64</td>
+                <td style="text-align:center;">
+                <strong>2.02</strong></td>
+                <td style="text-align:center;">12.33</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">
+                Children_woOutlier</td>
+                <td style="text-align:center;">
+                <strong>90.80</strong></td>
+                <td style="text-align:center;">
+                <strong>2.49</strong></td>
+                <td style="text-align:center;">7.05</td>
+                <td style="text-align:center;">
+                <strong>97.34</strong></td>
+                <td style="text-align:center;">
+                <strong>2.02</strong></td>
+                <td style="text-align:center;">2.63</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">H-enlarge</td>
+                <td style="text-align:center;">76.24</td>
+                <td style="text-align:center;">14.32</td>
+                <td style="text-align:center;">13.85</td>
+                <td style="text-align:center;">91.97</td>
+                <td style="text-align:center;">
+                <strong>2.02</strong></td>
+                <td style="text-align:center;">8.00</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">H-scale</td>
+                <td style="text-align:center;">76.00</td>
+                <td style="text-align:center;">15.17</td>
+                <td style="text-align:center;">14.67</td>
+                <td style="text-align:center;">92.65</td>
+                <td style="text-align:center;">
+                <strong>2.02</strong></td>
+                <td style="text-align:center;">7.32</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-responsive" id="tab4">
+          <div class="table-caption">
+            <span class="table-number">Table 4:</span> <span class=
+            "table-title">Evaluation result for different testsets
+            in (%).</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Methods</th>
+                <th style="text-align:center;">AOA</th>
+                <th style="text-align:center;">
+                <em>FP<sub>area</sub></em></th>
+                <th style="text-align:center;">
+                <em>FN<sub>area</sub></em></th>
+                <th style="text-align:center;">POA</th>
+                <th style="text-align:center;">
+                <em>FP<sub>point</sub></em></th>
+                <th style="text-align:center;">
+                <em>FN<sub>point</sub></em></th>
+                <th style="text-align:center;">AOA</th>
+                <th style="text-align:center;">
+                <em>FP<sub>area</sub></em></th>
+                <th style="text-align:center;">
+                <em>FN<sub>area</sub></em></th>
+                <th style="text-align:center;">POA</th>
+                <th style="text-align:center;">
+                <em>FP<sub>point</sub></em></th>
+                <th style="text-align:center;">
+                <em>FN<sub>point</sub></em></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">
+                <strong>Dataset</strong></td>
+                <td colspan="6" style="text-align:center;">
+                  <strong>Geo-540</strong>
+                  <hr />
+                </td>
+                <td colspan="6" style="text-align:center;">
+                  <strong>OSM-1500</strong>
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Children</td>
+                <td style="text-align:center;">34.20</td>
+                <td style="text-align:center;">6.27</td>
+                <td style="text-align:center;">61.68</td>
+                <td style="text-align:center;">94.49</td>
+                <td style="text-align:center;">5.50</td>
+                <td style="text-align:center;">
+                <strong>1.85</strong></td>
+                <td style="text-align:center;">26.27</td>
+                <td style="text-align:center;">10.85</td>
+                <td style="text-align:center;">66.04</td>
+                <td style="text-align:center;">90.20</td>
+                <td style="text-align:center;">9.79</td>
+                <td style="text-align:center;">
+                <strong>2.6</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Center</td>
+                <td style="text-align:center;">65.39</td>
+                <td style="text-align:center;">22.71</td>
+                <td style="text-align:center;">22.23</td>
+                <td style="text-align:center;">91.73</td>
+                <td style="text-align:center;">
+                <strong>4.29</strong></td>
+                <td style="text-align:center;">7.49</td>
+                <td style="text-align:center;">63.25</td>
+                <td style="text-align:center;">24.71</td>
+                <td style="text-align:center;">24.43</td>
+                <td style="text-align:center;">91.87</td>
+                <td style="text-align:center;">
+                <strong>4.56</strong></td>
+                <td style="text-align:center;">6.76</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">
+                Children_woOutlier</td>
+                <td style="text-align:center;">34.80</td>
+                <td style="text-align:center;">
+                <strong>5.44</strong></td>
+                <td style="text-align:center;">61.72</td>
+                <td style="text-align:center;">
+                <strong>94.52</strong></td>
+                <td style="text-align:center;">5.45</td>
+                <td style="text-align:center;">1.86</td>
+                <td style="text-align:center;">25.97</td>
+                <td style="text-align:center;">
+                <strong>10.83</strong></td>
+                <td style="text-align:center;">66.37</td>
+                <td style="text-align:center;">90.20</td>
+                <td style="text-align:center;">9.78</td>
+                <td style="text-align:center;">2.61</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">H-enlarge</td>
+                <td style="text-align:center;">
+                <strong>71.86</strong></td>
+                <td style="text-align:center;">17.95</td>
+                <td style="text-align:center;">
+                <strong>17.85</strong></td>
+                <td style="text-align:center;">94.28</td>
+                <td style="text-align:center;">4.75</td>
+                <td style="text-align:center;">4.28</td>
+                <td style="text-align:center;">
+                <strong>64.29</strong></td>
+                <td style="text-align:center;">23.79</td>
+                <td style="text-align:center;">
+                <strong>23.63</strong></td>
+                <td style="text-align:center;">94.15</td>
+                <td style="text-align:center;">4.90</td>
+                <td style="text-align:center;">4.08</td>
+              </tr>
+              <tr style="border-bottom: solid 2px">
+                <td style="text-align:center;">H-scale</td>
+                <td style="text-align:center;">63.74</td>
+                <td style="text-align:center;">24.37</td>
+                <td style="text-align:center;">25.04</td>
+                <td style="text-align:center;">94.49</td>
+                <td style="text-align:center;">4.73</td>
+                <td style="text-align:center;">4.06</td>
+                <td style="text-align:center;">59.43</td>
+                <td style="text-align:center;">28.16</td>
+                <td style="text-align:center;">28.02</td>
+                <td style="text-align:center;">
+                <strong>94.32</strong></td>
+                <td style="text-align:center;">4.91</td>
+                <td style="text-align:center;">3.87</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">
+                <strong>Dataset</strong></td>
+                <td colspan="6" style="text-align:center;">
+                  <strong>Geo-140</strong>
+                  <hr />
+                </td>
+                <td colspan="6" style="text-align:center;">
+                  <strong>OSM-160</strong>
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Children</td>
+                <td style="text-align:center;">44.43</td>
+                <td style="text-align:center;">53.66</td>
+                <td style="text-align:center;">
+                <strong>7.02</strong></td>
+                <td style="text-align:center;">91.32</td>
+                <td style="text-align:center;">8.67</td>
+                <td style="text-align:center;">
+                <strong>0.71</strong></td>
+                <td style="text-align:center;">36.33</td>
+                <td style="text-align:center;">59.86</td>
+                <td style="text-align:center;">
+                <strong>18.85</strong></td>
+                <td style="text-align:center;">60.99</td>
+                <td style="text-align:center;">39.0</td>
+                <td style="text-align:center;">
+                <strong>3.75</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Center</td>
+                <td style="text-align:center;">63.78</td>
+                <td style="text-align:center;">24.09</td>
+                <td style="text-align:center;">23.66</td>
+                <td style="text-align:center;">84.87</td>
+                <td style="text-align:center;">6.79</td>
+                <td style="text-align:center;">12.94</td>
+                <td style="text-align:center;">53.39</td>
+                <td style="text-align:center;">
+                <strong>32.60</strong></td>
+                <td style="text-align:center;">32.34</td>
+                <td style="text-align:center;">76.47</td>
+                <td style="text-align:center;">
+                <strong>15.81</strong></td>
+                <td style="text-align:center;">14.99</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">POM</td>
+                <td style="text-align:center;">
+                <strong>78.16</strong></td>
+                <td style="text-align:center;">9.42</td>
+                <td style="text-align:center;">17.29</td>
+                <td style="text-align:center;">
+                <strong>92.89</strong></td>
+                <td style="text-align:center;">6.79</td>
+                <td style="text-align:center;">2.12</td>
+                <td style="text-align:center;">43.98</td>
+                <td style="text-align:center;">39.57</td>
+                <td style="text-align:center;">46.20</td>
+                <td style="text-align:center;">64.20</td>
+                <td style="text-align:center;">34.15</td>
+                <td style="text-align:center;">19.52</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">
+                Children_woOutlier</td>
+                <td style="text-align:center;">67.12</td>
+                <td style="text-align:center;">
+                <strong>9.30</strong></td>
+                <td style="text-align:center;">27.95</td>
+                <td style="text-align:center;">87.10</td>
+                <td style="text-align:center;">
+                <strong>6.44</strong></td>
+                <td style="text-align:center;">7.56</td>
+                <td style="text-align:center;">39.76</td>
+                <td style="text-align:center;">43.79</td>
+                <td style="text-align:center;">30.82</td>
+                <td style="text-align:center;">64.51</td>
+                <td style="text-align:center;">33.96</td>
+                <td style="text-align:center;">5.43</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">H-enlarge</td>
+                <td style="text-align:center;">72.09</td>
+                <td style="text-align:center;">17.98</td>
+                <td style="text-align:center;">17.87</td>
+                <td style="text-align:center;">89.37</td>
+                <td style="text-align:center;">6.82</td>
+                <td style="text-align:center;">7.89</td>
+                <td style="text-align:center;">
+                <strong>55.33</strong></td>
+                <td style="text-align:center;">31.03</td>
+                <td style="text-align:center;">30.98</td>
+                <td style="text-align:center;">
+                <strong>77.41</strong></td>
+                <td style="text-align:center;">17.18</td>
+                <td style="text-align:center;">12.18</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">H-scale</td>
+                <td style="text-align:center;">72.16</td>
+                <td style="text-align:center;">17.96</td>
+                <td style="text-align:center;">17.85</td>
+                <td style="text-align:center;">89.98</td>
+                <td style="text-align:center;">6.85</td>
+                <td style="text-align:center;">7.23</td>
+                <td style="text-align:center;">55.04</td>
+                <td style="text-align:center;">31.41</td>
+                <td style="text-align:center;">31.36</td>
+                <td style="text-align:center;">77.40</td>
+                <td style="text-align:center;">17.27</td>
+                <td style="text-align:center;">11.99</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>Overall accuracy:</strong> The results on Geo-50
+        (see Tables <a class="tbl" href="#tab2">2</a> and <a class=
+        "tbl" href="#tab3">3</a>) show that children MBR without
+        outliers (children_woOutlier) outperforms all other
+        strategies and across both the baselines, namely Google
+        Maps and US Census data. This is mainly due to a large
+        number of child locations per US state (i.e. 40,210) in
+        Geo-50. This also shows that gazetteers have a good
+        coverage of developed places.</p>
+        <p>As shown in Table <a class="tbl" href="#tab4">4</a>,
+        with a large false positive rate for Geo-140 and OSM-160,
+        when the area of children MBR is larger than expected, our
+        probabilistic approach (POM) and hybrid approaches
+        (H-enlarge and H-scale) perform very well (between 7% to
+        33% improvement over Children MBR), accurately excluding
+        outliers and shrinking the area close to a given area. Our
+        hybrid approaches also do better when the places do not
+        contain many spatial points or there is too much
+        uncertainty in data, as shown for Geo-540 and OSM-1500
+        where hybrid approaches perform the best. This is because
+        our hybrid approaches construct their MBRs based on the
+        overlap between center MBR and children MBR, which is
+        expected to have less uncertainty.</p>
+        <p><strong>Varying the MBR area and the number of child
+        locations:</strong>To better understand how each method
+        performs under different settings and if one method is
+        better under a more specific setting, we varied the MBR
+        area and the child count and studied the performance of
+        different methods across different testsets. The success
+        rate of each method is defined as the ratio of the number
+        of instances for which the method gives the best accuracy
+        over total number of instances in a given area range or
+        child count range. The success rate of each method on
+        different testsets is shown in Fig. <a class="fig" href=
+        "#fig4">4</a> (a) and (b) for different ranges of MBR areas
+        and in Fig. <a class="fig" href="#fig4">4</a> (c) and (d)
+        for different ranges of child counts.</p>
+        <p>It can be observed from Fig. <a class="fig" href=
+        "#fig4">4</a> (a) that the probabilistic approach (POM)
+        performs best for places with area greater than 7383.75
+        km<sup>2</sup>, which includes mostly large cities,
+        districts, provinces and small countries. These places also
+        corresponds to the range of child count greater than 553 in
+        which our probabilistic approach performs best, as shown in
+        Fig. <a class="fig" href="#fig4">4</a> (c). On the other
+        hand, for majority of places with small area or less child
+        count (see Fig. <a class="fig" href="#fig4">4</a> (a), (b),
+        (d)), conflation techniques such as center MBR and hybrid
+        MBR seem to work well.</p>
+        <p><strong>Enlargement vs Scaling:</strong> In this
+        experiment, we study the effect of applying uniform scaling
+        and uniform enlargement operations on the accuracy of
+        hybridMBR. Figure <a class="fig" href="#fig3">3</a> shows
+        the number of instances in which a particular operation
+        outperforms the other operation at different administrative
+        levels on Geo-540. One can observe that the performance of
+        H-enlarge is comparable to that of H-scale for places at
+        higher administrative levels (e.g. province) while
+        H-enlarge performs better for places at lower levels in the
+        spatial hierarchy. This is because H-scale operation
+        extends the intersection region without changing the shape
+        of the intersection region greatly. In case of uniform
+        enlargement, the intersection region is equally incremented
+        in both horizontal and vertical directions, and this
+        results in an MBR shape that is close to a square. This
+        seems to work better for places at a coarser granularity
+        since it covers the majority of area around the
+        intersection region.</p>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186078/images/www2018-87-fig3.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">Success rate of hybrid
+            strategies varying the level of places.</span>
+          </div>
+        </figure><strong>Comparison with MBRs from
+        OSMNames:</strong> One benefit of using OSMNames for our
+        evaluation is that it allow us to compare the bounding
+        boxes of places in OSMNames with our MBRs, in reference to
+        MBRs from a third party (i.e. google MBR in our case). The
+        area overlap accuracy for places in OSM-160 using their
+        bounding boxes from OSMNames gives an accuracy of 31.48%
+        whereas our geometric approach achieves 55.33% on the same
+        testset; that means our methods can construct better MBRs
+        than those in OSMNames. On OSM-1500, the area overlap
+        accuracy for the bounding boxes in OSMNames is 66.53%,
+        compared to 64.29% accuracy of our hybridMBR. This shows
+        that MBRs obtained from our methods are pretty close to
+        those in OSMNames.
+        <figure id="fig4">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186078/images/www2018-87-fig4.jpg"
+          class="img-responsive" alt="Figure 4" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 4:</span>
+            <span class="figure-title">Success rate of the methods
+            varying the area of MBR of the places in (a) and (b)
+            and varying child count in (c) and (d).</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-18">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span>
+            Effectiveness of an MBR</h3>
+          </div>
+        </header>
+        <p>Effectiveness of an MBR can be measured in terms of its
+        usability in some of the applications discussed in Section
+        <a class="sec" href="#sec-12">4</a>.</p>
+        <p><strong>Gazetteer refinement</strong>The dataset used
+        was GeoNames with its spatial hierarchy constructed using
+        feature class, feature code and administrative level codes.
+        To generate an MBR for each place, we extracted the area of
+        places from a public domain site (in our case Wikipedia
+        Infobox) and used it as input to the strategies discussed
+        in Section <a class="sec" href="#sec-5">3</a>. Since the
+        area information was available for a limited set of places,
+        and not many places did have children, an MBR was
+        constructed using one of our methods in the given order:
+        (1) the probabilistic model (POM) was used when the area
+        information was available and the expected area of the MBR
+        was less than the children MBR; (2) the geometric model
+        (Center MBR) was used when the place had no children; (3)
+        the hierarchical model (Children MBR) was used otherwise.
+        We ended up generating MBRs for 93,274 locations which are
+        also available online<a class="fn" href="#fn5" id=
+        "foot-fn5"><sup>5</sup></a>.</p>
+        <p>To evaluate the refined hierarchy, we obtained two
+        samples of 100 places randomly selected from the list of
+        places processed under <em>change of parent</em> and
+        <em>restructuring children</em> (as discussed in Section
+        <a class="sec" href="#sec-13">4.1</a>). For former, we
+        verified whether a place which was identified as
+        inconsistent was actually inconsistent and for the latter,
+        we verified whether a location was part of another
+        location. This was done manually by looking into Wikipedia
+        text and/or Google Maps.</p>
+        <p>The total number of places identified as wrongly placed
+        under <em>change of parent</em> was 67,820 while the total
+        number of places moved deeper in the hierarchy was
+        2,081,709 (roughly 20% of places in GeoNames). This shows
+        that in the absence of a geographic scope, there are many
+        places which are kept directly below the root level.
+        Furthermore, our evaluation result shows that 91% of places
+        in our sample (91/100) are moved correctly down the
+        hierarchy. This provides a strong evidence in support of an
+        accurate restructuring. For <em>change of parent</em>, the
+        fraction of places which were actually inconsistent was
+        3/100; this empirical result shows that the MBRs are robust
+        enough to support the movement of places deeper in the
+        hierarchy (i.e. vertical movements) but inconsistent for
+        moving the nodes across the hierarchy (i.e. horizontal
+        movements). The children places identified as wrongly
+        placed were often streams, forests or places which lied
+        near the geographical boundary of a parent. This is mainly
+        due to the vague geographic scope of natural landscapes and
+        mis-alignments of child MBRs, which does not allow an MBR
+        to fall completely under a parent node.</p>
+        <p><strong>Gazetteer enrichment via geotagging</strong>The
+        dataset used for this experiment consisted of 4,631,717
+        photos/videos for training and 500,000 photos/videos for
+        testing. This dataset which was provided in ‘Placing
+        task’<a class="fn" href="#fn6" id=
+        "foot-fn6"><sup>6</sup></a> was extracted by organizers
+        from the YFCC100M corpus (see [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0009">9</a>] for details). Our preprocessing of
+        this data included removing stopwords (as detected by
+        Weka&nbsp;<a class="fn" href="#fn7" id=
+        "foot-fn7"><sup>7</sup></a>) as well as tags that contained
+        special characters and doing a stemming using Snowball
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0021">21</a>] stemmer.
+        As a baseline for comparison with our MBR-based approach,
+        we also divided the surface of earth into cells of size 0.3
+        degree latitude and longitude. The training instances were
+        then mapped to the MBRs (generated in Section <a class=
+        "sec" href="#sec-18">5.2</a> under gazetteer enrichment)
+        and cells independently which gave 52,294 MBRs and 44,926
+        cells with at least one photo or video. The reason for
+        generating cells of size 0.3 degree was to keep the number
+        of cells relatively close to the number of MBRs; otherwise
+        a method with fewer cells or MBRs is expected to perform
+        better in MBR prediction with less chance of making an
+        error. The ground truth (i.e. geo-coordinates for test
+        photos and videos) was provided in the dataset.</p>
+        <p>The prediction accuracy is measured in terms of the
+        Average Distance Error (ADE), calculated as the mean
+        Haversine distance [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0024">24</a>] between predicted and true
+        coordinates over all photos and videos. We also measured
+        the prediction accuracy for MBRs (and similarly for cells)
+        defined as the ratio of the number of instances for which a
+        predicted MBR (cell) is the same as the true MBR (cell) to
+        the total number of instances in the testset.</p>
+        <p>Our experiment gives an ADE of 2561.114 km for MBRs
+        compared to 3039.674 km for cells, with a prediction
+        accuracy of 41.23% for MBRs and 32.37% for cells. This
+        clearly shows that geo-tagging using MBRs is more accurate
+        than a grid-based approach. The analysis of the results
+        show two major reasons for a wrong prediction of MBR or
+        cell, which leads to a large distance error; (1) There are
+        several instances of photos or videos in the testset, which
+        mention some general terms only (e.g. ‘affect’, ‘ipad’) and
+        they do not carry any location-specific information. These
+        tags can occur anywhere on the world map and it is
+        difficult to predict a location for them. (2) There are
+        cells and MBRs which are sparsely populated, i.e. they have
+        very few users assigned (usually 1 or 2). As a result, even
+        though there are several dense MBRs or cells (with the
+        number of users of order 10<sup>5</sup>) containing
+        multiple tags of a test instance, a sparsely populated cell
+        or MBR is predicted as best cell or MBR for the test
+        instance. Also, such cases are seen more often for cells
+        which are created randomly without any knowledge of
+        geographical scope of the locations.</p>
+      </section>
+    </section>
+    <section id="sec-19">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Conclusions and
+          Future Work</h2>
+        </div>
+      </header>
+      <p>We studied different strategies for building the bounding
+      boxes of places using the spatial hierarchy of a gazetteer
+      and information such as the area of places, which are
+      available in public domains. Our extensive evaluation on
+      various datasets and settings show that an accurate bounding
+      box can be constructed and that these bounding boxes can
+      improve other applications that use a gazetteer. Also, while
+      our POM-based approach works best for places at district,
+      provinces or higher level, our geometric and heuristic
+      approaches can be employed for places without enough coverage
+      in a gazetteer.</p>
+      <p>Our work can be extended in a few directions, and we are
+      exploring some of those directions. First, one can integrate
+      the proposed strategies into a single model that is invariant
+      to parameters such as the number of child locations, the
+      distribution of points, etc. Second, the local features of a
+      region such as landscape of places in a close proximity,
+      population density, etc. can be used to improve the accuracy
+      of boundary boxes. Third, a limitation of our probabilistic
+      model is that it is not applicable when the area of a
+      children MBR is smaller than a given area. Also our
+      optimization in Section&nbsp;<a class="sec" href=
+      "#sec-10">3.3.2</a> makes use of the uncertainty of events
+      that are observed on our gazetteers; relaxing those
+      assumptions can make the optimization more challenging.
+      Fourth, our heuristic approach, which removes the outliers,
+      does not work well when the center of a place is away from
+      its child locations; this is another area for further
+      research. Finally, exploring other applications of a
+      gazetteer enriched with MBRs is also a possible future
+      direction.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="sec-20">
+      <header>
+        <div class="title-info">
+          <h2>ACKNOWLEDGMENTS</h2>
+        </div>
+      </header>
+      <p>This research is supported by the Natural Sciences and
+      Engineering Research Council of Canada.</p>
+    </section>
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Dirk Ahlers. 2013.
+        Assessment of the accuracy of GeoNames gazetteer data. In
+        <em><em>Proceedings of the 7th Workshop on Geographic
+        Information Retrieval</em></em> . ACM, 74–81.</li>
+        <li id="BibPLXBIB0002" label="[2]">Harith Alani,
+        Christopher&nbsp;B Jones, and Douglas Tudhope. 2001.
+        Voronoi-based region approximation for geographical
+        information retrieval with gazetteers.
+        <em><em>International Journal of Geographical Information
+        Science</em></em> 15, 4(2001), 287–306.</li>
+        <li id="BibPLXBIB0003" label="[3]">Norbert Beckmann,
+        Hans-Peter Kriegel, Ralf Schneider, and Bernhard Seeger.
+        1990. The R*-tree: an efficient and robust access method
+        for points and rectangles. In <em><em>ACM Sigmod
+        Record</em></em> , Vol.&nbsp;19. Acm, 322–331.</li>
+        <li id="BibPLXBIB0004" label="[4]">Jens Bleiholder and
+        Felix Naumann. 2009. Data fusion. <em><em>ACM Computing
+        Surveys (CSUR)</em></em> 41, 1 (2009), 1.</li>
+        <li id="BibPLXBIB0005" label="[5]">Volha Bryl and Christian
+        Bizer. 2014. Learning conflict resolution strategies for
+        cross-language wikipedia data fusion. In
+        <em><em>Proceedings of the 23rd International Conference on
+        World Wide Web</em></em> . ACM, 1129–1134.</li>
+        <li id="BibPLXBIB0006" label="[6]">Cláudio&nbsp;Elízio
+        Calazans&nbsp;Campeloand Cláudio de Souza&nbsp;Baptista.
+        2008. Geographic scope modeling for web documents. In
+        <em><em>Proceedings of the 2nd international workshop on
+        Geographic information retrieval</em></em> . ACM,
+        11–18.</li>
+        <li id="BibPLXBIB0007" label="[7]">Cláudio Campelo and
+        Cláudio de Souza&nbsp;Baptista. 2009. A model for
+        geographic knowledge extraction on web documents.
+        <em><em>Advances in Conceptual Modeling-Challenging
+        Perspectives</em></em> (2009), 317–326.</li>
+        <li id="BibPLXBIB0008" label="[8]">Jiaoli Chen and
+        Shih-Lung Shaw. 2016. Representing the Spatial Extent of
+        Places Based on Flickr Photos with a
+        Representativeness-Weighted Kernel Density Estimation. In
+        <em><em>International Conference on Geographic Information
+        Science</em></em> . Springer, 130–144.</li>
+        <li id="BibPLXBIB0009" label="[9]">Jaeyoung Choi, Claudia
+        Hauff, Olivier&nbsp;Van Laere, and Bart Thomee. 2016. The
+        Placing Task at MediaEval 2016. <em><em>MediaEval 2016
+        Workshop</em></em> (Oct. 20-21 2016).</li>
+        <li id="BibPLXBIB0010" label="[10]">Xin&nbsp;Luna Dong and
+        Felix Naumann. 2009. Data fusion: resolving data conflicts
+        for integration. <em><em>Proceedings of the VLDB
+        Endowment</em></em> 2, 2 (2009), 1654–1655.</li>
+        <li id="BibPLXBIB0011" label="[11]">Jan Funke, Fred&nbsp;A
+        Hamprecht, and Chong Zhang. 2015. Learning to segment:
+        training hierarchical segmentation under a topological
+        loss. In <em><em>International Conference on Medical Image
+        Computing and Computer-Assisted Intervention</em></em> .
+        Springer, 268–275.</li>
+        <li id="BibPLXBIB0012" label="[12]">Maurizio Gibin, Alex
+        Singleton, Richard Milton, Pablo Mateos, and Paul Longley.
+        2008. An exploratory cartographic visualisation of London
+        through the Google Maps API. <em><em>Applied Spatial
+        Analysis and Policy</em></em> 1, 2 (2008), 85–97.</li>
+        <li id="BibPLXBIB0013" label="[13]">Victoria Hodge and Jim
+        Austin. 2004. A survey of outlier detection methodologies.
+        <em><em>Artificial intelligence review</em></em> 22, 2
+        (2004), 85–126.</li>
+        <li id="BibPLXBIB0014" label="[14]">Livia Hollenstein and
+        Ross Purves. 2012. Exploring place through user-generated
+        content: Using Flickr tags to describe city cores.
+        <em><em>Journal of Spatial Information Science</em></em>
+        2010, 1 (2012), 21–48.</li>
+        <li id="BibPLXBIB0015" label="[15]">Ehsan Kamalloo and
+        Davood Rafiei. 2018. A coherent unsupervised model for
+        toponym resolution. In <em><em>Proceedings of the Web
+        (former WWW) Conference</em></em> . ACM. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/3178876.3186027">https://doi.org/10.1145/3178876.3186027</a>
+        </li>
+        <li id="BibPLXBIB0016" label="[16]">Giorgos
+        Kordopatis-Zilos, Symeon Papadopoulos, and Yiannis
+        Kompatsiaris. 2015. Geotagging social media content with a
+        refined language modelling approach. In
+        <em><em>Pacific-Asia Workshop on Intelligence and Security
+        Informatics</em></em> . Springer, 21–40.</li>
+        <li id="BibPLXBIB0017" label="[17]">Weimo Liu,
+        Md&nbsp;Farhadur Rahman, Saravanan Thirumuruganathan, Nan
+        Zhang, and Gautam Das. 2015. Aggregate estimations over
+        location based services. <em><em>Proceedings of the VLDB
+        Endowment</em></em> 8, 12 (2015), 1334–1345.</li>
+        <li id="BibPLXBIB0018" label="[18]">Maxwell
+        Guimarães&nbsp;de Oliveira, Cláudio&nbsp;EC Campelo,
+        Cláudio de&nbsp;Souza Baptista, and Michela Bertolotto.
+        2016. Gazetteer enrichment for addressing urban areas: a
+        case study. <em><em>Journal of Location Based
+        Services</em></em> 10, 2 (2016), 142–159.</li>
+        <li id="BibPLXBIB0019" label="[19]">Jonathon&nbsp;K Parker
+        and Joni&nbsp;A Downs. 2013. Footprint generation using
+        fuzzy-neighborhood clustering.
+        <em><em>Geoinformatica</em></em> 17, 2 (2013),
+        285–299.</li>
+        <li id="BibPLXBIB0020" label="[20]">Adrian Popescu, Gregory
+        Grefenstette, and Pierre&nbsp;Alain Moëllic. 2008.
+        Gazetiki: automatic creation of a geographical gazetteer.
+        In <em><em>Proceedings of the 8th ACM/IEEE-CS joint
+        conference on Digital libraries</em></em> . ACM,
+        85–93.</li>
+        <li id="BibPLXBIB0021" label="[21]">Martin&nbsp;F Porter.
+        2001. Snowball: A language for stemming algorithms.
+        (2001).</li>
+        <li id="BibPLXBIB0022" label="[22]">Rosanne Price, Nectaria
+        Tryfona, and Christian&nbsp;S Jensen. 2001. Modeling
+        topological constraints in spatial part-whole
+        relationships. In <em><em>International Conference on
+        Conceptual Modeling</em></em> . Springer, 27–40.</li>
+        <li id="BibPLXBIB0023" label="[23]">Nataliya Prokoshyna,
+        Jaroslaw Szlichta, Fei Chiang, Renée&nbsp;J Miller, and
+        Divesh Srivastava. 2015. Combining quantitative and logical
+        data cleaning. <em><em>Proceedings of the VLDB
+        Endowment</em></em> 9, 4 (2015), 300–311.</li>
+        <li id="BibPLXBIB0024" label="[24]">C&nbsp;Carl Robusto.
+        1957. The cosine-haversine formula. <em><em>The American
+        Mathematical Monthly</em></em> 64, 1 (1957), 38–40.</li>
+        <li id="BibPLXBIB0025" label="[25]">Peter&nbsp;J Rousseeuw,
+        Ida Ruts, and John&nbsp;W Tukey. 1999. The bagplot: a
+        bivariate boxplot. <em><em>The American
+        Statistician</em></em> 53, 4 (1999), 382–387.</li>
+        <li id="BibPLXBIB0026" label="[26]">Pavel Serdyukov,
+        Vanessa Murdock, and Roelof Van&nbsp;Zwol. 2009. Placing
+        flickr photos on a map. In <em><em>Proceedings of the 32nd
+        international ACM SIGIR conference on Research and
+        development in information retrieval</em></em> . ACM,
+        484–491.</li>
+        <li id="BibPLXBIB0027" label="[27]">Sanket Singh and Davood
+        Rafiei. 2016. Geotagging Flickr Photos And Videos Using
+        Language Models, In <em>MediaEval 2016 Working Notes
+        Proceedings</em>. <em><em>Available from World Wide Web:
+        <a class="link-inline force-break" href=
+        "http://slim-sig.irisa.fr/me16proc/">http://slim-sig.irisa.fr/me16proc/</a></em></em>
+        .</li>
+        <li id="BibPLXBIB0028" label="[28]">María&nbsp;J
+        Somodevilla and Fred&nbsp;E Petry. 2004. Fuzzy minimum
+        bounding rectangles. In <em><em>Spatio-Temporal
+        Databases</em></em> . Springer, 237–263.</li>
+        <li id="BibPLXBIB0029" label="[29]">Kurt Stüwe. 2007.
+        <em><em>Geodynamics of the lithosphere: An
+        introduction</em></em> . Springer Science &amp; Business
+        Media.</li>
+        <li id="BibPLXBIB0030" label="[30]">Bart Thomee,
+        David&nbsp;A Shamma, Gerald Friedland, Benjamin Elizalde,
+        Karl Ni, Douglas Poland, Damian Borth, and Li-Jia Li. 2016.
+        Yfcc100m: The new data in multimedia research.
+        <em><em>Commun. ACM</em></em> 59, 2 (2016), 64–73.</li>
+        <li id="BibPLXBIB0031" label="[31]">Mark Wick and Bernard
+        Vatant. 2012. The geonames geographical database.
+        <em><em>Available from World Wide Web: <a class=
+        "link-inline force-break" href=
+        "http://geonames.org">http://geonames.org</a></em></em>
+        (2012).</li>
+        <li id="BibPLXBIB0032" label="[32]">David&nbsp;F
+        Williamson, Robert&nbsp;A Parker, and Juliette&nbsp;S
+        Kendrick. 1989. The box plot: a simple visual method to
+        interpret data. <em><em>Annals of internal
+        medicine</em></em> 110, 11 (1989), 916–921.</li>
+        <li id="BibPLXBIB0033" label="[33]">Jiangwei Yu and Davood
+        Rafiei. 2016. Geotagging Named Entities in News and Online
+        Documents. In <em><em>Proceedings of the 25th ACM
+        International on Conference on Information and Knowledge
+        Management</em></em> . ACM, 1321–1330.</li>
+        <li id="BibPLXBIB0034" label="[34]">Chengxiang Zhai and
+        John Lafferty. 2004. A study of smoothing methods for
+        language models applied to information retrieval.
+        <em><em>ACM Transactions on Information Systems
+        (TOIS)</em></em> 22, 2 (2004), 179–214.</li>
+        <li id="BibPLXBIB0035" label="[35]">Wei Zhang and Judith
+        Gelernter. 2014. Geocoding location expressions in Twitter
+        messages: A preference learning method. <em><em>Journal of
+        Spatial Information Science</em></em> 2014, 9 (2014),
+        37–70.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "http://osmnames.org">http://osmnames.org</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a>Reverse
+    Geocoding API from Google and other search engines convert the
+    coordinates of a point on the map to a human readable location
+    or address, but the details of their proprietary solutions
+    often are not made public.</p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.census.gov/geo/maps-data/data/kml/kml_state.html">https://www.census.gov/geo/maps-data/data/kml/kml_state.html</a></p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a><a class=
+    "link-inline force-break" href=
+    "https://developers.google.com/maps/documentation/geocoding/intro">https://developers.google.com/maps/documentation/geocoding/intro</a></p>
+    <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a><a class=
+    "link-inline force-break" href=
+    "https://goo.gl/WxcbMG">https://goo.gl/WxcbMG</a></p>
+    <p id="fn6"><a href="#foot-fn6"><sup>6</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.multimediaeval.org/mediaeval2016/placing">http://www.multimediaeval.org/mediaeval2016/placing</a></p>
+    <p id="fn7"><a href="#foot-fn7"><sup>7</sup></a><a class=
+    "link-inline force-break" href=
+    "http://weka.sourceforge.net/doc.dev/weka/core/Stopwords.html">http://weka.sourceforge.net/doc.dev/weka/core/Stopwords.html</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5639-8/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3178876.3186078">https://doi.org/10.1145/3178876.3186078</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

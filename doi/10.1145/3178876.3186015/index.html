@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Sentiment Analysis by Capsules⁎⁎This work was done when
+  Yequan was a visiting Ph.D student at School of Computer Science
+  and Engineering, Nanyang Technological University,
+  Singapore.</title><!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Sentiment Analysis by
+          Capsules<a class="fn" href="#fn1" id=
+          "foot-fn1"><sup>*</sup></a></span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Yequan</span> <span class=
+          "surName">Wang</span>, State Key Laboratory on
+          Intelligent Technology and Systems, Tsinghua National
+          Laboratory for Information Science and Technology,
+          Department of Computer Science and Technology, Tsinghua
+          University, Beijing, China, <a href=
+          "mailto:tshwangyequan@gmail.com">tshwangyequan@gmail.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Aixin</span> <span class=
+          "surName">Sun</span>, School of Computer Science and
+          Engineering, Nanyang Technological University, Singapore,
+          <a href="mailto:axsun@ntu.edu.sg">axsun@ntu.edu.sg</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Jialong</span> <span class=
+          "surName">Han</span>, Tencent AI Lab, Shenzhen, China,
+          <a href=
+          "mailto:jialonghan@gmail.com">jialonghan@gmail.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Ying</span> <span class=
+          "surName">Liu</span>, School of Engineering, Cardiff
+          University, UK, <a href=
+          "mailto:liuy81@cardiff.ac.uk">liuy81@cardiff.ac.uk</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Xiaoyan</span> <span class=
+          "surName">Zhu</span>, State Key Laboratory on Intelligent
+          Technology and Systems, Tsinghua National Laboratory for
+          Information Science and Technology, Department of
+          Computer Science and Technology, Tsinghua University,
+          Beijing, China, <a href=
+          "mailto:zxy-dcs@tsinghua.edu.cn">zxy-dcs@tsinghua.edu.cn</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3178876.3186015"
+        target=
+        "_blank">https://doi.org/10.1145/3178876.3186015</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3178876" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>In this paper, we propose RNN-Capsule, a capsule
+        model based on Recurrent Neural Network (RNN) for sentiment
+        analysis. For a given problem, one capsule is built for
+        each sentiment category <em>e.g.,</em> ‘positive’ and
+        ‘negative’. Each capsule has an attribute, a state, and
+        three modules: representation module, probability module,
+        and reconstruction module. The attribute of a capsule is
+        the assigned sentiment category. Given an instance encoded
+        in hidden vectors by a typical RNN, the representation
+        module builds capsule representation by the attention
+        mechanism. Based on capsule representation, the probability
+        module computes the capsule's state probability. A
+        capsule's state is active if its state probability is the
+        largest among all capsules for the given instance, and
+        inactive otherwise. On two benchmark datasets
+        (<em>i.e.,</em> Movie Review and Stanford Sentiment
+        Treebank) and one proprietary dataset (<em>i.e.,</em>
+        Hospital Feedback), we show that RNN-Capsule achieves
+        state-of-the-art performance on sentiment classification.
+        More importantly, without using any linguistic knowledge,
+        RNN-Capsule is capable of outputting words with sentiment
+        tendencies reflecting capsules’ attributes. The words well
+        reflect the domain specificity of the dataset.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Yequan Wang &nbsp;Aixin Sun &nbsp;Jialong Han &nbsp;Ying
+          Liu &nbsp;Xiaoyan Zhu. 2018. Sentiment Analysis by
+          Capsules. In <em>WWW 2018: The 2018 Web Conference, April
+          23–27, 2018, Lyon, France</em>. ACM, New York, NY, USA 10
+          Pages. <a href="https://doi.org/10.1145/3178876.3186015"
+          class="link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3178876.3186015</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-2">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Sentiment analysis, also known as opinion mining, is the
+      field of study that analyzes people's sentiments, opinions,
+      evaluations, attitudes, and emotions from written
+      languages&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0020">20</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0026">26</a>]. Many neural network models have
+      achieved good performance, <em>e.g.,</em> Recursive Auto
+      Encoder&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0033">33</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0034">34</a>], Recurrent Neural Network
+      (RNN)&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0021">21</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0035">35</a>], and
+      Convolutional Neural Network&nbsp;(CNN)&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0013">13</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0014">14</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0018">18</a>].</p>
+      <p>Despite the great success of recent neural network models,
+      there are some defects. First, existing models focus on, and
+      heavily rely on, the quality of instance representations. An
+      instance here can be a sentence, paragraph or document. Using
+      a vector to represent sentiment is much limited because
+      opinions are delicate and complex. The capsule structure in
+      our work gives the model more capacity to model sentiments.
+      Second, linguistic knowledge such as sentiment lexicon,
+      negation words (<em>e.g.,</em> no, not, never), and intensity
+      words (<em>e.g.,</em> very, extremely), need to be carefully
+      incorporated into these models to realize their best
+      potential in terms of prediction accuracy. However,
+      linguistic knowledge requires significant efforts to develop.
+      Further, the developed sentiment lexicon may not be
+      applicable to some domain specific datasets. For example,
+      when patients give feedback to hospital services, words like
+      ‘quick’ and ‘caring’ are all considered strong positive
+      words. These words, are unlikely to be considered strong
+      positive in movie reviews. Our capsule model does not need
+      any linguistic knowledge, and is able to output words with
+      sentiment tendencies to explain the sentiments.</p>
+      <p>In this paper, we make the very first attempt to perform
+      sentiment analysis by capsules. A capsule is a group of
+      neurons which has rich significance&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0030">30</a>]. We design each single
+      capsule<a class="fn" href="#fn3" id=
+      "foot-fn3"><sup>1</sup></a> to contain <em>an attribute</em>,
+      <em>a state</em>, and <em>three modules</em> (<em>i.e.,</em>
+      representation module, probability module, and reconstruction
+      module).</p>
+      <ul class="list-no-style">
+        <li id="list1" label="•">The attribute of a capsule
+        reflects its dedicated sentiment category, which is
+        pre-assigned when we build the capsule. Depending on the
+        number of sentiment categories in a given problem, the same
+        number of capsules are built. For example, <em>Positive
+        Capsule</em> and <em>Negative Capsule</em> are built for a
+        problem with two sentiment categories.<br /></li>
+        <li id="list2" label="•">The state of a capsule,
+        <em>i.e.,</em> ‘active’ or ‘inactive’, is determined by the
+        probability modules of all capsules in the model. A
+        capsule's state is ‘active’ if the output of its
+        probability module is the largest among all
+        capsules.<br /></li>
+        <li id="list3" label="•">Regarding the three modules,
+        representation module uses the attention mechanism to build
+        capsule representation; Probability module uses the capsule
+        representation to predict the capsule's state probability;
+        Reconstruction module is used to rebuild the representation
+        of the input instance. The input instance of a capsule
+        model is a sequence (<em>e.g.,</em> a sentence, or a
+        paragraph). In this work, the input instance representation
+        of a capsule is computed through RNN.<br /></li>
+      </ul>
+      <p>In the proposed RNN-Capsule model, each capsule is capable
+      of, not only predicting the probability of its assigned
+      sentiment, but also reconstructing the input instance
+      representation. Both qualities are considered in our training
+      objectives.</p>
+      <p>Specifically, for each sentiment category, we build a
+      capsule whose attribute is the same as the sentiment
+      category. Given an input instance, we get its instance
+      representation by using the hidden vectors of RNN. Taking the
+      hidden vectors as input, each capsule outputs: (i) the state
+      probability through its probability module, and (ii) the
+      reconstruction representation through its reconstruction
+      module. During training, one objective is to maximize the
+      state probability of the capsule corresponding to the
+      groundtruth sentiment, and to minimize the state
+      probabilities of other capsule(s). The other objective is to
+      minimize the distance between the input instance
+      representation and the reconstruction representation of the
+      capsule corresponding to the ground truth, and to maximize
+      such distances for other capsule(s). In testing, a capsule's
+      state becomes ‘active’ if its state probability is the
+      largest among all capsules for a given test instance. The
+      states of all other capsule(s) will be ‘inactive’. Attribute
+      of the active capsule is selected to be the predicted
+      sentiment category of the test instance.</p>
+      <p>Compared with most existing neural network models for
+      sentiment analysis, RNN-Capsule model does not heavily rely
+      on the quality of input instance representation. In
+      particular, the RNN layer in our model can be realized
+      through the widely used Long Short-Term Memory&nbsp;(LSTM)
+      model, Gated Recurrent Unit&nbsp;(GRU) model or their
+      variants. RNN-Capsule does not require any linguistic
+      knowledge. Instead, each capsule is capable of outputting
+      words with sentiment tendencies reflecting its assigned
+      sentiment category. Recall that the representation module of
+      a capsule uses attention mechanism to build the capsule
+      representation. We observe through experiments that the
+      attended words by each capsule well reflect the capsule's
+      sentiment category. These words reflect the domain
+      specificity of the dataset, although not included in
+      sentiment lexicon. For instance, our model is able to
+      identify ‘professional’, ‘quick’, and ‘caring’ as strong
+      positive words in patient feedback to hospitals. We also
+      observe that the attended words include not only high
+      frequency words, but also medium and low frequency words, and
+      even typos which are common in social media. These domain
+      dependent sentiment words could be extremely useful for
+      decision makers to identify the positive and negative aspects
+      of their services or products. The main contributions are as
+      follows:</p>
+      <ul class="list-no-style">
+        <li id="list4" label="•">To the best of our knowledge,
+        RNN-Capsule is the first attempt to use capsule model for
+        sentiment analysis. A capsule is easy to build with input
+        instance representations taken from RNN. Each capsule
+        contains an attribute, a state, and three simple modules
+        (representation, probability, and
+        reconstruction).<br /></li>
+        <li id="list5" label="•">We demonstrate that RNN-Capsule
+        does not require any linguistic knowledge to achieve
+        state-of-the-art performance. Further, capsule model is
+        able to attend opinion words that reflect domain knowledge
+        of the dataset.<br /></li>
+        <li id="list6" label="•">We conduct experiments on two
+        benchmark datasets and one proprietary dataset, to compare
+        our capsule model with strong baselines. Our experimental
+        results show that capsule model is competitive and
+        robust.<br /></li>
+      </ul>
+    </section>
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>Early methods for sentiment analysis are mostly based on
+      manually defined rules. With the recent development of deep
+      learning techniques, neural network based approaches become
+      the mainstream. On this basis, many researchers apply
+      linguistic knowledge for better performance in sentiment
+      analysis.</p>
+      <p><strong>Traditional Sentiment Analysis.</strong> Many
+      methods for sentiment analysis focus on feature engineering.
+      The carefully designed features are then fed to machine
+      learning methods in a supervised learning setting.
+      Performance of sentiment classification therefore heavily
+      depends on the choice of feature representation of text. The
+      system in&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0024">24</a>] implements a number of hand-crafted
+      features, and is the top performer in SemEval 2013 Twitter
+      Sentiment Classification Track. Other than supervised
+      learning, Turney&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0038">38</a>] introduces an unsupervised approach
+      by using sentiment words/phrases extracted from syntactic
+      patterns to determine document polarity. Goldberg and
+      Zhu&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0006">6</a>]
+      propose a semi-supervised approach where the unlabeled
+      reviews are utilized in a graph-based method.</p>
+      <p>In terms of features, different kinds of representations
+      have been used in sentiment analysis, including bag-of-words
+      representation, word co-occurrences, and syntactic
+      contexts&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0026">26</a>]. Despite its effectiveness, feature
+      engineering is labor intensive, and is unable to extract and
+      organize the discriminative information from
+      data&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>].</p>
+      <p><strong>Sentiment Analysis by Neural Networks.</strong>
+      Since the proposal of a simple and effective approach to
+      learn distributed representations of words and
+      phrases&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0023">23</a>], neural network based models have
+      shown their great success in many natural language processing
+      (NLP) tasks. Many models have been applied to sentiment
+      analysis, including Recursive Auto Encoder&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0004">4</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0029">29</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0033">33</a>], Recursive
+      Neural Tensor Network&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0034">34</a>], Recurrent Neural
+      Network&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0036">36</a>], LSTM&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0009">9</a>],
+      Tree-LSTMs&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0035">35</a>], and GRU[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0003">3</a>].</p>
+      <p>Recursive autoencoder neural network builds the
+      representation of a sentence from subphrases
+      recursively&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0029">29</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0033">33</a>]. Such recursive models usually
+      depend on a tree structure of input text. In order to obtain
+      competitive results, all subphrases need to be annotated. By
+      utilizing syntax structures of sentences, tree-based LSTMs
+      have proved effective for many NLP tasks, including sentiment
+      analysis&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0035">35</a>]. However, such models may suffer
+      from syntax parsing errors which are common in
+      resource-lacking languages. Sequence models like CNN, do not
+      require tree-structured data, which are widely adopted for
+      sentiment classification&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>]. LSTM is also common for learning
+      sentence-level representation due to its capability of
+      modeling the prefix or suffix context as well as
+      tree-structured data&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0035">35</a>]. Despite the effectiveness of those
+      methods, it is still challenging to discriminate different
+      sentiment polarities at a fine-grained level.</p>
+      <p>In&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0008">8</a>],
+      the proposed neural model improves coherence by exploiting
+      the distribution of word co-occurrences through the use of
+      neural word embeddings. The list of top representative words
+      for each inferred aspect reflects the aspect, leading to more
+      meaningful results. The approach in&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0019">19</a>] combines two modular
+      components, generator and encoder, to extract pieces of input
+      text as justifications. The extracted short and coherent
+      pieces of text alone is sufficient for the prediction, and
+      can be used to explain the prediction.</p>
+      <p><strong>Linguistic Knowledge.</strong> Linguistic
+      knowledge has been carefully incorporated into models to
+      realize the best potential in terms of prediction accuracy.
+      Classical linguistic knowledge or sentiment resources include
+      sentiment lexicons, negators, and intensifiers.</p>
+      <p>Sentiment lexicons are valuable for rule-based or
+      lexicon-based models&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0010">10</a>]. There are also studies for
+      automatic construction of sentiment lexicons from social
+      data&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0039">39</a>]
+      or from multiple languages&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>]. Recently, a context-sensitive
+      lexicon-based method was proposed based on a simple
+      weighted-sum model&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0037">37</a>]. It uses an RNN to learn the
+      sentiments strength, intensification, and negation of lexicon
+      sentiments in composing the sentiment value of sentences.
+      Aspect information, negation words, sentiment intensities of
+      phrases, parsing tree and combination of them were applied
+      into models to improve their performance. Attention-based
+      LSTMs for aspect-level sentiment classification were proposed
+      in&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0040">40</a>].
+      The key idea is to add aspect information to the attention
+      mechanism. A linear regression model was proposed to predict
+      the valence value for content words in&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0041">41</a>]. The valence degree of
+      the text can be changed because of the effect of intensity
+      words. In&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0028">28</a>], sentiment lexicons, negation words,
+      and intensity words are all considered into one model for
+      sentence-level sentiment analysis.</p>
+      <p>However, linguistic knowledge requires significant human
+      effort to develop. The developed sentiment lexicon may not be
+      applicable to some domain specific dataset. All of those
+      limit the application of models based on linguistic
+      knowledge.</p>
+    </section>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> RNN-Capsule
+          Model</h2>
+        </div>
+      </header>
+      <p>The architecture of the proposed RNN-based capsule model
+      is shown in Figure&nbsp;<a class="fig" href="#fig1">1</a>.
+      The number of capsules <em>N</em> is the same as the number
+      of sentiment categories to be modeled, each corresponding to
+      one sentiment category. For example, five capsules are used
+      to model five fine-grained sentiment categories: ‘very
+      positive’, ‘positive’, ‘neutral’, ‘negative’, and ‘very
+      negative’. Each sentiment category is also known as the
+      capsule's attribute.</p>
+      <p>All capsules take the same instance representation as
+      their input, which is computed by an RNN network, as shown in
+      the figure. The RNN can be materialized by Long Short-Term
+      Memory&nbsp;(LSTM) model, Gated Recurrent Unit&nbsp;(GRU) or
+      their variants, <em>e.g.,</em> bi-directional and two-layer
+      LSTM. Given an instance (<em>e.g.,</em> a sentence, or a
+      paragraph), represented in dense vector, RNN encodes the
+      instance and outputs the hidden vectors. The instance is then
+      represented by the hidden vectors. That is, the input to all
+      capsules are the hidden vectors of RNN encoding.</p>
+      <p>In the top row of Figure&nbsp;<a class="fig" href=
+      "#fig1">1</a>, each capsule outputs a state probability and a
+      reconstruction representation, through its probability module
+      and its reconstruction module, respectively. Among all
+      capsules, the one with the highest state probability will
+      become ‘active’ and the rest will be ‘inactive’. During
+      training, one objective is to maximize the state probability
+      of the capsule corresponding to the ground truth sentiment,
+      and to minimize the state probability of the rest capsule(s).
+      The other objective is to minimize the distance between the
+      reconstruction representation of the capsule selected by
+      ground truth and the instance representation, and to maximize
+      such distances for other capsule(s). In the testing process,
+      a capsule's state will be ‘active’ if its state probability
+      is the largest among all capsules. All other capsule(s) will
+      then be ‘inactive’ because only one capsule can be in active
+      state. The active capsule's attribute is selected as the test
+      instance's sentiment category.</p>
+      <p>Because the capsule model is based on RNN, next we give
+      preliminaries of RNN before detailing the capsule structure
+      and the training objective.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186015/images/www2018-24-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Architecture of RNN-Capsule. The number of
+          capsules equals the number of sentiment categories.
+          <span class="inline-equation"><span class="tex">$H=[h_1,
+          h_2, \dots , h_{N_s}]$</span></span> is the hidden
+          vectors of an input instance encoded by RNN, where
+          <em>N<sub>s</sub></em> is the number of words. The
+          instance representation <span class=
+          "inline-equation"><span class=
+          "tex">$v_s=\frac{1}{N_s}\sum
+          _{i=1}^{N_s}h_i$</span></span> is the average of the
+          hidden vectors. All capsules take the hidden vectors as
+          input, and each capsule outputs a state probability
+          <em>p<sub>i</sub></em> and a reconstruction
+          representation <em>r</em> <sub><em>s</em>,
+          <em>i</em></sub> .</span>
+        </div>
+      </figure>
+      <p></p>
+      <section id="sec-5">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Recurrent
+            Neural Network</h3>
+          </div>
+        </header>
+        <p>A Recurrent Neural Network&nbsp;(RNN) is a class of
+        artificial neural network where connections between units
+        form a directed cycle. This allows the network to exhibit
+        dynamic temporal behavior. Unlike feedforward neural
+        networks, RNNs can use their internal memory to process
+        arbitrary sequences of inputs. However, it is known that
+        standard RNNs have the problem of gradient vanishing or
+        exploding. To overcome these issues, Long Short-term Memory
+        network&nbsp;(LSTM) was developed and has shown superior
+        performance in many tasks&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0009">9</a>].</p>
+        <p>Briefly speaking, in LSTM, the hidden states
+        <em>h<sub>t</sub></em> and memory cell
+        <em>c<sub>t</sub></em> are function of the previous
+        <em>h</em> <sub><em>t</em> − 1</sub> and <em>c</em>
+        <sub><em>t</em> − 1</sub>, and input vector
+        <em>x<sub>t</sub></em> , or formally:</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} c_t, h_t =
+            \operatorname{LSTM}(c_{t-1}, h_{t-1}, x_t)
+            \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>The hidden state <em>h<sub>t</sub></em> denotes the
+        representation of position <em>t</em> while encoding the
+        preceding contexts of the position. For more details about
+        LSTM, we refer readers to&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0009">9</a>].
+        <p></p>
+        <p>A variation of LSTM is the Gated Recurrent
+        Unit&nbsp;(GRU), introduced in&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0003">3</a>]. It combines the forget
+        gate and input gate into a single <em>update gate</em>. It
+        also merges the cell state and hidden state, among other
+        changes. The resulting model is simpler than standard LSTM
+        models, and has become a popular model in many tasks.
+        Similarly, the hidden state <em>h<sub>t</sub></em> in GRU
+        denotes the representation of position <em>t</em> while
+        encoding the preceding contexts of the position
+        (see&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href="#BibPLXBIB0003">3</a>]
+        for more details) .</p>
+        <div class="table-responsive" id="Xeq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} h_t =
+            \operatorname{GRU}(h_{t-1}, x_t)
+            \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>RNN can be bi-directional, by using a finite sequence to
+        predict or label each element of the sequence based on the
+        element's past and future contexts. This is achieved by
+        concatenating the outputs of two RNNs, one processes the
+        sequence from left to right, and the other from right to
+        left.</p>
+        <p><strong>Instance Representation.</strong> As shown in
+        Figure&nbsp;<a class="fig" href="#fig1">1</a>, the instance
+        representation to all capsules is encoded by RNN. Formally,
+        the instance representation <em>v<sub>s</sub></em> , is the
+        average of the hidden vectors obtained from RNN.</p>
+        <div class="table-responsive" id="Xeq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} v_s =
+            \frac{1}{N_s}\sum _{i=1}^{N_s} h_i,
+            \end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>where <em>N<sub>s</sub></em> is the length of
+        instance, <em>e.g.,</em> number of words in a given
+        sentence. Here, each word is represented by a dense vector
+        obtained through word2vec or similar techniques.
+        <p></p>
+      </section>
+      <section id="sec-6">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Capsule
+            Structure</h3>
+          </div>
+        </header>
+        <p>The structure of a single capsule is shown in
+        Figure&nbsp;<a class="fig" href="#fig2">2</a>. A capsule
+        contains three modules: <em>representation module</em>,
+        <em>probability module</em> and <em>reconstruction
+        module</em>. Representation module uses attention mechanism
+        to build the capsule representation <em>v</em>
+        <sub><em>c</em>, <em>i</em></sub> . Probability module uses
+        sigmoid function to predict the capsule's active state
+        probability <em>p<sub>i</sub></em> . Reconstruction module
+        computes the reconstruction representation of an instance
+        by multiplying <em>p<sub>i</sub></em> and <em>v</em>
+        <sub><em>c</em>, <em>i</em></sub> .</p>
+        <p><strong>Representation Module.</strong> Given the hidden
+        vectors encoded by RNN, we use the attention mechanism to
+        construct capsule representation inside a capsule. The
+        attention mechanism enables the representation module to
+        decide the importance of words based on the prediction
+        task. For example, word ‘clean’ is likely to be informative
+        and important in patient feedback to hospital. However,
+        this word is less important if it appears in movie
+        review.</p>
+        <p>We use an attention mechanism inspired
+        by&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href="#BibPLXBIB0001">1</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0005">5</a>, <a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0040">40</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0044">44</a>] with a
+        single parameter in capsule:</p>
+        <div class="table-responsive" id="eq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{align} &amp; e_{t, i} =
+            h_t w_{a, i} \end{align}</span><br />
+            <span class="equation-number">(4)</span>
+          </div>
+        </div>
+        <div class="table-responsive" id="eq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{align} &amp; \alpha _{t,
+            i} = \frac{exp(e_{t,i})}{\sum _{j=1}^{N_s}exp(e_{j,
+            i})} \end{align}</span><br />
+            <span class="equation-number">(5)</span>
+          </div>
+        </div>
+        <div class="table-responsive" id="eq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{align} &amp; v_{c, i} =
+            \sum _{j=1}^{N_s}a_{t, i} h_t \end{align}</span><br />
+            <span class="equation-number">(6)</span>
+          </div>
+        </div>In the above formulation, <em>h<sub>t</sub></em> is
+        the representation of word at position <em>t</em>
+        (<em>i.e.,</em> the hidden vector from RNN) and <em>w</em>
+        <sub><em>a</em>, <em>i</em></sub> is the parameter of
+        capsule <em>i</em> for the attention layer. The attention
+        importance score for each position, <em>α</em>
+        <sub><em>t</em>, <em>i</em></sub> , is obtained by
+        multiplying the representations with the weight matrix, and
+        then normalizing to a probability distribution over the
+        words. <span class="inline-equation"><span class=
+        "tex">$\alpha _i = [\alpha _{1, i}, \alpha _{2, i}, \dots ,
+        \alpha _{N_s, i}]$</span></span> . Lastly, the capsule
+        representation vector, <em>v</em> <sub><em>c</em>,
+        <em>i</em></sub> , is a weighted summation over all the
+        positions using the attention importance scores as weights.
+        <p></p>
+        <p>Note that, this capsule representation vector obtained
+        from the attention layer is a high-level encoding of the
+        entire input text. This capsule representation vector will
+        be used to reconstruct the presentation of the input
+        instance. We observe that adding the attention mechanism
+        improves the model's capability and robustness.</p>
+        <p><strong>Probability Module.</strong> After getting the
+        capsule representation vector <em>v</em> <sub><em>c</em>,
+        <em>i</em></sub> , we calculate the active state
+        probability <em>p<sub>i</sub></em> through</p>
+        <div class="table-responsive" id="Xeq4">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} p_i= \sigma
+            (W_{p, i} v_{c, i} + b_{p, i}),
+            \end{equation}</span><br />
+            <span class="equation-number">(7)</span>
+          </div>
+        </div>where <em>W</em> <sub><em>p</em>, <em>i</em></sub>
+        and <em>b</em> <sub><em>p</em>, <em>i</em></sub> are the
+        parameters for the active probability of the current
+        capsule <em>i</em>.
+        <p></p>
+        <p>The parameters are learned based on the aforementioned
+        objectives, <em>i.e.,</em> maximizing the state probability
+        of capsule selected by ground truth sentiment, and
+        minimizing the state probability of other capsule(s). In
+        testing, a capsule's state will be active if
+        <em>p<sub>i</sub></em> is the largest among all
+        capsules.</p>
+        <p><strong>Reconstruction Module.</strong> The
+        reconstruction representation of an input instance is
+        obtained by multiplying <em>v</em> <sub><em>c</em>,
+        <em>i</em></sub> and probability <em>p<sub>i</sub></em></p>
+        <div class="table-responsive" id="Xeq5">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} r_{s, i} =
+            p_iv_{c, i}, \end{equation}</span><br />
+            <span class="equation-number">(8)</span>
+          </div>
+        </div>where <em>p<sub>i</sub></em> is the active state
+        probability of the current capsule and <em>v</em>
+        <sub><em>c</em>, <em>i</em></sub> is the capsule vector
+        representation.
+        <p></p>
+        <p>The three modules complement each other. The capsule
+        representation matches its attribute, and the state of one
+        capsule is corresponding to the input instance. Therefore,
+        the probability module, which is based on the capsule
+        representation, will be the largest if the capsule's
+        sentiment fit the input instance. Reconstruction module is
+        developed from the capsule representation and its state
+        probability, so the reconstruction representation is able
+        to stand for the input instance representation if its state
+        is ‘active’.</p>
+        <figure id="fig2">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186015/images/www2018-24-fig2.jpg"
+          class="img-responsive" alt="Figure 2" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 2:</span>
+            <span class="figure-title">The architecture of a single
+            capsule. The input to a capsule is the hidden vectors
+            <span class="inline-equation"><span class=
+            "tex">$H=[h_1, h_2,\dots ,h_{N_s}]$</span></span> from
+            RNN.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span> Training
+            Objective</h3>
+          </div>
+        </header>
+        <p>The training objective of the proposed capsule model
+        considers two aspects. One is to minimize the
+        reconstruction error and maximize the active state
+        probability of the capsule matching ground truth sentiment.
+        The other is to maximize the reconstruction error and
+        minimize the active state probability of other capsule(s).
+        To achieve the objective, we adopt the contrastive
+        max-margin objective function that has been used in many
+        studies&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0008">8</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0011">11</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0032">32</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0042">42</a>].</p>
+        <p><strong>Probability Objective.</strong> Because only one
+        capsule is active for each given training instance, we have
+        both positive sample (<em>i.e.,</em> the active capsule)
+        and negative samples (<em>i.e.,</em> the remaining inactive
+        capsules). Recall that our objective is to maximize the
+        active state probability of the active capsule and to
+        minimize the probabilities of inactive capsules. The
+        unregularized objective <em>J</em> can be formulated as a
+        hinge loss:</p>
+        <div class="table-responsive" id="Xeq6">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} J(\theta) =
+            \sum \max (0, 1+\sum _{i=1}^N y_{i}p_i)
+            \end{equation}</span><br />
+            <span class="equation-number">(9)</span>
+          </div>
+        </div>For a given training instance, <em>y<sub>i</sub></em>
+        = −1 for the active capsule (<em>i.e.,</em> the one that
+        matches the training instance's ground truth sentiment).
+        All remaining <em>y</em>’s are set to 1. We use a mask
+        vector to indicate which capsule is active for each
+        training instance.
+        <p></p>
+        <p><strong>Reconstruction Objective.</strong> The other
+        objective is to ensure that the reconstruction
+        representation <em>r</em> <sub><em>s</em>, <em>i</em></sub>
+        of the active capsule is similar to the instance
+        representation <em>v<sub>s</sub></em> , meanwhile
+        <em>v<sub>s</sub></em> is different from the reconstruction
+        representations of inactive capsules. Similarly, the
+        unregularized objective <em>U</em> can be formulated as
+        another hinge loss that maximizes the inner product between
+        <em>r</em> <sub><em>s</em>, <em>i</em></sub> and
+        <em>v<sub>s</sub></em> and simultaneously minimizes the
+        inner product between <em>r</em> <sub><em>s</em>,
+        <em>i</em></sub> from the inactive capsules and
+        <em>v<sub>s</sub></em> :</p>
+        <div class="table-responsive" id="Xeq7">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} U(\theta) =
+            \sum \max (0,1+\sum _{i=1}^N y_{i}v_sr_{s,i})
+            \end{equation}</span><br />
+            <span class="equation-number">(10)</span>
+          </div>
+        </div>Again, <em>y<sub>i</sub></em> = −1 if the capsule is
+        active and <em>y<sub>i</sub></em> = 1 if the capsule is
+        inactive.
+        <p></p>
+        <p>Considering both objectives, our final objective
+        function <em>L</em> is obtained by adding <em>J</em> and
+        <em>U</em>:</p>
+        <div class="table-responsive" id="Xeq8">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} L(\theta) =
+            J(\theta) + U(\theta) \end{equation}</span><br />
+            <span class="equation-number">(11)</span>
+          </div>
+        </div>
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-8">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Experiment</h2>
+        </div>
+      </header>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span>
+            Dataset</h3>
+          </div>
+        </header>
+        <p>We conduct experiments on two benchmark datasets, namely
+        Movie Review (MR)&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0025">25</a>] and Stanford Sentiment Treebank
+        (SST)&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0031">31</a>], and one proprietary dataset. Both
+        MR and SST have been widely used in sentiment
+        classification evaluation which enables us to benchmark our
+        result against the published results.</p>
+        <p><strong>Movie Review.</strong> Movie Review
+        (MR)<a class="fn" href="#fn4" id=
+        "foot-fn4"><sup>2</sup></a> is a collection of movie
+        reviews in English&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0025">25</a>], collected from <a class=
+        "link-inline force-break" href=
+        "http://www.rottentomatoes.com">www.rottentomatoes.com</a>.
+        Each instance, typically a sentence, is annotated with its
+        source review's sentiment categories, either ‘positive’ or
+        ‘negative’. There are 5331 positive and 5331 negative
+        processed sentences.</p>
+        <p><strong>Stanford Sentiment Treebank.</strong>
+        SST<a class="fn" href="#fn5" id="foot-fn5"><sup>3</sup></a>
+        is the first corpus with fully labeled parse trees, which
+        allows for a comprehensive analysis of the compositional
+        effects of sentiment in language&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0031">31</a>]. This corpus is based
+        on the dataset introduced by Pang and Lee&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0025">25</a>]. It
+        includes fine-grained sentiment labels for 215,154 phrases
+        parsed by the Stanford parser&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0016">16</a>] in the parse trees of
+        11,855 sentences. The sentiment label set is {0,1,2,3,4},
+        where the numbers correspond to ‘very negative’,
+        ‘negative’, ‘neutral’, ‘positive’, and ‘very positive’,
+        respectively. Note that, because SST provides phrase-level
+        annotations on the parse trees, some of the reported
+        results are obtained based on the phrase-level annotations.
+        In our experiments, we only utilize the sentence-level
+        annotations because our capsule model does not need the
+        expensive phrase-level annotation.</p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Number of instances in hospital feedback
+            dataset.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Question</th>
+                <th style="text-align:center;">Sentiment</th>
+                <th style="text-align:center;">Number of
+                answers</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">What I liked?</td>
+                <td style="text-align:center;">Positive</td>
+                <td style="text-align:center;">25,042</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">What could be
+                improved?</td>
+                <td style="text-align:center;">Negative</td>
+                <td style="text-align:center;">21,240</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>Hospital Feedback.</strong>We use a proprietary
+        patient opinion dataset that was generated by a non-profit
+        feedback platform for health services in the UK.</p>
+        <p>We use the text content from the feedback forms filled
+        by patients. Specifically, we make sentiment analysis on
+        the answers of two questions: <em>“What I liked?”</em>, and
+        <em>“What could be improved?”</em>. There is another
+        question in the feedback form: <em>Anything else?</em>
+        whose answers are not used in our experiments because the
+        sentiment is uncertain. The number of answers (or
+        instances) to the two questions are reported in
+        Table&nbsp;<a class="tbl" href="#tab1">1</a>.</p>
+        <p>Given the large number of instances, manually annotating
+        all sentences in hospital feedback is time consuming. In
+        this study, we simply consider an answer to the question
+        <em>“What I liked?”</em> processes ‘positive’ sentiment,
+        and an answer to the question <em>“What could be
+        improved?”</em> processes ‘negative’ sentiment. The average
+        length of the answers is about 120 words, and we consider
+        each answer as one instance without further splitting an
+        answer into sentences.</p>
+        <p>We note that the simple labeling scheme (<em>i.e.,</em>
+        assigning answers to <em>“What I liked?”</em> positive and
+        answers to <em>“What could be improved?”</em> negative)
+        introduces some noise in the dataset. A patient may write
+        “perfect, nothing to improve” to answer “What could be
+        improved”, and will be labeled as ‘negative’. Such noise
+        cannot be avoided without manual annotation. However, their
+        number is negligible by observation.</p>
+      </section>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span>
+            Implementation Details</h3>
+          </div>
+        </header>
+        <p>In our experiments, all word vectors are initialized by
+        Glove<a class="fn" href="#fn6" id=
+        "foot-fn6"><sup>4</sup></a>. The word embedding vectors are
+        pre-trained on an unlabeled corpus whose size is about 840
+        billion and the dimension of word vectors we used is
+        300&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0027">27</a>]. The dimension of hidden vectors
+        encoded by RNN is 256 if the RNN is single-directional, and
+        512 if the RNN is bi-directional. More specifically, on MR
+        and SST datasets, we use bi-directional and two-layer LSTM,
+        and on Hospital Feedback dataset, we use two-layer GRU. The
+        models are trained with a batch size of 32 examples on SST,
+        64 examples on MR and Hospital Feedback datasets. There is
+        a checkpoint every 32 mini-batch on SST, and 64 on MR and
+        Hospital Feedback dataset. The embedding dropout is 0.3 on
+        MR and Hospital Feedback dataset, and 0.5 on SST. The same
+        RNN cell dropout of 0.5 is applied on all the three
+        datasets. The dropout on capsule representation in
+        probability modules of capsules is also set to 0.5 on all
+        datasets. The length of attention weights is the same as
+        the length of sentence.</p>
+        <p>We use Adam&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0015">15</a>] as our optimization method. The
+        learning rate for model parameters except word vectors are
+        1<em>e</em> − 3, and 1<em>e</em> − 4 for word vectors. The
+        two parameters <em>β</em> <sub>1</sub> and <em>β</em>
+        <sub>2</sub> in Adam are 0.9 and 0.999, respectively. The
+        capsule models are implemented on Pytorch<a class="fn"
+        href="#fn7" id="foot-fn7"><sup>5</sup></a>&nbsp;(version
+        0.2.0_3) and the model parameters are randomly
+        initialized.</p>
+      </section>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span> Evaluation
+            on Benchmark Datasets</h3>
+          </div>
+        </header>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">The accuracy of methods on Movie Review
+            (MR) and Stanford Sentiment Treebank (SST) datasets.
+            Note that the models only use sentence-level annotation
+            and not the phrase-level annotation in SST. The
+            accuracy marked with * are reported in&nbsp;[<a class=
+            "bib" data-trigger="hover" data-toggle="popover"
+            data-placement="top" href="#BibPLXBIB0012">12</a>,
+            <a class="bib" data-trigger="hover" data-toggle=
+            "popover" data-placement="top" href=
+            "#BibPLXBIB0014">14</a>, <a class="bib" data-trigger=
+            "hover" data-toggle="popover" data-placement="top"
+            href="#BibPLXBIB0018">18</a>, <a class="bib"
+            data-trigger="hover" data-toggle="popover"
+            data-placement="top" href="#BibPLXBIB0033">33</a>]; and
+            the accuracy marked with # are reported
+            in&nbsp;[<a class="bib" data-trigger="hover"
+            data-toggle="popover" data-placement="top" href=
+            "#BibPLXBIB0028">28</a>].</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Model</th>
+                <th style="text-align:center;">Movie Review
+                (MR)</th>
+                <th style="text-align:center;">
+                SST&nbsp;(Sentence-level)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">RAE</td>
+                <td style="text-align:center;">77.7*</td>
+                <td style="text-align:center;">43.2*</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">RNTN</td>
+                <td style="text-align:center;">75.9#</td>
+                <td style="text-align:center;">43.4#</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">LSTM</td>
+                <td style="text-align:center;">77.4#</td>
+                <td style="text-align:center;">45.6#</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Bi-LSTM</td>
+                <td style="text-align:center;">79.3#</td>
+                <td style="text-align:center;">46.5#</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">LR-LSTM</td>
+                <td style="text-align:center;">81.5#</td>
+                <td style="text-align:center;">48.2#</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">LR-Bi-LSTM</td>
+                <td style="text-align:center;">82.1#</td>
+                <td style="text-align:center;">48.6#</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Tree-LSTM</td>
+                <td style="text-align:center;">80.7#</td>
+                <td style="text-align:center;">48.1#</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">CNN</td>
+                <td style="text-align:center;">81.5*</td>
+                <td style="text-align:center;">46.9#</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">CNN-Tensor</td>
+                <td style="text-align:center;">-</td>
+                <td style="text-align:center;">
+                <strong>50.6</strong>*</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">DAN</td>
+                <td style="text-align:center;">-</td>
+                <td style="text-align:center;">47.7*</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">NCSL</td>
+                <td style="text-align:center;">82.9#</td>
+                <td style="text-align:center;">47.1#</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">RNN-Capsule</td>
+                <td style="text-align:center;">
+                <strong>83.8</strong></td>
+                <td style="text-align:center;">49.3</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Both MR and SST datasets have been widely used in
+        evaluating sentiment classification. This gives us the
+        convenience of directly comparing the result of our
+        proposed capsule model against the reported results using
+        the same experimental setting. Table&nbsp;<a class="tbl"
+        href="#tab2">2</a> lists the accuracy of sentiment
+        classification of baseline methods on the two datasets
+        reported in a recent ACL 2017 paper&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0028">28</a>]. Our capsule model,
+        named RNN-Capsule, is listed in the last row.</p>
+        <p><strong>Baseline Methods.</strong> We now briefly
+        introduce the baseline methods, all based on neural
+        networks. Recursive Auto Encoder&nbsp;(RAE, also known as
+        RecursiveNN)&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0033">33</a>] and Recursive Tensor Neural
+        Network&nbsp;(RNTN)&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0031">31</a>] are based on parsing trees. RNTN
+        uses tensors to model correlations between different
+        dimensions of child nodes’ vectors. Bidirectional LSTM
+        (Bi-LSTM) is a variant of LSTM which is introduced in
+        Section&nbsp;<a class="sec" href="#sec-5">3.1</a>. Both
+        LSTM and Bi-LSTM are based on sequence structure of the
+        sentences. LR-LSTM and LR-Bi-LSTM are linguistically
+        regularized variants of LSTM and Bi-LSTM, respectively.
+        Tree-Structured LSTM&nbsp;(Tree-LSTM)&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0035">35</a>] is a generalization of
+        LSTMs to tree-structured network topologies. Convolutional
+        Neural Network&nbsp;(CNN)&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0014">14</a>] uses convolution and
+        pooling operations, which is popular in image captioning.
+        CNN-Tensor&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0018">18</a>] is different from CNN where the
+        convolution operation is replaced by tensor product.
+        Dynamic programming is applied in CNN-Tensor to enumerate
+        all skippable trigrams in a sentence. Deep Average
+        Network&nbsp;(DAN)&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0012">12</a>] has three layers: one layer to
+        average all word vectors in a sentence, an MLP layer, and
+        the last layer is the output layer. Neural
+        Context-Sensitive Lexicon&nbsp;(NCSL)&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0037">37</a>] uses a Recurrent Neural
+        Network to learn the sentiments values, based on a simple
+        weighted-sum model, but requires linguistic knowledge.</p>
+        <p><strong>Observations.</strong> On the Movie Review
+        dataset, our proposed RNN-Capsule model achieves the best
+        accuracy of 83.8. Among the baseline methods, LR-Bi-LSTM
+        and NCSL outperform the other baselines. However, both
+        LR-Bi-LSTM and NCSL requires linguistic knowledge like
+        sentiment lexicon and intensity regularizer. It is worth
+        noting that lots of human efforts are required to build
+        such linguistic knowledge. Our capsule model does not use
+        any linguistic knowledge. On the SST dataset, our model is
+        the second best performer after CNN-Tensor. However,
+        CNN-Tensor is much more computationally intensive due to
+        the tensor product operation. Our model only requires
+        simple linear operations on top of the hidden vectors
+        obtained through RNN. Our model also outperforms other
+        strong baselines like LR-Bi-LSTM which requires dedicated
+        linguistic knowledge.</p>
+      </section>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.4</span> Evaluation
+            on Hospital Feedback</h3>
+          </div>
+        </header>
+        <p><strong>Baseline Methods.</strong> We now evaluate
+        RNN-Capsule on the hospital feedback dataset. Although
+        neural network models have shown their effectiveness on
+        many other datasets, it is better to provide a complete
+        performance overview for a new dataset. To this end, we
+        evaluate three kinds of baseline methods listed in
+        Table&nbsp;<a class="tbl" href="#tab3">3</a>: (i) The
+        traditional machine learning models based on Naive Bayes
+        and Support Vector Machines (SVMs) using unigram and bigram
+        representations; (ii) SVMs with dense vector
+        representations obtained through Word2vec and Doc2vec; and
+        (iii) LSTM based baselines, due to the promising accuracy
+        obtained by LSTM based models among neural network models
+        reported earlier.</p>
+        <p>Specifically, for the model named Word2vec-SVM, word
+        vectors learned through CBOW are used to learn the SVM
+        classifiers on patient feedback. Each feedback is
+        represented by the averaged vector of its words. For
+        Doc2vec-SVM, Doc2vec is used to learn vectors for all
+        feedbacks where PV-DBOW, PV-DM, or their concatenation
+        (<em>i.e.,</em> PV-DBOW + PV-DM) are used&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0017">17</a>]. Because
+        attention mechanism is utilized in our RNN-Capsule model,
+        we also evaluated Attention-LSTM. This model is the same as
+        LSTM, except that an additional attention weight vector is
+        trained. The weight vector is applied to the LSTM outputs
+        at every position to produce weights for different time
+        stamps. The weighted average of LSTM outputs is used for
+        sentiment classification<a class="fn" href="#fn8" id=
+        "foot-fn8"><sup>6</sup></a>. Naive Bayes, Linear SVM,
+        word2vec/doc2vec, and LSTM/Attention-LSTM are implemented
+        by using NLTK, Scikit-learn, Gensim, and Keras,
+        respectively.</p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Accuracy on Hospital Feedback
+            Dataset.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Method</th>
+                <th>Accuracy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Navie Bayes</td>
+                <td style="text-align:center;">84.7</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Navie
+                Bayes&nbsp;(+Bigram)</td>
+                <td style="text-align:center;">81.9</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Linear SVM</td>
+                <td style="text-align:center;">87.6</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Linear
+                SVM&nbsp;(+Bigram)</td>
+                <td style="text-align:center;">88.9</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                Word2vec-SVM&nbsp;(CBOW)</td>
+                <td style="text-align:center;">85.5</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                Doc2vec-SVM&nbsp;(PV-DM)</td>
+                <td style="text-align:center;">77.7</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                Doc2vec-SVM&nbsp;(PV-DBOW)</td>
+                <td style="text-align:center;">81.8</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                Doc2vec-SVM&nbsp;(PV-DM+PV-DBOW)</td>
+                <td style="text-align:center;">83.2</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">LSTM</td>
+                <td style="text-align:center;">89.8</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Attention-LSTM</td>
+                <td style="text-align:center;">90.2</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">RNN-Capsule</td>
+                <td style="text-align:center;">
+                <strong>91.6</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>Observations.</strong> Among traditional machine
+        learning models based on Naive Bayes and Support Vector
+        Machines, Linear SVM learned by using both unigram and
+        bigram (<em>i.e.,</em> Linear SVM&nbsp;(+Bigram)) is a
+        clear winner with accuracy of 88.9. This accuracy is much
+        higher than all SVM models learn on dense representation
+        from either Word2vec or Doc2vec.</p>
+        <p>LSTM-based methods outperform Linear SVM with bigram.
+        When enhanced with the attention mechanism, attention-LSTM
+        slightly outperforms the vanilla LSTM by achieving accuracy
+        of 90.2. Our proposed model, RNN-Capsule, being the
+        top-performer, further improves the accuracy to 91.6.</p>
+      </section>
+    </section>
+    <section id="sec-13">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Explainability
+          Analysis</h2>
+        </div>
+      </header>
+      <p>In Section&nbsp;<a class="sec" href="#sec-8">4</a>, we
+      show that RNN-Capsule achieves comparable or better accuracy
+      than state-of-the-art models, without using any linguistic
+      knowledge. Now, we show that RNN-Capsule is capable of
+      outputting words with sentiment tendencies reflecting domain
+      knowledge. In other words, we try to explain for a given
+      dataset, based on which words, our RNN-Capsule model predicts
+      the sentiment categories. These domain dependent sentiment
+      words could be extremely useful for decision makers to
+      identify the positive and negative aspects of their services
+      or products.</p>
+      <p><strong>Attended Words by Capsule.</strong> Because of the
+      attention mechanism in our capsule model, each word is
+      assigned an attention weight. The attention weight of a word
+      is computed as follows:</p>
+      <div class="table-responsive" id="Xeq9">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} w_{c,i} =
+          p_i\alpha _{i}, \end{equation}</span><br />
+          <span class="equation-number">(12)</span>
+        </div>
+      </div>where <em>p<sub>i</sub></em> is the active state
+      probability of capsule <em>i</em>, and <em>α<sub>i</sub></em>
+      is the attention weight in the representation module of
+      capsule <em>i</em>.
+      <p></p>
+      <p>Because each capsule corresponds to one sentiment
+      category, we collect the attended words by individual
+      capsules. More specifically, for each capsule, we build a
+      dictionary, where the key is a word and the value is the sum
+      of attention weights for this word in the capsule, as the
+      word may appear in multiple test instances. The sum of
+      attention weights is updated for the word only if the capsule
+      is ‘active’ for the input instance. After evaluating all test
+      instances, we get the list of attended words for each capsule
+      with their attention weights.</p>
+      <p>A straightforward way of ranking the attended words is to
+      compute the <em>averaged attention weight</em> for each word
+      (recall a word may appear multiple times). We observe that
+      many top-ranked words are of low frequency. That is, the
+      words have very high attention weight (or strong sentiment
+      tendencies) but do not appear often. To get a ranking of
+      medium and high frequency words that are attended by each
+      capsule, we multiple averaged attention weight of a word and
+      <em>the logarithm of word frequency</em>. In the following,
+      we discuss both rankings: the attended words with medium/high
+      word frequency, and the attended words with low
+      frequency.</p>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span> Attended
+            Words with Medium/High Word Frequency</h3>
+          </div>
+        </header>
+        <p>Tables&nbsp;4a, 4b and 4c list the top 20 ranking words
+        attended by the different capsules on the three datasets.
+        The words are ranked by the product of averaged attention
+        weight and the logarithm of word frequency. Most of the
+        words have medium to high word frequency in the
+        corresponding dataset. All the words are self-explanatory
+        for the assigned sentiment category. To further verify the
+        sentiment tendencies of the words, we match the words with
+        a sentiment lexicon&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0043">43</a>]. In this sentiment lexicon, there
+        are six sentiment tendencies, {‘strong-positive’,
+        ‘weak-positive’, ‘weak-neutral’, ‘strong-neutral’,
+        ‘weak-negative’, ‘strong-negative’}. We indicate the
+        matching words in the tables using {++, +, 0<sup>−</sup>,
+        0<sup>+</sup>, –, – –} for the six sentiment tendencies.
+        The words that are not included in the sentiment lexicon
+        are marked with ‘N’. There are also words, which do not
+        match any words in sentiment lexicon but are possible to
+        match with morphological changes. We indicate these
+        underlined words like ‘fails’ and ‘lacks’. Note that the
+        punctuation marks are processed as tokens and it is not
+        surprising that many of them are attended by the neutral
+        capsule.</p>
+        <div class="table-responsive" id="tab4">
+          <div class="table-caption">
+            <span class="table-number">Table 4:</span> <span class=
+            "table-title">Medium/high frequency words attended by
+            different capsules on the three datasets. {++, +,
+            0<sup>-</sup>, 0<sup>+</sup>, -, - -} indicate
+            {'strong-positive', 'weak-positive', 'weak-neutral',
+            'strong-neutral', 'weak-negative', 'strong-negative'}
+            respectively, based on the sentiment lexicon [43]. 'N'
+            denotes that the word is not included in the sentiment
+            lexicon. A word is underlined if the word does not
+            match any word in sentiment lexicon but matches a
+            morphological variant of a word in sentiment
+            lexicon.</span>
+          </div><img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186015/images/www2018-24-img1.jpg"
+          class="img-responsive" alt="" longdesc="" />
+          <table class="table"></table>
+        </div>
+        <div class="table-responsive" id="tab5">
+          <div class="table-caption">
+            <span class="table-number">Table 5:</span> <span class=
+            "table-title">Low frequency words attended by different
+            capsules on the three datasets, following the same
+            notations as in Table ??.</span>
+          </div><img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186015/images/www2018-24-img2.jpg"
+          class="img-responsive" alt="" longdesc="" />
+          <table class="table"></table>
+        </div>
+        <p>Observe from the three tables, the attended words not
+        only well reflect the sentiment tendencies, but also
+        reflect the domain difference. We use the hospital feedback
+        as an example (see Table&nbsp;4c). Word ‘leave’ or
+        ‘leaving’ in most contexts are considered not having any
+        sentiment tendencies. The word is not included in the
+        sentiment lexicon as expected. However, it is ranked at the
+        second position in the positive capsule on hospital
+        feedback. A closer look at the dataset shows that many
+        patients express their happiness for being able to ‘leave’
+        hospital or being able to ‘leave’ earlier than expected.
+        The words like ‘quickly’, ‘attentative’, ‘professional’,
+        ‘cared’, and ‘caring’ clearly make sense for carrying
+        strong positive sentiments in the context of the dataset.
+        For the negative capsules, because the sentences are for
+        answering the question <em>‘What could be improved’</em>,
+        many of them contain various forms of ‘improve’. From
+        answers like ‘perfect, nothing to improve’, the words
+        ‘perfect’ and ‘nothing’ are attended. There are also
+        patients requesting to improve ‘everything’, particularly,
+        ‘parking’.</p>
+      </section>
+      <section id="sec-15">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> Attended
+            Words with Low Word Frequency</h3>
+          </div>
+        </header>
+        <p>Tables&nbsp;5a, 5b and 5c list the top 20 words by
+        average attention weights. Most of them are low frequency
+        words with no more than three appearances. Again, the words
+        are self-explainable for the corresponding sentiment
+        category. On movie review dataset, our negative capsule
+        identifies ‘dopey’, ‘execrable’, ‘self-satisfied’, and
+        ‘cloying’ as strong negative words which are very
+        meaningful for comments on movies. Interestingly, the
+        capsule model is not sensitive to typos, which are common
+        in social media. The word ‘noneconsideratedoctors’ is
+        attended to be negative with the correct spelling of ‘none
+        considerate doctors’.</p>
+        <p>From these tables, we demonstrate that our capsule model
+        is capable of outputting words with sentiment tendencies
+        reflecting domain knowledge, even if the words only appear
+        one or two times.</p>
+      </section>
+    </section>
+    <section id="sec-16">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>The key idea of RNN-Capsule model is to design a simple
+      capsule structure and use each capsule to focus on one
+      sentiment category. Each capsule outputs its active
+      probability and the reconstruction representation. The
+      objective of learning is to maximize the active probability
+      of the capsule matching the ground truth and to minimize its
+      reconstruction representation with the given instance
+      representation. At the same time, the other capsules’ active
+      probability needs to be minimized, and the distance between
+      their reconstruction representations with the instance
+      representation needs to be maximized. We show that this
+      simple capsule model achieves state-of-the-art sentiment
+      classification accuracy without any carefully designed
+      instance representations or linguistic knowledge. We also
+      show that the capsule is able to output the words best
+      reflecting the sentiment category. The words well reflect the
+      domain specificity of the dataset, and many words carry
+      sentiment tendencies within the context defined by the data.
+      Such words are not included in any sentiment lexicon, but
+      these words become extremely useful in real applications for
+      decision makers to further understand the quality of their
+      products and services.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="sec-17">
+      <header>
+        <div class="title-info">
+          <h2>ACKNOWLEDGMENTS</h2>
+        </div>
+      </header>
+      <p>This work was supported by the National Science Foundation
+      of China under grant No. 61272227/61332007, China Scholarship
+      Council, and Singapore Ministry of Education Research Fund
+      MOE2014-T2-2-066.</p>
+    </section>
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Dzmitry Bahdanau,
+        Kyunghyun Cho, and Yoshua Bengio. 2014. Neural Machine
+        Translation by Jointly Learning to Align and Translate.
+        <em><em>CoRR</em></em> abs/1409.0473(2014).</li>
+        <li id="BibPLXBIB0002" label="[2]">Yanqing Chen and Steven
+        Skiena. 2014. Building Sentiment Lexicons for All Major
+        Languages. In <em><em>Proc. ACL, Volume 2: Short
+        Papers.</em></em> 383–389.</li>
+        <li id="BibPLXBIB0003" label="[3]">Kyunghyun Cho, Bart van
+        Merrienboer, Çaglar Gülçehre, Dzmitry Bahdanau, Fethi
+        Bougares, Holger Schwenk, and Yoshua Bengio. 2014. Learning
+        Phrase Representations using RNN Encoder-Decoder for
+        Statistical Machine Translation. In <em><em>Proc.
+        EMNLP.</em></em> 1724–1734.</li>
+        <li id="BibPLXBIB0004" label="[4]">Li Dong, Furu Wei,
+        Chuanqi Tan, Duyu Tang, Ming Zhou, and Ke Xu. 2014.
+        Adaptive Recursive Neural Network for Target-dependent
+        Twitter Sentiment Classification. In <em><em>Proc. ACL,
+        Volume 2: Short Papers.</em></em> 49–54.</li>
+        <li id="BibPLXBIB0005" label="[5]">Bjarke Felbo, Alan
+        Mislove, Anders Søgaard, Iyad Rahwan, and Sune Lehmann.
+        2017. Using millions of emoji occurrences to learn
+        any-domain representations for detecting sentiment, emotion
+        and sarcasm. In <em><em>Proc. EMNLP.</em></em>
+        1615–1625.</li>
+        <li id="BibPLXBIB0006" label="[6]">Andrew&nbsp;B Goldberg
+        and Xiaojin Zhu. 2006. Seeing stars when there aren't many
+        stars: graph-based semi-supervised learning for sentiment
+        categorization. In <em><em>Proc. Workshop on Graph Based
+        Methods for Natural Language Processing.</em></em>
+        Association for Computational Linguistics, 45–52.</li>
+        <li id="BibPLXBIB0007" label="[7]">Ian&nbsp;J. Goodfellow,
+        Yoshua Bengio, and Aaron&nbsp;C. Courville. 2016.
+        <em><em>Deep Learning.</em></em> MIT Press.</li>
+        <li id="BibPLXBIB0008" label="[8]">Ruidan He, Wee&nbsp;Sun
+        Lee, Hwee&nbsp;Tou Ng, and Daniel Dahlmeier. 2017. An
+        Unsupervised Neural Attention Model for Aspect Extraction.
+        In <em><em>Proc. ACL, Volume 1: Long Papers.</em></em>
+        388–397.</li>
+        <li id="BibPLXBIB0009" label="[9]">Sepp Hochreiter and
+        Jürgen Schmidhuber. 1997. Long Short-Term Memory.
+        <em><em>Neural Computation</em></em> 9, 8 (1997),
+        1735–1780.</li>
+        <li id="BibPLXBIB0010" label="[10]">Minqing Hu and Bing
+        Liu. 2004. Mining Opinion Features in Customer Reviews. In
+        <em><em>Proc. National Conference on Artificial
+        Intelligence, Conference on Innovative Applications of
+        Artificial Intelligence.</em></em> 755–760.</li>
+        <li id="BibPLXBIB0011" label="[11]">Mohit Iyyer, Anupam
+        Guha, Snigdha Chaturvedi, Jordan&nbsp;L. Boyd-Graber, and
+        Hal&nbsp;Daumé III. 2016. Feuding Families and Former
+        Friends: Unsupervised Learning for Dynamic Fictional
+        Relationships. In <em><em>Proc. NAACL HLT.</em></em>
+        1534–1544.</li>
+        <li id="BibPLXBIB0012" label="[12]">Mohit Iyyer, Varun
+        Manjunatha, Jordan&nbsp;L. Boyd-Graber, and Hal&nbsp;Daumé
+        III. 2015. Deep Unordered Composition Rivals Syntactic
+        Methods for Text Classification. In <em><em>Proc. ACL,
+        Volume 1: Long Papers.</em></em> 1681–1691.</li>
+        <li id="BibPLXBIB0013" label="[13]">Nal Kalchbrenner,
+        Edward Grefenstette, and Phil Blunsom. 2014. A
+        Convolutional Neural Network for Modelling Sentences. In
+        <em><em>Proc. ACL, Volume 1: Long Papers.</em></em>
+        655–665.</li>
+        <li id="BibPLXBIB0014" label="[14]">Yoon Kim. 2014.
+        Convolutional Neural Networks for Sentence Classification.
+        In <em><em>Proc. EMNLP.</em></em> 1746–1751.</li>
+        <li id="BibPLXBIB0015" label="[15]">Diederik&nbsp;P. Kingma
+        and Jimmy Ba. 2014. Adam: A Method for Stochastic
+        Optimization. <em><em>CoRR</em></em>
+        abs/1412.6980(2014).</li>
+        <li id="BibPLXBIB0016" label="[16]">Dan Klein and
+        Christopher&nbsp;D. Manning. 2003. Accurate Unlexicalized
+        Parsing. In <em><em>Proc. ACL.</em></em> 423–430.</li>
+        <li id="BibPLXBIB0017" label="[17]">Quoc Le and Tomas
+        Mikolov. 2014. Distributed Representations of Sentences and
+        Documents. In <em><em>Proc. ICML.</em></em>
+        II–1188–II–1196.</li>
+        <li id="BibPLXBIB0018" label="[18]">Tao Lei, Regina
+        Barzilay, and Tommi&nbsp;S. Jaakkola. 2015. Molding CNNs
+        for text: non-linear, non-consecutive convolutions. In
+        <em><em>Proc. EMNLP.</em></em> 1565–1575.</li>
+        <li id="BibPLXBIB0019" label="[19]">Tao Lei, Regina
+        Barzilay, and Tommi&nbsp;S. Jaakkola. 2016. Rationalizing
+        Neural Predictions. In <em><em>Proc. EMNLP.</em></em>
+        107–117.</li>
+        <li id="BibPLXBIB0020" label="[20]">Bing Liu. 2012.
+        <em><em>Sentiment Analysis and Opinion Mining.</em></em>
+        Morgan &amp; Claypool Publishers.</li>
+        <li id="BibPLXBIB0021" label="[21]">Tomáš Mikolov. 2012.
+        Statistical language models based on neural networks.
+        <em><em>Presentation at Google, Mountain View, 2nd
+        April</em></em> (2012).</li>
+        <li id="BibPLXBIB0022" label="[22]">Tomas Mikolov, Martin
+        Karafiát, Lukás Burget, Jan Cernocký, and Sanjeev
+        Khudanpur. 2010. Recurrent neural network based language
+        model. In <em><em>Proc. INTERSPEECH.</em></em>
+        1045–1048.</li>
+        <li id="BibPLXBIB0023" label="[23]">Tomas Mikolov, Ilya
+        Sutskever, Kai Chen, Gregory&nbsp;S. Corrado, and Jeffrey
+        Dean. 2013. Distributed Representations of Words and
+        Phrases and their Compositionality. In <em><em>Proc.
+        NIPS.</em></em> 3111–3119.</li>
+        <li id="BibPLXBIB0024" label="[24]">Saif Mohammad, Svetlana
+        Kiritchenko, and Xiaodan Zhu. 2013. NRC-Canada: Building
+        the State-of-the-Art in Sentiment Analysis of Tweets. In
+        <em><em>Proc. Workshop on Semantic Evaluation,
+        SemEval@NAACL-HLT.</em></em> 321–327.</li>
+        <li id="BibPLXBIB0025" label="[25]">Bo Pang and Lillian
+        Lee. 2005. Seeing Stars: Exploiting Class Relationships for
+        Sentiment Categorization with Respect to Rating Scales. In
+        <em><em>Proc. ACL.</em></em> 115–124.</li>
+        <li id="BibPLXBIB0026" label="[26]">Bo Pang and Lillian
+        Lee. 2007. Opinion Mining and Sentiment Analysis.
+        <em><em>Foundations and Trends in Information
+        Retrieval</em></em> 2, 1-2(2007), 1–135.</li>
+        <li id="BibPLXBIB0027" label="[27]">Jeffrey Pennington,
+        Richard Socher, and Christopher&nbsp;D. Manning. 2014.
+        Glove: Global Vectors for Word Representation. In
+        <em><em>Proc. EMNLP.</em></em> 1532–1543.</li>
+        <li id="BibPLXBIB0028" label="[28]">Qiao Qian, Minlie
+        Huang, JinHao Lei, and Xiaoyan Zhu. 2017. Linguistically
+        Regularized LSTMs for Sentiment Classification. In
+        <em><em>Proc. ACL</em></em> , Vol.&nbsp;1. 1679–1689.</li>
+        <li id="BibPLXBIB0029" label="[29]">Qiao Qian, Bo Tian,
+        Minlie Huang, Yang Liu, Xuan Zhu, and Xiaoyan Zhu. 2015.
+        Learning Tag Embeddings and Tag-specific Composition
+        Functions in Recursive Neural Network. In <em><em>Proc.
+        ACL, Volume 1: Long Papers.</em></em> 1365–1374.</li>
+        <li id="BibPLXBIB0030" label="[30]">Sara Sabour, Nicholas
+        Frosst, and Geoffrey&nbsp;E. Hinton. 2017. Dynamic Routing
+        Between Capsules. In <em><em>Proc. NIPS.</em></em>
+        3859–3869.</li>
+        <li id="BibPLXBIB0031" label="[31]">Richard Socher, John
+        Bauer, Christopher&nbsp;D. Manning, and Andrew&nbsp;Y. Ng.
+        2013. Parsing with Compositional Vector Grammars. In
+        <em><em>Proc. ACL, Volume 1: Long Papers.</em></em>
+        455–465.</li>
+        <li id="BibPLXBIB0032" label="[32]">Richard Socher, Andrej
+        Karpathy, Quoc&nbsp;V. Le, Christopher&nbsp;D. Manning, and
+        Andrew&nbsp;Y. Ng. 2014. Grounded Compositional Semantics
+        for Finding and Describing Images with Sentences.
+        <em><em>TACL</em></em> 2(2014), 207–218.</li>
+        <li id="BibPLXBIB0033" label="[33]">Richard Socher, Jeffrey
+        Pennington, Eric&nbsp;H. Huang, Andrew&nbsp;Y. Ng, and
+        Christopher&nbsp;D. Manning. 2011. Semi-Supervised
+        Recursive Autoencoders for Predicting Sentiment
+        Distributions. In <em><em>Proc. EMNLP.</em></em>
+        151–161.</li>
+        <li id="BibPLXBIB0034" label="[34]">Richard Socher, Alex
+        Perelygin, Jean&nbsp;Y Wu, Jason Chuang, Christopher&nbsp;D
+        Manning, Andrew&nbsp;Y Ng, and Christopher Potts. 2013.
+        Recursive deep models for semantic compositionality over a
+        sentiment treebank. In <em><em>Proc. EMNLP</em></em> ,
+        Vol.&nbsp;1631. Citeseer, 1642.</li>
+        <li id="BibPLXBIB0035" label="[35]">Kai&nbsp;Sheng Tai,
+        Richard Socher, and Christopher&nbsp;D. Manning. 2015.
+        Improved Semantic Representations From Tree-Structured Long
+        Short-Term Memory Networks. In <em><em>Proc. ACL, Volume 1:
+        Long Papers.</em></em> 1556–1566.</li>
+        <li id="BibPLXBIB0036" label="[36]">Duyu Tang, Bing Qin,
+        and Ting Liu. 2015. Document Modeling with Gated Recurrent
+        Neural Network for Sentiment Classification. In
+        <em><em>Proc. EMNLP.</em></em> 1422–1432.</li>
+        <li id="BibPLXBIB0037" label="[37]">Zhiyang Teng, Duy-Tin
+        Vo, and Yue Zhang. 2016. Context-Sensitive Lexicon Features
+        for Neural Sentiment Analysis. In <em><em>Proc.
+        EMNLP.</em></em> 1629–1638.</li>
+        <li id="BibPLXBIB0038" label="[38]">Peter&nbsp;D. Turney.
+        2002. Thumbs Up or Thumbs Down? Semantic Orientation
+        Applied to Unsupervised Classification of Reviews. In
+        <em><em>Proc. ACL.</em></em> 417–424.</li>
+        <li id="BibPLXBIB0039" label="[39]">Duy-Tin Vo and Yue
+        Zhang. 2016. Don't Count, Predict! An Automatic Approach to
+        Learning Sentiment Lexicons for Short Text. In
+        <em><em>Proc. ACL, Volume 2: Short Papers.</em></em>
+        219–224.</li>
+        <li id="BibPLXBIB0040" label="[40]">Yequan Wang, Minlie
+        Huang, Li Zhao, and Xiaoyan Zhu. 2016. Attention-based LSTM
+        for Aspect-level Sentiment Classification. In <em><em>Proc.
+        EMNLP.</em></em> 606–615.</li>
+        <li id="BibPLXBIB0041" label="[41]">Wen-Li Wei, Chung-Hsien
+        Wu, and Jen-Chun Lin. 2011. A Regression Approach to
+        Affective Rating of Chinese Words from ANEW. In
+        <em><em>Proc. Conference on Affective Computing and
+        Intelligent Interaction, Part II.</em></em> 121–131.</li>
+        <li id="BibPLXBIB0042" label="[42]">Jason Weston, Samy
+        Bengio, and Nicolas Usunier. 2011. WSABIE: Scaling Up to
+        Large Vocabulary Image Annotation. In <em><em>Proc.
+        IJCAI.</em></em> 2764–2770.</li>
+        <li id="BibPLXBIB0043" label="[43]">Theresa Wilson, Janyce
+        Wiebe, and Paul Hoffmann. 2005. Recognizing Contextual
+        Polarity in Phrase-Level Sentiment Analysis. In
+        <em><em>Proc. HLT EMNLP.</em></em> 347–354.</li>
+        <li id="BibPLXBIB0044" label="[44]">Zichao Yang, Diyi Yang,
+        Chris Dyer, Xiaodong He, Alexander&nbsp;J. Smola, and
+        Eduard&nbsp;H. Hovy. 2016. Hierarchical Attention Networks
+        for Document Classification. In <em><em>Proc. NAACL
+        HLT.</em></em> 1480–1489.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>*</sup></a>This work was
+    done when Yequan was a visiting Ph.D student at School of
+    Computer Science and Engineering, Nanyang Technological
+    University, Singapore.</p>
+    <p id="fn3"><a href="#foot-fn3"><sup>1</sup></a>This work was
+    done before the publication of&nbsp;[<a class="bib"
+    data-trigger="hover" data-toggle="popover" data-placement="top"
+    href="#BibPLXBIB0030">30</a>]. Capsule in this work is designed
+    differently from that in&nbsp;[<a class="bib" data-trigger=
+    "hover" data-toggle="popover" data-placement="top" href=
+    "#BibPLXBIB0030">30</a>].</p>
+    <p id="fn4"><a href="#foot-fn4"><sup>2</sup></a>Sentence
+    polarity dataset v1.0. <a class="link-inline force-break" href=
+    "http://www.cs.cornell.edu/people/pabo/movie-review-data/">http://www.cs.cornell.edu/people/pabo/movie-review-data/</a></p>
+    <p id="fn5"><a href="#foot-fn5"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "https://nlp.stanford.edu/sentiment/index.html">https://nlp.stanford.edu/sentiment/index.html</a></p>
+    <p id="fn6"><a href="#foot-fn6"><sup>4</sup></a><a class=
+    "link-inline force-break" href=
+    "http://nlp.stanford.edu/projects/glove/">http://nlp.stanford.edu/projects/glove/</a></p>
+    <p id="fn7"><a href="#foot-fn7"><sup>5</sup></a><a class=
+    "link-inline force-break" href=
+    "https://github.com/pytorch">https://github.com/pytorch</a></p>
+    <p id="fn8"><a href="#foot-fn8"><sup>6</sup></a>From each
+    instance, up to the first 300 words are used in LSTM models for
+    computational efficiency. More than 90% of the instances are
+    shorter than 300 words.</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License.<br />
+      ACM ISBN 978-1-4503-5639-8/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3178876.3186015">https://doi.org/10.1145/3178876.3186015</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

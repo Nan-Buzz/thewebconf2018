@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Monetization Strategies for the Web of Data</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Monetization Strategies for the
+          Web of Data</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <a href=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186568/0000-0003-0391-584X"
+          ref="author"><span class="givenName">Tobias</span>
+          <span class="surName">Grubenmann</span></a> «supervised
+          by Abraham Bernstein»University of Zurich, Department of
+          Informatics, Binzmühlestrasse 14 8050Zurich, Switzerland,
+          <a href=
+          "mailto:grubenmann@ifi.uzh.ch">grubenmann@ifi.uzh.ch</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186568"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186568</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Inspired by the World Wide Web, the Web of Data
+        is a network of interlinked data fragments. One of the main
+        advantages of the Web of Data is that all of its content is
+        processable by machines. However, this also has its
+        drawbacks when it comes to monetization of the content:
+        advertisements and donations—two important financial motors
+        in the World Wide Web—do not translate into the Web of Data
+        as they rely on exposing the user to advertisement/call for
+        donations.</small></p>
+        <p><small>The remedy this situation, we propose two
+        different monetization strategies for the Web of Data. The
+        first strategy involves a marketplace where users can buy
+        data in an integrated way. The second strategy allows third
+        parties to promote certain data. In return, the sponsors
+        pay money whenever a user follows a link contained in the
+        sponsored data. We identified two different kind of
+        data—commercial and sponsored data—which can benefit from
+        the two respective monetization strategies. With our work,
+        we propose solutions to the problem of financing the
+        creation and maintenance of content in the Web of
+        Data.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Tobias Grubenmann. 2018. Monetization Strategies for the
+          Web of Data. In <em>WWW '18 Companion: The 2018 Web
+          Conference Companion,</em> <em>April 23–27, 2018,</em>
+          <em>Lyon, France. ACM, New York, NY, USA</em> 6 Pages.
+          <a href="https://doi.org/10.1145/3184558.3186568" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3186568</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <p>Web of Data, Monetization, Marketplace, Integer Programming,
+    Auction</p>
+    <section id="sec-2">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span> Problem</h2>
+        </div>
+      </header>
+      <p>The <em>Web of Data</em> (WoD) is an extension of the
+      World Wide Web (WWW) to facilitate the exchange and
+      processing of data which is distributed over the Web. In the
+      WoD, data is exposed using a machine-processable,
+      semantically annotated data model, the <em>Resource
+      Description Framework (RDF) data model</em>. Using this data
+      model, <em>machines</em> can access data
+      <em>autonomously</em> on behalf of humans according to some
+      task specifications. Another advantage of the RDF data model
+      is that data sources can be queried in a federated fashion
+      without agreeing on a common scheme beforehand. Even though
+      the WoD is an extension of the WWW, accessing data in the WoD
+      is more similar to querying one big, decentralized database
+      than browsing web pages. Whilst this has the before-mentioned
+      advantages, it also has its disadvantages. One of these
+      disadvantages is that most <em>monetization strategies</em>
+      for data publishers from the WWW do not translate easily to
+      the WoD. Typical monetization strategies in the WWW include
+      <em>advertisement</em>, <em>donations</em>, and
+      <em>subsidies</em>.</p>
+      <p>Advertisement is arguably the biggest financial motor in
+      the WWW. The WWW offers the opportunity to customize
+      advertisement to the user and target specific user groups in
+      a way unprecedented in any other media. A <em>publisher</em>
+      of Web content can embed ads into the <em>presentation</em>
+      of the actual content to create the required impressions
+      (which may be converted into clicks and actions) for which
+      the advertiser is paying. If we would want to translate this
+      advertisement mechanism to the WoD, we would need a way to
+      embed advertisement into the presentation of the RDF data.
+      However, unlike the markup language HTML, the RDF data model
+      does not provide the means to <em>dictate</em> how certain
+      data elements should be presented to the user. Indeed, the
+      mere concept of machine-processable data opposes the idea of
+      exposing the consumer of the data (which could be a human or
+      a machine) to advertisement. For example, the query language
+      SPARQL [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0011">11</a>],
+      which can be used to query RDF data, allows to
+      <em>project</em> a query answer to a set of variables which
+      are of interest. Thus, meta-data like advertisement can
+      easily be filtered out. Of course, it is always possible to
+      introduce advertisement at the interface between the human
+      and the machine which accesses the WoD. However, such
+      advertisements would be controlled by the publisher of the
+      respective interface and not by the publisher of the original
+      data. The data publisher would not benefit from such an
+      advertisement strategy, which is the main concern of our
+      research.</p>
+      <p>Donations are another important source of money in the
+      WWW. This monetization strategy relies on users’
+      <em>appreciation</em> of the Web content to a degree where
+      they are voluntarily donating money to keep the service
+      alive. If a publisher wants to finance its service through
+      donations, a crucial part is to make the consumers
+      <em>aware</em> of the need of financial support and instruct
+      them how to donate. This problem should not be
+      underestimated. As [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>] shows, a significant part of the
+      users is not aware that there is a possibility to donate to
+      Wikipedia<a class="fn" href="#fn1" id=
+      "foot-fn1"><sup>1</sup></a>, a website which is mainly
+      financed through donations, or do not know how to donate. To
+      remedy this situation, publishers which do rely on donations
+      occasionally put banners on their websites to call for
+      donations, for example. In the WoD, this problem is much more
+      pronounced. Similar to what we have already discussed about
+      advertisement, it is also not straightforward to embed calls
+      for donations into RDF data. In the end, calls for donations
+      can be seen as a kind of advertisement where the advertiser
+      is also the publisher. In addition, users might simply not be
+      aware that they are using the data of a certain publisher,
+      especially if the data is part of a federation. Even if the
+      RDF data contains some attribution about the source of the
+      data, similar to advertisement, such meta-data can be
+      filtered out. As a result, publishers in the WoD might not be
+      able to create the required <em>awareness</em> to trigger
+      donations.</p>
+      <p>Besides advertisement and donations, subsidies play also
+      an important role in financing Web content. Unlike the former
+      two, subsidies do actually also apply to the WoD setting.
+      Most current datasets on the WoD which are not maintained by
+      enthusiasts are subsidized either by governments via data
+      access laws or by research grants. However, subsidies cannot
+      be considered an actual monetization strategy, as they
+      basically delegate the problem to somebody else.</p>
+      <p><strong>Problem statement:</strong> Without new
+      monetization strategies, many promising datasets will be
+      poorly maintained or disappear as there will be not enough
+      funds to keep the data up-to-date and the servers running. To
+      solve this problem, we identify, model, and evaluate two new
+      monetization strategies for the WoD.</p>
+      <p>The first monetization strategy focuses on the consumer of
+      the WoD data to finance the data publishers. In the second
+      monetization strategy a third party, the sponsor, finances
+      the data. These two monetization strategies can be applied to
+      two different types of data: The former strategy is
+      applicable to data for which a consumer is willing to pay,
+      which we will call <em>commercial data</em>. The latter
+      strategy is applicable to data some sponsor is willing to
+      promote, which we will call <em>sponsored data</em>.</p>
+    </section>
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> State of the
+          Art</h2>
+        </div>
+      </header>
+      <p>The state of the art can be divided into two parts: Data
+      Markets and Sponsored Search Auctions.</p>
+      <section id="sec-4">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Data
+            Markets</h3>
+          </div>
+        </header>
+        <p>The idea to charge customers for accessing data is
+        already implemented in the WWW. <em>Bloomberg</em><a class=
+        "fn" href="#fn2" id="foot-fn2"><sup>2</sup></a>,
+        <em>LexisNexis</em><a class="fn" href="#fn3" id=
+        "foot-fn3"><sup>3</sup></a>, and <em>Thomson
+        Reuters</em><a class="fn" href="#fn4" id=
+        "foot-fn4"><sup>4</sup></a> charge customers high fees for
+        accessing their data, primarily using subscription-based
+        models. All these examples have in common that they can
+        sell their whole data offering charging quasi-monopolistic
+        prices&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0002">2</a>]. Also, for relational databases,
+        markets have been proposed which sell data using
+        arbitrage-free pricing schemes&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0004">4</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0012">12</a>]. In the work of
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0017">17</a>], the
+        negative externalities of giving away data are considered
+        when selling them using an auction mechanism.</p>
+        <p>Unfortunately, none of these marketplaces allow a
+        customer to join datasets from different providers, which
+        is an important aspect of the WoD scenario we are
+        investigating. In addition, to the best of our knowledge,
+        none of these marketplaces considers partial answers due to
+        value or budget constraints.</p>
+        <p>In a pilot study, [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0019">19</a>] laid the foundation of our
+        research by simulating a marketplace for the WoD. In
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0013">13</a>], we
+        first introduced the idea of using a double-auction to sell
+        data on the WoD. Finally, in [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0010">10</a>] we introduced our model for a
+        marketplace which allows customers to buy data from
+        decentralized sellers in an integrated way. In contrast to
+        previous models, we focused on maximizing the customers
+        utility given all available data.</p>
+      </section>
+      <section id="sec-5">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> Sponsored
+            Search Auctions</h3>
+          </div>
+        </header>
+        <p>The Generalized Second Price (GSP), which was introduced
+        by Google in 2002 and replaced the first price models,
+        became an industry standard for sponsored search auctions
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0018">18</a>]. The
+        main advantage of the GSP auction is that it prevents
+        “cycling” patterns, a situation where repeatedly prices
+        gradually rise and then suddenly drop&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0005">5</a>]. Another alternative to
+        first price models is the Vickrey-Clarke-Groves (VCG)
+        auction&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0016">16</a>]. This auction has the advantage of
+        being <em>truthful</em>, meaning that no bidder has an
+        incentive to lie about his or her valuation of the outcome
+        of the auction. [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0001">1</a>] proposed a new auction mechanism
+        where bidders can impose additional constraints on the
+        exact location where they want their ad to appear, as a
+        bidder might have a value for the mere appearance of the
+        ad, even if the ad is not clicked by the user.</p>
+        <p>So far, none of these auction models have been applied
+        to the WoD setting. One reason is that, as discussed in
+        Section <a class="sec" href="#sec-2">1</a>, online
+        advertisement from the WWW does not translate to the WoD.
+        However, as we have shown in [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0009">9</a>], the auction techniques can
+        nevertheless be applied in the WoD setting, although not in
+        the way they were originally designed for.</p>
+      </section>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Proposed
+          Approach</h2>
+        </div>
+      </header>
+      <p>Our basic approach is to formulate two different
+      monetization strategies for commercial and sponsored
+      data.</p>
+      <p>The main characteristics of commercial data is that the
+      consumer has a higher <em>value</em> for <em>consuming</em>
+      the data than any other entity (including, but not limited
+      to, the data publisher) has in <em>exposing</em> the customer
+      to the data. The value indicates the willingness to pay for
+      consuming and exposing the data, respectively. Examples of
+      commercial data are data about consumer behaviors or stock
+      exchange data.</p>
+      <p>The main characteristics of sponsored data is that there
+      is an entity, which we call the <em>sponsor</em>, that has a
+      higher value for <em>exposing</em> the consumer to the data
+      than the consumer has for <em>consuming</em> the data.
+      Sponsored data is basically any data which is typically
+      included in advertisements. In contrast to traditional
+      advertisement, however, sponsored data is explicitly
+      requested by the consumer and does not represent additional
+      information or even a distraction from the requested data.
+      Examples of sponsored data are information about hotels and
+      restaurants or data about goods for sale.</p>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> A
+            Marketplace for Commercial Data</h3>
+          </div>
+        </header>
+        <p>To answer the first research question, we propose a
+        marketplace for commercial data in the WoD. The main
+        feature of our marketplace is that a customer can
+        <em>combine</em> data from different data publishers in an
+        integrated way, which means that the customer can access
+        the data of all participating data publishers as if there
+        would be only one big database. The customer does not have
+        to pay for all the available data, however. Instead, a
+        customer can submit a query and will be charged only for
+        those triples (the smallest possible data fragments) which
+        are precisely needed to form a certain query answer. In
+        addition, the customer can decide how small or big the
+        query answer should be.</p>
+        <p>Without using such a marketplace, a user would have to
+        buy individual triples directly from the different data
+        publishers. While this is possible, there is a major
+        drawback of this approach when data from more than one data
+        publisher have to be joined: It is very hard for the
+        customer to estimate which triples of one publisher will
+        actually join with the triples of another publisher. Hence,
+        a customer might either waste money on triples which do not
+        join or miss a part of the query answer because some
+        triples were not bought. As we have shown in [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0008">8</a>], join
+        estimation techniques are suffering a lot from
+        false-positive matches in the WoD setting and hence, we
+        cannot expect that a customer would be able to use such
+        techniques to buy exactly those triples which are needed to
+        form a specific query answer. Only a query execution can
+        reveal the true contribution and value of the publishers’
+        triples. Hence, we argue that a market for the WoD has to
+        execute a given query on the publishers’ data
+        <em>before</em> the decision can be made which triples
+        should be bought by the customer. Figure <a class="fig"
+        href="#fig1">1</a> shows the necessary steps in our
+        marketplace:</p>
+        <ol class="list-no-style">
+          <li id="list1" label="(1)">The marketplace receives a
+          query from the customer and executes it on the available
+          data.<br /></li>
+          <li id="list2" label="(2)">Only a certain part of the
+          complete query answer is chosen by the
+          customer.<br /></li>
+          <li id="list3" label="(3)">The customer only pays the
+          marketplace the indicated price of the selected
+          triples.<br /></li>
+        </ol>
+        <p>My first research question focuses on the customer's
+        buying decision, which we call the <em>allocation
+        problem</em>:</p>
+        <ol class="list-no-style">
+          <li id="list4" label="leftmargan=0.95cm,label=,ref=RQ0">
+          How to solve the allocation problem for a market for the
+          WoD efficiently?<br /></li>
+        </ol>
+        <figure id="fig1">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186568/images/www18companion-122-fig1.jpg"
+          class="img-responsive" alt="Figure 1" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 1:</span>
+            <span class="figure-title">The three steps from a query
+            to the selected query answer.</span>
+          </div>
+        </figure>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> A
+            Delayed-Answer Auction for Sponsored Data</h3>
+          </div>
+        </header>
+        <p>For the second research question, we propose a
+        slot-auction similar to the auctions used for sponsored
+        search results. In this auction, sponsors pay money if a
+        user follows a certain link contained in a query answer. To
+        motivate sponsors to pay for such link visits, we need a
+        way to prioritize those links which receive a higher bid
+        from those links with lower or no bid. For this, we
+        introduce delays into the delivery of the query answer.
+        Records containing links with high bids are delivered more
+        quickly than the records with lower bids. By introducing
+        such different delays, we create a ranking of the different
+        records of a query answer. The ranking we introduce works
+        similar to the rankings of advertisement slots in sponsored
+        search results. Hence, we can apply the auction techniques
+        which originate from sponsored search auctions to this new
+        setting.</p>
+        <p>Figure <a class="fig" href="#fig2">2</a> illustrates the
+        process of our new auction concept. Like in the marketplace
+        from Section <a class="sec" href="#sec-7">3.1</a>, we have
+        a user who submits a query to our system and the query gets
+        executed on the data of all participating publishers. This
+        time, however, the user does not select a part of the query
+        answer. Instead, the complete query answer is delivered to
+        the user. Different delays are assigned to the different
+        records of the query answer, depending on how much the
+        sponsors bid on certain links contained in the records.
+        Records with less delay have a higher chance of being
+        considered by the user and hence, the likelihood of a link
+        visit is higher. If the user visits a certain link, the
+        sponsor has to pay a certain price to the auctioneer. The
+        prices are calculated using the VCG
+        mechanism&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0016">16</a>].</p>
+        <figure id="fig2">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186568/images/www18companion-122-fig2.jpg"
+          class="img-responsive" alt="Figure 2" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 2:</span>
+            <span class="figure-title">A user gets a delayed query
+            answer based on the bids of sponsors.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>The second research question asks about the influence of
+        the delays on the proposed auction:</p>
+        <ol class="list-no-style">
+          <li id="list5" label="leftmbrgbn=0.95cm,lbbel=,ref=RQ0">
+          How does the choice of the delays influence the proposed
+          delayed-answer auction?<br /></li>
+        </ol>
+      </section>
+    </section>
+    <section id="sec-9">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span>
+          Methodology</h2>
+        </div>
+      </header>
+      <p>The methodology of our research is slightly different for
+      the two research questions.</p>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Marketplace
+            for Commercial Data</h3>
+          </div>
+        </header>
+        <p>For the marketplace for commercial data, different parts
+        of the market have to be modelled. The first part models
+        how the necessary meta-data can be extracted from the
+        different data publishers during query execution (part 1 in
+        Figure <a class="fig" href="#fig1">1</a>). In our model,
+        the publishers’ data is organized into <em>data
+        products</em>. A data product is a collection of RDF
+        triples that all have the same meta-data (including the
+        price). We use RDF statements to describe the meta-data
+        about a data product. This allows us to access the data and
+        the meta-data of the data products using a single,
+        federated SPARQL query. Additionally, a user can use the
+        meta-data directly in the query to restrict the query
+        answer based on the specific needs.</p>
+        <p>A second important aspect of our model for the
+        marketplace is the selection of the query answer (part 2 in
+        Figure&nbsp;<a class="fig" href="#fig1">1</a>). Choosing an
+        appropriate subset of the complete query answer can be
+        modelled as an integer programming problem, assuming that
+        the value for the query answer is a linear function with
+        respect to the containing records. However, solving such a
+        problem is NP-hard. If the value is not linear but
+        monotonically decreasing, we cannot formulate the problem
+        as an integer programming problem.</p>
+        <p>The query execution of our marketplace is implemented
+        using the federated querying engine FedX [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0015">15</a>]. In traditional
+        federated SPARQL query execution, a SPARQL query is split
+        up into subqueries which are sent to different sources.
+        Combining the query answers from the different subqueries
+        results in the complete query answer. Instead of sending
+        the subqueries directly to the endpoints, we have to
+        rewrite each subquery to retrieve also all meta-data about
+        the different data products.</p>
+        <p>The selection of the query answer is implemented using
+        two different approaches:</p>
+        <ol class="list-no-style">
+          <li id="list6" label="(1)">Using the commercial solver
+          CPLEX<a class="fn" href="#fn5" id=
+          "foot-fn5"><sup>5</sup></a>. This approach is only
+          possible if the selection can be modelled as an integer
+          programming problem.<br />
+          </li>
+          <li id="list7" label="(2)">Using our own greedy
+          algorithm. This approach is also possible if the value is
+          monotonically decreasing.<br /></li>
+        </ol>
+        <p>To evaluate the two different approaches, we are using
+        two different metrics: the runtime of the algorithms (which
+        establishes their feasibility) and the quality of their
+        selection. The quality of a specific selection of a query
+        answer is expressed by its <em>utility</em>, which is the
+        <em>value</em> a user has for a specific selection minus
+        the <em>price</em> the customer has to pay.</p>
+      </section>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span>
+            Delayed-Answer Auction</h3>
+          </div>
+        </header>
+        <p>The model for the delayed-answer auction is based on the
+        slot auctions for sponsored search results. In this model,
+        we have different slots with decreasing likelihood of being
+        selected by the user. Since a query answer is a set of
+        records, there is no inherent ordering of the different
+        records and hence, all records have initially the same
+        likelihood of being selected. To create such an ordering
+        artificially, we have to introduce different delays for
+        different records. Each record inside a query answer gets
+        assigned to a specific slot which determines the delay.</p>
+        <p>Even though our delayed-answer auction is similar to
+        sponsored search auctions, we need a new click model for
+        this new setting. The model we are using assumes that a
+        user is able to judge the relevancy of a link upon
+        receiving the query answer and hence, will visit at most
+        one link. Unlike links in the WWW, in the WoD, the user can
+        judge the relevancy of a link by the information embedded
+        in the query answer.</p>
+        <p>The delays for the different records are important
+        parameters of our auction which have to be chosen by the
+        auctioneer. These parameters add a new dimensionality to
+        the slot auctions and do not have any counterpart in
+        traditional slot auctions used in sponsored search
+        auctions. Hence, it is crucial to understand how these
+        parameters influence the auction and how an auctioneer can
+        optimize on them. Hence, we perform a theoretical analysis
+        of how the parameters can be optimized. In addition, we
+        perform simulations which illustrates the choice of the
+        parameters on social welfare (the total generated wealth)
+        and revenue for the auctioneer.</p>
+      </section>
+    </section>
+    <section id="sec-12">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Results</h2>
+        </div>
+      </header>
+      <p>We will now briefly sketch some of the results we already
+      obtained for the two scenarios: the marketplace for
+      commercial data (Research Question <a class="lst" href=
+      "#list4">RQ1</a>) and the delayed-answer auction (Research
+      Question <a class="lst" href="#list5">RQ2</a>).</p>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span> Marketplace
+            for Commercial Data</h3>
+          </div>
+        </header>
+        <p>To evaluate the two different approaches sketched in
+        Section <a class="sec" href="#sec-10">4.1</a>, we tested
+        both algorithms on 17 FedBench [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0014">14</a>] queries. We used the
+        metrics described in Section <a class="sec" href=
+        "#sec-10">4.1</a> for this evaluation.</p>
+        <p>With respect to the utility, the first approach using
+        CPLEX and the second approach using our greedy algorithm
+        are very close to each other. We observed that our greedy
+        algorithm reaches more than 90% of the utility of CPLEX in
+        15 out of 17 queries. For the other two queries, our greedy
+        algorithm reached at least 80%. At the same time, the
+        greedy algorithm runs in most cases between 1 and 3 orders
+        of magnitude faster than CPLEX. Figure <a class="fig" href=
+        "#fig3">3</a> compares the approach using CPLEX, which we
+        call the Integer Rule, and our own algorithm, which we call
+        the Greedy Rule.</p>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186568/images/www18companion-122-fig3.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">Runtime in seconds when
+            using CPLEX (Integer) and our own algorithm (Greedy)
+            for the FedBench benchmark.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>In a different evaluation, we showed that CPLEX is very
+        sensitive to the diversity of the query answer and that for
+        some parameter ranges, CPLEX is not able to find an optimal
+        solution within a time-limit of 12 hours.</p>
+        <p>As our results show, the two approaches under
+        investigation—Integer Rule and Greedy Rule—can be used to
+        solve the allocation problem. While using CPLEX guarantees
+        an optimal solution, our own algorithm can achieve similar
+        results in a much shorter time-frame, usually. This gives
+        an answer to Research Question <a class="lst" href=
+        "#list4">RQ1</a>: The allocation problem can in most cases
+        solved efficiently with both approaches. In some cases, the
+        Integer Rule is superior to the Greedy Rule. In most cases,
+        however, the Greedy Rule can be a good and fast
+        alternative. Finally, for some cases, the Integer Rule is
+        not feasible due to the excessive runtime.</p>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span>
+            Delayed-Answer Auction</h3>
+          </div>
+        </header>
+        <p>We analyzed the properties of the delayed-answer auction
+        and found that in general it is not possible to optimize
+        both revenue and social welfare with the same set of
+        parameters for the delays. Optimal revenue and optimal
+        social welfare have in common that they both require that
+        part of the query answer is delayed indefinitely. Such an
+        approach might damp the user's experience, however, who
+        only receives part of all available data. Our simulations
+        showed that the parameters for optimizing revenue and
+        optimizing social welfare differ a lot when there are is a
+        small set of bids which are much higher than the remaining
+        bids.</p>
+        <p>The analysis gives a good overview of the influence of
+        the choice of the parameters for the auction and thus,
+        answers Research Question <a class="lst" href=
+        "#list5">RQ2</a>.</p>
+      </section>
+    </section>
+    <section id="sec-15">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Conclusions and
+          Future Work</h2>
+        </div>
+      </header>
+      <p>To create financial incentives to publish content in the
+      Web of Data, we proposed two different strategies, one for
+      commercial and one for sponsored data. As discussed in
+      Section <a class="sec" href="#sec-12">5</a>, we already
+      established some results regarding these two strategies.</p>
+      <p>For the first strategy, we compared two different ways how
+      a consumer can select a subset of a query answer and compared
+      their performance with respect to runtime and utility. What
+      is left for future work is to investigate how data providers
+      can determine the best price for their data. We believe that
+      such optimal price can be learned, for example by using
+      reinforced learning techniques. We also need to explore how
+      well subscription-based models can be applied to our new
+      setting. Finally, our marketplace offers new possibilities
+      for market-aware query optimizations which considers the
+      costs we impose on the data providers by executing queries on
+      their servers.</p>
+      <p>For the second strategy, we already did a theoretical
+      analysis of our auction setting and a simulation which showed
+      some interesting properties of our model. However, we are
+      still missing an evaluation of our method using real-world
+      data. For this, we plan to use datasets from traditional ad
+      auctions for web search. We have to investigate how these
+      datasets can be applied to our new setting.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="sec-16">
+      <header>
+        <div class="title-info">
+          <h2>ACKNOWLEDGMENTS</h2>
+        </div>
+      </header>
+      <p>I want to thank my advisor Abraham Bernstein for
+      supervising my PhD research.</p>
+      <p>This work was partially supported by the Swiss National
+      Science Foundation SNF http://www.snf.ch/ under grant #
+      153598 SNF http://p3.snf.ch/project-153598 .</p>
+    </section>
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Gagan Aggarwal, Jon
+        Feldman, and Shanmugavelayutham Muthukrishnan. 2007.
+        Bidding to the Top: VCG and Equilibria of Position-Based
+        Auctions. In <em><em>Approximation and Online Algorithms.
+        WAOA 2006</em></em> .</li>
+        <li id="BibPLXBIB0002" label="[2]">Yannis Bakos and Erik
+        Brynjolfsson. 1999. Bundling Information Goods: Pricing,
+        Profits, and Efficiency. <em><em>Management
+        Science</em></em> 45, 12 (1999), 1613–1630. <a class=
+        "link-inline force-break" href=
+        "http://EconPapers.repec.org/RePEc:inm:ormnsc:v:45:y:1999:i:12:p:1613-1630"
+          target=
+          "_blank">http://EconPapers.repec.org/RePEc:inm:ormnsc:v:45:y:1999:i:12:p:1613-1630</a>
+        </li>
+        <li id="BibPLXBIB0003" label="[3]">Edward&nbsp;H. Clarke.
+        1971. Multipart Pricing of Public Goods. <em><em>Public
+        Choice</em></em> 2(1971), 19–33.</li>
+        <li id="BibPLXBIB0004" label="[4]">Shaleen Deep and
+        Paraschos Koutris. 2017. QIRANA: A Framework for Scalable
+        Query Pricing. In <em><em>SIGMOD ’17 Proceedings of the
+        2017 ACM International Conference on Management of
+        Data</em></em> . 699–713.</li>
+        <li id="BibPLXBIB0005" label="[5]">Benjamin Edelman and
+        Michael Ostrovsky. 2007. Strategic Bidder Behavior in
+        Sponsored Search Auctions. In <em><em>Decision Support
+        Systems</em></em> , Vol.&nbsp;43. 192–198.</li>
+        <li id="BibPLXBIB0006" label="[6]">Ruediger Glott, Philipp
+        Schmidt, and Rishab Ghosh. 2010. <em><em>Wikipedia survey –
+        overview of results</em></em> . Technical Report. United
+        Nations University MERIT.</li>
+        <li id="BibPLXBIB0007" label="[7]">Theodore Groves. 1973.
+        Incentives in Teams. <em><em>Econometrica</em></em>
+        41(4)(1973), 617–631.</li>
+        <li id="BibPLXBIB0008" label="[8]">Tobias Grubenmann,
+        Abraham Bernstein, Dmitry Moor, and Sven Seuken. 2017.
+        Challenges of source selection in the WoD. In
+        <em><em>Proceedings of the International Semantic Web
+        Conference ISWC ’17</em></em> .</li>
+        <li id="BibPLXBIB0009" label="[9]">Tobias Grubenmann,
+        Abraham Bernstein, Dmitry Moor, and Sven Seuken. 2018.
+        Financing the Web of Data with Delayed-Answer Auctions. In
+        <em><em>WWW 2018: The 2018 Web Conference</em></em> .</li>
+        <li id="BibPLXBIB0010" label="[10]">Tobias Grubenmann,
+        Daniele Dell'Aglio, Abraham Bernstein, Dmitry Moor, and
+        Sven Seuken. 2017. Decentralizing the Semantic Web: Who
+        will pay to realize it?. In <em><em>Proceedings of the
+        Workshop on Decentralizing the Semantic Web
+        (DeSemWeb)</em></em> . <a class="link-inline force-break"
+        href="http://ceur-ws.org/Vol-1934/contribution-01.pdf"
+        target=
+        "_blank">http://ceur-ws.org/Vol-1934/contribution-01.pdf</a>
+        </li>
+        <li id="BibPLXBIB0011" label="[11]">Steve Harris and Andy
+        Seaborne. 2013. SPARQL 1.1 Query Language.
+        https://www.w3.org/TR/sparql11-query/. (March 2013).</li>
+        <li id="BibPLXBIB0012" label="[12]">Paraschos Koutris,
+        Prasang Upadhyaya, Magdalena Balazinska, Bill Howe, and Dan
+        Suciu. 2013. Toward Practical Query Pricing with
+        QueryMarket. In <em><em>Proceedings of the 2013 ACM SIGMOD
+        International Conference on Management of Data</em></em> .
+        613–624.</li>
+        <li id="BibPLXBIB0013" label="[13]">Dmitry Moor, Tobias
+        Grubenmann, Sven Seuken, and Abraham Bernstein. 2015. A
+        Double Auction for Querying the Web of Data. In <em><em>The
+        Third Conference on Auctions, Market Mechanisms and Their
+        Applications</em></em> .</li>
+        <li id="BibPLXBIB0014" label="[14]">Michael Schmidt, Olaf
+        Görlitz, Peter Haase, Günter Ladwig, Andreas Schwarte, and
+        Thanh Tran. 2011. FedBench: A Benchmark Suite for Federated
+        Semantic Data Query Processing. <em><em>International
+        Semantic Web Conference</em></em> (2011), 585–600.</li>
+        <li id="BibPLXBIB0015" label="[15]">Andreas Schwarte, Peter
+        Haase, Katja Hose, Ralf Schenkel, and Michael Schmidt.
+        2011. FedX: Optimization Techniques for Federated Query
+        Processing on Linked Data. In <em><em>International
+        Semantic Web Conference (1)</em></em> . 601–616.</li>
+        <li id="BibPLXBIB0016" label="[16]">William Vickrey. 1961.
+        Counterspeculation, Auctions, and Competitive Sealed
+        Tenders. <em><em>The Journal of Finance</em></em> 16(1)
+        (1961), 8–37.</li>
+        <li id="BibPLXBIB0017" label="[17]">Xiang Wang, Zhenzhe
+        Zheng, Fan Wu, Xiaoju Dong, Shaojie Tang, and Guihai Chen.
+        2016. Strategy-proof data auctions with negative
+        externalities. In <em><em>Proceedings of the International
+        Conference on Autonomous Agents Multiagent Systems
+        (AAMAS)</em></em> . 1269–1270.</li>
+        <li id="BibPLXBIB0018" label="[18]">Christopher&nbsp;A.
+        Wilkens, Ruggiero Cavallo, and Rad Niazadeh. 2017. GSP –
+        The Cinderella of Mechanism Design. In <em><em>WWW ’17
+        Proceedings of the 26th International Conference on World
+        Wide Web</em></em> . 25–32.</li>
+        <li id="BibPLXBIB0019" label="[19]">Mengia Zollinger,
+        Cosmin Basca, and Abraham Bernstein. 2013.
+        <em><em>Market-based SPARQL Brokerage with MaTriX: Towards
+        a Mechanism for Economic Welfare Growth and Incentives for
+        Free Data Provision in the Web of Data</em></em> .
+        Technical Report IFI-2013.4.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.wikipedia.org">http://www.wikipedia.org</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.bloomberg.com">http://www.bloomberg.com</a></p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.lexisnexis.com">http://www.lexisnexis.com</a></p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.thomsonreuters.com">http://www.thomsonreuters.com</a></p>
+    <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.ibm.com/jm-en/marketplace/ibm-ilog-cplex">https://www.ibm.com/jm-en/marketplace/ibm-ilog-cplex</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186568">https://doi.org/10.1145/3184558.3186568</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

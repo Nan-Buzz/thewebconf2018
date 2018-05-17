@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Detecting Music Genre Using Extreme Gradient
+  Boosting</title><!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Detecting Music Genre Using
+          Extreme Gradient Boosting</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Benjamin</span> <span class=
+          "surName">Murauer</span> Universität Innsbruck,
+          Innsbruck, Austria, <a href=
+          "mailto:benjamin.murauer@uibk.ac.at">benjamin.murauer@uibk.ac.at</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Günther</span> <span class=
+          "surName">Specht</span> Universität Innsbruck, Innsbruck,
+          Austria, <a href=
+          "mailto:guenther.specht@uibk.ac.at">guenther.specht@uibk.ac.at</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191822"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191822</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>This paper summarizes our contribution to the
+        CrowdAI music genre classification challenge “Learning to
+        Recognise Musical Genre from Audio on the Web” as part of
+        the WebConference 2018. We utilize different approaches
+        from the field of music analysis to predict the music genre
+        of given mp3 music files, including a convolutional neural
+        network for spectrogram classification, deep neural
+        networks and ensemble methods using various numerical audio
+        features. Our best results were obtained by an extreme
+        gradient boosting classifier.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Benjamin Murauer and Günther Specht. 2018. Detecting
+          Music Genre Using Extreme Gradient Boosting. In <em>WWW
+          '18 Companion: The 2018 Web Conference Companion,</em>
+          <em>April 23–27, 2018,</em> <em>Lyon, France. ACM, New
+          York, NY, USA</em> 5 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3191822" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191822</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>In the 2018 WebConference task “Learning to Recognise
+      Musical Genre from Audio on the Web”, the goal is to predict
+      the music genre of 30 second audio clips automatically. As
+      input for the task, participants are provided with raw mp3
+      files. These are part of the free music archive [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0006">6</a>], which is a
+      collection of over 100,000 music tracks freely available for
+      download. Because the input files are raw audio, multiple
+      steps are required to predict the genre of each track, which
+      are displayed in Figure&nbsp;<a class="fig" href=
+      "#fig1">1</a>, represented by the gray block descriptions.
+      Firstly, a representation of the tracks has to be found that
+      can be used by classification models, where the type of
+      classifier may determine the type of the features that are to
+      be extracted from the tracks. For example, a convolutional
+      neural network (CNN) may be used together with image
+      features, whereas a random forest classifier requires
+      numerical features.</p>
+      <p>In our approach, we extract two different kinds of
+      features and a variety of different classifiers to predict
+      the genres of the tracks. The overall workflow is displayed
+      in Figure&nbsp;<a class="fig" href="#fig1">1</a>, where
+      details about each step are explained in the respective
+      sections.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191822/images/www18companion-399-fig1.svg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Extracted features and tested
+          classifiers.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>The remainder of this paper is structured as follows: In
+      Section&nbsp;<a class="sec" href="#sec-4">2</a>, related
+      topics and work are discussed. Section&nbsp;<a class="sec"
+      href="#sec-5">3</a> describes the task and the dataset in
+      more detail, followed by an explanation of the calculated
+      features in Section&nbsp;<a class="sec" href="#sec-6">4</a>.
+      All classifiers that have been tested are listed in
+      Section&nbsp;<a class="sec" href="#sec-7">5</a>, and their
+      performance is discussed in Section&nbsp;<a class="sec" href=
+      "#sec-10">6</a>.</p>
+    </section>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>Music genre classification is a well-known objective and
+      many different approaches exist to tackle it. In a similar
+      task held at the MediaEval 2017 workshop [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0001">1</a>], the classification labels
+      included subgenres in addition to the main genre.
+      Furthermore, the number of genres a track could have was not
+      limited, resulting in a multi-labeled multi-output
+      classification task. In contrast to the task tackled by this
+      challenge, the organizers of the MediaEval challenge did not
+      provide audio files directly, but rather published
+      precalculated features only. Different solutions proved to be
+      efficient, including a deep neural network (DNN) [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0010">10</a>] or
+      hierarchical classification in combination with a voting
+      scheme [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href=
+      "#BibPLXBIB0013">13</a>].</p>
+      <p>While these approaches work with low-level features and
+      computations thereof, other solutions also take music theory
+      into account. Franklin [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>] uses long short-term memory (LSTM)
+      cells for extracting high-level features, which can
+      subsequently be used for various purposes.
+      Li&nbsp;et&nbsp;al.&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>] have shown that CNNs can be used for
+      extracting features out of the raw audio data, which can then
+      be used for a variety of different tasks.</p>
+      <p>Other methods for genre prediction use spectrograms (i.e.,
+      an image representation of the frequency strengths in a
+      track) in combination with CNNs, transforming the task into
+      an image classification problem [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>].</p>
+      <p>Finally, combinations of CNN and recurrent neural network
+      (RNN) models show improvements over the use of either
+      solution separately. Chen and Wang&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0002">2</a>] utilize three different
+      CNNs for different aspects of a spectrogram to calculate
+      high-level descriptors, which are subsequently fed into a
+      LSTM-layer. Costa et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>] use a CNN along with a SVM on
+      hand-selected features from the spectrogram image. They then
+      combine these image predictions with the outcome of a SVM
+      trained on acoustical features by fusing the results of both
+      areas with different operations.</p>
+      <p>In this paper, a collection of different approaches for
+      genre prediction is implemented. We chose to use two ensemble
+      methods, which have been shown to be effective at a similar
+      task [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0013">13</a>]
+      and represent an easily calculated baseline. Furthermore, we
+      selected two approaches from current research that have
+      promising results for similar tasks [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0009">9</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0010">10</a>]: a DNN which operates on
+      numerical acoustical features and a CNN which works with
+      image representations of the songs.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Dataset and
+          Task Description</h2>
+        </div>
+      </header>
+      <p>The overall task of predicting the genre of music tracks
+      is split into two parts: in the first phase, contestants have
+      to use a provided script to upload the predicted genres for a
+      provided test set. In the second phase, contestants have to
+      upload a docker image that includes the model of the
+      submitted solution, which is then used to predict genres of a
+      previously unknown second test set. The provided training and
+      test data represents a subset of the free music archive
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0006">6</a>]. The
+      training set features 25,000 mp3 formatted audio files, along
+      with meta information containing their true genre. While each
+      of the tracks is 30 seconds long (except for a few broken
+      files), their genres range over both a wide variety of
+      different classes as well as a highly unbalanced
+      distribution, as is depicted in Table&nbsp;<a class="tbl"
+      href="#tab1">1</a>.</p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">Genre distribution of the traing
+          dataset</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">
+              <strong>genre</strong></th>
+              <th style="text-align:right;"><strong># of
+              songs</strong></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:left;">Rock</td>
+              <td style="text-align:right;">7,103</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Electronic</td>
+              <td style="text-align:right;">6,314</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Experimental</td>
+              <td style="text-align:right;">2,251</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Hip-Hop</td>
+              <td style="text-align:right;">2,201</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Folk</td>
+              <td style="text-align:right;">1,519</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Instrumental</td>
+              <td style="text-align:right;">1,350</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Pop</td>
+              <td style="text-align:right;">1,186</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">International</td>
+              <td style="text-align:right;">1,018</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Classical</td>
+              <td style="text-align:right;">619</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Old-Time / Historic</td>
+              <td style="text-align:right;">510</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Jazz</td>
+              <td style="text-align:right;">384</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Country</td>
+              <td style="text-align:right;">178</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Soul-RnB</td>
+              <td style="text-align:right;">154</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Spoken</td>
+              <td style="text-align:right;">118</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Blues</td>
+              <td style="text-align:right;">74</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Easy Listening</td>
+              <td style="text-align:right;">21</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">
+              <strong>total</strong></td>
+              <td style="text-align:right;">
+              <strong>25,000</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The test set consists of 35,000 equally formatted, but
+      unlabeled mp3 files. For each of these tracks, the respective
+      genre is to be predicted. Contestants are not obligated to
+      provide a hard classification, but rather are allowed to
+      supply probabilities for each genre (e.g.,
+      <em>p</em>(Rock)=0.9, <em>p</em>(Electronic)=0.06,
+      <em>p</em>(Hip-Hop)=0.04). To measure how well the predicted
+      genres match the ground truth, two different metrics are
+      predefined by the challenge organizers:</p>
+      <p>Firstly, the <em>mean log loss</em> score (<em>L</em>) was
+      used for primary ranking, which is computed as follows:</p>
+      <div class="table-responsive">
+        <div class="display-equation">
+          <span class="tex mytex">\[ L = -\frac{1}{N} \sum
+          ^{N}_{n=1} \sum ^{C}_{c=1} y_{nc}
+          \mathrm{ln}\left(p_{nc}\right) \]</span><br />
+        </div>
+      </div>where <em>N</em> is the number of samples, <em>C</em>
+      is the number of distinct classes (i.e., genres),
+      <em>y<sub>nc</sub></em> is a binary label stating whether the
+      <em>n</em> <sup>th</sup> sample belongs to class <em>c</em>
+      (i.e., <em>y<sub>nc</sub></em> denotes the correct label) and
+      <em>p<sub>nc</sub></em> is the probability provided by the
+      submitted solution that the <em>n</em> <sup>th</sup> sample
+      belongs to class <em>c</em>. As <em>L</em> is a loss measure,
+      lower values mean better predictions.
+      <p></p>
+      <p>Secondly, the <em>mean <em>F</em> <sub>1</sub></em> score
+      (<span class="inline-equation"><span class=
+      "tex">$F^{m}_{1}$</span></span> ) is only used for breaking
+      ties within ranks of the same <em>L</em> score. It is defined
+      as</p>
+      <div class="table-responsive">
+        <div class="display-equation">
+          <span class="tex mytex">\[ F^{m}_1 = \frac{1}{C} \sum
+          ^{C}_{c=1} F_{1}^{c} \]</span><br />
+        </div>
+      </div>where <span class="inline-equation"><span class=
+      "tex">$F^{c}_{1}$</span></span> denotes the <em>F</em>
+      <sub>1</sub> score (harmonic mean of precision and recall)
+      for a particular class <em>c</em>. However, due to the high
+      accuracy of the grading and the continuous nature of the
+      <em>L</em> metric, it is very unlikely that two solutions
+      will tie and the <span class="inline-equation"><span class=
+      "tex">$F^{m}_{1}$</span></span> -metric has to be used.
+      <p></p>
+      <p>Since the participants will only have to include their
+      best model in the docker image for phase 2 of the challenge,
+      we focussed on exploring different approaches for the first
+      phase. Once the second phase starts, we will optimize our
+      best approach only.</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Feature
+          Extraction</h2>
+        </div>
+      </header>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191822/images/www18companion-399-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">Example of a spectrogram extracted from
+          the test set. Lighter pixels denote a more powerful
+          frequency (y-axis) at the respective time (x-axis)</span>
+        </div>
+      </figure>
+      <p>In order to predict the genre of the tracks, we first have
+      to extract features from the raw mp3 files, which can then be
+      fed into various classification models. As is depicted in
+      Figure&nbsp;<a class="fig" href="#fig1">1</a>, where the
+      feature extraction is displayed as step two, we use several
+      different classifiers, which require a different input
+      representation of the songs. Therefore, we extract two
+      different sets of features from the audio files: a numerical
+      acoustic feature set, which was extracted using the
+      <em>essentia</em> library<a class="fn" href="#fn1" id=
+      "foot-fn1"><sup>1</sup></a>, and image representations of
+      tracks, which were created using <em>librosa</em><a class=
+      "fn" href="#fn2" id="foot-fn2"><sup>2</sup></a>. In the
+      remainder of this paper, we refer to numerical features as
+      the values extracted by essentia (cf. Table&nbsp;<a class=
+      "tbl" href="#tab2">2</a>), in contrast to the image features
+      extracted by librosa.</p>
+      <p>Firstly, we extracted a numerical feature set by using the
+      essentia framework for audio analysis. Essentia features a
+      standalone binary application for handling a wide variety of
+      different audio formats, which was chosen for an easier
+      configuration of the docker image, which is required for the
+      second part of the challenge task. Table&nbsp;<a class="tbl"
+      href="#tab2">2</a> displays a subset of the features that
+      were extracted using essentia. These range from low-level
+      spectral energy bands to high-level constructed features like
+      danceability (how well can someone dance to this track?).</p>
+      <p>Several of these features (i.e., the key or scale of a
+      track) are categorical rather than numerical. To use them in
+      a wider variety of different classifying models, they were
+      transformed to a one-hot encoding beforehand. The feature
+      category <em>rhythm beats position</em> yields a position for
+      every beat detected by essentia. Since the amount of beats
+      obviously differs between tracks, this leads to a divergence
+      in the amount of features per track. For this reason, all
+      entries for this feature category were discarded. Note that
+      the average distance between those beats is still
+      incorporated in the feature set as <em>rhythm bpm</em>.</p>
+      <p>By default, essentia tries to extract meta information
+      from tracks, including the tracks’ artist, album or its
+      genre. As these fields don't represent an acoustic feature
+      and are unavailable for testing, they were removed from the
+      training set.</p>
+      <p>After these feature selection steps, the amount of
+      features used for classification was reduced from 2,717 to
+      2,677. Before feeding them into the respective models, all
+      values were normalized to zero mean and 1.0 standard
+      deviation.</p>
+      <div class="table-responsive" id="tab2">
+        <div class="table-caption">
+          <span class="table-number">Table 2:</span> <span class=
+          "table-title">Exemplary audio features extracted with
+          essentia. Some of the features are categorical (e.g.,
+          tonal key), requiring one-hot encoding for some
+          classification models. All feature values were
+          z-normalized.</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:left;"><strong>feature
+              name</strong></th>
+              <th style="text-align:right;"><strong>exemplary
+              value</strong></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:left;">low level average
+              loudness</td>
+              <td style="text-align:right;">0.938</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">low level melbands
+              skewness mean</td>
+              <td style="text-align:right;">2.246</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">low level spectral flux
+              median</td>
+              <td style="text-align:right;">0.112</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">rhythm bpm</td>
+              <td style="text-align:right;">83.583</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">...</td>
+              <td style="text-align:right;">...</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">danceability</td>
+              <td style="text-align:right;">1.101</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">tonal key</td>
+              <td style="text-align:right;">’E’</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">tonal chord</td>
+              <td style="text-align:right;">’major’</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Secondly, for extracting image representations, we used
+      the methodology proposed in [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>] and calculated mel spectrogram images
+      for each track, which have been shown to be effective in the
+      task of predicting genres [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0012">12</a>]. An example for such a spectrogram
+      can be seen in Figure&nbsp;<a class="fig" href="#fig2">2</a>.
+      The key idea for this method is that different music genres
+      feature different patterns in the distribution and
+      occurrences of specific frequency ranges, which are displayed
+      in the image. Thereby, the raw frequency is normalized to the
+      mel scale, which more accurately represents a listeners
+      perceived frequency [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>]. All tracks from the training and
+      testing set were converted to 500 × 1,500 pixel images by
+      using the respective functions from the librosa library.
+      Although the original images (i.e., Figure&nbsp;<a class=
+      "fig" href="#fig2">2</a>) feature a color mapping of the
+      output intensities, the CNN model only uses grayscale pixels
+      in order to save memory. This does not reduce the information
+      stored in the image, as the mapping is linear and merely for
+      producing optically pleasing output for humans.</p>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Classification
+          Models</h2>
+        </div>
+      </header>
+      <p>To predict the genre of the provided tracks, we rely on
+      machine learning models. Thereby, several different
+      classifiers on the computed features. These are depicted as
+      step three in Figure&nbsp;<a class="fig" href="#fig1">1</a>.
+      We divide our approaches into two types, depending on which
+      features extracted in the previous step are used for the
+      respective model.</p>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span> Numerical
+            Feature Models</h3>
+          </div>
+        </header>
+        <p>For the numerical feature set, we utilize three
+        different classifying models. We first tested two ensemble
+        classifiers with help of the scikit<a class="fn" href=
+        "#fn3" id="foot-fn3"><sup>3</sup></a> library:</p>
+        <ol class="list-no-style">
+          <li id="list1" label="(1)">ExtraTrees is a variant of the
+          random forest classifier and uses extreme random trees
+          for classification [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0008">8</a>]. We included it as a reliable
+          baseline approach for comparing other models.<br />
+          </li>
+          <li id="list2" label="(2)">The XGBoost classifier uses
+          extreme gradient boosting [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top"
+            href="#BibPLXBIB0003">3</a>], which has been shown to
+            be effective in a wide variety of tasks, ranging from
+            recommending jobs [<a class="bib" data-trigger="hover"
+            data-toggle="popover" data-placement="top" href=
+            "#BibPLXBIB0014">14</a>] to assisting neural networks
+            by weighting feature importances [<a class="bib"
+            data-trigger="hover" data-toggle="popover"
+            data-placement="top" href="#BibPLXBIB0016">16</a>]. In
+            addition to its good performance, we chose XGBoost for
+            its versatility and simplicity for
+            parallelization.<br />
+          </li>
+        </ol>
+        <p>We utilized a grid search approach with 5-fold cross
+        validation to tune the parameters for each of the
+        classifiers. Due to time limitations, not all possible
+        parameters were included in the grid search process, which
+        was limited to the amount of trees used (n_estimators), the
+        amount of features used (which resulted in best performance
+        if all features were used) and, in case of XGBoost, the
+        maximal depth of a tree.</p>
+        <p>In addition to these ensemble methods, we constructed a
+        deep neural network along the lines of the winning solution
+        of the MediaEval 2017 challenge [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0010">10</a>]. The architecture of
+        the network is displayed in Figure&nbsp;<a class="fig"
+        href="#fig3">3</a>. At every dense layer, a random dropout
+        (with <em>p</em> = 0.5) and batch normalization was
+        performed to prevent overfitting. In the second layer,
+        three different activation functions are used to implicitly
+        represent the internal features as good as possible. The
+        next dense layer uses the hyperbolic tangent activation
+        function, as this provided the best results in our
+        experiments. Finally, the last layer uses softmax to
+        calculate the probabilities for each genre. The best
+        performing parameters are listed in Table&nbsp;<a class=
+        "tbl" href="#tab3">3</a>. Because the performance of the
+        DNN was substantially lower than the ensemble approaches,
+        we did not perform an extensive parameter search on this
+        model. Instead, we focussed on increasing the other, more
+        promising solutions.</p>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191822/images/www18companion-399-fig3.svg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">Deep neural network
+            architecture. FC denotes a fully connected layer with
+            the activation function stated in parentheses.</span>
+          </div>
+        </figure>
+        <p></p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Best parameters found for the deep neural
+            network.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">
+                <strong>parameter</strong></th>
+                <th style="text-align:left;">
+                <strong>value</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">input dimension</td>
+                <td style="text-align:left;">2,677</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">dropout
+                probability</td>
+                <td style="text-align:left;">0.5</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">activation function
+                (input)</td>
+                <td style="text-align:left;">tanh</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">activation function
+                (layer 2)</td>
+                <td style="text-align:left;">tanh, relu, elu</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">activation function
+                (layer 3)</td>
+                <td style="text-align:left;">tanh</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">initializer</td>
+                <td style="text-align:left;">He</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">optimizer</td>
+                <td style="text-align:left;">adam</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">batch size</td>
+                <td style="text-align:left;">50</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <figure id="fig4">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191822/images/www18companion-399-fig4.svg"
+          class="img-responsive" alt="Figure 4" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 4:</span>
+            <span class="figure-title">Convolutional neural network
+            architecture. For layout reasons, dropout layers are
+            omitted in this diagram.</span>
+          </div>
+        </figure>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> Image
+            Feature Model</h3>
+          </div>
+        </header>
+        <p>For the second set of features, where the tracks are
+        represented as images, the classification approach
+        suggested by [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0009">9</a>] was used to construct a CNN, which
+        was trained on the spectrograms of the tracks. The
+        architecture of this network is displayed in
+        Figure&nbsp;<a class="fig" href="#fig4">4</a>, whereas the
+        detailed parameters that were used are listed in
+        Table&nbsp;<a class="tbl" href="#tab4">4</a>. The full size
+        of the previously extracted images (i.e., 500 × 1,500
+        pixels) could not be used due to GPU memory limitations on
+        our computers (GTX1060, 6GB VRAM). Instead, the images had
+        to be downsized to 400 × 1,200 pixels. Instead of using a
+        larger kernel for the convolution operations, we stacked
+        two convolutional layers using smaller kernel sizes (of 3 ×
+        3 pixels) at each convolution step for better memory
+        efficiency. After every pooling layer, a random dropout
+        (with <em>p</em> = 0.5) was introduced for regularization.
+        For layout reasons, these layers are not displayed in the
+        diagram.</p>
+        <div class="table-responsive" id="tab4">
+          <div class="table-caption">
+            <span class="table-number">Table 4:</span> <span class=
+            "table-title">Best parameters found for the
+            convolutional network.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">
+                <strong>parameter</strong></th>
+                <th style="text-align:left;">
+                <strong>value</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">input
+                dimensions</td>
+                <td style="text-align:left;">400 × 1,200 pix., 1
+                channel</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">kernel size</td>
+                <td style="text-align:left;">3 × 3 pixels</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">number of filter
+                maps</td>
+                <td style="text-align:left;">4</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">max pooling
+                size</td>
+                <td style="text-align:left;">2</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">batch size</td>
+                <td style="text-align:left;">25</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">dropout
+                probability</td>
+                <td style="text-align:left;">0.5</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">activation function
+                (conv.)</td>
+                <td style="text-align:left;">relu</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">activation function
+                (dense)</td>
+                <td style="text-align:left;">tanh</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">fully connected
+                cells</td>
+                <td style="text-align:left;">50</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">optimizer</td>
+                <td style="text-align:left;">adam</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">initializer</td>
+                <td style="text-align:left;">glorot uniform</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">padding</td>
+                <td style="text-align:left;">same</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Results</h2>
+        </div>
+      </header>
+      <div class="table-responsive" id="tab5">
+        <div class="table-caption">
+          <span class="table-number">Table 5:</span> <span class=
+          "table-title">Results and parameters of tested models. *
+          Parameters of DNN and CNN classifiers are listed in
+          Tables&nbsp;<a class="tbl" href="#tab3">3</a> and
+          <a class="tbl" href="#tab4">4</a>, respectively.</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">
+              <strong>classifier</strong></th>
+              <th style="text-align:left;">
+              <strong>parameters</strong></th>
+              <th style="text-align:center;">
+              <strong><em>L</em></strong></th>
+              <th style="text-align:center;"><span class=
+              "inline-equation"><span class=
+              "tex">$F^{m}_1$</span></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:left;">XGBoost</td>
+              <td style="text-align:left;">n_estimators=1,000,
+              max_depth=3</td>
+              <td style="text-align:center;">
+              <strong>0.82</strong></td>
+              <td style="text-align:center;">0.74</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">XGBoost</td>
+              <td style="text-align:left;">n_estimators=3,000,
+              max_depth=5</td>
+              <td style="text-align:center;">0.85</td>
+              <td style="text-align:center;">
+              <strong>0.78</strong></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">ExtraTrees</td>
+              <td style="text-align:left;">n_estimators=1,000</td>
+              <td style="text-align:center;">0.92</td>
+              <td style="text-align:center;">0.74</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">ExtraTrees</td>
+              <td style="text-align:left;">n_estimators=2,000</td>
+              <td style="text-align:center;">0.92</td>
+              <td style="text-align:center;">0.74</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">ExtraTrees</td>
+              <td style="text-align:left;">n_estimators=2,000,
+              balanced weights</td>
+              <td style="text-align:center;">0.96</td>
+              <td style="text-align:center;">0.73</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">CNN</td>
+              <td style="text-align:left;">*</td>
+              <td style="text-align:center;">1.65</td>
+              <td style="text-align:center;">0.48</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">DNN</td>
+              <td style="text-align:left;">*</td>
+              <td style="text-align:center;">1.44</td>
+              <td style="text-align:center;">0.77</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The results of all classifiers can be seen in
+      Table&nbsp;<a class="tbl" href="#tab5">5</a>. From all tested
+      models, only ExtraTrees features an automatic balancing of
+      the sample weights according to the class imbalances.
+      However, as is listed in Table&nbsp;<a class="tbl" href=
+      "#tab5">5</a>, this optimization technique yielded a slightly
+      higher loss. For all other classifiers, no explicit measures
+      were taken for tackling the class imbalance. It can be seen
+      that the more traditional ensemble approaches outperform the
+      neural networks, with XGBoost achieving the lowest loss of
+      <em>L</em> = 0.82, whereas the CNN performs worst with
+      <em>L</em> = 1.65. This result conflicts with the current
+      state of research, where many top tier approaches use neural
+      networks for similar tasks [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0010">10</a>].</p>
+      <p>At this point, the poor performance of the DNN model may
+      have resulted from various different factors. Given the
+      limited timeframe, we were not able to analyze and identify
+      which network design choices were most significant for the
+      given problem. Interestingly, the <span class=
+      "inline-equation"><span class="tex">$F^{m}_{1}$</span></span>
+      -score of the DNN approach was comparable to the ensemble
+      solutions.</p>
+      <p>As of the CNN, we presume that a more accurate model could
+      have been built with more GPU memory. Although a better
+      performing model may have been found with the resources at
+      hand, we were restricted in exploring different network
+      layouts due to hardware limitations. In detail, the memory
+      limited the following parameters to be increased (cf.
+      Table&nbsp;<a class="tbl" href="#tab4">4</a>):</p>
+      <ul class="list-no-style">
+        <li id="list3" label="•">number of dense units after the
+        convolution (50)<br /></li>
+        <li id="list4" label="•">number of filters used for each
+        convolution (4)<br /></li>
+        <li id="list5" label="•">batch size (25)<br /></li>
+        <li id="list6" label="•">input dimension (400 × 1,200
+        pixels)<br /></li>
+        <li id="list7" label="•">number of convolutional
+        layers<br /></li>
+      </ul>
+      <p>As each of these parameters potentially increases the
+      expressiveness of the CNN model (for example, [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0009">9</a>] and [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0004">4</a>] use 5 convolutional layers
+      each), we assume that testing larger values could have
+      yielded better predictions. Especially the combination of
+      fewer, smaller layers and decreased image size is a possible
+      explanation why the performance of the CNN model is behind
+      other approaches like XGBoost.</p>
+    </section>
+    <section id="sec-11">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">7</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>In this paper, we used different types of classifiers to
+      predict the genre of unlabeled music tracks. We extracted two
+      different sets of features, yielding a numerical and a
+      graphical representation of each track. These are used in
+      combination with various models that have been effective for
+      similar problems. For the numerical features, we used
+      ensemble methods (XGBoost, ExtraTrees) as well as a deep
+      neural network for classification. The graphical features
+      were fed into a CNN. Our best results were obtained by the
+      XGBoost classifier on the numerical feature set, yielding a
+      mean log loss of <em>L</em> = 0.82, compared to 0.92 for the
+      ExtraTrees approach and 1.44 and 1.65 for the DNN and CNN
+      models, respectively. Many promising approaches, especially
+      more elaborate neural networks, could not be implemented or
+      optimized due to GPU memory limitations.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Dmitry Bogdanov,
+        Alastair Porter, Julián Urbano, and Hendrik Schreiber.
+        2017. The MediaEval 2017 AcousticBrainz Genre Task:
+        Content-based Music Genre Recognition from Multiple
+        Sources. In <em><em>Working Notes Proceedings of the
+        MediaEval 2017 Workshop</em></em> . CEUR-WS.org.</li>
+        <li id="BibPLXBIB0002" label="[2]">Ning Chen and Shijun
+        Wang. 2017. High-level music descriptor extraction
+        algorithm based on combination of multi-channel CNNs and
+        LSTM. In <em><em>Proceedings of the 18th International
+        Society for Music Information Retrieval Conference
+        (ISMIR’2017)</em></em> . 509–514.</li>
+        <li id="BibPLXBIB0003" label="[3]">Tianqi Chen and Carlos
+        Guestrin. 2016. XGBoost: A Scalable Tree Boosting System.
+        In <em><em>Proceedings of the 22nd SIGKDD Conference on
+        Knowledge Discovery and Data Mining</em></em> . ACM,
+        785–794. <a class="link-inline force-break" href=
+        "http://arxiv.org/abs/1603.02754" target=
+        "_blank">http://arxiv.org/abs/1603.02754</a>
+        </li>
+        <li id="BibPLXBIB0004" label="[4]">Keunwoo Choi, George
+        Fazekas, Mark&nbsp;B. Sandler, and Kyunghyun Cho. 2016.
+        Convolutional Recurrent Neural Networks for Music
+        Classification. <em><em>CoRR</em></em>
+        abs/1609.04243(2016). <a class="link-inline force-break"
+        href="http://arxiv.org/abs/1609.04243" target=
+        "_blank">http://arxiv.org/abs/1609.04243</a>
+        </li>
+        <li id="BibPLXBIB0005" label="[5]">Yandre&nbsp;M.G. Costa,
+        Luiz&nbsp;S. Oliveira, and Carlos&nbsp;N. Silla. 2017. An
+        evaluation of Convolutional Neural Networks for music
+        classification using spectrograms. <em><em>Applied Soft
+        Computing</em></em> 52 (2017), 28 – 38. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1016/j.asoc.2016.12.024" target=
+        "_blank">https://doi.org/10.1016/j.asoc.2016.12.024</a>
+        </li>
+        <li id="BibPLXBIB0006" label="[6]">Michaël Defferrard,
+        Kirell Benzi, Pierre Vandergheynst, and Xavier Bresson.
+        2017. FMA: A Dataset for Music Analysis. In
+        <em><em>Proceedings of the 18th International Society for
+        Music Information Retrieval Conference
+        (ISMIR’2017)</em></em> .</li>
+        <li id="BibPLXBIB0007" label="[7]">Judy&nbsp;A. Franklin.
+        2006. Recurrent Neural Networks for Music Computation. <em>
+          <em>INFORMS Journal on Computing</em></em> 18, 3 (2006),
+          321–338. <a class="link-inline force-break" href=
+          "https://doi.org/10.1287/ijoc.1050.0131" target=
+          "_blank">https://doi.org/10.1287/ijoc.1050.0131</a>
+        </li>
+        <li id="BibPLXBIB0008" label="[8]">Pierre Geurts, Damien
+        Ernst, and Louis Wehenkel. 2006. Extremely randomized
+        trees. <em><em>Machine Learning</em></em> 63, 1 (2006),
+        3–42. <a class="link-inline force-break" href=
+        "https://doi.org/10.1007/s10994-006-6226-1" target=
+        "_blank">https://doi.org/10.1007/s10994-006-6226-1</a>
+        </li>
+        <li id="BibPLXBIB0009" label="[9]">Grzegorz Gwardys and
+        Daniel Grzywczak. 2014. Deep Image Features in Music
+        Information Retrieval. <em><em>International Journal of
+        Electronics and Telecommunications</em></em> 60, 4(2014),
+        321–326. <a class="link-inline force-break" href=
+        "https://doi.org/10.2478/eletel-2014-0042" target="_blank">
+          https://doi.org/10.2478/eletel-2014-0042</a>
+        </li>
+        <li id="BibPLXBIB0010" label="[10]">Khaled Koutini, Alina
+        Imenina, Matthias Dorfer, Alexander&nbsp;Rudolf Gruber, and
+        Markus Schedl. 2017. MediaEval 2017 AcousticBrainz Genre
+        Task: Multilayer Perceptron Approach. In <em><em>Working
+        Notes Proceedings of the MediaEval 2017 Workshop</em></em>
+        . CEUR-WS.org.</li>
+        <li id="BibPLXBIB0011" label="[11]">Tom&nbsp;LH. Li,
+        Antoni&nbsp;B. Chan, and Andy&nbsp;HW. Chun. 2010.
+        Automatic Musical Pattern Feature Extraction Using
+        Convolutinoal Neural Network. In <em><em>Proceedings of the
+        International MultiConference of Engineers and Computer
+        Scientists</em></em> , Vol.&nbsp;1.</li>
+        <li id="BibPLXBIB0012" label="[12]">Thomas Lidy and
+        Alexander Schindler. 2016. Parallel convolutional neural
+        networks for music genre and mood classification.
+        <em><em>MIREX 2016</em></em> (2016).</li>
+        <li id="BibPLXBIB0013" label="[13]">Benjamin Murauer,
+        Maximilian Mayerl, Michael Tschuggnall, Eva Zangerle,
+        Martin Pichl, and Günther Specht. 2017. Hierarchical
+        Multilabel Classification and Voting for Genre
+        Classification. In <em><em>Working Notes Proceedings of the
+        MediaEval 2017 Workshop</em></em> . CEUR-WS.org.</li>
+        <li id="BibPLXBIB0014" label="[14]">Andrzej Pacuk, Piotr
+        Sankowski, Karol Węgrzycki, Adam Witkowski, and Piotr
+        Wygocki. 2016. RecSys Challenge 2016: Job Recommendations
+        Based on Preselection of Offers and Gradient Boosting. In
+        <em><em>Proceedings of the Recommender Systems
+        Challenge</em></em> . 10:1–10:4. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/2987538.2987544" target="_blank">
+          https://doi.org/10.1145/2987538.2987544</a>
+        </li>
+        <li id="BibPLXBIB0015" label="[15]">Stanley&nbsp;Smith
+        Stevens, John Volkmann, and B. Edwin. 1937. A scale for the
+        measurement of the psychological magnitude pitch. <em><em>
+          Journal of the Acoustical Society of America</em></em> 8,
+          3 (1937), 185–190. <a class="link-inline force-break"
+          href="https://doi.org/10.1121/1.1915893" target=
+          "_blank">https://doi.org/10.1121/1.1915893</a>
+        </li>
+        <li id="BibPLXBIB0016" label="[16]">Huiting Zheng, Jiabin
+        Yuan, and Long Chen. 2017. Short-Term Load Forecasting
+        Using EMD-LSTM Neural Networks with a Xgboost Algorithm for
+        Feature Importance Evaluation. <em><em>Energies</em></em>
+        10, 8 (2017). <a class="link-inline force-break" href=
+        "https://doi.org/10.3390/en10081168" target=
+        "_blank">https://doi.org/10.3390/en10081168</a>
+        </li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "http://essentia.upf.edu">http://essentia.upf.edu</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "https://librosa.github.io">https://librosa.github.io</a></p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "http://scikit-learn.org/">http://scikit-learn.org/</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191822">https://doi.org/10.1145/3184558.3191822</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

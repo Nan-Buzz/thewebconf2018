@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Smart-MD: Neural Paragraph Retrieval of Medical
+  Topics</title><!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Smart-MD: Neural Paragraph
+          Retrieval of Medical Topics</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Rudolf</span> <span class=
+          "surName">Schneider</span> Beuth University of Applied
+          Sciences, Luxemburger Stra***e 10Berlin, Germany 13353,
+          <a href=
+          "mailto:ruschneider@beuth-hochschule.de">ruschneider@beuth-hochschule.de</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Sebastian</span> <span class=
+          "surName">Arnold</span> Beuth University of Applied
+          Sciences, Luxemburger Stra***e 10Berlin, Germany 13353,
+          <a href=
+          "mailto:sarnold@beuth-hochschule.de">sarnold@beuth-hochschule.de</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Tom</span> <span class=
+          "surName">Oberhauser</span> Beuth University of Applied
+          Sciences, Luxemburger Stra***e 10Berlin, Germany 13353,
+          <a href=
+          "mailto:toberhauser@beuth-hochschule.de">toberhauser@beuth-hochschule.de</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Tobias</span> <span class=
+          "surName">Klatt</span> Beuth University of Applied
+          Sciences, Luxemburger Stra***e 10Berlin, Germany 13353,
+          <a href=
+          "mailto:tklatt@beuth-hochschule.de">tklatt@beuth-hochschule.de</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Thomas</span> <span class=
+          "surName">Steffek</span> Beuth University of Applied
+          Sciences, Luxemburger Stra***e 10Berlin, Germany 13353,
+          <a href=
+          "mailto:tsteffek@beuth-hochschule.de">tsteffek@beuth-hochschule.de</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Alexander</span> <span class=
+          "surName">Löser</span> Beuth University of Applied
+          Sciences, Luxemburger Stra***e 10Berlin, Germany 13353,
+          <a href=
+          "mailto:aloeser@beuth-hochschule.de">aloeser@beuth-hochschule.de</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186979"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186979</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>We demonstrate Smart-MD, an information retrieval
+        system for medical professionals. The system supports
+        topical queries in the form [disease topic], such as [”lyme
+        disease”, treatments]. In contrast to document-oriented
+        retrieval systems, Smart-MD retrieves relevant paragraphs
+        and reduces the reading load of a medical doctor
+        drastically. We recognize diseases and topical aspects with
+        a novel paragraph retrieval method based on bidirectional
+        LSTM neural networks. We demonstrate Smart-MD on a dataset
+        that contains 3,469 diseases from the English language part
+        of Wikipedia and 6,876 distinct medical aspects extracted
+        from Wikipedia headlines.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Applied computing</strong> →
+        <strong>Health care information systems;</strong> •
+        <strong>Information systems</strong> → <strong>Information
+        retrieval;</strong></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Neural Information
+          Classification; Paragraph Retrieval</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Rudolf Schneider, Sebastian Arnold, Tom Oberhauser,
+          Tobias Klatt, Thomas Steffek, and Alexander Löser. 2018.
+          Smart-MD: Neural Paragraph Retrieval of Medical Topics.
+          In <em>WWW '18 Companion: The 2018 Web Conference
+          Companion,</em> <em>April 23–27, 2018,</em> <em>Lyon,
+          France. ACM, New York, NY, USA</em> 4 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3186979" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3186979</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Medical doctors, in particular at emergencies, often need
+      to make fast decisions and without studying latest research
+      results from journals thoroughly. In particular less
+      experienced doctors might overlook alternative treatments or
+      therapies and often fall back to potentially less effective
+      standard procedures known from their academic studies.
+      Despite the fact that most queries of doctors are of
+      informational intent [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>] [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0013">13</a>], standard medical search engines,
+      like PubMed<a class="fn" href="#fn1" id=
+      "foot-fn1"><sup>1</sup></a>, still focus on filtering
+      documents for a key word query. Ideally, a doctor could use
+      an effective search engine for retrieving diverse and
+      potentially unknown results from the latest literature about
+      symptoms, therapies, medications, treatments or other often
+      requested aspects during the anamnesis. <em>Scenario:</em>.
+      Consider the case of a doctor searching for treatments of
+      <em>Lyme disease</em>, an infectious disease caused by
+      bacteria of the Borrelia type which is mainly spread by
+      <em>ticks</em>. She will study essential articles and will
+      find the transmission of ticks from birds to humans as main
+      cause. While she knows from her academic studies that
+      antibiotics such as <em>doxycycline</em> will help most
+      patients, she might oversee that certain patients with
+      cardiac diseases will likely suffer from this treatment and
+      should rather be treated with <em>ceftriaxone</em>-based
+      antibiotics. Ideally, the system would retrieve all
+      treatments for Lyme disease and would display an aggregated
+      overview of different treatments, including some paragraphs
+      of text which explain infrequent edge cases.</p>
+      <p>We demonstrate Smart-MD, an information retrieval system
+      that provides such a functionality for medical professionals.
+      It takes as input diseases and a list of optional topical
+      aspects and returns paragraphs that report about the given
+      diseases in context of the given aspects. Moreover, it
+      recognizes and aggregates important facets in these
+      paragraphs, such as correlating medical terms or topics and
+      provides the user these facets for query refinement. Figure
+      <a class="fig" href="#fig1">1</a> shows a typical result for
+      the query ‘lyme treatment’. Given the query (1), the system
+      retrieves two highly relevant paragraphs about treatments
+      from two articles on Lyme disease (4) or on Borrelia. The
+      user is able to refine the query with topical aspects that
+      appear in the context of these documents (2). Next, Smart-MD
+      shows a distribution of treatments (3) and the user can
+      narrow the query to a particular novel and previously unknown
+      treatment. Finally, the user may click on an interesting
+      paragraph to inspect the context of the entire document.
+      Thereby the system highlights the topic of each relevant
+      paragraph (6). In particular with long documents, this fine
+      granularity at paragraph level permits the reader to skip
+      many irrelevant passages.</p>
+      <p>The remainder of this paper is structured as follows: In
+      Section <a class="sec" href="#sec-8">2</a>, we give details
+      about the neural network models, in Section <a class="sec"
+      href="#sec-12">3</a> we outline a walk-through of the
+      system.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186979/images/www18companion-219-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Screenshot of the Smart-MD user interface.
+          The search bar (1) shows current query terms and offers a
+          auto completion based on the neural entity and topic
+          extractors. The fact distribution chart (3) and the topic
+          tag bar (2) offer visual navigation components to allow
+          the user refinement of the search direction. Smart-MD
+          groups search results by their topics in result cards
+          with a generated title and short description (4). Those
+          can be unfolded using the arrow button (5). The view
+          button (6) opens a full-text view of the document as
+          shown in Figure <a class="fig" href="#fig2">2</a>.</span>
+        </div>
+      </figure>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186979/images/www18companion-219-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">Visualization of the neural topic
+          classification for an example document (excerpt).
+          Smart-MD assigns coherent topic labels ‘prevention’ and
+          ‘treatment’ to sentences. The shading of colors
+          visualizes confidence of the best scored class from the
+          prediction, numbers in brackets depict the average
+          confidence per paragraph.</span>
+        </div>
+      </figure>
+      <p></p>
+    </section>
+    <section id="sec-8">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Paragraph
+          Retrieval</h2>
+        </div>
+      </header>
+      <p>Smart-MD is built upon two neural information extractors
+      which process the dataset at load time. The <em>topic
+      extractor</em> assigns a distribution of topics to each
+      sentence in the dataset. The <em>entity extractor</em>
+      recognizes named entities in these sentences. Both models are
+      trained end-to-end with data from the medical domain, in
+      particular for the diseases scenario. We store all
+      extractions in an index and retrieve them at query time to
+      return relevant paragraphs. In this section we describe these
+      steps briefly.</p>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Sequential
+            Topic Classification</h3>
+          </div>
+        </header>
+        <p>The topic extractor's goal is to assign a coherent
+        distribution of topics over all positions in a document. In
+        contrast to traditional probabilistic topic models such as
+        LDA [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0003">3</a>], which describe topic distributions
+        on document-level, we approach to capture topics on
+        sentence level. One possible solution is Paragraph Vectors
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0009">9</a>], which
+        treats all paragraphs (or sentences) independently.
+        However, to achieve a coherent sequence of topics, e.g. to
+        spot adjacent sentences that express treatments of a
+        disease, we need to respect the sequential order and
+        long-range dependencies of sentences in the document.
+        Consequential, our approach uses a Long Short-Term Memory
+        (LSTM) network [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0007">7</a>] for classification.</p>
+        <p><em>Definition of topics from Wiki section
+        headlines</em>. We utilize section and subsection headlines
+        from Wikipedia documents to define possible topics. For
+        example, we observe 6,876 distinct headlines from 3,469
+        Wikipedia pages on diseases<a class="fn" href="#fn2" id=
+        "foot-fn2"><sup>2</sup></a>. Table <a class="tbl" href=
+        "#tab1">1</a> shows the distribution of observed topics
+        among articles. A closer inspection reveals that this
+        distribution is heavily skewed, e.g. top 20 topics cover
+        more than 90% of all paragraphs. We therefore chose 20
+        representative topic labels for training and assign label
+        ‘other’ to the remainder. A detailed overview of the topic
+        distribution is shown in Table <a class="tbl" href=
+        "#tab2">2</a>.</p>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186979/images/www18companion-219-fig3.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">Neural network architectures
+            of our section classification model. It classifies a
+            sequence of sentences <strong>s</strong>
+            <sub><em>t</em></sub> to their corresponding section
+            labels <strong>l</strong> <sub><em>t</em></sub> . We
+            employ bidirectional LSTMs layers which respect the
+            long-range dependencies of sentences <strong>s</strong>
+            <sub><em>t</em></sub> inside a document.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p><em>Sequential classification using BLSTM networks</em>.
+        We utilize the LSTM model with forget gates [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0005">5</a>] and bidirectional layers
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0006">6</a>] to
+        predict for each sentence s <sub><em>t</em></sub> a
+        probability distribution <em>y<sub>t</sub></em> for its
+        topic label <strong>Tl</strong> <sub><em>t</em></sub> =
+        max(<em>y<sub>t</sub></em> ). The BLSTM is configured using
+        forward and backward layers with input nodes <span class=
+        "inline-equation"><span class=
+        "tex">$\vec{g}_t$</span></span> , input gates <span class=
+        "inline-equation"><span class=
+        "tex">$\vec{i}_t$</span></span> , forget gate <span class=
+        "inline-equation"><span class=
+        "tex">$\vec{f}_t$</span></span> , output gate <span class=
+        "inline-equation"><span class=
+        "tex">$\vec{o}_t$</span></span> and internal state
+        <span class="inline-equation"><span class=
+        "tex">$\vec{s}_t$</span></span> . We encode hidden states
+        <span class="inline-equation"><span class=
+        "tex">$\vec{h}_t$</span></span> (forward layer) and
+        <span class="inline-equation"><span class=
+        "tex">$[1]{\vec{[1]{z}}}_t$</span></span> (backward layer)
+        for every time step <em>t</em>. We generate the output
+        layer <em>y<sub>t</sub></em> by summing <span class=
+        "inline-equation"><span class=
+        "tex">$\vec{h}_t$</span></span> and <span class=
+        "inline-equation"><span class=
+        "tex">$[1]{\vec{[1]{z}}}_t$</span></span> .</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            \begin{array}{ll}\vec{g}_t &amp;= \phi (\vec{W}_{gx}
+            x_t + \vec{W}_{gh} \vec{h}_{t-1} + \vec{b}_g) \\
+            \vec{i}_t &amp;= \sigma (\vec{W}_{ix} x_t +
+            \vec{W}_{ih} \vec{h}_{t-1} + \vec{b}_i) \\ \vec{f}_t
+            &amp;= \sigma (\vec{W}_{fx} x_t + \vec{W}_{fh}
+            \vec{h}_{t-1} + \vec{b}_f) \\ \vec{o}_t &amp;= \sigma
+            (\vec{W}_{ox} x_t + \vec{W}_{oh} \vec{h}_{t-1} +
+            \vec{b}_o) \\ \vec{s}_t &amp;= \phi (\vec{g}_t \odot
+            \vec{i}_t + \vec{s}_{t-1} \odot \vec{f}_t) \\ \vec{h}_t
+            &amp;= \vec{s_t} \odot \vec{o_t} \quad /\quad
+            [1]{\vec{[1]{z}}}_t = [1]{\vec{[1]{s}}}_t \odot
+            [1]{\vec{[1]{o}}}_t \\ y_t &amp;= \phi (\vec{W}_{yh}
+            \vec{h}_t + [1]{\vec{[1]{W}}}_{yz} [1]{\vec{[1]{z}}}_t
+            + b_y) \end{array} \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>Our network architecture is shown in Figure <a class=
+        "fig" href="#fig3">3</a>. We use n-hot bag of words vectors
+        as input features, i.e. <span class=
+        "inline-equation"><span class="tex">$x_{t} = \sum
+        _{\mathrm{w} \in \mathrm{s}_t}
+        \mathrm{i}_{\mathrm{w}}$</span></span> with indicator
+        <span class="inline-equation"><span class=
+        "tex">$\mathrm{i}_{\mathrm{w}} \in \lbrace 0,1\rbrace
+        ^{|\mathcal {V}_\mathrm{w}|}$</span></span> over a fixed
+        vocabulary <span class="inline-equation"><span class=
+        "tex">$\mathcal {V}_\mathrm{w}$</span></span> . We
+        implement our BLSTM model with 300 cells, sigmoid
+        activation, 0.5 dropout and a softmax output layer. It is
+        trained document-wise with using stochastic gradient
+        descent with ADAM [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0008">8</a>], L2 regularization and cross
+        entropy loss using a learning rate of 10<sup>− 3</sup> and
+        backpropagation-through-time [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0012">12</a>]. The network classifies a complete
+        document per iteration and is only reset in between
+        documents. We segment the document into paragraphs by
+        splitting at positions where the topic label changes. The
+        outcome of our method is visualized in Figure <a class=
+        "fig" href="#fig2">2</a>.</p>
+      </section>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> Medical
+            Named Entity Recognition (NER)</h3>
+          </div>
+        </header>
+        <p>The entity extractor's goal is to recognize medical
+        named entities, such as diseases or medications in the
+        documents. This task is often difficult, since for this
+        specialized task only sparse training data exists and
+        recall suffers [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0010">10</a>]. We utilize our own work
+        TASTY<a class="fn" href="#fn3" id=
+        "foot-fn3"><sup>3</sup></a> [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0001">1</a>], a generic and robust approach for
+        high-recall named entity recognition and linking in many
+        languages and with sparse training data. TASTY offers
+        strong generalization over domain-specific language, such
+        as in biomedical text (e.g. Medline, PubMed or Wikipedia
+        articles) and can be trained with only few hundred labeled
+        sentences to achieve F1 scores in the range of 84–94% on
+        standard datasets.</p>
+        <p><em>Robust recognition using character n-gram
+        embeddings</em>. Similar to the topic extractor, the
+        architecture of our entity extractor utilizes a BLSTM
+        architecture. The model's objective is to assign BIOES
+        entity labels <strong>El</strong> <sub><em>t</em></sub> =
+        max(<em>y<sub>t</sub></em> ) to all words in a sentence
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0011">11</a>]. To
+        achieve a robust classifier, we encode words as bag of
+        letter-trigrams as input features, i.e. <span class=
+        "inline-equation"><span class="tex">$x_t = \sum
+        _{\mathrm{tri} \in \mathrm{w}_t}
+        \mathrm{i}_{\mathrm{tri}}$</span></span> . This allows us
+        to train a character embedding that is able to recognize
+        typical syllables in a word [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0002">2</a>]. We extract possible diseases and
+        other medical entities and store them in the index for
+        query completion and paragraph retrieval.</p>
+      </section>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.3</span> Query
+            Processing and Paragraph Scoring</h3>
+          </div>
+        </header>
+        <p>Smart-MD executes queries of the form [disease topic] as
+        follows: First, the user matches ambiguous disease and
+        topic names using the autocomplete. It maps a variety of
+        notations from Wikipedia headlines to well defined classes.
+        We then conduct a conjunctive boolean search and retrieve
+        documents that contain both disease name and topic ID a
+        single document. Finally, we score the candidate
+        paragraphs. Our scoring approach bases on the assumption
+        that paragraphs likely contain medical entities that have a
+        mutual relation with the topic of the paragraph and the
+        requested disease. Moreover, we would like to retrieve for
+        a doctor low frequency events that are probably unknown to
+        the doctor. We measure for each paragraph, proximity
+        between the requested topic and co-occurring entities with
+        normalized pointwise mutual information [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0004">4</a>] (nPMI):</p>
+        <div class="table-responsive" id="Xeq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            \begin{alignedat}{2} \mathrm{nPMI}(\mathrm{entity},
+            \mathrm{topic}) =
+            \frac{\mathrm{ln}\frac{P(\mathrm{entity},
+            \mathrm{topic})}{P(\mathrm{entity})
+            P(\mathrm{topic})}}{-\mathrm{ln}\
+            P(\mathrm{entity},\mathrm{topic})} \end{alignedat}
+            \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div><em>P</em>(entity) denotes the probability that
+        retrieved paragraphs contain the entity, <em>P</em>(topic)
+        the probability that the topic is discussed in the
+        retrieved paragraphs and <em>P</em>(entity, topic) denotes
+        the probability that an entity appears in any retrieved
+        paragraph that discusses the topic. Hence we assign to low
+        frequency events relatively high scores.
+        <p></p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Frequency and entropy (H) of top-5 head
+            and randomly selected torso and tail headings for 3,469
+            diseases and 6,876 distinct headlines in the English
+            Wikipedia.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:right;">
+                <strong>no.</strong></th>
+                <th style="text-align:left;">
+                <strong>headline</strong></th>
+                <th style="text-align:left;">
+                <strong>topic</strong></th>
+                <th style="text-align:right;">
+                <strong>freq</strong></th>
+                <th style="text-align:right;">
+                <strong>H</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:right;">0</td>
+                <td style="text-align:left;">Abstract</td>
+                <td style="text-align:left;">abstract</td>
+                <td style="text-align:right;">3,453</td>
+                <td style="text-align:right;">0.03</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">1</td>
+                <td style="text-align:left;">Diagnosis</td>
+                <td style="text-align:left;">diagnosis</td>
+                <td style="text-align:right;">2,795</td>
+                <td style="text-align:right;">0.49</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">2</td>
+                <td style="text-align:left;">Treatment</td>
+                <td style="text-align:left;">treatment</td>
+                <td style="text-align:right;">2,789</td>
+                <td style="text-align:right;">0.49</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">3</td>
+                <td style="text-align:left;">Signs and</td>
+                <td style="text-align:left;">symptom</td>
+                <td style="text-align:right;">1,921</td>
+                <td style="text-align:right;">0.69</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;"></td>
+                <td style="text-align:left;">Symptoms</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">4</td>
+                <td style="text-align:left;">Causes</td>
+                <td style="text-align:left;">cause</td>
+                <td style="text-align:right;">1,531</td>
+                <td style="text-align:right;">0.69</td>
+              </tr>
+              <tr>
+                <td colspan="5" style="text-align:center;">
+                  ...
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">14</td>
+                <td style="text-align:left;">Symptoms</td>
+                <td style="text-align:left;">symptom</td>
+                <td style="text-align:right;">339</td>
+                <td style="text-align:right;">0.32</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">15</td>
+                <td style="text-align:left;">Types</td>
+                <td style="text-align:left;">classification</td>
+                <td style="text-align:right;">329</td>
+                <td style="text-align:right;">0.31</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">16</td>
+                <td style="text-align:left;">Research</td>
+                <td style="text-align:left;">research</td>
+                <td style="text-align:right;">312</td>
+                <td style="text-align:right;">0.30</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">17</td>
+                <td style="text-align:left;">Society and</td>
+                <td style="text-align:left;">culture</td>
+                <td style="text-align:right;">310</td>
+                <td style="text-align:right;">0.30</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;"></td>
+                <td style="text-align:left;">Culture</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">18</td>
+                <td style="text-align:left;">Mechanism</td>
+                <td style="text-align:left;">mechanism</td>
+                <td style="text-align:right;">224</td>
+                <td style="text-align:right;">0.24</td>
+              </tr>
+              <tr>
+                <td colspan="5" style="text-align:center;">
+                  ...
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">6,873</td>
+                <td style="text-align:left;">Fungal</td>
+                <td style="text-align:left;">other</td>
+                <td style="text-align:right;">1</td>
+                <td style="text-align:right;">0.00</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;"></td>
+                <td style="text-align:left;">Meningitis</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">6,874</td>
+                <td style="text-align:left;">Location and</td>
+                <td style="text-align:left;">symptom</td>
+                <td style="text-align:right;">1</td>
+                <td style="text-align:right;">0.00</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;"></td>
+                <td style="text-align:left;">Symptoms</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">6,875</td>
+                <td style="text-align:left;">Molecular Basis</td>
+                <td style="text-align:left;">other</td>
+                <td style="text-align:right;">1</td>
+                <td style="text-align:right;">0.00</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;"></td>
+                <td style="text-align:left;">of Disease</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+    <section id="sec-12">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Demonstration
+          Outline</h2>
+        </div>
+      </header>
+      <p>We demonstrate Smart-MD in a live demonstration and with a
+      video<a class="fn" href="#fn4" id="foot-fn4"><sup>4</sup></a>
+      that shows the case for our query from the introduction
+      [”lyme disease”, treatments].</p>
+      <p><em>Initial search query.</em>. While she is typing the
+      query, the system auto-completes terms against words in the
+      index of diseases or topics. Next, the system retrieves
+      documents, filters, scores and displays top-ranked
+      paragraphs. Now, she can skim the results to get an overview.
+      The system supports her with a short description of the
+      relevant paragraphs of the documents. All sources claiming
+      the same fact are aggregated and can be unfolded by a click
+      on the arrow icon. This representation allows her to overview
+      and skip irrelevant content fast until she reaches
+      interesting treatments.</p>
+      <p><em>Query refinement.</em>. Smart-MD ranks co-occurring
+      entities and topics in a pie-chart or respectively in the
+      topic bar by their frequency. If resulting paragraphs are
+      still too broad, she can click on topics in the topic bar to
+      refine the query and search for rare facts. Alternatively,
+      she can visit the entity navigation chart on the right that
+      shows a frequency distribution of entities in paragraphs. For
+      accessing less frequent but relevant entities which co-occur
+      with the search query, she clicks on a pie in the chart. This
+      excludes the more frequent entities from the visualization
+      and allows to inspect results in the ’long tail’ of search
+      results.</p>
+      <p><em>Inspecting the context of a paragraph.</em>. Finally,
+      she can drill down into the context of interesting facts by
+      clicking on the text which opens the corresponding document.
+      Next, the system displays the entire document. Similar to
+      hand written notes at margins of a text book, Smart-MD shows
+      an assigned topic for each paragraph. She can now read these
+      pre-labeled topics and skip topics fast until she reaches an
+      important part. She can now drill down further or start over
+      again.</p>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Future
+            Work</h3>
+          </div>
+        </header>
+        <p>We plan in our future work to apply the system to more
+        sophisticated document sources like scientific
+        publications, doctors letters or medical health
+        records.</p>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Distribution of covered sentences by
+            topics in the wikipedia dump which was used to train
+            the topic extractor. F1 scores are evaluated on a test
+            set of n=32,045 sentences.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">
+                <strong>topic</strong></td>
+                <td style="text-align:left;">
+                <strong>freq</strong></td>
+                <td style="text-align:left;">
+                <strong>F1</strong></td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                <strong>topic</strong></td>
+                <td style="text-align:left;">
+                <strong>freq</strong></td>
+                <td><strong>F1</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">(r)1-3 (l)5-7
+                abstract</td>
+                <td style="text-align:left;">14.35%</td>
+                <td style="text-align:left;">82.40</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">classification</td>
+                <td style="text-align:left;">2.29%</td>
+                <td>37.78</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">treatment</td>
+                <td style="text-align:left;">12.59%</td>
+                <td style="text-align:left;">70.55</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">genotype</td>
+                <td style="text-align:left;">2.13%</td>
+                <td>49.60</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">symptom</td>
+                <td style="text-align:left;">11.99%</td>
+                <td style="text-align:left;">65.59</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">prevention</td>
+                <td style="text-align:left;">1.69%</td>
+                <td>68.07</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">diagnosis</td>
+                <td style="text-align:left;">11.62%</td>
+                <td style="text-align:left;">73.43</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">culture</td>
+                <td style="text-align:left;">1.58%</td>
+                <td>50.24</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">cause</td>
+                <td style="text-align:left;">10.05%</td>
+                <td style="text-align:left;">48.98</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">research</td>
+                <td style="text-align:left;">1.33%</td>
+                <td>60.09</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">other</td>
+                <td style="text-align:left;">7.20%</td>
+                <td style="text-align:left;">23.17</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">animal</td>
+                <td style="text-align:left;">0.66%</td>
+                <td>50.25</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">mechanism</td>
+                <td style="text-align:left;">6.28%</td>
+                <td style="text-align:left;">58.05</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">transmission</td>
+                <td style="text-align:left;">0.63%</td>
+                <td>0.00</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">management</td>
+                <td style="text-align:left;">4.09%</td>
+                <td style="text-align:left;">37.78</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">risk</td>
+                <td style="text-align:left;">0.37%</td>
+                <td>0.00</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">epidemiology</td>
+                <td style="text-align:left;">4.00%</td>
+                <td style="text-align:left;">75.08</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">complication</td>
+                <td style="text-align:left;">0.13%</td>
+                <td>4.65</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">history</td>
+                <td style="text-align:left;">3.82%</td>
+                <td style="text-align:left;">66.19</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">screening</td>
+                <td style="text-align:left;">0.11%</td>
+                <td>0.00</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">prognosis</td>
+                <td style="text-align:left;">3.08%</td>
+                <td style="text-align:left;">62.80</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;"></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+    <section id="sec-14">
+      <header>
+        <div class="title-info">
+          <h2>Acknowledgements</h2>
+        </div>
+      </header>
+      <p>Our work is funded by the German Federal Ministry of
+      Economic Affairs and Energy (BMWi) under grant agreement
+      01MD16011E (Medical Allround-Care Service Solutions), grant
+      agreement 01MD15010B (Smart Data Web) and H2020 ICT-2016-1
+      grant agreement 732328 (FashionBrain).</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Sebastian Arnold, Robert
+        Dziuba, and Alexander Löser. 2016. TASTY: Interactive
+        Entity Linking As-You-Type. <em><em>In COLING’16
+        Demos</em></em> . 111–115.</li>
+        <li id="BibPLXBIB0002" label="[2]">Sebastian Arnold,
+        Felix&nbsp;A. Gers, Torsten Kilias, and Alexander Löser.
+        2016. Robust Named Entity Recognition in Idiosyncratic
+        Domains. <em><em>In arXiv:1608.06757 [cs.CL]</em></em>
+        .</li>
+        <li id="BibPLXBIB0003" label="[3]">David&nbsp;M. Blei,
+        Andrew&nbsp;Y. Ng, and Michael&nbsp;I. Jordan. 2003. Latent
+        Dirichlet Allocation. In <em><em>Journal of Machine
+        Learning Research</em></em> , Vol.&nbsp;3. 993–1022. Issue
+        Jan.</li>
+        <li id="BibPLXBIB0004" label="[4]">Gerlof Bouma. 2009.
+        Normalized (Pointwise) Mutual Information in Collocation
+        Extraction. <em><em>In Proceedings of GSCL</em></em> .
+        31–40.</li>
+        <li id="BibPLXBIB0005" label="[5]">Felix&nbsp;A. Gers,
+        Jürgen Schmidhuber, and Fred Cummins. 2000. Learning to
+        Forget: Continual Prediction with LSTM. <em><em>In Neural
+        Computation</em></em> , Vol.&nbsp;12. 2451–2471.</li>
+        <li id="BibPLXBIB0006" label="[6]">Alex Graves. 2012.
+        <em><em>Supervised Sequence Labelling with Recurrent Neural
+        Networks</em></em> . Vol.&nbsp;385. Springer.</li>
+        <li id="BibPLXBIB0007" label="[7]">Sepp Hochreiter and
+        Jürgen Schmidhuber. 1997. Long Short-Term Memory. In
+        <em><em>Neural Computation</em></em> , Vol.&nbsp;9.
+        1735–1780.</li>
+        <li id="BibPLXBIB0008" label="[8]">Diederik Kingma and
+        Jimmy Ba. 2015. ADAM: A Method for Stochastic Optimization.
+        <em><em>In ICLR’15</em></em> .</li>
+        <li id="BibPLXBIB0009" label="[9]">Quoc&nbsp;V. Le and
+        Tomas Mikolov. 2014. Distributed Representations of
+        Sentences and Documents.. <em><em>In ICML’14</em></em> ,
+        Vol.&nbsp;32. 1188–1196.</li>
+        <li id="BibPLXBIB0010" label="[10]">Glen Pink, Joel
+        Nothman, and James&nbsp;R. Curran. 2014. Analysing Recall
+        Loss in Named Entity Slot Filling. <em><em>In
+        EMNLP’14</em></em> . ACL, 820–830.</li>
+        <li id="BibPLXBIB0011" label="[11]">Lev Ratinov and Dan
+        Roth. 2009. Design Challenges and Misconceptions in Named
+        Entity Recognition. <em><em>In CoNLL’09</em></em> . ACL,
+        147–155.</li>
+        <li id="BibPLXBIB0012" label="[12]">Paul&nbsp;J Werbos.
+        1990. Backpropagation Through Time: What It Does And How To
+        Do It. <em><em>In Proc. IEEE</em></em> , Vol.&nbsp;78.
+        1550–1560.</li>
+        <li id="BibPLXBIB0013" label="[13]">Ryen&nbsp;W. White and
+        Eric Horvitz. 2014. From Health Search to Healthcare:
+        Explorations of Intention and Utilization via Query Logs
+        and User Surveys.. In <em><em>Journal of the American
+        Medical Informatics Association</em></em> , Vol.&nbsp;21.
+        49–55.</li>
+        <li id="BibPLXBIB0014" label="[14]">Illhoi Yoo and Abu
+        Saleh&nbsp;Mohammad Mosa. 2015. Analysis of PubMed User
+        Sessions Using a Full-Day PubMed Query Log: A Comparison of
+        Experienced and Nonexperienced PubMed Users. <em><em>In
+        JMIR Medical Informatics</em></em> , Vol.&nbsp;3.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.ncbi.nlm.nih.gov/pubmed/">https://www.ncbi.nlm.nih.gov/pubmed/</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a>taken from the
+    20170320 Wikipedia dump</p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a>Demo available
+    at <a class="link-inline force-break" href=
+    "http://demo.datexis.com/tasty/">http://demo.datexis.com/tasty/</a></p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.youtube.com/watch?v=kcDi7qQxpBo">https://www.youtube.com/watch?v=kcDi7qQxpBo</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186979">https://doi.org/10.1145/3184558.3186979</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

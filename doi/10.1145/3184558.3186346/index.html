@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>When E-commerce Meets Social Media: Identifying Business
+  on WeChat Moment Using Bilateral-Attention LSTM</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">When E-commerce Meets Social
+          Media: Identifying Business on WeChat Moment Using
+          Bilateral-Attention LSTM</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Tianlang</span> <span class=
+          "surName">Chen</span> University of Rochester, <a href=
+          "mailto:tchen45@cs.rochester.edu">tchen45@cs.rochester.edu</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Yuxiao</span> <span class=
+          "surName">Chen</span> University of Rochester, <a href=
+          "mailto:ychen211@cs.rochester.edu">ychen211@cs.rochester.edu</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Han</span> <span class=
+          "surName">Guo</span> Institute of Computing Technology,
+          Chinese Academy of Sciences, <a href=
+          "mailto:guohan@ict.ac.cn">guohan@ict.ac.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Jiebo</span> <span class=
+          "surName">Luo</span> University of Rochester, <a href=
+          "mailto:jluo@cs.rochester.edu">jluo@cs.rochester.edu</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186346"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186346</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>WeChat Business, developed on WeChat, the most
+        extensively used instant messaging platform in China, is a
+        new business model that bursts into people's lives in the
+        e-commerce era. As one of the most typical WeChat Business
+        behaviors, WeChat users can advertise products, advocate
+        companies and share customer feedback to their WeChat
+        friends by posting a WeChat Moment–a public status that
+        contains images and a text. Given its popularity and
+        significance, in this paper, we propose a novel
+        Bilateral-Attention LSTM network (BiATT-LSTM) to identify
+        WeChat Business Moments based on their texts and images. In
+        particular, different from previous schemes that equally
+        consider visual and textual modalities for a joint
+        visual-textual classification task, we start our work with
+        a text classification task based on an LSTM network, then
+        we incorporate a bilateral-attention mechanism that can
+        automatically learn two kinds of explicit attention weights
+        for each word, namely 1) a global weight that is
+        insensitive to the images in the same Moment with the word,
+        and 2) a local weight that is sensitive to the images in
+        the same Moment. In this process, we utilize visual
+        information as a guidance to figure out the local weight of
+        a word in a specific Moment. Two-level experiments
+        demonstrate the effectiveness of our framework. It
+        outperforms other schemes that jointly model visual and
+        textual modalities. We also visualize the
+        bilateral-attention mechanism to illustrate how this
+        mechanism helps joint visual-textual
+        classification.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>attention
+          model</small>,</span> <span class="keyword"><small>joint
+          visual-textual learning</small>,</span> <span class=
+          "keyword"><small>multimodality analysis</small>,</span>
+          <span class="keyword"><small>WeChat
+          business</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Tianlang Chen, Yuxiao Chen, Han Guo, and Jiebo Luo. 2018.
+          When E-commerce Meets Social Media: Identifying Business
+          on WeChat Moment Using Bilateral-Attention LSTM. In
+          <em>WWW '18 Companion: The 2018 Web Conference
+          Companion,</em> <em>April 23–27, 2018,</em> <em>Lyon,
+          France. ACM, New York, NY, USA</em> 8 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3186346" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3186346</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186346/images/www18companion-108-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Examples of WeChat Moment. A red dotted
+          box indicates a WeChat Business Moment, a blue dotted box
+          indicates a WeChat non-business Moment.</span>
+        </div>
+      </figure>
+      <p>In the e-commerce era, the rise of WeChat Business can be
+      regarded as an significant event in the Chinese e-commerce
+      history. WeChat Business, developed on WeChat, one of the
+      most well-known messaging platforms with 806 millions monthly
+      active users<a class="fn" href="#fn1" id=
+      "foot-fn1"><sup>1</sup></a> in China, is a new business mode
+      that refers to seller's advertising and trading activities on
+      WeChat. Typically, as one of the most popular and effective
+      promotion strategy, sellers can advertise their products,
+      companies platforms and other services via WeChat
+      Moments.</p>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186346/images/www18companion-108-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">Overview of the proposed work.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>Like Instagram, WeChat Moment is a platform where users
+      can post text and pictures, which can be accessed and
+      commented by their WeChat friends. In a Moment, sellers can
+      effectively advertise their products or services, share the
+      customer feedbacks and show their trading achievements. A
+      Moment related to these topics should be regarded as a WeChat
+      Business Moment. Figure <a class="fig" href="#fig1">1</a>
+      shows several examples that belong to WeChat Business
+      Moments. Our goal is to create a high-performance WeChat
+      Business Moment classifier that can accurately identify
+      WeChat Business Moments, based on their image and text
+      contents. For online shopping addicts, they need the push
+      notification service from these Moments to provide instant
+      and comprehensive information for potential purchases.
+      However, for online shopping haters, they want to block these
+      Moments because they are nuisance. A robust classifier is
+      beneficial for both kinds of users. It can identify the
+      WeChat Business Moments from the Moment pool and facilitate
+      appropriate actions by different kinds of users.</p>
+      <p>We formally define our task as a visual-textual binary
+      classification task to classify WeChat Business Moments and
+      WeChat non-business Moments, where each Moment may contain a
+      text message and multiple images (up to 9). To accurately
+      identify WeChat Business Moments, we propose a novel
+      bilateral-attention LSTM network. Different from previous
+      works that equally consider visual and textual features and
+      build fusion-based models, our model is based on text
+      classification using LSTM and we make the best use of weak
+      image information by creating an image-guide attention
+      mechanism. In particular, we believe that for a word in a
+      specific Moment, there are two significant weights to measure
+      its importance in its associated sentence, namely the global
+      weight and local weight. The global weight reflects the
+      overall importance of a word for the classification task and
+      is insensitive to the corresponding images of the Moment the
+      word belongs to. On the other hand, the local weight reflects
+      the local importance of a word in a specific Moment that is
+      related to the word's corresponding images. In other words,
+      same words in different Moments possess same global weights
+      but different local weights. The final weight of a word
+      should be the combination of its global weight and local
+      weight. Figure <a class="fig" href="#fig2">2</a> shows the
+      framework of our model. When we predict whether a Moment is
+      related to WeChat Business, a self-learned attention
+      mechanism will learn the global weight of each word, and an
+      image-guide attention mechanism will further figure out the
+      local weight of each word from the Moment's specific image
+      environment. In Figure <a class="fig" href="#fig2">2</a>,
+      “eat”, “delicious”, “food”, “sleep”, “Dear member”,
+      “patient”, “import”, “delivery” and “product” have high
+      global weights as they are significant words for the WeChat
+      Business Moment classification task. However, combined with
+      the local weight of each word, only “Dear member”, “import”,
+      “delivery” and “product” hold the highest final weights since
+      the images are related to WeChat screenshot and cosmetics. In
+      the end, the Moment can be correctly predicted as a WeChat
+      Business Moment by the LSTM network.</p>
+      <p>We make the following contributions in this work:</p>
+      <ul class="list-no-style">
+        <li id="list1" label="•">We propose an end-to-end
+        bilateral-attention LSTM model that can successfully
+        capture the global and local importance of a word in a
+        specific Moment. To figure out the local weight by an
+        image-guide attention mechanism, we propose an efficient
+        method to accurately classify WeChat Moment images into
+        categories in a semi-supervised fashion.<br /></li>
+        <li id="list2" label="•">We perform two-level experiments
+        on a WeChat Moment dataset to demonstrate the effectiveness
+        of our framework. In particular, we demonstrate that the
+        image-guide attention mechanism makes better use of image
+        information compared with other joint visual-textual
+        learning models for our task. We also visualize the
+        bilateral-attention mechanism on significant examples to
+        illustrate how it works.<br /></li>
+      </ul>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>Recently, in keeping up with the wave of e-commerce, many
+      researchers have paid attention to social network business
+      and advertising. For instance, by analyzing more than 7000
+      tweets regarding the Fortune 500 companies, Swani et al.
+      conclude that different branding and selling strategies exist
+      in B2B and B2C settings, such as in terms of message appeal,
+      cues, links, and hashtags [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>]. Zhai et al. build an RNN network,
+      which maps queries and ads to real valued vectors so that one
+      can easily compute the quality of a (query, ad) pair
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0023">23</a>].</p>
+      <p>Our work also tracks the popular e-commerce research while
+      integrating a new attention model. The attention model has
+      been applied to different research topics and tasks in recent
+      years, with its strong capacity to capture key words or local
+      image regions that can provide more significant information.
+      For image captioning, Xu et al. [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0017">17</a>] first propose an attention-based
+      model that automatically learns to describe the content of
+      images. You et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0020">20</a>] propose a novel framework that
+      combines the top-down and bottom-up approaches through a
+      semantic attention model. In video captioning, Guo et al.
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0005">5</a>] propose a
+      novel end-to-end attention-based LSTM framework with semantic
+      consistency, to transfer videos to natural sentences. In
+      addition, in the field of image question answering, Yang et
+      al. [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0018">18</a>]
+      present stacked attention networks that could learn to answer
+      natural language questions from images. Shih et al.
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0013">13</a>] create an
+      attention-based model that learns to answer visual questions
+      by selecting image regions relevant to the text-based query.
+      Inspired by these results, we propose a novel model that
+      combines two kinds of attention mechanism with strong
+      interpretability for our joint visual-textual classification
+      task. We demonstrate that compared with other models, the
+      weak image feature could exert its influence in a better way
+      as a guidance to adjust the text word weight.</p>
+      <p>Although most of the recent social media data mining
+      research mainly focuses on western social media services,
+      such as Twitter, Facebook and Instagram, researchers start to
+      pay attention to WeChat due to its high popularity in China.
+      For instance, Wang et al. investigate how WeChat usage
+      reinforces, reconfigures, and enhances existing Chinese
+      social practices. They propose a new theoretical concept,
+      space collapse [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>]. Zang et al. analyze the growth
+      patterns of Wechat online social network and propose a
+      NetTide Model to fit the growth [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>]. Qiu et al. analyze the growth,
+      evolution and diffusion patterns of WeChat Messaging Group
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0011">11</a>], and Li et
+      al. discover the diffusion patterns of information in Moments
+      by tracking a large amount of pictures in Moment [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0009">9</a>].</p>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> BiATT-LSTM</h2>
+        </div>
+      </header>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Basic LSTM
+            for text classification</h3>
+          </div>
+        </header>
+        <p>For our task, a basic LSTM network can be implemented to
+        identify a WeChat Business Moment by classifying its
+        associated text, it receives the text of each Moment as
+        input sample and predict its class. This basic LSTM network
+        could be represented as the blue part in Figure <a class=
+        "fig" href="#fig3">3</a>. It contains a word-embedding
+        layer that maps each word into a feature vector and a LSTM
+        layer that extracts the hidden state of each time after
+        inputting a new word, we could extract the last time's
+        hidden state (<em>h<sub>T</sub></em> ) or all times’ hidden
+        states (<em>h</em> <sub>1</sub>, <em>h</em> <sub>2</sub>,
+        ..., <em>h<sub>T</sub></em> ) to represent the high-level
+        feature of the input sentence. In the end, it transforms
+        this high-level feature via several fully-connected layers
+        and a softmax layer with 2 nodes that output the predicted
+        probabilities of WeChat Business Moment and WeChat
+        non-business Moment.</p>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span>
+            Self-learned attention VS Image-guide attention</h3>
+          </div>
+        </header>
+        <p>As demonstrated in [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0019">19</a>] [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0018">18</a>], each word should possess a unique
+        weight in a sentence, for a classification or regression
+        task based on text, incorporating the attention mechanism
+        to capture appropriate importance of each word will improve
+        the model's performance. For our task, we consider that a
+        word's attention weight in a specific Moment should be a
+        two-level concept, in particular, the final attention
+        weight of a word in a Moment should be the combination of a
+        global weight and a local weight. The global weight of a
+        word represents the overall importance and capacity of the
+        word to classify samples in the classification task, it
+        remains unchanged in different Moments. For example, both
+        words “customer” and “mountain” should owe high global
+        weights, because both of them are significant words to
+        classify a text. The word “customer” has strong positive
+        correlation with WeChat Business, a Moment whose text
+        includes this word is usually a WeChat business Moment. In
+        contrast, the word “mountain” has strong positive
+        correlation with WeChat non-business. It should be noticed
+        that this global weight is insensitive to Moments, in other
+        words, the word “mountain” has the same global weight in
+        different texts of different Moments. On the other hand,
+        each word “mountain” in a specific Moment has a unique
+        local weight that represents its importance in this Moment,
+        based on the image environment of the Moment. For example,
+        when “mountain” exists in a text whose corresponding images
+        are completely related to ads, living goods, posters or
+        foods, it should have a low local weight since it should
+        not be the keyword the Moment intends to express. In
+        contrast, if its corresponding images are mountain photos,
+        landscape photos or even outdoor selfies, it should have a
+        high local weight in the text. In the end, the final weight
+        of a word in a text should be the combination of its global
+        weight and local weight.</p>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186346/images/www18companion-108-fig3.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">The structure of the
+            proposed BiATT-LSTM. It contains a basic LSTM network
+            (blue), a self-learned attention sub-network (green)
+            and an image-guide attention sub-network (red).</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>For a given word, to figure out its local weight in a
+        specific Moment, we construct two kinds of feature, one
+        reflects the image environment of the corresponding Moment
+        and one represents the word's relation with specific image
+        environments. In particular, first, for all images in our
+        dataset, we implement a semi-supervised classification
+        framework to accurately classify images into <em>n</em>
+        categories as a basis of two kinds of features. The whole
+        process will be described in Section&nbsp;<a class="sec"
+        href="#sec-10">3.3</a>. Then, for a word <em>W</em> and a
+        category <em>C</em>, we construct a correlation coefficient
+        between them based on a Bayesian model and denote it as
+        <em>Θ<sub>WC</sub></em> . In particular, if a word
+        <em>W</em> belongs to a Moment, we define it as an
+        occurrence of word <em>W</em>, and if a word <em>W</em>
+        belongs to a Moment which contains images whose category is
+        <em>C</em>, we define it as an occurrence of a
+        word-category pair (<em>W</em>, <em>C</em>) . If a word
+        occurs more than one time in a text, we only record it for
+        one time. After we go through all texts in the train set,
+        we can denote the posterior probability of a category
+        <em>C</em> when we observe a word <em>W</em> by:</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \Pr (C|W)=
+            \frac{O(C,W)}{O(W)} \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>where <em>O</em>(<em>W</em>), <em>O</em>(<em>C</em>,
+        <em>W</em>) represent the total occurrence number of a word
+        <em>W</em> and a word-category pair (<em>W</em>,
+        <em>C</em>). We also record the prior probability of the
+        category <em>C</em> from the train set and denote it as
+        <em>Pr</em>(<em>C</em>). We could thus figure out the
+        correlation coefficient <em>Θ<sub>WC</sub></em> between a
+        category <em>C</em> and a word <em>W</em> by:
+        <div class="table-responsive" id="Xeq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \Theta _{WC}=
+            \frac{Pr(C|W)-Pr(C)}{Pr(C)} \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>For each word, we construct a <em>n</em>-dimensional
+        feature vector that records the correlation coefficient
+        between the word and each specific image category and we
+        call it category correlation word feature (CC word feature)
+        and denote it as <em>Θ<sub>W</sub></em> . For a word in
+        test set, if it occurs in the train set, we directly get
+        its CC word feature. Otherwise, we use word2vec [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0010">10</a>] to
+        predict its five most similar words in the train set, and
+        represent its feature by the mean value of these five
+        words’ CC word features. Meanwhile, for each Moment,
+        focusing on its contained images, we construct a
+        <em>n</em>-dimensional binary category distribution feature
+        vector denoted as <em>D<sub>C</sub></em> . If there exists
+        at least one image that belongs to a specific category, we
+        set the corresponding value of the feature vector for this
+        category as 1, otherwise, it is set to 0. In the end, for
+        an input Moment, the local weight <em>g<sub>l</sub></em> of
+        a word <em>W</em> is computed as:</p>
+        <div class="table-responsive" id="Xeq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            \begin{aligned} g_{l}=sigmoid(\sum ((W_{WC}\Theta _{W})
+            \odot (W_{DC}D_{C}))) \end{aligned}
+            \end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>where <em>Θ<sub>W</sub></em> and
+        <em>D<sub>C</sub></em> are the word's CC word feature and
+        its corresponding images’ category distribution feature in
+        the same Moment. <em>W<sub>WC</sub></em> and
+        <em>W<sub>DC</sub></em> are two matrices that map
+        <em>Θ<sub>W</sub></em> and <em>D<sub>C</sub></em> to
+        appropriate feature space. They are synchronously learned
+        with the whole network. In our experiments, we set their
+        dimensions as <em>n</em> x 200 which leads to the best
+        performance. In the end, we compute the inner product of
+        two vectors with an sigmoid transformation as the local
+        weight of the word, sigmoid transformation restrict the
+        weight's range from 0 to 1. In the whole process, the
+        category distribution feature plays role as a filter, it
+        strengthens the words express similar semantic content with
+        the images and weaken the words express dissimilar
+        semantic. Since this local weight is guided by the image
+        information, we call the mechanism as image-guide
+        attention.
+        <p></p>
+        <p>For the global weight of a word, we train a two layers
+        sub-network with sigmoid unit at the top, it receives the
+        embedding feature vector of a word as input and outputs a
+        value in the range of (0, 1) that represents the word's
+        global weight. In particular, the global weight
+        <em>g<sub>g</sub></em> of a word <em>W</em> is computed
+        as:</p>
+        <div class="table-responsive" id="Xeq4">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            \begin{aligned} h_{1} &amp;= ReLU(W_{1}X_{W}) \\g_{g}
+            &amp;= sigmoid(W_{2}h_{1}) \end{aligned}
+            \end{equation}</span><br />
+            <span class="equation-number">(4)</span>
+          </div>
+        </div>where <em>X<sub>W</sub></em> is the embedding feature
+        vector of word <em>W</em>, <em>W</em> <sub>1</sub> and
+        <em>W</em> <sub>2</sub> are learning matrices updated with
+        the whole network. In our experiments, we set the
+        dimensions of <em>W</em> <sub>1</sub> and <em>W</em>
+        <sub>2</sub> as <em>m</em> x 200 and 200 x 1 to produce the
+        best performance, where <em>m</em> is the dimension of word
+        feature vector.
+        <p></p>
+        <p>Note that for a specific word in different Moments,
+        because the embedding feature vector is same, the output
+        global weight does not change.</p>
+        <p>In the end, the final weight of a word in a Moment is
+        defined as:</p>
+        <div class="table-responsive" id="Xeq5">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            \begin{aligned} g_{f}=g_{l} \cdot g_{g} \end{aligned}
+            \end{equation}</span><br />
+            <span class="equation-number">(5)</span>
+          </div>
+        </div>Compared with other possible definitions, such as
+        computing the mean value of global and local weight as the
+        final weight, this definition achieves best performance.
+        <p></p>
+      </section>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span>
+            Semi-supervised Image Classification</h3>
+          </div>
+        </header>
+        <p>As we stated in Section <a class="sec" href=
+        "#sec-9">3.2</a>, we classify all Moment images into
+        <em>n</em> different categories as the basis of image-guide
+        attention mechanism. Considering that we do not have any
+        label for the Moment images, we classify each image by
+        extracting and clustering its deep neural network features.
+        The whole process is shown as follows. First, we extract a
+        deep-level 2048-dimensional feature vector for each image
+        from the last “pool5” layer of ResNet-50 proposed by He et
+        al [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0006">6</a>]. After that, we cluster these
+        feature vectors by k-means clustering. We determine the
+        value of k based on the well-known Silhouette Coefficient.
+        To reduce the time complexity, we replace the mean distance
+        of a sample to all samples of a cluster with the distance
+        between this sample and the centroid of this cluster. We
+        set k from 10 to 100 and find that when k is larger than
+        60, there is a marked decline for the Silhoette
+        Coefficient. Therefore we set k = 60 and obtain 60
+        categories with their corresponding Moment images. Next, we
+        manually combine several categories (which makes it
+        semi-supervised) that we judge to be the same category,
+        generate 50 categories in the end and label them according
+        to their corresponding images. The names of the 50
+        categories are shown in Table&nbsp;<a class="tbl" href=
+        "#tab1">1</a>. An image of test set is classified as the
+        category whose centroid holds the minimum Euclidean
+        distance with the image's high-level feature. To evaluate
+        the performance of the image classification method, for
+        each category, we randomly sample 500 images and ask two
+        volunteers to judge whether it is accurate to classify an
+        image into this category. The average accuracy for all
+        categories is 88.7%, with a standard deviation of 8.89,
+        while 43 of 50 categories are higher than 80%. Several
+        typical categories’ classification results are shown in
+        Figure&nbsp;<a class="fig" href="#fig4">4</a>. We can see
+        that the semi-supervised image classification has an
+        adequately high accuracy. Noticing that our categories have
+        some different characteristics from other well-known social
+        networking services, such as Pinterest<a class="fn" href=
+        "#fn2" id="foot-fn2"><sup>2</sup></a>, which defines 34
+        available categories for users to choose from. Since our
+        goal to generate categories is to improve the model's
+        performance, so the exact definitions of the categories are
+        less critical.</p>
+        <figure id="fig4">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186346/images/www18companion-108-fig4.jpg"
+          class="img-responsive" alt="Figure 4" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 4:</span>
+            <span class="figure-title">Several typical categories’
+            clustering results. (a) Flower (b) Meal (c) Cosmetics
+            (d) Chat Screenshot.</span>
+          </div>
+        </figure>
+        <p></p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Name of each category</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Indoor Selfie</td>
+                <td style="text-align:center;">Snack</td>
+                <td style="text-align:center;">Cosmetic Tips</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Pet</td>
+                <td style="text-align:center;">Landscape Photo</td>
+                <td style="text-align:center;">Display Rack</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Bed</td>
+                <td style="text-align:center;">Tourist Photo</td>
+                <td style="text-align:center;">Hand &amp; Leg</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Big Word Ad</td>
+                <td style="text-align:center;">Sunglass &amp;
+                Handbag</td>
+                <td style="text-align:center;">Wallet &amp;
+                Accessory</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Small Group
+                Photo</td>
+                <td style="text-align:center;">Photoshop Photo</td>
+                <td style="text-align:center;">Fruit &amp;
+                Cake</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Poster</td>
+                <td style="text-align:center;">Star</td>
+                <td style="text-align:center;">WeChat Moment</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Chart</td>
+                <td style="text-align:center;">Beauty Ad</td>
+                <td style="text-align:center;">Motto</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Pink Goods</td>
+                <td style="text-align:center;">Holding Something
+                Selfie</td>
+                <td style="text-align:center;">WeChat
+                Expression</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Child</td>
+                <td style="text-align:center;">Necklace &amp;
+                Bracelet</td>
+                <td style="text-align:center;">QR-code</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Flower</td>
+                <td style="text-align:center;">Baby</td>
+                <td style="text-align:center;">WeChat Wallet</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Cosmetics</td>
+                <td style="text-align:center;">Full-Length
+                Photo</td>
+                <td style="text-align:center;">Chat Screenshot</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Cosmetic Ad</td>
+                <td style="text-align:center;">Special Effects
+                Photo</td>
+                <td style="text-align:center;">Other Ad</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Activity</td>
+                <td style="text-align:center;">Very Long
+                Picture</td>
+                <td style="text-align:center;">Comic</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Large Group
+                Photo</td>
+                <td style="text-align:center;">Meal</td>
+                <td style="text-align:center;">Essay</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Building</td>
+                <td style="text-align:center;">Outdoor Selfie</td>
+                <td style="text-align:center;">Other Goods</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">TV &amp; Poster
+                Screenshot</td>
+                <td style="text-align:center;">Face Mask
+                Selfie</td>
+                <td style="text-align:center;">Shoes</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Toy</td>
+                <td style="text-align:center;">Clothes</td>
+                <td style="text-align:center;"></td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>“Tourist Photo” represents full-length photo of
+                tourist in a tourism scene.</td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>“Photoshop Photo” represents photo with
+                words/graphs using photoshop.</td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.4</span>
+            Architecture of BiATT-LSTM</h3>
+          </div>
+        </header>
+        <p>We formally describe the architecture of the BiATT-LSTM
+        model shown in Figure <a class="fig" href="#fig3">3</a>.
+        The basic LSTM contains a word embedding layer, an LSTM
+        layer, two fully-connected layers with ReLU non-linearity
+        function and a softmax layer which outputs two values that
+        represent probabilities of WeChat Business Moment and
+        WeChat non-business Moment. For the rest of the model, the
+        word embedding feature is not only added as an input term
+        of the LSTM layer, but also as the input to learn the
+        word's global weight. On the other hand, for each word we
+        compute the 50-dimensional category correlation word
+        feature that represents the correlation between the word
+        and image categories, and thus figure out the local weight
+        of the word in a specific Moment via the 50-dimensional
+        category distribution feature. In the end, we feed the
+        bilateral weights of a word into the LSTM by modifying the
+        equations representing the operations of the LSTM cell
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0004">4</a>] as
+        follows:</p>
+        <div class="table-responsive" id="Xeq6">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            \begin{aligned} i_t &amp;= \sigma ({\bf
+            g_{f}}W_{xi}x_t+W_{hi}h_{t-1}+b_i) \\f_t &amp;= \sigma
+            ({\bf g_{f}}W_{xf}x_t+W_{hf}h_{t-1}+b_f) \\o_t &amp;=
+            \sigma ({\bf g_{f}}W_{xo}x_t+W_{ho}h_{t-1}+b_o) \\g_t
+            &amp;= \phi ({\bf g_{f}}W_{xc}x_t+W_{hc}h_{t-1}+b_c)
+            \\c_t &amp;= f_t\odot c_{t-1}+i_t\odot g_t \\h_t &amp;=
+            o_t\odot \phi (c_t) \end{aligned}
+            \end{equation}</span><br />
+            <span class="equation-number">(6)</span>
+          </div>
+        </div>
+        <p>Where for the current focusing word at time step
+        <em>t</em>, <em>x<sub>t</sub></em> are the 32-dimensional
+        word embedding feature and, <em><em>g<sub>f</sub></em></em>
+        is the word's final weight computed by its global and local
+        weights. <em>W</em> and <em>b</em> are learning parameters
+        of the LSTM network.</p>
+        <p>Finally, we fuse the hidden state of last time with the
+        category distribution feature of the Moment and input them
+        to the fully-connected layers. On one hand, we notice that
+        in addition to reducing the network complexity, inputting
+        the hidden state of last time to the next fully-connected
+        layer leads to better performance than inputting the hidden
+        states of all times. Meanwhile, we find that for the
+        utility of image information in a Moment, even though the
+        image-guide attention mechanism achieves better performance
+        than late fusion, but fusion mechanism could still provide
+        complementary information and improve the performance.
+        Therefore, we still add the category distribution feature
+        as part of the input of the last fully-connected layers.
+        Cross-entropy loss is employed as the loss function and a
+        mini-batch gradient descent algorithm with an adaptive
+        learning rate is used to optimize the network.</p>
+      </section>
+    </section>
+    <section id="sec-12">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span>
+          Experiments</h2>
+        </div>
+      </header>
+      <p>To demonstrate the effectiveness of our BiATT-LSTM for the
+      task, we perform a two-level “vertical” and “parallel”
+      experiments that show the results of different models on
+      several measures. For “vertical” experiments, we compare the
+      basic LSTM framework with other three popular frameworks for
+      text classification, text-based decision tree framework,
+      Doc2vec-based framework [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>] and Latent Dirichlet Allocation-based
+      framework [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0003">3</a>]
+      to show its effectiveness. Then we feed bilateral-attention
+      mechanism into model as shown in Figure <a class="fig" href=
+      "#fig3">3</a>, and compare the experiment results. For
+      “parallel” experiments, intrinsically, we consider the
+      BiATT-LSTM as a new framework that jointly models vision and
+      language content in a novel way, we thus compare our model's
+      result with other multi-modality frameworks. In recent years,
+      a number of innovative models [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0008">8</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0018">18</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0019">19</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0021">21</a>] implement different tasks based on
+      jointly modeling image and language content. However, with
+      the restrictions of 1) our task is a classification task, 2)
+      one text corresponds to multiple images and 3) the language
+      style are informal, some of them are not suitable for our
+      work. Therefore, we compare our methods with four models, the
+      normal late fusion model, factorization machines [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0012">12</a>],
+      Aishwarya's deeper LSTM Q + norm I model (LSTM Q) [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0001">1</a>] and You's
+      Cross-modality Consistent Regression model (CCR) [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0021">21</a>]. You's CCR
+      model assumes that different modalities should be consistent
+      in terms of depicting the same subject, it thus imposes
+      consistent constraints across related but different
+      modalities (visual and textual). Aishwarya's LSTM Q model
+      replaces the concatenation of visual and textual feature with
+      common space mapping and element-wise multiplication.
+      Factorization machines could model all interactions between
+      features using factorized parameters, thus they are able to
+      estimate interactions even in problems with huge sparsity. It
+      adapts our category distribution feature which is a sparse
+      vector. All baseline models are suitable for joint
+      visual-textual classification task.</p>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span>
+            Dataset</h3>
+          </div>
+        </header>
+        <p>We collect a dataset that consists of 570 users with
+        their 37,359 WeChat Moments and 109,545 Moment images, from
+        Mar 21, 2016 to July 21, 2016. All of these users are VIPs
+        of a cosmetics brand. We collect data from this kind of
+        users because a considerable amount of their Moments is
+        about WeChat Business. In addition to cosmetics, they also
+        advertise other products such as clothes, shoes,
+        restaurants, start-ups, exotic fruits, luxuries, platforms,
+        laundry detergents, high-tech gears, and so on. To train
+        and test the WeChat Business Moment classifier, two
+        researchers randomly select 10078 Moments and respectively
+        label part of them in two categories, WeChat Business
+        Moment and WeChat non-business Moment. The similar label
+        proportion of WeChat Business Moment (nearly 43%) by both
+        researchers and a thorough process of sub-sample validation
+        ensures the consistency of the labeling process. In the
+        end, 4309 of 10078 Moments are positive samples that are
+        related to WeChat Business. For all experiments, We
+        randomly select 80% Moments as train samples and 20%
+        Moments as test samples, and cross-validated model
+        hyperparameters based on random 10% samples of the train
+        set.</p>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span>
+            Experimental Settings</h3>
+          </div>
+        </header>
+        <p>For vertical experiments, we first demonstrate the
+        effectiveness of LSTM. For text-based decision tree, we
+        extract text feature by TF-IDF [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0016">16</a>] and directly train a
+        decision tree for classification, for Doc2vec-based and
+        LDA-based frameworks, we respectively extract the text
+        feature by Doc2vec and the combination of TF-IDF and LDA,
+        and input the feature to Multi-layer Perceptron for
+        classification. We set both text feature dimension of
+        Doc2vec and topic number of LDA as 300 for best
+        performance. After that, we compare the BiATT-LSTM
+        framework with the baseline LSTM. Consistent with
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0021">21</a>], four
+        measures, accuracy, precision, recall and F-measure are
+        used to measure the performance.</p>
+        <p>For the parallel experiment, we compare the model's
+        performance with late fusion, factorization machines, LSTM
+        Q and CCR. For CCR, as [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0021">21</a>] does, we add a new loss term that
+        imposes consistent constraints across visual and textual
+        modalities. For factorization machines, we replace the top
+        fully-connected layers with factorization machines layers.
+        For LSTM Q, we normalize the visual feature (CD feature) as
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0001">1</a>], and also
+        implement common space mapping and element-wise
+        multiplication.</p>
+        <p>On the other hand, considering the sample number for our
+        dataset, we also focus on a simulation of using a large
+        dataset for our task, and prove that bilateral-attention
+        mechanism still have strong capacity to improve the
+        performance. Specifically, because of the complicate
+        language environment, very large word vocabulary and
+        relatively limited sample number of the dataset, we find
+        that a great amount of words in test set only exist few
+        times or even not exist in training set. This situation
+        leads to inaccurate word embedding for these words and make
+        the model's performance far from using a large dataset,
+        from which, the model can learn accurate word embedding for
+        each word of test set. For our task, pre-trained word
+        embedding is difficult to be transfered and used since 1)
+        it's difficult to find large dataset that contains all
+        these words/expressions to train the model 2) most
+        importantly, the task is high-level, even words with
+        completely different semantic meanings (e.g. “washing
+        powder” and “face mask”) in ordinary datasets can have
+        similar attributes toward our task (positive to WeChat
+        Business), which weakens the significance of pre-trained
+        word embedding. Therefore, to simulate the situation of
+        using a large dataset, we manually incorporate a strong
+        word feature into the LSTM cell. In particular, for a word
+        and a label, we construct a correlation coefficient between
+        them in the same way as constructing the correlation
+        between word and category, but also adding the test samples
+        of dataset instead of just using training samples, this
+        operation artificially makes up for the bad word embedding
+        quality of a test word which only exists few times and
+        simulate a more close situation of using large dataset.
+        Since there are two types of labels for the text of our
+        binary classification task, the word feature is a
+        2-dimension feature vector where each node records the
+        correlation coefficient between this word and a specific
+        label. In our experiments, we also show the performance of
+        different models based on this simulation.</p>
+      </section>
+      <section id="sec-15">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span>
+            Experimental Results</h3>
+          </div>
+        </header>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Vertical comparison of accuracy,
+            precision, recall and F-measure based on different
+            frameworks. “LSTM(S)” represents the experiments of
+            simulating large dataset.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td style="text-align:right;"></td>
+                <td style="text-align:right;">Accuracy</td>
+                <td style="text-align:right;">Precision</td>
+                <td style="text-align:right;">Recall</td>
+                <td style="text-align:right;">F-measure</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">Category Distribution
+                Feature</td>
+                <td style="text-align:right;">77.12</td>
+                <td style="text-align:right;">76.86</td>
+                <td style="text-align:right;">67.77</td>
+                <td style="text-align:right;">71.96</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">DecisionTree</td>
+                <td style="text-align:right;">80.41</td>
+                <td style="text-align:right;">78.09</td>
+                <td style="text-align:right;">76.27</td>
+                <td style="text-align:right;">77.17</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">
+                  Doc2vec[<a class="bib" data-trigger="hover"
+                  data-toggle="popover" data-placement="top" href=
+                  "#BibPLXBIB0007">7</a>]
+                </td>
+                <td style="text-align:right;">81.23</td>
+                <td style="text-align:right;">83.16</td>
+                <td style="text-align:right;">71.18</td>
+                <td style="text-align:right;">76.70</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">
+                  TFIDF+LDA[<a class="bib" data-trigger="hover"
+                  data-toggle="popover" data-placement="top" href=
+                  "#BibPLXBIB0003">3</a>]
+                </td>
+                <td style="text-align:right;">77.71</td>
+                <td style="text-align:right;">74.80</td>
+                <td style="text-align:right;">73.39</td>
+                <td style="text-align:right;">74.09</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">LSTM</td>
+                <td style="text-align:right;">87.34</td>
+                <td style="text-align:right;">86.18</td>
+                <td style="text-align:right;">84.37</td>
+                <td style="text-align:right;">85.27</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">BiATT-LSTM</td>
+                <td style="text-align:right;">89.85</td>
+                <td style="text-align:right;">91.48</td>
+                <td style="text-align:right;">84.48</td>
+                <td style="text-align:right;">87.84</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">LSTM(S)</td>
+                <td style="text-align:right;">93.26</td>
+                <td style="text-align:right;">89.85</td>
+                <td style="text-align:right;">95.23</td>
+                <td style="text-align:right;">92.46</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">BiATT-LSTM(S)</td>
+                <td style="text-align:right;">96.01</td>
+                <td style="text-align:right;">96.05</td>
+                <td style="text-align:right;">94.67</td>
+                <td style="text-align:right;">95.13</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <figure id="fig5">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186346/images/www18companion-108-fig5.jpg"
+          class="img-responsive" alt="Figure 5" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 5:</span>
+            <span class="figure-title">Correlation between WeChat
+            Business and each image category.</span>
+          </div>
+        </figure>
+        <p>Table&nbsp;<a class="tbl" href="#tab2">2</a> shows the
+        vertical experiment results, we can see that using image
+        category distribution feature, the accuracy reaches 77.12%.
+        A logistic regression model is implemented to compute the
+        correlation between WeChat Business and each image
+        category. Figure&nbsp;<a class="fig" href="#fig5">5</a>
+        shows the logistic regression coefficient of each category,
+        we can see that most of image categories have the capacity
+        (strong positive or negative correlation) to classify the
+        Moments, but only using them as direct features for our
+        task cannot exert their stronger potential as a guidance to
+        adjust the text word weight. For text information, using
+        LSTM model could reach 87% accuracy for the task, it is
+        better than LDA-based and Doc2vec-based framework, which
+        demonstrates that LSTM achieves better performance for our
+        task. Most importantly, bilateral-attention mechanism
+        remarkably improves the performance for both experiments
+        with common setting and setting of simulating large
+        dataset, it respectively improve the accuracy from 87.34%
+        to 89.85% and from 93.26% to 96.01%, which is significant
+        considering that the baseline accuracy is high. In addition
+        to the highest accuracy, BiATT-LSTM achieves a balanced
+        performance for both precision and recall, which indicates
+        that most of the Moments it predicts as positive are indeed
+        WeChat Business Moment, and most of the real WeChat
+        Business Moments are identified.</p>
+        <p>In the parallel experiment, from Table&nbsp;<a class=
+        "tbl" href="#tab3">3</a>, it can be seen that the
+        bilateral-attention mechanism, as a new approach to jointly
+        modeling visual and textual modalities, helps the network
+        learn better for the visual-textual interaction and
+        achieves excellent performance on different experiment
+        settings, it outperforms other approaches on almost all
+        situations. Also, we could see that a combination of
+        bilateral-attention mechanism and late fusion can still
+        improve the performance, which demonstrates that
+        bilateral-attention mechanism is compatible with other
+        frameworks, because it acts on the bottom layers of the
+        model, which makes it potential to coexist with other
+        approaches that act on top layers of the model.</p>
+        <figure id="fig6">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186346/images/www18companion-108-fig6.jpg"
+          class="img-responsive" alt="Figure 6" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 6:</span>
+            <span class="figure-title">Visualization of the
+            bilateral attention mechanism on two artificially
+            designed examples (The word segmentation is based on
+            Chinese, each Chinese word may correspond to multiple
+            English words). (a) represents two Moments with the
+            same text but different images. (b) represents two
+            Moments with the same images but different
+            texts.</span>
+          </div>
+        </figure>
+        <p></p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Parallel comparison of accuracy,
+            precision, recall and F-measure based on different
+            frameworks. “CD” represents category distribution
+            feature, “LF” represents normal late fusion.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td style="text-align:right;"></td>
+                <td style="text-align:right;">Accuracy</td>
+                <td style="text-align:right;">Precision</td>
+                <td style="text-align:right;">Recall</td>
+                <td style="text-align:right;">F-measure</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">LSTM+CD+LF</td>
+                <td style="text-align:right;">88.98</td>
+                <td style="text-align:right;">90.02</td>
+                <td style="text-align:right;">84.04</td>
+                <td style="text-align:right;">86.93</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">
+                  LSTM+CD+CCR[<a class="bib" data-trigger="hover"
+                  data-toggle="popover" data-placement="top" href=
+                  "#BibPLXBIB0021">21</a>]
+                </td>
+                <td style="text-align:right;">89.18</td>
+                <td style="text-align:right;">90.17</td>
+                <td style="text-align:right;">84.27</td>
+                <td style="text-align:right;">87.12</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">
+                  LSTM+CD+FM[<a class="bib" data-trigger="hover"
+                  data-toggle="popover" data-placement="top" href=
+                  "#BibPLXBIB0012">12</a>]
+                </td>
+                <td style="text-align:right;">89.42</td>
+                <td style="text-align:right;">89.90</td>
+                <td style="text-align:right;">85.22</td>
+                <td style="text-align:right;">87.50</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">
+                  LSTM+CD+LSTM Q[<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0001">1</a>]
+                </td>
+                <td style="text-align:right;">88.65</td>
+                <td style="text-align:right;">91.53</td>
+                <td style="text-align:right;">81.39</td>
+                <td style="text-align:right;">86.17</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">BiATT-LSTM</td>
+                <td style="text-align:right;">89.85</td>
+                <td style="text-align:right;">91.48</td>
+                <td style="text-align:right;">84.48</td>
+                <td style="text-align:right;">87.84</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">BiATT-LSTM+CD+LF</td>
+                <td style="text-align:right;">90.33</td>
+                <td style="text-align:right;">91.36</td>
+                <td style="text-align:right;">85.70</td>
+                <td style="text-align:right;">88.49</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">LSTM(S)</td>
+                <td style="text-align:right;">93.26</td>
+                <td style="text-align:right;">89.85</td>
+                <td style="text-align:right;">95.23</td>
+                <td style="text-align:right;">92.46</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">LSTM(S)+CD+LF</td>
+                <td style="text-align:right;">94.27</td>
+                <td style="text-align:right;">97.57</td>
+                <td style="text-align:right;">89.02</td>
+                <td style="text-align:right;">93.10</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">LSTM(S)+CD+CCR</td>
+                <td style="text-align:right;">94.63</td>
+                <td style="text-align:right;">92.48</td>
+                <td style="text-align:right;">95.35</td>
+                <td style="text-align:right;">93.89</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">LSTM(S)+CD+FM</td>
+                <td style="text-align:right;">94.94</td>
+                <td style="text-align:right;">94.81</td>
+                <td style="text-align:right;">93.55</td>
+                <td style="text-align:right;">94.18</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">LSTM(S)+CD+LSTM
+                Q</td>
+                <td style="text-align:right;">94.13</td>
+                <td style="text-align:right;">94.02</td>
+                <td style="text-align:right;">92.36</td>
+                <td style="text-align:right;">93.81</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">BiATT-LSTM(S)</td>
+                <td style="text-align:right;">96.01</td>
+                <td style="text-align:right;">96.05</td>
+                <td style="text-align:right;">94.67</td>
+                <td style="text-align:right;">95.13</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">
+                BiATT-LSTM(S)+CD+LF</td>
+                <td style="text-align:right;">96.20</td>
+                <td style="text-align:right;">95.47</td>
+                <td style="text-align:right;">95.78</td>
+                <td style="text-align:right;">95.63</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-responsive" id="tab4">
+          <div class="table-caption">
+            <span class="table-number">Table 4:</span> <span class=
+            "table-title">Typical words with their local weights in
+            a Moment that contains images of a single following
+            category. Sigmoid unit is replaced with ReLU for a
+            better display of words’ differences. Values with bold
+            format are relatively high weights for each
+            word.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;">Cosmetic Ad</td>
+                <td style="text-align:center;">Meal</td>
+                <td style="text-align:center;">Landscape Photo</td>
+                <td style="text-align:center;">Shoes</td>
+                <td style="text-align:center;">Motto</td>
+                <td style="text-align:center;">Chat Screenshot</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Skin</td>
+                <td style="text-align:center;">
+                <strong>3.56</strong></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0.11</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Taste</td>
+                <td style="text-align:center;">0.26</td>
+                <td style="text-align:center;">
+                <strong>0.63</strong></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0.28</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Scenery</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0.21</td>
+                <td style="text-align:center;">
+                <strong>1.64</strong></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0.25</td>
+                <td style="text-align:center;">0</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Color</td>
+                <td style="text-align:center;">
+                <strong>0.48</strong></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0.03</td>
+                <td style="text-align:center;">
+                <strong>0.47</strong></td>
+                <td style="text-align:center;">0.16</td>
+                <td style="text-align:center;">0.09</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Sunshine</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0.21</td>
+                <td style="text-align:center;">
+                <strong>0.53</strong></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">
+                <strong>0.44</strong></td>
+                <td style="text-align:center;">0</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Feedback</td>
+                <td style="text-align:center;">1.85</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0.80</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">
+                <strong>3.52</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Table&nbsp;<a class="tbl" href="#tab4">4</a> shows
+        typical words’ local weights in a Moment that contains
+        images of a specific category, we replace sigmoid unit with
+        ReLU which can show the difference of words in a better
+        way. We could see that “skin”, “taste”, “scenery”, “color”,
+        “sunshine” and “feedback” respectively gain high local
+        weight for categories of “Cosmetic Ad”, “Meal”, “Landscape
+        Photo”, “Shoes”, “Motto” and “Chat Screenshot”.
+        Figure&nbsp;<a class="fig" href="#fig6">6</a> illustrates
+        how bilateral-attention mechanism works. In (a), we test
+        two artificial Moments with the same text but different
+        images. For the global weights of the words, the words that
+        could provide significant information to judge whether a
+        Moment is related to WeChat Business are learned with high
+        global weights. For example, “along the trip”, “mountain”,
+        “whitening”, “face masks” possess high global weights, thus
+        the first two words are marked words for WeChat
+        non-business Moment and the last two words are the
+        counterpart. For Moment <em>A</em>, with several images
+        belonging to Cosmetic and Cosmetic Ad categories,
+        “whitening” and “face masks” hold high local weights and
+        “along the trip”, “mountain” hold low local weights. The
+        final word weights have an clear tendency to strengthen the
+        words in the latter part of the sentence. On the other
+        hand, for Moment <em>B</em>, with the image environment
+        related to travel, the words in the latter part of the
+        sentence are weakened with low local weights. In the end,
+        with totally different distributions of final word weights
+        for the same sentence, Moment <em>A</em> will be predicted
+        as positive and Moment <em>B</em> will be predicted as
+        negative. In (b), it tests two Moments with the same images
+        and different texts, still ,the bilateral attention
+        mechanism could adjust the weights as we would expect and
+        identify Moment <em>A</em> as a WeChat Business Moment.</p>
+      </section>
+    </section>
+    <section id="sec-16">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span>
+          Conclusions</h2>
+        </div>
+      </header>
+      <p>In this paper, we propose a Bilateral-Attention task
+      driven LSTM network to identify WeChat Business related
+      Moments. To make better use of image information of a Moment,
+      we incorporate an image-guide attention mechanism to
+      automatically learn a word's local weight on its
+      corresponding specific Moment. On the other hand, to extract
+      the overall importance of each word for the classification
+      task and strengthen the significant words, a self-learned
+      attention mechanism is implemented to learn words’ global
+      weight. We figure out the final weight and feed it into the
+      LSTM cells to adjust the final importance of a word in a
+      text. Two-level experiments demonstrate that BiATT-LSTM
+      remarkably improves the model's performance on all measures.
+      In particular, the image-guided attention mechanism provides
+      a novel approach to make the best use of the weaker visual
+      modality for joint visual-textual learning tasks.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Aishwarya Agrawal,
+        Jiasen Lu, Stanislaw Antol, Margaret Mitchell,
+        C.&nbsp;Lawrence Zitnick, Devi Parikh, and Dhruv Batra.
+        2017. VQA: Visual Question Answering. <em><em>International
+        Journal of Computer Vision</em></em> 123, 1 (2017),
+        4–31.</li>
+        <li id="BibPLXBIB0002" label="[2]">Stanislaw Antol,
+        Aishwarya Agrawal, Jiasen Lu, Margaret Mitchell, Dhruv
+        Batra, C Lawrence&nbsp;Zitnick, and Devi Parikh. 2015. Vqa:
+        Visual question answering. In <em><em>Proceedings of the
+        IEEE International Conference on Computer Vision</em></em>
+        . 2425–2433.</li>
+        <li id="BibPLXBIB0003" label="[3]">David&nbsp;M Blei,
+        Andrew&nbsp;Y Ng, and Michael&nbsp;I Jordan. 2003. Latent
+        dirichlet allocation. <em><em>Journal of machine Learning
+        research</em></em> 3, Jan (2003), 993–1022.</li>
+        <li id="BibPLXBIB0004" label="[4]">Alex Graves <em>et
+        al.</em> 2012. <em><em>Supervised sequence labelling with
+        recurrent neural networks</em></em> . Vol.&nbsp;385.
+        Springer.</li>
+        <li id="BibPLXBIB0005" label="[5]">Zhao Guo, Lianli Gao,
+        Jingkuan Song, Xing Xu, Jie Shao, and Heng&nbsp;Tao Shen.
+        2016. Attention-based LSTM with Semantic Consistency for
+        Videos Captioning. In <em><em>Proceedings of the 2016 ACM
+        on Multimedia Conference</em></em> . ACM, 357–361.</li>
+        <li id="BibPLXBIB0006" label="[6]">Kaiming He, Xiangyu
+        Zhang, Shaoqing Ren, and Jian Sun. 2015. Deep Residual
+        Learning for Image Recognition. <em><em>arXiv preprint
+        arXiv:1512.03385</em></em> (2015).</li>
+        <li id="BibPLXBIB0007" label="[7]">Quoc Le and Tomas
+        Mikolov. 2014. Distributed representations of sentences and
+        documents. In <em><em>Proceedings of the 31st International
+        Conference on Machine Learning (ICML-14)</em></em> .
+        1188–1196.</li>
+        <li id="BibPLXBIB0008" label="[8]">Shuang Li, Tong Xiao,
+        Hongsheng Li, Bolei Zhou, Dayu Yue, and Xiaogang Wang.
+        2017. Person Search with Natural Language Description.
+        <em><em>arXiv:1702.05729</em></em> (2017).</li>
+        <li id="BibPLXBIB0009" label="[9]">Zhuqi Li, Lin Chen,
+        Yichong Bai, Kaigui Bian, and Pan Zhou. 2016. On
+        Diffusion-restricted Social Network: A Measurement Study of
+        WeChat Moments. <em><em>IEEE International Conference on
+        Communications</em></em> (2016).</li>
+        <li id="BibPLXBIB0010" label="[10]">Tomas Mikolov, Ilya
+        Sutskever, Kai Chen, Greg&nbsp;S Corrado, and Jeff Dean.
+        2013. Distributed representations of words and phrases and
+        their compositionality. In <em><em>Advances in neural
+        information processing systems</em></em> . 3111–3119.</li>
+        <li id="BibPLXBIB0011" label="[11]">Jiezhong Qiu, Yixuan
+        Li, Jie Tang, Zheng Lu, Hao Ye, Bo Chen, Qiang Yang, and
+        John&nbsp;E. Hopcroft. 2016. The Lifecycle and Cascade of
+        WeChat Social Messaging Groups. <em><em>Proceedings of. ACM
+        International Conference on World Wide Web (WWW) Pages
+        311-320</em></em> (2016).</li>
+        <li id="BibPLXBIB0012" label="[12]">Steffen Rendle. 2010.
+        Factorization Machines. In <em><em>ICDM 2010, the IEEE
+        International Conference on Data Mining, Sydney, Australia,
+        14-17 December</em></em> . 995–1000.</li>
+        <li id="BibPLXBIB0013" label="[13]">Kevin&nbsp;J Shih,
+        Saurabh Singh, and Derek Hoiem. 2016. Where to look: Focus
+        regions for visual question answering. (2016),
+        4613–4621.</li>
+        <li id="BibPLXBIB0014" label="[14]">Kunal Swani,
+        Brian&nbsp;P. Brown, and George&nbsp;R. Milne. 2014. Should
+        tweets differ for B2B and B2C? An analysis of Fortune 500
+        companies’ Twitter communications. <em><em>Industrial
+        Marketing Management</em></em> 43, 5 (2014), 873–881.</li>
+        <li id="BibPLXBIB0015" label="[15]">Yang Wang, Yao Li,
+        Bryan Semaan, and Jian Tang. 2016. Space Collapse:
+        Reinforcing, Reconfiguring and Enhancing Chinese Social
+        Practices through WeChat. In <em><em>ICWSM</em></em> .</li>
+        <li id="BibPLXBIB0016" label="[16]">Ho&nbsp;Chung Wu,
+        Robert Wing&nbsp;Pong Luk, Kam&nbsp;Fai Wong, and
+        Kui&nbsp;Lam Kwok. 2008. Interpreting tf-idf term weights
+        as making relevance decisions. <em><em>ACM Transactions on
+        Information Systems (TOIS)</em></em> 26, 3 (2008), 13.</li>
+        <li id="BibPLXBIB0017" label="[17]">Kelvin Xu, Jimmy Ba,
+        Ryan Kiros, Kyunghyun Cho, Aaron&nbsp;C Courville, Ruslan
+        Salakhutdinov, Richard&nbsp;S Zemel, and Yoshua Bengio.
+        2015. Show, Attend and Tell: Neural Image Caption
+        Generation with Visual Attention.14 (2015), 77–81.</li>
+        <li id="BibPLXBIB0018" label="[18]">Zichao Yang, Xiaodong
+        He, Jianfeng Gao, Li Deng, and Alex Smola. 2016. Stacked
+        attention networks for image question answering. (2016),
+        21–29.</li>
+        <li id="BibPLXBIB0019" label="[19]">Quanzeng You,
+        Liangliang Cao, Hailin Jin, and Jiebo Luo. 2016. Robust
+        Visual-Textual Sentiment Analysis: When Attention meets
+        Tree-structured Recursive Neural Networks. In
+        <em><em>Proceedings of the 2016 ACM on Multimedia
+        Conference</em></em> . ACM, 1008–1017.</li>
+        <li id="BibPLXBIB0020" label="[20]">Quanzeng You, Hailin
+        Jin, Zhaowen Wang, Chen Fang, and Jiebo Luo. 2016. Image
+        captioning with semantic attention. (2016), 4651–4659.</li>
+        <li id="BibPLXBIB0021" label="[21]">Quanzeng You, Jiebo
+        Luo, Hailin Jin, and Jianchao Yang. 2016. Cross-modality
+        Consistent Regression for Joint Visual-Textual Sentiment
+        Analysis of Social Multimedia. In <em><em>ACM International
+        Conference on Web Search and Data Ming (WSDM)</em></em> .
+        13–22.</li>
+        <li id="BibPLXBIB0022" label="[22]">Chengxi Zang, Peng Cui,
+        and Christos Faloutsos. 2016. Beyond Sigmoids: The NetTide
+        Model for Social Network Growth, and Its Applications. In
+        <em><em>The ACM SIGKDD International Conference</em></em> .
+        2015–2024.</li>
+        <li id="BibPLXBIB0023" label="[23]">Shuangfei Zhai,
+        Keng&nbsp;Hao Chang, Ruofei Zhang, and Zhongfei&nbsp;Mark
+        Zhang. 2016. DeepIntent: Learning Attentions for Online
+        Advertising with Recurrent Neural Networks. In <em><em>ACM
+        SIGKDD International Conference on Knowledge Discovery and
+        Data Mining</em></em> . 1295–1304.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "http://tech.qq.com/a/20160518/067853.htm">http://tech.qq.com/a/20160518/067853.htm</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.pinterest.com/">https://www.pinterest.com/</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186346">https://doi.org/10.1145/3184558.3186346</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

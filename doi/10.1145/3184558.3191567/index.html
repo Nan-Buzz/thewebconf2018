@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Towards Quantifying Sampling Bias in Network
+  Inference</title><!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Towards Quantifying Sampling Bias
+          in Network Inference</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Lisette</span> <span class=
+          "surName">Espín-Noboa</span> GESIS &amp; University of
+          Koblenz-Landau<a class="fn" href="#fn1" id=
+          "foot-fn1"><sup>⁎</sup></a>, <a href=
+          "mailto:Lisette.Espin@gesis.org">Lisette.Espin@gesis.org</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Claudia</span> <span class=
+          "surName">Wagner</span> GESIS &amp; University of
+          Koblenz-Landau, <a href=
+          "mailto:Claudia.Wagner@gesis.org">Claudia.Wagner@gesis.org</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Fariba</span> <span class=
+          "surName">Karimi</span> GESIS &amp; University of
+          Koblenz-Landau, <a href=
+          "mailto:Fariba.Karimi@gesis.org">Fariba.Karimi@gesis.org</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Kristina</span> <span class=
+          "surName">Lerman</span> USC Information Sciences
+          Institute, <a href=
+          "mailto:lerman@isi.edu">lerman@isi.edu</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191567"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191567</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Relational inference leverages relationships
+        between entities and links in a network to infer
+        information about the network from a small sample. This
+        method is often used when global information about the
+        network is not available or difficult to obtain. However,
+        how reliable is inference from a small labeled sample? How
+        should the network be sampled, and what effect does it have
+        on inference error? How does the structure of the network
+        impact the sampling strategy? We address these questions by
+        systematically examining how network sampling strategy and
+        sample size affect accuracy of relational inference in
+        networks. To this end, we generate a family of synthetic
+        networks where nodes have a binary attribute and a tunable
+        level of homophily. As expected, we find that in
+        heterophilic networks, we can obtain good accuracy when
+        only small samples of the network are initially labeled,
+        regardless of the sampling strategy. Surprisingly, this is
+        not the case for homophilic networks, and sampling
+        strategies that work well in heterophilic networks lead to
+        large inference errors. This finding suggests that the
+        impact of network structure on relational classification is
+        more complex than previously thought.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Lisette Espín-Noboa, Claudia Wagner, Fariba Karimi, and
+          Kristina Lerman. 2018. Towards Quantifying Sampling Bias
+          in Network Inference. In <em>WWW '18 Companion: The 2018
+          Web Conference Companion,</em> <em>April 23–27,
+          2018,</em> <em>Lyon, France. ACM, New York, NY, USA</em>
+          9 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3191567" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191567</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Networks form the infrastructure of modern life, linking
+      billions of people, organizations and devices via trillions
+      of transactions. Solving today's problems and making critical
+      decisions increasingly calls for mining massive data residing
+      in such networks. Due to their size and complexity, it is
+      often prohibitively costly for analysts to obtain a global
+      view of the network and the data it contains. Instead, they
+      can use relational machine learning methods to infer
+      information about the network from a partial sample, e.g.,
+      infer the class of unlabeled nodes from the known classes of
+      a few seed nodes. How reliable is such inference? How much
+      impact does the choice of seeds have on inference error? How
+      much does the structure of the network impact sampling
+      strategy? In this work, we address some of these questions by
+      systematically studying potential sources of bias in the
+      relational inference process: Network Structure, Sampling,
+      Relational Classification, and Collective Inference. Towards
+      that goal, we dig deeper into how sampling strategies can be
+      biased, and when this bias can be beneficial or
+      disadvantageous for the inference process. New insights on
+      how sampling impacts relational classification performance
+      can potentially lead to new unbiased strategies.</p>
+      <p><strong>Relational Classification</strong>. Relational
+      classifiers propagate information through the network from
+      the known labels of nodes to infer unknown labels. The
+      classification performance is measured by how well all the
+      nodes’ labels can be recovered when only the labels of a few
+      seed nodes are known. In [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>] the authors outline the two main
+      components of collective classification, which are the
+      collective inference method and the relational classifier.
+      They assess how various choices and combinations of
+      components, as well as the percentage of labeled data used
+      for training the method, impact the accuracy of the
+      classification. Their results show that there are two sets of
+      techniques that are preferable in different situations,
+      namely when few versus many labels are known initially, and
+      that link selection plays an important role similar to
+      traditional feature selection. However, the authors did not
+      explore how the network structure impacts performance of
+      collective classification methods. Sen et al. close this gap
+      by comparing four collective classification algorithms with a
+      content-only classifier, which does not take the network into
+      account, on networks that varied in link density and
+      homophily [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0012">12</a>].
+      They found that increasing link density improves the
+      performance of collective classification and clearly
+      outperforms content-only classifiers at all density levels.
+      Moreover, <em>homophily</em>, which refers to the tendency of
+      nodes with similar labels to be connected, further helps
+      collective classifiers outperform content-only classifiers,
+      except for very low levels of homophily (&lt; 0.1), where
+      content-only classifiers perform slightly better. While this
+      work explores homophily and density of networks separately,
+      more recent research investigates how these characteristics
+      jointly impact performance. In [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0017">17</a>] the authors show that as homophily
+      and link density of the network increase, the accuracy of
+      relational classification also increases. Similar to our
+      study, that work focuses on balanced networks where nodes
+      have a single binary attribute. However, the subgraph used
+      for training is selected via random node sampling only.</p>
+      <p><strong>Sampling Bias</strong>. Previous work has
+      demonstrated that the estimates obtained from network samples
+      collected by various crawlers can be inaccurate with respect
+      to global [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0008">8</a>]
+      and local network statistics [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>]. Two recent papers showed that the
+      choice of the initial sample of labeled seed nodes can also
+      affect attribute inference [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>]. However, these did not explore how
+      properties of networks, such as homophily, affect the choice
+      of seeds and classification performance.</p>
+      <p><strong>Findings and Contributions</strong>. In this work,
+      we focus on the attribute inference task and explore how the
+      accuracy of collective inference in networks depends on the
+      strategy used to create the initial set of labeled nodes. In
+      summary, our main contributions are three-fold: (i) Using
+      synthetic and empirical networks, we provide evidence that
+      homophily plays a decisive role in the collective inference
+      process: First, no sampling technique can beat a random
+      classifier when networks are neutral (i.e., nodes connected
+      at random regardless of their class label). Second,
+      heterophilic networks are easy to classify with any sampling
+      strategy and require a training sample of at least 5% of
+      random nodes to achieve an unbiased classification. Finally,
+      some sampling strategies that work well for heterophilic
+      networks require larger samples for homophilic networks. Only
+      methods that construct samples by selecting highest degree
+      nodes first achieve good classification performance with
+      small samples in both homophilic and heterophilic regimes.
+      (ii) We show that link density influences classification
+      performance under certain conditions: First, sampling methods
+      that rank low-degree nodes first, benefit from networks with
+      high link density. Second, homophilic networks with high link
+      density require larger training samples for edge, mixed
+      degrees, and snowball sampling. (iii) We discuss the impact
+      of sampling strategies on relational classification using
+      collective inference, and demonstrate that inference can be
+      negatively affected by class imbalance.</p>
+      <p>The remainder of this paper is organized as follows: In
+      Section <a class="sec" href="#sec-6">2</a> we present
+      background knowledge. Experiments, datasets and results are
+      described in Section <a class="sec" href="#sec-10">3</a>
+      followed by a discussion in Section <a class="sec" href=
+      "#sec-13">4</a>. Finally, we present future work and
+      conclusions in Section <a class="sec" href=
+      "#sec-16">5</a>.</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Background</h2>
+        </div>
+      </header>
+      <p>In this work, we are primarily interested in studying the
+      influence of different sampling techniques on relational
+      classification. We describe (i) networks of interest, (ii)
+      the classification process and (iii) used network sampling
+      techniques.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191567/images/www18companion-306-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title"><strong>Example</strong>. This figure
+          illustrates an unweighted undirected node-attributed
+          network and three different samples. (a) Shows a
+          heterophilic network with seven edges and six nodes. Each
+          node is coloured either red (A, C, E) or blue (B, D, F).
+          (b) Sample #1 shows a subgraph extracted by sampling two
+          nodes. This sample includes nodes B and C, which reflect
+          perfect heterophily. (c) Sample #2 shows a homophilic
+          subgraph sampled by randomly picking two edges, C-E and
+          B-D. (d) This sample is similar to Sample #1 as it
+          reflects perfect heterophily. However in this case node F
+          is 3-HOPs away from the nearest seed node (compared to
+          2-HOPs in Sample #1).</span>
+        </div>
+      </figure>
+      <p></p>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Attributed
+            Networks</h3>
+          </div>
+        </header>
+        <p>We formally define this as: Let <em>G</em> =
+        (<em>V</em>, <em>E</em>, <em>F</em>) be an attributed
+        unweighted graph with <em>V</em> = (<em>v</em>
+        <sub>1</sub>, ..., <em>v<sub>n</sub></em> ) being a set of
+        nodes, <em>E</em> = {(<em>v<sub>i</sub></em> ,
+        <em>v<sub>j</sub></em> )} ∈ (<em>V</em> × <em>V</em>) a set
+        of either directed or undirected edges, and a set of
+        feature vectors <em>F</em> = (<em>f</em> <sub>1</sub>, ...,
+        <em>f<sub>n</sub></em> ). Each feature vector
+        <em>f<sub>i</sub></em> = (<em>f<sub>i</sub></em> [1], ...,
+        <em>f<sub>i</sub></em> [<em>t</em>]) <sup><em>T</em></sup>
+        maps a node <em>v<sub>i</sub></em> to <em>t</em> (binary,
+        numeric or categorical) attributes. A class label is
+        defined as <em>c</em> ∈ <em>t</em>, and represents the
+        attribute to be inferred in the classification process.
+        Link density is described as the fraction of potential
+        connections in G that are actual connections, that is
+        <span class="inline-equation"><span class=
+        "tex">$d=\frac{|E|}{N(N-1)}$</span></span> for directed,
+        and <span class="inline-equation"><span class=
+        "tex">$d=\frac{2|E|}{N(N-1)}$</span></span> for undirected
+        networks. The average degree of the network captures the
+        average number of edges per node: <span class=
+        "inline-equation"><span class="tex">$\langle k \rangle
+        =\frac{|E|}{N}$</span></span> for directed and <span class=
+        "inline-equation"><span class="tex">$\langle k \rangle
+        =\frac{2|E|}{N}$</span></span> for undirected networks. The
+        network homophily <em>H</em> is captured by the fraction of
+        same-class connections among the total number of edges
+        |<em>E</em>|. Homophily values range from <em>H</em> = 0.0
+        to <em>H</em> = 1.0. Networks with homophily <em>H</em> =
+        0.5 are referred to as <em>neutral</em>, otherwise they are
+        <em>heterophilic</em> if <em>H</em> &lt; 0.5, or
+        <em>homophilic</em> when <em>H</em> &gt; 0.5. Class balance
+        <em>B</em> captures the fraction of nodes under each class
+        value. A network is <em>balanced</em> when all class values
+        have the same number of nodes, otherwise it is an
+        <em>unbalanced</em> network.</p>
+        <p>In this work, we focus on attributed networks whose
+        edges are unweighted and undirected, and whose nodes are
+        balanced along a binary feature (e.g., <em>c</em> =
+        <em>color</em> ∈ {<em>blue</em>, <em>red</em>}). Figure 1a
+        shows an example of such network, where nodes are assigned
+        to one color, either blue or red, and since only 2 out of 7
+        edges are same-color connections this network is
+        heterophilic (<em>H</em> ≈ 0.3). This network is also
+        balanced (<span class="inline-equation"><span class=
+        "tex">$B=\frac{3}{6}=0.5$</span></span> ) since the number
+        of blue nodes (<em>n<sub>b</sub></em> = 3) is equal to the
+        number of red nodes (<em>n<sub>r</sub></em> = 3).</p>
+        <p>Notice that in a realistic scenario, class balance
+        <em>B</em> is often unknown, as well as homophily
+        <em>H</em>. However, these two values can be inferred. For
+        instance, balance can be approximated by randomly picking a
+        set of nodes to extract their true class value and then
+        infer class balance. Similarly, homophily can be
+        approximated by randomly picking a set of edges. These
+        approximations go beyond the scope of this work. For
+        evaluation purposes we assume total knowledge of the
+        network.</p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> Relational
+            Classification</h3>
+          </div>
+        </header>
+        <p>Classification in networked data&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0005">5</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0009">9</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0012">12</a>] learns correlations
+        between attribute values of linked nodes from observed data
+        and then uses them in a collective inference process that
+        propagates predictions through the network. This process
+        can be divided into four phases. First, a subgraph needs to
+        be <em>sampled</em> from the network. Second, a <em>local
+        model</em> is learned by using information from nodes only
+        (e.g., nodal attributes) and can be used as class priors
+        later in the inference. Third, the <em>relational
+        model</em> in contrast to the local model, learns
+        information from nodes and their 1-HOP neighbourhood.
+        Finally, once the models’ parameters (i.e., probabilities)
+        have been learned, the collective inference phase
+        determines how the unknown values are estimated.</p>
+        <p>Every phase can be implemented in different
+        ways&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0009">9</a>]. Since our work focuses on the
+        sampling phase, we keep fixed the other modules by (i)
+        learning the local model as class priors from the nodes in
+        the training sample, (ii) learning the relational model
+        from the nodes and edges in the training sample using
+        Bayesian statistics, and (iii) inferring estimate values
+        using Relaxation labeling.</p>
+        <p>For simplicity, we focus on uni-variate network
+        classification, which means that the linkage structure in
+        the network is modeled with the class label and no
+        information from other attributes. This setup is referred
+        to as network-only Bayes classifier (NBC) in [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0009">9</a>] to
+        emphasize that additional local attributes of a node are
+        ignored.</p>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.3</span> Network
+            Sampling</h3>
+          </div>
+        </header>
+        <p>The goal of sampling is to split the network into a
+        <em>training</em> and a <em>testing</em> sample. First, a
+        subgraph <span class="inline-equation"><span class=
+        "tex">$\hat{G}=(\hat{V},\hat{E},\hat{F})$</span></span> is
+        extracted from the network <em>G</em> in order to learn the
+        model parameters. Nodes <span class=
+        "inline-equation"><span class="tex">$\hat{V} \subset
+        V$</span></span> that belong to the training sample
+        <span class="inline-equation"><span class=
+        "tex">$\hat{G}$</span></span> are called <em>seed
+        nodes</em>, and we assume that their edges <span class=
+        "inline-equation"><span class="tex">$\hat{E}=\lbrace
+        (\hat{v_i},\hat{v_j})\rbrace \in (\hat{V} \times \hat{V})
+        \subset (V \times V)$</span></span> and attributes
+        <span class="inline-equation"><span class="tex">$\hat{F}
+        \subset F$</span></span> are known by the classification
+        algorithm. For example, based on the information shown in
+        Figure <a class="fig" href="#fig1">1</a>, if we choose the
+        sample in Figure 1b, node A would be correctly classified
+        as red, due to the fact that A is connected to a blue seed
+        node, and the sample (B-C) reflects perfect heterophily.
+        However, if we choose the sample in Figure 1c, node A would
+        be classified as blue, because it is connected to a blue
+        seed node and the sample (C-E, B-D) reflects perfect
+        homophily. A different sample is shown in Figure 1d, in
+        this case nodes A and B are selected as seed nodes, and
+        regardless of the learned model parameters (i.e.,
+        probability of connecting blue-blue, blue-red, red-blue,
+        red-red), notice that node F is not connected to any seed
+        node. Thus, the inferred attribute of node F will depend on
+        the inferred attribute of node E, which in turn also
+        depends on the estimates of unlabeled nodes, C and D. If
+        those estimates are wrong the inference for node F will
+        probably also be wrong.</p>
+        <p>Notice the importance of the sampling method. The
+        selected nodes should not only reflect the global
+        properties of the network such as balance and homophily but
+        should also be as close as possible to the unlabeled nodes
+        to avoid long label propagation chains that may potentially
+        be erroneous. Next, we describe ten different sampling
+        methods that we evaluate in this work.</p>
+        <p><strong>Random Nodes</strong>. This is the most basic
+        sampling method where a random fraction <em>p</em> of nodes
+        is selected. The sampled network then contains the selected
+        nodes and all edges among them.</p>
+        <p><strong>Random Edges</strong>. This technique randomly
+        selects edges from the set of all edges <em>E</em>. In
+        order to make a fair comparison among other sampling
+        techniques (based on number of nodes), we select edges
+        randomly until we reach a specific fraction <em>p</em> of
+        nodes. That is why this sampling method is referred to as
+        nedges.</p>
+        <p><strong>SnowBall</strong>. Snowball
+        sampling&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0006">6</a>] randomly selects a starting node
+        and all its neighbours as well as their neighbours’
+        neighbours (similar to breadth-search-first). The algorithm
+        continues until it has gathered a fraction <em>p</em> of
+        nodes.</p>
+        <p><strong>Degree</strong>. We rank all nodes by their
+        degree in descendant (degreeDESC) and ascendant (degreeASC)
+        order. The idea is to verify whether high (or low) degree
+        nodes are good seeds for classification. Therefore, the
+        fraction <em>p</em> of selected nodes includes the top
+        <span class="inline-equation"><span class="tex">$p\times
+        100\%$</span></span> of nodes in the ranking. We also
+        provide a mix of degrees (degreeMIX) by selecting
+        <span class="inline-equation"><span class=
+        "tex">$\frac{p}{2}\times 100\%$</span></span> of both top
+        high and top low degree nodes.</p>
+        <p><strong>PageRank</strong>. Similar to sampling by
+        degree, we rank nodes by their PageRank
+        (PR)&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0011">11</a>] in descendant (pagerankDESC) and
+        ascendant (pagerankASC) order. By using highest PR first,
+        (pagerankDESC) we test whether the most important nodes in
+        the network are good samples for the learning and testing
+        inference. We expect pagerankASC to work poorly since their
+        top low PR nodes are not well connected, and often have low
+        degree.</p>
+        <p><strong>Optimal Percolation</strong>. The motivation
+        behind optimal percolation&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0010">10</a>], is to find a minimal
+        set of nodes, called influencers, which, if activated,
+        would cause the spread of information through the whole
+        network. Therefore, we rank nodes based on their
+        <em>collective influence</em> in descendant
+        (percolationDESC) and ascendant (percolationASC) order. By
+        taking into account collective influence effects, strategic
+        influencers are identified, also called weak-nodes, which
+        outrank the hubs in the network.</p>
+        <figure id="fig2">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191567/images/www18companion-306-fig2.jpg"
+          class="img-responsive" alt="Figure 2" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 2:</span>
+            <span class="figure-title"><strong>Results on synthetic
+            (sparse) networks (⟨<em>k</em>⟩ = 8, <em>d</em> =
+            0.0039)</strong>. This figure shows the mean ROC-AUC
+            values of classification for 10 sampling methods on (a)
+            heterophilic, (b) neutral and (c) homophilic networks
+            generated using the preferential attachment-based
+            algorithm proposed by Karimi et al. in [<a class="bib"
+            data-trigger="hover" data-toggle="popover"
+            data-placement="top" href="#BibPLXBIB0007">7</a>].
+            Sample size is shown on the x-axis. Values are averages
+            of 5 runs; shaded areas depict standard
+            deviations.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span>
+          Experiments</h2>
+        </div>
+      </header>
+      <p>The classification process can be summarized into three
+      steps. First, it splits the nodes of the network into
+      training and testing sets, then it learns the local and
+      relational models using the subgraph extracted from the
+      training sample, and finally it runs the classification on
+      the testing set. The selection of nodes in the training
+      sample varies depending on the sampling method. However, to
+      compare sampling methods, the size of the training sample is
+      kept constant and contains between <span class=
+      "inline-equation"><span class="tex">$5-90\%$</span></span> of
+      nodes from <em>V</em>.</p>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Synthetic
+            Networks</h3>
+          </div>
+        </header>
+        <p><strong>Datasets</strong>. We generate 11 networks with
+        given class balance <em>B</em> = 0.5, homophily <em>H</em>
+        ∈ {0.0, 0.1, …, 1.0} and starting degree <em>m</em> = 4,
+        using the preferential attachment-based algorithm proposed
+        by Karimi et al. in&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0007">7</a>]. Every network consists of
+        <em>N</em> = 2000 nodes, |<em>E</em>| = 7984 edges, average
+        degree ⟨<em>k</em>⟩ = 8, and link density <em>d</em> =
+        0.0039<a class="fn" href="#fn2" id=
+        "foot-fn2"><sup>1</sup></a>. Table <a class="tbl" href=
+        "#tab1">1</a> shows more network properties for some
+        heterophilic, neutral and homophilic networks. In general,
+        each node is assigned one binary attribute, i.e.,
+        <em>color</em> ∈ {<em>blue</em>, <em>red</em>}, which
+        defines its class membership. The probability of node
+        <em>v<sub>j</sub></em> to connect to node
+        <em>v<sub>i</sub></em> is given by:</p>
+        <div class="table-responsive" id="eq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \Pi _{i} =
+            \frac{h_{ij} k_{i}}{\sum _{l} h_{lj} k_{l}}
+            \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>where <em>k<sub>i</sub></em> is the degree of node
+        <em>v<sub>i</sub></em> and <em>h<sub>ij</sub></em> is the
+        homophily between the two nodes [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0007">7</a>]. Considering that
+        homophily is symmetric and complementary, we can assume
+        that the probability of connections between nodes that
+        belong to class blue (<em>h<sub>bb</sub></em> ) and nodes
+        that belong to class red (<em>h<sub>rr</sub></em> ) is
+        identical (<em>h<sub>bb</sub></em> =
+        <em>h<sub>rr</sub></em> = <em>H</em>) and is complementary
+        to intra-class link probability <em>h<sub>br</sub></em> =
+        <em>h<sub>rb</sub></em> = 1 − <em>H</em>. We vary homophily
+        from <em>H</em> = 0.0 (completely heterophilic) to
+        <em>H</em> = 1.0 (completely homophilic). When <em>H</em> =
+        0.0, only nodes that do not share the same attribute are
+        connected. In contrast, in the complete homophilic case,
+        only nodes that share the same attribute are interlinked.
+        In neutral networks (<em>H</em> = 0.5), a node is equally
+        likely to link to nodes with either label. That means, in
+        neutral networks the formation of edges is statistically
+        independent from node attributes.
+        <p></p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title"><strong>Synthetic (sparse) network
+            properties</strong>. This table shows properties of the
+            networks analyzed in this work. These networks contain
+            two balanced groups of nodes (i.e., blue, red). Each
+            numeric column represents a single network with a
+            specific level of homophily.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">
+                1c<strong>Property</strong></th>
+                <th style="text-align:center;" colspan="3">
+                  <strong>Homophily (H)</strong>
+                  <hr />
+                </th>
+              </tr>
+              <tr>
+                <th style="text-align:left;">(l)2-4 1c</th>
+                <th style="text-align:right;">
+                <strong>0.1</strong></th>
+                <th style="text-align:right;">
+                <strong>0.5</strong></th>
+                <th style="text-align:right;">
+                <strong>0.9</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">B</td>
+                <td style="text-align:right;">0.5</td>
+                <td style="text-align:right;">0.5</td>
+                <td style="text-align:right;">0.5</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">⟨<em>k</em>⟩</td>
+                <td style="text-align:right;">8</td>
+                <td style="text-align:right;">8</td>
+                <td style="text-align:right;">8</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Link Density</td>
+                <td style="text-align:right;">0.0039</td>
+                <td style="text-align:right;">0.0039</td>
+                <td style="text-align:right;">0.0039</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Node Connectivity</td>
+                <td style="text-align:right;">4</td>
+                <td style="text-align:right;">4</td>
+                <td style="text-align:right;">4</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Degree
+                Assortativity</td>
+                <td style="text-align:right;">-0.06</td>
+                <td style="text-align:right;">-0.06</td>
+                <td style="text-align:right;">-0.05</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Attribute
+                Assortativity</td>
+                <td style="text-align:right;">-0.8</td>
+                <td style="text-align:right;">0.01</td>
+                <td style="text-align:right;">0.8</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Clustering
+                Coefficient</td>
+                <td style="text-align:right;">0.01</td>
+                <td style="text-align:right;">0.02</td>
+                <td style="text-align:right;">0.03</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>Results</strong>. For simplicity, we report on
+        networks with special cases of homophily, i.e., <em>H</em>
+        ∈ {0.1, 0.5, 0.9}. These results are shown in Figure
+        <a class="fig" href="#fig2">2</a>. From Figure 2b we see
+        that classification performance across all sampling methods
+        is uniform in neutral networks since the formation of links
+        is independent of the node attributes. Therefore,
+        relational classifiers cannot detect any pattern in the
+        network structure that helps to guess the correct
+        attributes. The comparison between heterophilic (Figure 2a)
+        and homophilic (Figure 2c) networks shows that regardless
+        of the sampling technique and sample size, heterophilic
+        networks are easier to classify (i.e., most ROC-AUC values
+        are 1.0), whereas homophilic networks (in some cases)
+        require larger training samples to achieve perfect
+        classification. For instance, the overall classification
+        performance is worse (ROC-AUC ≈ 0.6) for sampling by nodes,
+        percolationASC, snowball and nedges, if sample sizes are
+        very small (5%). However, once sample sizes increase,
+        ROC-AUC values quickly converge to 1.0.</p>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191567/images/www18companion-306-fig3.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title"><strong>Results on Caltech
+            Facebook dataset</strong>. From left to right, this
+            figure shows the performance of 10 different sampling
+            techniques on the Caltech dataset for different sample
+            sizes: (a) mean ROC-AUC, (b) classification mean error
+            of class gender&nbsp;1, and (c) classification mean
+            error of class gender&nbsp;2. Values are averages of 5
+            runs; shaded areas depict standard deviations. This
+            network is unbalanced <em>B</em> = 0.7 towards
+            gender&nbsp;2, and almost neutral <em>H</em> = 0.6.
+            Thus, it is not surprising that classification
+            performance is around <em>ROC</em> − <em>AUC</em> =
+            0.5. From (a) we can see that a small training sample
+            of 30% of highest degree nodes (degreeDESC) can achieve
+            <em>ROC</em> − <em>AUC</em> = 0.66. However, the best
+            model is degreeMIX, which achieves <em>ROC</em> −
+            <em>AUC</em> = 0.76 with 70% of top mix degree nodes
+            (i.e., 35% top high degree, and 35% top low degree
+            nodes). In general, all sampling methods improve the
+            classification performance with higher sample sizes.
+            From figures (b,c) we can see the class imbalance
+            problem. Since gender&nbsp;2 is the majority class, it
+            has lower classification error compared to the minority
+            class gender&nbsp;1.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>This asymmetry between homophilic and heterophilic
+        (sparse) networks is clear in Figure , which summarizes the
+        classification performance on samples drawn from balanced
+        networks using different sampling strategies. Color
+        represents different sampling methods, and bars the minimum
+        sample size required so that a classifier achieves an error
+        below 20% for both classes. Homophilic networks require
+        larger sample sizes to achieve good classification
+        performance when sampling by nodes, nedges, snowball, and
+        all metrics that rank nodes in ascendant order (generally,
+        low degree nodes first). Hence, sampling methods that are
+        biased towards high degree nodes (DESC) outperform the
+        other techniques. Heterophilic networks on the other hand
+        are easier to classify, since 8 out of 10 sampling methods
+        achieve good performance for both classes with small
+        training samples that contain only 5-10% of the nodes.
+        Notice that for the particular cases of degreeASC and
+        pagerankASC, all networks require at least 40% of seed
+        nodes to achieve good performance. This occurs because both
+        sampling techniques rank lowest-degree nodes first, and
+        these nodes do not necessary link to each other<a class=
+        "fn" href="#fn3" id="foot-fn3"><sup>2</sup></a>. Hence,
+        such samples contain disconnected nodes (i.e., <span class=
+        "inline-equation"><span class=
+        "tex">$\hat{E}=\varnothing$</span></span> ) that do not
+        help learning the model's parameters.</p>
+      </section>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Real-World
+            Networks</h3>
+          </div>
+        </header>
+        <p><strong>Dataset</strong>. We choose one of the 100
+        Facebook networks extracted back in 2005&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0013">13</a>]. We
+        focus on the Caltech University network which includes only
+        intra-school links (i.e., friendship links between user's
+        FB pages). Every node represents a member of the school,
+        and it is described by several attributes: a
+        student/faculty status flag, gender, major, second
+        major/minor, dorm/house, year, and high school. For the
+        purpose of our experiments we choose the attribute
+        <em>gender</em> ∈ {1, 2} as the class label (and only
+        attribute) for the classifier. After removing nodes without
+        gender information (i.e., <em>gender</em> = 0), and nodes
+        with no edges we end up with 701 nodes and 15464 edges. The
+        final network is almost neutral (<em>H</em> = 0.6), and
+        unbalanced (<em>B</em> = 0.7) towards gender&nbsp;2.
+        Properties of this network are shown in Figure <a class=
+        "tbl" href="#tab2">2</a>. For instance, we can see that
+        people are highly connected (i.e., 44.12 friendships on
+        average).</p>
+        <p>Notice that this network differs from the synthetic
+        network examples, regarding not only class imbalance, but
+        also link density, average degree and clustering
+        coefficient.</p>
+        <p>Although this network goes beyond the scope of our work
+        (i.e., it is an unbalanced network), we include it in this
+        report for two reasons: (i) to highlight the importance of
+        further research on minimizing the class imbalance problem,
+        and (ii) to show whether homophily has an impact on
+        classification regardless of class imbalance.</p>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title"><strong>Caltech 2005</strong>. Properties
+            of the Caltech university Facebook network.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">(r)1-2 (l)4-5
+                1l<strong>Property</strong></td>
+                <td style="text-align:left;">
+                <strong>Value</strong></td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                <strong>Property</strong></td>
+                <td style="text-align:left;">
+                <strong>Value</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">(r)1-2 (l)4-5 N</td>
+                <td style="text-align:left;">701</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">⟨<em>k</em>⟩</td>
+                <td style="text-align:left;">44.12</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">|E|</td>
+                <td style="text-align:left;">15464</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                ⟨<em>k<sub>minority</sub></em> ⟩</td>
+                <td style="text-align:left;">51</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">gender&nbsp;1
+                (min.)</td>
+                <td style="text-align:left;">228 (33%)</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                ⟨<em>k<sub>majority</sub></em> ⟩</td>
+                <td style="text-align:left;">41</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">gender&nbsp;2
+                (maj.)</td>
+                <td style="text-align:left;">473 (67%)</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">Node Connectivity</td>
+                <td style="text-align:left;">0</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">B</td>
+                <td style="text-align:left;">∼ 0.70</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">Degree
+                Assortativity</td>
+                <td style="text-align:left;">-0.0617</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">H</td>
+                <td style="text-align:left;">0.6</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">Attribute
+                Assortativity</td>
+                <td style="text-align:left;">0.054</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Link Density</td>
+                <td style="text-align:left;">0.063</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">Clustering
+                Coefficient</td>
+                <td style="text-align:left;">0.39</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">(r)1-2 (l)4-5</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <figure id="fig4">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191567/images/www18companion-306-fig4.jpg"
+          class="img-responsive" alt="Figure 4" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 4:</span>
+            <span class="figure-title"><strong>Results on synthetic
+            (dense) networks (⟨<em>k</em>⟩ = 40, <em>d</em> =
+            0.019)</strong>. Similar to Figure <a class="fig" href=
+            "#fig2">2</a>, this figure shows the mean ROC-AUC
+            values of classification for 10 sampling methods on (a)
+            heterophilic, (b) neutral and (c) homophilic networks.
+            The difference relies on link density. These networks
+            posses higher density. Sample size is shown on the
+            x-axis. Values are averages of 5 runs; shaded areas
+            depict standard deviations.</span>
+          </div>
+        </figure>
+        <p><strong>Results</strong>. Figure <a class="fig" href=
+        "#fig3">3</a> shows the classification results of the
+        Caltech network. Since this network is almost neutral
+        (<em>H</em> = 0.6) we expect its performance to be similar
+        to a uniform classifier (i.e., random guessing). Figure 3a
+        confirms this expectation, since it shows that most sample
+        techniques achieve a ROC-AUC value around 0.5, especially
+        for small samples (<span class=
+        "inline-equation"><span class="tex">$5-50\%$</span></span>
+        seed nodes). We conclude that degreeMIX outperforms the
+        other sampling methods, although it requires at least 70%
+        of the total number of nodes <em>N</em> to achieve a
+        ROC-AUC=0.76.</p>
+        <p>ROC-AUC values give us an overall performance of the
+        classification, but they do not give us the whole picture
+        within classes. In Figure , the classification mean error
+        values for minority and majority are shown respectively.
+        Here we observe the <em>class imbalance</em> problem, where
+        classification estimates tend to lean towards the majority
+        class: mean error values for gender&nbsp;2 (i.e., majority
+        70%) are lower than for gender&nbsp;1 (i.e., minority
+        30%).</p>
+        <p>These results show the importance of further research on
+        the understanding of relational classification in
+        unbalanced networks with different levels of homophily.</p>
+      </section>
+    </section>
+    <section id="sec-13">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Discussion</h2>
+        </div>
+      </header>
+      <p>The current work presents a descriptive study of the
+      effect of network sampling on the performance of relational
+      classification. In the following we present a detailed
+      discussion of the factors we explored.</p>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Network
+            Structure</h3>
+          </div>
+        </header>
+        <p><strong>Link Density</strong>. The synthetic networks
+        used in our experiments were generated with <em>N</em> =
+        2000 nodes, |<em>E</em>| = 7984 edges, average degree
+        ⟨<em>k</em>⟩ = 8, and link density <em>d</em> = 0.0039.
+        Previous work found that link density impacts performance
+        of relational classifiers [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0012">12</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0017">17</a>]. To test this finding, we
+        increased link density to <em>d</em> = 0.019, which
+        resulted in |<em>E<sub>dense</sub></em> | = 39600 edges,
+        and average degree ⟨<em>k<sub>dense</sub></em> ⟩ = 40. We
+        refer to this set of networks as dense networks. As we see
+        in Figure <a class="fig" href="#fig4">4</a>, higher link
+        density did not improve the classification performance. For
+        neutral (Figure 4b) and heterophilic (Figure 4a) networks,
+        results were similar to the ones using networks with lower
+        link density. Classification of homophilic networks (Figure
+        4c) on the other hand, worsened ROC-AUC values for very
+        small sample sizes (i.e., 5-20% seed nodes) for degreeMIX,
+        nedges and snowball sampling. Only the performance of
+        classifier based on degreeDESC, pagerankDESC and
+        percolationDESC samples were not affected by increasing
+        link density and outperformed other techniques when only
+        small samples (5% of nodes) were available. Notice that in
+        both variants of link density, ROC-AUC values converged to
+        1.0 for all sampling strategies with at least 30% of seed
+        nodes. From Figure <a class="fig" href="#fig6">6</a> we see
+        that high link density helps sampling techniques that rank
+        low degree nodes first.</p>
+        <p><strong>Class Imbalance</strong>. Real-world networks
+        can be highly unbalanced, with dissimilar proportions of
+        nodes of each type. For example, the network we studied in
+        Section <a class="sec" href="#sec-12">3.2</a> has homophily
+        <em>H</em> = 0.6, and class balance <em>B</em> = 0.7. We
+        showed that class balance affects classification results.
+        Due to the almost neutral homophily, the collective
+        inference performed only slightly better than random
+        baseline (i.e., random guessing), regardless of the
+        sampling technique. However, due to class imbalance the
+        error for each class (e.g., minority vs. majority) differed
+        drastically. For instance, using random node sampling and
+        30% seed nodes, class gender 1 achieved a classification
+        error of 0.85, whereas class gender 2 only 0.16. Further
+        research is needed to understand dynamics of relational
+        classification in unbalanced networks.</p>
+        <figure id="fig5">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191567/images/www18companion-306-fig5.jpg"
+          class="img-responsive" alt="Figure 5" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 5:</span>
+            <span class="figure-title"><strong>Overall mean error
+            of synthetic (sparse) networks</strong>. These heatmaps
+            illustrate the overall classification mean error using
+            (a) random node sampling, (b) random edge sampling, and
+            (c) degree descendant sampling. Columns represent
+            networks of different homophily, from heterophilic
+            (<em>H</em> = 0.0) to homophilic (<em>H</em> = 1.0).
+            Every row shows the percentage of nodes collected in
+            the sampling. Neutral and almost neutral networks (0.4
+            ≤ <em>H</em> ≤ 0.6) perform uniformly using either
+            sampling technique. The more heterophilic/homophilic
+            the network the more accurate the classification in all
+            cases. However, homophilic networks require larger
+            samples compared to heterophilic networks, especially
+            when using nodes and nedges sampling. In general, in
+            both regimes classification error decreases as the size
+            of training samples increases. Values are averages of 5
+            runs.</span>
+          </div>
+        </figure><strong>Homophily</strong>. Our work shows that
+        homophily clearly impacts the performance of relational
+        classifiers (cf. Figure <a class="fig" href="#fig2">2</a>).
+        When networks are balanced, ROC-AUC curves vary depending
+        on the level of homophily and sample size. As expected, in
+        neutral networks (homophily <em>H</em> = 0.5) all sampling
+        methods perform equally well and sample size does not
+        impact classification performance. Thus, it is not
+        surprising that the classifier cannot learn any pattern,
+        since no pattern exists, no matter the size of the sample.
+        However, in heterophilic (<em>H</em> = 0.1) or homophilic
+        (<em>H</em> = 0.9) networks, the classification accuracy
+        varies based on the sampling strategy and number of labeled
+        seeds present in the training sample. To understand this,
+        let us focus on the performance of three different sampling
+        methods over networks with different levels of homophily
+        shown in Figure <a class="fig" href="#fig5">5</a>. Each
+        heatmap shows the classification mean error (averaged over
+        5 runs) for each of the 11 synthetic networks (x-axis)
+        described in Section <a class="sec" href="#sec-11">3.1</a>,
+        and the amount of seed nodes in the training sample
+        (y-axis). Darker cells represent higher errors, i.e., worse
+        performance.
+        <p></p>
+        <p>Overall, we can see that in the heterophilic regime (H ≤
+        0.2, leftmost columns), the classifier works very well with
+        a small fraction of seed nodes. For homophilic networks (H
+        ≥ 0.8, rightmost columns), the classification error is high
+        when the training sample is small for node and nedge
+        sampling. DegreeDESC on the other hand, performs best with
+        only 5% of seed nodes. This seems counter-intuitive, as one
+        would expect perfect classification in both cases, since
+        the strong homophily and strong heterophily should help the
+        classifier learn the relationships between links and
+        attributes. Moreover, global properties of both networks
+        seem to be almost identical, as shown in Table <a class=
+        "tbl" href="#tab1">1</a>. At first glance, it seems that
+        heterophilic networks are easier to classify and their
+        performance do not vary across sampling techniques.
+        Furthermore, high degree seed nodes help the classifier to
+        not only learn the correct parameters, but also to
+        propagate the correct inference among nodes in both
+        heterophilic and homophilic networks. Notice that in both
+        regimes classification error reduces with larger training
+        samples.</p>
+      </section>
+      <section id="sec-15">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Sampling
+            Networks</h3>
+          </div>
+        </header>
+        <p>As described in Section <a class="sec" href=
+        "#sec-9">2.3</a>, we used ten different network sampling
+        strategies. In Figure <a class="fig" href="#fig6">6</a> we
+        rank sampling methods based on the sample size that is
+        required to train a classifier that achieves a
+        classification error below 20% for both classes<a class=
+        "fn" href="#fn4" id="foot-fn4"><sup>3</sup></a>. Figure
+        refer to the sparse networks shown in Section <a class=
+        "sec" href="#sec-11">3.1</a> (link density <em>d</em> =
+        0.0039). Figure refer to the respective dense versions
+        (link density <em>d</em> = 0.019).</p>
+        <p>The rightmost figures show the results for classifiers
+        trained on homophilic networks. One can see that sampling
+        strategies that include nodes which have a central position
+        in the network (degreeDESC, pagerankDESC, percolationDESC)
+        work best, and require only 5% of seed nodes. However,
+        these sampling strategies require knowledge of the full
+        network and may not be appropriate in cases where this
+        information is difficult to obtain. In those cases, the
+        second best option for sparse networks (cf. Figure 6b) is
+        to sample 10% of nodes by nedges, which randomly selects
+        edges from the network. Notice that this leads to hubs
+        (i.e., high degree nodes) being preferred. For dense
+        networks (cf. Figure 6d), the second best option is to
+        sample 20% of random nodes.</p>
+        <p>The rest of sampling techniques require larger training
+        samples. Next, we explain their poor performance. Snowball
+        sampling is a technique that randomly picks a node, then
+        its neighbours, and the neighbours’ neighbours, similar to
+        breadth-first search. It is expected to require a larger
+        sample of seed nodes, since in a homophilic network, a
+        snowball sample that starts with a red node, will then
+        select its neighbours—who are likely to be mostly
+        red—without capturing enough blue nodes. Degree, pagerank
+        and percolation ascendant sampling methods (degreeASC,
+        pagerankASC, percolationASC) are usually ranked the worst.
+        This is not surprising, since low degree and low pagerank
+        nodes tend to connect to fewer nodes, leaving a vast
+        majority of nodes disconnected from them (especially in
+        sparse networks).</p>
+        <p>In the heterophilic regime (leftmost figures), degreeASC
+        and pagerankASC are also ranked last. This is also due to
+        the fact that low degree nodes connect to only a few nodes.
+        However, eight out of ten sampling techniques require a
+        training sample containing only 5-10% of seed nodes. In
+        other words, in a heterophilic network, it is enough to
+        collect only 5% of random nodes in order to achieve good
+        classification performance<a class="fn" href="#fn5" id=
+        "foot-fn5"><sup>4</sup></a>.</p>
+        <figure id="fig6">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191567/images/www18companion-306-fig6.jpg"
+          class="img-responsive" alt="Figure 6" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 6:</span>
+            <span class="figure-title"><strong>Ranking of Sampling
+            methods</strong>. This figure depicts the minimum
+            sample size (in terms of percentage of nodes) required
+            for all sampling techniques in order to achieve a
+            classification error below 20% for both classes (blue
+            and red) in balanced scale-free networks. We summarize
+            from left to right, (a,c) heterophilic and (b,d)
+            homophilic networks, and from top to bottom, (a,b)
+            sparse and (c,d) dense networks. Each color represents
+            a different sampling method. The lower the bars the
+            better. For instance, sampling by degreeDESC (second
+            bar from left to right in each plot) works very well by
+            picking the top 5% of highest degree nodes in all
+            cases. In general, classification works best for
+            heterophilic networks since they require very small
+            training samples regardless of sampling strategy and
+            density.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-16">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Conclusions and
+          Future Work</h2>
+        </div>
+      </header>
+      <p>In this paper we presented a step towards quantifying
+      sampling bias in network inference. Precisely, we studied the
+      influence of network structure and sampling on relational
+      classification. Our findings are as follows. (i) Heterophilic
+      networks are easier to classify than homophilic networks. The
+      former require only 5-10% of seed nodes to be able to
+      classify correctly most unlabeled nodes. This holds for 8 out
+      of 10 sampling methods. (ii) Link density and degree
+      assortativity influence the performance of sampling methods
+      that rank low-degree nodes first. Low-degree nodes are less
+      likely to connect to each other if the network has low link
+      density and negative or neutral degree assortativity.
+      Therefore, sampling methods that rank low degree nodes first
+      require larger samples to include not only more nodes, but
+      also more edges (within seeds, and from seeds to unlabeled
+      nodes). (iii) Link density also influences the performance of
+      homophilic networks. The higher the link density, the larger
+      the training samples for degreeMIX, nedges and snowball
+      sampling in order to achieve good accuracy for all classes.
+      (iv) High degree nodes are the best seed nodes, since only 5%
+      of them achieve optimal classification performance
+      (ROC-AUC=1.0) for homophilic, heterophilic, dense and sparse
+      networks. However, these sampling strategies require
+      knowledge of the full network and may not be appropriate in
+      cases where this information is difficult to obtain.
+      Therefore, in those cases it is sufficient to sample: 5% of
+      random nodes in heterophilic networks, 10% of nedges if the
+      network is homophilic and has low link density, and 20% nodes
+      if the network is homophilic and has high link density.</p>
+      <p>How to select a sample that reflects the global properties
+      of the original network and allows accurate label propagation
+      is still an open research question. In future work, we plan
+      to investigate the trade-off between constructing
+      well-connected samples that help the classifier to learn
+      patterns between link formation, attributes, and seed nodes
+      that are as distant as possible to gain information about
+      different parts of the original network. We also plan to
+      investigate: (i) networks with multiple attributes where
+      attribute distributions are skewed (i.e., imbalanced classes
+      exist), (ii) more sophisticated sampling techniques such as
+      the one in&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>], and (iii) other relational models
+      such as relational logistic regression[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0016">16</a>].</p>
+      <p><strong>Acknowledgements</strong>. The authors would like
+      to thank Dr. Peter Fennell for his time and helpful advice on
+      various technical topics, and Prof. Dr. Markus Strohmaier,
+      Dr. Mathieu Génois and Reinhard Munz for their valuable
+      comments and suggestions to improve the quality of the paper.
+      This work was supported in part by the ARO (contract
+      W911NF-16-1-0306) and by the AFOSR (contract
+      FA9550-17-1-0327).</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Nesreen&nbsp;K Ahmed,
+        Jennifer Neville, and Ramana&nbsp;Rao Kompella. 2012.
+        Network Sampling Designs for Relational Classification.
+        <em>In <em>ICWSM</em></em> .</li>
+        <li id="BibPLXBIB0002" label="[2]">Rowland Atkinson and
+        John Flint. 2001. Accessing hidden and hard-to-reach
+        populations: Snowball research strategies. <em><em>Social
+        research update</em></em> 33, 1 (2001), 1–4.</li>
+        <li id="BibPLXBIB0003" label="[3]">Konstantin Avrachenkov,
+        Bruno Ribeiro, and Jithin&nbsp;K Sreedharan. 2016.
+        Inference in OSNs via Lightweight Partial Crawls. <em>In
+        <em>Proceedings of the 2016 ACM SIGMETRICS International
+        Conference on Measurement and Modeling of Computer
+        Science</em></em> . ACM, 165–177.</li>
+        <li id="BibPLXBIB0004" label="[4]">Albert-László Barabási.
+        2016. <em><em>Network science</em></em> . Cambridge
+        university press.</li>
+        <li id="BibPLXBIB0005" label="[5]">Lise Getoor and Ben
+        Taskar. 2007. <em><em>Introduction to statistical
+        relational learning</em></em> . MIT press.</li>
+        <li id="BibPLXBIB0006" label="[6]">Leo&nbsp;A Goodman.
+        1961. Snowball sampling. <em><em>The annals of mathematical
+        statistics</em></em> (1961), 148–170.</li>
+        <li id="BibPLXBIB0007" label="[7]">Fariba Karimi, Mathieu
+        Génois, Claudia Wagner, Philipp Singer, and Markus
+        Strohmaier. 2017. Visibility of minorities in social
+        networks. <em><em>arXiv:1702.00150</em></em> (2017).</li>
+        <li id="BibPLXBIB0008" label="[8]">Jure Leskovec and
+        Christos Faloutsos. 2006. Sampling from large graphs.
+        <em>In <em>Proceedings of the 12th ACM SIGKDD international
+        conference on Knowledge discovery and data mining</em></em>
+        . ACM, 631–636.</li>
+        <li id="BibPLXBIB0009" label="[9]">Sofus&nbsp;A. Macskassy
+        and Foster Provost. 2007. Classification in Networked Data:
+        A Toolkit and a Univariate Case Study. <em><em>J. Mach.
+        Learn. Res.</em></em> 8 (May 2007), 935–983. <a class=
+        "link-inline force-break" href=
+        "http://dl.acm.org/citation.cfm?id=1248659.1248693"
+          target="_blank">http://dl.acm.org/citation.cfm?id=1248659.1248693</a>
+        </li>
+        <li id="BibPLXBIB0010" label="[10]">Flaviano Morone and
+        Hernán&nbsp;A Makse. 2015. Influence maximization in
+        complex networks through optimal percolation.
+        <em><em>Nature</em></em> 524, 7563 (2015), 65.</li>
+        <li id="BibPLXBIB0011" label="[11]">Lawrence Page, Sergey
+        Brin, Rajeev Motwani, and Terry Winograd. 1999. <em><em>The
+        PageRank citation ranking: Bringing order to the
+        web.</em></em> Technical Report. Stanford InfoLab.</li>
+        <li id="BibPLXBIB0012" label="[12]">Prithviraj Sen,
+        Galileo&nbsp;Mark Namata, Mustafa Bilgic, Lise Getoor,
+        Brian Gallagher, and Tina Eliassi-Rad. 2008. Collective
+        Classification in Network Data. <em><em>AI
+        Magazine</em></em> 29, 3 (2008), 93–106. <a class=
+        "link-inline force-break" href=
+        "http://www.cs.iit.edu/~ml/pdfs/sen-aimag08.pdf" target=
+        "_blank">http://www.cs.iit.edu/~ml/pdfs/sen-aimag08.pdf</a>
+        </li>
+        <li id="BibPLXBIB0013" label="[13]">Amanda&nbsp;L Traud,
+        Peter&nbsp;J Mucha, and Mason&nbsp;A Porter. 2012. Social
+        structure of Facebook networks. <em><em>Physica A:
+        Statistical Mechanics and its Applications</em></em> 391,
+        16(2012), 4165–4180.</li>
+        <li id="BibPLXBIB0014" label="[14]">Claudia Wagner, Philipp
+        Singer, Fariba Karimi, Jürgen Pfeffer, and Markus
+        Strohmaier. 2017. Sampling from Social Networks with
+        Attributes. <em>In <em>Proceedings of the 26th
+        International Conference on World Wide Web</em></em>
+        (<em>WWW ’17</em>). International World Wide Web
+        Conferences Steering Committee, Republic and Canton of
+        Geneva, Switzerland, 1181–1190. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/3038912.3052665" target="_blank">
+          https://doi.org/10.1145/3038912.3052665</a>
+        </li>
+        <li id="BibPLXBIB0015" label="[15]">Jiasen Yang, Bruno
+        Ribeiro, and Jennifer Neville. 2017. Should We Be Confident
+        in Peer Effects Estimated From Social Network Crawls?. <em>
+          In <em>Proceedings of the Eleventh International
+          Conference on Web and Social Media, ICWSM 2017, Montréal,
+          Québec, Canada, May 15-18, 2017.</em></em> 708–711.
+          <a class="link-inline force-break" href=
+          "https://aaai.org/ocs/index.php/ICWSM/ICWSM17/paper/view/15696"
+          target=
+          "_blank">https://aaai.org/ocs/index.php/ICWSM/ICWSM17/paper/view/15696</a>
+        </li>
+        <li id="BibPLXBIB0016" label="[16]">Jiasen Yang, Bruno
+        Ribeiro, and Jennifer Neville. 2017. Stochastic Gradient
+        Descent for Relational Logistic Regression via Partial
+        Network Crawls. <em><em>arXiv preprint
+        arXiv:1707.07716</em></em> (2017).</li>
+        <li id="BibPLXBIB0017" label="[17]">Giselle Zeno and
+        Jennifer Neville. 2016. Investigating the impact of graph
+        structure and attribute correlation on collective
+        classification performance. (2016).</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>⁎</sup></a>This work was
+    part of her summer internship at USC-ISI in 2017.</p>
+    <p id="fn2"><a href="#foot-fn2"><sup>1</sup></a>Since link
+    density is very small, we refer to this set of networks as
+    sparse networks.</p>
+    <p id="fn3"><a href="#foot-fn3"><sup>2</sup></a>In fact, degree
+    assortativity[<a class="bib" data-trigger="hover" data-toggle=
+    "popover" data-placement="top" href="#BibPLXBIB0004">4</a>] for
+    these networks is around − 0.06 (i.e., no degree
+    correlation).</p>
+    <p id="fn4"><a href="#foot-fn4"><sup>3</sup></a>While this
+    measure might be arbitrary, the goal is to show an unbiased
+    classification, where both classes get correctly inferred</p>
+    <p id="fn5"><a href="#foot-fn5"><sup>4</sup></a>This holds for
+    0.0 ≤ <em>H</em> ≤ 0.2 as shown in Figure 5a .</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191567">https://doi.org/10.1145/3184558.3191567</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

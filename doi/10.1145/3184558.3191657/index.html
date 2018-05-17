@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Virtual Representations for an Iterative IoT
+  Deployment</title><!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Virtual Representations for an
+          Iterative IoT Deployment</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Sebastian R.</span> <span class=
+          "surName">Bader</span> Karlsruhe Institute of Technology,
+          Karlsruhe 76131Germany
+        </div>
+        <div class="author">
+          <span class="givenName">Maria</span> <span class=
+          "surName">Maleshkova</span> Karlsruhe Institute of
+          Technology, Karlsruhe 76131Germany
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191657"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191657</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>A central vision of the Internet of Things is the
+        representation of the physical world in a consistent
+        virtual environment. Especially in the context of smart
+        factories the connection of the different, heterogeneous
+        production modules through a digital shop floor promises
+        faster conversion rates, data-driven maintenance or
+        automated machine configurations for use cases which
+        haven't been recognized at design time. Nevertheless, these
+        scenarios demand IoT representations of all participating
+        machines and components, which requires high installation
+        efforts and hardware adjustments.</small></p>
+        <p><small>We propose an incremental process for bringing
+        the shop floor closer to the IoT vision. Currently the
+        majority of systems, components or parts are not yet
+        connected with the internet and might not even provide the
+        possibility to be technically equipped with sensors.
+        However, those could be essential parts for a realistic
+        digital shop floor representation. We therefore propose
+        <em>Virtual Representation</em>s, which are capable of
+        independently calculating a physical object's condition by
+        dynamically collecting and interpreting already available
+        data through RESTful Web APIs. The internal logic of such
+        <em>Virtual Representations</em> are further adjustable at
+        runtime since changes to its respective physical object,
+        its environment or updates to the resource itself should
+        not cause any downtime.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>internet of things; linked
+          data; virtual integration</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Sebastian R. Bader and Maria Maleshkova. 2018. Virtual
+          Representations for an Iterative IoT Deployment. In
+          <em>WWW '18 Companion: The 2018 Web Conference
+          Companion,</em> <em>April 23–27, 2018,</em> <em>Lyon,
+          France. ACM, New York, NY, USA</em> 6 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3191657" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191657</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>The ongoing digitization and interconnecting of devices of
+      any kind through internet technologies are a prominent
+      current trend [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>]. The Internet of Things (IoT)
+      comprises these efforts to represent physical and virtual
+      objects through common patterns in order to allow a digital
+      information exchange between them. Gubbi et&nbsp;al.,
+      similarly to others, define the IoT as an ”Interconnection of
+      sensing and actuating devices providing the ability to share
+      information across platforms through a unified framework,
+      developing common operating picture for enabling innovative
+      applications. This is achieved by seamless large scale
+      sensing, data analytics and information representation using
+      cutting edge ubiquitous sensing and cloud computing.”
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0007">7</a>]. Obviously,
+      the regarded ’things’ are restricted to physical objects,
+      equipped with sensors or actuators, and with some kind of
+      connection capability (referred to as ’devices’).</p>
+      <p>We claim that the installation of sensors, the monitoring
+      of components or the connection in digital networks is not a
+      goal in itself but is always demand-driven. Consequently, a
+      certain need is defined in the first place (e.g. digitally
+      monitoring a machine's abrasion state), creating requirements
+      on the data side. If the required data is not yet measured,
+      additional sensors (or actuators) at the physical objects are
+      taken into account. Only if the added value justifies this
+      investment the hardware is updated. Following this
+      argumentation, the creation of an IoT setting especially in
+      the industrial domain is an iterative process, where more and
+      more things get a digital counterpart but a complete coverage
+      of all things does not happen. In contrast to that, the key
+      potential of the Internet of Things is not only the
+      integration of such devices and then conducting a defined
+      analysis but enabling previously <em>unknown</em>
+      applications.</p>
+      <p>Especially in the context of smart factories notable
+      efforts are conducted to bring the diverse and heterogeneous
+      components of the shop floor to a consistent digital layer.
+      In order to keep the integration efforts sustainable an easy
+      to understand data and interaction model are required. The
+      self-explaining characteristics and the high maturity level
+      of the Semantic Web make it a suitable candidate for a
+      future-proven solution. Such an integration layer (e.g. the
+      so called ’Implementation Viewpoint’ in Fig. <a class="fig"
+      href="#fig1">1</a>) encapsulates the complexity of underlying
+      network implementation. Generally aspired goals are e.g.
+      faster conversions, data-driven maintenance or automated
+      machine configurations in order to reduce down times and
+      therefore increase the overall efficiency achieved by the
+      overlying applications.</p>
+      <p>Even though IoT technologies support the integration
+      process, the IoT is not only about increasing the flexibility
+      or new insights into the behaviour of one machine but of the
+      production line or even supply chain as a whole. Applications
+      achieving these aims need to be deployed rapidly if not
+      automatically with minimal effort. A heterogeneous landscape
+      with a use case-driven integration approach requires
+      repetitive ’repetitive’ correct wording? efforts,
+      contradicting any potentially acquired efficiency gains. The
+      main reason is that the configuration of interfaces is
+      usually oriented towards scenarios relevant at the respective
+      point in time but not for generic requirements of such later
+      deployed systems. As the input needs of future applications
+      are per se unknown at design time, a consistent and
+      comprehensive digital reflection of the real world is more
+      efficient and sustainable. Achieving this flexibility is the
+      main benefit where the IoT can contribute to the
+      manufacturing industry. Aussage zu ambitioniert?</p>
+      <p>Consequently, nearly full information about the current
+      state of all things must be reflected: the relevant machines,
+      their respective components as well as the involved materials
+      and products. Whereas many critical machine parts are not
+      observable with economically reasonable investment
+      (accessibility, unreliable network access, high update costs)
+      a continuous and complete monitoring of any system,
+      sub-system and sub-sub-system from one day to the other is
+      unrealistic anyway.</p>
+      <p>We propose an incremental process for bringing the shop
+      floor to the IoT. Many machines and devices nowadays are
+      already (partly) IoT-ready. However, systems, modules or
+      parts, which cannot be connected to the internet or promptly
+      equipped with sensors are also required for a true digital
+      shop floor. We, therefore, develop <em>Virtual
+      Representation</em> <strong>s</strong>, a digital
+      representation which does not necessarily require a direct
+      network connection to the physical thing. The <em>Virtual
+      Representation</em> is responsible for independently
+      calculating the object's condition by collecting and
+      interpreting already available environment data. We present a
+      RESTful interaction model to deploy and scale <em>Virtual
+      Representation</em>s. Furthermore, we show how the
+      configuration specifying a <em>Virtual Representation</em>
+      can be adapted at runtime by RESTful Web APIs, since changes
+      in the real world need to be reflected in a transparent and
+      standardized manner. We implemented the approach based on a
+      Linked Data Platform server for future extension. A
+      demonstrating show case is also publicly available to
+      illustrate the concept. We argue that the significantly lower
+      cost of a <em>Virtual Representation</em> based on omitted
+      hardware updates (if those are possible at all) motivates the
+      use of <em>Virtual Representation</em>’s and of simulated
+      values.</p>
+      <p>One example application scenario might be a robot gripper
+      arm, as one unit in an industrial production line. Its motors
+      and the supplied material are directly observable by
+      appropriate analytic components. In contrast, e.g. the shafts
+      transmitting the force from the motor to the jaws and the
+      jaws themselves cannot be monitored as its movements and the
+      robot's configuration do not allow a sufficient measurement.
+      Nevertheless, the abrasion state of both components might be
+      a critical factor for a maintenance strategy. A <em>Virtual
+      Representation</em> can encapsulate the necessary data
+      collection (number and duration of loads, applied material
+      type etc.) and the currently best performing evaluation
+      logic. The thereby encapsulated <em>Virtual
+      Representation</em> can be shifted easily, connected to other
+      cyber-physical systems or updated as it confirms to well
+      established Web standards. This allows a sufficiently
+      detailed and flexibly modelled smart factory with a minimum
+      required investment.</p>
+      <p>The paper is structured as follows: Section 2 gives a
+      brief overview on related concepts discussed in the Web and
+      IoT community. Section 3 further illustrates the use case
+      followed by the conceptional design of <em>Virtual
+      Representation</em>s in Section 4. Section 5 summarizes the
+      proposed methods and outlines future implications.</p>
+    </section>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>A Thing in the most general view can be either a physical
+      object, a software program, a piece of information or any
+      other kind of identifiable resource. Within the IoT, more and
+      more things become part of the internet – at the moment
+      mainly focusing on production related objects (e.g. machines,
+      materials etc.) or Smart Homes (smart/connected furniture).
+      To establish a digital information exchange, a virtual
+      resource is created in order to identify and access those
+      objects. These resources need to be identifiable by a unique
+      key and accessible through a commonly understood locator.
+      Both purposes are served by URIs and their widespread usage
+      throughout the internet makes them the identifier of
+      choice.</p>
+      <p>The internet and in particular the World Wide Web offers
+      already a well understood and widely accepted infrastructure
+      to exchange data. Well-established Web technologies like
+      URIs, HTTP and hyperlinks have proven to allow easy and
+      reliable communication mechanisms in a decentralized manner.
+      Cloud services and on demand Web solutions offer fast and
+      flexible deployment of applications, a strict requirement for
+      a smart factory. Maleshkova et&nbsp;al. analyzed the state of
+      deployed Web APIs and RESTful services [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0013">13</a>]. They conclude that a
+      significant ratio of APIs lacks sufficient descriptions and
+      at the same time miss necessary information on both the input
+      and output data sets. The Semantic Web on the other hand adds
+      meaning to data objects and can reduce the mentioned
+      integration effort. However, thereby created Web of Things
+      does neither specify the interaction patterns of the regarded
+      things nor does it model the intended relationship with the
+      physical world.</p>
+      <p>Perera et&nbsp;al. write about the Avatar concept as an
+      interoperability concept between objects ’using standard
+      protocols and technologies defined by the W3C for the Web,
+      coupled with a distributed service-oriented mediation
+      infrastructure’ [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>]. Thus, avatars can serve as a
+      representation for both physical and software things but do
+      not contain formalisms to simulate unconnected objects.</p>
+      <p>’Physical entities’ and ’virtual entities’ are basic
+      concepts in the domain of cyber-physical systems. Lee
+      et&nbsp;al. introduce a general five layered architecture for
+      cyber-physical systems. Their cyber layer includes ’cyber
+      twins’ which capture and preprocess the captured data for
+      higher level applications [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>]. The thereby created virtual
+      modeling of the factory and its entities are the consistent
+      data suppliers for the factory management. Unfortunately,
+      they do not consider the enormous necessary effort to fully
+      represent all machines of a production line and require to
+      have all entities at every step and do not discuss how an
+      environment with only partly digitized machines can benefit
+      from their vision.</p>
+      <p>Glaessgen and Stargel formulate requirements on so called
+      digital twins regarding NASA and US air force vehicles. Their
+      focus is to simulate any perceived incident to the physical
+      vehicle at the virtual one in order to get a higher accuracy
+      predicting the current state of the vehicle. Tao et&nbsp;al.
+      focus on the product lifecycle (design, manufacturing,
+      service). They identify a research gap in the field of
+      Product Lifecycle Management in the form of a disconnection
+      between the physical object and the virtual information
+      available during the several lifecycle stages. Their digital
+      twin concept follows the definition of [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0006">6</a>] and focuses on information
+      presentation in the form of a virtual objects but do not
+      consider any manipulations of those. Therefore, their digital
+      twin concept mainly serves as a virtual model and information
+      container and rather the thing itself as any (virtual)
+      interaction pattern is missing.</p>
+      <p>The Industrial Internet Consortium aims to introduce
+      common standards for the Industrial Internet of Things. As
+      part of their reference architecture (Fig. <a class="fig"
+      href="#fig1">1</a>) the consortium discusses the trend to
+      ”base their control decisions on the simulation model rather
+      than a control engineer's equation” [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0012">12</a>]. Especially the
+      introduced Functional Viewpoint contains the modeling of
+      things but still only targets objects directly equipped with
+      sensors or actuators. In addition, context information is
+      briefly discussed but limited to the semantically described
+      relationships of the previously mentioned entities.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191657/images/www18companion-396-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Architectural Framework according to
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0012">12</a>]</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>Similar to the Industrial Internet Consortium the
+      Plattform Industrie 4.0 proposes the ’Asset Administration
+      Shell’ containing an identifier, a referent, the referent
+      definition and a set of characteristics [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0003">3</a>]. It contains basic
+      descriptions (header) of its provided data objects and
+      functions in the body. An ’Asset Administration Shell’ can be
+      seen as a specification of the virtual entity concept from
+      cyber-physical systems but does also only regard connected
+      objects. Even though an ’Asset Administration Shell’ can also
+      represent software or a Web service the authors do not
+      discuss any strategies how their general concept also allows
+      the introduction of unconnected things to the digital shop
+      floor.</p>
+      <p>Edge computing [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>], edge analytics or fog computing
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0004">4</a>] proposes to
+      conduct substantial part of computing tasks close to the
+      physical thing at the edge of the network. The main
+      advantages are less network traffic and response times as
+      data processing takes place close to the data sources. Even
+      though simulating resources close to their physical location
+      can be seen as some kind of edge computing the paradigm
+      itself lacks – to the best of our knowledge – standardized
+      methods describing how to implement and how to interact with
+      the resources of interest.</p>
+      <p>The Resource Description Framework (RDF) models resources
+      in the form of triples (subject, predicate, object). Each
+      part of the triple can either be a resource in the form of a
+      globally unique URI or, in case of the object position, also
+      a sequence of characters referred to as Literals. RDF also
+      allows several serialization formats and therefore serves as
+      a flexible data format for both descriptions and productive
+      data. Linked Data further introduces dereferenceable
+      identifiers (HTTP URIs) and relationships to other web
+      resources. Linked Data Platform [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0016">16</a>] specifies data manipulation (CRUD)
+      operations on Linked Data resources other the web.</p>
+      <p>In particular, in the context of the Web, Smart Components
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0010">10</a>] paves the
+      way to flexible and context-dependent integration. A Smart
+      Component not only exchanges semantically defined data
+      (through its regular Web API) but also can adjust their
+      program code through a so called meta API, using exactly the
+      same interaction mechanisms enabled by the Linked Data-Fu
+      engine [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0008">8</a>].
+      Self-governed Components [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>] utilize this functionality to
+      independently trigger actions and achieve more robust Web
+      service networks.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Scenario: Robot
+          Gripper Arm</h2>
+        </div>
+      </header>
+      <p>1 page</p>
+      <p>An implementation of the previously descried scenario is
+      publicly accessible. A Linked Data Platform server hosts the
+      IoT representation of a demonstration gripper as an LDP RDF
+      Source together with its components<a class="fn" href="#fn1"
+      id="foot-fn1"><sup>1</sup></a> (Fig. <a class="fig" href=
+      "#fig2">2</a>). Requesting the web resource of the gripper is
+      possible via GET requests as well as towards it
+      sub-resources, returning the current state of the physical
+      object as far as observed together with some meta data.
+      RESTful interactions with the gripper's Web API are enabled
+      by overwriting the current resource state of the gripper's
+      arm<a class="fn" href="#fn2" id="foot-fn2"><sup>2</sup></a>
+      and claw<a class="fn" href="#fn3" id=
+      "foot-fn3"><sup>3</sup></a> by sending an RDF statement with
+      the predicate <em>saref:hasState</em> and the new state
+      (’up’/’down’ and ’opened’/’closed’) at the object position.
+      Example requests<a class="fn" href="#fn4" id=
+      "foot-fn4"><sup>4</sup></a> illustrate the use case.</p>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191657/images/www18companion-396-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">Illustration of IoT resources (white) and
+          <em>Virtual Representation</em>s (grey)</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>Even though the gripper itself and two components are
+      digitally accessible it is easy to understand that this only
+      represents a fraction of the actually installed components.
+      In order to e.g. decide of the optimal maintenance strategy
+      further information on other parts is essential too. We
+      illustrate our strategy to bring those parts to the same
+      integration layer by representing them as <em>Virtual
+      Representation</em>s. Two <em>Virtual Representation</em>s
+      are hosted on an Apache Marmotta<a class="fn" href="#fn5" id=
+      "foot-fn5"><sup>5</sup></a> server representing the
+      shaft<a class="fn" href="#fn6" id="foot-fn6"><sup>6</sup></a>
+      and the jaws<a class="fn" href="#fn7" id=
+      "foot-fn7"><sup>7</sup></a>.</p>
+      <p>The <em>Virtual Representation</em> simulates the physical
+      object's state. To do so, the relation between the already
+      available input data and the required features needs to be
+      determined. Such an algorithm or heuristic is of course based
+      on the currently most accurate available knowledge.
+      Furthermore, in the same way the setup in the physical world
+      changes or new information on the performance of the regarded
+      components become known, the deployed logic of the
+      <em>Virtual Representation</em> needs transparent update
+      functionalities.</p>
+      <p>Let us assume that the relation between the shaft's
+      abrasion state and the conducted number of actions is a
+      linear function, where the component is still perfectly fine
+      after 10 usages but broken after 20. A straight forward
+      heuristic would be:</p>
+      <div class="table-responsive" id="eq1">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation}
+          \hspace{-2.84544pt} abrasion(actions) =
+          {{\lt}CASE-START{\gt}\left\lbrace
+          \begin{array}{@{}l@{\quad }l@{}}0 \quad , |actions| {\lt}
+          10 \\ min\lbrace \frac{1}{10} * (|actions| - 10),
+          1\rbrace \ , else \end{array}\right.{\lt}CASE-END{\gt}}
+          \end{equation}</span><br />
+          <span class="equation-number">(1)</span>
+        </div>
+      </div>
+      <p></p>
+      <p>This naive function is most probably not very accurate.
+      After better insights in the abrasion process have revealed a
+      more fine grained relationship like Eq. <a class="eqn" href=
+      "#eq2">2</a> the formerly deployed heuristic must be
+      adjusted. We show in the following how a <em>Virtual
+      Representation</em> can be initialized with Eq. <a class=
+      "eqn" href="#eq1">1</a> and then be easily updated with Eq.
+      <a class="eqn" href="#eq2">2</a>.</p>
+      <div class="table-responsive" id="eq2">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation}
+          \hspace{-2.84544pt} abrasion(actions) =
+          {{\lt}CASE-START{\gt}\left\lbrace
+          \begin{array}{@{}l@{\quad }l@{}}0 \quad , |actions| {\lt}
+          10 \\ min\lbrace \frac{1}{1000} * (|actions| - 10)^3,
+          1\rbrace \ , else \end{array}\right.{\lt}CASE-END{\gt}}
+          \end{equation}</span><br />
+          <span class="equation-number">(2)</span>
+        </div>
+      </div>
+      <p></p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> The VIRTUAL
+          REPRESENTATION</h2>
+        </div>
+      </header>
+      <p>The <em>Virtual Representation</em> at its core contains
+      a) some descriptions of its physical counterpart, b) its
+      current (simulated) state, c) the function/algorithm
+      responsible for the calculation of derived features and a
+      RESTful pattern to request it. A <em>Virtual
+      Representation</em> is a Web resource identified by a
+      globally unique URI. In this paper we focus on the
+      interaction pattern and how the derivation function can be
+      implemented, its characteristics and how to interact with
+      it.</p>
+      <p>We model a <em>Virtual Representation</em> as a RESTful
+      Web resource producing RDF, in particular Linked
+      Data<a class="fn" href="#fn8" id="foot-fn8"><sup>8</sup></a>.
+      RDF as the common data format has the advantage of being a
+      very mature and wide-spread standard as it serves as a corner
+      stone of the Semantic Web Stack. Its native connection to
+      formal knowledge representations make RDF the data format of
+      choice for a loosely coupled environment like the regarded
+      shop floor with many heterogeneous machines from different
+      vendors.</p>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span>
+            Configuration Function for Derived Features</h3>
+          </div>
+        </header>
+        <p>A configuration function <em>f</em> of a <em>Virtual
+        Representation</em> is a relation of derived features
+        <em>y</em> (e.g. the current abrasion state) by evaluating
+        currently available input data <em>x</em> (e.g. the number
+        of movements). For this paper, we rely on Linked Data as
+        our data format in order to cope the syntactical and
+        semantic interoperability at the same time. Therefore, both
+        input data and derived features are Linked Data triples
+        (<em>x<sub>i</sub></em> , <em>y<sub>j</sub></em> ∈
+        <em>L</em>) with <em>L</em> being the set of RDF triples
+        compliant to the Linked Data principles.</p>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191657/images/www18companion-396-fig3.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">Integrating data from
+            external sources and deriving new information (see Eq.
+            <a class="eqn" href="#eq1">1</a>)</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>As the Linked Data-Fu engine [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0008">8</a>] is used to collect and
+        process the input data <em>x</em> in the demonstration
+        implementation of <em>Virtual Representation</em>s, the
+        function <em>f</em> needs to be a two stage process. First,
+        a set of declarative rules in N3 syntax defines the initial
+        data and processing steps. We denote this set according to
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0008">8</a>] as a
+        program <em>p</em>. Executing a rule of <em>p</em> leads to
+        either an execution of HTTP requests towards RESTful Web
+        APIs – responding with RDF – or the derivation of new RDF
+        statements locally. The second step involves a SPARQL
+        Construct query <em>q</em> filtering the collected data and
+        finally generating <em>y</em>. The set of RDF triples
+        <em>y</em> representing a <em>Virtual Representation</em>
+        is therefore for the demonstration implementation:</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} y = f(x) = q
+            \circ p (x) \end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>An example program is shown in Fig. <a class="fig" href=
+        "#fig3">3</a>. Lines 8 to 11 specify two HTTP request
+        available IoT entities as Linked Data resources. The rule
+        from line 14 to 23 derives the new statement specifying the
+        current abrasion state as the condition in the body part
+        (lines 15 to 19) of the rule is satisfied by the above
+        requested RDF set. The query in Fig. <a class="fig" href=
+        "#fig4">4</a> receives all statements from the program
+        execution and constructs the description of the <em>Virtual
+        Representation</em> as specified from line 2 to 10 in the
+        form of a SPARQL Construct query.</p>
+        <p>On has to note that the chosen form of the configuration
+        function is not a general requirement for <em>Virtual
+        Representations</em> but due to the chosen engine.
+        Different implementations can require other formats like
+        e.g. machine learning models or scripts. The proposed
+        configuration method has the main advantage of being
+        familiar with the Semantic Web and therefore form one
+        single technology stack with RDF and Linked Data.</p>
+        <figure id="fig4">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191657/images/www18companion-396-fig4.jpg"
+          class="img-responsive" alt="Figure 4" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 4:</span>
+            <span class="figure-title">Creating the <em>Virtual
+            Representation</em> through a SPARQL Construct
+            query</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Interaction
+            Model</h3>
+          </div>
+        </header>
+        <p>A <em>Virtual Representation</em> is the combination of
+        meta data triples together with the set of derived triples
+        and a resource representing the function code. As this
+        resource is also a Linked Data Platform Resource (LDP-R),
+        it can be manipulated according to the Linked Data Platform
+        specification. Even though the concept of <em>Virtual
+        Representations</em> is conforming to the Linked Data
+        Platform specification, <em>Virtual Representations</em>
+        enhance their regular interaction model by requiring a
+        further configuration. An adaption of a Linked Data
+        Platform server enables the proposed deployment of
+        <em>Virtual Representations</em> as shown in Fig. <a class=
+        "fig" href="#fig5">5</a>.</p>
+        <figure id="fig5">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191657/images/www18companion-396-fig5.jpg"
+          class="img-responsive" alt="Figure 5" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 5:</span>
+            <span class="figure-title">Interaction model for
+            <em>Virtual Representation</em>s</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>The Linked Data Platform specification defines how
+        clients can interact with LDP Web Resources in a RESTful
+        manner. We follow the LDP specification regarding the
+        creation, updating and deletion of Web resources. In
+        particular, <em>Virtual Representations</em> and the
+        additionally necessary configurations (<em>p</em> and
+        <em>q</em>) are themselves Web resources. More precisely
+        the configurations resources are LDP Non-RDF Sources
+        whereas the <em>Virtual Representation</em> itself is an
+        LDP RDF Source. The distinction is necessary as neither the
+        SPARQL syntax of <em>q</em> nor Notation3 of <em>p</em> or
+        any other model are necessarily RDF serializations, a
+        requirement for an LDP RDF Source.</p>
+        <p>In general, two possible strategies can be applied to
+        create a <em>Virtual Representation</em> in a RESTful
+        manner. On the one hand, a user agent can periodically
+        calculate the data, send it to the server which then
+        enables access to the latest received state of the
+        resource. Alternatively, the server waits until a client
+        requests the resource and then calculates the data on the
+        fly. The first approach has advantages in an environment
+        with unreliable network access as at least some version of
+        the requested data is available. Also, storing each state
+        creates a time series and allows historic analysis.
+        Nevertheless, especially in the context of the IoT update
+        rates often in the range of milliseconds are creating
+        enormous data volumes. To receive a lightweight
+        representation and also to increase the scalability of the
+        concept we therefore promote the calculation of a
+        <em>Virtual Representation</em>’s state on the fly. An HTTP
+        GET request on the <em>Virtual Representation</em> triggers
+        the server to load both the program and the query into the
+        engine and executes it (Fig. <a class="fig" href=
+        "#fig5">5</a>). The dynamically created RDF statements are
+        calculated, representing the related physical object in the
+        same way as a regular Web resource. As we rely on the
+        Linked Data-Fu engine the loading, compilation and
+        execution process happens at real-time and results in a
+        usually not notable overhead.</p>
+        <figure id="fig6">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191657/images/www18companion-396-fig6.jpg"
+          class="img-responsive" alt="Figure 6" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 6:</span>
+            <span class="figure-title">Basic classes and relations
+            to create a <em>Virtual Representation</em></span>
+          </div>
+        </figure>
+        <p></p>
+        <p>In order to identify the desired configuration of a
+        <em>Virtual Representation</em>, the engine needs
+        additional information. The relations (1) and (2) of the
+        data model (Fig. <a class="fig" href="#fig6">6</a>) include
+        these relations. A naive client would expect these
+        statements to reside at the <em>Virtual Representation</em>
+        itself as both include the <em>Virtual Representation</em>
+        as their subject. Unfortunately, the <em>Virtual
+        Representation</em> is calculated dynamically at request
+        time and not stored in the server's database, and therefore
+        not accessible for the engine itself. Even though one could
+        deposit the statements (1) and (2) at any other LDP
+        resource it is better practice to keep such information as
+        close as possible to the related <em>Virtual
+        Representation</em>. We therefore introduce the <em>Virtual
+        Representation Container</em>, a LDP Basic Container with
+        the additional requirement of containing exactly one
+        <em>Virtual Representation</em> together with its
+        configuration, here the query and program resources. The
+        engine can locate the Web resources <em>p</em> and
+        <em>q</em> as the container's child resources and therefore
+        combine the necessary Web resources.</p>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span>
+            Categorization of <em>Virtual Representation</em>s</h3>
+          </div>
+        </header>
+        <p>In REST terms as introduced by [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0005">5</a>] the proposed concept of
+        <em>Virtual Representations</em> cannot be seen as a user
+        agent. Even though the <em>Virtual Representation</em> can
+        initiate request through a client connector it is not the
+        source of the initial request. In the same way the
+        <em>origin server</em> concept does not apply as source of
+        the requested thing is not directly connected with it. It
+        is a general problem with the IoT that the virtual
+        reference is not the target of the request which in fact is
+        the physical object. Therefore, any IoT entity must be some
+        kind of intermediary. <em>Virtual Representations</em> have
+        server and client components as required for a
+        <em>proxy</em> but without allowing a client to choose
+        whether to use it. In contrast, a <em>gateway</em> forwards
+        the request but acts as an origin server for the client.
+        <em>Virtual Representations</em> act in that way, making
+        them a <em>gateway</em> for the digital shop floor without
+        necessarily informing the client about this role.</p>
+        <p>The <em>Virtual Representations</em> as discussed in the
+        example is e.g. part of the ’Monitoring &amp; Diagnostics’
+        module of the operations domain (’Functional Viewpoint’) of
+        the IIC Reference Architecture [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0012">12</a>] but the methodology is
+        not restricted to it. ML trained models or the proposed
+        program/query implementation of the configuration function
+        are as well covered by the IIC operations domain. In
+        addition, one can also locate the <em>Virtual
+        Representation</em> in the underlying ’Implementation
+        Viewpoint’ as it acts as a kind of data source or a
+        gateway, even though not between distinct networks but
+        entities.</p>
+        <figure id="fig7">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191657/images/www18companion-396-fig7.jpg"
+          class="img-responsive" alt="Figure 7" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 7:</span>
+            <span class="figure-title">Reference Architectural
+            Model Industrie 4.0 according to [<a class="bib"
+            data-trigger="hover" data-toggle="popover"
+            data-placement="top" href=
+            "#BibPLXBIB0001">1</a>]</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>The Asset Administration Shell (AAS) concept of the
+        ’Plattform Industrie 4.0’ [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0003">3</a>] can act as a reference model for a
+        <em>Virtual Representation</em> especially as it mentions
+        the usage of RDF ontology concepts to clarify semantic
+        meaning. An AAS acts as an interface between the virtual
+        and the physical world, same as a <em>Virtual
+        Representation</em>. Nevertheless, as discussed in
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0003">3</a>], it is
+        not yet discussed whether an AAS representing a physical
+        objects requires a direct data connection. In the reference
+        architecture in Fig. <a class="fig" href="#fig7">7</a> the
+        <em>Virtual Representation</em> is based in the integration
+        and communication layer where the physical object is
+        represented and accessible by higher level applications
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0001">1</a>].</p>
+      </section>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Conclusion and
+          Future Work</h2>
+        </div>
+      </header>
+      <p>The concept of <em>Virtual Representations</em> serves as
+      a mediator to bring unconnected physical objects quickly to
+      the IoT. Needless to say, a simulated reflection cannot be as
+      accurate as a directly observed measurement. Still, the
+      advantage of the <em>Virtual Representation</em> is the
+      low-cost deployment and its flexible ways to write the
+      configuration into an encapsulated representation of a
+      real-world object.</p>
+      <p>We did not focus on security related problems and yet
+      disregarded <em>Virtual Representations</em> in other IoT
+      protocols such as MQTT, CoaP, or OPC-UA. In addition, only a
+      state-based request/response interaction is (yet)
+      implemented, in contrast to data streams and
+      events/notifications of many IoT applications. Future steps
+      include the consisting modeling and description of the
+      <em>Virtual Representation</em>’s analytic logic, its
+      interaction scheme and physical behavior in a
+      machine-processable manner. The Hydra and openAPI vocabulary
+      will be used to further document and explain the interface.
+      Although we implemented an example execution environment as a
+      HTTP Web server the common concept is not restricted to HTTP.
+      We aim to provide similar projects for OPC-UA and
+      publish/subscribe protocols like MQTT.</p>
+      <p><em>Virtual Representations</em> can be one stepping stone
+      for a faster introduction of the IoT to real-world production
+      lines. We believe that the proposed method can reduce
+      implementation costs and efforts and illustrated the approach
+      with a very simple machine demonstrator. We further discussed
+      how <em>Virtual Representations</em> fit in current reference
+      works in order to clearly specify their characteristics.</p>
+      <section id="sec-11">
+        <section id="sec-12">
+          <p><em>Acknowledgement.</em> The research and development
+          project that forms the basis for this report is funded
+          under project No. 01MD16015 (STEP) within the scope of
+          the Smart Services World technology program.</p>
+        </section>
+      </section>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Plattform&nbsp;Industrie
+        4.0 and ZVEI. Reference Architectural Model Industrie 4.0
+        (RAMI 4.0), October 2016.
+        http://www.plattform-i40.de/I40/Redaktion/EN/Downloads/Publikation/rami40-an-introduction.html.</li>
+        <li id="BibPLXBIB0002" label="[2]">Sebastian&nbsp;R Bader.
+        Automating the dynamic interactions of self-governed
+        components in distributed architectures. In <em>European
+        Semantic Web Conference</em>, pages 173–183. Springer,
+        2017.</li>
+        <li id="BibPLXBIB0003" label="[3]">Heinz Bedenbender,
+        Alexander Bentkus, Ulrich Epple, Thomas Hadlich, Roland
+        Heidel, Oliver Hillermeier, Michael Hoffmeister, Haimo
+        Huhle, Markus Kiele-Dunsche, Heiko Koziolek, Steffen
+        Lohmann, Marco Mendes, Jörg Neidig, Florian Palm, Stefan
+        Pollmeier, Benedikt Rauscher, Frank Schewe, Martin
+        Wollschlaeger, Wollschlaeger, Ingo Weber, and Bernd Waser.
+        Industrie 4.0 Plug-and-Produce for Adaptable Factories:
+        Example Use Case Definition, Models, and Implementation,
+        2017.
+        http://www.plattform-i40.de/I40/Redaktion/EN/Downloads/Publikation/Industrie-40-%20Plug-and-Produce.</li>
+        <li id="BibPLXBIB0004" label="[4]">Flavio Bonomi, Rodolfo
+        Milito, Jiang Zhu, and Sateesh Addepalli. Fog computing and
+        its role in the internet of things. In <em>Proceedings of
+        the first edition of the MCC workshop on Mobile cloud
+        computing</em>, pages 13–16. ACM, 2012.</li>
+        <li id="BibPLXBIB0005" label="[5]">Fielding, Roy T and
+        Taylor, Richard N. <em>Architectural styles and the design
+        of network-based software architectures</em>. Irvine
+        Doctoral dissertation. University of California, 2000.</li>
+        <li id="BibPLXBIB0006" label="[6]">Edward&nbsp;H Glaessgen
+        and David Stargel. The digital twin paradigm for future
+        nasa and us air force vehicles. In <em>53rd Struct. Dyn.
+        Mater. Conf. Special Session: Digital Twin, Honolulu, HI,
+        US</em>, pages 1–14, 2012.</li>
+        <li id="BibPLXBIB0007" label="[7]">Jayavardhana Gubbi,
+        Rajkumar Buyya, Slaven Marusic, and Marimuthu Palaniswami.
+        Internet of things (iot): A vision, architectural elements,
+        and future directions. <em>Future generation computer
+        systems</em>, 29(7):1645–1660, 2013.</li>
+        <li id="BibPLXBIB0008" label="[8]">Andreas Harth,
+        Craig&nbsp;A. Knoblock, Steffen Stadtmüller, Rudi Studer,
+        and Pedro Szekely. On-the-fly integration of static and
+        dynamic linked data. In <em>Proceedings of the Fourth
+        International Conference on Consuming Linked Data</em>,
+        volume 1034, pages 1–12, 2013.</li>
+        <li id="BibPLXBIB0009" label="[9]">Yun&nbsp;Chao Hu, Milan
+        Patel, Dario Sabella, Nurit Sprecher, and Valerie Young.
+        Mobile edge computing—a key technology towards 5g. <em>ETSI
+        White Paper</em>, 11(11):1–16, 2015.</li>
+        <li id="BibPLXBIB0010" label="[10]">Felix&nbsp;Leif
+        Keppmann and Maria Maleshkova. Smart Components for
+        Enabling Intelligent Web of Things Applications.
+        <em>INTELLI 2016</em>, page 128, 2016.</li>
+        <li id="BibPLXBIB0011" label="[11]">Jay Lee, Behrad
+        Bagheri, and Hung-An Kao. A Cyber-Physical Systems
+        architecture for Industry 4.0-based manufacturing systems.
+        <em>Manufacturing Letters</em>, 3:18–23, January 2015.</li>
+        <li id="BibPLXBIB0012" label="[12]">Shi-Wan Lin, Bradford
+        Miller, Jacques Durand, Graham Bleakley, Amine Chigani,
+        Robert Martin, Brett Murphy, and Mark Crawford. The
+        Industrial Internet of Things Volume G1: Reference
+        Architecture, 2017.
+        http://www.iiconsortium.org/IIRA.htm.</li>
+        <li id="BibPLXBIB0013" label="[13]">Maria Maleshkova,
+        Carlos Pedrinaci, and John Domingue. Investigating web apis
+        on the world wide web. In <em>Web Services (ECOWS), 2010
+        IEEE 8th European Conference on</em>, pages 107–114. IEEE,
+        2010.</li>
+        <li id="BibPLXBIB0014" label="[14]">Charith Perera, Arkady
+        Zaslavsky, Peter Christen, and Dimitrios Georgakopoulos.
+        Context Aware Computing for The Internet of Things: A
+        Survey. <em>IEEE Communications Surveys &amp;
+        Tutorials</em>, 16(1):414–454, 2014.</li>
+        <li id="BibPLXBIB0015" label="[15]">Goldman Sachs. The
+        internet of things: Making sense of the next mega-trend.
+        2014. <em>Available:
+        www.goldmansachs.com/our-thinking/pages/internet-of-things/
+        [Online][Accessed on Jan 17, 2018]</em>, 2017.</li>
+        <li id="BibPLXBIB0016" label="[16]">Steve Speicher, John
+        Arwe, and Ashok Malhotra. Linked data platform 1.0.
+        https://www.w3.org/TR/ldp/, 2015. W3C Recommendation,
+        accessed 30.06.2016.</li>
+        <li id="BibPLXBIB0017" label="[17]">Fei Tao, Jiangfeng
+        Cheng, Qinglin Qi, Meng Zhang, He&nbsp;Zhang, and Fangyuan
+        Sui. Digital twin-driven product design, manufacturing and
+        service with big data. <em>The International Journal of
+        Advanced Manufacturing Technology</em>, pages 1–14,
+        2017.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "http://km.aifb.kit.edu/services/step-iot/gripper/">http://km.aifb.kit.edu/services/step-iot/gripper/</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "http://km.aifb.kit.edu/services/step-iot/gripper/arm/">http://km.aifb.kit.edu/services/step-iot/gripper/arm/</a></p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "http://km.aifb.kit.edu/services/step-iot/gripper/claw/">http://km.aifb.kit.edu/services/step-iot/gripper/claw/</a></p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a><a class=
+    "link-inline force-break" href=
+    "https://github.com/aifb/virtrep/requests/">https://github.com/aifb/virtrep/requests/</a></p>
+    <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a><a class=
+    "link-inline force-break" href=
+    "http://marmotta.apache.org/">http://marmotta.apache.org/</a></p>
+    <p id="fn6"><a href="#foot-fn6"><sup>6</sup></a><a class=
+    "link-inline force-break" href=
+    "http://km.aifb.kit.edu/services/bader4/marmotta/ldp/ShaftContainer/shaft/">http://km.aifb.kit.edu/services/bader4/marmotta/ldp/ShaftContainer/shaft/</a></p>
+    <p id="fn7"><a href="#foot-fn7"><sup>7</sup></a><a class=
+    "link-inline force-break" href=
+    "http://km.aifb.kit.edu/services/bader4/marmotta/ldp/JawsContainer/jaws/">http://km.aifb.kit.edu/services/bader4/marmotta/ldp/JawsContainer/jaws/</a></p>
+    <p id="fn8"><a href="#foot-fn8"><sup>8</sup></a>source code
+    available at <a class="link-inline force-break" href=
+    "https://github.com/aifb/virtrep/">https://github.com/aifb/virtrep/</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191657">https://doi.org/10.1145/3184558.3191657</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

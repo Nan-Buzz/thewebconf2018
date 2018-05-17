@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Modelling Dynamics in Semantic Web Knowledge Graphs with
+  Formal Concept Analysis</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Modelling Dynamics in Semantic
+          Web Knowledge Graphs with Formal Concept
+          Analysis</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Larry</span> <span class=
+          "surName">González</span>, Center for Advancing
+          Electronics Dresden (cfaed), TU Dresden, Germany,
+          <a href="mailto:larry.gonzalez@tu-dresden.de">larry.gonzalez@tu-dresden.de</a>
+        </div>
+        <div class="author">
+          <a href="https://orcid.org/0000-0001-9482-1982" ref=
+          "author"><span class="givenName">Aidan</span>
+          <span class="surName">Hogan</span></a>, Center for
+          Semantic Web Research, DCC, Universidad de Chile,
+          <a href="mailto:ahogan@dcc.uchile.cl">ahogan@dcc.uchile.cl</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3178876.3186016"
+        target=
+        "_blank">https://doi.org/10.1145/3178876.3186016</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3178876" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>In this paper, we propose a novel data-driven
+        schema for large-scale heterogeneous knowledge graphs
+        inspired by Formal Concept Analysis (FCA). We first extract
+        the sets of properties associated with individual entities;
+        these property sets (aka. <em>characteristic sets</em>) are
+        annotated with cardinalities and used to induce a lattice
+        based on set-containment relations, forming a natural
+        hierarchical structure describing the knowledge graph. We
+        then propose an algebra over such schema lattices, which
+        allows to compute diffs between lattices (for example, to
+        summarise the changes from one version of a knowledge graph
+        to another), to add diffs to lattices (for example, to
+        project future changes), and so forth. While we argue that
+        this lattice structure (and associated algebra) may have
+        various applications, we currently focus on the use-case of
+        modelling and predicting the dynamic behaviour of knowledge
+        graphs. Along those lines, we instantiate and evaluate our
+        methods for analysing how versions of the Wikidata
+        knowledge graph have changed over a period of 11 weeks. We
+        propose algorithms for constructing the lattice-based
+        schema from Wikidata, and evaluate their efficiency and
+        scalability. We then evaluate use of the resulting
+        schema(ta) for predicting how the knowledge graph will
+        evolve in future versions.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Information systems</strong> →
+        <strong>Semantic web description languages;</strong>
+        <em>Graph-based database models;</em></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Semantic Web</small>,</span>
+          <span class="keyword"><small>Schema</small>,</span>
+          <span class="keyword"><small>Knowledge
+          Graph</small>,</span> <span class=
+          "keyword"><small>Dynamics</small>,</span> <span class=
+          "keyword"><small>FCA</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Larry González and Aidan Hogan. 2018. Modelling Dynamics
+          in Semantic Web Knowledge Graphs with Formal Concept
+          Analysis. In <em>WWW 2018: The 2018 Web Conference,</em>
+          <em>April 23–27, 2018,</em> <em>Lyon, France. ACM, New
+          York, NY, USA</em> 10 Pages. <a href=
+          "https://doi.org/10.1145/3178876.3186016" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3178876.3186016</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Graph-based data models&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>] have become increasingly common in
+      data management scenarios that require flexibility beyond
+      what is offered by traditional relational databases. Such
+      flexibility is particularly important in Web scenarios, where
+      potentially many users may be involved (either directly or
+      indirectly) in the creation, management and curation of data,
+      where data may be incomplete, properties may have multiple
+      values, and the data schema may be subject to frequent
+      change. This need for flexibility has given rise to the
+      adoption of graph-based models for various applications,
+      including Facebooks's Open Graph Protocol, Google's Knowledge
+      Graph, schema.org, and so forth. In other applications, users
+      may further have control over the schema, allowing not only
+      to edit nodes and edges in the graph, but also to define new
+      <em>types</em> of nodes and edges; an example of such a
+      scenario is the Wikidata knowledge graph&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0039">39</a>] – hosted by the Wikimedia
+      Foundation and seen as a source of data to compliment
+      Wikipedia – where users can add new properties and types that
+      can be used to define further data.</p>
+      <p>While graphs enable increased levels of flexibility in
+      terms of how a given data collection is managed and curated,
+      on the flip-side, this flexibility comes with the inevitable
+      cost of higher levels of heterogeneity, where involved
+      entities may be defined in diverse ways, data may have
+      various levels of (in)completeness, etc. Conceptually
+      understanding the current state of a knowledge graph – in
+      terms of what data it contains, what it is missing, how it
+      can be effectively queried, what has changed recently, etc. –
+      is thus a major challenge: it is unclear how to distil an
+      adequate, high-level description that captures an actionable
+      overview of knowledge graphs.</p>
+      <p>We thus need well-founded methodologies to make sense of
+      knowledge graphs, where an obvious approach is to define some
+      notion(s) of <em>schema</em> for such graphs. The traditional
+      approach in the Semantic Web has been what Pham and Boncz
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0031">31</a>] call the
+      <em>schema first</em> approach: define the schema that the
+      data should follow. The most established language for
+      specifying <em>semantic schemata</em> is RDF Schema
+      (RDFS)&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0009">9</a>],
+      which allows for defining the semantics of terms used in the
+      RDF&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0037">37</a>]
+      graph-based model; however, such an approach does not help to
+      understand the data that an RDF graph contains since defined
+      terms need not be used and further undefined terms may be
+      used in such data. More recently, <em>validating
+      schemata</em> – such as the Shapes Constraint Language
+      (SHACL)&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0027">27</a>] – have been proposed that allow for
+      defining various constraints that compliant RDF graphs must
+      follow; however, the purpose of such schemata is to constrain
+      and validate graphs rather than to gain an understanding of
+      the legacy data contained in a given graph.</p>
+      <p>An alternative to the <em>schema first</em> approach is
+      the <em>schema last</em> approach&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0031">31</a>], which foregoes an
+      upfront schema and rather lets the data evolve naturally;
+      thereafter, the goal is to understand what the legacy graph
+      data contain by extracting high-level summaries that
+      characterise the graph, resulting in a <em>data-driven
+      schema</em>. Due to a growing realisation that traditional
+      notions of schema are not enough, various works have emerged
+      on this topic, trying to extract implicit structure from –
+      and ultimately make sense of – diverse RDF
+      graphs&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0001">1</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0002">2</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0010">10</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0011">11</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0012">12</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0013">13</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0014">14</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0019">19</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0020">20</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0025">25</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0031">31</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0032">32</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0036">36</a>]. Such
+      works consider various applications, be it to help users
+      write queries, to build browsing interfaces, to optimise
+      query processing, to identify abstract topics covered, to
+      model topological changes, etc.</p>
+      <p>In this paper, we propose yet another approach to compute
+      a data-driven schema from such graphs; more specifically, our
+      approach is inspired by formal concept analysis (FCA) and
+      produces a lattice of “concepts” based on the properties
+      (outgoing edge labels) for all entities in the graph (also
+      known as <em>characteristic sets</em>). A key novelty of our
+      approach is to propose an FCA-style framework that can be
+      applied to very large, diverse, graph-structured
+      knowledge-bases. To validate the utility of the FCA-based
+      schema extracted by this framework, as our use-case, we study
+      the problem of summarising the dynamics of a dataset and of
+      predicting future high-level changes. To address this
+      use-case, we propose a novel abstract algebra over FCA-style
+      lattices that allows for computing diffs between two such
+      schemas (through a subtraction operator) and adding such
+      diffs to given schemata in order to project future
+      schema-level changes (through an additional operator).</p>
+      <p>We apply this framework to compute lattices for 11
+      versions of the Wikidata knowledge graph, evaluating their
+      suitability for the use-case of predicting future, high-level
+      changes. We select Wikidata as: (1) it provides a history of
+      weekly versions that we can use for evaluating predictions,
+      (2) it is edited by thousands of users, meaning that
+      significant changes are observed week-to-week, (3) the scale
+      and diversity of the dataset offer (to the best of our
+      knowledge) an unprecedented challenge for FCA-style
+      techniques, requiring novel methods. Our results show that
+      the proposed framework can scale to datasets like Wikidata
+      and that it can provide better predictions than a baseline
+      method using a linear model.</p>
+      <p><em>Contributions:</em> Our main contributions are as
+      follows: (1) We propose a notion of formal context and
+      concepts for applying FCA-style techniques to RDF graphs. (2)
+      To improve scalability, we propose using an intermediary
+      lattice that does not materialise the full lattice but rather
+      allows for the concepts to be lazily computed (as needed).
+      (3) We propose an algebra for (a) computing a high-level diff
+      between two versions of an RDF graph based on our lattice
+      structures, and (b) adding lattices to predict future
+      changes. (4)&nbsp;We evaluate our methods by extracting the
+      lattices for 11 weekly versions of the Wikidata knowledge
+      graph, presenting performance and scalability results, and
+      assessing the quality of predictions.</p>
+      <p><em>Paper outline:</em> Section&nbsp;<a class="sec" href=
+      "#sec-4">2</a> presents related work in the areas of
+      data-driven schemata, FCA techniques and Semantic Web
+      dynamics. Section&nbsp;<a class="sec" href="#sec-5">3</a>
+      presents preliminaries relating to RDF and FCA.
+      Section&nbsp;<a class="sec" href="#sec-6">4</a> presents our
+      framework for extracting lattices from RDF graphs, for which
+      Section&nbsp;<a class="sec" href="#sec-11">5</a> discusses
+      concrete algorithms. Section&nbsp;<a class="sec" href=
+      "#sec-15">6</a> describes an algebra for computing diffs and
+      predicting future changes in lattices. Section&nbsp;<a class=
+      "sec" href="#sec-18">7</a> presents our evaluation before
+      Section&nbsp;<a class="sec" href="#sec-19">8</a>
+      concludes.</p>
+    </section>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Works</h2>
+        </div>
+      </header>
+      <p>We now provide an overview of the most pertinent related
+      works in the areas of data-driven schemata for RDF, FCA on
+      the Semantic Web, and modelling dynamics in knowledge
+      graphs.</p>
+      <p><em>Data-driven RDF schemata:</em> A variety of works have
+      proposed methods to summarise, profile and/or compute
+      schemata from RDF graphs (as opposed to defining an
+      <em>upfront</em> schema for RDF graphs, per the
+      RDFS&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0009">9</a>]
+      and SHACL&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0027">27</a>] standards). A common approach is to
+      compute a <em>graph summary</em> based on various notions of
+      <em>quotient graphs</em>&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0012">12</a>], which first define an equivalence
+      relation on nodes in the input graph, where each node
+      partition induced by the relation is then considered a node
+      in the quotient graph; such equivalence relations can be
+      defined in terms of, e.g., bisimulations&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0010">10</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0014">14</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0032">32</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0036">36</a>], node
+      types&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0011">11</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0019">19</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0020">20</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0025">25</a>],
+      isomorphism&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0012">12</a>], and so forth. An interesting
+      property of such quotient graphs is that they can (often)
+      preserve some notion of the connectivity of the original
+      graph.</p>
+      <p>Further approaches rather consider extracting a meta-data
+      summary – such as a <em>VoID description</em>&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0004">4</a>] – from the
+      graph&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0008">8</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0023">23</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0029">29</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0034">34</a>]; however,
+      such approaches tend to extract statistical descriptions
+      rather than inherent structures from the data (though VoID's
+      dataset partitions&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>] do capture some notion of
+      structure).</p>
+      <p>Other approaches for computing inherent structures from an
+      RDF dataset are based on clustering&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0001">1</a>], latent topic
+      analysis&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>], association rule
+      mining&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0002">2</a>],
+      <em>n</em>-ary relations&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0031">31</a>], prototypes&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0013">13</a>], formal concept
+      analysis&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>], and more besides. The approach we
+      propose falls into the latter category, applying formal
+      concept analysis to RDF graphs; we now discuss such works in
+      more detail.</p>
+      <p><em>FCA on the Semantic Web:</em> Our proposal is inspired
+      by methods proposed in the Formal Concept Analysis (FCA)
+      community&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0033">33</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0040">40</a>]. In fact, we are far from the first
+      authors to consider applying FCA techniques to a Semantic Web
+      context, where amongst such works we can mention the proposal
+      by Rouane-Hacene et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0035">35</a>] for Relational Concept Analysis
+      (RCA), where FCA is applied individually to entities of
+      different types to create a concept lattice for each type;
+      the work by Alam et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>] on applying FCA to help explore and
+      assess the completeness of Linked Datasets; the evaluation of
+      Kirchberg et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0026">26</a>] for the performance of FCA
+      algorithms applied to Linked Datasets; as well as works by
+      Formica [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0021">21</a>]
+      and d'Aquin and Motta [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>] for facilitating search and question
+      answering applications over Semantic Web datasets. However,
+      while some of these papers do deal with datasets similar to
+      our own (e.g., DBpedia), all of the papers we have observed
+      apply FCA over closed subsets of datasets, typically
+      including a subset of entities of a particular type. For
+      example, in the performance-focussed paper of Kirchberg et
+      al. [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0026">26</a>],
+      the largest datasets considered contain in the order of
+      35,000 entities, whereas we consider an FCA-style analysis
+      over full (truthy) Wikidata, which describes tens of millions
+      of entities.</p>
+      <p>Broadening the search to more general FCA methods at large
+      scale, we could find works by Xu et al. [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0041">41</a>] and Krajca and Vychodil
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0028">28</a>] that (like
+      us) propose to use the distributed MapReduce framework to
+      enhance the scalability of the FCA process; however, the
+      largest dataset considered by Xu et al. [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0041">41</a>] contains in the order of
+      100,000 entities, while the largest considered by Krajca and
+      Vychodil [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0028">28</a>]
+      contains in the order of 33,000 entities—still orders of
+      magnitude below our target scale. Hence, at least to the best
+      of our knowledge, no work has considered applying FCA over a
+      dataset as diverse and large as Wikidata; in fact, as we will
+      discuss later, typical FCA methods require adaptations to
+      scale to such levels.</p>
+      <p><em>Modelling Dynamics on the Semantic Web:</em> Our main
+      use-case for applying FCA over Wikidata is to model the
+      dynamic behaviour of the dataset and predict future changes.
+      Thus within our related works, we can consider works relating
+      to the modelling of changes in Semantic Web knowledge graphs.
+      Within this area, we can consider, for example, the work by
+      Umbrich et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0038">38</a>], who define various types of entity-
+      and document-level changes in Linked Data, looking to see if
+      such changes follow a Poisson distribution. Later work by
+      Käfer et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0024">24</a>] proposed the Dynamic Linked Data
+      Observatory to collect weekly snapshots of Linked Data
+      crawled from the Web; analysing various aspects of the
+      dynamics of datasets, they classify websites by the types of
+      changes observed, be they bulk changes, continuous changes,
+      or simply static datasets. The data collected by Käfer et
+      al.’s observatory was later used in follow-up work by, e.g.,
+      Dividino et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0018">18</a>] for improving cache maintenance. To
+      the best of our knowledge, however, no work has attempted to
+      <em>predict</em> high-level changes in such datasets; rather
+      the focus of such work has been on modelling and analysing
+      historical dynamics.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span>
+          Preliminaries</h2>
+        </div>
+      </header>
+      <p>In order to present a formal framework for the paper, we
+      focus on the RDF data model. However, the techniques and
+      results developed herein generalise to other graph-structured
+      data models&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>].</p>
+      <p><em>RDF terms and graphs:</em> RDF is a graph-structured
+      model based on three disjoint sets of terms: IRIs (I),
+      literals (<strong>L</strong>) and blank nodes
+      (<strong>B</strong>). Claims involving these terms can be
+      organised into <em>RDF triples</em> (<em>s</em>, <em>p</em>,
+      <em>o</em>) ∈ <em>I</em> <strong>B</strong> × <em>I</em> ×
+      <em>I</em> <strong>B</strong> <strong>L</strong>,<a class=
+      "fn" href="#fn1" id="foot-fn1"><sup>1</sup></a> where
+      <em>s</em> is called <em>subject</em>, <em>p</em> is called
+      <em>predicate</em>, and <em>o</em> is called <em>object</em>.
+      An <em>RDF graph G</em> is then a finite set of RDF triples,
+      where a triple (<em>s</em>, <em>p</em>, <em>o</em>) ∈
+      <em>G</em> can be viewed as an edge of the form <span class=
+      "inline-equation"><span class="tex">$s \xrightarrow {p}
+      o$</span></span> in a directed edge-labelled graph. The terms
+      used in the predicate position are referred to as
+      <em>properties</em>. We use the term <em>entity</em> to refer
+      to the real-world objects referred to by the subjects of the
+      graph. Given an RDF graph <em>G</em>, for <span class=
+      "inline-equation"><span class="tex">$\bullet \in \lbrace
+      \small{\textrm S},\small{\textrm P},\small{\textrm O}
+      \rbrace$</span></span> , we denote by <em>π</em>
+      <sub>•</sub>(<em>G</em>) the projection of the set of terms
+      appearing in a particular triple position in <em>G</em>;
+      e.g., <span class="inline-equation"><span class="tex">$\pi
+      _{\small{\textrm S}} (G) := \lbrace s \mid \exists p,o :
+      (s,p,o) \in G \rbrace$</span></span> .</p>
+      <p><em>Formal contexts and concepts:</em> Formal concept
+      analysis (FCA) is a methodology for extracting a concept
+      hierarchy from sets of entities and their
+      properties&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0040">40</a>]. More specifically, the methodology
+      is based on extracting <em>formal concepts</em> from
+      <em>formal contexts</em>. A <em>formal context</em> is a
+      triple <em>X</em> = (<em>E</em>, <em>A</em>, <em>I</em>),
+      where <em>E</em> is a set of entities,<a class="fn" href=
+      "#fn2" id="foot-fn2"><sup>2</sup></a> <em>A</em> is a set of
+      attributes, and <em>I</em>⊆<em>E</em> × <em>A</em> is the
+      <em>incidence</em>: a set of pairs such that (<em>e</em>,
+      <em>a</em>) ∈ <em>I</em> if and only if the attribute
+      <em>a</em> is defined for entity <em>e</em>.</p>
+      <p>Towards defining <em>formal concepts</em>, we give some
+      initial definitions. Given a formal context <em>X</em> =
+      (<em>E</em>, <em>A</em>, <em>I</em>), for a subset of
+      entities <em>F</em>⊆<em>E</em>, let <span class=
+      "inline-equation"><span class="tex">$[[ F ]] _X := \lbrace a
+      \in A \mid \forall f \in F : (f,a) \in I
+      \rbrace$</span></span> ; conversely, for a subset of
+      attributes <em>B</em>⊆<em>A</em>, let <span class=
+      "inline-equation"><span class="tex">$[[ B ]] _X :=\lbrace e
+      \in E \mid \forall b \in B : (e,b) \in I
+      \rbrace$</span></span> . Thus, for a set of entities,
+      <span class="inline-equation"><span class="tex">$[[ \cdot
+      ]]$</span></span> takes the set of attributes they all share
+      in common, while for a set of attributes, <span class=
+      "inline-equation"><span class="tex">$[[ \cdot
+      ]]$</span></span> takes the set of entities they all share in
+      common. A formal concept is then a pair (<em>F</em>,
+      <em>B</em>) where: (1) <em>F</em>⊆<em>E</em>, (2)
+      <em>B</em>⊆<em>A</em>, (3) <span class=
+      "inline-equation"><span class="tex">$[[ F ]] _X =
+      B$</span></span> , <em>and</em> (4) <span class=
+      "inline-equation"><span class="tex">$F = [[ B ]]
+      _X$</span></span> . In the formal concept (<em>F</em>,
+      <em>B</em>), the set <em>F</em> is called the <em>extent</em>
+      of the concept while the set <em>B</em> is called the
+      <em>intent</em> of the concept.</p>
+      <p>In terms of inducing a concept hierarchy, let (<em>F</em>
+      <sub>1</sub>, <em>B</em> <sub>1</sub>) and (<em>F</em>
+      <sub>2</sub>, <em>B</em> <sub>2</sub>) be two formal concepts
+      for the formal context <em>X</em> = (<em>E</em>, <em>A</em>,
+      <em>I</em>). We define the partial order ≤ based on set
+      containment of intent such that (<em>F</em> <sub>1</sub>,
+      <em>B</em> <sub>1</sub>) ≤ (<em>F</em> <sub>2</sub>,
+      <em>B</em> <sub>2</sub>) iff <em>B</em>
+      <sub>1</sub>⊆<em>B</em> <sub>2</sub>. Letting <em>C</em>
+      denote the set of all formal concepts in <em>X</em>, then
+      <span class="inline-equation"><span class="tex">$(E,[[ E ]]
+      _X)$</span></span> serves as the bottom context denoting the
+      attributes that all entities share, while <span class=
+      "inline-equation"><span class="tex">$([[ A ]]
+      _X,A)$</span></span> serves as the top concept (⊤) denoting
+      the entities using all attributes; since for any <em>c</em> ∈
+      <em>C</em> it holds that ⊥ ≤ <em>c</em> ≤ ⊤, we can say that
+      (<em>C</em>, ≤) forms a complete lattice, known as the
+      <em>concept lattice</em>. We remark that <span class=
+      "inline-equation"><span class="tex">$[[ E ]]
+      _X$</span></span> and <span class=
+      "inline-equation"><span class="tex">$[[ A ]]
+      _X$</span></span> can be the empty set in practice, and that
+      <span class="inline-equation"><span class="tex">$[[ A ]]
+      _X$</span></span> , in particular, will very often be empty.
+      Also we note that the same characteristics could be achieved
+      by considering a dual partial order based on set containment
+      of the entities in the extent; however, herein we will be
+      concerned with the attribute-based order. Furthermore, it
+      will be useful to consider a non-transitive version of the ≤
+      order wrt. <em>C</em>, which we denote by ⪯, such that
+      <em>c</em>≺<em>c</em>′′ iff <em>c</em> &lt; <em>c</em>′′ and
+      there does not exist <em>c</em>′ ∈ <em>C</em> such that
+      <em>c</em> &lt; <em>c</em>′ &lt; <em>c</em>′′.</p>
+      <p><em>Characteristic sets:</em> In the section that follows,
+      we will outline a (rather natural) notion of formal context
+      for RDF graphs based on <em>characteristic sets</em>, which
+      were first proposed by Neumann and Moerkotte [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0030">30</a>] in the context of query
+      optimisation (more specifically, for cardinality estimation).
+      The characteristic set of an RDF term <em>s</em> ∈ <em>I</em>
+      <strong>B</strong> <strong>L</strong> in an RDF graph
+      <em>G</em> is defined as the set of properties associated
+      with that subject <em>s</em> in <em>G</em>; more formally,
+      <span class="inline-equation"><span class="tex">$\mathsf
+      {cs}(G,s) :=\lbrace p \mid \exists o: (s,p,o) \in G
+      \rbrace$</span></span> . The characteristic sets of the graph
+      <em>G</em> are then defined as the set of characteristic sets
+      for all subjects in <em>G</em>; more formally, overloading
+      notation, <span class="inline-equation"><span class=
+      "tex">$\mathsf {cs}(G) :=\lbrace \mathsf {cs}(G,s) \mid s \in
+      \pi _{\small{\textrm S}} (G) \rbrace$</span></span> .</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> FCA for RDF
+          Graphs</h2>
+        </div>
+      </header>
+      <p>We now discuss a general method by which FCA can be used
+      to extract a data-driven schema – in the form of a formal
+      concept hierarchy – from an RDF graph. We begin with a
+      general definition that instantiates a formal context in a
+      natural way from an RDF graph. However, the concept lattice
+      resulting from such a definition is not practical to compute
+      at scale and hence we propose increasingly minimal structures
+      that should be more feasible to compute.</p>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> RDF
+            FC-Lattice</h3>
+          </div>
+        </header>
+        <p>An intuitive instantiation of FCA for RDF is given by
+        constructing a formal context <em>X</em> = (<em>E</em>,
+        <em>A</em>, <em>I</em>) from an RDF graph <em>G</em>
+        considering the subject terms in <em>G</em> to be the
+        entities (<span class="inline-equation"><span class=
+        "tex">$E :=\pi _{\small{\textrm S}} (G)$</span></span> ),
+        the properties in <em>G</em> to be the attributes
+        (<span class="inline-equation"><span class="tex">$A :=\pi
+        _{\small{\textrm P}} (G)$</span></span> ), and the
+        incidence to be given by the use of that property as a
+        predicate on the given subject (<span class=
+        "inline-equation"><span class="tex">$I :=\lbrace (s,p) \mid
+        \exists o : (s,p,o) \in G \rbrace)$</span></span> . The
+        notion of a formal concept in such a setting then follows
+        naturally from the definition of <em>X</em>.</p>
+        <div class="example" id="enc1">
+          <label>Example 4.1.</label>
+          <p>Consider the following example RDF graph <em>G</em>
+          (in Turtle syntax) containing five subjects and four
+          properties.</p>
+          <figure id="fig1">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186016/images/www2018-25-fig1.jpg"
+            class="img-responsive" alt="" longdesc="" />
+          </figure>
+          <p></p>
+          <p>We can consider the formal context <em>X</em> =
+          (<em>E</em>, <em>A</em>, <em>I</em>) of this RDF graph as
+          the following matrix (often known as a <em>cross
+          table</em> in the FCA literature) with the row leader
+          denoting <em>A</em>, the column header denoting
+          <em>E</em> , and the matrix ticks denoting
+          <em>I</em>:</p>
+          <figure id="fig2">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186016/images/www2018-25-fig2.jpg"
+            class="img-responsive" alt="" longdesc="" />
+          </figure>
+          <p></p>
+          <p>Let <tt>d</tt>, <tt>n</tt>, <tt>s</tt> and <tt>w</tt>
+          denote properties by their initial and <tt>A</tt>,
+          <tt>C</tt>, <tt>G</tt>, <tt>P</tt> and <tt>U</tt> denote
+          subjects likewise by their initial. Within this matrix,
+          the maximal projections of incidence sub-matrices filled
+          with <span class="inline-equation"><span class=
+          "tex">$\checkmark$</span></span> are then considered to
+          be formal concepts. For example, <span class=
+          "inline-equation"><span class="tex">$(\lbrace \texttt {A}
+          \rbrace ,\lbrace \texttt {d},\texttt {n}
+          \rbrace)$</span></span> is not considered a formal
+          concept since it can be extended by the <span class=
+          "inline-equation"><span class="tex">$\texttt
+          {C}$</span></span> column maintaining a dense sub-matrix;
+          on the other hand <span class=
+          "inline-equation"><span class="tex">$(\lbrace \texttt
+          {A},\texttt {C} \rbrace ,\lbrace \texttt {d},\texttt {n}
+          \rbrace)$</span></span> is a formal concept since it
+          cannot be extended by any row or column while keeping the
+          projected sub-matrix full. Likewise <span class=
+          "inline-equation"><span class="tex">$(\lbrace \texttt
+          {G},\texttt {P} \rbrace ,\lbrace \texttt {w}
+          \rbrace)$</span></span> is not considered a formal
+          concept since it can be extended by row <span class=
+          "inline-equation"><span class="tex">$\texttt
+          {n}$</span></span> to create the formal concept
+          <span class="inline-equation"><span class="tex">$(\lbrace
+          \texttt {G},\texttt {P} \rbrace ,\lbrace \texttt
+          {n},\texttt {w} \rbrace)$</span></span> .</p>
+          <p>Along these lines, one can verify that the formal
+          context representing <em>G</em> has six formal concepts
+          <em>C</em>. We can draw the corresponding lattice
+          (<em>C</em>, ≤) as the following <em>Hasse diagram</em>,
+          where lines denote only direct inclusions (i.e.,
+          (<em>C</em>, ⪯)) and the top concept ⊤ is drawn at the
+          top of the diagram with lesser concepts then
+          descending:</p>
+          <figure id="fig3">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186016/images/www2018-25-fig3.jpg"
+            class="img-responsive" alt="" longdesc="" />
+          </figure>Here we maintain attribute subsets with the same
+          cardinality on the same “level” where direct inclusions
+          may skip levels as shown for the inclusion between
+          <span class="inline-equation"><span class="tex">$\lbrace
+          \texttt {n},\texttt {w} \rbrace$</span></span> and
+          <span class="inline-equation"><span class="tex">$\lbrace
+          \texttt {d},\texttt {n},\texttt {s},\texttt {w}
+          \rbrace$</span></span> .
+          <p></p>
+          <p>Intuitively, the idea is that this lattice represents
+          a concept hierarchy distinguishing sets of entities based
+          on the properties by which they are defined; for example,
+          we can see concepts in the lattice relating to directors,
+          actors, writers, and director–actors. We call this the
+          <em>formal concept lattice</em> or <em>FC lattice</em>
+          for short. <span class="inline-equation"><span class=
+          "tex">$\Box$</span></span></p>
+        </div>
+        <p>While the previously defined notion of a formal context
+        and formal concepts for RDF are quite intuitive, there are
+        a variety of potential practical problems to address with
+        the FC lattice.</p>
+        <p>To start with, for a formal context <em>X</em> =
+        (<em>E</em>, <em>A</em>, <em>I</em>), the upper bound on
+        the number of formal concepts is
+        min(2<sup>|<em>E</em>|</sup>, 2<sup>|<em>A</em>|</sup>),
+        bounded by the cardinality of the powerset of entities and
+        attributes (whichever is smaller since the same subset of
+        attributes or entities cannot appear twice). The bound is
+        tight considering, for example, a context where <em>E</em>
+        = <em>A</em> = {1, ..., <em>n</em>} and where <em>I</em> =
+        {(<em>e</em>, <em>a</em>)∣<em>e</em> ≠ <em>a</em>}; now
+        each pair (<em>F</em>, <em>B</em>) such that
+        <em>F</em>∩<em>B</em> = ∅, <em>F</em>∪<em>B</em> = {1, ...,
+        <em>n</em>} is a formal concept, generating the 2
+        <sup><em>n</em></sup> powerset of concepts (both in extent
+        and intent). However, under the hypothesis that many
+        combinations of properties – such as <tt>ex:capital</tt>
+        and <tt>ex:director</tt> – are unlikely to ever occur on a
+        single subject in practice, we can speculate that such
+        exponentiality is unlikely to be encountered in real RDF
+        graphs (though this will require empirical support).</p>
+        <p>More problematically in practice, the size of individual
+        formal concepts can be prohibitively large, especially with
+        respect to the inclusion of subjects in each such concept:
+        in most RDF graphs the number of unique subjects will far
+        surpass the number of unique properties. In the Wikidata
+        knowledge graph, for example, there are millions of
+        subjects, with each concept being potentially of length
+        <span class="inline-equation"><span class="tex">$|\pi
+        _{\small{\textrm S}} (G)| + |\pi _{\small{\textrm P}}
+        (G)|$</span></span> (e.g, measured in bits) and where each
+        subject <em>s</em> in the graph <em>G</em> can be contained
+        in potentially <span class="inline-equation"><span class=
+        "tex">$2^{|\mathsf {cs}(G,s)|}$</span></span> concepts.</p>
+        <p>For such reasons, given a large-scale dataset as input,
+        from even an initial inspection, it may not be practical to
+        materialise the FC concept lattice. A number of approaches
+        have been developed to deal with this issue by reducing the
+        dimensionality of the concept lattice (creating what is
+        sometimes called an <em>iceberg lattice</em>) by pruning
+        attributes or entities that are rare, or grouping
+        attributes or entities that frequently coincide, and so
+        forth (we refer to Section 5.5 of the survey by Poelmans et
+        al. [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0033">33</a>] for further details). We take a
+        rather simpler strategy as described in the following
+        section.</p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> RDF
+            CS-Lattice</h3>
+          </div>
+        </header>
+        <p>To avoid materialising the entire FC lattice, we rather
+        propose to materialise an intermediary structure from which
+        the concept lattice, or parts there of, can be lazily
+        materialised, as needed. The core intuition is to represent
+        a non-transitive version of the FC lattice such that, for
+        each concept, the intent corresponds precisely to the
+        extent. We call this the characteristic set (CS) lattice
+        since each concept refers to a characteristic set and its
+        extension.</p>
+        <p>More specifically, given a formal context <em>X</em> =
+        (<em>E</em>, <em>A</em>, <em>I</em>), let <span class=
+        "inline-equation"><span class="tex">$I(e) :=\lbrace a \in A
+        \mid (e,a) \in I \rbrace$</span></span> denote the
+        attributes of entity <em>e</em> ∈ <em>E</em>. We say that
+        (<em>F</em>, <em>B</em>) is a CS concept of <em>X</em> if
+        (1) <em>F</em>⊆<em>E</em>, (2) <em>B</em>⊆<em>A</em>, (3)
+        for all <em>e</em> ∈ <em>F</em>, it holds that
+        <em>I</em>(<em>e</em>) = <em>B</em>, and (4) for all
+        <em>e</em> ∈ <em>E</em>∖<em>F</em>, it holds that
+        <em>I</em>(<em>e</em>) ≠ <em>B</em>. Equivalently,
+        (<em>F</em>, <em>B</em>) is a CS concept of <em>G</em> iff
+        <em>B</em> is a characteristic set of <em>G</em> and
+        <em>F</em> is the set of all subjects in <em>G</em> with
+        characteristic set <em>B</em>.</p>
+        <p>However, letting <em>C</em> denote the set of all CS
+        concepts of <em>X</em> and considering the intent-based
+        ordering ≤ as before, we must be careful: namely the
+        partially ordered set (<em>C</em>, ≤) is no longer a
+        lattice since the previous top formal concept may not be a
+        CS concept (if no subject uses all properties) while the
+        bottom formal concept will never be a CS concept (since no
+        subject has no properties). Hence to return to a complete
+        lattice, we can create new top and bottom CS concepts to
+        return to a complete CS lattice.</p>
+        <div class="example" id="enc2">
+          <label>Example 4.2.</label>
+          <p>Let us return to the FC lattice depicted in
+          Example&nbsp;<a class="enc" href="#enc1">4.1</a>. The
+          corresponding CS lattice is then:</p>
+          <figure id="fig4">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186016/images/www2018-25-fig4.jpg"
+            class="img-responsive" alt="" longdesc="" />
+          </figure>We draw with a dashed line the virtual top and
+          bottom CS concepts introduced to ensure the result is a
+          lattice. Note that now, for example, the extent of
+          <span class="inline-equation"><span class="tex">$\lbrace
+          \texttt {n},\texttt {s} \rbrace$</span></span> no longer
+          contains <span class="inline-equation"><span class=
+          "tex">$\texttt {C}$</span></span> even though that entity
+          is incident with both attributes: instead, each extent
+          refers to the set of entities with <em>precisely</em>
+          that intent. The CS lattice is thus, intuitively
+          speaking, a “non-transitive” version of the FC lattice.
+          <span class="inline-equation"><span class=
+          "tex">$\Box$</span></span>
+          <p></p>
+        </div>
+        <p>The CS lattice has a number of practical benefits when
+        compared with the previously defined FC lattice.</p>
+        <p>First, in many use-cases, it may be useful to group
+        subjects by the exact set of properties that they are
+        incident with. To give an intuition of such a case, we will
+        later use these lattices to compute probabilistic
+        predictions of how a particular subject will evolve in a
+        future version of the RDF graph in terms of what properties
+        are most likely to be added/deleted for that subject; here
+        we need to analyse the evolution of other subjects with
+        <em>precisely</em> that set of properties in observable
+        historical data. For this, the CS lattice will be a better
+        alternative than the corresponding FC lattice.</p>
+        <p>Second, the size of this CS lattice is now bounded by
+        the number of subjects <span class=
+        "inline-equation"><span class="tex">$|\pi _{\small{\textrm
+        S}} (G)|+2$</span></span> since only one extent can contain
+        a particular subject (with 2 referring to the top and
+        bottom concepts). This bound is tight if each subject is
+        associated with a different characteristic set and no
+        subject contains all properties. Intuitively, the CS
+        lattice no longer contains “intermediary” concepts; for
+        instance, in the previous example, while there was a formal
+        concept associated with the intent <span class=
+        "inline-equation"><span class="tex">$\lbrace \texttt {n}
+        \rbrace$</span></span> , there is no “strict” CS concept
+        with that intent since no subject has precisely the set of
+        properties <span class="inline-equation"><span class=
+        "tex">$\lbrace \texttt {n} \rbrace$</span></span> ; if it
+        were not needed as the bottom concept of the CS lattice,
+        such a concept (and other such intermediary concepts) would
+        not be included. Taking perhaps a better example, if we
+        consider again the formal context <em>E</em> = <em>A</em> =
+        {1, ..., <em>n</em>}, and <em>I</em> = {(<em>e</em>,
+        <em>a</em>)∣<em>e</em> ≠ <em>a</em>}, the CS lattice will
+        contain <em>n</em> + 2 concepts encoding precisely
+        <em>I</em> and the required top (∅, <em>A</em>) and bottom
+        (∅, ∅) concepts. Likewise, given that each subject appears
+        in one extent, the average length of the CS concepts is
+        greatly reduced (though the upper bound is not).</p>
+        <p>We highlight that the CS lattice directly encodes the
+        incidence <em>I</em> of the formal context and (assuming
+        all entities and attributes appear in the incidence) thus
+        contains sufficient information to recompute the FC
+        lattice, allowing to materialise formal concepts in a lazy
+        manner—hence why we referred to the CS lattice as an
+        “intermediary structure” at the outset of the section.</p>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span> RDF
+            #-Lattices</h3>
+          </div>
+        </header>
+        <p>The number of subjects described by large-scale
+        knowledge graphs such as Wikidata or DBpedia is often in
+        the order of millions, while the number of properties
+        rather tends to be in the order of thousands. Hence we can
+        greatly reduce the overall (e.g., in-memory) size of the
+        lattice by replacing the extents in each concept with their
+        cardinality. In other words, given a lattice (<em>C</em>,
+        ≤), we define its <span class=
+        "inline-equation"><span class="tex">$\#$</span></span>
+        -lattice as <span class="inline-equation"><span class=
+        "tex">$(C^\#,\le)$</span></span> where <span class=
+        "inline-equation"><span class="tex">$C^\# :=\lbrace (|F|,B)
+        \mid (F,B) \in C \rbrace$</span></span> . This may be
+        sufficient for a number of use-cases, such as for
+        estimating the cardinalities of conjunctive
+        queries&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0030">30</a>]. We refer to such lattices as
+        #-lattices, where the definition applies to either FC
+        #-lattices or CS #-lattices; in the following, we exemplify
+        the latter.</p>
+        <div class="example" id="enc3">
+          <label>Example 4.3.</label>
+          <p>The CS #-lattice corresponding to
+          Example&nbsp;<a class="enc" href="#enc2">4.2</a> is as
+          follows (replacing the extent with its cardinality):</p>
+          <figure id="fig5">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186016/images/www2018-25-fig5.jpg"
+            class="img-responsive" alt="" longdesc="" />
+          </figure>The dashed concepts represent the top and bottom
+          concepts included to ensure the result is a complete
+          lattice (other concepts with count 0 are excluded). The
+          hierarchy remains the same. <span class=
+          "inline-equation"><span class="tex">$\Box$</span></span>
+          <p></p>
+        </div>
+        <p>We highlight that #-lattices contain the same number of
+        concepts as their full-extent versions; furthermore, the CS
+        #-lattice contains sufficient information to recreate the
+        FC #-lattice as needed.</p>
+      </section>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.4</span>
+            Alternatives</h3>
+          </div>
+        </header>
+        <p>We remark that the previous notions of lattices form a
+        natural “base” for describing an RDF graph as part of a
+        data-driven schema. However, one can consider a number of
+        variations on this theme:</p>
+        <ol class="list-no-style">
+          <li id="list1" label="(1)">One could consider the
+          properties on <em>objects</em> as forming a separate
+          “inverse” lattice based on labels for inward edges, or
+          potentially even combining both subject and object
+          lattices into one by considering virtual inverse
+          properties.<br /></li>
+          <li id="list2" label="(2)">One could consider encoding
+          the number of values that a given subject takes for a
+          given property into the lattice, which would distinguish,
+          for instance, <tt>ex:GO</tt> (with one value for
+          <tt>ex:writer</tt>) from <tt>ex:PD</tt> (with two
+          values).<br /></li>
+          <li id="list3" label="(3)">One could consider including
+          the <em>values</em> of certain (categorical) properties
+          into the lattice, such as to capture the type of a
+          particular entity, or its occupation, gender, etc.; this
+          would lead towards the notion of a <em>many-valued
+          context</em>&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0033">33</a>].<br />
+          </li>
+        </ol>
+        <p>While such variations and extensions would be
+        interesting to investigate, we consider them as part of
+        future work, with a particular challenge being to keep the
+        size of the resulting lattice manageable.</p>
+      </section>
+    </section>
+    <section id="sec-11">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Computing
+          Lattices</h2>
+        </div>
+      </header>
+      <p>We now present an overview of the methods we propose for
+      computing the concept lattices previously described. Given a
+      (potentially very large) RDF graph <em>G</em>, our strategy
+      is as follows: (1) We first compute the CS concepts; given
+      that here we must process the entire graph, we propose an
+      algorithm based on the MapReduce framework to enable
+      horizontal scaling. (2) We then compute the hierarchy over
+      these CS concepts to generate the CS lattice; more precisely,
+      we compute the direct containments and add the top and bottom
+      elements, giving us the CS lattice for the RDF graph. (3) We
+      do not directly materialise the FC lattices; rather these
+      will be materialised as needed for a particular use-case.</p>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span> Computing
+            the CS concepts</h3>
+          </div>
+        </header>
+        <p>We compute the characteristic sets from the RDF graph
+        using an algorithm for the distributed <em>MapReduce
+        framework</em>&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0017">17</a>], which consists of two main
+        phases: a <em>map</em> phase where sets of key–value pairs
+        are assigned to machines based on their key, and a
+        <em>reduce</em> phase, where values with the same key are
+        grouped, aggregated and processed to produce an output on
+        the local machine. Given an input RDF graph as a set of
+        triples, the algorithm for computing CS concepts then
+        consists of two high-level MapReduce tasks:</p>
+        <ul class="list-no-style">
+          <li id="uid19" label="Task1">takes as input the set of
+          triples from <em>G</em> and runs:<br />
+            <ul class="list-no-style">
+              <li id="uid20" label="Map1">Each input triple
+              (<em>s</em>, <em>p</em>, <em>o</em>) is mapped with
+              key <em>s</em> and value <em>p</em>, thus emitting
+              pairs of the form (<em>s</em>,
+              <em>p</em>).<br /></li>
+              <li id="uid21" label="Reduce1">For each key
+              <em>s</em>, the pair (<em>s</em>, {<em>p</em>
+              <sub>1</sub>, …, <em>p<sub>n</sub></em> }) is output
+              where {<em>p</em> <sub>1</sub>, …,
+              <em>p<sub>n</sub></em> } is the set of all properties
+              on <em>s</em>.<br /></li>
+            </ul>
+          </li>
+          <li id="uid22" label="Task2">takes as input the set of
+          pairs from <font style=
+          "font-variant: small-caps">Task</font> <sub>1</sub> and
+          runs:<br />
+            <ul class="list-no-style">
+              <li id="uid23" label="Map2">Each input pair
+              (<em>s</em>, {<em>p</em> <sub>1</sub>, …,
+              <em>p<sub>n</sub></em> }) is mapped with key
+              [<em>p</em> <sub>1</sub>, …, <em>p<sub>n</sub></em> ]
+              and value <em>s</em>. In practice, we apply a lexical
+              order on the properties in the key and concatenate
+              them to produce a canonical key for each such
+              set.<br /></li>
+              <li id="uid24" label="Reduce2">For each key
+              [<em>p</em> <sub>1</sub>, …, <em>p<sub>n</sub></em>
+              ], all subjects are collected and the pair
+              ({<em>s</em> <sub>1</sub>, …, <em>s<sub>m</sub></em>
+              }, [<em>p</em> <sub>1</sub>, …,
+              <em>p<sub>n</sub></em> ]) is output, corresponding to
+              a CS concept.<br /></li>
+            </ul>
+          </li>
+        </ul>
+        <p>While conceptually straightforward, in practice we
+        encountered a litany of errors in trying to run these tasks
+        over Wikidata on rented clusters; in particular, we
+        frequently encountered out-of-disk errors, expensively slow
+        runtimes, load issues, and so forth. Hence we implemented
+        and tested a number of improvements:</p>
+        <ul class="list-no-style">
+          <li id="list4" label="•">Subjects and properties are
+          compressed using numeric ids. This greatly reduces space
+          and improves performance by allowing MapReduce to sort
+          more data in memory, also producing much more succinct
+          keys for the second task.<br /></li>
+          <li id="list5" label="•">We tested a variety of
+          <em>combiners</em> – local reducers that take advantage
+          of the commutativity of processing to reduce the number
+          of key–value pairs that need to be sent over the network
+          and processed on the reduce machines – for the first task
+          that also boosted performance.<br /></li>
+          <li id="list6" label="•">We also experimented with
+          varying number of machines.<br /></li>
+        </ul>
+        <p>Some brief details on performance will be provided in
+        Section&nbsp;<a class="sec" href="#sec-18">7</a>.</p>
+      </section>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> Computing
+            the CS partial order</h3>
+          </div>
+        </header>
+        <p>The next challenge is to compute the CS lattice based on
+        the subset partial order of the set of CS concepts
+        <em>C</em> computed in the previous stage; more
+        specifically, we compute direct containments within
+        <em>C</em>. We can then (trivially) add a top and bottom
+        concept, as previously described, to compute the final CS
+        lattice. In this phase, we assume that the <em>intents</em>
+        (i.e., the characteristic sets themselves, not the lists of
+        subjects) fit in memory since the partial order underlying
+        the CS lattice only relies on the intents of the CS
+        concepts. Indeed, as described later in the experimental
+        section, although over 2 million unique characteristics
+        sets are computed for Wikidata, with numeric compression,
+        these fit in 16GB of memory without issue.</p>
+        <p>In order to compute the CS lattice from <em>n</em>
+        characteristic sets, the simplest algorithm we could
+        consider is to perform <span class=
+        "inline-equation"><span class="tex">${n}\atopwithdelims
+        (){2}$</span></span> pairwise subset comparisons, but
+        clearly this would not be practical for <em>n</em> &gt;
+        2,000,000, and likewise we would compute (<em>C</em>, ≤)
+        (i.e., all transitive containments) rather than
+        (<em>C</em>, ⪯) (the direct containments).</p>
+        <p><img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186016/images/www2018-25-img1.svg"
+        class="img-responsive" alt="" longdesc="" /></p>
+        <p>Instead we adopt the approach outlined in
+        Algorithm&nbsp;1 . Here we only consider the intents of the
+        concepts: the characteristic sets themselves, denoted
+        <span class="inline-equation"><span class="tex">$\mathcal
+        {B}$</span></span> . We stratify these characteristic sets
+        into levels based on their cardinality, where level
+        <em>i</em> is the set of all characteristic sets with
+        cardinality <em>i</em> (denoted <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {B}\!.i$</span></span> ). Note that as per
+        Example&nbsp;<a class="enc" href="#enc2">4.2</a>, a direct
+        containment may “skip” a level; hence we must check all
+        pairs of levels. Starting with <em>j</em> = 2 and ending
+        when <em>j</em> = <em>m</em> (for <em>m</em> the max number
+        of levels), we compare all characteristic sets on level
+        <em>j</em> to all on levels <em>j</em> − 1 to 1; in other
+        words, we compare levels in the order <span class=
+        "inline-equation"><span class="tex">$(\mathcal
+        {B}\!.2,\mathcal {B}\!.1), (\mathcal {B}\!.3,\mathcal
+        {B}\!.2), (\mathcal {B}\!.3,\mathcal {B}\!.1), \ldots ,
+        (\mathcal {B}\!.m,\mathcal {B}\!.1)$</span></span> , which
+        helps avoid returning indirect containments. For comparing
+        two levels <em>i</em> and <em>j</em> (for <em>i</em> &lt;
+        <em>j</em>); we have two algorithms to choose from:</p>
+        <ol class="list-no-style">
+          <li id="list7" label="(1)">When <em>i</em> + 1 =
+          <em>j</em>, we invoke <font style=
+          "font-variant: small-caps">removeOne</font>, where from
+          each characteristic set in <span class=
+          "inline-equation"><span class="tex">$\mathcal
+          {B}\!.j$</span></span> , we remove a property and check
+          if the result is in <span class=
+          "inline-equation"><span class="tex">$\mathcal
+          {B}\!.i$</span></span> . We use an index to check
+          membership in <span class="inline-equation"><span class=
+          "tex">$\mathcal {B}\!.i$</span></span> where we then
+          require <span class="inline-equation"><span class=
+          "tex">$|\mathcal {B}\!.j| \times j$</span></span> lookups
+          on that index.<br /></li>
+          <li id="list8" label="(2)">Otherwise we apply
+          <font style="font-variant: small-caps">rareJoin</font>
+          where, for each characteristic set <span class=
+          "inline-equation"><span class="tex">$B_i \in \mathcal
+          {B}\!.i$</span></span> , we find the rarest property
+          <em>p</em> ∈ <em>B<sub>i</sub></em> in terms of appearing
+          in the fewest sets of <span class=
+          "inline-equation"><span class="tex">$\mathcal
+          {B}$</span></span> (choosing arbitrarily based on lexical
+          order if tied), retrieve each <span class=
+          "inline-equation"><span class="tex">$B_j \in \mathcal
+          {B}\!.j$</span></span> that also contains <em>p</em>, and
+          then check if <em>B<sub>i</sub></em>
+          ⊂<em>B<sub>j</sub></em> and (<em>B<sub>i</sub></em> ,
+          <em>B<sub>j</sub></em> ) is not already reachable in the
+          current partial order; if so, we add the pair
+          (<em>B<sub>i</sub></em> , <em>B<sub>j</sub></em> ) to the
+          partial order. Note that in a preprocessing step, all
+          properties in each input characteristic set are ordered
+          by rarest first, and we create an inverted index from
+          properties to characteristic sets by level; hence finding
+          all <em>B<sub>j</sub></em> matching the condition on
+          Line&nbsp;25 requires one lookup on the inverted index.
+          While the upper-bound remains <span class=
+          "inline-equation"><span class="tex">$|\mathcal {B}\!.i|
+          \times |\mathcal {B}\!.j|$</span></span> set-containment
+          checks, in practice, comparing only pairs of sets that
+          share their rarest property should greatly reduce the
+          number of comparisons from a brute-force
+          method.<br /></li>
+        </ol>
+        <p>In terms of the condition for choosing one algorithm or
+        the other, note that if we considered a generalised method
+        <font style=
+        "font-variant: small-caps">remove<em>N</em></font> for
+        <em>n</em> = <em>j</em> − <em>i</em> ≤ <em>N</em>, we would
+        end up having to perform <span class=
+        "inline-equation"><span class="tex">${j}\atopwithdelims
+        (){n}$</span></span> lookups on the <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {B}\!.i$</span></span> index, which would be problematic
+        for <span class="inline-equation"><span class="tex">$n
+        \approx \frac{j}{2}$</span></span> . Empirically we found
+        that <font style=
+        "font-variant: small-caps">removeOne</font> was the only
+        case faster than <font style=
+        "font-variant: small-caps">rareJoin</font>.</p>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.3</span> Computing
+            the lattices</h3>
+          </div>
+        </header>
+        <p>Once we have the partially ordered set returned by
+        Algorithm&nbsp;1, to derive the final CS lattice, we need
+        to compute the extent and the top and bottom concepts.
+        Given that the extent (computed by the MapReduce framework)
+        does not fit in-memory, we simply leave it indexed on-disk.
+        To complete the CS lattice, we add the top concept
+        <span class="inline-equation"><span class="tex">$([[ A ]]
+        _X,A)$</span></span> for <em>A</em> the set of all
+        properties and <span class="inline-equation"><span class=
+        "tex">$[[ A ]] _X$</span></span> the set of subjects with
+        all properties; and the bottom concept (∅, ∅).</p>
+      </section>
+    </section>
+    <section id="sec-15">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Lattice
+          Diff-Algebra</h2>
+        </div>
+      </header>
+      <p>We could intuitively consider the FC/CS lattice as
+      encoding the possible paths of evolution of entities in a
+      knowledge graph: in a monotonic knowledge graph where
+      properties are continuously added to entities (often the case
+      for incomplete knowledge-graphs where new information is
+      constantly being added), we could consider new entities as
+      beginning at the bottom of the lattice and evolving towards
+      the top of the lattice. Referring back to
+      Example&nbsp;<a class="enc" href="#enc2">4.2</a>, for
+      instance, we could consider new entities as first having
+      <tt>ex:name</tt> defined, where they can then take a path
+      towards being a director, an actor, or a writer; if already
+      an actor or director, they may become an actor–director, and
+      so forth. The cardinality of the extent likewise encodes
+      information about the popularity of certain paths along which
+      entities evolve. Of course, if the knowledge graph is not
+      monotonic, entities may also descend the lattice as
+      properties are removed. In any case, we can see the lattice
+      as somehow encoding possible evolutions of an entity.</p>
+      <p>Taking this one step further, if we have the lattices for
+      two different versions of a knowledge graph, we can apply a
+      diff to see high-level changes between both versions of the
+      data. Furthermore, given such a diff between two versions, we
+      could further consider adding that diff to the most recent
+      version to try predict future changes. We now capture
+      precisely these intuitions with an algebra for computing
+      diffs between lattices and adding diffs to lattices.</p>
+      <section id="sec-16">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">6.1</span> Defining
+            CS-lattice diffs</h3>
+          </div>
+        </header>
+        <p>Let <em>X<sub>i</sub></em> = (<em>E<sub>i</sub></em> ,
+        <em>A<sub>i</sub></em> , <em>I<sub>i</sub></em> ) and
+        <em>X<sub>j</sub></em> = (<em>E<sub>j</sub></em> ,
+        <em>A<sub>j</sub></em> , <em>I<sub>j</sub></em> ) be formal
+        contexts for two versions of an RDF graph (<em>i</em> being
+        some version before <em>j</em>), and let <span class=
+        "inline-equation"><span class="tex">$\mathcal {L}_i
+        :=(C_i,\le)$</span></span> and <span class=
+        "inline-equation"><span class="tex">$\mathcal {L}_j
+        :=(C_j,\le)$</span></span> be the two corresponding CS
+        lattices, where we remark that ≤ is defined for
+        <em>C<sub>i</sub></em> ∪<em>C<sub>j</sub></em> (being based
+        on a general notion of set containment). Further let
+        <span class="inline-equation"><span class="tex">$E :=E_i
+        \cup E_j$</span></span> and <span class=
+        "inline-equation"><span class="tex">$A :=A_i \cup
+        A_j$</span></span> . We can define a lattice diff
+        <em>Δ</em> <sub><em>j</em>, <em>i</em></sub> ⊆2
+        <sup><em>A</em></sup> × <em>E</em> × 2
+        <sup><em>A</em></sup> as a set of triples denoting for each
+        entity in <em>E</em> its intent in <em>C<sub>j</sub></em>
+        and in <em>C<sub>i</sub></em> . More specifically, we say
+        that <span class="inline-equation"><span class=
+        "tex">$\Delta _{j,i} = \mathcal {L}_j - \mathcal
+        {L}_i$</span></span> iff</p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{align*} \Delta _{j,i} =
+            \lbrace \,(B_j,e,B_i) \mid \,&amp; (e \in E_i \cap
+            E_j\text{ and }I_i(e) = B_i\text{ and }I_j(e) = B_j) \\
+            &amp; ~{\it or} (e \in E_i \setminus E_j\text{ and
+            }I_i(e) = B_i\text{ and }B_j = \emptyset) \\ &amp;
+            ~{\it or} (e \in E_j \setminus E_i\text{ and }B_i =
+            \emptyset \text{ and }I_j(e) = B_j)
+            \,\rbrace\end{align*}</span><br />
+          </div>
+        </div>Note that if <em>e</em> is a new entity (<em>e</em> ∈
+        <em>E<sub>j</sub></em> ∖<em>E<sub>i</sub></em> ), we mark
+        it as <em>coming from</em> the bottom CS concept (∅, ∅) of
+        <em>Δ</em> <sub><em>j</em>, <em>i</em></sub> , whereas if
+        <em>e</em> is removed (<em>e</em> ∈ <em>E<sub>i</sub></em>
+        ∖<em>E<sub>j</sub></em> ), we mark it as <em>going to</em>
+        the bottom CS concept.
+        <p></p>
+        <div class="example" id="enc4">
+          <label>Example 6.1.</label>
+          <p>At the top of Figure&nbsp;<a class="fig" href=
+          "#fig6">1</a>, we provide an example of the diff computed
+          between two lattices, where <span class=
+          "inline-equation"><span class="tex">$\mathcal
+          {L}_1$</span></span> is the CS lattice previously
+          introduced in Example&nbsp;<a class="enc" href=
+          "#enc2">4.2</a> and <span class=
+          "inline-equation"><span class="tex">$\mathcal
+          {L}_2$</span></span> is taken as an example of how the
+          lattice evolves in the next version of the dataset. The
+          diff is then a directed edge-labelled graph where the
+          nodes are the sets of characteristic sets and the edges
+          are labelled according to the entities that move between
+          the sets from version 1 to 2. <span class=
+          "inline-equation"><span class=
+          "tex">$\Box$</span></span></p>
+        </div>
+        <p>As before, we can also consider a cardinality version of
+        a diff <span class="inline-equation"><span class=
+        "tex">$\Delta ^\#_{j,i} \subseteq 2^A \times \mathbb {N}
+        \times 2^A$</span></span> where instead of computing the
+        entities that move between characteristic sets, we simply
+        count the number of entities that move. Thus given
+        <em>Δ</em> <sub><em>j</em>, <em>i</em></sub> , let
+        <span class="inline-equation"><span class="tex">$\Delta
+        _{j,i}(B_j,B_i) :=\lbrace e : (B_j,e,B_i) \in \Delta
+        _{j,i}\rbrace$</span></span> ; now we can define
+        <span class="inline-equation"><span class="tex">$\Delta
+        _{j,i}^\# :=\lbrace (B_j,n,B_i) : n = |\Delta
+        _{j,i}(B_j,B_i)| \rbrace$</span></span> .</p>
+        <figure id="fig6">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186016/images/www2018-25-fig6.jpg"
+          class="img-responsive" alt="Figure 6" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 1:</span>
+            <span class="figure-title">Computing a diff between two
+            CS lattices and adding it to the most recent CS
+            #-lattice to predict the next CS #-lattice.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-17">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">6.2</span> Predicting
+            future #-lattices</h3>
+          </div>
+        </header>
+        <p>Given two CS lattices <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {L}_1$</span></span> and <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {L}_2$</span></span> referring to two versions of an RDF
+        graph, we could consider using the diff <span class=
+        "inline-equation"><span class="tex">$\Delta _{2,1} =
+        \mathcal {L}_2 - \mathcal {L}_1$</span></span> to predict a
+        future version of the dataset through an operation such as
+        <span class="inline-equation"><span class="tex">$\mathcal
+        {L}_{[3]} = \mathcal {L}_2 + \Delta _{2,1}$</span></span> .
+        However, such an operation would not make much sense since
+        specific entities in <em>Δ</em> <sub>2, 1</sub> have
+        already reached their destination. Instead we can consider
+        predicting the CS #-lattice <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {L}_{[3]}^\#$</span></span> by defining the following
+        algebraic operation: <span class=
+        "inline-equation"><span class="tex">$\mathcal {L}_{[3]}^\#
+        = \mathcal {L}_2^\# + \Delta _{2,1}^\#$</span></span> (or
+        in other words, <span class="inline-equation"><span class=
+        "tex">$\mathcal {L}_{[3]}^\# = \mathcal {L}_2^\# +
+        (\mathcal {L}_{2}^\# - \mathcal {L}_{1}^\#)$</span></span>
+        ). More generally, given <span class=
+        "inline-equation"><span class="tex">$\Delta ^\#_{j,i} =
+        \mathcal {L}^\#_j - \mathcal {L}^\#_i$</span></span> , let
+        <span class="inline-equation"><span class="tex">$\mathcal
+        {L}^\#_k$</span></span> be derived from a third version of
+        the graph; we now wish to “add” the changes between the
+        <em>i</em> <sup>th</sup> and <em>j</em> <sup>th</sup>
+        versions to the <em>k</em> <sup>th</sup> version to predict
+        the (<em>k</em> + <em>j</em> − <em>i</em>)<sup>th</sup>
+        version.<a class="fn" href="#fn3" id=
+        "foot-fn3"><sup>3</sup></a> We will thus define the
+        operation <span class="inline-equation"><span class=
+        "tex">$\mathcal {L}^\#_k + \Delta ^\#_{j,i}$</span></span>
+        as producing a #-lattice <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {L}^\#_{k,j,i} :=(C^\#_{k,j,i},\le)$</span></span>
+        predicting <span class="inline-equation"><span class=
+        "tex">$\mathcal {L}^\#_{[k + j - i]}$</span></span> ; we
+        are left to define <span class=
+        "inline-equation"><span class=
+        "tex">$C^\#_{k,j,i}$</span></span> .</p>
+        <p>A natural idea is to sum the incoming entities and
+        subtract the outgoing entities for each characteristic set
+        between versions <em>i</em> and <em>j</em> and add that
+        total to version <em>k</em>; for example, let us say that
+        <em>n</em> entities move from some characteristic set
+        {<em>p</em>, <em>q</em>} in version <em>i</em> to
+        {<em>p</em>, <em>q</em>, <em>r</em>} in version <em>j</em>;
+        then starting with <span class=
+        "inline-equation"><span class=
+        "tex">$C^\#_{k}$</span></span> , we could add <em>n</em> to
+        the number of entities for {<em>p</em>, <em>q</em>,
+        <em>r</em>} and remove <em>n</em> from {<em>p</em>,
+        <em>q</em>} when computing <span class=
+        "inline-equation"><span class=
+        "tex">$C^\#_{k,j,i}$</span></span> . But what if
+        <span class="inline-equation"><span class=
+        "tex">$C^\#_{k}$</span></span> does not have <em>n</em>
+        entities in the source characteristic set {<em>p</em>,
+        <em>q</em>} to “move” to {<em>p</em>, <em>q</em>,
+        <em>r</em>}? Furthermore, what if more entities should move
+        from {<em>p</em>, <em>q</em>} to another set {<em>p</em>,
+        <em>q</em>, <em>s</em>}?</p>
+        <p>To resolve such issues, rather than apply transitions in
+        terms of absolute numbers of entities, we apply them in
+        terms of the ratio of entities that move from the source
+        characteristic set. Formally, first let <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {B}_i$</span></span> , <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {B}_j$</span></span> , <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {B}_k$</span></span> denote the characteristic sets in
+        <span class="inline-equation"><span class=
+        "tex">$C^\#_i$</span></span> , <span class=
+        "inline-equation"><span class="tex">$C^\#_j$</span></span>
+        , <span class="inline-equation"><span class=
+        "tex">$C^\#_k$</span></span> , let <span class=
+        "inline-equation"><span class="tex">$C^\#(B)$</span></span>
+        denote <em>m</em> such that <span class=
+        "inline-equation"><span class="tex">$(m,B) \in
+        C^\#$</span></span> (or 0 if no such value for <em>m</em>
+        exists), and let <span class="inline-equation"><span class=
+        "tex">$\Delta ^\#_{j,i}(B_j,B_i)$</span></span> denote
+        <em>n</em> such that <span class=
+        "inline-equation"><span class="tex">$(B_j,n,B_i) \in \Delta
+        ^\#_{j,i}$</span></span> (or 0 if no such value for
+        <em>n</em> exists). Next we define the ratio of entities of
+        <em>B<sub>i</sub></em> moving to <em>B<sub>j</sub></em> as
+        <span class="inline-equation"><span class="tex">$\rho
+        _{j,i}(B_j,B_i) :=\frac{\Delta
+        ^\#_{j,i}(B_j,B_i)}{C_i^\#(B_i)}$</span></span> if
+        <span class="inline-equation"><span class=
+        "tex">$C_i^\#(B_i) \ne 0$</span></span> ; for convenience,
+        we also define the ratio for characteristic sets not in
+        <span class="inline-equation"><span class="tex">$\mathcal
+        {B}_i$</span></span> to indicate no change where, in such a
+        case (i.e, where <span class="inline-equation"><span class=
+        "tex">$C_i^\#(B_i) = 0$</span></span> ), if
+        <em>B<sub>i</sub></em> = <em>B<sub>j</sub></em> then
+        <span class="inline-equation"><span class="tex">$\rho
+        _{j,i}(B_j,B_i) :=1$</span></span> , otherwise <span class=
+        "inline-equation"><span class="tex">$\rho _{j,i}(B_j,B_i)
+        :=0$</span></span> . Finally, we define <span class=
+        "inline-equation"><span class="tex">$C^*_{k,j,i} :=\lbrace
+        (B, \sigma (B)) \mid B \in \mathcal {B}_j \cup \mathcal
+        {B}_k, B \ne \emptyset \text{ and }\sigma (B) {\gt} 0
+        \rbrace$</span></span> , where <em>σ</em>(<em>B</em>), in
+        turn, is defined as:<a class="fn" href="#fn4" id=
+        "foot-fn4"><sup>4</sup></a></p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{align*} \sigma (B)
+            :=&amp; \, \mathrm{round}\left(\sum _{B^{\prime } \in
+            \mathcal {B}_k \setminus \lbrace \emptyset \rbrace }
+            \rho _{j,i}(B,B^{\prime }) \times C_k^\#(B^{\prime })
+            \right) + \Delta
+            ^\#_{j,i}(B,\emptyset)\,.\\\end{align*}</span><br />
+          </div>
+        </div>The summand <span class=
+        "inline-equation"><span class="tex">$\Delta
+        ^\#_{j,i}(B,\emptyset)$</span></span> adds the absolute
+        number of fresh entities (nowhere in version <em>i</em>)
+        added to <em>B</em> in version <em>j</em>. Finally, we add
+        top and bottom concepts to <span class=
+        "inline-equation"><span class=
+        "tex">$C^*_{k,j,i}$</span></span> to generate a lattice
+        <span class="inline-equation"><span class="tex">$\mathcal
+        {L}_{k,j,i}^\# = (C^\#_{k,j,i},\le)$</span></span> : let
+        <span class="inline-equation"><span class="tex">$\mathcal
+        {B}^*_{k,j,i}$</span></span> denote all characteristic sets
+        in <span class="inline-equation"><span class=
+        "tex">$C^*_{k,j,i}$</span></span> and <span class=
+        "inline-equation"><span class=
+        "tex">$A^*_{k,j,i}$</span></span> their union; if
+        <span class="inline-equation"><span class=
+        "tex">$A^*_{k,j,i} \in \mathcal
+        {B}^*_{k,j,i}$</span></span> , we add only the bottom
+        concept (0, ∅); otherwise we add (0, ∅) and the top concept
+        <span class="inline-equation"><span class=
+        "tex">$(0,A^*_{k,j,i})$</span></span> .
+        <p></p>
+        <div class="example" id="enc5">
+          <label>Example 6.2.</label>
+          <p>At the bottom of Figure&nbsp;<a class="fig" href=
+          "#fig6">1</a>, we provide an example of adding a #-diff
+          to a #-lattice to predict the next #-lattice (with
+          <span class="inline-equation"><span class="tex">$\mathcal
+          {L}^\#_2$</span></span> and <span class=
+          "inline-equation"><span class="tex">$\Delta
+          ^\#_{2,1}$</span></span> based on the top of the figure).
+          Take the case of <span class=
+          "inline-equation"><span class="tex">$\lbrace \texttt
+          {n},\texttt {w} \rbrace$</span></span> : in <span class=
+          "inline-equation"><span class="tex">$\mathcal
+          {L}^\#_2$</span></span> this characteristic set has 4
+          entities, of which, <span class=
+          "inline-equation"><span class="tex">$\Delta
+          ^\#_{2,1}$</span></span> states that half (2) should stay
+          in <span class="inline-equation"><span class=
+          "tex">$\lbrace \texttt {n},\texttt {w}
+          \rbrace$</span></span> while half (2) should go to
+          <span class="inline-equation"><span class="tex">$\lbrace
+          \texttt {n},\texttt {s},\texttt {w}
+          \rbrace$</span></span> ; furthermore, 3 fresh entities
+          are defined for <span class=
+          "inline-equation"><span class="tex">$\lbrace \texttt
+          {n},\texttt {w} \rbrace$</span></span> ; hence the
+          predicted value for <span class=
+          "inline-equation"><span class="tex">$\lbrace \texttt
+          {n},\texttt {w} \rbrace$</span></span> is 5. Consider on
+          the other hand <span class="inline-equation"><span class=
+          "tex">$\lbrace \texttt {n},\texttt {s},\texttt {w}
+          \rbrace$</span></span> : in <span class=
+          "inline-equation"><span class="tex">$\Delta
+          ^\#_{2,1}$</span></span> it has no outgoing edges since
+          it was not present in <span class=
+          "inline-equation"><span class="tex">$\mathcal
+          {L}_1$</span></span> , hence the one entity in
+          <span class="inline-equation"><span class="tex">$\mathcal
+          {L}^\#_2$</span></span> remains and 2 are added from
+          <span class="inline-equation"><span class="tex">$\lbrace
+          \texttt {n},\texttt {w} \rbrace$</span></span> as
+          aforementioned; thus the predicted value is 3. Finally,
+          we highlight that <span class=
+          "inline-equation"><span class="tex">$\lbrace \texttt
+          {d},\texttt {n},\texttt {s} \rbrace$</span></span> is
+          predicted empty: though <span class=
+          "inline-equation"><span class="tex">$\Delta
+          ^\#_{2,1}$</span></span> suggests that entities should be
+          added from <span class="inline-equation"><span class=
+          "tex">$\lbrace \texttt {n},\texttt {s}
+          \rbrace$</span></span> , no such entities are available
+          in <span class="inline-equation"><span class=
+          "tex">$\mathcal {L}^\#_2$</span></span> , and the entity
+          previously in <span class="inline-equation"><span class=
+          "tex">$\lbrace \texttt {d},\texttt {n},\texttt {s}
+          \rbrace$</span></span> moves to <span class=
+          "inline-equation"><span class="tex">$\lbrace \texttt
+          {d},\texttt {n} \rbrace$</span></span> (while the
+          previous entity in <span class=
+          "inline-equation"><span class="tex">$\lbrace \texttt
+          {d},\texttt {n} \rbrace$</span></span> is deleted,
+          leaving one entity in <span class=
+          "inline-equation"><span class="tex">$\lbrace \texttt
+          {d},\texttt {n} \rbrace$</span></span> ). <span class=
+          "inline-equation"><span class=
+          "tex">$\Box$</span></span></p>
+        </div>
+        <p>These algebraic operations then allow to predict future
+        high-level changes in the RDF graph where, in particular,
+        the #-diff encodes a prediction on how entities will evolve
+        and move between characteristic sets. This has various
+        concrete use-cases: e.g., given a particular subject in
+        <em>G</em> <sub>2</sub> – the second version of the dataset
+        – we may wish to know the probability that it will change
+        characteristic sets – either adding or removing unique
+        incident properties – in the next version <em>G</em>
+        <sub>3</sub>, which we can compute based on <em>Δ</em>
+        <sub>2, 1</sub> as described.</p>
+        <p>A natural generalisation of this idea is to consider the
+        “transitive counts” of the ancestors of a characteristic
+        set, where rather than considering a fixed subject, we
+        consider the evolution of all subjects with (at least) a
+        given characteristic set (in line with the original FC
+        lattice). This is useful, for example, to predict how the
+        results for a query on those properties might change in the
+        next version. To compute such a prediction, we can simply
+        take the predicted <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {L}^\#$</span></span> lattice and sum the non-overlapping
+        counts of its ancestors.</p>
+        <p>Finally, note that where <em>n</em> &gt; 2 past versions
+        of the dataset are available, we may consider computing a
+        <em>mean #-diff</em> by simply computing the <em>n</em> − 1
+        #-diffs possible and then taking the average of their
+        transition values; the intuition here is to take the “mean”
+        transition of entities across several pairs of versions,
+        which may smooth the effect of bulk edits between a given
+        pair of versions.</p>
+      </section>
+    </section>
+    <section id="sec-18">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">7</span> Evaluation</h2>
+        </div>
+      </header>
+      <p>The prior discussion raises a number of questions that can
+      only be validated empirically; in particular, we are
+      interested in addressing the following primary questions: (1)
+      Can we compute the CS concepts at scale? (2) Can we
+      efficiently compute the CS lattice? (3) How large is the CS
+      lattice produced? (4) How accurately can our #-diffs predict
+      future changes? Along these lines, we now present the results
+      of experiments for the Wikidata knowledge graph.</p>
+      <p><em>Data</em>. We consider the “truthy” RDF dumps of
+      Wikidata – without qualifier information – spanning 11 weeks
+      from 2017-04-18 to 2017-06-27. The first version has
+      1,102,242,331 triples, 54,236,592 unique subjects and 3,276
+      unique properties, while the final version has 1,293,099,057
+      triples (+17%), 57,197,406 unique subjects (+5%) and 3,492
+      unique properties (+6%). Hence we see that the dataset is
+      growing, particularly in the volume of triples (with new
+      triples often using existing properties on existing
+      subjects).</p>
+      <p><em>Computing CS concepts</em>. We use a Hadoop cluster
+      with a single namenode and a varying number of datanodes. All
+      machines had a 2.20GHz Xeon E5-2650 v4 CPU, 8GB of RAM and a
+      500G SSD. We used JDK 1.8.0_121, Apache Hadoop 2.7.3 and
+      Apache Jena 3.2.0 for parsing. We ran a variety of
+      experiments testing different combiner strategies,
+      compression techniques, varying number of reducers, and so
+      forth. For reasons of space, we do not present the full
+      details of these experiments except to note that the fastest
+      configuration involved processing data with numeric ID
+      compression (more than halving the processing time including
+      compression time on a single machine) and with a
+      concatenation-based combiner, we save an additional 12.5% of
+      computational time. In experiments with 4, 8, 16 and 32
+      machines, we found that after 8 machines, little gain in
+      wall-clock computation time was observed, perhaps due to skew
+      in the characteristic set distribution. For the largest
+      dataset, numeric compression took 01:21:05 (HH:MM:SS), while
+      <font style=
+      "font-variant: small-caps"><strong>Task</strong></font>
+      <sub>1</sub> took 01:06:38 and <font style=
+      "font-variant: small-caps"><strong>Task</strong></font>
+      <sub>2</sub> took 00:07:15; the total (wall-clock) time for
+      computing the CS concepts was thus 02:34:58.</p>
+      <p>The total number of characteristic sets varied from
+      2,004,910–2,118,109 between the earliest and latest versions
+      of Wikidata considered. The smallest characteristic sets
+      contained one property, with the largest containing 148–154
+      properties across the versions; the median number of
+      properties was 18 for all versions.</p>
+      <p><em>Computing CS lattices</em>. We use a single machine
+      for computing the CS lattice with a 2.5GHz Intel Core
+      i7-6500U CPU, 16GB RAM and a 256 GB SSD. Using the strategy
+      outlined in Algorithm&nbsp;1, the runtimes for computing the
+      lattice varied from 06:57:59–07:51:07 for the least-to-most
+      recent version, with the number of edges varying from
+      78,046,423–86,848,506. This corresponds to a mean indegree
+      (or equivalently outdegree) of ∼ 39–41 edges in the CS
+      lattice.</p>
+      <p><em>Quality of predicted #-lattices</em>. Finally, we turn
+      to testing the quality of the future #-lattices we predict.
+      For this, we run experiments where we train on <em>w</em>
+      previous weekly versions of the dataset to predict the next
+      version of the #-lattice. Given that we have 11 versions, we
+      train on 1 ≤ <em>w</em> ≤ 6 versions to ensure at least 5 (11
+      − <em>w</em>) predicted lattices for each experiment. To
+      measure the quality of the prediction, we compute the Root
+      Mean Square Error (RMSE) and the Mean Average Error (MAE)
+      between the predicted #-lattice and the real lattice. Note
+      that RMSE = MAE indicates that prediction errors have
+      consistent magnitude (e.g., each prediction is out by a
+      constant factor ± <em>n</em>), while RMSE ≫ MAE indicates
+      that some errors have much larger magnitude than the average
+      case (which we would expect given that some characteristic
+      sets have much higher cardinality and much more dynamic
+      behaviour than others).</p>
+      <p>In each case, we consider two algorithms: (1) a baseline
+      algorithm that, independently for each CS in the (union of)
+      the <em>w</em> previous #-lattices, applies a linear model
+      (LM) – more specifically, using linear regression with least
+      squares fitting – over the previous counts for that CS to
+      predict the count in the subsequent version; and (2) using
+      our diff algebra (<em>Δ</em>) averaged over the <em>w</em>
+      previous diffs and added to the latest version to derive the
+      prediction.</p>
+      <p>We then apply two experiments. The first experiment
+      considers the counts of subjects with an exact characteristic
+      set, evaluating the quality of prediction given an exact CS,
+      for example, to predict how a particular subject might
+      change. The results are shown in Table&nbsp;<a class="tbl"
+      href="#tab1">1</a>, where we see that our diff algebra
+      (<em>Δ</em>) outperforms the baseline method (LM) in all
+      cases, with smaller error by a considerable margin. We
+      attribute this to the fact that <em>Δ</em> considers where
+      entities come from, whereas LM does not: for example, if we
+      consider two weeks of training data where a bulk edit is made
+      between the two weeks adding a property <span class=
+      "inline-equation"><span class="tex">$\texttt
+      {p}$</span></span> to each entity with CS <span class=
+      "inline-equation"><span class="tex">$\lbrace \texttt
+      {q},\texttt {r}\rbrace$</span></span> , LM will predict the
+      same increase again in <span class=
+      "inline-equation"><span class="tex">$\lbrace \texttt
+      {p},\texttt {q},\texttt {r}\rbrace$</span></span> for the
+      next week whereas <em>Δ</em> will recognise that there are no
+      “source” entities left in <span class=
+      "inline-equation"><span class="tex">$\lbrace \texttt
+      {q},\texttt {r}\rbrace$</span></span> and will not predict
+      such an increase again. We also see that considering more
+      weeks improves the quality of prediction for <em>Δ</em>:
+      considering further training data allows to smooth out the
+      effect of certain bursty (e.g., bot) edits between recent
+      versions. In both cases, RMSE ≫ MAE, indicating that most
+      predictions of CS cardinalities are accurate, but a few
+      predictions have large errors.</p>
+      <p>The second experiment we run considers the counts of
+      subjects with at least a given characteristic set (but that
+      may have further properties); a concrete use-case would be to
+      predict how the results for a query with those properties may
+      change. First, we note that the overall error rises
+      considerably, which is to be expected as the absolute
+      (transitive) counts likewise increase considerably. As
+      before, we see that the <em>Δ</em>-based predictions
+      considerably outperform the LM baseline, and that the errors
+      decrease for <em>Δ</em> as further weeks of training data are
+      considered for the prediction.</p>
+      <p><em>Evaluation material:</em> Source code and other
+      evaluation materials are available at: <a class=
+      "link-inline force-break" href=
+      "https://github.com/larryjgonzalez/rdf_dynamics">https://github.com/larryjgonzalez/rdf_dynamics</a>.</p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">Quality of predicted <span class=
+          "inline-equation"><span class="tex">$\#$</span></span>
+          -lattice for exact intent.</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:left;"><em>w</em></th>
+              <th style="text-align:right;">LM (<font style=
+              "font-variant: small-caps">rmse</font>)</th>
+              <th style="text-align:right;">LM (<font style=
+              "font-variant: small-caps">mae</font>)</th>
+              <th style="text-align:right;"><em>Δ</em>
+              (<font style="font-variant: small-caps">rmse</font>)</th>
+              <th style="text-align:right;"><em>Δ</em>
+              (<font style="font-variant: small-caps">mae</font>)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:left;">2</td>
+              <td style="text-align:right;">167.2</td>
+              <td style="text-align:right;">0.5697</td>
+              <td style="text-align:right;">25.26</td>
+              <td style="text-align:right;">0.1286</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">3</td>
+              <td style="text-align:right;">173.9</td>
+              <td style="text-align:right;">0.5595</td>
+              <td style="text-align:right;">19.15</td>
+              <td style="text-align:right;">0.1134</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">4</td>
+              <td style="text-align:right;">186.6</td>
+              <td style="text-align:right;">0.6051</td>
+              <td style="text-align:right;">17.71</td>
+              <td style="text-align:right;">0.1078</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">5</td>
+              <td style="text-align:right;">196.0</td>
+              <td style="text-align:right;">0.6624</td>
+              <td style="text-align:right;">17.31</td>
+              <td style="text-align:right;">0.1020</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">6</td>
+              <td style="text-align:right;">202.9</td>
+              <td style="text-align:right;">0.6842</td>
+              <td style="text-align:right;">15.62</td>
+              <td style="text-align:right;">0.0941</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-responsive" id="tab2">
+        <div class="table-caption">
+          <span class="table-number">Table 2:</span> <span class=
+          "table-title">Quality of predicted <span class=
+          "inline-equation"><span class="tex">$\#$</span></span>
+          -lattice for transitive intent.</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:left;"><em>w</em></th>
+              <th style="text-align:right;">LM (<font style=
+              "font-variant: small-caps">rmse</font>)</th>
+              <th style="text-align:right;">LM (<font style=
+              "font-variant: small-caps">mae</font>)</th>
+              <th style="text-align:right;"><em>Δ</em>
+              (<font style="font-variant: small-caps">rmse</font>)</th>
+              <th style="text-align:right;"><em>Δ</em>
+              (<font style="font-variant: small-caps">mae</font>)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:left;">2</td>
+              <td style="text-align:right;">1477.8</td>
+              <td style="text-align:right;">177.0</td>
+              <td style="text-align:right;">264.2</td>
+              <td style="text-align:right;">6.19</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">3</td>
+              <td style="text-align:right;">1458.9</td>
+              <td style="text-align:right;">162.4</td>
+              <td style="text-align:right;">209.1</td>
+              <td style="text-align:right;">5.09</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">4</td>
+              <td style="text-align:right;">1535.6</td>
+              <td style="text-align:right;">178.8</td>
+              <td style="text-align:right;">185.7</td>
+              <td style="text-align:right;">4.50</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">5</td>
+              <td style="text-align:right;">1398.8</td>
+              <td style="text-align:right;">123.4</td>
+              <td style="text-align:right;">176.7</td>
+              <td style="text-align:right;">4.15</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">6</td>
+              <td style="text-align:right;">1357.8</td>
+              <td style="text-align:right;">59.6</td>
+              <td style="text-align:right;">145.8</td>
+              <td style="text-align:right;">3.67</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="sec-19">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">8</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>In this paper, we have presented a framework for computing
+      a data-driven schema from large-scale knowledge graphs based
+      on Formal Concept Analysis. Given that FCA is challenging to
+      apply at scale, we proposed more lightweight structures that
+      similarly provide a concept hierarchy based on a lattice of
+      characteristic sets. We then discussed algorithms for
+      extracting these characteristic sets and building the
+      resulting lattices in a scalable and efficient manner. As a
+      concrete use-case, we presented an algebraic method by which
+      these lattices can be used to predict high-level changes in
+      the dataset. Our evaluation over 11 weeks of Wikidata
+      versions – each with more than 1 billion triples, 50 million
+      subjects and 3 thousand properties – demonstrates the
+      feasibility of our approach. Furthermore, we validated the
+      quality of predictions made by our algebraic approach against
+      a linear-model baseline.</p>
+      <p>There are a number of future directions for follow-up
+      work. Aside from Wikidata, it would be interesting to conduct
+      further experiments on other knowledge graphs with different
+      scales and different types of dynamic behaviour. We also wish
+      to investigate other applications for our proposed schema,
+      including query processing, user interfaces, etc. Other
+      variations of schema could also be explored, including, for
+      example, concepts that encode type values or multiplicity, or
+      quotient graphs based on characteristic sets. In general, we
+      foresee much potential in the area of deriving data-driven
+      schema from emergent knowledge graphs.</p>
+      <p><em>Acknowledgements:</em> We thank Pablo Barceló and
+      Pablo Muñoz for discussions that inspired this topic. We also
+      thank Romana Pernischova and the anonymous reviewers for
+      their comments. This work was supported by the Millennium
+      Nucleus Center for Semantic Web Research, Grant No. NC120004;
+      by Fondecyt Grant No. 1181896; by the German Research
+      Foundation (DFG) within the Collaborative Research Center SFB
+      912 (HAEC); and by Emmy Noether grant KR 4381/1-1
+      (DIAMOND).</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Ziawasch Abedjan, Toni
+        Grütze, Anja Jentzsch, and Felix Naumann. 2014. Profiling
+        and mining RDF data with ProLOD++. In <em><em>International
+        Conference on Data Engineering (ICDE)</em></em> . IEEE
+        Computer Society, 1198–1201.</li>
+        <li id="BibPLXBIB0002" label="[2]">Ziawasch Abedjan and
+        Felix Naumann. 2013. Improving RDF Data Through Association
+        Rule Mining. <em><em>Datenbank-Spektrum</em></em> 13, 2
+        (2013), 111–120.</li>
+        <li id="BibPLXBIB0003" label="[3]">Mehwish Alam, Aleksey
+        Buzmakov, Víctor Codocedo, and Amedeo Napoli. 2015. Mining
+        Definitions from RDF Annotations Using Formal Concept
+        Analysis. In <em><em>International Joint Conference on
+        Artificial Intelligence (IJCAI)</em></em> . AAAI Press,
+        823–829.</li>
+        <li id="BibPLXBIB0004" label="[4]">Keith Alexander, Richard
+        Cyganiak, Michael Hausenblas, and Jun Zhao. 2009.
+        Describing Linked Datasets. In <em><em>Workshop on Linked
+        Data on the Web (LDOW)</em></em> . CEUR-WS.org.</li>
+        <li id="BibPLXBIB0005" label="[5]">Renzo Angles, Marcelo
+        Arenas, Pablo Barceló, Aidan Hogan, Juan Reutter, and
+        Domagoc Vrgoč. 2017. Foundations of Modern Query Languages
+        for Graph Databases. <em><em>ACM Computing
+        Surveys</em></em> 50, 5 (2017). <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/3104031" target=
+        "_blank">https://doi.org/10.1145/3104031</a>
+        </li>
+        <li id="BibPLXBIB0006" label="[6]">Franz Baader, Bernhard
+        Ganter, Baris Sertkaya, and Ulrike Sattler. 2007.
+        Completing Description Logic Knowledge Bases Using Formal
+        Concept Analysis. In <em><em>International Joint Conference
+        on Artificial Intelligence (IJCAI)</em></em> .
+        230–235.</li>
+        <li id="BibPLXBIB0007" label="[7]">Christoph Böhm, Gjergji
+        Kasneci, and Felix Naumann. 2012. Latent topics in
+        graph-structured data. In <em><em>ACM International
+        Conference on Information and Knowledge Management
+        (CIKM)</em></em> . ACM, 2663–2666.</li>
+        <li id="BibPLXBIB0008" label="[8]">Christoph Böhm, Johannes
+        Lorey, and Felix Naumann. 2011. Creating voiD descriptions
+        for Web-scale data. <em><em>J. Web Sem.</em></em> 9, 3
+        (2011), 339–345.</li>
+        <li id="BibPLXBIB0009" label="[9]">Dan Brickley, R.V. Guha,
+        and Brian McBride. 2014. RDF Schema 1.1. W3C
+        Recommendation. (25 Feb. 2014). <a class=
+        "link-inline force-break" href=
+        "http://www.w3.org/TR/rdf-schema/">http://www.w3.org/TR/rdf-schema/</a>.
+        </li>
+        <li id="BibPLXBIB0010" label="[10]">Peter Buneman and
+        Slawek Staworko. 2016. RDF Graph Alignment with
+        Bisimulation. <em><em>PVLDB</em></em> 9, 12 (2016),
+        1149–1160.</li>
+        <li id="BibPLXBIB0011" label="[11]">Stéphane Campinas,
+        Thomas Perry, Diego Ceccarelli, Renaud Delbru, and Giovanni
+        Tummarello. 2012. Introducing RDF Graph Summary with
+        Application to Assisted SPARQL Formulation. In
+        <em><em>Database and Expert Systems Applications Workshop
+        (DEXA)</em></em> . IEEE Computer Society, 261–266.</li>
+        <li id="BibPLXBIB0012" label="[12]">Šejla Čebirić, François
+        Goasdoué, and Ioana Manolescu. 2015. Query-Oriented
+        Summarization of RDF Graphs. <em><em>PVLDB</em></em> 8, 12
+        (2015), 2012–2015. <a class="link-inline force-break"
+          href="http://www.vldb.org/pvldb/vol8/p2012-cebiric.pdf">http://www.vldb.org/pvldb/vol8/p2012-cebiric.pdf</a>
+        </li>
+        <li id="BibPLXBIB0013" label="[13]">Michael Cochez, Stefan
+        Decker, and Eric Prud'hommeaux. 2016. Knowledge
+        Representation on the Web Revisited: The Case for
+        Prototypes. In <em><em>International Semantic Web
+        Conference (ISWC)</em> (Lecture Notes in Computer
+        Science)</em>. Springer, 151–166.</li>
+        <li id="BibPLXBIB0014" label="[14]">Mariano&nbsp;P.
+        Consens, Valeria Fionda, Shahan Khatchadourian, and
+        Giuseppe Pirrò. 2015. S+EPPs: Construct and Explore
+        Bisimulation Summaries, plus Optimize Navigational Queries;
+        all on Existing SPARQL Systems. <em><em>PVLDB</em></em> 8,
+        12 (2015), 2028–2031. <a class="link-inline force-break"
+        href=
+        "http://www.vldb.org/pvldb/vol8/p2028-consens.pdf">http://www.vldb.org/pvldb/vol8/p2028-consens.pdf</a>
+        </li>
+        <li id="BibPLXBIB0015" label="[15]">Mathieu d'Aquin and
+        Enrico Motta. 2011. Extracting relevant questions to an RDF
+        dataset using formal concept analysis. In
+        <em><em>International Conference on Knowledge Capture
+        (K-CAP)</em></em> . ACM, 121–128.</li>
+        <li id="BibPLXBIB0016" label="[16]">Frithjof Dau and Baris
+        Sertkaya. 2011. Formal Concept Analysis for Qualitative
+        Data Analysis over Triple Stores. In <em><em>Advances in
+        Conceptual Modeling (ER)</em></em> . Springer, 45–54.</li>
+        <li id="BibPLXBIB0017" label="[17]">Jeffrey Dean and Sanjay
+        Ghemawat. 2010. MapReduce: a flexible data processing tool.
+        <em><em>Commun. ACM</em></em> 53, 1 (2010), 72–77.</li>
+        <li id="BibPLXBIB0018" label="[18]">Renata&nbsp;Queiroz
+        Dividino, Thomas Gottron, and Ansgar Scherp. 2015.
+        Strategies for Efficiently Keeping Local Linked Open Data
+        Caches Up-To-Date. In <em><em>International Semantic Web
+        Conference (ISWC)</em></em> . Springer, 356–373.</li>
+        <li id="BibPLXBIB0019" label="[19]">Marek Dudás, Vojtech
+        Svátek, and Jindrich Mynarz. 2015. Dataset Summary
+        Visualization with LODSight. In <em><em>Extended Semantic
+        Web Conference (ESWC) – Demo</em></em> . Springer,
+        36–40.</li>
+        <li id="BibPLXBIB0020" label="[20]">Fernando Florenzano,
+        Denis Parra, Juan&nbsp;L. Reutter, and Freddie Venegas.
+        2016. A Visual Aide for Understanding Endpoint Data. In
+        <em><em>International Workshop on Visualization and
+        Interaction for Ontologies and Linked Data
+        (VOILA@ISWC)</em></em> . CEUR-WS.org, 102–113.</li>
+        <li id="BibPLXBIB0021" label="[21]">Anna Formica. 2012.
+        Semantic Web search based on rough sets and Fuzzy Formal
+        Concept Analysis. <em><em>Knowl.-Based Syst.</em></em>
+        26(2012), 40–47. <a class="link-inline force-break" href=
+        "https://doi.org/10.1016/j.knosys.2011.06.018" target=
+        "_blank">https://doi.org/10.1016/j.knosys.2011.06.018</a>
+        </li>
+        <li id="BibPLXBIB0022" label="[22]">Mohamed&nbsp;Rouane
+        Hacene, Marianne Huchard, Amedeo Napoli, and Petko
+        Valtchev. 2007. A Proposal for Combining Formal Concept
+        Analysis and Description Logics for Mining Relational Data.
+        In <em><em>International Conference on Formal Concept
+        Analysis (ICFCA)</em></em> . Springer, 51–65.</li>
+        <li id="BibPLXBIB0023" label="[23]">Ali Hasnain, Qaiser
+        Mehmood, Syeda&nbsp;Sana e Zainab, and Aidan Hogan. 2016.
+        SPORTAL: Profiling the Content of Public SPARQL Endpoints.
+        <em><em>Int. J. Semantic Web Inf. Syst.</em></em> 12, 3
+        (2016), 134–163.</li>
+        <li id="BibPLXBIB0024" label="[24]">Tobias Käfer, Ahmed
+        Abdelrahman, Jürgen Umbrich, Patrick O'Byrne, and Aidan
+        Hogan. 2013. Observing Linked Data Dynamics. In
+        <em><em>Extended Semantic Web Conference (ESWC)</em></em> .
+        Springer, 213–227.</li>
+        <li id="BibPLXBIB0025" label="[25]">Sheila Kinsella, Uldis
+        Bojars, Andreas Harth, John&nbsp;G. Breslin, and Stefan
+        Decker. 2008. An Interactive Map of Semantic Web Ontology
+        Usage. In <em><em>International Conference on Information
+        Visualisation</em></em> . 179–184.</li>
+        <li id="BibPLXBIB0026" label="[26]">Markus Kirchberg, Erwin
+        Leonardi, Yu&nbsp;Shyang Tan, Sebastian Link, Ryan
+        K.&nbsp;L. Ko, and Bu-Sung Lee. 2012. Formal Concept
+        Discovery in Semantic Web Data. In <em><em>International
+        Conference on Formal Concept Analysis (ICFCA)</em></em> .
+        Springer, 164–179.</li>
+        <li id="BibPLXBIB0027" label="[27]">Holger Knublauch and
+        Dimitris Kontokostas. 2014. Shapes Constraint Language
+        (SHACL). W3C Working Group Note. (24 June 2014).
+          <a class="link-inline force-break" href=
+          "http://www.w3.org/TR/rdf11-primer/">http://www.w3.org/TR/rdf11-primer/</a>.
+        </li>
+        <li id="BibPLXBIB0028" label="[28]">Petr Krajca and Vilém
+        Vychodil. 2009. Distributed Algorithm for Computing Formal
+        Concepts Using Map-Reduce Framework. In
+        <em><em>International Symposium on Intelligent Data
+        Analysis (IDA)</em></em> . Springer, 333–344.</li>
+        <li id="BibPLXBIB0029" label="[29]">Nandana
+        Mihindukulasooriya, María Poveda-Villalón, Raúl
+        García-Castro, and Asunción Gómez-Pérez. 2015. Loupe – An
+        Online Tool for Inspecting Datasets in the Linked Data
+        Cloud. In <em><em>International Semantic Web Conference
+        (ISWC) Posters &amp; Demos</em></em> . CEUR-WS.org.</li>
+        <li id="BibPLXBIB0030" label="[30]">Thomas Neumann and
+        Guido Moerkotte. 2011. Characteristic sets: Accurate
+        cardinality estimation for RDF queries with multiple joins.
+        In <em><em>International Conference on Data Engineering
+        (ICDE)</em></em> . IEEE Computer Society, 984–994.</li>
+        <li id="BibPLXBIB0031" label="[31]">Minh-Duc Pham and
+        Peter&nbsp;A. Boncz. 2016. Exploiting Emergent Schemas to
+        Make RDF Systems More Efficient. In <em><em>International
+        Semantic Web Conference (ISWC)</em> (Lecture Notes in
+        Computer Science)</em>. Springer, 463–479.</li>
+        <li id="BibPLXBIB0032" label="[32]">François Picalausa,
+        George H.&nbsp;L. Fletcher, Jan Hidders, and Stijn
+        Vansummeren. 2014. Principles of Guarded Structural
+        Indexing. In <em><em>International Conference on Database
+        Theory (ICDT)</em></em> . OpenProceedings.org,
+        245–256.</li>
+        <li id="BibPLXBIB0033" label="[33]">Jonas Poelmans,
+        Sergei&nbsp;O. Kuznetsov, Dmitry&nbsp;I. Ignatov, and Guido
+        Dedene. 2013. Formal Concept Analysis in knowledge
+        processing: A survey on models and techniques.
+        <em><em>Expert Syst. Appl.</em></em> 40, 16 (2013),
+        6601–6623.</li>
+        <li id="BibPLXBIB0034" label="[34]">Laurens Rietveld,
+        Wouter Beek, Rinke Hoekstra, and Stefan Schlobach. 2017.
+        Meta-data for a lot of LOD. <em><em>Semantic Web</em></em>
+        8, 6 (2017), 1067–1080.</li>
+        <li id="BibPLXBIB0035" label="[35]">Mohamed Rouane-Hacene,
+        Marianne Huchard, Amedeo Napoli, and Petko Valtchev. 2013.
+        Relational Concept Analysis: mining concept lattices from
+        multi-relational data. <em><em>Ann. Math. Artif.
+        Intell.</em></em> 67, 1 (2013), 81–108. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1007/s10472-012-9329-3" target=
+        "_blank">https://doi.org/10.1007/s10472-012-9329-3</a>
+        </li>
+        <li id="BibPLXBIB0036" label="[36]">Alexander Schätzle,
+        Antony Neu, Georg Lausen, and Martin Przyjaciel-Zablocki.
+        2013. Large-scale bisimulation of RDF graphs. In
+        <em><em>Semantic Web Information Management (SWIM)
+        Workshop</em></em> .</li>
+        <li id="BibPLXBIB0037" label="[37]">Guus Schreiber and Yves
+        Raimond. 2014. RDF 1.1 Primer. W3C Working Group Note. (24
+        June 2014). <a class="link-inline force-break" href=
+        "http://www.w3.org/TR/rdf11-primer/">http://www.w3.org/TR/rdf11-primer/</a>.
+        </li>
+        <li id="BibPLXBIB0038" label="[38]">Jürgen Umbrich, Michael
+        Hausenblas, Aidan Hogan, Axel Polleres, and Stefan Decker.
+        2010. Towards Dataset Dynamics: Change Frequency of Linked
+        Open Data Sources. In <em><em>Workshop on Linked Data on
+        the Web (LDOW)</em></em> . CEUR-WS.org.</li>
+        <li id="BibPLXBIB0039" label="[39]">Denny Vrandecic and
+        Markus Krötzsch. 2014. Wikidata: a free collaborative
+        knowledgebase. <em><em>Commun. ACM</em></em> 57, 10 (2014),
+        78–85. <a class="link-inline force-break" href=
+        "https://doi.org/10.1145/2629489" target=
+        "_blank">https://doi.org/10.1145/2629489</a>
+        </li>
+        <li id="BibPLXBIB0040" label="[40]">Rudolf Wille. 2009.
+        Restructuring Lattice Theory: An Approach Based on
+        Hierarchies of Concepts. In <em><em>International
+        Conference on Formal Concept Analysis (ICFCA)</em> (Lecture
+        Notes in Computer Science)</em>. Springer, 314–339.
+        (Reprint).</li>
+        <li id="BibPLXBIB0041" label="[41]">Biao Xu, Ruairí de
+        Fréin, Eric Robson, and Mícheál&nbsp;Ó Foghlú. 2012.
+        Distributed Formal Concept Analysis Algorithms Based on an
+        Iterative MapReduce Framework. In <em><em>International
+        Conference on Formal Concept Analysis (ICFCA)</em> (Lecture
+        Notes in Computer Science)</em>. Springer, 292–308.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>We use, e.g.,
+    <strong>IB</strong> as a shortcut for <strong>I</strong> ∪
+    <strong>B</strong>.</p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a>In the FCA
+    literature, it is more typical to refer to a set of
+    <em>objects</em>; we avoid this nomenclature since it clashes
+    with the notion of an object in an RDF triple.</p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a>In practice,
+    this assumes versions with regular periodicity, e.g., weekly
+    versions; often <em>k</em> = <em>j</em> with both referring to
+    the latest version from which predictions are made.</p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a>round(·)
+    denotes rounding towards positive infinity (applying ceiling
+    for <span class="inline-equation"><span class="tex">$\frac{2n +
+    1}{2}$</span></span> ).</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5639-8/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3178876.3186016">https://doi.org/10.1145/3178876.3186016</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

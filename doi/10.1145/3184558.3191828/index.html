@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>INF-UFG at FiQA 2018 Task 1: Predicting Sentiments and
+  Aspects on Financial Tweets and News Headlines</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">INF-UFG at FiQA 2018 Task 1:
+          Predicting Sentiments and Aspects on Financial Tweets and
+          News Headlines</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Dayan de França</span>
+          <span class="surName">Costa</span>, Federal University of
+          Goias, Goiânia, GO, Brazil, <a href=
+          "mailto:dayanfcosta@gmail.com">dayanfcosta@gmail.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Nadia Felix Felipe</span>
+          <span class="surName">da Silva</span>, Federal University
+          of Goias, Goiânia, GO, Brazil, <a href=
+          "mailto:nadia@inf.ufg.br">nadia@inf.ufg.br</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191828"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191828</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>This paper describes our system which participate
+        in Task 1 of FiQA 2018. The task's focuses was to predict
+        sentiment and aspects of financial microblog posts and
+        headlines. The sentiment analysis for a specific company
+        had to be predicted using a scale between -1 and 1, while
+        the aspect prediction had to be predicted using a set of
+        aspects which was given in train data. We had used Support
+        Vector Regression (SVR) to predict the sentiments in both
+        cases (microblog posts and headlines).</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Predictive sentiment
+          analysis; Stock market; Sentiment analysis in the
+          financial domain</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Dayan de França Costa and Nadia Felix Felipe da Silva.
+          2018. INF-UFG at FiQA 2018 Task 1: Predicting Sentiments
+          and Aspects on Financial Tweets and News Headlines. In
+          <em>The 2018 Web Conference Companion,</em> <em>April
+          23–27, 2018,</em> <em>Lyon, France. ACM, New York, NY,
+          USA</em>, 5 Pages. <a href=
+          "https://doi.org/10.1109/WI-IAT.2010.63" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1109/WI-IAT.2010.63</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>The use and communication through microblogs as
+      Twitter<a class="fn" href="#fn1" id=
+      "foot-fn1"><sup>1</sup></a> and StockTwits<a class="fn" href=
+      "#fn2" id="foot-fn2"><sup>2</sup></a> have been increasing in
+      the last years, making the market to pay more attention in
+      what is said about them in those microblogs [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0001">1</a>]. This increase is given
+      through the facility to use these platforms, the message
+      formats and its accessibility[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0020">20</a>]. People are using these
+      communication vehicles to express sentiments about life,
+      business, work, sports and other ones, therefore the brands
+      has become more worried about what people say about them in
+      these platforms to measure how people fell about the brand,
+      attract more customers, etc. In financial domain, these texts
+      full of opinions are able to change the financial sector,
+      raising or falling stock values.</p>
+      <p>With the increasing use of these platforms, applications
+      of technologies have been growing up too in last decade and
+      it has been caused by the applications coming from academia
+      to commercial domain and because sentiment the analysis tasks
+      are full of challenges. In last years, sentiment analysis
+      become an interest of financial research area [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0002">2</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0004">4</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0031">31</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0032">32</a>]. Since researchers have
+      been showing that opinions expressed in microblogs and social
+      media discussions can make a great impact on market[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0007">7</a>].</p>
+      <p>This paper describes our systems submitted to Open
+      Challenge – Financial Opinion Mining in FiQA (2018) - Task 1
+      which is related to aspect-based financial sentiment analysis
+      <a class="fn" href="#fn3" id="foot-fn3"><sup>3</sup></a>,
+      which had 4 teams participating. This task aims to identify
+      positive (bearish) and negative (bullish) sentiments and the
+      aspects associated to companies stocks based on a dataset of
+      microblogging posts and news statements and headlines. The
+      challenges were that sentiment should be scaled between -1
+      (very negative/bullish) and 1 (very positive/bearish) instead
+      of using the conventional positive, negative and neutral
+      labels, as a classifying challenge, in addition the aspects
+      should be classified using a big set of aspects given in the
+      dataset, using two levels of classification.</p>
+      <p>In this work, we extract a series of elaborately designed
+      features like word embeddings, n-grams, word replacements and
+      multiple different regression and classification algorithms
+      such as SVM in linear kernels, Bayesian models, ensemble and
+      tree models. We also have tried a ensemble containing some of
+      these models quoted.</p>
+      <p>The rest of this paper is structured as follows. Section
+      <a class="sec" href="#sec-4">2</a> describes related work.
+      Section <a class="sec" href="#sec-7">3</a> reports datasets,
+      experiments and results discussion. Finally, Section
+      <a class="sec" href="#sec-12">4</a> concludes our work.</p>
+    </section>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>Many research initiatives have focused on whether the
+      sentiment analysis of social media can be used to predict the
+      future of stock market indicators. In this section, we give
+      an overview of related studies, which are focused on: (i)
+      sentiment analysis of social media as a predictor of the
+      future stock market indicators, and (ii) aspect-based
+      sentiment analysis.</p>
+      <section id="sec-5">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Financial
+            tweet sentiment analysis</h3>
+          </div>
+        </header>
+        <p>The most well-known publication in this area is by
+        Bollen et al. [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0002">2</a>]. They investigated whether
+        measurements of collective moods derived from Twitter feeds
+        are correlated to the value of the Dow Jones Industrial
+        Average (DJIA) over time. They analyzed the tweets by two
+        mood tracking tools, namely OpinionFinder that measures
+        positive vs. negative mood and Google-Profile of Mood
+        States (GPOMS) that measures mood in terms of 6 dimensions
+        (Calm, Alert, Sure, Vital, Kind, and Happy). They
+        cross-validated the resulting mood-time series by comparing
+        their ability to detect the public's response to the
+        presidential election and Thanksgiving day in 2008. The
+        Granger causality analysis and a Fuzzy Neural Network were
+        used to investigate the hypothesis that public mood states,
+        as measured by the OpinionFinder and GPOMS mood time
+        series, were predictive of changes in DJIA closing values.
+        Their results indicated that the accuracy of DJIA
+        predictions can be improved by the inclusion of specific
+        public mood dimensions.</p>
+        <p>Smailovic et al. [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0031">31</a>] also analyzed whether the
+        sentiment expressed in tweets, which discuss selected
+        companies and their products, can indicate their stock
+        price changes. To address this problem, an active learning
+        approach was developed and applied to sentiment analysis of
+        tweet streams in the stock market domain. The paper first
+        presents a static Twitter data analysis problem, explored
+        in order to determine the best Twitter-specific text
+        preprocessing setting for training the Support Vector
+        Machine (SVM) sentiment classifier. In the static setting,
+        the Granger causality test shows that sentiments in
+        stock-related tweets can be used as indicators of stock
+        price movements a few days in advance, where improved
+        results were achieved by adapting the SVM classifier to
+        categorize Twitter posts into three sentiment categories of
+        positive, negative and neutral. These findings were adopted
+        in the development of a new stream-based active learning
+        approach to sentiment analysis, applicable in incremental
+        learning from continuously changing financial tweet
+        streams. To this end, a series of experiments was conducted
+        to determine the best querying strategy for active learning
+        of the SVM classifier adapted to sentiment analysis of
+        financial tweet streams. The experiments in analyzing stock
+        market sentiments of a particular company showed that
+        changes in positive sentiment probability can be used as
+        indicators of the changes in stock closing prices.</p>
+        <p>Pagalu et al. [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0019">19</a>] observed how well the changes in
+        stock prices of a company, the rises and falls, are
+        correlated with the public opinions being expressed in
+        tweets about that company. Their paper employed two textual
+        representations, Word2vec and N-gram, for analyzing the
+        public sentiments in tweets. The authors applied sentiment
+        analysis and supervised machine learning principles to the
+        tweets and analyzed the correlation between stock market
+        movements of a company and sentiments in tweets. They
+        showed that positive news and tweets in social media about
+        a company would encourage people to invest in the stocks of
+        that company and as a result the stock price of that
+        company would increase. In addition, this study
+        demonstrated a strong correlation between the rise and
+        falls in stock prices with the public sentiments in
+        tweets.</p>
+        <p>Given the link between sentiment and market dynamics,
+        the analysis of public sentiment becomes a powerful method
+        to predict the market reaction. However, the accuracy of
+        machine learning-based sentiment analysis approaches rarely
+        exceeds seventy percent [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0032">32</a>].</p>
+        <p>It is still important to mention the Task 5 of
+        Semeval<a class="fn" href="#fn4" id=
+        "foot-fn4"><sup>4</sup></a>[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0004">4</a>] which discusses the “Fine-Grained
+        Sentiment Analysis on Financial Microblogs (subtask a) and
+        News (subtask b)” is specifically under the “Detecting
+        sentiment, humor, and truth” theme. This task contains two
+        tracks, where the first one concerns Microblog messages and
+        the second one covers News Statements and Headlines. The
+        main goal behind both tracks was to predict the sentiment
+        score for each of the mentioned companies/stocks. The
+        sentiment scores for each text instance adopted floating
+        point values in the range of -1 (very negative/bearish) to
+        1 (very positive/bullish), with 0 designating neutral
+        sentiment. This task attracted a total of 32 participants,
+        with 25 participating in Track 1 and 29 in Track 2. Tables
+        <a class="tbl" href="#tab1">1</a> and <a class="tbl" href=
+        "#tab2">2</a> summarize the top five teams that
+        participated in task.</p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Top five teams that participated in Task
+            5 of Semeval – predicting sentiment from financial news
+            headlines</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;"></th>
+                <th style="text-align:center;">Authors</th>
+                <th style="text-align:center;">Feature Set</th>
+                <th style="text-align:center;">Approach</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">1</td>
+                <td style="text-align:center;">
+                  Mansar et al. [<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0015">15</a>]
+                </td>
+                <td style="text-align:center;">word embeddings
+                (GloVe), lexicon</td>
+                <td style="text-align:center;">A deep learning
+                architecture</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">2</td>
+                <td style="text-align:center;">
+                  Kar et al. [<a class="bib" data-trigger="hover"
+                  data-toggle="popover" data-placement="top" href=
+                  "#BibPLXBIB0011">11</a>]
+                </td>
+                <td style="text-align:center;">word embeddings
+                (word2vec), lexicon</td>
+                <td style="text-align:center;">Support Vector
+                Regression (SVR) and a deep learning
+                architecture</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">3</td>
+                <td style="text-align:center;">
+                  Rotim et al. [<a class="bib" data-trigger="hover"
+                  data-toggle="popover" data-placement="top" href=
+                  "#BibPLXBIB0026">26</a>]
+                </td>
+                <td style="text-align:center;">String kernels, word
+                embeddings (Glove and word2vec), named entity
+                recognition (NER)</td>
+                <td style="text-align:center;">Support Vector
+                Regression (SVR)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">4</td>
+                <td style="text-align:center;">
+                  Moore and Rayson [<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0018">18</a>]
+                </td>
+                <td style="text-align:center;">n-grams and
+                word-replacements</td>
+                <td style="text-align:center;">Support Vector
+                Regression (SVR) and a Bidirectional Long
+                Short-Term Memory (BLSTM)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">5</td>
+                <td style="text-align:center;">
+                  Jiang et al. [<a class="bib" data-trigger="hover"
+                  data-toggle="popover" data-placement="top" href=
+                  "#BibPLXBIB0010">10</a>]
+                </td>
+                <td style="text-align:center;">linguistic,
+                sentiment lexicon, domain-specific and word
+                embedding features (word2vec)</td>
+                <td style="text-align:center;">regressor
+                ensemble</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Top five teams that participated in Task
+            5 of Semeval – predicting sentiment from microblogs
+            messages</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;"></th>
+                <th style="text-align:center;">Authors</th>
+                <th style="text-align:center;">Feature Set</th>
+                <th style="text-align:center;">Approach</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">1</td>
+                <td style="text-align:center;">
+                  Jiang et al. [<a class="bib" data-trigger="hover"
+                  data-toggle="popover" data-placement="top" href=
+                  "#BibPLXBIB0010">10</a>]
+                </td>
+                <td style="text-align:center;">linguistic,
+                sentiment lexicon, domain-specific and word
+                embedding features (word2vec)</td>
+                <td style="text-align:center;">regressor
+                ensemble</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">2</td>
+                <td style="text-align:center;">
+                  Ghosal et al. [<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0006">6</a>]
+                </td>
+                <td style="text-align:center;">Character ngrams,
+                Word ngrams, POS-tag, Lexicons, Pointwise Mutual
+                Information (PMI), and Microblog Specific
+                Features</td>
+                <td style="text-align:center;">Deep Learning
+                Ensemble</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">3</td>
+                <td style="text-align:center;">
+                  Deborah et al. [<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0027">27</a>]
+                </td>
+                <td style="text-align:center;">bag-of-words- based
+                features</td>
+                <td style="text-align:center;">Gaussian
+                Process</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">4</td>
+                <td style="text-align:center;">
+                  Cabanski et al. [<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0003">3</a>]
+                </td>
+                <td style="text-align:center;">word embedding and
+                lexicon features</td>
+                <td style="text-align:center;">recurrent neural
+                network</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">5</td>
+                <td style="text-align:center;">
+                  Kumar et al. [<a class="bib" data-trigger="hover"
+                  data-toggle="popover" data-placement="top" href=
+                  "#BibPLXBIB0012">12</a>]
+                </td>
+                <td style="text-align:center;">Word Embedding
+                (GloVe), Tf-Idf Score, Sentiment Lexicon</td>
+                <td style="text-align:center;">an ensemble of
+                Support Vector Classifier and Logistic
+                Regression.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-6">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span>
+            Aspect-based sentiment analysis</h3>
+          </div>
+        </header>
+        <p>Aspect-based sentiment analysis systems treat a set of
+        texts (e.g., product reviews or messages from social media)
+        discussing a particular entity (e.g., a new restaurant) to
+        detect the main (e.g., the most frequently discussed)
+        aspects (features) of this entity (e.g., ‘food’, ‘service’)
+        to estimate the average sentiment of the texts per aspect
+        (e.g., how positive or negative the opinions are on average
+        for each aspect) [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0013">13</a>].</p>
+        <p>One of the earliest studies on Aspect-based sentiment
+        analysis is [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0009">9</a>], which followed a frequency-based
+        approach. The basic idea is that frequently mentioned nouns
+        are more likely to be aspects. To compensate for the errors
+        resulting from ignoring infrequent names, the authors
+        suggested exploiting opinion words to find aspects. For
+        this part, they proposed to consider the nearest opinion
+        word. This idea was used in papers [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0025">25</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0033">33</a>].</p>
+        <p>The main approaches use classifiers with expensive
+        handcrafted features based on n-grams, parts-of-speech, and
+        sentiment lexicon. For example, Popescu and Etzioni
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0024">24</a>]
+        suggested the use of part-of relationship to remove
+        frequent noun phrases that are not aspects. Benefiting from
+        statistics about the use of nouns in the English language,
+        Scaffidi et al. [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0030">30</a>] improved the general approach of
+        relying frequent nouns to extract aspects. Long et al.
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0014">14</a>] added
+        the use of information distance, and dependent words
+        (adjectives).</p>
+        <p>The studies about aspect-based sentiment analysis has
+        gained more propulsion in some editions of SemEval<a class=
+        "fn" href="#fn5" id="foot-fn5"><sup>5</sup></a><a class=
+        "fn" href="#fn6" id="foot-fn6"><sup>6</sup></a><a class=
+        "fn" href="#fn7" id="foot-fn7"><sup>7</sup></a> [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0021">21</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0022">22</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0023">23</a>]. These
+        Semeval competitions provided datasets of English reviews
+        annotated at the sentence level with aspect terms (e.g.,
+        “mouse”, “pizza”) and their polarity for specific domains,
+        as well as aspect categories (e.g., “food”) and their
+        polarity.</p>
+        <p>It is interesting to present that a one of the best
+        scores [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0022">22</a>] was achieved based on a Liblinear
+        model [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href="#BibPLXBIB0008">8</a>]
+        and the second best score [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0005">5</a>] was achieved with an SVM model
+        trained on the restaurants training data. The model used
+        features based on unigrams, sentiment lexica and PMI scores
+        learnt from TripAdvisor data. The team of EliXa [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0029">29</a>] (one of
+        the challenge winners) used a multiclass SVM and features
+        based on word clusters, lemmas, n-grams, POS tagging, and
+        sentiment lexica.</p>
+      </section>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Experimental
+          evaluation</h2>
+        </div>
+      </header>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span>
+            Datasets</h3>
+          </div>
+        </header>
+        <p>The dataset provided consists of 675 microblog messages,
+        and 438 news statements and headlines for training stage
+        (see Table <a class="tbl" href="#tab3">3</a>). There are 99
+        microblog messages, and 93 news statements and headlines
+        for testing stage. The data was collected from web sites as
+        Stocktwits<a class="fn" href="#fn8" id=
+        "foot-fn8"><sup>8</sup></a>, Reddit<a class="fn" href=
+        "#fn9" id="foot-fn9"><sup>9</sup></a>, Wikinews<a class=
+        "fn" href="#fn10" id="foot-fn10"><sup>10</sup></a>, and
+        other finance domain web pages. We used just the dataset
+        available for participating systems.</p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Statistis about training dataset</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;"></th>
+                <th style="text-align:center;">Instances</th>
+                <th style="text-align:center;">Positive</th>
+                <th style="text-align:center;">Negative</th>
+                <th style="text-align:center;">Neutral</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">Microblog Posts</td>
+                <td style="text-align:center;">675</td>
+                <td style="text-align:center;">440</td>
+                <td style="text-align:center;">234</td>
+                <td style="text-align:center;">1</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Headlines</td>
+                <td style="text-align:center;">438</td>
+                <td style="text-align:center;">282</td>
+                <td style="text-align:center;">144</td>
+                <td style="text-align:center;">12</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The Table <a class="tbl" href="#tab3">3</a> refers to
+        statistics about the sentiments of training dataset. The
+        Instances columns refers to the amount of sentences
+        available in the dataset. Positive, Negative and Neutral
+        correspond to instances with sentiment score positive,
+        negative or zero, respectively.</p>
+        <p>About the aspects, the datasets contains 95 aspect
+        classes for the news statements and headlines and 83 aspect
+        classes for the microblog posts. Into these classes, the
+        most often classes in news statements and headlines dataset
+        are ’corporate’, ’m&amp;a’ and ’stock’ with 327, 106 and
+        101 classifications respectively. The most often classes
+        into microblog posts dataset are ’stock’, ’price action’
+        and ’bullish’ with 546, 379 and 203 classifications
+        respectively. The datasets has a lot of classes that are
+        classified just once in whole dataset, the news statements
+        and headlines dataset there are 28 classes and in the
+        microblog posts dataset there are 29 classes that were used
+        just once.</p>
+        <p>The training dataset contains the followed
+        attributes:</p>
+        <ul class="list-no-style">
+          <li id="list1" label="•"><strong>Target:</strong> In
+          microblog posts it refers to stocks companies without the
+          cashtag (that is present in sentence). In headlines it
+          refers to the main company in sentence<br /></li>
+          <li id="list2" label="•"><strong>Sentence:</strong> The
+          news statements and headlines or the microblog posts
+          which sentiment is expressed<br /></li>
+          <li id="list3" label="•"><strong>Snippets:</strong> The
+          main piece of the sentence<br /></li>
+          <li id="list4" label="•"><strong>Aspects:</strong> The
+          aspects associated to the sentences<br /></li>
+          <li id="list5" label="•"><strong>Sentiment
+          Score:</strong> A scaled sentiment between -1 and 1,
+          where 1 is very positive, -1 is very negative and 0
+          represents a neutral sentiment. It's related to the
+          sentences and targets.<br /></li>
+        </ul>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Feature
+            Engineering</h3>
+          </div>
+        </header>
+        <p>While building the system, we tested a set of features
+        and parameters trying get the best data fitting. The
+        features used are described below:</p>
+        <ol class="list-no-style">
+          <li id="list6" label="(1)"><strong>N-Grams</strong><br />
+          It is a sequence of <em>N</em> words in a text/sentence.
+          We used unigrams, bigrams, and trigrams in the grid
+          search to see which one would perform better.<br /></li>
+          <li id="list7" label="(2)">
+            <strong>Tokenization</strong><br />
+            Was used a library called Unitok<a class="fn" href=
+            "#fn11" id="foot-fn11"><sup>11</sup></a> [<a class=
+            "bib" data-trigger="hover" data-toggle="popover"
+            data-placement="top" href="#BibPLXBIB0016">16</a>] to
+            help tokenize sentences. This library recognizes URLs,
+            e-mail addresses, DNS domains and IP addresses, and an
+            interesting characteristics of that is the recognition
+            of abbreviations made in English.<br />
+          </li>
+          <li id="list8" label="(3)"><strong>Word
+          Replacements</strong><br />
+          It was tested replacing or not the company's stock
+          symbols presented in the sentences as well as positive
+          and negative words. To replace negative and positive
+          words, it was used the <em>N</em> most similar words
+          based on a cosine similarity, in our case <em>N</em> was
+          10. With all the stock symbols we tested to replace them
+          with a common word (e.g., replacing <font style=
+          "normal">$</font>AAPL by ’company’ string) and removing
+          them from the sentences.<br /></li>
+          <li id="list9" label="(4)">
+            <strong>Word Embeddings</strong><br />
+            As many tasks involving natural language processing, we
+            decided to use word embeddings that performs better
+            than a natural bag-of-words, which hardly capture the
+            words's semantic. As it was widely used by the winners
+            of Task 5 of Semeval 2017 we decided to use this
+            technique in our experiments through the use of
+            word2vec<a class="fn" href="#fn12" id=
+            "foot-fn12"><sup>12</sup></a> model. We have chosen to
+            use word2vec because of its size (3 millions vocabulary
+            entries) and because it is trained on Google News using
+            the Mikoliv's [<a class="bib" data-trigger="hover"
+            data-toggle="popover" data-placement="top" href=
+            "#BibPLXBIB0017">17</a>] method.<br />
+          </li>
+          <li id="list10" label="(5)">
+            <strong>TF-IDF (Term Frequency - Inverse Document
+            Frequency)</strong><br />
+            Using TF-IDF weighting [<a class="bib" data-trigger=
+            "hover" data-toggle="popover" data-placement="top"
+            href="#BibPLXBIB0028">28</a>] was used to scale down
+            the impact of frequencies words in both cases,
+            regression and classification. Was tested using both l1
+            (a simple sum of the vector's components) and l2 (based
+            on Euclidean Distance) normalizations and using or not
+            inverse-document-frequency to reweighting.<br />
+          </li>
+        </ol>
+      </section>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span>
+            Experimental Setup</h3>
+          </div>
+        </header>
+        <p>In training stage, we split the dataset using randomly
+        80%-20% proportion, where the 80% part was used to train
+        the algorithms and 20% was used to test and validate our
+        algorithms according to competition measures. The results
+        was evaluated using Mean Squared Error (MSE) and R Squared
+        (R2) to measure the sentiment analysis score and precision,
+        recall and F1-score for aspect classification task. We
+        used, in both cases Support Vector Machine algorithms from
+        sklearn<a class="fn" href="#fn13" id=
+        "foot-fn13"><sup>13</sup></a>, so we applied the Support
+        Vector Regressor in sentiment analysis’ task and Support
+        Vector Classifier in aspect's classification task.</p>
+        <p>In our experiments, we used a grid search cross
+        validation with 10-folds for both cases. On regression case
+        (sentiment) we tested the values 10, 1 and 0.1 for the
+        penalty parameter C of LinearSVR algorithm, and we
+        validated with the R Squared and Mean Squared Error, both
+        metrics from sklearn metrics’ package. We ran some
+        sklearn's regressors to this case, including an ensemble of
+        them and our best results were with LinearSVR<a class="fn"
+        href="#fn14" id="foot-fn14"><sup>14</sup></a> only.</p>
+        <p>On classification case (aspects) we first binarized the
+        aspects based on a set of all possible aspects in training
+        set. To extract this set, we simple split the aspects given
+        in <em>”/”</em> and cleared the values to remove
+        punctuation and white spaces. Then we ran the
+        OneVsRest<a class="fn" href="#fn15" id=
+        "foot-fn15"><sup>15</sup></a> meta Classifier with
+        LinearSVC algorithm to classify the multi labeled aspects
+        and the scorer function we used the mean of precision,
+        recall and F1-score algorithms provided by sklearn, where
+        greater were better. As it was done in regression, we
+        tested the same parameters for the penalty parameter C of
+        LinearSVC.</p>
+      </section>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.4</span> Results and
+            Discussion</h3>
+          </div>
+        </header>
+        <p>In this section we present the results for sentiment
+        analysis and aspect classification tasks of FiQA (2018).
+        The metrics used were Mean Squared Error(MSE) and R Squared
+        for the sentiment analysis task, and Precision, Recall, and
+        F1-score for the aspects classification. The formulas is
+        shown below:</p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\[ {\displaystyle
+            \operatorname{MSE} ={\frac{1}{n}}\sum
+            _{i=1}^{n}(Y_{i}-{\hat{Y_{i}}})^{2}.} \]</span><br />
+          </div>
+        </div>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\[ {\displaystyle
+            RS_{\text{tot}}=\sum _{i=1}^{n}(y_{i}-{\bar{y}})^{2}\,}
+            \]</span><br />
+          </div>
+        </div>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\[ {\displaystyle
+            {\text{Precision}}={\frac{tp}{tp+fp}}\,}
+            \]</span><br />
+          </div>
+        </div>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\[ {\displaystyle
+            {\text{Recall}}={\frac{tp}{tp+fn}}\,} \]</span><br />
+          </div>
+        </div>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\[ {\displaystyle F_{1}=2\cdot
+            {\frac{1}{{\tfrac{1}{\mathrm{recall}
+            }}+{\tfrac{1}{\mathrm{precision} }}}}=2\cdot
+            {\frac{\mathrm{precision} \cdot \mathrm{recall}
+            }{\mathrm{precision} +\mathrm{recall} }}}
+            \]</span><br />
+          </div>
+        </div>
+        <p></p>
+        <p>In our tests, we obtained the following results – see
+        Table <a class="tbl" href="#tab4">4</a>.</p>
+        <div class="table-responsive" id="tab4">
+          <div class="table-caption">
+            <span class="table-number">Table 4:</span> <span class=
+            "table-title">Results of Aspects Classification in
+            “unofficial test set” – The training dataset was split
+            using randomly 80%-20% proportion, where the 80% part
+            was used to train the algorithms and 20% was used to
+            test and validate our algorithms according to
+            competition measures.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;"></th>
+                <th style="text-align:center;">Precision</th>
+                <th style="text-align:center;">Recall</th>
+                <th style="text-align:center;">F1-Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Microblog Posts</td>
+                <td style="text-align:center;">0.6673</td>
+                <td style="text-align:center;">0.5592</td>
+                <td style="text-align:center;">0.5775</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Headlines and
+                Statements</td>
+                <td style="text-align:center;">0.4992</td>
+                <td style="text-align:center;">0.4</td>
+                <td style="text-align:center;">0.4240</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>In the test dataset the all predicted values were
+        ’stock’, ’price action’, ’coverage’, ’bullish’,
+        ’corporate’, ’analyst ratings’ and ’bearish’ for the posts,
+        with the most often classified ’stock’, ’price action’ and
+        ’coverage’. For the headline and news statements the
+        predicted values were ’corporate’, ’stock’, ’m&amp;a’,
+        ’appointment’, ’bullish’, ’price action’ with the most
+        often classified ’corporate’, ’stock’, and ’m&amp;a’.</p>
+        <p>According to official results<a class="fn" href="#fn16"
+        id="foot-fn16"><sup>16</sup></a>, we scored the following
+        results about sentiment analysis challenge – see Table
+        <a class="tbl" href="#tab5">5</a>.</p>
+        <div class="table-responsive" id="tab5">
+          <div class="table-caption">
+            <span class="table-number">Table 5:</span> <span class=
+            "table-title">Official Results - Sentiment
+            Analysis</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;"></th>
+                <th style="text-align:center;">MSE</th>
+                <th style="text-align:center;">R Squared</th>
+                <th style="text-align:center;">Cosine</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Microblog Posts</td>
+                <td style="text-align:center;">0.206794</td>
+                <td style="text-align:center;">0.1665593177</td>
+                <td style="text-align:center;">0.415379</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Headlines and
+                Statements</td>
+                <td style="text-align:center;">0.0958436</td>
+                <td style="text-align:center;">0.1642305099</td>
+                <td style="text-align:center;">0.533388</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>We scored the best MSE of the competition with the
+        dataset of headlines and news statements, according to the
+        official results<a class="fn" href="#fn17" id=
+        "foot-fn17"><sup>17</sup></a>. As we provided the aspects
+        in a wrong format, the results about them was not
+        evaluated, becoming zero.</p>
+      </section>
+    </section>
+    <section id="sec-12">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span>
+          Conclusions</h2>
+        </div>
+      </header>
+      <p>In this paper we presented our solution for FiQA 2018 Task
+      1 using Linear Kernel (SVR and SVC) models from sklearn. We
+      have tested some regressors, classifiers and ensembles of
+      them, but our best scores were just using only linear models
+      for each part of the task. The enhancing of the results can
+      be made by using different approaches of learning like simple
+      neural networks or LSTMs (Long Short Term Memory). In the
+      future we can improve our solution with some of these
+      approaches.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Sitaram Asur and
+        Bernardo&nbsp;A. Huberman. 2010. Predicting the Future with
+        Social Media. In <em>Proceedings of the 2010 IEEE/WIC/ACM
+        International Conference on Web Intelligence and
+        Intelligent Agent Technology - Volume 01</em>(<em>WI-IAT
+        ’10</em>). IEEE Computer Society, Washington, DC, USA,
+        492–499. <a class="link-inline force-break" href=
+        "https://doi.org/10.1109/WI-IAT.2010.63" target=
+        "_blank">https://doi.org/10.1109/WI-IAT.2010.63</a>
+        </li>
+        <li id="BibPLXBIB0002" label="[2]">Johan Bollen, Huina Mao,
+        and Xiao-Jun Zeng. 2010. Twitter mood predicts the stock
+        market. <em><em>CoRR</em></em> abs/1010.3003(2010).
+        arxiv:1010.3003<a class="link-inline force-break" href=
+        "http://arxiv.org/abs/1010.3003" target=
+        "_blank">http://arxiv.org/abs/1010.3003</a>
+        </li>
+        <li id="BibPLXBIB0003" label="[3]">Tobias Cabanski, Julia
+        Romberg, and Stefan Conrad. 2017. HHU at SemEval-2017 Task
+        5: Fine-Grained Sentiment Analysis on Financial Data using
+        Machine Learning Methods. In <em>Proceedings of the 11th
+        International Workshop on Semantic Evaluation
+        (SemEval-2017)</em>. Association for Computational
+        Linguistics, Vancouver, Canada, 832–836. <a class=
+        "link-inline force-break" href=
+        "http://www.aclweb.org/anthology/S17-2141" target="_blank">
+          http://www.aclweb.org/anthology/S17-2141</a>
+        </li>
+        <li id="BibPLXBIB0004" label="[4]">Keith Cortis, André
+        Freitas, Tobias Daudert, Manuela Huerlimann, Manel Zarrouk,
+        Siegfried Handschuh, and Brian Davis. 2017. SemEval-2017
+        Task 5: Fine-Grained Sentiment Analysis on Financial
+        Microblogs and News. In <em>Proceedings of the 11th
+        International Workshop on Semantic Evaluation
+        (SemEval-2017)</em>. Association for Computational
+        Linguistics, 519–535. <a class="link-inline force-break"
+        href="https://doi.org/10.18653/v1/S17-2089" target=
+        "_blank">https://doi.org/10.18653/v1/S17-2089</a>
+        </li>
+        <li id="BibPLXBIB0005" label="[5]">Orphee De&nbsp;Clercq,
+        Marjan Van&nbsp;de Kauter, Els Lefever, and Veronique
+        Hoste. 2015. LT3: Applying Hybrid Terminology Extraction to
+        Aspect-Based Sentiment Analysis. In <em>Proceedings of the
+        9th International Workshop on Semantic Evaluation (SemEval
+        2015)</em>. Association for Computational Linguistics,
+        Denver, Colorado, 719–724. <a class=
+        "link-inline force-break" href=
+        "http://www.aclweb.org/anthology/S15-2122" target="_blank">
+          http://www.aclweb.org/anthology/S15-2122</a>
+        </li>
+        <li id="BibPLXBIB0006" label="[6]">Deepanway Ghosal,
+        Shobhit Bhatnagar, Md&nbsp;Shad Akhtar, Asif Ekbal, and
+        Pushpak Bhattacharyya. 2017. IITP at SemEval-2017 Task 5:
+        An Ensemble of Deep Learning and Feature Based Models for
+        Financial Sentiment Analysis. In <em>Proceedings of the
+        11th International Workshop on Semantic Evaluation
+        (SemEval-2017)</em>. Association for Computational
+        Linguistics, 899–903. <a class="link-inline force-break"
+        href="https://doi.org/10.18653/v1/S17-2154" target=
+        "_blank">https://doi.org/10.18653/v1/S17-2154</a>
+        </li>
+        <li id="BibPLXBIB0007" label="[7]">Rohitha Goonatilake,
+        Ajantha Herath, Suvineetha Herath, Susantha Herath, and
+        Jayantha Herath. 2007. Intrusion detection using the
+        chi-square goodness-of-fit test for information assurance,
+        network, forensics and software security. <em><em>Journal
+        of Computing Sciences in Colleges</em></em> 23, 1 (2007),
+        255–263.</li>
+        <li id="BibPLXBIB0008" label="[8]">Hussam Hamdan, Patrice
+        Bellot, and Frederic Bechet. 2015. lsislif: Feature
+        extraction and label weighting for sentiment analysis in
+        twitter. In <em>In In Proceedings of the 9th International
+        Workshop on Semantic Evaluation (SemEval</em>.</li>
+        <li id="BibPLXBIB0009" label="[9]">Minqing Hu and Bing Liu.
+        2004. Mining and Summarizing Customer Reviews. In
+        <em>Proceedings of the Tenth ACM SIGKDD International
+        Conference on Knowledge Discovery and Data
+        Mining</em>(<em>KDD ’04</em>). ACM, New York, NY, USA,
+        168–177. <a class="link-inline force-break" href=
+        "https://doi.org/10.1145/1014052.1014073" target="_blank">
+          https://doi.org/10.1145/1014052.1014073</a>
+        </li>
+        <li id="BibPLXBIB0010" label="[10]">Mengxiao Jiang, Man
+        Lan, and Yuanbin Wu. 2017. ECNU at SemEval-2017 Task 5: An
+        Ensemble of Regression Algorithms with Effective Features
+        for Fine-Grained Sentiment Analysis in Financial Domain. In
+        <em>Proceedings of the 11th International Workshop on
+        Semantic Evaluation (SemEval-2017)</em>. Association for
+        Computational Linguistics, 888–893. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.18653/v1/S17-2152" target=
+        "_blank">https://doi.org/10.18653/v1/S17-2152</a>
+        </li>
+        <li id="BibPLXBIB0011" label="[11]">Sudipta Kar, Suraj
+        Maharjan, and Thamar Solorio. 2017. RiTUAL-UH at
+        SemEval-2017 Task 5: Sentiment Analysis on Financial Data
+        Using Neural Networks. In <em>Proceedings of the 11th
+        International Workshop on Semantic Evaluation
+        (SemEval-2017)</em>. Association for Computational
+        Linguistics, 877–882. <a class="link-inline force-break"
+        href="https://doi.org/10.18653/v1/S17-2150" target=
+        "_blank">https://doi.org/10.18653/v1/S17-2150</a>
+        </li>
+        <li id="BibPLXBIB0012" label="[12]">Abhishek Kumar,
+        Abhishek Sethi, Md&nbsp;Shad Akhtar, Asif Ekbal, Chris
+        Biemann, and Pushpak Bhattacharyya. 2017. IITPB at
+        SemEval-2017 Task 5: Sentiment Prediction in Financial
+        Text. In <em>Proceedings of the 11th International Workshop
+        on Semantic Evaluation (SemEval-2017)</em>. Association for
+        Computational Linguistics, 894–898. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.18653/v1/S17-2153" target=
+        "_blank">https://doi.org/10.18653/v1/S17-2153</a>
+        </li>
+        <li id="BibPLXBIB0013" label="[13]">Bing Liu. 2012.
+        <em><em>Sentiment Analysis and Opinion Mining</em></em> .
+        Morgan &amp; Claypool Publishers.</li>
+        <li id="BibPLXBIB0014" label="[14]">Chong Long, Jie Zhang,
+        and Xiaoyan Zhut. 2010. A Review Selection Approach for
+        Accurate Feature Rating Estimation. In <em>Proceedings of
+        the 23rd International Conference on Computational
+        Linguistics: Posters</em>(<em>COLING ’10</em>). Association
+        for Computational Linguistics, Stroudsburg, PA, USA,
+        766–774. <a class="link-inline force-break" href=
+        "http://dl.acm.org/citation.cfm?id=1944566.1944654"
+          target="_blank">http://dl.acm.org/citation.cfm?id=1944566.1944654</a>
+        </li>
+        <li id="BibPLXBIB0015" label="[15]">Youness Mansar, Lorenzo
+        Gatti, Sira Ferradans, Marco Guerini, and Jacopo Staiano.
+        2017. Fortia-FBK at SemEval-2017 Task 5: Bullish or
+        Bearish? Inferring Sentiment towards Brands from Financial
+        News Headlines. <em>CoRR</em>abs/1704.00939(2017).
+        arxiv:1704.00939<a class="link-inline force-break" href=
+        "http://arxiv.org/abs/1704.00939" target=
+        "_blank">http://arxiv.org/abs/1704.00939</a>
+        </li>
+        <li id="BibPLXBIB0016" label="[16]">Jan Michelfeit, Jan
+        Pomikálek, and Vít Suchomel. 2014. Text Tokenisation Using
+        unitok. In <em>RASLAN 2014</em>, Aleš Horák and Pavel
+        Rychlý (Eds.). Tribun EU, Brno, Czech Republic, 71–75.</li>
+        <li id="BibPLXBIB0017" label="[17]">Tomas Mikolov, Ilya
+        Sutskever, Kai Chen, Greg S Corrado, and Jeff Dean. 2013.
+        Distributed representations of words and phrases and their
+        compositionality. In <em>Advances in neural information
+        processing systems</em>. 3111–3119.</li>
+        <li id="BibPLXBIB0018" label="[18]">Andrew Moore and Paul
+        Rayson. 2017. Lancaster A at SemEval-2017 Task 5:
+        Evaluation metrics matter: predicting sentiment from
+        financial news headlines. <em><em>CoRR</em></em>
+        abs/1705.00571(2017). arxiv:1705.00571<a class=
+        "link-inline force-break" href=
+        "http://arxiv.org/abs/1705.00571" target=
+        "_blank">http://arxiv.org/abs/1705.00571</a>
+        </li>
+        <li id="BibPLXBIB0019" label="[19]">Venkata&nbsp;Sasank
+        Pagolu, Kamal Nayan&nbsp;Reddy Challa, Ganapati Panda, and
+        Babita Majhi. 2016. Sentiment Analysis of Twitter Data for
+        Predicting Stock Market Movements. <em><em>CoRR</em></em>
+        abs/1610.09225(2016). arxiv:1610.09225<a class=
+        "link-inline force-break" href=
+        "http://arxiv.org/abs/1610.09225" target=
+        "_blank">http://arxiv.org/abs/1610.09225</a>
+        </li>
+        <li id="BibPLXBIB0020" label="[20]">Alexander Pak and
+        Patrick Paroubek. 2010. Twitter as a corpus for sentiment
+        analysis and opinion mining.. In <em>LREc</em>,
+        Vol.&nbsp;10.</li>
+        <li id="BibPLXBIB0021" label="[21]">Maria Pontiki, Dimitris
+        Galanis, Haris Papageorgiou, Ion Androutsopoulos, Suresh
+        Manandhar, Mohammed AL-Smadi, Mahmoud Al-Ayyoub, Yanyan
+        Zhao, Bing Qin, Orphée De&nbsp;Clercq, Veronique Hoste,
+        Marianna Apidianaki, Xavier Tannier, Natalia Loukachevitch,
+        Evgeniy Kotelnikov, Núria Bel, Salud&nbsp;Maria
+        Jiménez-Zafra, and Gülşen Eryiğit. 2016. SemEval-2016 task
+        5 : aspect based sentiment analysis. In <em>Proceedings of
+        the 10th International Workshop on Semantic Evaluation
+        (SemEval-2016)</em>. Association for Computational
+        Linguistics, 19–30. <a class="link-inline force-break"
+          href="http://www.aclweb.org/anthology/S16-1002" target=
+          "_blank">http://www.aclweb.org/anthology/S16-1002</a>
+        </li>
+        <li id="BibPLXBIB0022" label="[22]">Maria Pontiki, Dimitris
+        Galanis, Haris Papageorgiou, Suresh Manandhar, and Ion
+        Androutsopoulos. 2015. <em><em>SemEval-2015 Task 12: Aspect
+        Based Sentiment Analysis</em></em> . The Association for
+        Computational Linguistics, 486–495.</li>
+        <li id="BibPLXBIB0023" label="[23]">Maria Pontiki, Dimitris
+        Galanis, John Pavlopoulos, Harris Papageorgiou, Ion
+        Androutsopoulos, and Suresh Manandhar. 2014. SemEval-2014
+        Task 4: Aspect Based Sentiment Analysis. In <em>Proceedings
+        of the 8th International Workshop on Semantic Evaluation
+        (SemEval 2014)</em>. Association for Computational
+        Linguistics and Dublin City University, Dublin, Ireland,
+        27–35. <a class="link-inline force-break" href=
+        "http://www.aclweb.org/anthology/S14-2004" target="_blank">
+          http://www.aclweb.org/anthology/S14-2004</a>
+        </li>
+        <li id="BibPLXBIB0024" label="[24]">Ana-Maria Popescu and
+        Oren Etzioni. 2005. Extracting Product Features and
+        Opinions from Reviews. In <em>Proceedings of the Conference
+        on Human Language Technology and Empirical Methods in
+        Natural Language Processing</em>(<em>HLT ’05</em>).
+        Association for Computational Linguistics, Stroudsburg, PA,
+        USA, 339–346. <a class="link-inline force-break" href=
+        "https://doi.org/10.3115/1220575.1220618" target="_blank">
+          https://doi.org/10.3115/1220575.1220618</a>
+        </li>
+        <li id="BibPLXBIB0025" label="[25]">Guang Qiu, Bing Liu,
+        Jiajun Bu, and Chun Chen. 2009. Expanding Domain Sentiment
+        Lexicon Through Double Propagation. In <em>Proceedings of
+        the 21st International Jont Conference on Artifical
+        Intelligence</em>(<em>IJCAI’09</em>). Morgan Kaufmann
+        Publishers Inc., San Francisco, CA, USA, 1199–1204.
+        <a class="link-inline force-break" href=
+        "http://dl.acm.org/citation.cfm?id=1661445.1661637"
+          target="_blank">http://dl.acm.org/citation.cfm?id=1661445.1661637</a>
+        </li>
+        <li id="BibPLXBIB0026" label="[26]">Leon Rotim, Martin
+        Tutek, and Jan Snajder. 2017. TakeLab at SemEval-2017 Task
+        5: Linear aggregation of word embeddings for fine-grained
+        sentiment analysis of financial news. In <em>Proceedings of
+        the 11th International Workshop on Semantic Evaluation,
+        SemEval@ACL 2017, Vancouver, Canada, August 3-4, 2017</em>.
+        866–871. <a class="link-inline force-break" href=
+        "https://doi.org/10.18653/v1/S17-2148" target=
+        "_blank">https://doi.org/10.18653/v1/S17-2148</a>
+        </li>
+        <li id="BibPLXBIB0027" label="[27]">Angel&nbsp;Deborah S,
+        S&nbsp;Milton Rajendram, and T&nbsp;T Mirnalinee. 2017.
+        SSN_MLRG1 at SemEval-2017 Task 4: Sentiment Analysis in
+        Twitter Using Multi-Kernel Gaussian Process Classifier. In
+        <em>Proceedings of the 11th International Workshop on
+        Semantic Evaluation (SemEval-2017)</em>. Association for
+        Computational Linguistics, Vancouver, Canada, 709–712.
+        <a class="link-inline force-break" href=
+        "http://www.aclweb.org/anthology/S17-2118" target="_blank">
+          http://www.aclweb.org/anthology/S17-2118</a>
+        </li>
+        <li id="BibPLXBIB0028" label="[28]">Gerard Salton and
+        Christopher Buckley. 1988. Term-weighting Approaches in
+        Automatic Text Retrieval. <em><em>Inf. Process.
+        Manage.</em></em> 24, 5 (Aug. 1988), 513–523. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1016/0306-4573(88)90021-0" target=
+        "_blank">https://doi.org/10.1016/0306-4573(88)90021-0</a>
+        </li>
+        <li id="BibPLXBIB0029" label="[29]">Iñaki San&nbsp;Vicente,
+        Xabier Saralegi, and Rodrigo Agerri. 2015. EliXa: A Modular
+        and Flexible ABSA Platform. In <em>Proceedings of the 9th
+        International Workshop on Semantic Evaluation (SemEval
+        2015)</em>. Association for Computational Linguistics,
+        Denver, Colorado, 748–752. <a class=
+        "link-inline force-break" href=
+        "http://www.aclweb.org/anthology/S15-2127" target="_blank">
+          http://www.aclweb.org/anthology/S15-2127</a>
+        </li>
+        <li id="BibPLXBIB0030" label="[30]">Christopher Scaffidi,
+        Kevin Bierhoff, Eric Chang, Mikhael Felker, Herman Ng, and
+        Chun Jin. 2007. Red Opal: Product-feature Scoring from
+        Reviews. In <em>Proceedings of the 8th ACM Conference on
+        Electronic Commerce</em>(<em>EC ’07</em>). ACM, New York,
+        NY, USA, 182–191. <a class="link-inline force-break"
+          href="https://doi.org/10.1145/1250910.1250938" target=
+          "_blank">https://doi.org/10.1145/1250910.1250938</a>
+        </li>
+        <li id="BibPLXBIB0031" label="[31]">Jasmina Smailovic, Miha
+        Grcar, Nada Lavrac, and Martin Znidarsic. 2014.
+        Stream-based active learning for sentiment analysis in the
+        financial domain. <em><em>Information Sciences</em></em>
+        285(2014), 181 – 203. <a class="link-inline force-break"
+        href="https://doi.org/10.1016/j.ins.2014.04.034" target=
+        "_blank">https://doi.org/10.1016/j.ins.2014.04.034</a>Processing
+        and Mining Complex Data Streams.
+        </li>
+        <li id="BibPLXBIB0032" label="[32]">Pyry Takala, Pekka
+        Malo, Ankur Sinha, and Oskar Ahlgren. 2014. Gold-standard
+        for Topic-specific Sentiment Analysis of Economic Texts. In
+        <em>Proceedings of the Ninth International Conference on
+        Language Resources and Evaluation (LREC’14)</em>(26-31),
+        Nicoletta Calzolari&nbsp;(Conference Chair), Khalid
+        Choukri, Thierry Declerck, Hrafn Loftsson, Bente Maegaard,
+        Joseph Mariani, Asuncion Moreno, Jan Odijk, and Stelios
+        Piperidis (Eds.). European Language Resources Association
+        (ELRA), Reykjavik, Iceland.</li>
+        <li id="BibPLXBIB0033" label="[33]">Li Zhuang, Feng Jing,
+        and Xiao-Yan Zhu. 2006. Movie Review Mining and
+        Summarization. In <em>Proceedings of the 15th ACM
+        International Conference on Information and Knowledge
+        Management</em>(<em>CIKM ’06</em>). ACM, New York, NY, USA,
+        43–50. <a class="link-inline force-break" href=
+        "https://doi.org/10.1145/1183614.1183625" target="_blank">
+          https://doi.org/10.1145/1183614.1183625</a>
+        </li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "https://twitter.com">https://twitter.com</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "https://stocktwits.com">https://stocktwits.com</a></p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "https://sites.google.com/view/fiqa">https://sites.google.com/view/fiqa</a></p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a><a class=
+    "link-inline force-break" href=
+    "http://alt.qcri.org/semeval2017/task5/">http://alt.qcri.org/semeval2017/task5/</a></p>
+    <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a><a class=
+    "link-inline force-break" href=
+    "http://alt.qcri.org/semeval2014/task4/">http://alt.qcri.org/semeval2014/task4/</a></p>
+    <p id="fn6"><a href="#foot-fn6"><sup>6</sup></a><a class=
+    "link-inline force-break" href=
+    "http://alt.qcri.org/semeval2015/task12/">http://alt.qcri.org/semeval2015/task12/</a></p>
+    <p id="fn7"><a href="#foot-fn7"><sup>7</sup></a><a class=
+    "link-inline force-break" href=
+    "http://alt.qcri.org/semeval2016/task5/">http://alt.qcri.org/semeval2016/task5/</a></p>
+    <p id="fn8"><a href="#foot-fn8"><sup>8</sup></a><a class=
+    "link-inline force-break" href=
+    "https://stocktwits.com/">https://stocktwits.com/</a></p>
+    <p id="fn9"><a href="#foot-fn9"><sup>9</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.reddit.com/">https://www.reddit.com/</a></p>
+    <p id="fn10"><a href="#foot-fn10"><sup>10</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.wikinews.org/">https://www.wikinews.org/</a></p>
+    <p id="fn11"><a href="#foot-fn11"><sup>11</sup></a><a class=
+    "link-inline force-break" href=
+    "http://corpus.tools/wiki/Unitok">http://corpus.tools/wiki/Unitok</a></p>
+    <p id="fn12"><a href="#foot-fn12"><sup>12</sup></a><a class=
+    "link-inline force-break" href=
+    "https://code.google.com/archive/p/word2vec/">https://code.google.com/archive/p/word2vec/</a></p>
+    <p id="fn13"><a href="#foot-fn13"><sup>13</sup></a><a class=
+    "link-inline force-break" href=
+    "http://scikit-learn.org/stable/index.html">http://scikit-learn.org/stable/index.html</a></p>
+    <p id="fn14"><a href="#foot-fn14"><sup>14</sup></a><a class=
+    "link-inline force-break" href=
+    "http://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVR.html">http://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVR.html</a></p>
+    <p id="fn15"><a href="#foot-fn15"><sup>15</sup></a><a class=
+    "link-inline force-break" href=
+    "http://scikit-learn.org/stable/modules/generated/sklearn.multiclass.OneVsRestClassifier.html">http://scikit-learn.org/stable/modules/generated/sklearn.multiclass.OneVsRestClassifier.html</a></p>
+    <p id="fn16"><a href="#foot-fn16"><sup>16</sup></a>Until the
+    deadline for the submission of this paper, the organizers did
+    not divulge the gold classes and values for the classification
+    task of aspects and for the sentiment analysis.</p>
+    <p id="fn17"><a href="#foot-fn17"><sup>17</sup></a>The official
+    results were not publicly released until the deadline for the
+    submission of this paper</p>
+    <div class="bibStrip">
+      <p>Permission to make digital or hard copies of part or all
+      of this work for personal or classroom use is granted without
+      fee provided that copies are not made or distributed for
+      profit or commercial advantage and that copies bear this
+      notice and the full citation on the first page. Copyrights
+      for third-party components of this work must be honored. For
+      all other uses, contact the owner/author(s).</p>
+      <p><em>WWW '18 Companion, April 23–27, 2018, Lyon,
+      France</em></p>
+      <p>© 2018; Copyright held by the owner/author(s). ACM ISBN
+      978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191828">https://doi.org/10.1145/3184558.3191828</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

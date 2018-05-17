@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Dynamic Local Models for Online Recommendation</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Dynamic Local Models for Online
+          Recommendation</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Marie</span> <span class=
+          "surName">Al-Ghossein</span> LTCI, Télécom ParisTech,
+          Université Paris-Saclay, AccorHotels, Paris, France,
+          <a href=
+          "mailto:malghossein@enst.fr">malghossein@enst.fr</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Talel</span> <span class=
+          "surName">Abdessalem</span> LTCI, Télécom ParisTech,
+          Université Paris-Saclay, UMI CNRS IPAL NUS, Paris,
+          France, <a href=
+          "mailto:talel.abdessalem@enst.fr">talel.abdessalem@enst.fr</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Anthony</span> <span class=
+          "surName">Barré</span> AccorHotels, Paris, France,
+          <a href=
+          "mailto:anthony.barre@live.fr">anthony.barre@live.fr</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191586"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191586</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>With the explosion of the volume of
+        user-generated data, designing online recommender systems
+        that learn from data streams has become essential. These
+        systems rely on incremental learning that continuously
+        update models as new observations arrive and they should be
+        able to adapt to drifts in real-time. User preferences
+        evolve over time and tracking their evolution is not an
+        easy task. In addition to the low number of observations
+        available per user, the preferences change at different
+        moments and in different ways for each individual. In this
+        paper, we propose a novel approach based on local models to
+        address this problem. Local models are known for their
+        ability to capture diverse preferences among user subsets.
+        Our approach automatically detects the drift of preferences
+        that leads a user to adopt a behavior closer to the users
+        of another subset, and adjusts the models accordingly. Our
+        experiments on real world datasets show promising results
+        and prove the effectiveness of using local models to adapt
+        to changes in user preferences.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Marie Al-Ghossein, Talel Abdessalem, and Anthony Barré.
+          2018. Dynamic Local Models for Online Recommendation. In
+          <em>WWW '18 Companion: The 2018 Web Conference
+          Companion,</em> <em>April 23–27, 2018,</em> <em>Lyon,
+          France. ACM, New York, NY, USA</em> 5 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3191586" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191586</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>In the last two decades, top-N recommender systems (RS)
+      have been gaining a lot of attention and have been applied in
+      many domains. Their task is to provide users with a
+      personalized ranked list of items to help them make good
+      decisions and increase their satisfaction.</p>
+      <p>In order to improve the quality of recommendation,
+      contextual information has been exploited in previous
+      work&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0001">1</a>].
+      Time information is in particular very relevant for
+      personalization. For example, in the application of hotel
+      recommendation, user preferences tend to change over time,
+      especially when their standards evolve. They typically move
+      from booking hotels in one segment, e.g., economy segment, to
+      booking hotels in a higher one, e.g., luxury segment.
+      Destination popularity also varies with trends, seasons, and
+      the occurrence of impactful events. Time-aware
+      RS&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0002">2</a>]
+      respect the chronological order of observations and try to
+      capture the temporal dynamics existing in user-generated
+      data.</p>
+      <p>Most RS and time-aware RS proposed in the literature build
+      first a model from a large static dataset, and then rebuild
+      it periodically as new chunks of data arrive and are added to
+      the original dataset. Training a model on a continuously
+      growing dataset is computationally expensive and the
+      frequency of model updates usually depends on the model's
+      complexity and scalability. Therefore, RS can not take into
+      account the user feedback generated after a model update
+      before the next one, leading to a lower quality of
+      recommendation and to the inability to adapt to quick
+      changes.</p>
+      <p>One way to address this issue is to approach the
+      recommendation problem as a data stream problem and design
+      online RS that learn from continuous data streams and adapt
+      to changes in real-time. These systems are based on
+      incremental learning allowing continuous update and
+      retraining of models using recent data&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0016">16</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0021">21</a>]. One challenge with
+      learning from data streams is to detect and adapt to concept
+      drifts. Instance selection&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0017">17</a>] and instance
+      weighting&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>] strategies have been explored in this
+      direction. However, these methods require fixing a set of
+      parameters (e.g., size of a sliding window, decaying factor)
+      and anticipate that the RS should forget old observations and
+      learn from new ones. They assume that we have a prior
+      knowledge of the way the user behavior changes and that the
+      preferences of all users drift at the same rate.</p>
+      <p>In this paper, we present a novel incremental approach
+      relying on item-based local models to learn user preferences
+      and track their evolution in online RS. Our approach
+      maintains one global model for all users and several local
+      models built separately for each subset of users. Local
+      models have been exploited for batch RS and are able to
+      capture diverse and opposing preferences&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0003">3</a>]. We propose to
+      continuously evaluate over time user assignments to subsets.
+      Users are moved from one subset to a more adapted one when a
+      change in preferences is detected, and user profiles are
+      updated accordingly. Experiments on three real datasets show
+      promising results.</p>
+      <p>The rest of the paper is organized as follows. In
+      Section&nbsp;<a class="sec" href="#sec-5">2</a>, we discuss
+      related work on online RS. In Section&nbsp;<a class="sec"
+      href="#sec-6">3</a>, we present our approach performing
+      online recommendation and adapting to changes in user
+      behaviors. Experiments and results are presented and
+      discussed in Section&nbsp;<a class="sec" href=
+      "#sec-10">4</a>. Finally, Section&nbsp;<a class="sec" href=
+      "#sec-11">5</a> concludes the paper.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          work</h2>
+        </div>
+      </header>
+      <p><strong>Time-aware RS.</strong> Time-aware RS take into
+      account the time information in order to better represent the
+      dynamics of users and items. One way to approach time in RS
+      is to use it as context&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>] and model it as a number of discrete
+      categorical variables, e.g., time of day, day of week,
+      seasons. Another way is to consider it as a continuous
+      variable&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0010">10</a>]. Common approaches consist in
+      weighting observations according to their
+      recency&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>] or addressing the recommendation
+      problem using time series&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0012">12</a>].</p>
+      <p>Most research in time-aware RS assume that models should
+      be retrained frequently in batch to stay up-to-date. In real
+      world RS, this assumption leads to scalability issues as the
+      data generated by users keeps on growing, and to a loss of
+      accuracy as the RS can not instantly adjust to changes.</p>
+      <p><strong>Online RS.</strong> Recent work&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0005">5</a>] has
+      proposed to address the recommendation problem as a data
+      stream problem, which is a more realistic setting. Moreover,
+      Frigó et al.&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>] show that simple algorithms updated
+      online can perform better than more complex algorithms
+      updated periodically. Elements of a data stream are
+      considered to arrive in real-time and to be processed
+      sequentially in only a few passes (typically one) using
+      limited memory and processing time per element. Online RS
+      rely on incremental approaches to build models, e.g.,
+      incremental neighborhood-based methods&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0016">16</a>] and incremental matrix
+      factorization&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0021">21</a>].</p>
+      <p>Dealing with concept drift is one of the core problems in
+      data stream mining&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>]. Online RS have to be able to track
+      multiple concepts changing in different ways at different
+      moments, including the preferences of each user. Liu and
+      Aberer&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0013">13</a>]
+      propose to model users’ short-term and long-term preferences
+      separately using an offline and an online component. Nasraoui
+      et al.&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0017">17</a>]
+      develop a user-based neighborhood algorithm using a sliding
+      window that contains a fixed number of observations. Siddiqui
+      et al.&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0020">20</a>]
+      also use a sliding window and perform rating prediction by
+      clustering user profiles. Forgetting outdated information is
+      another common approach used to deal with evolving
+      data&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>].</p>
+      <p>Previous work makes assumptions concerning the drift rate
+      of user preferences or the relevance of old observations, and
+      does not take into account the fact that these changes do not
+      occur uniformly over all users. We propose a novel approach
+      to perform online RS that adapts to new observations when
+      change is detected. Our approach is based on local
+      models.</p>
+      <p><strong>Local models for recommendation.</strong> O'Connor
+      and Herlocker&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0019">19</a>] propose to estimate multiple local
+      recommendation models in order to perform rating prediction.
+      Users are clustered based on the rating matrix and one local
+      model is built for each cluster. Lee et al.&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0011">11</a>] consider
+      that the rating matrix is locally low-rank. Neighborhoods are
+      identified using a distance measure between pairs of users
+      and items and a local low-rank model is estimated for each
+      neighborhood. Christakopoulou and Karypis&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0003">3</a>] propose a
+      method using SLIM (Sparse LInear Methods&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0018">18</a>]) to perform top-N
+      recommendation. They automatically identify appropriate user
+      subsets and combine global and local SLIM models to improve
+      the recommendation performance.</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Proposed
+          approach</h2>
+        </div>
+      </header>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span>
+            Motivation</h3>
+          </div>
+        </header>
+        <p>Our goal is to develop an online RS that detects change
+        in user preferences and adapts to it. Our approach extends
+        item-based methods since it has been shown that they
+        outperform user-based methods&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0004">4</a>]. A single item-based
+        model may not be enough to capture the preferences of a set
+        of users. In particular, a single model can not detect
+        diverse or opposing preferences existing in user
+        subsets&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0003">3</a>]. Local models built separately for
+        each subset of users try, for their part, to represent
+        fine-grained patterns.</p>
+        <p>We focus on detecting the change of preferences that
+        would push a user to adopt a behavior that is different
+        from the one of those belonging to the same subset and
+        closer to the one of those assigned to another subset. In
+        the hotel recommendation problem, this could be for example
+        the consequence of a change in the user social status. The
+        drift is therefore handled by assigning the user to a more
+        adapted subset and updating the models accordingly.</p>
+        <p>Our approach is designed to extend any incremental
+        item-based method and we rely in this work on the item
+        K-Nearest Neighbors (KNN) method.</p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Incremental
+            item K-Nearest Neighbors</h3>
+          </div>
+        </header>
+        <p><strong>Notation.</strong> We denote by <em>U</em> the
+        set of users containing <em>n<sub>U</sub></em> users and by
+        <em>I</em> the set of items containing
+        <em>n<sub>I</sub></em> items. The matrix <em>R</em> of size
+        <em>n<sub>U</sub></em> × <em>n<sub>I</sub></em> is used to
+        represent the user-item implicit feedback. If user
+        <em>u</em> provided feedback for item <em>i</em>, the entry
+        <em>r<sub>ui</sub></em> of R is 1, otherwise it is 0. The
+        set of users that have rated the item <em>i</em> is denoted
+        by <em>U<sub>i</sub></em> . To generate recommendations for
+        a target user <em>u</em>, we compute the recommendation
+        scores (ratings) of every item <em>i</em> unrated by
+        <em>u</em>, denoted by <span class=
+        "inline-equation"><span class=
+        "tex">$\widetilde{r_{ui}}$</span></span> , and select the
+        top-<em>N</em> items for recommendation.</p>
+        <p>Item-based KNN methods explore similarities between
+        items to provide recommendations. The similarity between
+        two items <em>i</em> and <em>j</em> is computed using the
+        cosine similarity between <em>R</em> <sub>*<em>i</em></sub>
+        and <em>R</em> <sub>*<em>j</em></sub> , the columns
+        <em>i</em> and <em>j</em> of the matrix <em>R</em>, and is
+        given by:</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} sim(i, j) =
+            \frac{R_{*i} . R_{*j}}{\left\Vert R_{*i} \right\Vert
+            \times \left\Vert R_{*j} \right\Vert } =
+            \frac{\left|U_i \cap U_j \right|}{\sqrt {\left|U_i
+            \right|} \times \sqrt {\left|U_j \right|}}
+            \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>We denote by <em>S</em> the item similarity matrix such
+        that <em>S<sub>ij</sub></em> = <em>sim</em>(<em>i</em>,
+        <em>j</em>). Recommendations to a user <em>u</em> are
+        computed by aggregating and ranking the <em>K</em>-nearest
+        neighbors of the items already rated by <em>u</em>. Miranda
+        and Jorge&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0016">16</a>] propose an incremental version of
+        this method.</p>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span> Dynamic
+            local models</h3>
+          </div>
+        </header>
+        <p>In this subsection, we detail our approach also shown in
+        Algorithm 1. We maintain <em>m</em> local item-based models
+        and one global item-based model. Each model is represented
+        by an item-item similarity matrix <em>S</em> <sub>*</sub>.
+        We learn <em>m</em> local similarity matrices denoted by
+        <em>S<sub>l</sub></em> , where <em>l</em> is the index of
+        the local model, and one global similarity matrix
+        <em>S<sub>g</sub></em> . At timestamp <em>t</em>, every
+        user <em>u</em> belongs to one subset <em>l</em> where
+        <em>l</em> ∈ {1, ..., <em>m</em>} and the rating
+        <span class="inline-equation"><span class=
+        "tex">$\widetilde{r_{ui}}$</span></span> is given by:</p>
+        <div class="table-responsive" id="eq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            \widetilde{r_{ui}} = \alpha _g . (\widetilde{r_{ui}})_g
+            + (1 - \alpha _g) . (\widetilde{r_{ui}})_l
+            \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>
+        <p></p>
+        <p><span class="inline-equation"><span class=
+        "tex">$(\widetilde{r_{ui}})_g$</span></span> is computed
+        using the global model, <span class=
+        "inline-equation"><span class=
+        "tex">$(\widetilde{r_{ui}})_l$</span></span> is computed
+        using the local model <em>l</em>, and
+        <em>α<sub>g</sub></em> is the weight controlling the
+        contribution of the global and local models.</p>
+        <p><strong>Updating the models.</strong> Online RS assume
+        that observations, i.e., user-item pairs (<em>u</em>,
+        <em>i</em>), are continuously generated and handled. Each
+        observation received is used to update the models, i.e.,
+        the similarity matrices, and to update the assignments of
+        users to subsets. The idea is to detect that <em>u</em> is
+        adopting a behavior that is no longer similar to the users
+        of the subset <em>l</em>. We assume that this is the case
+        when we find that there is a local model that performs
+        better than <em>l</em> for <em>u</em>. The change of user
+        preferences also requires forgetting old information that
+        is no longer relevant to the current behavior of
+        <em>u</em>. We compare the performance of <em>l</em> using
+        the full profile of <em>u</em>, i.e., <em>R</em>
+        <sub><em>u</em>*</sub>, against the performances of the
+        other local models using only recent observations of
+        <em>R</em> <sub><em>u</em>*</sub>.</p>
+        <p><strong>Comparing the performances of local
+        models.</strong> We define the metric measuring the error
+        of a model <em>l</em> when tested for the pair (<em>u</em>,
+        <em>i</em>) as follows:</p>
+        <div class="table-responsive" id="Xeq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} err(l, R_{u*})
+            = 1 - \frac{1}{rank(i)} \end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>where <em>rank</em>(.) is a function returning the
+        ranking of the item <em>i</em> in the item list sorted by
+        decreasing order of (<em>r</em> <sub><em>u</em>*</sub>)
+        <sub><em>l</em></sub> . A better recommendation model
+        should rank the relevant item higher in the list.</p>
+        <p><strong>Forgetting irrelevant observations.</strong>
+        When a change in the user behavior is detected, the
+        assignment of <em>u</em> to user subsets is modified and
+        his profile, i.e., the row <em>R</em>
+        <sub><em>u</em>*</sub> of the matrix <em>R</em>, is
+        updated. The old observations corresponding to the previous
+        adopted behavior have to be forgotten. To this end, we rely
+        on a forgetting strategy&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0014">14</a>] where we keep in <em>R</em>
+        <sub><em>u</em>*</sub> the last <em>F</em> items observed
+        for <em>u</em> and remove the older observations. We denote
+        by <span class="inline-equation"><span class=
+        "tex">$R^{\prime }_{u*}$</span></span> the result of
+        applying the forgetting strategy to <em>R</em>
+        <sub><em>u</em>*</sub>.</p>
+        <p><strong>Initializing item-based models.</strong>
+        Real-world RS usually have access to part of the data
+        before running in an online fashion. We use part of the
+        available data to perform an initial batch
+        training&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0022">22</a>]. Users are first separated into
+        clusters either randomly or using a clustering algorithm.
+        The local models and the global model are learned in batch.
+        We then fix the learned models, iterate over users, and
+        verify that the subset they belong to generates the
+        smallest error on the observed user-item pairs. If this is
+        the case, the user remains in the initial cluster.
+        Otherwise, he is moved to the cluster with the smallest
+        error.</p>
+        <p><strong>Running time.</strong> We note that all the
+        models can be trained in parallel and used for
+        recommendation independently. Our approach introduces a
+        very low overhead to the item-based method extended.</p>
+        <figure id="fig1">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191586/images/www18companion-325-fig1.jpg"
+          class="img-responsive" alt="" longdesc="" />
+        </figure>
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span>
+          Experiments</h2>
+        </div>
+      </header>
+      <p><strong>Evaluation protocol.</strong> Holdout methods,
+      traditionally used in the evaluation process of RS, are not
+      adapted for the evaluation of online RS&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0022">22</a>]. By randomly sampling
+      data for training and testing, these methods ignore the
+      temporal dimension and do not take into account the natural
+      ordering of observations&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>].</p>
+      <p>Since our method requires a short offline initialization
+      phase, we adopt the evaluation protocol proposed
+      in&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0014">14</a>].
+      The dataset is sorted chronologically and then split in three
+      subsets, with the proportions 30%-20%-50%:</p>
+      <ol class="list-no-style">
+        <li id="list1" label="(1)"><strong>Batch Train</strong>
+        subset, used as a training set for initializing the models
+        in batch.<br /></li>
+        <li id="list2" label="(2)"><strong>Batch Test - Stream
+        Train</strong> subset, used as a test set for the
+        initialization set, and also used for incremental online
+        learning to ensure the transition between (1) and
+        (3).<br /></li>
+        <li id="list3" label="(3)"><strong>Stream Test and
+        Train</strong> subset, used for prequential
+        evaluation.<br /></li>
+      </ol>
+      <p>The prequential evaluation&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0008">8</a>] is a
+      <em>test-then-learn</em> procedure performed while iterating
+      over the dataset. For each observation, i.e., pair (user
+      <em>u</em>, item <em>i</em>), we use the current model to
+      perform recommendation for <em>u</em>, measure the
+      performance of the model given <em>i</em>, and then use the
+      observation (<em>u</em>, <em>i</em>) to update the model.</p>
+      <p><strong>Evaluation measures.</strong> We use two measures
+      for evaluating the quality of recommendation, recall@N and
+      DCG@N, as defined in&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>]. The metrics are computed
+      individually and averaged for all observations.</p>
+      <p><strong>Datasets.</strong> We evaluated the performance of
+      our method on three datasets which characteristics are shown
+      in Table&nbsp;<a class="tbl" href="#tab1">1</a>. The
+      <em>AH</em> dataset is extracted from the hotel
+      industry&nbsp;<a class="fn" href="#fn1" id=
+      "foot-fn1"><sup>1</sup></a> and gathers actual bookings of
+      European users in the hotels of AccorHotels during a period
+      of 3 consecutive years. The <em>ml-1M</em> and
+      <em>ml-10M</em> datasets correspond respectively to the
+      MovieLens 1M and MovieLens 10M datasets&nbsp;<a class="fn"
+      href="#fn2" id="foot-fn2"><sup>2</sup></a> and represent
+      movie ratings. In order to use the data as implicit feedback
+      (positive-only data), we keep in the dataset the pairs for
+      which the rating is in the top 20% of the rating scale of the
+      dataset, i.e., rating equal to 5&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0021">21</a>].</p>
+      <p><strong>Parameters.</strong> We performed a grid search
+      over the parameter space of the methods in order to find the
+      parameters that give the best performance. Due to space
+      constraints, we only report the performance corresponding to
+      the parameters that lead to the best results. We fix the
+      number of neighbors <em>K</em> to 100 for all the
+      methods.</p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">Description of the datasets.</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:center;">
+              <strong>Dataset</strong></td>
+              <td style="text-align:center;">
+              <strong>#Users</strong></td>
+              <td style="text-align:center;">
+              <strong>#Items</strong></td>
+              <td style="text-align:center;">
+              <strong>#Transactions</strong></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>AH</em></td>
+              <td style="text-align:center;">98,130</td>
+              <td style="text-align:center;">3,332</td>
+              <td style="text-align:center;">704,722</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>ml-1M</em></td>
+              <td style="text-align:center;">6,012</td>
+              <td style="text-align:center;">3,135</td>
+              <td style="text-align:center;">157,535</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><em>ml-10M</em></td>
+              <td style="text-align:center;">67,297</td>
+              <td style="text-align:center;">8,658</td>
+              <td style="text-align:center;">1,223,892</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-responsive" id="tab2">
+        <div class="table-caption">
+          <span class="table-number">Table 2:</span> <span class=
+          "table-title">Metrics measured for each method per
+          dataset.</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td colspan="5" style="text-align:center;">
+                <strong>AH</strong>
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">
+              <strong>Method</strong></td>
+              <td style="text-align:center;">
+              <strong>recall@5</strong></td>
+              <td style="text-align:center;">
+              <strong>DCG@5</strong></td>
+              <td style="text-align:center;">
+              <strong>recall@10</strong></td>
+              <td style="text-align:center;">
+              <strong>DCG@10</strong></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">KNNi</td>
+              <td style="text-align:center;">0.1621</td>
+              <td style="text-align:center;">0.1033</td>
+              <td style="text-align:center;">0.2819</td>
+              <td style="text-align:center;">0.1415</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">KNNi_w</td>
+              <td style="text-align:center;">0.1683</td>
+              <td style="text-align:center;">0.1042</td>
+              <td style="text-align:center;">0.2831</td>
+              <td style="text-align:center;">0.1421</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">DOLORES</td>
+              <td style="text-align:center;">
+              <strong>0.1852</strong></td>
+              <td style="text-align:center;">
+              <strong>0.1179</strong></td>
+              <td style="text-align:center;">
+              <strong>0.3045</strong></td>
+              <td style="text-align:center;">
+              <strong>0.1561</strong></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">DOLORES-G</td>
+              <td style="text-align:center;">0.1816</td>
+              <td style="text-align:center;">0.1165</td>
+              <td style="text-align:center;">0.3012</td>
+              <td style="text-align:center;">0.1548</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">LORES</td>
+              <td style="text-align:center;">0.1694</td>
+              <td style="text-align:center;">0.1075</td>
+              <td style="text-align:center;">0.2902</td>
+              <td style="text-align:center;">0.1461</td>
+            </tr>
+            <tr>
+              <td colspan="5" style="text-align:center;">
+                <strong>ml-1M</strong>
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">
+              <strong>Method</strong></td>
+              <td style="text-align:center;">
+              <strong>recall@5</strong></td>
+              <td style="text-align:center;">
+              <strong>DCG@5</strong></td>
+              <td style="text-align:center;">
+              <strong>recall@10</strong></td>
+              <td style="text-align:center;">
+              <strong>DCG@10</strong></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">KNNi</td>
+              <td style="text-align:center;">0.0407</td>
+              <td style="text-align:center;">0.0253</td>
+              <td style="text-align:center;">0.0716</td>
+              <td style="text-align:center;">0.0352</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">KNNi_w</td>
+              <td style="text-align:center;">0.0409</td>
+              <td style="text-align:center;">0.0258</td>
+              <td style="text-align:center;">0.0717</td>
+              <td style="text-align:center;">0.0354</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">DOLORES</td>
+              <td style="text-align:center;">
+              <strong>0.0521</strong></td>
+              <td style="text-align:center;">
+              <strong>0.0298</strong></td>
+              <td style="text-align:center;">
+              <strong>0.0798</strong></td>
+              <td style="text-align:center;">
+              <strong>0.0386</strong></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">DOLORES-G</td>
+              <td style="text-align:center;">0.0505</td>
+              <td style="text-align:center;">0.0289</td>
+              <td style="text-align:center;">0.0788</td>
+              <td style="text-align:center;">0.0381</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">LORES</td>
+              <td style="text-align:center;">0.0412</td>
+              <td style="text-align:center;">0.0271</td>
+              <td style="text-align:center;">0.0729</td>
+              <td style="text-align:center;">0.0364</td>
+            </tr>
+            <tr>
+              <td colspan="5" style="text-align:center;">
+                <strong>ml-10M</strong>
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">
+              <strong>Method</strong></td>
+              <td style="text-align:center;">
+              <strong>recall@5</strong></td>
+              <td style="text-align:center;">
+              <strong>DCG@5</strong></td>
+              <td style="text-align:center;">
+              <strong>recall@10</strong></td>
+              <td style="text-align:center;">
+              <strong>DCG@10</strong></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">KNNi</td>
+              <td style="text-align:center;">0.0591</td>
+              <td style="text-align:center;">0.0389</td>
+              <td style="text-align:center;">0.0943</td>
+              <td style="text-align:center;">0.0502</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">KNNi_w</td>
+              <td style="text-align:center;">0.0594</td>
+              <td style="text-align:center;">0.0390</td>
+              <td style="text-align:center;">0.0944</td>
+              <td style="text-align:center;">0.0502</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">DOLORES</td>
+              <td style="text-align:center;">
+              <strong>0.0602</strong></td>
+              <td style="text-align:center;">
+              <strong>0.0394</strong></td>
+              <td style="text-align:center;">
+              <strong>0.0953</strong></td>
+              <td style="text-align:center;">
+              <strong>0.0511</strong></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">DOLORES-G</td>
+              <td style="text-align:center;">0.0598</td>
+              <td style="text-align:center;">0.0392</td>
+              <td style="text-align:center;">0.0949</td>
+              <td style="text-align:center;">0.0508</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">LORES</td>
+              <td style="text-align:center;">0.0596</td>
+              <td style="text-align:center;">0.0390</td>
+              <td style="text-align:center;">0.0945</td>
+              <td style="text-align:center;">0.0505</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Methods compared.</strong> In order to demonstrate
+      our proposed method, we evaluate the performance of several
+      recommendation models including variants of the proposed
+      method:</p>
+      <ul class="list-no-style">
+        <li id="list4" label="•"><strong>KNNi</strong> denotes the
+        incremental item-based KNN method.<br /></li>
+        <li id="list5" label="•"><strong>KNNi_w</strong> denotes
+        the incremental item-based KNN method that uses a sliding
+        window per user and retains only the last <em>F</em> items
+        rated by each user. We set <em>F</em>=20.<br /></li>
+        <li id="list6" label="•"><strong>DOLORES</strong> stands
+        for Dynamic Local Online RS and denotes the method we
+        propose in this paper. We set <em>m</em>=15, <em>F</em>=20,
+        <em>α<sub>g</sub></em> =0.5 for <em>AH</em>, and
+        <em>α<sub>g</sub></em> =0.7 for <em>ml-1M</em> and
+        <em>ml-10M</em>.<br /></li>
+        <li id="list7" label="•">
+          <strong>DOLORES-G</strong> stands for Dynamic Local
+          Online RS without a Global model. This is equivalent to
+          setting the parameter <em>α<sub>g</sub></em> to 0 in
+          equation&nbsp;<a class="eqn" href="#eq1">2</a> and only
+          using local models to perform recommendation. We set
+          <em>m</em>=15 and <em>F</em>=20.<br />
+        </li>
+        <li id="list8" label="•"><strong>LORES</strong> stands for
+        Local Online RS. In LORES, the user assignment to subsets
+        is fixed after the initial optimal assignment of each user.
+        We set <em>m</em>=15, <em>F</em>=20, <em>α<sub>g</sub></em>
+        =0.5 for <em>AH</em>, and <em>α<sub>g</sub></em> =0.7 for
+        <em>ml-1M</em> and <em>ml-10M</em>.<br /></li>
+      </ul>
+      <p><strong>Performance of the methods.</strong>The results
+      are shown in Table&nbsp;<a class="tbl" href=
+      "#tab2">2</a>.</p>
+      <ul class="list-no-style">
+        <li id="list9" label="•">By comparing KNNi with DOLORES and
+        its variants, we show the importance of building local
+        models and considering the change in user
+        preferences.<br /></li>
+        <li id="list10" label="•">By comparing KNNi_w with DOLORES,
+        we highlight the advantage of using our approach instead of
+        sliding windows.<br /></li>
+        <li id="list11" label="•">By comparing DOLORES-G with
+        DOLORES, we show the benefit of using a global model to
+        capture global patterns, instead of only using local
+        models.<br /></li>
+        <li id="list12" label="•">By comparing LORES with DOLORES,
+        we demonstrate the benefit of reevaluating user assignments
+        to subsets as new observations arrive. This also shows that
+        user preferences are shifting over time. Results prove that
+        taking into account this change of preferences has a high
+        impact on the quality of recommendation. We note for
+        example that for the <em>AH</em> dataset, user assignments
+        to subsets are modified for 20% of the received
+        observations.<br /></li>
+      </ul>
+      <p>DOLORES outperforms the other methods for the studied
+      datasets and we can see the relative benefit of each of its
+      components.</p>
+    </section>
+    <section id="sec-11">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>Tracking the changes of user preferences in online RS
+      raises unique challenges. On one hand, RS have to be able to
+      process data streams and adapt to drifts in real-time. On the
+      other hand, these drifts happen differently for each
+      individual and we do not have any information about how they
+      occur. We propose a novel approach based on local models to
+      address the problem. Our approach automatically detects
+      change of preferences by continuously reevaluating the
+      assignment of users to subsets and updating the models. In
+      future work, we will be extending this approach to other
+      recommendation models including latent factor models. We will
+      also be investigating methods to distinguish between
+      different types of drifts in preferences in order to enhance
+      the quality of recommendation.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Gediminas Adomavicius
+        and Alexander Tuzhilin. 2015. Context-aware recommender
+        systems. In <em><em>Recommender systems handbook</em></em>
+        . Springer, 191–226.</li>
+        <li id="BibPLXBIB0002" label="[2]">Pedro&nbsp;G Campos,
+        Fernando Díez, and Iván Cantador. 2014. Time-aware
+        recommender systems: a comprehensive survey and analysis of
+        existing evaluation protocols. <em><em>User Modeling and
+        User-Adapted Interaction</em></em> 24, 1-2 (2014),
+        67–119.</li>
+        <li id="BibPLXBIB0003" label="[3]">Evangelia
+        Christakopoulou and George Karypis. 2016. Local item-item
+        models for top-n recommendation. In <em><em>Proceedings of
+        the 10th ACM Conference on Recommender Systems</em></em> .
+        ACM, 67–74.</li>
+        <li id="BibPLXBIB0004" label="[4]">Mukund Deshpande and
+        George Karypis. 2004. Item-based top-n recommendation
+        algorithms. <em><em>ACM Transactions on Information Systems
+        (TOIS)</em></em> 22, 1 (2004), 143–177.</li>
+        <li id="BibPLXBIB0005" label="[5]">M.&nbsp;Benjamin Dias,
+        Dominique Locher, Ming Li, Wael El-Deredy, and
+        Paulo&nbsp;J.G. Lisboa. n. d.. The Value of Personalised
+        Recommender Systems to e-Business: A Case Study. In
+        <em><em>Proceedings of the 2008 ACM Conference on
+        Recommender Systems</em></em> (<em>RecSys ’08</em>).</li>
+        <li id="BibPLXBIB0006" label="[6]">Yi Ding and Xue Li.
+        2005. Time weight collaborative filtering. In
+        <em><em>Proceedings of the 14th ACM international
+        conference on Information and knowledge
+        management</em></em> . ACM, 485–492.</li>
+        <li id="BibPLXBIB0007" label="[7]">Erzsébet Frigó, Róbert
+        Pálovics, Domokos Kelen, Levente Kocsis, and András&nbsp;A.
+        Benczúr. 2017. Online Ranking Prediction in Non-stationary
+        Environments. In <em><em>Proceedings of the 1st Workshop on
+        Temporal Reasoning in Recommender Systems co-located with
+        11th International Conference on Recommender Systems
+        (RecSys 2017), Como, Italy, August 27-31, 2017.</em></em>
+        28–34.</li>
+        <li id="BibPLXBIB0008" label="[8]">João Gama, Raquel
+        Sebastião, and Pedro&nbsp;Pereira Rodrigues. 2009. Issues
+        in evaluation of stream learning algorithms. In
+        <em><em>Proceedings of the 15th ACM SIGKDD international
+        conference on Knowledge discovery and data mining</em></em>
+        . ACM, 329–338.</li>
+        <li id="BibPLXBIB0009" label="[9]">João Gama, Indrė
+        Žliobaitė, Albert Bifet, Mykola Pechenizkiy, and Abdelhamid
+        Bouchachia. 2014. A survey on concept drift adaptation.
+        <em><em>ACM Computing Surveys (CSUR)</em></em> 46, 4
+        (2014), 44.</li>
+        <li id="BibPLXBIB0010" label="[10]">Yehuda Koren. 2010.
+        Collaborative filtering with temporal dynamics.
+        <em><em>Commun. ACM</em></em> 53, 4 (2010), 89–97.</li>
+        <li id="BibPLXBIB0011" label="[11]">Joonseok Lee, Samy
+        Bengio, Seungyeon Kim, Guy Lebanon, and Yoram Singer. 2014.
+        Local collaborative ranking. In <em><em>Proceedings of the
+        23rd international conference on World wide web</em></em> .
+        ACM, 85–96.</li>
+        <li id="BibPLXBIB0012" label="[12]">Xin Liu. 2015. Modeling
+        Users’ Dynamic Preference for Personalized Recommendation.
+        In <em><em>Twenty-Fourth International Joint Conference on
+        Artificial Intelligence</em></em> .</li>
+        <li id="BibPLXBIB0013" label="[13]">Xin Liu and Karl
+        Aberer. 2014. Towards a dynamic top-n recommendation
+        framework. In <em><em>Proceedings of the 8th ACM Conference
+        on Recommender systems</em></em> . ACM, 217–224.</li>
+        <li id="BibPLXBIB0014" label="[14]">Pawel Matuszyk and Myra
+        Spiliopoulou. 2014. Selective forgetting for incremental
+        matrix factorization in recommender systems. In
+        <em><em>International Conference on Discovery
+        Science</em></em> . Springer, 204–215.</li>
+        <li id="BibPLXBIB0015" label="[15]">Pawel Matuszyk, João
+        Vinagre, Myra Spiliopoulou, Alípio&nbsp;Mário Jorge, and
+        João Gama. 2015. Forgetting methods for incremental matrix
+        factorization in recommender systems. In
+        <em><em>Proceedings of the 30th Annual ACM Symposium on
+        Applied Computing</em></em> . ACM, 947–953.</li>
+        <li id="BibPLXBIB0016" label="[16]">Catarina Miranda and
+        Alípio&nbsp;Mário Jorge. 2009. Item-based and user-based
+        incremental collaborative filtering for web
+        recommendations. In <em><em>Portuguese Conference on
+        Artificial Intelligence</em></em> . Springer, 673–684.</li>
+        <li id="BibPLXBIB0017" label="[17]">Olfa Nasraoui, Jeff
+        Cerwinske, Carlos Rojas, and Fabio Gonzalez. 2007.
+        Performance of recommendation systems in dynamic streaming
+        environments. In <em><em>Proceedings of the 2007 SIAM
+        International Conference on Data Mining</em></em> . SIAM,
+        569–574.</li>
+        <li id="BibPLXBIB0018" label="[18]">Xia Ning and George
+        Karypis. 2011. Slim: Sparse linear methods for top-n
+        recommender systems. In <em><em>Data Mining (ICDM), 2011
+        IEEE 11th International Conference on</em></em> . IEEE,
+        497–506.</li>
+        <li id="BibPLXBIB0019" label="[19]">Mark O'Connor and Jon
+        Herlocker. 1999. Clustering items for collaborative
+        filtering. In <em><em>Proceedings of the ACM SIGIR workshop
+        on recommender systems</em></em> , Vol.&nbsp;128. UC
+        Berkeley.</li>
+        <li id="BibPLXBIB0020" label="[20]">Zaigham&nbsp;Faraz
+        Siddiqui, Eleftherios Tiakas, Panagiotis Symeonidis, Myra
+        Spiliopoulou, and Yannis Manolopoulos. 2014. xstreams:
+        Recommending items to users with time-evolving preferences.
+        In <em><em>Proceedings of the 4th International Conference
+        on Web Intelligence, Mining and Semantics
+        (WIMS14)</em></em> . ACM, 22.</li>
+        <li id="BibPLXBIB0021" label="[21]">João Vinagre,
+        Alípio&nbsp;Mário Jorge, and João Gama. 2014. Fast
+        incremental matrix factorization for recommendation with
+        positive-only feedback. In <em><em>International Conference
+        on User Modeling, Adaptation, and Personalization</em></em>
+        . Springer, 459–470.</li>
+        <li id="BibPLXBIB0022" label="[22]">João Vinagre,
+        Alípio&nbsp;Mário Jorge, and João Gama. 2015. Evaluation of
+        recommender systems in streaming environments.
+        <em><em>arXiv preprint arXiv:1504.08175</em></em>
+        (2015).</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.accorhotels.com">http://www.accorhotels.com</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.movielens.org">http://www.movielens.org</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191586">https://doi.org/10.1145/3184558.3191586</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

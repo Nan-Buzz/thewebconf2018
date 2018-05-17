@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>OSTRICH: Versioned Random-Access Triple Store</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">OSTRICH: Versioned Random-Access
+          Triple Store</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Ruben</span> <span class=
+          "surName">Taelman</span> IDLab, Ghent University,
+          <a href="mailto:imecruben.taelman@ugent.be">imecruben.taelman@ugent.be</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Miel Vander</span> <span class=
+          "surName">Sande</span> IDLab, Ghent University, <a href=
+          "mailto:imecmiel.vandersande@ugent.be">imecmiel.vandersande@ugent.be</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Ruben</span> <span class=
+          "surName">Verborgh</span> IDLab, Ghent University,
+          <a href=
+          "mailto:imecruben.verborgh@ugent.be">imecruben.verborgh@ugent.be</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186960"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186960</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>The Linked Open Data cloud is evergrowing and
+        many datasets are frequently being updated. In order to
+        fully exploit the potential of the information that is
+        available in and over historical dataset versions, such as
+        discovering evolution of taxonomies or diseases in
+        biomedical datasets, we need to be able to store and query
+        the different versions of Linked Datasets efficiently. In
+        this demonstration, we introduce OSTRICH, which is an
+        efficient triple store with supported for versioned query
+        evaluation. We demonstrate the capabilities of OSTRICH
+        using a Web-based graphical user interface in which a store
+        can be opened or created. Using this interface, the user is
+        able to query <em>in, between</em>, and <em>over</em>
+        different versions, ingest new versions, and retrieve
+        summarizing statistics.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="keyword">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Linked Data</small>,</span>
+          <span class="keyword"><small>RDF</small>,</span>
+          <span class="keyword"><small>versioning</small>,</span>
+          <span class="keyword"><small>OSTRICH</small>,</span>
+          <span class="keyword"><small>triple store</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Ruben Taelman, Miel Vander Sande and Ruben Verborgh.
+          2018. OSTRICH: Versioned Random-Access Triple Store. In
+          <em>Proceedings of The 2018 Web Conference Companion (WWW
+          '18 Companion). ACM, New York, NY, USA, 12 pages.</em>
+          <a href="https://doi.org/10.1145/3184558.3186960" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3186960</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec1">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Many of the Linked Datasets [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#bib1">1</a>] that are available on the Web change over time
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib2">2</a>]. Many of these
+      dataset publishers host separate snapshots of each of these
+      versions, which can introduce storage overhead due to
+      redundancies between them. Furthermore, separate snapshots
+      can make it harder to execute queries for performing
+      historical analyses.</p>
+      <p>RDF [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#bib3">3</a>] provides a
+      framework for representing Linked Data. Over the last couple
+      of years, RDF archiving has been an active area of research
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib4">4</a>][<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib5">5</a>][<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib6">6</a>][<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib7">7</a>][<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib8">8</a>]. Fernández et al. define an RDF archive
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib9">9</a>] as a set of
+      version-annotated triples, where a <em>version-annotated
+      triple</em> is an RDF triple that is annotated with a label
+      representing the version in which this triple holds. Three
+      strategies [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#bib10">10</a>] were
+      identified on how RDF archives can be stored:</p>
+      <ol class="list-no-style">
+        <li label="1.">The <strong>Independent Copies (IC)</strong>
+        approach creates separate instantiations of datasets for
+        each change or set of changes.<br /></li>
+        <li label="2.">The <strong>Change-Based (CB)</strong>
+        approach instead only stores change sets between
+        versions.<br /></li>
+        <li label="3.">The <strong>Timestamp-Based (TB)</strong>
+        approach stores the temporal validity of facts.<br /></li>
+      </ol>
+      <p></p>
+      <p>Additionally, several query types were introduced
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib9">9</a>] to cover the
+      retrieval demands in RDF archives, which are referred to as
+      <em>query atoms</em>. In this work, we consider the following
+      query atoms:</p>
+      <ol class="list-no-style">
+        <li label="1."><strong>Version materialization
+        (VM)</strong> retrieves data using queries targeted at a
+        single version. Example: <em>Which books were present in
+        the library yesterday?</em><br /></li>
+        <li label="2."><strong>Delta materialization (DM)</strong>
+        retrieves query result change sets between two versions.
+        Example: <em>Which books were returned or taken from the
+        library between yesterday and now?</em><br /></li>
+        <li label="3."><strong>Version query (VQ)</strong>
+        annotates query results with the versions in which they are
+        valid. Example: <em>At what times was book X present in the
+        library?</em><br /></li>
+      </ol>
+      <p></p>
+      <p>Each of these storage strategies have their advantages and
+      disadvantages in combination with certain query atoms. For
+      instance, IC works well in combination with VM queries
+      because it stores each version separately, so it can query
+      each version separately as well. However, IC is less
+      efficient for DM queries because it requires the differences
+      between two dataset versions for the given query to be
+      generated on-the-fly. Hybrid storage strategies, such as
+      applied by TailR [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib11">11</a>], can however provide different trade-offs
+      between these strategies.</p>
+      <p>In this work, we describe and demonstrate
+      <em>OSTRICH</em>, which is a hybrid IC-CB-TB storage
+      technique, that offers efficient VM, DM and VQ triple pattern
+      query support. This system is further discussed in Section
+      <a class="sec" href="#sec2">2</a>, together with a
+      preliminary evaluation in Section <a class="sec" href=
+      "#sec3">3</a>. After that, we give an overview of a
+      demonstration of OSTRICH using a Web-based graphical user
+      interface in Section <a class="sec" href="#sec4">4</a>.
+      Finally, we discuss our conclusions and opportunities for
+      future work in Section <a class="sec" href="#sec5">5</a>.</p>
+    </section>
+    <section id="sec2">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Overview of the
+          OSTRICH system</h2>
+        </div>
+      </header>
+      <p>In this section, we give a brief overview of OSTRICH, the
+      system on which this demonstration is built.</p>
+      <p>OSTRICH uses a <em>versioned triple store</em> format that
+      allows VM, DM and VQ triple pattern queries to be resolved
+      efficiently. Furthermore, these queries return a triple
+      stream—triples can be consumed as they arrive, which supports
+      efficient offsets. As certain systems, such as SPARQL query
+      engines, typically optimize triple pattern join orders using
+      estimated triple counts, OSTRICH provides efficient count
+      estimation for VM, DM and VQ queries. Triple pattern queries,
+      together with count estimation, form the basis for more
+      sophisticated RDF/SPARQL query engines, such as the
+      client-side Triple Pattern Fragments engine [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib12">12</a>].</p>
+      <p>Internally, OSTRICH stores a versioned dataset in a
+      <em>hybrid IC-CB-TB</em> way, using multiple indexes for
+      supporting the different query types. The initial version of
+      a dataset is stored as a fully materialized and immutable
+      snapshot. This snapshot is stored as an HDT [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib13">13</a>] file, which is a highly
+      compressed, binary RDF representation. HDT also provides
+      indexes that enable the efficient execution of triple pattern
+      queries and count estimation. All other versions are
+      <em>changesets</em>, i.e., lists of triples that need to be
+      removed and lists of triples that need to be added.
+      Changesets are stored in a custom indexing structure. These
+      changesets are relative to the initial version, but merged in
+      a timestamp-based manner to reduce redundancies between each
+      version.</p>
+      <p>OSTRICH is implemented in C++, and is available as open
+      source on GitHub (<a class="link-inline force-break" href=
+      "https://github.com/rdfostrich/ostrich">https://github.com/rdfostrich/ostrich</a>).
+      Additionally, JavaScript bindings for Node.js have been
+      implemented and are available on NPM (<a class=
+      "link-inline force-break" href=
+      "https://www.npmjs.com/package/ostrich-bindings">https://www.npmjs.com/package/ostrich-bindings</a>).
+      These JavaScript bindings however lead to slightly slower
+      queries compared to the native C++ API. The C++ and
+      JavaScript APIs allow OSTRICH stores to be queried using VM,
+      DM and VQ triple pattern queries with a certain limit and
+      offset. Additionally, their count estimates can be retrieved.
+      Finally, new dataset versions can be ingested as
+      changesets.</p>
+    </section>
+    <section id="sec3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Preliminary
+          Evaluation</h2>
+        </div>
+      </header>
+      <p>For our preliminary evaluation, we have used the highly
+      volatile BEAR-B-hourly dataset from the BEAR benchmark
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib9">9</a>], which consists of
+      the 100 most volatile resources from DBpedia Live [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib14">14</a>]. This dataset
+      contains 48.000 unique triples over 1.299 versions, and
+      requires 8,314.86 MB when stored as N-Triples in changesets
+      (466.35 MB gzipped). <a class="fig" href="#fig1">Fig. 1</a>
+      shows the growth of an OSTRICH store after the ingestion of
+      each consecutive version of this dataset. Using OSTRICH, this
+      dataset requires only 450.59 MB to be stored, or 187.46 MB
+      without the optimizing indexes. Compared to other systems in
+      the BEAR benchmark, this is on average only 5,2% of IC
+      strategies, 4,8% of TB strategies, but 514% of CB stategies.
+      Furthermore, a less volatile dataset with an average of 17M
+      triples over 10 versions requires 4.48 GB of storage with
+      OSTRICH, and 3.03 GB if only the essential querying indexes
+      are enabled. With OSTRICH, this dataset takes on average 35%
+      of IC strategies, 10% of TB strategies, and 66% of CB
+      stategies. For the tested datasets, OSTRICH requires
+      significantly less storage space than IC and TB strategies.
+      For datasets with a low volatility, OSTRICH requires less
+      storage space than CB strategies. For highly volatile
+      datasets, it requires more storage space, which is because
+      OSTRICH enables more efficient version materialization than
+      these CB strategies, and this comes at the cost of more
+      required storage.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186960/images/image1.png"
+        class="img-responsive" alt="Fig. 1:" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Fig. 1:</span> <span class=
+          "figure-title">Cumulative OSTRICH store sizes for each
+          consecutive BEAR-B-hourly version in GB for an increasing
+          number of versions.</span>
+        </div>
+      </figure>
+      <p><a class="fig" href="#fig2">Fig. 2</a>, <a class="fig"
+      href="#fig3">3</a> and <a class="fig" href="#fig4">4</a> show
+      the average query evaluation times for VM, DM and VQ triple
+      pattern queries on this BEAR-B-hourly dataset. In these
+      figures, the evaluation times of OSTRICH are compared with
+      versioning systems implemented based on HDT [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib13">13</a>] and Jena [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib15">15</a>], as provided by the BEAR
+      benchmark. At the cost of ingestion times that are 1,38 to
+      125 times higher than in alternative solutions, OSTRICH is
+      able to significantly reduce query times for VM, DM and VQ
+      triple pattern queries. Results have shown that the average
+      query times range between 0.1 and 1 milliseconds, which is
+      lower than most alternative solutions. Only for VM queries on
+      individual HDT copies, OSTRICH is slightly slower. This is
+      because these HDT file are optimized for querying within each
+      specific version, while OSTRICH chooses a different
+      trade-off: storage space is significantly reduced and this
+      makes VM queries only slightly slower compared to individual
+      HDT copies. Additionally, this also makes DM and VQ queries
+      within OSTRICH faster than with individual HDT copies, which
+      makes OSTRICH a general-purpose versioned querying
+      solution.</p>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186960/images/image2.png"
+        class="img-responsive" alt="Fig. 2:" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Fig. 2:</span> <span class=
+          "figure-title">Median BEAR-B-hourly VM query results for
+          all triple patterns for all versions.</span>
+        </div>
+      </figure>
+      <figure id="fig3">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186960/images/image3.png"
+        class="img-responsive" alt="Fig. 3:" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Fig. 3:</span> <span class=
+          "figure-title">Median BEAR-B-hourly DM query results for
+          all triple patterns from version 0 to all other
+          versions.</span>
+        </div>
+      </figure>
+      <figure id="fig4">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186960/images/image4.png"
+        class="img-responsive" alt="Fig. 4:" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Fig. 4:</span> <span class=
+          "figure-title">Median BEAR-B-hourly VQ query results for
+          all triple patterns.</span>
+        </div>
+      </figure>
+    </section>
+    <section id="sec4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Demonstration
+          Overview</h2>
+        </div>
+      </header>
+      <p>The goal of this demonstration is to show the capabilities
+      of OSTRICH. This is done using a Web application (<em>OSTRICH
+      Admin</em>) in which an OSTRICH store can be created, viewed,
+      and updated. When starting the application, the path to
+      a—possibly empty—OSTRICH store must be provided. This
+      application has several features, including the ability to
+      perform VM, DM and VQ queries, ingest new versions, and
+      retrieve statistics about the store. These features will be
+      elaborated on in the next sections. Finally, we introduce two
+      example datasets to discover the interface.</p>
+      <p>OSTRICH Admin is implemented as a Node.js Web application
+      using the Express framework (<a class=
+      "link-inline force-break" href=
+      "https://expressjs.com/">https://expressjs.com/</a>). This
+      was done using the OSTRICH JavaScript bindings for Node.js.
+      This application is available on GitHub (<a class=
+      "link-inline force-break" href=
+      "https://github.com/rdfostrich/ostrichadmin">https://github.com/rdfostrich/ostrichadmin</a>)
+      under an open license. A screencast demonstrating the usage
+      of this application can be found on Vimeo (<a class=
+      "link-inline force-break" href=
+      "https://vimeo.com/246792247">https://vimeo.com/246792247</a>).</p>
+      <section id="sec4Z1">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Query</h3>
+          </div>
+        </header>
+        <p>OSTRICH Admin supports visual VM, DM and VQ triple
+        pattern queries. These are usable by respectively following
+        the <em>Version Materialization, Delta Materialization</em>
+        or <em>Version Query</em> links as can be seen in <a class=
+        "fig" href="#fig5">Fig. 5</a>. These pages show a form that
+        corresponds to the OSTRICH API for these query types.</p>
+        <figure id="fig5">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186960/images/image5.png"
+          class="img-responsive" alt="Fig. 5:" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Fig. 5:</span> <span class=
+            "figure-title">Delta Materialization interface for
+            querying the differences between two versions by triple
+            pattern with a certain offset and limit. The page shows
+            all matching triples annotated with either the addition
+            (+) or deletion symbol (–). Additionally, the total
+            number of results and the query duration time is
+            shown.</span>
+          </div>
+        </figure>
+        <p>For instance, Fig. 5 shows the form for DM queries. The
+        subject, predicate and object fields are used to provide
+        URIs, literals or variables for the triple pattern query. A
+        start and end version can be selected, which will define
+        the versions over which the delta will be retrieved.
+        Additionally, offset and limit values can be applied to the
+        triple results.</p>
+        <p>Below the form, the triples matching the defined query
+        are shown. In the case of DM queries, triples are annotated
+        with a “+” or “-”, which indicates if they are respectively
+        an addition or deletion with respect to the given
+        changeset. Furthermore, the number of results on this page
+        is shown, together with the total count of this query,
+        independent of the limit and offset. This total count can
+        either be an <em>exact value</em>, or an <em>estimate</em>
+        if calculating the exact value would take too much time.
+        Finally, the triple pattern query execution time is
+        shown.</p>
+        <p>Similar pages exist for VM and VQ queries. For VM
+        queries, the form does not have a version range, but only a
+        single version field. For VQ queries, the form has no
+        version fields, but results are annotated with version
+        ranges.</p>
+      </section>
+      <section id="sec4Z2">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Ingest</h3>
+          </div>
+        </header>
+        <p>As ingesting new versions is an important feature in
+        archiving solutions, OSTRICH Admin allows changeset-based
+        version ingestion as can be seen in <a class="fig" href=
+        "#fig6">Fig. 6.</a></p>
+        <figure id="fig6">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186960/images/image6.png"
+          class="img-responsive" alt="Fig. 6:" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Fig. 6:</span> <span class=
+            "figure-title">Ingesting a new version is done using a
+            changeset form for additions and deletions. The form
+            accepts triples in turtle format, and will give user
+            feedback in case invalid triples were provided.</span>
+          </div>
+        </figure>
+        <p>This form has a textbox for additions and deletions.
+        This corresponds to the way the OSTRICH API accepts version
+        ingestion, which is done using a stream containing
+        additions and deletions. These textboxes accept triples in
+        the Turtle serialization.</p>
+        <p>When ingestion is successful, the number of inserted
+        triples will be displayed, together with the time it took
+        to insert them.</p>
+      </section>
+      <section id="sec4Z3">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span>
+            Statistics</h3>
+          </div>
+        </header>
+        <p>Finally, OSTRICH Admin allows basic statistics about the
+        current OSTRICH store to be displayed as shown in <a class=
+        "fig" href="#fig7">Fig. 7</a>. These statistics can be used
+        for gaining a basic understanding of the dataset size and
+        its growth rate.</p>
+        <figure id="fig7">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186960/images/image7.png"
+          class="img-responsive" alt="Fig. 7:" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Fig. 7:</span> <span class=
+            "figure-title">The stats page shows an overview of the
+            number of triples in each version. The user can hover
+            over the version bars to see the exact number of
+            triples in the top-left side of the graph.</span>
+          </div>
+        </figure>
+        <p>On the top of this page—and all other pages as well—the
+        path to the currently opened store is shown. Next to that,
+        the total number of versions in this store is displayed.
+        Finally, the total number of unique triples in this store,
+        and the total size of this store is shown.</p>
+        <p>Additionally, this page shows a graph containing the
+        number of triples in each version of the dataset. This
+        graph is interactive, and allows the user to hover over
+        each version bar to show the exact number of triples in the
+        selected version.</p>
+      </section>
+      <section id="sec4Z4">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.4</span> Example
+            Datasets</h3>
+          </div>
+        </header>
+        <p>For our demonstration, we provide two example datasets
+        that can be used to load into OSTRICH admin. All of these
+        examples are publicly available (<a class=
+        "link-inline force-break" href=
+        "https://linkedsoftwaredependencies.org/raw/ostrich/datasets/">https://linkedsoftwaredependencies.org/raw/ostrich/datasets/</a>).</p>
+        <section id="sec4Z4Z1">
+          <p><em>4.4.1 Library.</em> The first dataset is a very
+          small synthetic dataset about the availability of books
+          in a library. The goal of this dataset is to explain the
+          concept of changesets using books that are only available
+          at specific moments in the library. In order to make it
+          easily understandable, this dataset has only four
+          versions, and 11 books that are available in specific
+          versions of the dataset.</p>
+        </section>
+        <section id="sec4Z4Z2">
+          <p><em>4.4.2 DBpedia Live.</em> A larger real-world
+          dataset based on DBpedia Live [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#bib14">14</a>] contains more
+          than 48K unique triples over 89 versions. This dataset
+          has been derived from the BEAR archiving benchmark
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href="#bib9">9</a>]. It
+          contains the 100 most volatile resources from DBpedia
+          Live over the course of three months with an hourly
+          granularity.</p>
+        </section>
+      </section>
+    </section>
+    <section id="sec5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span>
+          Conclusions</h2>
+        </div>
+      </header>
+      <p>RDF archiving has been an active area of research over the
+      last couple of years. OSTRICH is storage and querying system
+      for RDF archives that supports various kinds of versioned
+      queries. With OSTRICH, versioned datasets can be stored
+      efficiently, while at the same time enabling efficient
+      support for versioned queries. When OSTRICH is combined with
+      techniques such as Triple Pattern Fragments, versioned Linked
+      Datasets can be published at a low cost, and complex SPARQL
+      queries can be evaluated <em>in, between</em>, and
+      <em>over</em> the different versions. This lower the barrier
+      towards historical analysis over datasets that evolve over
+      time, such as biomedical patient information or certain
+      taxonomies.</p>
+      <p>In the future, we will continue improving the performance
+      of OSTRICH, and do an extensive performance evaluation.
+      OSTRICH Admin will be kept up-to-date with the functionality
+      of OSTRICH, so that OSTRICH datasets can be discovered and
+      managed at a high-level using this Web application, without
+      having to use the programmatic API for this.</p>
+    </section>
+    <section id="sec-006">
+      <header>
+        <div class="title-info">
+          <h2>Biographies</h2>
+        </div>
+      </header>
+      <p><img src=
+      "../../../data/deliveryimages.acm.org/10.1145/3190000/3186960/images/image8.png"
+      class="img-responsive" alt="" longdesc="" /></p>
+      <p><strong>Ruben Taelman</strong> is a PhD student at IDLab,
+      Ghent University – imec, Belgium. His research concerns the
+      server and client trade-offs for Linked Data publication and
+      querying, with a particular focus on dynamic data, such as
+      streams and versioning.</p>
+      <p><img src=
+      "../../../data/deliveryimages.acm.org/10.1145/3190000/3186960/images/image9.png"
+      class="img-responsive" alt="" longdesc="" /></p>
+      <p><strong>Miel Vander Sande</strong> is a post-doctoral
+      researcher in Linked Data at Ghent University – imec. His
+      main interest is low-cost Linked Data publishing
+      infrastructures and Intelligent Web clients. In that regard,
+      he executed numerous projects in Open Data legislation,
+      digital publishing, e-learning, and data sharing.</p>
+      <p><img src=
+      "../../../data/deliveryimages.acm.org/10.1145/3190000/3186960/images/image10.png"
+      class="img-responsive" alt="" longdesc="" /></p>
+      <p><strong>Ruben Verborgh</strong> is a professor of Semantic
+      Web technology at Ghent University – imec and a postdoctoral
+      fellow of the Research Foundation Flanders. He explores the
+      connection between Semantic Web technologies and the Web's
+      architectural properties, with the ultimate goal of building
+      more intelligent clients. Along the way, he became fascinated
+      by Linked Data, REST/hypermedia, Web APIs, and related
+      technologies.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ack-001">
+      <header>
+        <div class="title-info">
+          <h2>Acknowledgements</h2>
+        </div>
+      </header>
+      <p>The described research activities were funded by Ghent
+      University, imec, Flanders Innovation &amp; Entrepreneurship
+      (AIO), and the European Union. Ruben Verborgh is a
+      postdoctoral fellow of the Research Foundation –
+      Flanders.</p>
+    </section>
+    <section id="bib-sec-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">References</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="bib1" label="[1]">Bizer, C., Heath, T.,
+        Berners-Lee, T.: Linked Data - the story so far. Semantic
+        Services, Interoperability and Web Applications: Emerging
+        Concepts. 205–227 (2009).</li>
+        <li id="bib2" label="[2]">Umbrich, J., Decker, S.,
+        Hausenblas, M., Polleres, A., Hogan, A.: Towards dataset
+        dynamics: Change frequency of Linked Open Data sources. 3rd
+        International Workshop on Linked Data on the Web (LDOW).
+        (2010).</li>
+        <li id="bib3" label="[3]">Cyganiak, R., Wood, D.,
+        Lanthaler, M.: RDF 1.1: Concepts and Abstract Syntax. W3C,
+        <a class="link-inline force-break" href=
+        "http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/">http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/</a>
+        (2014).
+        </li>
+        <li id="bib4" label="[4]">Vander Sande, M., Colpaert, P.,
+        Verborgh, R., Coppens, S., Mannens, E., Walle, R. Van de:
+        R&amp;Wbase: git for triples. In: Proceedings of the 6th
+        Workshop on Linked Data on the Web (2013).</li>
+        <li id="bib5" label="[5]">Neumann, T., Weikum, G.:
+        x-RDF-3X: fast querying, high update rates, and consistency
+        for RDF databases. Proceedings of the VLDB Endowment. 3,
+        256–263 (2010).</li>
+        <li id="bib6" label="[6]">Volkel, M., Winkler, W., Sure,
+        Y., Kruk, S.R., Synak, M.: Semversion: A versioning system
+        for RDF and ontologies. In: Second European Semantic Web
+        Conference, ESWC 2005, Heraklion, Crete, Greece, May
+        29–June 1, 2005. Proceedings (2005).</li>
+        <li id="bib7" label="[7]">Cerdeira-Pena, A., Farina, A.,
+        Fernández, J.D., Martı́nez-Prieto Miguel A: Self-indexing
+        RDF archives. In: Data Compression Conference (DCC), 2016.
+        pp. 526–535. IEEE (2016).</li>
+        <li id="bib8" label="[8]">Taelman, R., Vander Sande, M.,
+        Verborgh, R., Mannens, E.: Versioned Triple Pattern
+        Fragments: A Low-cost Linked Data Interface Feature for Web
+        Archives. In: Proceedings of the 3rd Workshop on Managing
+        the Evolution and Preservation of the Data Web (2017).</li>
+        <li id="bib9" label="[9]">Fernández, J.D., Umbrich, J.,
+        Polleres, A., Knuth, M.: Evaluating Query and Storage
+        Strategies for RDF Archives. In: Proceedings of the 12th
+        International Conference on Semantic Systems. ACM
+        (2016).</li>
+        <li id="bib10" label="[10]">Fernández, J.D., Polleres, A.,
+        Umbrich, J.: Towards efficient archiving of Dynamic Linked
+        Open Data. In: Debattista, J., d'Aquin, M., and Lange, C.
+        (eds.) Proceedings of te First DIACHRON Workshop on
+        Managing the Evolution and Preservation of the Data Web.
+        pp. 34–49 (2015).</li>
+        <li id="bib11" label="[11]">Meinhardt, P., Knuth, M., Sack,
+        H.: TailR: a platform for preserving history on the web of
+        data. In: Proceedings of the 11th International Conference
+        on Semantic Systems. pp. 57–64. ACM (2015).</li>
+        <li id="bib12" label="[12]">Verborgh, R., Vander Sande, M.,
+        Hartig, O., Van Herwegen, J., De Vocht, L., De Meester, B.,
+        Haesendonck, G., Colpaert, P.: Triple Pattern Fragments: a
+        Low-cost Knowledge Graph Interface for the Web. Journal of
+        Web Semantics. 37–38, (2016).</li>
+        <li id="bib13" label="[13]">Fernández, J.D.,
+        Martínez-Prieto, M.A., Gutiérrez, C., Polleres, A., Arias,
+        M.: Binary RDF Representation for Publication and Exchange
+        (HDT). Web Semantics: Science, Services and Agents on the
+        World Wide Web. 19, 22–41 (2013).</li>
+        <li id="bib14" label="[14]">Morsey, M., Lehmann, J., Auer,
+        S., Stadler, C., Hellmann, S.: DBpedia and the live
+        extraction of structured data from wikipedia. Program. 46,
+        157–181 (2012).</li>
+        <li id="bib15" label="[15]">McBride, B.: Jena: A semantic
+        web toolkit. IEEE Internet computing. 6, 55–59 (2002).</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY 4.0) license. Authors
+      reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018 IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY 4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186960">https://doi.org/10.1145/3184558.3186960</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

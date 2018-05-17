@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Multi-turn QA: A RNN Contextual Approach to
+  Intent&nbsp;Classification for Goal-oriented Systems</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Multi-turn QA: A RNN Contextual
+          Approach to Intent&nbsp;Classification for Goal-oriented
+          Systems</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <a href="https://orcid.org/0000-0002-9875-6396" ref=
+          "author"><span class="givenName">Martino</span>
+          <span class="surName">Mensio</span></a> Politecnico di
+          Torino, Torino, Italy 10129, <a href=
+          "mailto:martino.mensio@studenti.polito.it">martino.mensio@studenti.polito.it</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Giuseppe</span> <span class=
+          "surName">Rizzo</span> Istituto Superiore Mario Boella,
+          Torino, Italy 10138, <a href=
+          "mailto:giuseppe.rizzo@ismb.it">giuseppe.rizzo@ismb.it</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Maurizio</span> <span class=
+          "surName">Morisio</span> Politecnico di Torino, Torino,
+          Italy, <a href=
+          "mailto:maurizio.morisio@polito.it">maurizio.morisio@polito.it</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191539"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191539</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>QA systems offer a human friendly interface to
+        navigate through knowledge, which can range from
+        encyclopedic to domain-specific. Generally, a QA system is
+        designed to provide an answer to a specific question once
+        (so-called single turn) and state-of-the-art systems reach
+        nowadays robust performance in such a scenario. However,
+        most of the interactions with QA systems are based on
+        multiple handshakes of question/answer pairs, where the
+        human being refines the questions further, while the system
+        can collect the necessary information and generate a
+        compelling final answer through multiple turns. In this
+        paper, we investigate and experiment a multi-turn QA system
+        that is suited to work given a particular domain of
+        knowledge and configurable goals. Our approach models the
+        entire dialogue as a sequence of turns, i.e. questions and
+        answers, using a Recurrent Neural Network which is firstly
+        trained to understand natural language, classifying
+        entities and intents using prior knowledge of
+        domain-specific interactions, and provide answers according
+        to the domain used as background knowledge. We have
+        compared our approach with state-of-the-art sequence-based
+        intent classification using a well-known and standardized
+        gold standard observing an increase of 17.16% of F1.
+        Results show the robustness of the approach and the
+        competitive results motivate the adoption in multi-turn QA
+        scenarios.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Human-centered
+        computing</strong> → <strong>Natural language
+        interfaces;</strong> • <strong>Computing
+        methodologies</strong> → <em>Neural
+        networks;</em></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Multi-turn question
+          answering; Conversational agent; Goal-oriented
+          conversational agent; Recurrent Neural
+          Networks</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Martino Mensio, Giuseppe Rizzo, and Maurizio Morisio.
+          2018. Multi-turn QA: A RNN Contextual Approach to
+          Intent&nbsp;Classification for Goal-oriented Systems. In
+          <em>WWW '18 Companion: The 2018 Web Conference
+          Companion,</em> <em>April 23–27, 2018,</em> <em>Lyon,
+          France. ACM, New York, NY, USA</em> 6 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3191539" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191539</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Question Answering (QA) systems&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0026">26</a>] are defined as software
+      components that provide natural language interface towards
+      information that is usually stored in structured
+      tables&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0013">13</a>],
+      graphs of data&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0033">33</a>], or in collections of documents.
+      They are usually defined as search tools that first
+      understand natural language and provide back a response in a
+      single turn (i.e. one question and one answer). No context is
+      usually carried over eventual next interrogations. The system
+      has to understand them separately.</p>
+      <p>With the continuous transition towards
+      <em>voice-first</em> technologies, we have observed a large
+      adoption of goal-oriented agents. They are a particular case
+      of domain-specific QA systems&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0013">13</a>] that are not just limited
+      to retrieve information but also to complete some actions
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0007">7</a>], and thus
+      they provide a conversational interface to complete
+      transactions. A transaction is defined as a set of
+      interactions towards a specific goal, e.g. buying tickets,
+      where the user has its own goal (called intent) and talks to
+      the system in order to achieve it. The transaction can have
+      different turns because the system may require some
+      information from the user and the user can refine his initial
+      goal. To keep track of all the possible paths of a dialogue,
+      usually a Finite State Machine&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0002">2</a>] is used. On those systems
+      it is usually difficult for a user to interrupt an intent and
+      to take back the dialog initiative without using special
+      commands (like “stop” or “restart”). In addition, QA systems
+      lack in exploiting the surrounding context when processing
+      the single question, while goal-oriented agents offer
+      interfaces that answer generally simple questions over a
+      predetermined number of things. Having this landscape, this
+      study proposes a system able to manage the interaction
+      context in a multi-turn fashion. The presented work has been
+      researched and applied for a goal-oriented agent, and it can
+      be applied to multi-turn QA systems in a similar way by
+      considering the coarse-grained sentence classification.</p>
+      <p>Our approach aims to provide interaction context, i.e. a
+      surrounding environment for the present sentence, by taking
+      into account previous user's intents and previous agent's
+      sentences in order to have a better understanding of the
+      current sentence sent by the user. Being able to dynamically
+      contextualize the sentences, by understanding when to keep
+      the context and when to discard it following some signals in
+      both user and agent turns, can be an important feature in
+      agents that are interrogated in highly asynchronous scenarios
+      (in particular in mobile devices when users are using
+      numerous widgets in parallel). In those situations, using a
+      time-based session split can be misleading and a working
+      solution should rely on the contents only. Some studies have
+      been already done on this problem of contextual understanding
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0005">5</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0009">9</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0010">10</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0025">25</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0037">37</a>] with
+      different variations at different levels of complexity: from
+      simply feeding back some features of the previous turn, up to
+      memory networks [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0028">28</a>] that may require a lot of training
+      samples. Inspired by these, we want to understand how
+      relevant is the interaction context in the process of
+      understanding the sentences.</p>
+      <p>The remainder of this paper is structured as follows: in
+      Section&nbsp;<a class="sec" href="#sec-5">2</a> we set the
+      scene of our approach and experimentation while listing the
+      peculiarities of goal-oriented QA agents and the differences
+      with respect to domain-specific QA systems.
+      Section&nbsp;<a class="sec" href="#sec-9">3</a> presents our
+      approach and in Section&nbsp;<a class="sec" href=
+      "#sec-12">4</a> we first describe the experimental setup and
+      then discuss the performance of the approach.
+      Section&nbsp;<a class="sec" href="#sec-15">5</a> concludes
+      the paper and outlines future research activities.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Background</h2>
+        </div>
+      </header>
+      <p>The origins of conversational agents are rooted in
+      chit-chat agents. These systems were born to overcome the
+      challenge initially proposed by the Turing Test [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0032">32</a>] and aimed
+      to emulate a natural language conversation between humans.
+      The approach used in&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0035">35</a>] implements a set of handcrafted
+      rules: patterns executed on the input sentences are used to
+      find a match over a rule-set, and then the responses are
+      generated from a set of templates. Also, the memory of the
+      agent (required to answer to next questions in a coherent
+      manner) is managed by those rules, setting state variables
+      and retrieving them when necessary. These agents are able to
+      answer back only to the questions they are designed for and,
+      furthermore, the interaction does not carry meaningful
+      contents from the informational point of view because the
+      conversation goal is only to make the interlocutor thinking
+      to be speaking with something that understands the
+      conversation. This section studies and elaborates how there
+      has been a split of conversational systems, one towards rich
+      interrogation and others towards more structured dialogues,
+      emphasizing the differences and common points in the
+      understanding part. We conclude outlining the point of
+      contact between the two and how they can be merged to provide
+      a more intelligent interaction.</p>
+      <section id="sec-6">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Beyond
+            rule-based QA systems</h3>
+          </div>
+        </header>
+        <p>On the side of QA systems, there has been a lot of
+        research towards the goal of building systems that can
+        answer questions by providing rich answers with an easy to
+        use conversational interface. For this type of systems the
+        information is usually stored in Knowledge Bases (KBs),
+        which can be in the form of structured tables or graphs or
+        textual documents written in natural language. Two major
+        paradigms of QA systems have arisen: knowledge-based and
+        information retrieval-based for the unstructured one. For
+        both the goal is to provide answers by performing three
+        steps: <em>i)</em> understanding the question (extracting
+        all the useful parameters), <em>ii)</em> retrieving the
+        information (against the KB via queries or some more
+        unstructured forms), and <em>iii)</em> combining the
+        results and presenting them in textual form.</p>
+        <p>The approaches that use structured knowledge range from
+        handcrafted or dynamically built templates&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0001">1</a>], or using
+        an intermediate logical form&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0004">4</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0014">14</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0030">30</a>], or using some measures
+        of entity proximity and relations with respect to a
+        question in an appositely generated embeddings
+        space&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0022">22</a>]. A key role in those approaches is
+        played by natural language processing methods such as named
+        entity recognition and dependency parsing, that enable a
+        fine-grained classification of the sentences. For
+        unstructured information retrieval, where the information
+        is not in the form of structured tables or graphs, but
+        simply a collection of documents in natural language,
+        instead of building the queries, the search is done in
+        unstructured form, usually with passage
+        retrieval&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0034">34</a>]. This is the kind of interrogation
+        that normally happens with search engines, where the
+        documents are sorted by their relatedness to the question
+        (presence of keywords or synonyms). A second stage is
+        applied to process the search candidates in order to build
+        an answer. This requires a deeper understanding both of the
+        question (what is the desired response) and of the
+        retrieved fragments [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0031">31</a>]. Those systems, however, have a
+        great limitation on the sentence contextualization: each
+        question is answered independently from the others. This
+        makes the interaction very rigid, as the user cannot refer
+        easily to previously mentioned entities, nor refine a
+        question without the need to reformulate again the whole
+        set of constraints. It is a problem affecting QA systems
+        that obtain the information in both ways. Even in
+        bAbI<a class="fn" href="#fn1" id=
+        "foot-fn1"><sup>1</sup></a>, when multiple questions are
+        asked to the system, each one of them is independent. The
+        memory and context of the system only works for the
+        sentences that contain facts. No follow-up questions are
+        possible.</p>
+        <p>To the best of our knowledge, the only studies that have
+        been made towards a contextualized understanding were
+        presented in the TREC<a class="fn" href="#fn2" id=
+        "foot-fn2"><sup>2</sup></a> “contextual suggestion” track.
+        This track, over the years, used two types of context:
+        discourse and user. The first, introduced in
+        TREC10,<a class="fn" href="#fn3" id=
+        "foot-fn3"><sup>3</sup></a> has been used with the goal to
+        perform reference resolution&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0016">16</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0029">29</a>]: some indicators in the
+        sentence (such as pronouns, definite nominals or ellipsis)
+        are used to find in previous turns the ones that contain
+        the referenced entity and build a model that selectively
+        retains query terms, following the Centering
+        Theory&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0015">15</a>]. The user context instead turns
+        the information retrieval into a recommendation problem,
+        where the items are places (presented under the form of
+        natural language text) that should be suggested to the user
+        having as features his location and his preferences.</p>
+      </section>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span>
+            Goal-oriented agents</h3>
+          </div>
+        </header>
+        <p>Goal-oriented agents come into the landscape of Question
+        Answering as domain-specific systems that enable users to
+        interact with some services to perform different tasks,
+        instead of being a natural language interface to perform
+        advanced queries. Being a QA branch, it lets users obtain
+        domain-specific information. But it can also be used to
+        perform some actions, under the form of digital personal
+        assistant, in different specific domains: booking and
+        travel services are just examples.</p>
+        <p>The word “goal” characterizes dialogues where each party
+        is aware of the objective of their communication, from one
+        side to use some services and receive some information, and
+        on the other to provide them. The dialogue is not an end in
+        itself like in chit-chat systems, as explained
+        in&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0019">19</a>]. These systems are similar to
+        structured and unstructured QA in the language
+        understanding part: categorize the sentences and extract
+        some parameters from it. But there are some key
+        differences:</p>
+        <ul class="list-no-style">
+          <li id="uid6" label="main focus:">it is very important to
+          provide access to the available operations and manage
+          interactive guided procedures, that require handling the
+          conversation state. The understanding of complex
+          interrogations is not focal;<br /></li>
+          <li id="uid7" label="limited search capabilities:">unlike
+          QA systems, the access to a knowledge base may be limited
+          by a specific set of available operations, caused by
+          limited remote APIs or by a pre-existing application
+          logic. Those can correspond to a finite set of question
+          types and a finite set of parameters;<br /></li>
+          <li id="uid8" label="bidirectional QA:">the system may
+          require some missing parameters to the user making the
+          interaction more complex;<br /></li>
+          <li id="uid9" label="interaction with dynamic data:">the
+          information stored can change frequently over time due to
+          resource availability (for example when providing
+          information about travel means or other dynamic domain).
+          Furthermore some actions can actually modify the stored
+          information (consider booking at a restaurant, occupying
+          a table).<br /></li>
+        </ul>
+        <p>The usually chosen strategy to build this kind of
+        systems, excluding button-based flows where the initiative
+        of dialog is completely owned by the agent, is to map
+        sentences expressed by a user onto a fixed set of intents
+        (the sentence types) and slots (entities mentioned that
+        together with a role are used as parameters). The
+        approaches for those two tasks, namely intent
+        classification and slot filling&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0023">23</a>], usually make use of
+        Recurrent Neural Networks (RNN)&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0012">12</a>] that are able to work
+        on sequence of words. The state-of-the-art condition is
+        currently achieved with a joint approach [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0021">21</a>], that makes use of
+        encoder-decoder structure originally born for translations
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0011">11</a>] in order
+        to perform both a sequence tagging (slots tagging) and
+        sentence categorization (intent). This approach is very
+        good at working on single-turn cases: each sentence is
+        processed autonomously.</p>
+        <p>When trying to deal with multi-turn interactions, a lot
+        of problems arise. First of all, the presence of follow-up
+        questions: resolving the references to entities is not
+        trivial when done without apparent evidences. Then, the
+        agent may ask some questions to the user to elicit some
+        missing required parameters: the answers from the user can
+        be fully structured, with signs that underline the entities
+        that are there, or can contain only text that has to be
+        further processed. Goal-oriented agents usually have a
+        dialogue state-tracker component to manage multi-turn
+        interactions, but their dynamicity understanding when to
+        keep the interaction context and when to discard it,
+        receiving signals from the current sentence, is a very
+        critical point. The most common and easy solution is to
+        have universal commands that can be used to stop the
+        current transaction and begin a new one. Some recent
+        approaches [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0009">9</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0010">10</a>] to multi-turn problem use memory
+        networks, applied to track the user's goal over the
+        conversation as in the Dialog State Tracking Challenge
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0036">36</a>].</p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.3</span> The point
+            of contact</h3>
+          </div>
+        </header>
+        <p>As it has been noticed, those two macro categories of
+        conversational systems would benefit a mutual integration.
+        From the side of goal-oriented, the missing point is being
+        able to answer to complex queries. For this problem a
+        possible solution is to have hierarchical sentence
+        classification: the coarse-grained types can keep
+        corresponding to intents as they convey trait values on the
+        whole sentence, while a fine-grained analysis can be done
+        using the techniques from QA systems in order to build
+        detailed structured queries. For this second step, a
+        detailed parsing has to be done on the sentences to capture
+        all the entities mentioned and their relations. A
+        statistical parsing of such nature, to be fully exploited,
+        needs an ontology whose entities and relations can be
+        explored dynamically instead of being visible only through
+        a finite set of APIs.</p>
+        <p>Instead QA systems need a more natural and
+        conversational interaction, enabled by some context. The
+        context can be of three types:</p>
+        <ul class="list-no-style">
+          <li id="uid11" label="domain:">a specialized knowledge,
+          including domain-specific datasets for understanding
+          better how to turn the natural language sentences into
+          interrogations. This is already included in
+          domain-specific QA;<br /></li>
+          <li id="uid12" label="interaction:">going beyond the
+          fixed form of atomic question-answer pairs. Human to
+          human conversations rely a lot on the interaction
+          context, referring explicitly or implicitly to things
+          that have been previously said. A multi-turn environment
+          can allow users to do questions and later refining them
+          to find what they were searching for, by simply adding
+          new parameters instead of rebuilding a complete
+          independent interrogation, or doing follow-up questions
+          on the previous results;<br /></li>
+          <li id="uid13" label="user:">knowing better the user who
+          is asking the questions can be advantageous to find
+          results that are more relevant to him.<br /></li>
+        </ul>
+        <p>An interesting approach that combines information
+        retrieval methodologies using structured knowledge with
+        goal-oriented systems is proposed in&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0013">13</a>], which aims to overcome
+        the main issue of goal-oriented systems: learn how to
+        extract information from a KB without the need of
+        handcrafted dialogue state tracking. This is possible
+        thanks to the KB structure that enables a good exchange of
+        data between the conversation and the KB without the need
+        of intent tracker and relying only on latent neural
+        embeddings. This approach mainly is a sequence-to-sequence
+        generator enriched by a KB that provides triples of
+        <em>(subject, relation, value)</em>. The values are
+        available to the output generation thanks to some
+        placeholders in the output dictionary in the form of
+        <tt>subject_relation</tt>, that is later replaced by its
+        value after decoding. As can be derived, this approach
+        really combines the techniques of QA over structured
+        knowledge with goal-oriented conversations. But it has two
+        main limitations. The first one is that the KB entries
+        cannot be searched by value, so a question like “Which
+        appointments I have at 9pm?” cannot generate a response
+        targeted to the value “9pm” because the value is not
+        considered. The second limitation is that this approach has
+        no way to perform actions and therefore can act as a
+        readonly service. Removing the intermediate handcrafted
+        level and letting the conversation flow in encoder-decoder
+        fashion, actually makes impossible to call some actions,
+        unless other techniques are found to semantically correlate
+        them.</p>
+      </section>
+    </section>
+    <section id="sec-9">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Approach</h2>
+        </div>
+      </header>
+      <p>In this section we first give an overview of our approach
+      with its features and then we describe the novelties with
+      respect to the state-of-the-art system&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0021">21</a>].</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191539/images/www18companion-278-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Sentences are encoded in fixed-length
+          vectors using the word-level bidirectional RNN (blue in
+          the figure). The outputs of this first RNN are passed to
+          a second RNN (red in the figure) which models the intent
+          propagation of the user sentences over the different
+          timesteps. This last RNN (the red one) for each user
+          sentence produces the contextualized intent value. The
+          agent words are in green, while the words generated by
+          the human are in white boxes.</span>
+        </div>
+      </figure>
+      <p></p>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> High level
+            overview</h3>
+          </div>
+        </header>
+        <p>Our approach uses a bidirectional sentence encoding that
+        summarizes the values of the embeddings at word-level into
+        one low-dimensional array, taking the outputs after
+        providing all the words embeddings as inputs. Not only the
+        words of the user, but also the ones of the agent are
+        processed. This sentence representation in single-turn NLU
+        approaches is used to categorize the sentence over a set of
+        intents&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0021">21</a>]. Instead our representation is fed
+        to the top-level RNN to provide outputs that depend from
+        both current sentence and the surrounding interaction
+        context. Three main challenges are addressed:</p>
+        <ul class="list-no-style">
+          <li id="uid16" label=
+          "detect the change of intent in a multi-turn environment:">
+          in other words, to understand dynamically when a certain
+          session (sequence of messages related to a single intent)
+          ends in favour of a new one. This corresponds to choose
+          for each input sentence whether to keep the value of the
+          previous intent or to consider some evidence on the
+          current input. The first case happens when the input
+          sentence is part of a preceding session, and the user is
+          simply continuing the interaction with the same initial
+          intent. The second case instead is when a new intent is
+          expressed in the current sentence, signalling an intent
+          change;<br /></li>
+          <li id="uid17" label=
+          "capture intent dependencies using the RNN:">capturing
+          the sequences of intent values, a better prediction of
+          the sentence can be done knowing the proceeding intents.
+          This can be quite useful with sentences that are not so
+          expressive because they are referring implicitly to some
+          context of the interaction;<br /></li>
+          <li id="uid18" label=
+          "consider the current agent turn words:">having a
+          knowledge about what has been replied to the user can
+          help contextualize the new sentence that may not have
+          evident indicators of the intent;<br /></li>
+        </ul>
+        <p>Figure&nbsp;<a class="fig" href="#fig1">1</a>
+        illustrates our approach. In literature also other studies
+        have been done on the problem of sentence classification
+        inside an interaction context. The approach proposed
+        in&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0037">37</a>] on the classification of the
+        domain, that is like the high level class in a hierarchical
+        intent classification, uses the previous model prediction
+        at word-level, concatenating it with each word vector. The
+        approach proposed in this work is different both in the
+        specific point where the previous classification is used
+        (not together with the input words but on the sentence
+        level, using the high-level RNN) and also in the way the
+        word-level features are summarized in sentence-level
+        features and considered for next interactions by the
+        learning network.</p>
+      </section>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span>
+            Novelty</h3>
+          </div>
+        </header>
+        <figure id="fig2">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191539/images/www18companion-278-fig2.jpg"
+          class="img-responsive" alt="Figure 2" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 2:</span>
+            <span class="figure-title">The modifications to
+            [<a class="bib" data-trigger="hover" data-toggle=
+            "popover" data-placement="top" href=
+            "#BibPLXBIB0021">21</a>].</span>
+          </div>
+        </figure>
+        <p>Our approach introduces two main novelties: first, as we
+        can observe in Figure&nbsp;<a class="fig" href=
+        "#fig2">2</a>, we consider the previous intent value on top
+        of the intent logits<a class="fn" href="#fn4" id=
+        "foot-fn4"><sup>4</sup></a> that come out from the original
+        network&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0021">21</a>]. In particular, the previous
+        intent value is turned into a one-hot vector that is passed
+        as previous internal state <span class=
+        "inline-equation"><span class="tex">$h_{t-1}$</span></span>
+        to a RNN cell. Two types of cells have been studied: the
+        GRU cell&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0037">37</a>] and the LSTM cell&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0018">18</a>] that is
+        commonly used and has two vectors that are carried over
+        timesteps: the cell state <span class=
+        "inline-equation"><span class="tex">$c_{t-1}$</span></span>
+        and the output vector <span class=
+        "inline-equation"><span class="tex">$h_{t-1}$</span></span>
+        . The GRU cell has less parameters than the LSTM and has
+        shown on different fields to have quite the same
+        performance. For this reason both LSTM and GRU cells are
+        considered as valid alternatives in Section&nbsp;<a class=
+        "sec" href="#sec-14">4.2</a>. The RNN cell, used with all
+        inputs and outputs of size <span class=
+        "inline-equation"><span class=
+        "tex">$n\_intents$</span></span> , takes as input at the
+        current timestep <span class="inline-equation"><span class=
+        "tex">$x_t$</span></span> the logits on the current turn.
+        It combines them with the previous intent and thanks to the
+        internal gates it outputs values that represent the
+        contextualized value of the current intent. The key
+        elements are the reset and update gates that are internal
+        to the cell itself and they allow to keep the previous
+        intent value, consider the features of the current
+        sentence, and to learn the intent dependencies. This
+        hierarchical use of RNN (one for encoding sentences and the
+        other one for considering the chain on sentence-level
+        features) is also proposed in&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0027">27</a>] but in the domain of
+        query-suggestions: the difference with the proposed
+        approach is that the top level RNN outputs an encoded value
+        that is used for decoding, while here the intent RNN works
+        in the intent space, having as hidden dimension the size of
+        the intent vocabulary and therefore outputs directly the
+        intent logits that passing through a softmax produce the
+        categorization label. In addition, our approach
+        concatenates the previous agent turn together with the
+        current user turn, following the idea that having a
+        knowledge of what a user is replying to can help
+        understanding better his request.</p>
+        <p>For having better performance also on smaller datasets
+        whose dictionary can be small, and with the need to be
+        ready for an online setting where words out-of-dictionary
+        may be received, the choice on the input embedding layer
+        has been to use GloVe&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0024">24</a>] word vectors pretrained on the
+        CommonCrawl corpus&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0008">8</a>]. In this way the embedding values,
+        covering a dictionary of 1.1 million different English
+        words, are set to be non-trainable.</p>
+      </section>
+    </section>
+    <section id="sec-12">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span>
+          Experimentation</h2>
+        </div>
+      </header>
+      <p>We first describe the rationale of using the Key-Value
+      Retrieval dataset, then we present the experimentation
+      protocol and, finally, the evaluation results.</p>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span>
+            Dataset</h3>
+          </div>
+        </header>
+        <p>The setup of the experiment required a search of a
+        standardized benchmark dataset. The ATIS dataset [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0017">17</a>],
+        historically used on the two tasks of intent classification
+        and slot filling, does not fit the experimental setup
+        because of its single-turn orientation.</p>
+        <p>The problem of multi-turn has been analyzed mostly on
+        proprietary datasets&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0025">25</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0037">37</a>], or requiring a participation in a
+        challenge (like the Dialogue State Tracking Challenge
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0036">36</a>]).
+        Others, focusing mainly on memory networks and simple
+        questions, are not very relevant for the multi-turn
+        goal-oriented problem (bAbI). The Frames
+        dataset&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0003">3</a>] is publicly available but it only
+        contains a single intent (“book”), and focuses more on the
+        tracking of user and machine actions. The only one that has
+        been found is the Key-Value Retrieval published
+        in&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0013">13</a>].</p>
+        <p>This dataset contains multi-turn sessions corresponding
+        to dialogues between a driver and his car assistant. Each
+        dialogue begins with a user sentence that establishes one
+        out of three intents, and the following turns are used by
+        both parties to reach the goal of the driver. Some slots
+        are annotated after each sentence to indicate which
+        entities the system should keep considering the context.
+        About the annotation of the slots, they are available but
+        not annotated in a straightforward way: each slot (15 types
+        available) is stored with its value, but there are some
+        problems in identifying their displacement in the
+        sentences. The selected approach, while providing also
+        outputs for the slot labels being trained jointly, is here
+        analyzed only under the point of view of the intents, so
+        this is actually not a problem. This dataset, therefore,
+        satisfies our needs: each sentence is annotated with its
+        speaker and the intent values are available. The
+        preprocessing is composed of three steps: <em>i)</em>
+        annotation of the intent from session-level to
+        sentence-level by copying the values; <em>ii)</em>
+        concatenation of all the sentences, removing the concept of
+        session that remains only on the intent values;
+        <em>iii)</em> consider as samples only the driver
+        sentences, each one stored together with the current and
+        previous intent value and with the previous sentence of the
+        agent.</p>
+        <p>With this setup of the samples, on the train set there
+        are 1583 intent changes over 6429 samples, while on the
+        test set 189 changes over 820 samples.</p>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Evaluation
+            protocol and results</h3>
+          </div>
+        </header>
+        <p>The goal is to measure how the system models the
+        intents. We evaluate the transitions of their values. So
+        the most appropriate measure is the F1 over the intent
+        changes. Being the previous state fixed both in true
+        conditions and on the expected conditions considered for
+        the F1 measure, evaluating the state transition or the
+        destination intent leads to the same values. For this
+        reason, the F1 measure is evaluated on the current sentence
+        intent.<a class="fn" href="#fn5" id=
+        "foot-fn5"><sup>5</sup></a></p>
+        <p>We compared our approach with the state-of-the-art
+        approach for single-turn&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0021">21</a>].<a class="fn" href="#fn6" id=
+        "foot-fn6"><sup>6</sup></a> To measure separately the
+        effects of the two modifications that have been described
+        in Section&nbsp;<a class="sec" href="#sec-11">3.2</a>, two
+        more approaches have been considered: the first one
+        considers the original single-turn network with the only
+        addition of the agent words, while the second one considers
+        the proposed multi-turn without the agents words (resulting
+        in the only addition of the top-level RNN working on the
+        intent values). We extended the comparison to a
+        CRF&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0020">20</a>] simply applied at word-level with
+        words as inputs and intent labels as outputs. In this case
+        two different configurations have been used: in the first
+        one, the lower cased words are used as input features,
+        while in the second one the pre-trained word
+        embeddings&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0008">8</a>].</p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">F1 over the test test. F1 scores
+            represent the max values reached at the given epoch
+            indicated in the table.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Row</th>
+                <th style="text-align:right;">Approach</th>
+                <th style="text-align:left;">F1(intent)</th>
+                <th style="text-align:center;">epoch</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">1</td>
+                <td style="text-align:right;">our approach with
+                LSTM</td>
+                <td style="text-align:left;">
+                <strong>0.9987</strong></td>
+                <td style="text-align:center;">
+                <strong>7</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">2</td>
+                <td style="text-align:right;">our approach without
+                agent words LSTM</td>
+                <td style="text-align:left;">
+                <strong>0.9987</strong></td>
+                <td style="text-align:center;">8</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">3</td>
+                <td style="text-align:right;">our approach with
+                GRU</td>
+                <td style="text-align:left;">0.9975</td>
+                <td style="text-align:center;">14</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">4</td>
+                <td style="text-align:right;">
+                  [<a class="bib" data-trigger="hover" data-toggle=
+                  "popover" data-placement="top" href=
+                  "#BibPLXBIB0021">21</a>] with the extension of
+                  agent words
+                </td>
+                <td style="text-align:left;">0.9951</td>
+                <td style="text-align:center;">5</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">5</td>
+                <td style="text-align:right;">our approach without
+                agent words GRU</td>
+                <td style="text-align:left;">0.9585</td>
+                <td style="text-align:center;">9</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">6</td>
+                <td style="text-align:right;">
+                  [<a class="bib" data-trigger="hover" data-toggle=
+                  "popover" data-placement="top" href=
+                  "#BibPLXBIB0021">21</a>]
+                </td>
+                <td style="text-align:left;">0.8524</td>
+                <td style="text-align:center;">8</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">7</td>
+                <td style="text-align:right;">CRF on pretrained
+                word embeddings</td>
+                <td style="text-align:left;">0.7049</td>
+                <td style="text-align:center;">100</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">8</td>
+                <td style="text-align:right;">CRF on words</td>
+                <td style="text-align:left;">0.4976</td>
+                <td style="text-align:center;">100</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Table&nbsp;<a class="tbl" href="#tab1">1</a> reports the
+        results of the F1 measure on the selected approaches. From
+        the results obtained, we can observe that the role of the
+        interaction context is crucial to perform a better
+        understanding. Natural Language dialogues have great
+        dependencies between the sentences used by both parties.
+        The experimental results show also that the intent changes
+        are correctly detected on the sequence of input samples. We
+        can observe that, considering only the previous value of
+        the intent without concatenating the agent words, gives
+        also an increase with respect to the single-turn model.
+        Then, by looking at the F1 measure change between the
+        couples of rows (1,2), (3,5) and (4,6), we can notice that
+        the agent words on their own give an important contribution
+        in terms of both score and epoch number. Combining both
+        modifications helps going a little bit higher with the
+        score achieving the top score faster. The comparison with
+        the simple CRF approach highlights how important is to work
+        on a properly encoded sentence using RNN.</p>
+        <p>We acknowledge that the top scores are really close each
+        other's, actually changing the output on only one or two
+        samples from 100%. For this reason a similar work on other
+        datasets may show which one of the two novelties is more
+        important. But, being the distance from the single-turn
+        approach&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0021">21</a>] more consistent (delta difference
+        of 0.1463 in F1), we can be sure that the multi-turn
+        classification is important.</p>
+      </section>
+    </section>
+    <section id="sec-15">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span>
+          Conclusions</h2>
+        </div>
+      </header>
+      <p>The initial research question about the importance of the
+      interaction context for better understanding the requests has
+      been analyzed and the results achieved in a controlled
+      experiment using a standard benchmark dataset showed that the
+      interaction context is very crucial in multi-turn
+      interactions.</p>
+      <p>The work focused on the first step required for QA,
+      understanding the sentences, that is very important for doing
+      the next steps of knowledge base interrogation and response
+      generation.</p>
+      <p>The analysis has been done on the intents only. In order
+      to have a rule-free context management it is necessary to
+      perform a similar work also on the entities to know which
+      ones (implicitly or explicitly referenced in the current
+      sentence) have to be kept into consideration into the current
+      context.</p>
+      <p>Future works may thus include a focus on the entities:
+      both for having a correctly preprocessed corpus, both for
+      including their propagation across turns inside the model. We
+      will obtain a contextualized representation of the current
+      sentence not only in terms of intent, but also with respect
+      to the entities. In this way, no more manual tracking of
+      dialogue components will be necessary and the agent will be
+      able to understand multi-turn interactions seamlessly.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Abdalghani Abujabal,
+        Mohamed Yahya, Mirek Riedewald, and Gerhard Weikum. 2017.
+        Automated template generation for question answering over
+        knowledge graphs. In <em><em>Proceedings of the 26th
+        international conference on world wide web</em></em> .
+        International World Wide Web Conferences Steering
+        Committee, Republic and Canton of Geneva, Switzerland,
+        1191–1200.</li>
+        <li id="BibPLXBIB0002" label="[2]">James&nbsp;F Allen,
+        Donna&nbsp;K Byron, Myroslava Dzikovska, George Ferguson,
+        Lucian Galescu, and Amanda Stent. 2001. Toward
+        conversational human-computer interaction. <em><em>AI
+        magazine</em></em> 22, 4 (2001), 27.</li>
+        <li id="BibPLXBIB0003" label="[3]">Layla&nbsp;El Asri,
+        Hannes Schulz, Shikhar Sharma, Jeremie Zumer, Justin
+        Harris, Emery Fine, Rahul Mehrotra, and Kaheer Suleman.
+        2017. Frames: A corpus for adding memory to goal-oriented
+        dialogue systems. In <em><em>Proceedings of the SIGDIAL
+        2017 Conference</em></em> . Association for Computational
+        Linguistics, Saarbrücken, Germany, 207–219.</li>
+        <li id="BibPLXBIB0004" label="[4]">Jonathan Berant, Andrew
+        Chou, Roy Frostig, and Percy Liang. 2013. Semantic parsing
+        on freebase from question-answer pairs. In
+        <em><em>Proceedings of the 2013 Conference on Empirical
+        Methods in Natural Language Processing</em></em> .
+        1533–1544.</li>
+        <li id="BibPLXBIB0005" label="[5]">Aditya Bhargava, Asli
+        Celikyilmaz, Dilek Hakkani-Tür, and Ruhi Sarikaya. 2013.
+        Easy contextual intent prediction and slot detection. In
+        <em><em>2013 IEEE International Conference on Acoustics,
+        Speech and Signal Processing (ICASSP)</em></em> . IEEE,
+        8337–8341.</li>
+        <li id="BibPLXBIB0006" label="[6]">Kurt Bollacker, Colin
+        Evans, Praveen Paritosh, Tim Sturge, and Jamie Taylor.
+        2008. Freebase: a collaboratively created graph database
+        for structuring human knowledge. In <em><em>Proceedings of
+        the 2008 ACM SIGMOD international conference on Management
+        of data</em></em> . ACM, 1247–1250.</li>
+        <li id="BibPLXBIB0007" label="[7]">Antoine Bordes and Jason
+        Weston. 2017. Learning end-to-end goal-oriented dialog.
+        <em><em>the International Conference on Learning
+        Representations (ICLR)</em></em> (2017).</li>
+        <li id="BibPLXBIB0008" label="[8]">Christian Buck, Kenneth
+        Heafield, and Bas van Ooyen. 2014. N-gram Counts and
+        Language Models from the Common Crawl. In
+        <em><em>Proceedings of the Language Resources and
+        Evaluation Conference (LREC)</em></em> , Vol.&nbsp;2.
+        Citeseer, Reykjavik, Iceland, 4.</li>
+        <li id="BibPLXBIB0009" label="[9]">Po-Chun Chen, Ta-Chung
+        Chi, Shang-Yu Su, and Yun-Nung Chen. 2017. Dynamic
+        Time-Aware Attention to Speaker Roles and Contexts for
+        Spoken Language Understanding. <em><em>The 2017 IEEE
+        Automatic Speech Recognition and Understanding
+        Workshop</em></em> (2017).</li>
+        <li id="BibPLXBIB0010" label="[10]">Yun-Nung Chen, Dilek
+        Hakkani-Tür, Gokhan Tur, Jianfeng Gao, and Li Deng. 2016.
+        End-to-End Memory Networks with Knowledge Carryover for
+        Multi-Turn Spoken Language Understanding.
+        <em><em>Interspeech</em></em> (2016), 3245–3249.</li>
+        <li id="BibPLXBIB0011" label="[11]">Kyunghyun Cho, Bart
+        Van&nbsp;Merriënboer, Caglar Gulcehre, Dzmitry Bahdanau,
+        Fethi Bougares, Holger Schwenk, and Yoshua Bengio. 2014.
+        Learning phrase representations using RNN encoder-decoder
+        for statistical machine translation. (October 2014),
+        1724–1734. <a class="link-inline force-break" href=
+        "http://www.aclweb.org/anthology/D14-1179" target="_blank">
+          http://www.aclweb.org/anthology/D14-1179</a>
+        </li>
+        <li id="BibPLXBIB0012" label="[12]">Jeffrey&nbsp;L Elman.
+        1990. Finding structure in time. <em><em>Cognitive
+        science</em></em> 14, 2 (1990), 179–211.</li>
+        <li id="BibPLXBIB0013" label="[13]">Mihail Eric and
+        Christopher&nbsp;D Manning. 2017. Key-Value Retrieval
+        Networks for Task-Oriented Dialogue. In <em><em>Proceedings
+        of the 18th Annual SIGdial Meeting on Discourse and
+        Dialogue</em></em> . Association for Computational
+        Linguistics, Saarbrücken, Germany, 37–49.</li>
+        <li id="BibPLXBIB0014" label="[14]">Anthony Fader, Luke
+        Zettlemoyer, and Oren Etzioni. 2014. Open question
+        answering over curated and extracted knowledge bases. In
+        <em><em>Proceedings of the 20th ACM SIGKDD international
+        conference on Knowledge discovery and data mining</em></em>
+        . ACM, 1156–1165.</li>
+        <li id="BibPLXBIB0015" label="[15]">Barbara&nbsp;J Grosz,
+        Scott Weinstein, and Aravind&nbsp;K Joshi. 1995. Centering:
+        A framework for modeling the local coherence of discourse.
+        <em><em>Computational linguistics</em></em> 21, 2 (1995),
+        203–225.</li>
+        <li id="BibPLXBIB0016" label="[16]">Sanda&nbsp;M Harabagiu,
+        Dan&nbsp;I Moldovan, Marius Pasca, Mihai Surdeanu, Rada
+        Mihalcea, Roxana Girju, Vasile Rus, V&nbsp;Finley Lacatusu,
+        Paul Morarescu, and Razvan&nbsp;C Bunescu. 2001. Answering
+        Complex, List and Context Questions with LCC's
+        Question-Answering Server.. In <em><em>TREC</em></em>
+        .</li>
+        <li id="BibPLXBIB0017" label="[17]">Charles&nbsp;T
+        Hemphill, John&nbsp;J Godfrey, and George&nbsp;R
+        Doddington. 1990. The ATIS spoken language systems pilot
+        corpus. In <em><em>Speech and Natural Language: Proceedings
+        of a Workshop Held at Hidden Valley, Pennsylvania, June
+        24-27, 1990</em></em> .</li>
+        <li id="BibPLXBIB0018" label="[18]">Sepp Hochreiter and
+        Jürgen Schmidhuber. 1997. Long short-term memory.
+        <em><em>Neural computation</em></em> 9, 8 (1997),
+        1735–1780.</li>
+        <li id="BibPLXBIB0019" label="[19]">Brendan Juba and Madhu
+        Sudan. 2008. Universal semantic communication ii: A theory
+        of goal-oriented communication. In <em><em>Electronic
+        Colloquium on Computational Complexity (ECCC)</em></em> ,
+        Vol.&nbsp;15.</li>
+        <li id="BibPLXBIB0020" label="[20]">John Lafferty, Andrew
+        McCallum, and Fernando&nbsp;CN Pereira. 2001. Conditional
+        random fields: Probabilistic models for segmenting and
+        labeling sequence data. (2001).</li>
+        <li id="BibPLXBIB0021" label="[21]">Bing Liu and Ian Lane.
+        2016. Attention-Based Recurrent Neural Network Models for
+        Joint Intent Detection and Slot Filling.
+        <em><em>Interspeech</em></em> (2016), 685–689.</li>
+        <li id="BibPLXBIB0022" label="[22]">Denis Lukovnikov, Asja
+        Fischer, Jens Lehmann, and Sören Auer. 2017. Neural
+        network-based question answering over knowledge graphs on
+        word and character level. In <em><em>Proceedings of the
+        26th international conference on World Wide Web</em></em> .
+        International World Wide Web Conferences Steering
+        Committee,1211–1220.</li>
+        <li id="BibPLXBIB0023" label="[23]">Grégoire Mesnil,
+        Xiaodong He, Li Deng, and Yoshua Bengio. 2013.
+        Investigation of recurrent-neural-network architectures and
+        learning methods for spoken language understanding.. In
+        <em><em>Interspeech</em></em> . 3771–3775.</li>
+        <li id="BibPLXBIB0024" label="[24]">Jeffrey Pennington,
+        Richard Socher, and Christopher Manning. 2014. Glove:
+        Global vectors for word representation. In
+        <em><em>Proceedings of the 2014 conference on empirical
+        methods in natural language processing (EMNLP)</em></em> .
+        1532–1543.</li>
+        <li id="BibPLXBIB0025" label="[25]">Yangyang Shi, Kaisheng
+        Yao, Hu Chen, Yi-Cheng Pan, Mei-Yuh Hwang, and Baolin Peng.
+        2015. Contextual spoken language understanding using
+        recurrent neural networks. In <em><em>2015 IEEE
+        International Conference on Acoustics, Speech and Signal
+        Processing (ICASSP)</em></em> . IEEE, 5271–5275.</li>
+        <li id="BibPLXBIB0026" label="[26]">Robert&nbsp;F Simmons.
+        1970. Natural language question-answering systems: 1969.
+        <em><em>Commun. ACM</em></em> 13, 1 (1970), 15–30.</li>
+        <li id="BibPLXBIB0027" label="[27]">Alessandro Sordoni,
+        Yoshua Bengio, Hossein Vahabi, Christina Lioma, Jakob
+        Grue&nbsp;Simonsen, and Jian-Yun Nie. 2015. A hierarchical
+        recurrent encoder-decoder for generative context-aware
+        query suggestion. In <em><em>Proceedings of the 24th ACM
+        International on Conference on Information and Knowledge
+        Management</em></em> . ACM, 553–562.</li>
+        <li id="BibPLXBIB0028" label="[28]">Sainbayar Sukhbaatar,
+        Jason Weston, Rob Fergus, <em>et al.</em> 2015. End-to-end
+        memory networks. In <em><em>Advances in neural information
+        processing systems</em></em> . 2440–2448.</li>
+        <li id="BibPLXBIB0029" label="[29]">Mingyu Sun and
+        Joyce&nbsp;Y Chai. 2007. Discourse processing for context
+        question answering based on linguistic knowledge.
+        <em><em>Knowledge-Based Systems</em></em> 20, 6 (2007),
+        511–526.</li>
+        <li id="BibPLXBIB0030" label="[30]">Valentin Tablan, Danica
+        Damljanovic, and Kalina Bontcheva. 2008. A natural language
+        query interface to structured information. In
+        <em><em>European Semantic Web Conference</em></em> .
+        Springer, 361–375.</li>
+        <li id="BibPLXBIB0031" label="[31]">Stefanie Tellex, Boris
+        Katz, Jimmy Lin, Aaron Fernandes, and Gregory Marton. 2003.
+        Quantitative evaluation of passage retrieval algorithms for
+        question answering. In <em><em>Proceedings of the 26th
+        annual international ACM SIGIR conference on Research and
+        development in informaion retrieval</em></em> . ACM,
+        41–47.</li>
+        <li id="BibPLXBIB0032" label="[32]">Alan&nbsp;M Turing.
+        1950. Computing machinery and intelligence.
+        <em><em>Mind</em></em> 59, 236 (1950), 433–460.</li>
+        <li id="BibPLXBIB0033" label="[33]">Denny Vrandečić and
+        Markus Krötzsch. 2014. Wikidata: a free collaborative
+        knowledgebase. <em><em>Commun. ACM</em></em> 57, 10 (2014),
+        78–85.</li>
+        <li id="BibPLXBIB0034" label="[34]">Courtney Wade and James
+        Allan. 2005. <em><em>Passage retrieval and
+        evaluation</em></em> . Technical Report. University of
+        Massachusetts, Amherst Center for Intelligent Information
+        Retrieval.</li>
+        <li id="BibPLXBIB0035" label="[35]">Joseph Weizenbaum.
+        1966. ELIZA - a computer program for the study of natural
+        language communication between man and machine.
+        <em><em>Commun. ACM</em></em> 9, 1 (1966), 36–45.</li>
+        <li id="BibPLXBIB0036" label="[36]">Jason Williams, Antoine
+        Raux, Deepak Ramachandran, and Alan Black. 2013. The dialog
+        state tracking challenge. In <em><em>Proceedings of the
+        SIGDIAL 2013 Conference</em></em> . 404–413.</li>
+        <li id="BibPLXBIB0037" label="[37]">Puyang Xu and Ruhi
+        Sarikaya. 2014. Contextual domain classification in spoken
+        language understanding systems using recurrent neural
+        network. In <em><em>2014 IEEE International Conference on
+        Acoustics, Speech and Signal Processing (ICASSP)</em></em>
+        . IEEE, 136–140.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "https://research.fb.com/downloads/babi">https://research.fb.com/downloads/babi</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "http://trec.nist.gov/">http://trec.nist.gov/</a></p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "http://trec.nist.gov/pubs/trec10/t10_proceedings.html">http://trec.nist.gov/pubs/trec10/t10_proceedings.html</a></p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a>A
+    <em>logit</em> is simply an output of a prediction with values
+    that are not yet normalized to a probability distribution by a
+    function like <em>softmax</em>.</p>
+    <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a>micro F1 is
+    used: globally counting the total TP, FN and FP over the single
+    sentences</p>
+    <p id="fn6"><a href="#foot-fn6"><sup>6</sup></a>the approach
+    was reimplemented using <a class="link-inline force-break"
+    href="https://github.com/HadoopIt/rnn-nlu">https://github.com/HadoopIt/rnn-nlu</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191539">https://doi.org/10.1145/3184558.3191539</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

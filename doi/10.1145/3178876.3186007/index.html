@@ -1,0 +1,2619 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Improving Word Embedding Compositionalityusing
+  Lexicographic Definitions</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Improving Word Embedding
+          Compositionality using Lexicographic
+          Definitions</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Thijs</span> <span class=
+          "surName">Scheepers</span>, University of Amsterdam,
+          <a href=
+          "mailto:thijs.scheepers@student.uva.nl">thijs.scheepers@student.uva.nl</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Evangelos</span> <span class=
+          "surName">Kanoulas</span>, University of Amsterdam,
+          <a href="mailto:e.kanoulas@uva.nl">e.kanoulas@uva.nl</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Efstratios</span> <span class=
+          "surName">Gavves</span>, University of Amsterdam,
+          <a href="mailto:e.gavves@uva.nl">e.gavves@uva.nl</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3178876.3186007"
+        target=
+        "_blank">https://doi.org/10.1145/3178876.3186007</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3178876" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>We present an in-depth analysis of four popular
+        word embeddings (<em>Word2Vec</em>, <em>GloVe</em>,
+        <em>fastText</em> and <em>Paragram</em>) in terms of their
+        semantic compositionality. In addition, we propose a method
+        to tune these embeddings towards better compositionality.
+        We find that training the existing embeddings to compose
+        lexicographic definitions improves their performance in
+        this task significantly, while also getting similar or
+        better performance in both word similarity and sentence
+        embedding evaluations.</small></p>
+        <p><small>Our method tunes word embeddings using a simple
+        neural network architecture with definitions and lemmas
+        from <em>WordNet</em>. Since dictionary definitions are
+        semantically similar to their associated lemmas, they are
+        the ideal candidate for our tuning method, as well as
+        evaluating for compositionality. Our architecture allows
+        for the embeddings to be composed using simple arithmetic
+        operations, which makes these embeddings specifically
+        suitable for production applications such as web search and
+        data mining. We also explore more elaborate and involved
+        compositional models.</small></p>
+        <p><small>In our analysis, we evaluate original embeddings,
+        as well as tuned embeddings, using existing word similarity
+        and sentence embedding evaluation methods. Aside from these
+        evaluation methods used in related work, we also evaluate
+        embeddings using a ranking method which tests composed
+        vectors using the lexicographic definitions already
+        mentioned. In contrast to other evaluation methods, ours is
+        not invariant to the magnitude of the embedding
+        vector—which we show is important for composition. We
+        consider this new evaluation method, called
+        <em>CompVecEval</em>, to be a key contribution.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Thijs Scheepers, Evangelos Kanoulas, and Efstratios
+          Gavves. 2018. Improving Word Embedding
+          Compositionalityusing Lexicographic Definitions. In
+          <em>WWW 2018: The 2018 Web Conference,</em> <em>April
+          23–27, 2018,</em> <em>Lyon, France. ACM, New York, NY,
+          USA</em> 11 Pages. <a href=
+          "https://doi.org/10.1145/3178876.3186007" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3178876.3186007</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>The principle of <em>compositionality</em> [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0017">17</a>] states that the meaning
+      of an expression comprises the meaning of its constituents as
+      well as the rules to combine them. It was first introduced to
+      explain the way humans understand language. Today, the same
+      principle is used to model the way computers represent
+      meaning [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0049">49</a>].
+      While the exact interpretation and implications of word
+      specific meaning is debatable, it is clear that lexicography,
+      i.e. the act of writing dictionaries, is important to
+      illustrate the relationship between words and their meaning
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0018">18</a>]. Words in
+      dictionaries, or lemmas, are described in one or more short
+      but exact definitions. These dictionary definitions are
+      called <em>lexicographic definitions</em>. If we have such a
+      definition, according to the principle of compositionality,
+      it should be composable to the word it describes. For
+      example, we should be able to compose: <em>“A small
+      domesticated carnivorous mammal with soft fur, a short snout,
+      and retractable claws.”</em> into the lexical semantic
+      representation of <em>‘cat’</em>.</p>
+      <p>Lexical representation using real valued vectors, i.e.
+      <em>word embeddings</em> [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0036">36</a>], have become an important aspect of
+      neural models for information retrieval, natural language
+      processing as well as other text related model classes. Ever
+      since the paper which made these real valued embeddings
+      popular, there has been interest in their compositional
+      properties [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0037">37</a>].
+      These properties are especially important in the context of
+      deep neural models where, in various architectures, multiple
+      representations can be composed into a single deeper
+      representation.</p>
+      <p>Finding good representations for words in an unsupervised
+      manner, in practice, often relies on a word's context.
+      Training based on context results in a representation which
+      captures both syntax as well as semantics. While syntactic
+      information is important for composing representations, it is
+      not necessarily useful for applying the meaning of single
+      word embedding in a model. When composing words into a joint
+      representation we often want to create a representation of
+      meaning, i.e. semantics, and often do not care for syntax,
+      even though this information is essential to the act of
+      composition itself. Having a compact representation of
+      meaning can be useful for lots of tasks, such as question
+      answering, web search, machine translation and sentiment
+      analysis. In most of these tasks one would need to combine
+      multiple word embeddings to create a single embedding of the
+      semantics from a combination of words. We define such an
+      operation as <em>word embedding composition</em>.</p>
+      <p>In this work we analyze the practical use of four widely
+      used pretrained word embeddings:
+      <em>Word2Vec</em>&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0037">37</a>], <em>GloVe</em>&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0044">44</a>],
+      <em>fastText</em>&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0008">8</a>] and <em>Paragram</em>&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0057">57</a>]. These
+      embeddings are often used directly as features or used for
+      <em>transfer learning</em> to kick start a model's training
+      operation and improve its final performance. Since most
+      applications of word embeddings require them to be composed,
+      we decided to analyze the most popular pretrained word
+      embeddings on their compositional properties, so we can make
+      more informed decisions on which embeddings to use.</p>
+      <p>In order to do this, we created a new evaluation method
+      called <em>CompVecEval</em>, which tests the compositionality
+      of word embeddings using a test set of lexicographic
+      definitions and lemmas. We used definitions and lemmas from
+      <em>WordNet</em>&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0038">38</a>]. The novel evaluation method checks
+      if the composed words from the definitions are close to the
+      embedding of the lemma. This means we test specifically for
+      the various senses of ambiguous words. If we take the example
+      of <em>‘cat’</em> again, it does not only refer to the furry
+      animal but also to: <em>“A method of examining body organs by
+      scanning them with X-rays and using a computer to construct a
+      series of cross-sectional scans along a single axis”</em>.
+      Our tests make sure the embeddings of all lexicographic
+      descriptions of <em>‘cat’</em> are able to compose into its
+      lexical representation. Not just the most frequent, as that
+      could be the case when learning embeddings from large
+      corpora.</p>
+      <p>Our test differs from others because it uses a balltree
+      ranking [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0042">42</a>]
+      algorithm—which is an exact nearest neighbor algorithm. It
+      therefore considers the relation to all other lexical
+      representations and is not invariant to the embeddings
+      magnitude. Other evaluation methods are invariant to this
+      aspect of the embeddings. Our results show that summing
+      embeddings can be just as effective or even better than
+      averaging them. Even though averaging happens a lot in
+      popular algorithms and has a theoretical framework backing it
+      up [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0003">3</a>].</p>
+      <p>In addition, we built a model to tune the existing
+      embeddings towards better compositionality using the same
+      dictionary definitions. We were able to tune the embeddings
+      using various compositional functions, some of which should
+      be learned and some of which are simple algebraic functions.
+      Using simple algebraic functions is sometimes necessary for
+      large scale production applications that need to process
+      large amounts of data. They are also surprisingly effective
+      as our results show. We were able to create embeddings which
+      performed better or comparable across both the
+      <em>CompVecEval</em> task, as well as several word similarity
+      and sentence embedding evaluation tasks. We believe therefore
+      that our tuned embeddings could be an even better candidate
+      for direct use in application specific models or for transfer
+      learning. Our method for tuning these embeddings can be
+      applied using other compositional datasets as well. We call
+      this method of tuning word embeddings using compositional
+      data: <em>CompVec</em><a class="fn" href="#fn1" id=
+      "foot-fn1"><sup>1</sup></a>.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>Compositionality in linguistics was first defined back in
+      1892 by Frege [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0017">17</a>] and later neatly placed into the
+      present context by Janssen [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0026">26</a>]. In 2010 the mathematical
+      foundations of compositional semantics were described by
+      Coecke et&nbsp;al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0012">12</a>].</p>
+      <p>Mitchell and Lapata [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0039">39</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0040">40</a>] were the first to semantically
+      compose meaning using a simple element-wise algebraic
+      operation on word vector representations. This work does not
+      use the real valued word embeddings which are popular today.
+      They compare various operations on word embeddings and how it
+      affects their composition. In their results, multiplicative
+      models are superior to the additive models, which is not the
+      case in our analysis.</p>
+      <section id="sec-6">
+        <section id="sec-7">
+          <p><em>Distributional composition.</em> Before the
+          popularity of neural approaches increased, there has been
+          progress with using more sophisticated distributional
+          approaches. These distributional approaches can suffer
+          from data sparsity problems due to large matrices that
+          contain co-occurrence frequencies. Baroni and Zamparelli
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0005">5</a>] composed adjective-noun phrases
+          using an adjective matrix and a noun vector. Grefenstette
+          and Sadrzadeh [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0022">22</a>] did something similar but they
+          use a matrix for relational words, and a vector for
+          argument words. Yessenalina and Cardie [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0059">59</a>] used
+          matrices instead of vectors to model each word and
+          compose them using matrix multiplication. Matrix
+          multiplication is not commutative; and can, to some
+          extent, take order in to account.</p>
+        </section>
+        <section id="sec-8">
+          <p><em>Word embeddings through neural networks.</em>
+          Bengio et&nbsp;al. [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0006">6</a>] first coined the term <em>word
+          embedding</em>, in the context of training a neural
+          language model. Collobert and Weston [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0013">13</a>] showed
+          that word embeddings are actually useful for downstream
+          tasks and are great candidates for pretraining. The
+          popularization of word embeddings can be attributed to
+          Mikolov et&nbsp;al. [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0036">36</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0037">37</a>] with <em>Word2Vec</em> and their
+          <em>skip-gram</em> algorithm. In their work, they discuss
+          composition for word embeddings in terms of analogy
+          tasks. They give a clear picture of the additive
+          compositional properties of word embeddings; however, the
+          analogy tasks are still somewhat selective.</p>
+          <p>A popular method for creating paragraph
+          representations is called <em>Paragraph2Vec</em> or
+          <em>Doc2Vec</em> [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0031">31</a>], in which word vectors are
+          averaged, as well as combined, with a separate paragraph
+          representation. Such a combined representation can then
+          be used in document retrieval. This method makes an
+          implicit assumption that averaging is a good method for
+          composition. While averaging is a simple operation, our
+          results show that another simple operation will likely
+          perform better on most embeddings.</p>
+          <p>Wieting et&nbsp;al. [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0057">57</a>] showed that word embeddings,
+          such as Word2Vec and GloVe, could be further enhanced by
+          training them to compose sentence embeddings for the
+          purpose of paraphrasing. Their method, which uses
+          averaging, has shown significant improvements on
+          <em>semantic textual similarity</em> (STS) tasks. The
+          structure of their model is similar to ours, but it
+          differs in the loss function and the training objective.
+          Their loss function is magnitude invariant, and this
+          explains why they prefer averaging since averaging and
+          summing are essentially exactly the same if you normalize
+          the embeddings magnitude. Our task involves direct
+          composition to lexicographic lemmas, while their training
+          task was a paraphrasing task. Arora et&nbsp;al.
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0003">3</a>] improved on Wieting et&nbsp;al.
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0057">57</a>] using a simple weighted average
+          using the function <span class=
+          "inline-equation"><span class="tex">$\frac{a}{a +
+          p(w)}$</span></span> , where <em>a</em> is a parameter
+          and <em>p</em>(<em>w</em>) is the estimated word
+          frequency.</p>
+          <p>Kiros et&nbsp;al. [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0030">30</a>] presented the
+          <em>skip-through</em> algorithm. Inspired by
+          <em>skip-gram</em>, it predicts a context of composed
+          sentence representations given the current composed
+          sentence representation. Which could be described as
+          being a decompositional approach to creating sentence
+          representations. Kenter et&nbsp;al. [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0027">27</a>]
+          combined approaches from Kiros et&nbsp;al. [<a class=
+          "bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0030">30</a>] with
+          the approach from Wieting et&nbsp;al. [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0057">57</a>] to
+          create an unsupervised method for learning sentence
+          embeddings using a siamese neural network which tries to
+          predict a sentence from context (CBOW). Kenter
+          et&nbsp;al. also average word embeddings to create a
+          semantic representation of sentences.</p>
+          <p>Recently Tissier et&nbsp;al. [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0054">54</a>]
+          introduced <em>dict2vec</em>, which expanded the
+          skip-gram algorithm by incorporating word pair
+          relatedness into the training procedure. These word pairs
+          are extracted from lexicographic definitions, similar to
+          the definitions we use. However, their approach is
+          included directly in the training procedure of lexical
+          word embeddings where we focus on composition.</p>
+        </section>
+        <section id="sec-9">
+          <p><em>Algebraic composition.</em> Aside from work by
+          Mitchell and Lapata, there are a lot of applications
+          where algebraic composition is applied as part of a
+          model's architecture. Examples are: weighted averaging in
+          attention mechanisms&nbsp;[<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0004">4</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0034">34</a>], or in memory
+          networks&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0056">56</a>].</p>
+          <p>Paperno and Baroni [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0043">43</a>] provided some mathematical
+          explanations for why algebraic composition is performing
+          well. Arora et&nbsp;al. [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0003">3</a>] introduced a mathematical
+          framework which attempts a rigorous theoretical
+          understanding for the performance of averaging skip-gram
+          vectors. Gittens et&nbsp;al. [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0020">20</a>] built
+          on this and proofed that the skip-gram algorithm actually
+          ensures additive compositionality in terms of analogy
+          tasks. There are caveats, they assume a specific
+          definition of <em>composition</em> and a uniform word
+          distribution. But words are distributed according to
+          Zipf's law&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0060">60</a>].</p>
+        </section>
+        <section id="sec-10">
+          <p><em>Convolutional composition.</em> Work on more
+          elaborate neural network composition can be divided into
+          two categories: <em>convolutional approaches</em> and
+          <em>recurrent approaches</em>. Convolutional approaches
+          use a <em>convolutional neural network</em> (CNN) to
+          compose word representations into n-gram representations.
+          Kim [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0028">28</a>] composed embeddings using a
+          single layer CNN to perform topic categorization and
+          sentiment analysis. Blunsom et&nbsp;al. [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0007">7</a>]
+          presented a new pooling layer to apply CNNs to variable
+          length input sentences. Liu et&nbsp;al. [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0033">33</a>] later
+          improved this model by reversing its architecture. Our
+          results show that a convolutional model can be used for
+          composing lexicographic definitions, even though we did
+          not find it to be the most effective method.</p>
+        </section>
+        <section id="sec-11">
+          <p><em>Recurrent composition.</em> Models utilizing a
+          <em>recurrent neural network</em> (RNN) can read input
+          sentences of varying length. They have been used for
+          <em>neural machine translation</em> (NMT) [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0010">10</a>] and
+          <em>neural question answering</em> (NQA) [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0021">21</a>,
+          <a class="bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0056">56</a>] as
+          well as other model classes. Cho et&nbsp;al. [<a class=
+          "bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0010">10</a>]
+          introduced the encoder-decoder architecture as well as
+          the <em>gated recurrent unit</em> (GRU) to be a more
+          efficient alternative to the <em>long short-term
+          memory</em> (LSTM) [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0025">25</a>]. Sutskever et&nbsp;al.
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0052">52</a>] improved upon the
+          encoder-decoder model by stacking recurrent layers and
+          reversing the input. The GRU unit is empirically
+          evaluated by Chung et&nbsp;al. [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0011">11</a>] and
+          they found that the GRU is comparable in performance with
+          less computational cost. We use the GRU as an order
+          dependent composition function.</p>
+          <p>In most deep learning models word embeddings are
+          trained jointly with the model in a supervised manner.
+          The embedding-matrix in these models are good candidates
+          for transfer learning from the unsupervised
+          context-driven approach to jump start training. When
+          applying transfer learning it is important to consider
+          the compositional properties of the used embeddings.</p>
+          <p>Now we turn to attention mechanisms [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0004">4</a>,
+          <a class="bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0034">34</a>], which
+          are important components of NMT and NQA systems. In such
+          mechanisms, creating an attention vector boils down to
+          using a different method for composition, as opposed to
+          RNN-encoding. In a traditional attention architecture,
+          multiple assumptions are made on how they compose
+          representations, e.g. using the hidden states from the
+          encoder as input and using a weighted average over all
+          source words or a specific window.</p>
+        </section>
+        <section id="sec-12">
+          <p><em>Recursive composition.</em> Socher et&nbsp;al.
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0048">48</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0049">49</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0050">50</a>] introduce a <em>matrix-vector
+          recursive neural networks</em> (MVRNN), which uses the
+          syntactic tree structure from constituency parse to
+          compose embeddings. Their models are not end-to-end
+          because of the required constituency parser. The model
+          relies on a correct parse to make good compositions, this
+          is not always the case. But it is one of the first models
+          that tries to separate syntactic information from the
+          word embedding to focus solely on the semantics.</p>
+        </section>
+        <section id="sec-13">
+          <p><em>Evaluation of composed embeddings.</em> Evaluating
+          word representations in general is a difficult task. This
+          usually happens in terms of the similarity between two
+          words and is handcrafted for specific examples. The
+          methods aggregated by Faruqui and Dyer [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href=
+          "#BibPLXBIB0015">15</a>]<a class="fn" href="#fn2" id=
+          "foot-fn2"><sup>2</sup></a> are a popular. Their
+          evaluation combines 13 different word pair similarity
+          sets [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0016">16</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0019">19</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0024">24</a>], with a total of 11,212 word
+          pairs, and they use the <em>Spearman</em>’s rank
+          correlation coefficient as a metric. Because their method
+          focuses on word pairs they can capture the semantic
+          similarity between words but cannot necessarily say
+          something about their compositionality. We use these
+          methods in this work to show that lexical semantic
+          qualities of word embeddings do not decrease when we tune
+          the embeddings.</p>
+          <p>Conneau et&nbsp;al. [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0014">14</a>] aggregated different of sentence
+          evaluation methods<a class="fn" href="#fn3" id=
+          "foot-fn3"><sup>3</sup></a>, including some on
+          compositionality. Downstream performance in applications
+          such as sentiment classification [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0046">46</a>,
+          <a class="bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0048">48</a>] or
+          question answering [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0032">32</a>] provide an extrinsic evaluation
+          of compositionality, but results may suffer from other
+          confounding effects that affect the performance of the
+          classifier. The STS tasks [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0002">2</a>], from SemEval 2014 and 2015, are
+          evaluation tasks which can be used to determine sentence
+          similarity and are also good candidates to test
+          composition indirectly. Marelli et&nbsp;al. [<a class=
+          "bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0035">35</a>]
+          created the <em>Sentences Involving Compositional
+          Knowledge</em> (SICK) dataset which tests two important
+          aspects of composition specifically: textual relatedness
+          and textual entailment. We use all of these evaluation
+          methods in this work as well.</p>
+          <p>None of these works seem to evaluate compositional
+          semantics of lexical definitions. Our evaluation method,
+          called <em>CompVecEval</em>, fills this gap by directly
+          trying to find the semantic similarity between a
+          dictionary definition from WordNet [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0038">38</a>] and
+          the associated lemma.</p>
+        </section>
+      </section>
+    </section>
+    <section id="sec-14">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Dataset</h2>
+        </div>
+      </header>
+      <p>In order to test semantic composition, we turn to a
+      dictionary for our data. The words or lemmas in dictionaries
+      all have good definitions, which can be composed semantically
+      into the meaning of that word, and thus ideal for our task.
+      We choose to use WordNet [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0038">38</a>] as the basis for our dataset. The
+      synonym set in WordNet allows for the creation of pairs
+      <em>x</em> = (<em>d</em>, <em>l<sub>d</sub></em> ) of
+      definitions <span class="inline-equation"><span class=
+      "tex">$d \in \mathcal {D}$</span></span> with one, or many
+      lemmas <span class="inline-equation"><span class="tex">$l_d
+      \subset \mathcal {L}$</span></span> associated with that
+      definition. A definition is a sequence of words where
+      <span class="inline-equation"><span class="tex">$d = \langle
+      w^d_1, w^d_2 \ldots w^d_n | w^d \in \mathcal {W}
+      \rangle$</span></span> . We make sure to remove stop words
+      from this definition. For our evaluation method, we only
+      consider single word, i.e. unigram, lemmas which are also in
+      <span class="inline-equation"><span class="tex">$\mathcal
+      {W}$</span></span> for <span class=
+      "inline-equation"><span class="tex">$\mathcal
+      {L}$</span></span> , which makes <span class=
+      "inline-equation"><span class="tex">$\mathcal {L} \subset
+      \mathcal {W}$</span></span> . We added this constraint
+      because this makes the evaluation method more usable, since
+      word embeddings do not necessarily have to be applied on the
+      target side, even though that is still possible.</p>
+      <p>In the original WordNet synonym graph, if we find that the
+      lemma is actually one of the definition words, we do not add
+      that lemma to <em>l<sub>d</sub></em> for that particular
+      <em>x</em>. We end up with <span class=
+      "inline-equation"><span class="tex">$\vert \mathcal {X} \vert
+      = 52,430$</span></span> unique data points with a vocabulary
+      of <span class="inline-equation"><span class="tex">$\vert
+      \mathcal {D} \vert = 48,944$</span></span> unique words and a
+      target vocabulary of <span class=
+      "inline-equation"><span class="tex">$\vert \mathcal {L} \vert
+      = 33,186$</span></span> unique lemmas.</p>
+      <section id="sec-15">
+        <section id="sec-16">
+          <p><em>Pretrained word embeddings.</em> Now that we have
+          a vocabulary of definition words <span class=
+          "inline-equation"><span class="tex">$\mathcal
+          {W}$</span></span> as well as a vocabulary of target
+          words <span class="inline-equation"><span class=
+          "tex">$\mathcal {L}$</span></span> , we find vector
+          representations for each definition and target words from
+          the four popular large pretrained word embeddings:
+          Word2Vec, GloVe, fastText and Paragram. Each of these
+          pretrained word embeddings, were trained on English text
+          and have a dimensionality of 300, as to keep our final
+          comparison relatively fair.</p>
+          <p>Word2Vec was trained using the original skip-gram
+          algorithm using a context window and walking over a large
+          corpus of 100B tokens from Google News articles. GloVe
+          vectors where trained using a local context window,
+          similar to skip-gram, combined with global matrix
+          factorization. With this global matrix vector, each
+          context word is weighted to its global co-occurrence
+          frequency. We used GloVe representations that where
+          trained on the Common Crawl which has 840B tokens and a
+          vocabulary of 2.2M. fastText uses a training algorithm
+          that is based on skip-gram, however it represents each
+          word as a bag of character n-grams. A vector
+          representation is associated with each n-gram and words
+          are represented as a sum of these n-grams. The fastText
+          embeddings were trained on a large English Wikipedia
+          dataset. The Paragram embeddings we use, are the same as
+          the tuned embeddings from the compositional paraphrasic
+          model of Wieting et&nbsp;al. [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0057">57</a>]
+          combined with the larger embedding dataset from Wieting
+          et&nbsp;al. [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0058">58</a>].</p>
+          <p>Keep in mind that we understand that these word
+          embeddings are each trained using both a different
+          algorithm and a different dataset. We are not trying to
+          determine which algorithm is better. We are merely trying
+          to give insights into the compositionality of existing
+          pretrained publicly available word embeddings.</p>
+        </section>
+        <section id="sec-17">
+          <p><em>Train-test split.</em> Since our objective is to
+          create a tuning method and an evaluation method for
+          existing embeddings, using this new dataset, we have to
+          split the dataset into train and test portions. The
+          structure of the data in <span class=
+          "inline-equation"><span class="tex">$\mathcal
+          {X}$</span></span> is such that we cannot randomly split
+          anywhere. When splitting we make sure that a lemma
+          <em>l</em> with multiple definitions <em>d</em> are all
+          in the same set. Otherwise the training algorithm would
+          be able to train on lemmas that are also in the test set,
+          which would make for unbalanced results. Additionally, we
+          make sure that both training and test datasets contain at
+          least one definition word <em>w</em> which is the same as
+          a lemma <em>l</em> from the other set, to prevent
+          diverging embeddings. We end up with a train dataset of
+          49,807 data points and a test dataset of 2,623 data
+          points. We made the dataset and the code to create the
+          entire dataset freely available<a class="fn" href="#fn4"
+          id="foot-fn4"><sup>4</sup></a>.</p>
+        </section>
+      </section>
+    </section>
+    <section id="sec-18">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Methods of
+          composition</h2>
+        </div>
+      </header>
+      <p>The goal of word embedding composition is to combine
+      multiple word embeddings in to a single composed embedding.
+      Figure <a class="fig" href="#fig1">1</a> shows how this can
+      be done. The compositional function <em>f<sup>c</sup></em>
+      can be anything from a very complicated neural network to
+      simple element-wise addition. In our evaluation, we will test
+      four simple algebraic composition functions, and six
+      learnable composition functions.</p>
+      <p>Combining multiple intermediate representations into one
+      simple representation is something which happens in lots of
+      deep learning architectures. But in itself, it is not often
+      studied in detail. In our case we look at the
+      compositionality of word embeddings, but these approaches
+      could very well be extended to other types of
+      representations. Similar evaluations on compositional
+      functions could take place.</p>
+      <p>In our experiments, we truncate the input definitions
+      tokens to a maximum of 32 and pad the unused tokens. In order
+      to determine this cut point, we looked at the length of all
+      definitions. We found that the mean definition length was: 10
+      tokens, the 95 percentile was: 22 tokens and the 99
+      percentile: 31 tokens. Additionally, we create a mask for the
+      padding tokens to correctly handle the composition functions
+      for variable input length.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186007/images/www2018-16-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">This figure illustrates the
+          <em>CompVec</em> model structure. The input embeddings go
+          into the composition function <em>f<sup>c</sup></em> and
+          get composed into a single composed embedding <em>c</em>.
+          We see how this composed vector <em>c</em> gets compared
+          against the positive example <em>y<sup>p</sup></em> and
+          the negative example <em>y<sup>n</sup></em> in the loss
+          function.</span>
+        </div>
+      </figure>
+      <p></p>
+      <section id="sec-19">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Algebraic
+            composition</h3>
+          </div>
+        </header>
+        <p>First, we will try to create a composition by applying
+        element-wise operations: + , × , max (<em>d</em>) and
+        average(<em>d</em>). It should be no surprise that
+        composing by simple mathematical operation is not ideal,
+        since the act of composing considers neither the
+        relationship between individual words nor the order of the
+        words. Instead such relationships should already be present
+        in the space of all words under the operation. But by
+        analyzing the results from simple operations we could have
+        new insights into the word embedding space itself, how it
+        already has compositional properties and how it can be
+        used. For example, the document representation model
+        <em>Paragraph2Vec</em> uses an average(<em>d</em>)
+        operation to compose embeddings of any kind. Our evaluation
+        shows that this is not necessarily the optimal
+        operation.</p>
+        <p>We mask padding tokens and make sure the composition in
+        our model is handled correctly. For example, padding tokens
+        should have a vector filled with zero values as an
+        embedding for the + operation while they should have a
+        vector filled with one values as embedding for the ×
+        operation.</p>
+        <p>It should be noted that the magnitude, i.e. norm, of the
+        pretrained embeddings is sometimes assumed to be 1
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0045">45</a>]. If one
+        makes this assumption, averaging is a logical composition
+        function over summation. However, the magnitude of all
+        pretrained embeddings is not 1. Instead, it varies from
+        embedding to embedding. If one wants the embeddings to have
+        this property they would have to normalize the embeddings,
+        with which they could lose valuable information.</p>
+      </section>
+      <section id="sec-20">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Tune
+            embeddings while composing</h3>
+          </div>
+        </header>
+        <p>Now that we have defined simple algebraic composition
+        and a dataset for composition we can try tuning the
+        pretrained embeddings for better composition under a
+        specific composition function <em>f<sup>c</sup></em> . In
+        order to do this, we train using stochastic gradient decent
+        and the triplet loss function [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0023">23</a>] as can be seen in equation
+        <a class="eqn" href="#eq1">1</a>. The loss function is
+        related to the more popular contrastive loss function.</p>
+        <div class="table-responsive" id="eq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \text{triplet
+            loss} := \sum ^N_{i=1} \text{max} \Big (\vert \vert c_i
+            - y^p_i \vert \vert ^2 - \vert \vert c_i - y^n_i \vert
+            \vert ^2 + \alpha , 0 \Big) \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>Aside from this loss function, we also experimented with
+        a triplet loss function based on cosine similarity, similar
+        to the work of [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0057">57</a>]. Results from training using the
+        loss function based on cosine-similarity were inferior on
+        all evaluation methods.</p>
+        <div class="table-responsive" id="eq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \text{cos
+            triplet loss} := \sum ^N_{i=1} \text{max} \Big (\cos
+            (c_i, y^p_i) - \cos (c_i, y^n_i) + \alpha , 0 \Big)
+            \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>Descending the gradients of the triplet loss will insure
+        that the composed embedding <em>c</em> moves closer to the
+        reference lemma embedding <em>y<sup>p</sup></em> but at the
+        same time moves away from a random other reference lemma
+        embedding <em>y<sup>n</sup></em> . Using the negative
+        example ensures the embedding values do not converge to 0.
+        The loss function also has a margin parameter <em>α</em>
+        which basically makes sure that if the embeddings
+        <em>c</em> and <em>y<sup>p</sup></em> are already close
+        enough to each other they do not incur a loss. After some
+        experimentation, we choose to use the margin value
+        <em>α</em> = 5 for the additive composition and <em>α</em>
+        = 0.25 for all other models.</p>
+        <p>While most word embedding algorithms do not include a
+        form of regularization during the training procedure, we
+        experimented with adding this to our training procedure.
+        While experimenting we found that adding dropout [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0051">51</a>] improved
+        the final results considerably. Therefore, our final models
+        are trained with a dropout probability of
+        <em>P<sub>dropout</sub></em> = 0.25 on the input
+        embeddings.</p>
+        <p>We trained the model for 205 epochs using batches of 512
+        data points with the Adam stochastic gradient decent
+        optimizer [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0029">29</a>]. We used a learning rate of
+        <em>lr</em> = 1<em>e</em> <sup>− 3</sup>, <em>β</em>
+        <sub>1</sub> = 0.9, <em>β</em> <sub>2</sub> = 0.99 and ϵ =
+        1<em>e</em> <sup>− 8</sup>.</p>
+      </section>
+      <section id="sec-21">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span> Learning to
+            compose</h3>
+          </div>
+        </header>
+        <p>In addition to simple algebraic composition we also
+        trained models to compose embeddings. We learned a simple
+        projection layer, recurrent models as well as convolutional
+        models. There are three big advantages of using a learned
+        model over using simple operations. First, we learn the
+        parameters for the compositional function to improve the
+        representation so that we are not bound to the original
+        embedding space and its compositional properties. Second,
+        we can make non-linear transformations when combining
+        representations. Lastly, a RNN and a CNN will be able to
+        take word order into account and thus can do more with
+        syntactical information.</p>
+        <p>We execute the training procedure twice for all learned
+        composition functions. Once with the embeddings fixed, and
+        once where we fix the embeddings for the first part of
+        training (2500 steps or 25 epochs) and then refine the
+        embeddings along with the model's weight matrices. In the
+        results table the models trained with fixed embeddings can
+        be found under the columns titled <em>Original</em>, and
+        the models with tuned embeddings under
+        <em>CompVec</em>.</p>
+        <section id="sec-22">
+          <p><em>Projecting the Composed Vector.</em> Our first and
+          simplest learned composition function is a projection.
+          This is similar to the approach Wieting et&nbsp;al.
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0057">57</a>] took.</p>
+          <div class="table-responsive" id="eq3">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} c = \tanh (x
+              W_{x} + b) \end{equation}</span><br />
+              <span class="equation-number">(3)</span>
+            </div>
+          </div>
+          <p></p>
+          <p>We apply this projection to vectors which are composed
+          using the same functions as in the previously discussed
+          algebraic composition functions.</p>
+        </section>
+        <section id="sec-23">
+          <p><em>Recurrent Composition.</em> Our first recurrent
+          model uses a plain RNN units for its hidden layer. Our
+          hidden units have a dimensionality of 300, similar to our
+          word embeddings. The RNN is described in the Equation
+          <a class="eqn" href="#eq4">4</a>.</p>
+          <div class="table-responsive" id="eq4">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} h = \tanh (x
+              W_{x} + h_{t-1} W_{h} + b)
+              \end{equation}</span><br />
+              <span class="equation-number">(4)</span>
+            </div>
+          </div>
+          <p></p>
+          <p>Our second recurrent model uses a GRU instead of plain
+          RNN units. It has been shown that GRU is well suited for
+          language related tasks and performs on par with or better
+          than the LSTM [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0011">11</a>]. This model has three times the
+          parameters of as our plain RNN model. Figure <a class=
+          "fig" href="#fig2">2</a> shows the internals of a GRU
+          schematically. Equation <a class="eqn" href="#eq5">5</a>
+          gives us the mathematical definition of a GRU.</p>
+          <div class="table-responsive" id="eq5">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}
+              \begin{array}{ll} r = \sigma (x W_{xr} + h_{t-1}
+              W_{hr} + b_r) &amp; \mbox{reset gate} \\ u = \sigma
+              (x W_{xu} + h_{t-1} W_{hu} + b_u) &amp; \mbox{update
+              gate} \\ \tilde{h} = \text{tanh}(x W_{ x \tilde{h} }
+              + r \cdot h_{ t - 1 } W_{ h\tilde{h} } + b_{
+              \tilde{h} }) &amp; \mbox{candidate update} \\ h = 1.0
+              - u \cdot h_{t-1} + u \cdot \tilde{h} &amp;
+              \mbox{final update} \end{array}
+              \end{equation}</span><br />
+              <span class="equation-number">(5)</span>
+            </div>
+          </div>
+          <figure id="fig2">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186007/images/www2018-16-fig2.jpg"
+            class="img-responsive" alt="Figure 2" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 2:</span>
+              <span class="figure-title">This figure shows the
+              inner workings of a GRU. We see the update and reset
+              gate with their input and output. We see <span class=
+              "inline-equation"><span class=
+              "tex">$\tilde{h}$</span></span> and how it influences
+              the final output <em>c</em> or <em>h</em>.</span>
+            </div>
+          </figure>
+          <figure id="fig3">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186007/images/www2018-16-fig3.jpg"
+            class="img-responsive" alt="Figure 3" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 3:</span>
+              <span class="figure-title">This figure shows the
+              inner workings of a CNN for composing word
+              embeddings. We see the weight matrix for the filters,
+              the max pooling operation as well as <em>c</em> the
+              final output.</span>
+            </div>
+          </figure>
+          <p>Our last recurrent model is a <em>bi-directional
+          GRU</em> [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0047">47</a>] where we have the input sequence
+          in regular order project to a hidden state of 150 units,
+          and we have a separate model doing so for the input
+          sequence in reverse order.</p>
+        </section>
+        <section id="sec-24">
+          <p><em>Convolutional Composition.</em> For our first CNN
+          we will use a filter were the dimensions correspond to
+          the embedding size (<em>E</em> = 300) and the width of
+          the sliding window (<em>F</em> = 3). We ensure that each
+          filter predicts a single dimension of the target
+          embedding. We see this clearly in Figure <a class="fig"
+          href="#fig3">3</a>.</p>
+          <div class="table-responsive" id="eq6">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}
+              \begin{array}{ll} \tilde{h}_{ij} = \sum ^{F}_{a=0}
+              \sum ^{E}_{b=0} W^{f}_{ab} x_{(i+a)(j+b)} &amp;
+              \text{convolution}\\ h = \text{relu}(\tilde{h} + b)
+              &amp; \text{nonlinearity} \\ c = \text{maxpool}(h)
+              &amp; \text{pooling} \end{array}
+              \end{equation}</span><br />
+              <span class="equation-number">(6)</span>
+            </div>
+          </div>
+          <p>For the second more complex CNN we employ different
+          filters with different sliding window widths. This CNN
+          should be able to better capture long distance
+          dependencies. We choose filters with a sliding window
+          size of: 3, 5, 7 and 9.</p>
+        </section>
+      </section>
+    </section>
+    <section id="sec-25">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Analysis and
+          Evaluation</h2>
+        </div>
+      </header>
+      <p>In our analysis of the four popular word embeddings
+      <em>Word2Vec</em> [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0037">37</a>], <em>GloVe</em> [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0044">44</a>], <em>fastText</em>
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0008">8</a>] and
+      <em>Paragram</em> [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0057">57</a>] we test their applicability when
+      using specific types of composition in a deep neural network
+      architecture. We present both results for the original
+      untuned embeddings as well as results for embeddings tuned
+      with our dataset and the architecture described in the
+      previous section. To analyze these word embeddings directly
+      in terms of their compositionality we introduce
+      <em>CompVecEval</em>. Additionally, we also analyze the
+      embeddings in terms of their semantic textual similarity,
+      relatedness and entailment using various existing evaluation
+      methods. Lastly, we see if the quality of the word embeddings
+      themselves have been influenced by the tuning optimization by
+      looking at the scores of word similarity tests.</p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">This table displays the results of all
+          evaluation measures. For all measures counts: ”Higher is
+          better”. The results for CompVecEval and SICK-E scores
+          are denoted × 100. All other sentence evaluation measures
+          are denoted in Pearson's <em>r</em> × 100, whereas the
+          word similarity measures are denoted in Spearman's
+          <em>r</em> × 100. It is important to note that in the
+          case of the learned composition functions (RNN, GRU, CNN
+          etc.) under <em>original</em>, we <em>did</em> train the
+          models themselves but <em>did not</em> change the
+          original embeddings whereas under <em>CompVec</em> we
+          tuned the embeddings as well.</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th colspan="3" style="text-align:left;">
+                &nbsp;
+                <hr />
+              </th>
+              <th colspan="2" style="text-align:center;">
+                Word2Vec
+                <hr />
+              </th>
+              <th colspan="2" style="text-align:center;">
+                GloVe
+                <hr />
+              </th>
+              <th colspan="2" style="text-align:center;">
+                fastText
+                <hr />
+              </th>
+              <th colspan="2" style="text-align:center;">
+                Paragram
+                <hr />
+              </th>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;">Measure</td>
+              <td style="text-align:right;">Composition</td>
+              <td style="text-align:left;">Original</td>
+              <td style="text-align:center;">CompVec</td>
+              <td style="text-align:left;">Original</td>
+              <td style="text-align:left;">CompVec</td>
+              <td style="text-align:center;">Original</td>
+              <td style="text-align:left;">CompVec</td>
+              <td style="text-align:left;">Original</td>
+              <td style="text-align:center;">CompVec</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="11" style="text-align:left;">
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">CompVecEval</td>
+              <td style="text-align:left;">MRR</td>
+              <td style="text-align:right;">+</td>
+              <td style="text-align:left;">17.0</td>
+              <td style="text-align:center;">23.0 (+6.0)</td>
+              <td style="text-align:left;">11.9</td>
+              <td style="text-align:left;">26.5 (+14.6)</td>
+              <td style="text-align:center;">20.7</td>
+              <td style="text-align:left;">26.3 (+5.6)</td>
+              <td style="text-align:left;">26.6</td>
+              <td style="text-align:center;"><em>29.9</em>
+              (+3.3)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">
+              average(<em>d</em>)</td>
+              <td style="text-align:left;">2.0</td>
+              <td style="text-align:center;">2.0 (-0.0)</td>
+              <td style="text-align:left;">3.3</td>
+              <td style="text-align:left;">4.1 (+0.8)</td>
+              <td style="text-align:center;">3.0</td>
+              <td style="text-align:left;">3.4 (+0.5)</td>
+              <td style="text-align:left;">3.8</td>
+              <td style="text-align:center;"><em>4.1</em>
+              (+0.3)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">×</td>
+              <td style="text-align:left;">0.6</td>
+              <td style="text-align:center;">0.9 (+0.2)</td>
+              <td style="text-align:left;">0.9</td>
+              <td style="text-align:left;">0.9 (-0.0)</td>
+              <td style="text-align:center;">0.9</td>
+              <td style="text-align:left;">1.0 (+0.1)</td>
+              <td style="text-align:left;"><em>1.0</em></td>
+              <td style="text-align:center;">0.5 (-0.5)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">max (<em>d</em>)</td>
+              <td style="text-align:left;">6.6</td>
+              <td style="text-align:center;">15.6 (+9.0)</td>
+              <td style="text-align:left;">13.7</td>
+              <td style="text-align:left;">20.1 (+6.4)</td>
+              <td style="text-align:center;">14.6</td>
+              <td style="text-align:left;">18.6 (+4.0)</td>
+              <td style="text-align:left;">20.5</td>
+              <td style="text-align:center;"><em>23.3</em>
+              (+2.8)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">+ Proj.</td>
+              <td style="text-align:left;">9.7</td>
+              <td style="text-align:center;">14.3 (+4.6)</td>
+              <td style="text-align:left;">17.5</td>
+              <td style="text-align:left;">22.7 (+5.2)</td>
+              <td style="text-align:center;">16.0</td>
+              <td style="text-align:left;">19.1 (+3.1)</td>
+              <td style="text-align:left;">20.3</td>
+              <td style="text-align:center;"><em>24.8</em>
+              (+4.6)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">RNN</td>
+              <td style="text-align:left;">8.5</td>
+              <td style="text-align:center;">7.3 (-1.2)</td>
+              <td style="text-align:left;">15.7</td>
+              <td style="text-align:left;">14.7 (-0.9)</td>
+              <td style="text-align:center;">14.2</td>
+              <td style="text-align:left;">12.6 (-1.7)</td>
+              <td style="text-align:left;"><em>16.3</em></td>
+              <td style="text-align:center;">15.6 (-0.7)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">GRU</td>
+              <td style="text-align:left;">23.4</td>
+              <td style="text-align:center;">20.7 (-2.7)</td>
+              <td style="text-align:left;">28.9</td>
+              <td style="text-align:left;">28.9 (+0.0)</td>
+              <td style="text-align:center;">27.8</td>
+              <td style="text-align:left;">26.1 (-1.6)</td>
+              <td style="text-align:left;">29.2</td>
+              <td style="text-align:center;"><em>29.8</em>
+              (+0.6)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">Bi-GRU</td>
+              <td style="text-align:left;">23.6</td>
+              <td style="text-align:center;">20.4 (-3.2)</td>
+              <td style="text-align:left;">30.2</td>
+              <td style="text-align:left;">30.1 (-0.1)</td>
+              <td style="text-align:center;">29.0</td>
+              <td style="text-align:left;">26.3 (-2.7)</td>
+              <td style="text-align:left;">29.7</td>
+              <td style="text-align:center;"><strong>30.3</strong>
+              (+0.5)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">CNN-3</td>
+              <td style="text-align:left;">11.4</td>
+              <td style="text-align:center;">14.8 (+3.3)</td>
+              <td style="text-align:left;">21.9</td>
+              <td style="text-align:left;">22.6 (+0.7)</td>
+              <td style="text-align:center;">22.2</td>
+              <td style="text-align:left;">22.4 (+0.2)</td>
+              <td style="text-align:left;"><em>24.0</em></td>
+              <td style="text-align:center;">23.8 (-0.1)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">CNN-3,5,7,9</td>
+              <td style="text-align:left;">12.0</td>
+              <td style="text-align:center;">14.8 (+2.8)</td>
+              <td style="text-align:left;">23.4</td>
+              <td style="text-align:left;">23.7 (+0.4)</td>
+              <td style="text-align:center;">23.3</td>
+              <td style="text-align:left;">22.6 (-0.7)</td>
+              <td style="text-align:left;">22.4</td>
+              <td style="text-align:center;"><em>24.2</em>
+              (+1.8)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">SentEval</td>
+              <td style="text-align:left;">
+                STS14 [<a class="bib" data-trigger="hover"
+                data-toggle="popover" data-placement="top" href=
+                "#BibPLXBIB0002">2</a>]
+              </td>
+              <td style="text-align:right;">+</td>
+              <td style="text-align:left;">31.4</td>
+              <td style="text-align:center;">61.8 (+30.4)</td>
+              <td style="text-align:left;">54.1</td>
+              <td style="text-align:left;">65.7 (+11.5)</td>
+              <td style="text-align:center;">52.7</td>
+              <td style="text-align:left;">65.2 (+12.5)</td>
+              <td style="text-align:left;">70.5</td>
+              <td style="text-align:center;"><strong>71.1</strong>
+              (+0.5)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">
+              average(<em>d</em>)</td>
+              <td style="text-align:left;">32.0</td>
+              <td style="text-align:center;">41.5 (+9.6)</td>
+              <td style="text-align:left;">54.1</td>
+              <td style="text-align:left;">48.0 (-6.1)</td>
+              <td style="text-align:center;">53.2</td>
+              <td style="text-align:left;">46.3 (-6.9)</td>
+              <td style="text-align:left;"><em>70.5</em></td>
+              <td style="text-align:center;">49.9 (-20.6)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">×</td>
+              <td style="text-align:left;">4.6</td>
+              <td style="text-align:center;">1.9 (-2.7)</td>
+              <td style="text-align:left;">5.9</td>
+              <td style="text-align:left;">7.4 (+1.5)</td>
+              <td style="text-align:center;">8.6</td>
+              <td style="text-align:left;"><em>21.2</em>
+              (+12.6)</td>
+              <td style="text-align:left;">1.6</td>
+              <td style="text-align:center;">4.7 (+3.1)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">max (<em>d</em>)</td>
+              <td style="text-align:left;">22.4</td>
+              <td style="text-align:center;">62.4 (+39.9)</td>
+              <td style="text-align:left;">60.6</td>
+              <td style="text-align:left;"><em>67.1</em>
+              (+6.5)</td>
+              <td style="text-align:center;">42.6</td>
+              <td style="text-align:left;">65.1 (+22.5)</td>
+              <td style="text-align:left;">61.6</td>
+              <td style="text-align:center;">66.3 (+4.7)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">+ Proj.</td>
+              <td style="text-align:left;">10.1</td>
+              <td style="text-align:center;">27.1 (+16.9)</td>
+              <td style="text-align:left;">25.2</td>
+              <td style="text-align:left;">49.7 (+24.5)</td>
+              <td style="text-align:center;">22.6</td>
+              <td style="text-align:left;">39.3 (+16.8)</td>
+              <td style="text-align:left;">27.0</td>
+              <td style="text-align:center;"><em>55.5</em>
+              (+28.5)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">RNN</td>
+              <td style="text-align:left;">41.4</td>
+              <td style="text-align:center;">46.5 (+5.2)</td>
+              <td style="text-align:left;">52.4</td>
+              <td style="text-align:left;">48.0 (-4.4)</td>
+              <td style="text-align:center;">46.8</td>
+              <td style="text-align:left;">49.8 (+3.0)</td>
+              <td style="text-align:left;"><em>55.7</em></td>
+              <td style="text-align:center;">47.6 (-8.1)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">GRU</td>
+              <td style="text-align:left;">48.2</td>
+              <td style="text-align:center;">62.5 (+14.2)</td>
+              <td style="text-align:left;">62.9</td>
+              <td style="text-align:left;">65.5 (+2.6)</td>
+              <td style="text-align:center;">57.9</td>
+              <td style="text-align:left;">63.9 (+6.0)</td>
+              <td style="text-align:left;">65.5</td>
+              <td style="text-align:center;"><em>67.4</em>
+              (+1.9)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">Bi-GRU</td>
+              <td style="text-align:left;">53.5</td>
+              <td style="text-align:center;">62.3 (+8.8)</td>
+              <td style="text-align:left;">66.1</td>
+              <td style="text-align:left;">67.5 (+1.4)</td>
+              <td style="text-align:center;">62.1</td>
+              <td style="text-align:left;">64.6 (+2.5)</td>
+              <td style="text-align:left;">66.8</td>
+              <td style="text-align:center;"><em>67.9</em>
+              (+1.1)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">CNN-3</td>
+              <td style="text-align:left;">36.0</td>
+              <td style="text-align:center;">52.9 (+16.8)</td>
+              <td style="text-align:left;">55.8</td>
+              <td style="text-align:left;">59.2 (+3.4)</td>
+              <td style="text-align:center;">51.0</td>
+              <td style="text-align:left;">57.4 (+6.4)</td>
+              <td style="text-align:left;"><em>63.6</em></td>
+              <td style="text-align:center;">63.5 (-0.1)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">CNN-3,5,7,9</td>
+              <td style="text-align:left;">35.5</td>
+              <td style="text-align:center;">54.4 (+18.9)</td>
+              <td style="text-align:left;">59.2</td>
+              <td style="text-align:left;">61.6 (+2.4)</td>
+              <td style="text-align:center;">54.0</td>
+              <td style="text-align:left;">59.1 (+5.1)</td>
+              <td style="text-align:left;">63.7</td>
+              <td style="text-align:center;"><em>64.2</em>
+              (+0.5)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;">
+                STS15 [<a class="bib" data-trigger="hover"
+                data-toggle="popover" data-placement="top" href=
+                "#BibPLXBIB0001">1</a>]
+              </td>
+              <td style="text-align:right;">+</td>
+              <td style="text-align:left;">36.8</td>
+              <td style="text-align:center;">68.7 (+31.9)</td>
+              <td style="text-align:left;">58.1</td>
+              <td style="text-align:left;">66.6 (+8.5)</td>
+              <td style="text-align:center;">58.1</td>
+              <td style="text-align:left;">68.8 (+10.7)</td>
+              <td style="text-align:left;">75.0</td>
+              <td style="text-align:center;"><strong>75.2</strong>
+              (+0.2)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">
+              average(<em>d</em>)</td>
+              <td style="text-align:left;">36.3</td>
+              <td style="text-align:center;">47.3 (+10.9)</td>
+              <td style="text-align:left;">58.1</td>
+              <td style="text-align:left;">51.3 (-6.8)</td>
+              <td style="text-align:center;">58.2</td>
+              <td style="text-align:left;">52.2 (-6.0)</td>
+              <td style="text-align:left;"><em>75.0</em></td>
+              <td style="text-align:center;">54.6 (-20.3)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">GRU</td>
+              <td style="text-align:left;">54.3</td>
+              <td style="text-align:center;">65.0 (+10.7)</td>
+              <td style="text-align:left;">64.6</td>
+              <td style="text-align:left;">65.8 (+1.2)</td>
+              <td style="text-align:center;">57.4</td>
+              <td style="text-align:left;">63.9 (+6.5)</td>
+              <td style="text-align:left;"><em>69.4</em></td>
+              <td style="text-align:center;">68.9 (-0.5)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">Bi-GRU</td>
+              <td style="text-align:left;">59.8</td>
+              <td style="text-align:center;">63.6 (+3.9)</td>
+              <td style="text-align:left;">67.6</td>
+              <td style="text-align:left;">69.6 (+2.0)</td>
+              <td style="text-align:center;">63.3</td>
+              <td style="text-align:left;">65.5 (+2.2)</td>
+              <td style="text-align:left;"><em>70.4</em></td>
+              <td style="text-align:center;">70.0 (-0.3)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;">
+                SICK-E [<a class="bib" data-trigger="hover"
+                data-toggle="popover" data-placement="top" href=
+                "#BibPLXBIB0035">35</a>]
+              </td>
+              <td style="text-align:right;">+</td>
+              <td style="text-align:left;">73.3</td>
+              <td style="text-align:center;">77.3 (+4.0)</td>
+              <td style="text-align:left;">75.8</td>
+              <td style="text-align:left;">76.7 (+0.9)</td>
+              <td style="text-align:center;">77.0</td>
+              <td style="text-align:left;">76.1 (-1.0)</td>
+              <td style="text-align:left;">77.5</td>
+              <td style="text-align:center;"><em>78.0</em>
+              (+0.6)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">
+              average(<em>d</em>)</td>
+              <td style="text-align:left;">77.1</td>
+              <td style="text-align:center;">76.9 (-0.2)</td>
+              <td style="text-align:left;">79.0</td>
+              <td style="text-align:left;">78.2 (-0.8)</td>
+              <td style="text-align:center;">78.3</td>
+              <td style="text-align:left;">76.6 (-1.7)</td>
+              <td style="text-align:left;"><em>81.1</em></td>
+              <td style="text-align:center;">78.9 (-2.1)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">GRU</td>
+              <td style="text-align:left;">75.6</td>
+              <td style="text-align:center;">78.2 (+2.6)</td>
+              <td style="text-align:left;">80.6</td>
+              <td style="text-align:left;">80.5 (-0.0)</td>
+              <td style="text-align:center;">77.7</td>
+              <td style="text-align:left;">78.7 (+1.0)</td>
+              <td style="text-align:left;">
+              <strong>81.5</strong></td>
+              <td style="text-align:center;">81.3 (-0.2)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">Bi-GRU</td>
+              <td style="text-align:left;">74.7</td>
+              <td style="text-align:center;">78.9 (+4.3)</td>
+              <td style="text-align:left;">79.7</td>
+              <td style="text-align:left;">78.7 (-1.0)</td>
+              <td style="text-align:center;">79.0</td>
+              <td style="text-align:left;">79.5 (+0.5)</td>
+              <td style="text-align:left;">81.1</td>
+              <td style="text-align:center;"><em>81.1</em>
+              (+0.0)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;">
+                SICK-R [<a class="bib" data-trigger="hover"
+                data-toggle="popover" data-placement="top" href=
+                "#BibPLXBIB0035">35</a>]
+              </td>
+              <td style="text-align:right;">+</td>
+              <td style="text-align:left;">72.4</td>
+              <td style="text-align:center;">78.4 (+6.1)</td>
+              <td style="text-align:left;">78.3</td>
+              <td style="text-align:left;">80.0 (+1.7)</td>
+              <td style="text-align:center;">78.2</td>
+              <td style="text-align:left;">78.0 (-0.2)</td>
+              <td style="text-align:left;"><em>80.3</em></td>
+              <td style="text-align:center;">79.9 (-0.4)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">
+              average(<em>d</em>)</td>
+              <td style="text-align:left;">71.4</td>
+              <td style="text-align:center;">72.2 (+0.8)</td>
+              <td style="text-align:left;">79.8</td>
+              <td style="text-align:left;">75.5 (-4.3)</td>
+              <td style="text-align:center;">79.1</td>
+              <td style="text-align:left;">74.0 (-5.0)</td>
+              <td style="text-align:left;"><em>81.5</em></td>
+              <td style="text-align:center;">77.0 (-4.5)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">GRU</td>
+              <td style="text-align:left;">74.8</td>
+              <td style="text-align:center;">77.5 (+2.8)</td>
+              <td style="text-align:left;"><em>81.6</em></td>
+              <td style="text-align:left;">81.2 (-0.4)</td>
+              <td style="text-align:center;">79.4</td>
+              <td style="text-align:left;">79.2 (-0.2)</td>
+              <td style="text-align:left;">81.3</td>
+              <td style="text-align:center;">81.1 (-0.2)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">Bi-GRU</td>
+              <td style="text-align:left;">76.9</td>
+              <td style="text-align:center;">78.3 (+1.3)</td>
+              <td style="text-align:left;">
+              <strong>81.8</strong></td>
+              <td style="text-align:left;">80.1 (-1.6)</td>
+              <td style="text-align:center;">80.1</td>
+              <td style="text-align:left;">79.1 (-1.0)</td>
+              <td style="text-align:left;">81.3</td>
+              <td style="text-align:center;">80.4 (-0.9)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">WordSim</td>
+              <td style="text-align:left;">
+                SimLex [<a class="bib" data-trigger="hover"
+                data-toggle="popover" data-placement="top" href=
+                "#BibPLXBIB0024">24</a>]
+              </td>
+              <td style="text-align:right;">+</td>
+              <td style="text-align:left;">44.0</td>
+              <td style="text-align:center;">51.4 (+7.4)</td>
+              <td style="text-align:left;">40.2</td>
+              <td style="text-align:left;">50.1 (+9.8)</td>
+              <td style="text-align:center;">37.3</td>
+              <td style="text-align:left;">46.5 (+9.1)</td>
+              <td style="text-align:left;">66.2</td>
+              <td style="text-align:center;"><em>67.0</em>
+              (+0.8)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">
+              average(<em>d</em>)</td>
+              <td style="text-align:left;">44.0</td>
+              <td style="text-align:center;">37.5 (-6.5)</td>
+              <td style="text-align:left;">40.2</td>
+              <td style="text-align:left;">45.0 (+4.8)</td>
+              <td style="text-align:center;">37.3</td>
+              <td style="text-align:left;">35.5 (-1.8)</td>
+              <td style="text-align:left;"><em>66.2</em></td>
+              <td style="text-align:center;">62.1 (-4.1)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">×</td>
+              <td style="text-align:left;">44.0</td>
+              <td style="text-align:center;">7.8 (-36.2)</td>
+              <td style="text-align:left;">40.2</td>
+              <td style="text-align:left;">33.7 (-6.6)</td>
+              <td style="text-align:center;">37.3</td>
+              <td style="text-align:left;">6.2 (-31.1)</td>
+              <td style="text-align:left;"><em>66.2</em></td>
+              <td style="text-align:center;">49.1 (-17.1)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">max (<em>d</em>)</td>
+              <td style="text-align:left;">44.0</td>
+              <td style="text-align:center;">48.2 (+4.2)</td>
+              <td style="text-align:left;">40.2</td>
+              <td style="text-align:left;">43.0 (+2.7)</td>
+              <td style="text-align:center;">37.3</td>
+              <td style="text-align:left;">41.1 (+3.8)</td>
+              <td style="text-align:left;"><em>66.2</em></td>
+              <td style="text-align:center;">66.0 (-0.2)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">+ Proj.</td>
+              <td style="text-align:left;">44.0</td>
+              <td style="text-align:center;">46.6 (+2.6)</td>
+              <td style="text-align:left;">40.2</td>
+              <td style="text-align:left;">44.4 (+4.2)</td>
+              <td style="text-align:center;">37.3</td>
+              <td style="text-align:left;">43.6 (+6.3)</td>
+              <td style="text-align:left;">66.2</td>
+              <td style="text-align:center;"><em>66.7</em>
+              (+0.6)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">RNN</td>
+              <td style="text-align:left;">44.0</td>
+              <td style="text-align:center;">44.3 (+0.3)</td>
+              <td style="text-align:left;">40.2</td>
+              <td style="text-align:left;">43.5 (+3.2)</td>
+              <td style="text-align:center;">37.3</td>
+              <td style="text-align:left;">39.7 (+2.4)</td>
+              <td style="text-align:left;"><em>66.2</em></td>
+              <td style="text-align:center;">66.1 (-0.1)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">GRU</td>
+              <td style="text-align:left;">44.0</td>
+              <td style="text-align:center;">47.3 (+3.3)</td>
+              <td style="text-align:left;">40.2</td>
+              <td style="text-align:left;">44.6 (+4.3)</td>
+              <td style="text-align:center;">37.3</td>
+              <td style="text-align:left;">43.8 (+6.4)</td>
+              <td style="text-align:left;">66.2</td>
+              <td style="text-align:center;"><strong>67.2</strong>
+              (+1.0)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">Bi-GRU</td>
+              <td style="text-align:left;">44.0</td>
+              <td style="text-align:center;">51.1 (+7.1)</td>
+              <td style="text-align:left;">40.2</td>
+              <td style="text-align:left;">45.4 (+5.2)</td>
+              <td style="text-align:center;">37.3</td>
+              <td style="text-align:left;">43.3 (+6.0)</td>
+              <td style="text-align:left;">66.2</td>
+              <td style="text-align:center;"><em>67.2</em>
+              (+1.0)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">CNN-3</td>
+              <td style="text-align:left;">44.0</td>
+              <td style="text-align:center;">46.2 (+2.2)</td>
+              <td style="text-align:left;">40.2</td>
+              <td style="text-align:left;">44.0 (+3.7)</td>
+              <td style="text-align:center;">37.3</td>
+              <td style="text-align:left;">41.6 (+4.3)</td>
+              <td style="text-align:left;">66.2</td>
+              <td style="text-align:center;"><em>66.9</em>
+              (+0.7)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">CNN-3,5,7,9</td>
+              <td style="text-align:left;">44.0</td>
+              <td style="text-align:center;">47.0 (+3.0)</td>
+              <td style="text-align:left;">40.2</td>
+              <td style="text-align:left;">44.3 (+4.1)</td>
+              <td style="text-align:center;">37.3</td>
+              <td style="text-align:left;">40.3 (+2.9)</td>
+              <td style="text-align:left;">66.2</td>
+              <td style="text-align:center;"><em>67.2</em>
+              (+1.0)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;">
+                SimVerb [<a class="bib" data-trigger="hover"
+                data-toggle="popover" data-placement="top" href=
+                "#BibPLXBIB0019">19</a>]
+              </td>
+              <td style="text-align:right;">+</td>
+              <td style="text-align:left;">34.2</td>
+              <td style="text-align:center;">39.3 (+5.2)</td>
+              <td style="text-align:left;">25.4</td>
+              <td style="text-align:left;">34.2 (+8.7)</td>
+              <td style="text-align:center;">23.0</td>
+              <td style="text-align:left;">34.1 (+11.1)</td>
+              <td style="text-align:left;">56.8</td>
+              <td style="text-align:center;"><strong>58.3</strong>
+              (+1.5)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">
+              average(<em>d</em>)</td>
+              <td style="text-align:left;">34.2</td>
+              <td style="text-align:center;">30.7 (-3.4)</td>
+              <td style="text-align:left;">25.4</td>
+              <td style="text-align:left;">32.2 (+6.8)</td>
+              <td style="text-align:center;">23.0</td>
+              <td style="text-align:left;">29.2 (+6.2)</td>
+              <td style="text-align:left;"><em>56.8</em></td>
+              <td style="text-align:center;">55.7 (-1.1)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">GRU</td>
+              <td style="text-align:left;">34.2</td>
+              <td style="text-align:center;">37.2 (+3.1)</td>
+              <td style="text-align:left;">25.4</td>
+              <td style="text-align:left;">29.7 (+4.2)</td>
+              <td style="text-align:center;">23.0</td>
+              <td style="text-align:left;">29.5 (+6.5)</td>
+              <td style="text-align:left;">56.8</td>
+              <td style="text-align:center;"><em>57.9</em>
+              (+1.1)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">Bi-GRU</td>
+              <td style="text-align:left;">34.2</td>
+              <td style="text-align:center;">36.9 (+2.8)</td>
+              <td style="text-align:left;">25.4</td>
+              <td style="text-align:left;">29.5 (+4.1)</td>
+              <td style="text-align:center;">23.0</td>
+              <td style="text-align:left;">29.9 (+6.9)</td>
+              <td style="text-align:left;">56.8</td>
+              <td style="text-align:center;"><em>58.1</em>
+              (+1.3)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;">
+                WS-353 [<a class="bib" data-trigger="hover"
+                data-toggle="popover" data-placement="top" href=
+                "#BibPLXBIB0016">16</a>]
+              </td>
+              <td style="text-align:right;">+</td>
+              <td style="text-align:left;">70.6</td>
+              <td style="text-align:center;">70.1 (-0.5)</td>
+              <td style="text-align:left;">71.9</td>
+              <td style="text-align:left;"><em>76.5</em>
+              (+4.6)</td>
+              <td style="text-align:center;">74.5</td>
+              <td style="text-align:left;">70.1 (-4.3)</td>
+              <td style="text-align:left;">73.1</td>
+              <td style="text-align:center;">72.1 (-1.1)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">
+              average(<em>d</em>)</td>
+              <td style="text-align:left;">70.4</td>
+              <td style="text-align:center;">67.8 (-2.5)</td>
+              <td style="text-align:left;">71.9</td>
+              <td style="text-align:left;">73.2 (+1.3)</td>
+              <td style="text-align:center;">74.5</td>
+              <td style="text-align:left;">69.8 (-4.6)</td>
+              <td style="text-align:left;">73.1</td>
+              <td style="text-align:center;"><strong>76.6</strong>
+              (+3.5)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">GRU</td>
+              <td style="text-align:left;">70.4</td>
+              <td style="text-align:center;">70.3 (-0.1)</td>
+              <td style="text-align:left;">71.9</td>
+              <td style="text-align:left;">72.9 (+0.9)</td>
+              <td style="text-align:center;">74.5</td>
+              <td style="text-align:left;"><em>76.5</em>
+              (+2.1)</td>
+              <td style="text-align:left;">73.1</td>
+              <td style="text-align:center;">74.4 (+1.2)</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:left;"></td>
+              <td style="text-align:right;">Bi-GRU</td>
+              <td style="text-align:left;">70.7</td>
+              <td style="text-align:center;">68.5 (-2.3)</td>
+              <td style="text-align:left;">71.9</td>
+              <td style="text-align:left;">73.2 (+1.2)</td>
+              <td style="text-align:center;">74.5</td>
+              <td style="text-align:left;">73.9 (-0.6)</td>
+              <td style="text-align:left;">73.1</td>
+              <td style="text-align:center;"><em>74.8</em>
+              (+1.6)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <section id="sec-26">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span>
+            CompVecEval</h3>
+          </div>
+        </header>
+        <p>We compare our composed representation to our target
+        word representation using nearest neighbor ranking with the
+        ball tree algorithm [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0042">42</a>], in contrast to other methods
+        which us magnitude invariant metrics such as cosine
+        similarity. The vector magnitude is important because
+        (intermediate) representations of semantics in neural
+        architectures are affected by it. One does not often
+        normalize each intermediate representation, because it
+        could lead to a loss of information and influence the
+        network's performance.</p>
+        <p>The balltree algorithm produces a complete ranking of
+        all the 33,186 target words. In the subsequent ranking, we
+        mark all target words from <em>l<sub>d</sub></em> as
+        equally relevant, and all other words as not relevant. This
+        will result in different results for + and
+        average(<em>d</em>), as opposed to them being the same with
+        cosine similarity based ranking approaches.</p>
+        <p>We believe that ranking is superior to other evaluation
+        methods because it is independent of the provided embedding
+        space. Additionally, there are several metrics you can
+        compute out of a ranking which could be interpreted in
+        different ways, especially regarding compositionality. Also
+        ranking allows us to find structure in the very noisy
+        compositional representations.</p>
+        <p>When we have obtained the ranking and the relevant
+        results, we apply several well-known ranking measures: Mean
+        Reciprocal Rank (MRR) [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0009">9</a>], Mean Average Precision (MAP) as
+        well as Mean Precision@10 (MP@10). In addition, we evaluate
+        using Mean Normalized Rank (MNR) which describes the
+        fraction of the total dataset that does not need to be
+        viewed when encountering a relevant result. For MNR and MRR
+        we use the rank of the first relevant target word in
+        <em>l<sub>d</sub></em> .</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} MNR := 1 -
+            \frac{1}{\vert \mathcal {D} \vert } \sum _{d \in
+            \mathcal {D}} \frac{\text{rank}_{d}}{\vert \mathcal {L}
+            \vert } \quad \quad MRR := \frac{1}{\vert \mathcal {D}
+            \vert } \sum _{d \in \mathcal {D}}
+            \frac{1}{\text{rank}_{d}} \end{equation}</span><br />
+            <span class="equation-number">(7)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>Here is rank <sub><em>d</em></sub> the rank of the first
+        relevant target word for the definition <em>d</em>. MRR is
+        the more common method, it is top heavy, i.e. the
+        contribution on lower ranked relevant decreases
+        exponentially. MNR does weight each rank of a relevant
+        result equally. Both of these measures are recall
+        based.</p>
+        <div class="table-responsive" id="Xeq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} MAP :=
+            \frac{1}{\vert \mathcal {D} \vert } \sum _{d \in
+            \mathcal {D}} \frac{\sum _{r_d=1}^{\vert \mathcal {L}
+            \vert }P(r_d) \times \text{rel}(r_d)}{\vert l_d \vert }
+            \end{equation}</span><br />
+            <span class="equation-number">(8)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>MAP as well as MP@10 captures the possibility of
+        multiple relevant target words into the metric, where MAP
+        is a recall-based metric and MP@10 is a precision-based
+        metric. For all metrics we can state: ”higher is
+        better”.</p>
+        <p>For now, we define CompVecEval as computing the MRR
+        measure on the test set of 2,623 data points, since we use
+        the rest for tuning the embeddings. If one's task does not
+        require the training data one could use all the available
+        data points (52,430) for an even more accurate evaluation
+        method. And whenever we want more insight into the
+        compositionality of word embeddings, we can also look at
+        the other ranking methods considered: MRR, MAP and
+        MP@10.</p>
+      </section>
+      <section id="sec-27">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> Sentence
+            Representation Evaluation</h3>
+          </div>
+        </header>
+        <p>To see which composition functions, have an impact on
+        specific aspects of sentence representations we evaluated
+        our composed embeddings using two popular methods: , STS14
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0002">2</a>], STS15
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0001">1</a>] and SICK
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0035">35</a>]. Conneau
+        et&nbsp;al. [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0014">14</a>] describes how to match different
+        sentence vectors from the SICK dataset. There are 3
+        matching methods used to extract the relations between two
+        composed sentences <em>u</em> and <em>v</em>: concatenation
+        of the two representations (<em>u</em>, <em>v</em>);
+        element-wise product <em>u</em> · <em>v</em>; and absolute
+        element-wise difference |<em>u</em> − <em>v</em>|. The
+        total resulting vector is fed into a logistic regression
+        classifier. The different datasets are evaluated using
+        10-fold cross validation. We evaluate our compositions
+        using the SICK dataset using both entailment (Entailment)
+        and semantic relatedness (Relatedness). For relatedness we
+        learn to predict the probability distribution of the
+        relatedness scores [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0053">53</a>]. Results for relatedness are
+        reported as Pearson's correlation coefficients since other
+        related works also report this metric. Results for
+        entailment are accuracy scores on the classifier with 3
+        labels.</p>
+        <p>With STS14 [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0002">2</a>] and STS15 we evaluate the
+        embeddings on 11 unsupervised SemEval tasks. The dataset is
+        a combination of post-editing, news, question and
+        plagiarism sentences labeled with a similarity score
+        between 0 and 5. Here we also report the Pearson's
+        correlation coefficient similar to SICK Relatedness.</p>
+        <p>For all these evaluations, we used the available 48,944
+        words from our dataset vocabulary to select embeddings for
+        the words we should compose. If a word was not available,
+        we grabbed back to the vocabulary of the original word
+        embeddings (which is much larger in all cases). In this
+        way, our results for the <em>original</em> word embeddings
+        are similar to those in other publications.</p>
+        <p>It is also important to note that we do not directly
+        optimize for the task and we are not trying to improve the
+        state of the art of these evaluation metrics. We are simply
+        showing the impact of different compositional functions on
+        the pretrained embeddings, as well as the impact that
+        tuning for compositionality does not decrease or even
+        slightly increase the sentence similarity, entailment or
+        relatedness performance. Including a task specific learning
+        objective would probably boost results further.</p>
+      </section>
+      <section id="sec-28">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.3</span> Word
+            Similarity Evaluation</h3>
+          </div>
+        </header>
+        <p>We performed word similarity tests to see if the quality
+        of the single word embeddings do not suffer under the
+        training for composition. In the results table, we will see
+        that the values before training are exactly the same. This
+        is logical since we are not evaluating the composition
+        itself here. We are only seeing how ”training for
+        compositionality” influences the final quality.</p>
+        <p>WS-353 by Myers et&nbsp;al. [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0041">41</a>] is a widely used
+        WordNet based word similarity measure. Naturally, we should
+        improve on this measure since it is based on similar data.
+        This should be noted and might make this result biased.
+        This word similarity set is not very elaborate either with
+        353 word pairs. SimLex by Hill et&nbsp;al. [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0024">24</a>] is a larger word
+        similarity dataset with 999 word pairs. It was specifically
+        created to capture similarity independent of relatedness
+        and association. SimVerb by Gerz et&nbsp;al. [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0019">19</a>] focuses
+        on the similarity between 3500 verb pairs from the USF
+        free-association database. For word similarity, we report
+        Spearman's correlation coefficient since other related
+        works also report this metric.</p>
+        <p>Again, it is important to note that we do not directly
+        optimize for the task and we are not trying to improve the
+        state of the art of these evaluation metrics. We are simply
+        showing that tuning for compositionality does not decrease
+        or even slightly increase the word similarity performance.
+        Including a word similarity learning objective would
+        probably boost results further.</p>
+      </section>
+      <section id="sec-29">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.4</span>
+            Results</h3>
+          </div>
+        </header>
+        <p>Table <a class="tbl" href="#tab1">1</a> shows the
+        results for all evaluation measures when using all ten
+        different composition functions. We left out under
+        performing composition functions (× , Proj., RNN, CNN etc.)
+        from most measures.</p>
+        <p>When we compare the four different embeddings used for
+        transfer learning we see clearly that the Paragram
+        embeddings are the best starting point. These embeddings
+        were already compared to the GloVe embeddings with an
+        averaging function [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0057">57</a>]. Now we can see how it compares
+        against fastText and Word2Vec with different composition
+        functions as well. The Paragram embeddings benefit from
+        tuning using the lexicographical definitions, albeit only
+        slightly on evaluations other than CompVecEval.</p>
+        <p>GloVe and Word2Vec seem to benefit the most from tuning.
+        On the additive composition (+) function Word2Vec jumps
+        30.4 points on the STS14 benchmark, 6.0 points on
+        CompVecEval and 7.4 points on SimLex. The same goes for
+        GloVe with 11.5 points on STS14, 14.6 points on CompVecEval
+        and 9.8 points on SimLex.</p>
+        <p>We can see that fastText has a lot of benefit from
+        additive composition (+) on CompVecEval without tuning.
+        This is can be explained by looking at the fastText
+        algorithm. It creates embeddings of words by additive
+        composition of n-grams itself, so fastText is intrinsically
+        optimized for additive composition.</p>
+        <p>Interestingly enough additive composition (+) performs
+        similar or slightly worse when compared to averaging on
+        measures other than CompVecEval. But when we tune on
+        additive composition the tuned model outperforms averaging
+        on our CompVecEval task as well as on STS, SimLex and
+        SimVerb. When tuned on averaging model performance drops
+        significantly for STS tasks, which could be attributed to
+        our choice of loss function. Averaging does yield a bad
+        result on CompVecEval for untuned as well as tuned
+        embeddings.</p>
+        <p>Multiplicative composition (×) performed, by far, the
+        worst of all composition functions. This directly
+        contradicts results from Mitchell and Lapata [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0039">39</a>], however
+        their vectors were not real-valued embeddings as uses in
+        neural networks.</p>
+        <p>We see that the max (<em>d</em>) operation or max
+        composition can be a good approach to compose elements.
+        Which is somewhat counter intuitive, because the
+        composition only takes a very small portion of the
+        available information into account. For CompVecEval as well
+        as the other evaluation measures this composition function
+        scores relatively high. In neural networks today, we rarely
+        see an operation such as element-wise maximum used within
+        an architecture outside of CNN's. This could be an
+        interesting direction to explore.</p>
+        <p>On the projection function, we have results that are not
+        in line with Wieting et&nbsp;al. [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0057">57</a>]. Where they found that
+        using a projection performed comparable to the algebraic
+        composition function, we find that for our limited dataset
+        this is not the case. Perhaps this could change when we
+        increase the size of the training data. The projection
+        function was outperformed by other learned models (e.g.
+        GRU) and the additive algebraic composition function on all
+        metrics.</p>
+        <p>For the learned composition functions, we see that the
+        recurrent models outperform the convolutional models. While
+        the more elaborate convolutional model with larger window
+        sizes (CNN-3,5,7,9) did outperform the simpler CNN as well
+        as the RNN, it was surpassed by both the GRU models. Both
+        GRU models consistently beat all other learned composition
+        functions. We see that the bi-directional GRU was sometimes
+        better, but overall, they perform comparable. This could be
+        due to the limited token length of our definitions. It
+        could be that with longer tokens the addition of the
+        bi-directional GRU could have a larger impact.</p>
+        <section id="sec-30">
+          <p><em>CompVecEval.</em> The results for CompVecEval show
+          that the untuned Paragram embeddings are the best untuned
+          embeddings at composing w.r.t. all composition functions.
+          The compositing performance increases if we train for the
+          task of composing lexicographical definitions, as one
+          would expect.</p>
+          <p>If we look at the best MRR of 30.3 for the
+          bi-directional GRU and the second best MRR of 29.9 for
+          the additive model (+) their difference is minimal. The
+          learned GRU model has noticeable downsides, since the
+          inference operation on a GRU model is a lot more
+          expensive and does require a model to be loaded into
+          memory, while simple addition only requires the word
+          embeddings themselves.</p>
+          <p>When we look at the best MRR score for Paragram with a
+          tuned algebraic model (+): 29.9, it had a MNR of 92.8
+          which comes down to seeing an average 3,524 of the total
+          of the total 48,944 target words before encountering a
+          relevant one, which is way better than the random
+          baseline but still not great. To highlight this, we added
+          a randomly generated ranking for all data points. In this
+          random baseline, we see a MNR of 55.2 and not of 50
+          because there are various data points with more than one
+          relevant target words. All this is good news since it
+          means there is a lot of room for improvement in making
+          embeddings more composable.</p>
+          <p>The low scores on CompVecEval for averaging could be
+          due to the fact that our balltree absolute distance
+          metric is strongly affected by the embeddings magnitude
+          into account. Whereas sentence embeddings metrics might
+          not be, because they are usually composing two sentences
+          of similar length into a comparable sentence embedding,
+          whereas we have a relatively long source (lexicographic
+          definition) and a very short target (lemma).</p>
+        </section>
+        <section id="sec-31">
+          <p><em>Sentence Evaluation.</em> We see that tuning for
+          composition has a very big impact in the STS metrics for
+          Word2Vec, GloVe and fastText. Where the improvements for
+          the Paragram embeddings are also there but less
+          significant. These improvements still lead to the best
+          result because the Paragram embeddings already score high
+          on the STS metrics to begin with.</p>
+          <p>It is interesting that tuning for composition improves
+          the STS metrics significantly for the first three
+          embeddings even though that the task of composing
+          definitions into short lemmas is not directly related to
+          sentence representations. When the original STS14
+          challenge was held the contestants trained models on STS
+          data specifically and the 75 percentile of the score was
+          71.4 which means our best score is better or comparable
+          to 75 % of contestants while we did not use task specific
+          training data.</p>
+          <p>For the SICK Relatedness and Entailment tests we see
+          comparable results for most composition functions and are
+          not able to improve on them. That could be due to the
+          nature of the SICK data. While our focus is on composing
+          lexical semantics, the focus on the SICK data is on
+          relatedness and entailment. This is not really
+          represented in lexicographical data.</p>
+        </section>
+        <section id="sec-32">
+          <p><em>Word Similarity.</em> If we look at the results
+          for the word similarity metrics we see that overall, they
+          increase quite significantly when tuned for composing
+          lexicographic definitions. This even happens when tuning
+          the embeddings to work better with learned composition
+          functions. One would expect that these embeddings would
+          decrease in general performance and increase in the task
+          they are trained for. But the word similarity results
+          suggest that the opposite is the case. Embeddings from
+          the tuned GRU models and our tuned embeddings for
+          additive composition (+) yield the best SimLex and
+          SimVerb performance. It has to be mentioned that the
+          Paragram embeddings [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0058">58</a>] were trained on the SimLex
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0024">24</a>] dataset. So naturally they will
+          score high on SimLex word similarity.</p>
+        </section>
+      </section>
+    </section>
+    <section id="sec-33">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>In this work, we introduced a new method to tune word
+      embeddings for ten composition functions, four of which are
+      algebraic and easily applicable in large scale industrial
+      systems, and six of which are learned. Additionally, we
+      presented a new method to evaluate word embeddings called:
+      <em>CompVecEval</em>. This method is different from existing
+      methods since it directly tries to evaluate compositional
+      semantics from lexicographic definitions to lemmas, in
+      addition it relies on ranking instead of accuracy and is not
+      invariant the magnitude of the embedding vector.</p>
+      <p>We analyzed four popular word embeddings and found that
+      the Paragram embeddings are the most versatile for various
+      forms of composition. Our tuned CompVec Paragram embeddings
+      are the best choice if your model uses them for additive
+      composition. Using GRU composition is also a candidate which
+      seems to be a more elaborate but effective composition
+      function for specific tasks. In addition, for almost every
+      evaluation measure we found that tuning the embeddings on our
+      lexicon-based dataset performed better or comparable. When
+      selecting word embeddings for transfer learning for training
+      a neural network our results can give insights into which
+      embeddings you should choose. We published and open sourced
+      both the dataset as well as the tuned embeddings.</p>
+      <p>For future research, one could look into multi-layered
+      composition functions. One neural model we would like to
+      explore is a convolutional model containing so called:
+      ‘dilated convolutions’&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0055">55</a>]. These could provide a solution to
+      the problems with long distance relationships.</p>
+      <p>One limitation of our lexicographic dataset is its size.
+      Other dictionaries sometimes contain more definitions and
+      words. For example, the Oxford Dictionary is a lot larger and
+      the data from this dictionary can be extracted using their
+      open API. Our intuition is that using this larger dataset
+      could increase the performance.</p>
+      <p>Published theoretical works on the understanding of word
+      embeddings is currently limited [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0020">20</a>]. This work only provides theory for
+      the original skip-gram algorithm. Further work could look at
+      the theoretical and mathematical properties of the embedding
+      spaces created using other algorithms.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Eneko Agirre, Carmen
+        Banea, Claire Cardie, Daniel Cer, Mona Diab, Aitor
+        Gonzalez-Agirre, Weiwei Guo, Inigo Lopez-Gazpio, Montse
+        Maritxalar, Rada Mihalcea, <em>et al.</em> 2015.
+        Semeval-2015 Task 2: Semantic Textual Similarity, English,
+        Spanish and Pilot on Interpretability. In
+        <em><em>Proceedings of the 9th International Workshop on
+        Semantic Evaluation (SemEval 2015)</em></em> . ACL,
+        252–263.</li>
+        <li id="BibPLXBIB0002" label="[2]">Eneko Agirre, Carmen
+        Banea, Claire Cardie, Daniel Cer, Mona Diab, Aitor
+        Gonzalez-Agirre, Weiwei Guo, Rada Mihalcea, German Rigau,
+        and Janyce Wiebe. 2014. Semeval-2014 task 10: Multilingual
+        Semantic Textual Similarity. In <em><em>Proceedings of the
+        8th International Workshop on Semantic Evaluation (SemEval
+        2014)</em></em> . ACL, 81–91.</li>
+        <li id="BibPLXBIB0003" label="[3]">Sanjeev Arora, Yingyu
+        Liang, and Tengyu Ma. 2016. A Simple but Tough-to-Beat
+        Baseline for Sentence Embeddings. In <em><em>Proceedings of
+        the 4th International Conference on Learning
+        Representations (ICLR 2016)</em></em> .</li>
+        <li id="BibPLXBIB0004" label="[4]">Dzmitry Bahdanau,
+        Kyunghyun Cho, and Yoshua Bengio. 2014. Neural machine
+        translation by jointly learning to align and translate.
+        <em><em>arXiv:1409.0473</em></em> (2014).</li>
+        <li id="BibPLXBIB0005" label="[5]">Marco Baroni and Roberto
+        Zamparelli. 2010. Nouns are Vectors, Adjectives are
+        Matrices: Representing Adjective-Noun Constructions in
+        Semantic Space. In <em><em>Proceedings of the 2010
+        Conference on Empirical Methods in Natural Language
+        Processing (EMNLP 2010)</em></em> . ACL, 1183–1193.</li>
+        <li id="BibPLXBIB0006" label="[6]">Yoshua Bengio, Réjean
+        Ducharme, Pascal Vincent, and Christian Jauvin. 2003. A
+        Neural Probabilistic Language Model. <em><em>Journal of
+        Machine Learning Research (JMLR)</em></em> 3 (2003),
+        1137–1155.</li>
+        <li id="BibPLXBIB0007" label="[7]">Phil Blunsom, Edward
+        Grefenstette, and Nal Kalchbrenner. 2014. A Convolutional
+        Neural Network for Modelling Sentences. In
+        <em><em>Proceedings of the 52nd Annual Meeting of the
+        Association for Computational Linguistics (ACL
+        2014)</em></em> . ACM.</li>
+        <li id="BibPLXBIB0008" label="[8]">Piotr Bojanowski,
+        Edouard Grave, Armand Joulin, and Tomas Mikolov. 2017.
+        Enriching Word Vectors with Subword Information.
+        <em><em>Transactions of the Association for Computational
+        Linguistics (TACL)</em></em> 5(2017), 135–146.</li>
+        <li id="BibPLXBIB0009" label="[9]">Olivier Chapelle, Donald
+        Metlzer, Ya Zhang, and Pierre Grinspan. 2009. Expected
+        Reciprocal Rank for Graded Relevance. In
+        <em><em>Proceedings of the 18th ACM Conference on
+        Information and Knowledge Management (CIKM 2009)</em></em>
+        . ACM, 621–630.</li>
+        <li id="BibPLXBIB0010" label="[10]">Kyunghyun Cho, Bart van
+        Merriënboer, Çaglar Gülçehre, Dzmitry Bahdanau, Fethi
+        Bougares, Holger Schwenk, and Yoshua Bengio. 2014. Learning
+        Phrase Representations using RNN Encoder–Decoder for
+        Statistical Machine Translation. In <em><em>Proceedings of
+        the 2014 Conference on Empirical Methods in Natural
+        Language Processing (EMNLP 2014)</em></em> . ACL,
+        1724–1734.</li>
+        <li id="BibPLXBIB0011" label="[11]">Junyoung Chung, Caglar
+        Gulcehre, KyungHyun Cho, and Yoshua Bengio. 2014. Empirical
+        Evaluation of Gated Recurrent Neural Networks on Sequence
+        Modeling. (2014). Presented in the Deep Learning and
+        Representation Learning Workshop of NIPS 2014.</li>
+        <li id="BibPLXBIB0012" label="[12]">Bob Coecke, Mehrnoosh
+        Sadrzadeh, and Stephen Clark. 2010. Mathematical
+        foundations for a compositional distributional model of
+        meaning. <em><em>Linguistic Analysis</em></em> 36(2010),
+        345–384.</li>
+        <li id="BibPLXBIB0013" label="[13]">Ronan Collobert and
+        Jason Weston. 2008. A Unified Architecture for Natural
+        Language Processing: Deep Neural Networks with Multitask
+        Learning. In <em><em>Proceedings of the 25th International
+        Conference on Machine Learning (ICML 2008)</em></em> . ACM,
+        160–167.</li>
+        <li id="BibPLXBIB0014" label="[14]">Alexis Conneau, Douwe
+        Kiela, Holger Schwenk, Loic Barrault, and Antoine Bordes.
+        2011. Supervised learning of universal sentence
+        representations from natural language inference data. In
+        <em><em>Proceedings of the 2017 Conference on Empirical
+        Methods in Natural Language Processing (EMNLP
+        2017)</em></em> . ACL, 670–680.</li>
+        <li id="BibPLXBIB0015" label="[15]">Manaal Faruqui and
+        Chris Dyer. 2014. Community Evaluation and Exchange of Word
+        Vectors at wordvectors.org. In <em><em>Proceedings of the
+        52nd Annual Meeting of the Association for Computational
+        Linguistics (ACL 2014)</em></em> . ACL, 19–24.</li>
+        <li id="BibPLXBIB0016" label="[16]">Lev Finkelstein,
+        Evgeniy Gabrilovich, Yossi Matias, Ehud Rivlin, Zach Solan,
+        Gadi Wolfman, and Eytan Ruppin. 2001. Placing Search in
+        Context: The Concept Revisited. In <em><em>Proceedings of
+        the 10th International Conference on World Wide Web (WWW
+        2001)</em></em> . ACM, 406–414.</li>
+        <li id="BibPLXBIB0017" label="[17]">Gottlob Frege. 1892. On
+        Concept and Object. <em><em>The Frege Reader</em></em>
+        (1892), 181–193.</li>
+        <li id="BibPLXBIB0018" label="[18]">Luca Gasparri and Diego
+        Marconi. 2016. Word Meaning. In <em><em>The Stanford
+        Encyclopedia of Philosophy</em>(spring 2016 ed.)</em>.
+        Metaphysics Research Lab, Stanford University.</li>
+        <li id="BibPLXBIB0019" label="[19]">Daniela Gerz, Ivan
+        Vulić, Felix Hill, Roi Reichart, and Anna Korhonen. 2016.
+        SimVerb-3500: A Large-Scale Evaluation Set of Verb
+        Similarity. In <em><em>Proceedings of the 2016 Conference
+        on Empirical Methods in Natural Language Processing (EMNLP
+        2016)</em></em> . ACL.</li>
+        <li id="BibPLXBIB0020" label="[20]">Alex Gittens, Dimitris
+        Achlioptas, and Michael&nbsp;W Mahoney. 2017. Skip-gram -
+        zipf + uniform = vector additivity. In <em><em>Proceedings
+        of the 55th Annual Meeting of the Association for
+        Computational Linguistics (ACL 2017)</em></em> . ACL,
+        69–76.</li>
+        <li id="BibPLXBIB0021" label="[21]">Alex Graves, Greg
+        Wayne, and Ivo Danihelka. 2014. Neural Turing Machines.
+        <em><em>arXiv:1410.5401</em></em> (2014).</li>
+        <li id="BibPLXBIB0022" label="[22]">Edward Grefenstette and
+        Mehrnoosh Sadrzadeh. 2011. Experimental Support for a
+        Categorical Compositional Distributional Model of Meaning.
+        In <em><em>Proceedings of the 2011 Conference on Empirical
+        Methods in Natural Language Processing (EMNLP
+        2011)</em></em> . ACL, 1394–1404.</li>
+        <li id="BibPLXBIB0023" label="[23]">Alexander Hermans,
+        Lucas Beyer, and Bastian Leibe. 2017. In Defense of the
+        Triplet Loss for Person Re-Identification.
+        <em><em>arXiv:1703.07737</em></em> (2017).</li>
+        <li id="BibPLXBIB0024" label="[24]">Felix Hill, Roi
+        Reichart, and Anna Korhonen. 2015. Simlex-999: Evaluating
+        Semantic Models with Genuine Similarity Estimation.
+        <em><em>Computational Linguistics</em></em> 41, 4 (2015),
+        665–695.</li>
+        <li id="BibPLXBIB0025" label="[25]">Sepp Hochreiter and
+        Jürgen Schmidhuber. 1997. Long Short-Term Memory.
+        <em><em>Neural Computation</em></em> 9, 8 (1997),
+        1735–1780.</li>
+        <li id="BibPLXBIB0026" label="[26]">Theo Janssen. 2001.
+        Frege, Contextuality and Compositionality. <em><em>Journal
+        of Logic, Language and Information</em></em> 10, 1 (2001),
+        115–136.</li>
+        <li id="BibPLXBIB0027" label="[27]">Tom Kenter, Alexey
+        Borisov, and Maarten de Rijke. 2016. Siamese CBOW:
+        Optimizing Word Embeddings for Sentence Representations. In
+        <em><em>Proceedings of the 54th Annual Meeting of the
+        Association for Computational Linguistics (ACL
+        2016)</em></em> . ACL.</li>
+        <li id="BibPLXBIB0028" label="[28]">Yoon Kim. 2014.
+        Convolutional Neural Networks for Sentence Classification.
+        In <em><em>Proceedings of the 2014 Conference on Empirical
+        Methods in Natural Language Processing (EMNLP
+        2014)</em></em> . ACL.</li>
+        <li id="BibPLXBIB0029" label="[29]">Diederik Kingma and
+        Jimmy Ba. 2015. Adam: A method for stochastic optimization.
+        (2015).</li>
+        <li id="BibPLXBIB0030" label="[30]">Ryan Kiros, Yukun Zhu,
+        Ruslan&nbsp;R Salakhutdinov, Richard Zemel, Raquel Urtasun,
+        Antonio Torralba, and Sanja Fidler. 2015. Skip-Thought
+        Vectors. In <em><em>Proceedings of the 28th International
+        Conference on Neural Information Processing Systems (NIPS
+        2015)</em></em> . NIPS, 3294–3302.</li>
+        <li id="BibPLXBIB0031" label="[31]">Quoc Le and Tomas
+        Mikolov. 2014. Distributed Representations of Sentences and
+        Documents. In <em><em>Proceedings of the 31st International
+        Conference on Machine Learning (ICML 2014)</em></em> .
+        IMLS, 1188–1196.</li>
+        <li id="BibPLXBIB0032" label="[32]">Xin Li and Dan Roth.
+        2002. Learning Question Classifiers. In <em><em>Proceedings
+        of the 19th International Conference on Computational
+        Linguistics (COLING 2002</em></em> . ACL, 1–7.</li>
+        <li id="BibPLXBIB0033" label="[33]">Shujie Liu, Nan Yang,
+        Mu Li, and Ming Zhou. 2014. A Recursive Recurrent Neural
+        Network for Statistical Machine Translation. In
+        <em><em>Proceedings of the 52nd Annual Meeting of the
+        Association for Computational Linguistics (ACL
+        2014)</em></em> . ACL, 1491–1500.</li>
+        <li id="BibPLXBIB0034" label="[34]">Minh-Thang Luong, Hieu
+        Pham, and Christopher&nbsp;D Manning. 2015. Effective
+        Approaches to Attention-based Neural Machine Translation.
+        In <em><em>Proceedings of the 2015 Conference on Empirical
+        Methods in Natural Language Processing (EMNLP
+        2015)</em></em> . ACL, 1412–1421.</li>
+        <li id="BibPLXBIB0035" label="[35]">Marco Marelli, Stefano
+        Menini, Marco Baroni, Luisa Bentivogli, Raffaella Bernardi,
+        and Roberto Zamparelli. 2014. A SICK Cure for the
+        Evaluation of Compositional Distributional Semantic Models.
+        In <em><em>Proceedings of the 9th International Conference
+        on Language Resources and Evaluation (LREC 2014)</em></em>
+        . ELRA, 216–223.</li>
+        <li id="BibPLXBIB0036" label="[36]">Tomas Mikolov, Kai
+        Chen, Greg Corrado, and Jeffrey Dean. 2013. Efficient
+        Estimation of Word Representations in Vector Space.
+        <em><em>arXiv:1301.3781</em></em> (2013).</li>
+        <li id="BibPLXBIB0037" label="[37]">Tomas Mikolov, Ilya
+        Sutskever, Kai Chen, Greg&nbsp;S Corrado, and Jeff Dean.
+        2013. Distributed representations of words and phrases and
+        their compositionality. In <em><em>Proceedings of the 26th
+        International Conference on Neural Information Processing
+        Systems (NIPS 2013)</em></em> . NIPS, 3111–3119.</li>
+        <li id="BibPLXBIB0038" label="[38]">George Miller and
+        Christiane Fellbaum. 1998. Wordnet: An Electronic Lexical
+        Database. (1998).</li>
+        <li id="BibPLXBIB0039" label="[39]">Jeff Mitchell and
+        Mirella Lapata. 2008. Vector-based Models of Semantic
+        Composition. In <em><em>Proceedings of the 46th Annual
+        Meeting of the Association for Computational Linguistics
+        (ACL 2008, HLT)</em></em> . ACL, 236–244.</li>
+        <li id="BibPLXBIB0040" label="[40]">Jeff Mitchell and
+        Mirella Lapata. 2009. Language Models based on Semantic
+        Composition. In <em><em>Proceedings of the 2009 Conference
+        on Empirical Methods in Natural Language Processing (EMNLP
+        2009)</em></em> . ACL, 430–439.</li>
+        <li id="BibPLXBIB0041" label="[41]">Jerome&nbsp;L Myers,
+        Arnold Well, and Robert&nbsp;Frederick Lorch. 2010.
+        <em><em>Research Design and Statistical Analysis</em></em>
+        . Routledge.</li>
+        <li id="BibPLXBIB0042" label="[42]">Stephen&nbsp;M
+        Omohundro. 1989. <em><em>Five Balltree Construction
+        Algorithms</em></em> . International Computer Science
+        Institute Berkeley.</li>
+        <li id="BibPLXBIB0043" label="[43]">Denis Paperno and Marco
+        Baroni. 2016. When the Whole is Less than the Sum of its
+        Parts: How Composition Affects PMI Values in Distributional
+        Semantic Vectors. <em><em>Computational
+        Linguistics</em></em> 42, 2 (2016), 345–350.</li>
+        <li id="BibPLXBIB0044" label="[44]">Jeffrey Pennington,
+        Richard Socher, and Christopher&nbsp;D. Manning. 2014.
+        GloVe: Global Vectors for Word Representation. In
+        <em><em>Proceedings of the 2014 Conference on Empirical
+        Methods in Natural Language Processing (EMNLP
+        2014)</em></em> . ACL, 1532–1543.</li>
+        <li id="BibPLXBIB0045" label="[45]">Sebastian Ruder. [n.
+        d.]. On word embeddings, Part 1. ([n. d.]).
+        http://ruder.io/word-embeddings-1/</li>
+        <li id="BibPLXBIB0046" label="[46]">Tobias Schnabel, Igor
+        Labutov, David&nbsp;M. Mimno, and Thorsten Joachims. 2015.
+        Evaluation methods for unsupervised word embeddings. In
+        <em><em>Proceedings of the 2015 Conference on Empirical
+        Methods in Natural Language Processing (EMNLP
+        2015)</em></em> . ACL, 298–307.</li>
+        <li id="BibPLXBIB0047" label="[47]">Mike Schuster and
+        Kuldip&nbsp;K Paliwal. 1997. Bidirectional Recurrent Neural
+        Networks. <em><em>IEEE Transactions on Signal
+        Processing</em></em> 45, 11 (1997), 2673–2681.</li>
+        <li id="BibPLXBIB0048" label="[48]">Richard Socher, John
+        Bauer, Christopher&nbsp;D Manning, and Andrew&nbsp;Y Ng.
+        2013. Parsing with compositional vector grammars. In
+        <em><em>Proceedings of the 51st Annual Meeting of the
+        Association for Computational Linguistics (ACL
+        2013)</em></em> . ACL, 455–465.</li>
+        <li id="BibPLXBIB0049" label="[49]">Richard Socher, Brody
+        Huval, Christopher&nbsp;D Manning, and Andrew&nbsp;Y Ng.
+        2012. Semantic Compositionality through Recursive
+        Matrix-Vector Spaces. In <em><em>Proceedings of the 2012
+        Joint Conference on Empirical Methods in Natural Language
+        Processing and Computational Natural Language Learning
+        (EMNLP-CoNLL 2012)</em></em> . ACL, 1201–1211.</li>
+        <li id="BibPLXBIB0050" label="[50]">Richard Socher, Alex
+        Perelygin, Jean Wu, Jason Chuang, Christopher&nbsp;D.
+        Manning, Andrew Ng, and Christopher Potts. 2013. Recursive
+        Deep Models for Semantic Compositionality Over a Sentiment
+        Treebank. In <em><em>Proceedings of the 2013 Conference on
+        Empirical Methods in Natural Language Processing (EMNLP
+        2013)</em></em> . ACL, 1631–1642.</li>
+        <li id="BibPLXBIB0051" label="[51]">Nitish Srivastava,
+        Geoffrey&nbsp;E Hinton, Alex Krizhevsky, Ilya Sutskever,
+        and Ruslan Salakhutdinov. 2014. Dropout: a Simple Way to
+        Prevent Neural Networks from Overfitting. <em><em>Journal
+        of Machine Learning Research (JMLR)</em></em> 15, 1 (2014),
+        1929–1958.</li>
+        <li id="BibPLXBIB0052" label="[52]">Ilya Sutskever, Oriol
+        Vinyals, and Quoc&nbsp;V. Le. 2014. Sequence to Sequence
+        Learning with Neural Networks. In <em><em>Proceedings of
+        the 27th International Conference on Neural Information
+        Processing Systems (NIPS 2014)</em></em> . NIPS,
+        3104–3112.</li>
+        <li id="BibPLXBIB0053" label="[53]">Kai&nbsp;Sheng Tai,
+        Richard Socher, and Christopher&nbsp;D Manning. 2015.
+        Improved Semantic Representations From Tree-Structured Long
+        Short-Term Memory Networks. In <em><em>Proceedings of the
+        53rd Annual Meeting of the Association for Computational
+        Linguistics (ACL 2015)</em></em> . ACL, 1556–1566.</li>
+        <li id="BibPLXBIB0054" label="[54]">Julien Tissier,
+        Christopher Gravier, and Amaury Habrard. 2017. Dict2vec :
+        Learning Word Embeddings using Lexical Dictionaries. In
+        <em><em>Proceedings of the 2017 Conference on Empirical
+        Methods in Natural Language Processing (EMNLP
+        2015)</em></em> . ACL, 254–263.</li>
+        <li id="BibPLXBIB0055" label="[55]">Aäron van&nbsp;den
+        Oord, Sander Dieleman, Heiga Zen, Karen Simonyan, Oriol
+        Vinyals, Alex Graves, Nal Kalchbrenner, Andrew Senior, and
+        Koray Kavukcuoglu. 2016. WaveNet: A Generative Model for
+        Raw Audio. In <em><em>Proceedings of the 9th ISCA Speech
+        Synthesis Workshop (SSW9)</em></em> . ISCA, 125–125.</li>
+        <li id="BibPLXBIB0056" label="[56]">Jason Weston, Sumit
+        Chopra, and Antoine Bordes. 2014. Memory networks.
+        <em><em>arXiv:1410.3916</em></em> (2014).</li>
+        <li id="BibPLXBIB0057" label="[57]">John Wieting, Mohit
+        Bansal, Kevin Gimpel, and Karen Livescu. 2016. Towards
+        Universal Paraphrastic Sentence Embeddings. (2016).</li>
+        <li id="BibPLXBIB0058" label="[58]">John Wieting, Mohit
+        Bansal, Kevin Gimpel, Karen Livescu, and Dan Roth. 2015.
+        From Paraphrase Database to Compositional Paraphrase Model
+        and Back. <em><em>Transactions of the Association for
+        Computational Linguistics (TACL)</em></em> (2015).</li>
+        <li id="BibPLXBIB0059" label="[59]">Ainur Yessenalina and
+        Claire Cardie. [n. d.]. Compositional Matrix-space Models
+        for Sentiment Analysis. In <em><em>Proceedings of the 2011
+        Conference on Empirical Methods in Natural Language
+        Processing (EMNLP 2011)</em></em> . ACL, 172–182.</li>
+        <li id="BibPLXBIB0060" label="[60]">George&nbsp;Kingsley
+        Zipf. 1932. Selected Studies of the Principle of Relative
+        Frequency in Language. (1932).</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>We provide an
+    open source implementation as well as an open source dataset on
+    <a class="link-inline force-break" href=
+    "https://thijs.ai/CompVec/">https://thijs.ai/CompVec/</a>.</p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a>More commonly
+    known as <a class="link-inline force-break" href=
+    "https://wordvectors.org">https://wordvectors.org</a>.</p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a>The set of
+    evaluation methods is provided in the SentEval software
+    library</p>
+    <p><a class="link-inline force-break" href=
+    "https://github.com/facebookresearch/SentEval">https://github.com/facebookresearch/SentEval</a>.</p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a>The dataset and
+    companion software can be found at: <a class=
+    "link-inline force-break" href=
+    "https://thijs.ai/CompVec/">https://thijs.ai/CompVec/</a>.</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5639-8/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3178876.3186007">https://doi.org/10.1145/3178876.3186007</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

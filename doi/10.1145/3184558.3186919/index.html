@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Ranking-based Method for News Stance Detection</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Ranking-based Method for News
+          Stance Detection</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Qiang</span> <span class=
+          "surName">Zhang</span> University College London London,
+          United Kingdom, <a href=
+          "mailto:qiang.zhang.16@ucl.ac.uk">qiang.zhang.16@ucl.ac.uk</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Emine</span> <span class=
+          "surName">Yilmaz</span> University College London London,
+          United Kingdom, <a href=
+          "mailto:emine.yilmaz@ucl.ac.uk">emine.yilmaz@ucl.ac.uk</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Shangsong</span> <span class=
+          "surName">Liang</span> KAUST Thuwal, Saudi Arabia,
+          <a href=
+          "mailto:shangsong.liang@kaust.edu.sa">shangsong.liang@kaust.edu.sa</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186919"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186919</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>A valuable step towards news veracity assessment
+        is to understand stance from different information sources,
+        and the process is known as the stance detection.
+        Specifically, the stance detection is to detect four kinds
+        of stances (“agree”, “disagree”, “discuss” and “unrelated”)
+        of the news towards a claim. Existing methods tried to
+        tackle the stance detection problem by classification-based
+        algorithms. However, classification-based algorithms make a
+        strong assumption that there is clear distinction between
+        any two stances, which may not be held in the context of
+        stance detection. Accordingly, we frame the detection
+        problem as a ranking problem and propose a ranking-based
+        method to improve detection performance. Compared with the
+        classification-based methods, the ranking-based method
+        compare the true stance and false stances and maximize the
+        difference between them. Experimental results demonstrate
+        the effectiveness of our proposed method.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Computing methodologies</strong>
+        → <strong>Information extraction;</strong></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Fake news; stance detection;
+          learning to rank</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Qiang Zhang, Emine Yilmaz, and Shangsong Liang. 2018.
+          Ranking-based Method for News Stance Detection. In
+          <em>WWW '18 Companion: The 2018 Web Conference
+          Companion,</em> <em>April 23–27, 2018,</em> <em>Lyon,
+          France. ACM, New York, NY, USA</em> 2 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3186919" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3186919</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Online news on social media is enjoying an increasingly
+      popularity all over the world due to its easy access and wide
+      information dimension. Despite the advantages provided by
+      social media, it also accelerates the spread of fake news or
+      low quality news with intentionally misinformation. Fake news
+      is defined by Facebook as “news articles that purport to be
+      factual, but which contain intentional misstatements of fact
+      with attention to arouse passions, attract viewership, or
+      deceive”&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>]. The proliferation of fake news can
+      contribute greatly to people's confusion and distrust. For
+      example, the fake news “Pizzagate” attracted over 1 million
+      tweets by the end of the 2016 United States America
+      presidential election.</p>
+      <p>Stance detection has been suggested as a crucial first
+      step to detect fake news.&nbsp;<a class="fn" href="#fn1" id=
+      "foot-fn1"><sup>1</sup></a> Researchers from both academia
+      and industry initiated the Fake News Challenge
+      (FNC)<span class="inline-equation"><span class=
+      "tex">$\,^\text{1}$</span></span> and the first stage of FNC
+      (FNC-1) aimed to accelerate the establishment of automatic
+      systems for evaluating the positions that a news source holds
+      about a particular claim. More specifically, given a news
+      headline as a claim and its article body, FNC-1 tried to
+      develop models to estimate the stance of the article body
+      towards its headline. The stance could be one of the labels:
+      “agree”, “disagree”, “discuss” and “unrelated”. All the news
+      with the “agree”, “disagree” and “discuss” are assumed as
+      “related”. According to the FNC-1, formal definitions of the
+      four stances are as: “<strong>Agree</strong>” – the body text
+      agrees with the headline; “<strong>Disagree</strong>” – the
+      body text disagrees with the headline;
+      “<strong>Discuss</strong>” – the body text discusses the same
+      claim as the headline, but does not take a position; and
+      “<strong>Unrelated</strong>” – the body text discusses a
+      different claim but not that in the headline.</p>
+      <p>A GradientBoosting classifier is implemented as the FNC-1
+      official baseline with a relative score of 75.20%. This
+      classifier makes use of semantic analysis and overlap between
+      headlines and bodies.<span class=
+      "inline-equation"><span class=
+      "tex">$\,^\text{1}$</span></span> As for the FNC-1
+      submissions, an ensemble of convolutional neural network and
+      gradient-boosted decision trees achieves the highest
+      detection performance&nbsp;<a class="fn" href="#fn2" id=
+      "foot-fn2"><sup>2</sup></a>. Another ensemble of five
+      multi-layer perceptrons (MLP) achieves a little worse
+      accuracy. These two methods take input of semantic analysis,
+      bag of words and baseline features&nbsp;<a class="fn" href=
+      "#fn3" id="foot-fn3"><sup>3</sup></a>. Different form the
+      above two methods, the third best team does not try ensemble
+      methods. They use one single MLP with term frequency-inversed
+      document frequency (TF-IDF) as text features&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0002">2</a>]. The fourth
+      best team extract both lexical matching and semantic
+      embedding features, and trains another gradient boosting
+      trees&nbsp;<a class="fn" href="#fn4" id=
+      "foot-fn4"><sup>4</sup></a>. All the aforementioned methods
+      detect stances by classification-based algorithms, the aim of
+      which is to approximate the true probability distribution of
+      the four stances in news articles.</p>
+      <p>However, classification-based algorithms make a strong
+      assumption that there is clear distinction between any two
+      stances. This assumption may not be hold in the setting of
+      stance detection, as it is challenging to distinguish between
+      any of the two even for humans&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0001">1</a>]. Accordingly, we propose a
+      ranking-based method that is more suitable to accomplish the
+      task, as stance should be detected relatively rather than
+      absolutely. We define a ranking loss function in our method
+      to compare the true stance and false stances. Given a news
+      body and its headline, the proposed method applies a
+      multi-layer perceptron to produce a value for every stance.
+      Our ranking loss function can maximize the value difference
+      between the true stance and false stances. Experimental
+      results on FNC-1 test dataset validate the effectiveness of
+      our proposed method.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Method</h2>
+        </div>
+      </header>
+      <p>The proposed model is a single, end-to-end ranking-based
+      algorithm with a multi-layer perceptron. The model input is a
+      pair of headlines and the article bodies. We use stance
+      labels to help compute the value of the objective during the
+      training phase. The multi-layer perceptron with two hidden
+      layers produces a value <em>u</em> <sup>+</sup> for the true
+      stance and three values <span class=
+      "inline-equation"><span class="tex">$u^-_1$</span></span> ,
+      <span class="inline-equation"><span class=
+      "tex">$u^-_2$</span></span> , <span class=
+      "inline-equation"><span class="tex">$u^-_3$</span></span> for
+      three false stances with the goal to satisfy this constraint:
+      <span class="inline-equation"><span class="tex">$u^+ \ge \max
+      \lbrace u^-_1, u^-_2, u^-_3\rbrace +1$</span></span> . The
+      objective of the loss function is to maximize the value
+      difference between the true and false stances. During
+      testing, given a news body and its headline the model assigns
+      a particular stance (predicted label) to it, on which the
+      model produces the highest value.</p>
+      <section id="sec-6">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Feature
+            Space</h3>
+          </div>
+        </header>
+        <p>We extract TF-IDF features to represent both headlines
+        and bodies of the news articles: TF-IDF of the headlines,
+        and TF-IDF of the bodies. We also consider cosine
+        similarity between the headline and the body of each
+        article, and those extracted by the official baseline as
+        our features. All features are concatenated to our input
+        vector, denoted as <strong>v</strong>, that is then fed
+        into the multi-layer perception.</p>
+      </section>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> Multi-layer
+            Perception</h3>
+          </div>
+        </header>
+        <p>The multi-layer perception consists of two hidden layers
+        with 100 units and 4 units, respectively. The second hidden
+        layer produces a four-dimensional vector <strong>u</strong>
+        with each dimension indicating a value for the
+        corresponding stance respectively,</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mathbf {u} =
+            \mathbf {W}^\top _2 \cdot \mathrm{ReLu}(\mathbf
+            {W}^\top _1\cdot \mathbf {v} + \mathbf {b}_1)+ \mathbf
+            {b}_2 \, , \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>where <strong>W</strong> <sub>1</sub> and
+        <strong>W</strong> <sub>2</sub> are the weight matrices,
+        <strong>b</strong> <sub>1</sub> and <strong>b</strong>
+        <sub>2</sub> are the bias vectors in the first and the
+        second hidden layer, respectively; and the rectified linear
+        unit (ReLu) is applied to the hidden layers as the
+        non-lineaer activation function. Then the ranking loss
+        function can be defined as follows:
+        <div class="table-responsive" id="Xeq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} L(\mathbf {u})
+            = \max (0,1-u^+ + \max (u^-_1,\, u^-_2,\, u^-_3)) \, ,
+            \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>where <em>u</em> <sup>+</sup> =
+        <em>u<sub>i</sub></em> with <em>i</em> being the index of
+        the true stance for the news, and <span class=
+        "inline-equation"><span class="tex">$\lbrace u^-_1, u^-_2,
+        u^-_3\rbrace \equiv \lbrace u_j\rbrace _{j=1}^4 / \lbrace
+        u_i\rbrace$</span></span> . Here <span class=
+        "inline-equation"><span class="tex">$\lbrace u_j\rbrace
+        _{j=1}^4$</span></span> are the elements in
+        <strong>u</strong>. The goal of the training is to enlarge
+        the difference between <em>u</em> <sup>+</sup> and the
+        maximum in <span class="inline-equation"><span class=
+        "tex">$\lbrace u^-_1, u^-_2, u^-_3\rbrace$</span></span>
+        for all the news articles.
+        <p></p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.3</span>
+            Experimental Setting</h3>
+          </div>
+        </header>
+        <p>Following the official setting, we split the data set
+        (75,385 news articles) into training, validation and
+        testing subsets.&nbsp;<a class="fn" href="#fn5" id=
+        "foot-fn5"><sup>5</sup></a> We apply dropout and include an
+        L2 regularization for the MLP weights in the loss function
+        to mitigate overfitting. We train in mini-batches over the
+        entire training set with the Adadelta optimizer.</p>
+        <p>The evaluation is based on a weighted, two-layer scoring
+        system. The “related”/“unrelated” classification is given
+        25% score weighting in the <em>accuracy</em> evaluation
+        metric because it is easier. The classification between
+        ”agree”, ”disagree” and ”discuss” is given 75% score
+        weighting since it is more difficult and relevant to fake
+        news detection. The scoring system produces a <em>relative
+        score</em> based on the differentially weighted scoring
+        metric.</p>
+      </section>
+    </section>
+    <section id="sec-9">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Results</h2>
+        </div>
+      </header>
+      <p>As for the FNC-1 official evaluation metric, our method
+      achieves an overall relative score of 86.66%.
+      Fig.&nbsp;<a class="fig" href="#fig1">1</a> demonstrates the
+      performance with a heat map and Table 1 compares our method
+      with the state-of-the-art. Our method significantly achieves
+      the best performance and improves detection accuracy. When
+      separating “unrelated” pairs of headlines and bodies, we got
+      over 99% accuracy. Besides, the detection accuracy for
+      “discuss” is improved by 3.72%. Importantly, our method
+      successfully improves the pretty limited accuracy of “agree”
+      and “disagree” by 10.86% and 187.86%, respectively. This is
+      the most attracting point as “agree” and “disagree” are the
+      most difficult to detect by previous methods and the most
+      relevant to the superordinate goal of automating the stance
+      detection process.</p>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>We tackle the news stance detection task using a
+      ranking-based method rather than classification-based
+      algorithms. Given a pair of headlines and article bodies, the
+      ranking-based method can compare and maximize the difference
+      between the true and false stances. Though the architecture
+      is simple, it successfully improves stance detection
+      performance to a large extent.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186919/images/www18companion-159-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">The heat map of detection results.</span>
+        </div>
+      </figure>
+      <p></p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">Performance comparison with the
+          state-of-art algorithms on the FNC-1 competition
+          dataset.</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:center;">Team</th>
+              <th style="text-align:center;" colspan="4">
+                Accuracy (%)
+                <hr />
+              </th>
+              <th style="text-align:center;">Relative Score(%)</th>
+            </tr>
+            <tr>
+              <th style="text-align:center;"></th>
+              <th style="text-align:center;">agree</th>
+              <th style="text-align:center;">disagree</th>
+              <th style="text-align:center;">discuss</th>
+              <th style="text-align:center;">unrelated</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:center;">Official baseline</td>
+              <td style="text-align:center;">09.09</td>
+              <td style="text-align:center;">01.00</td>
+              <td style="text-align:center;">79.66</td>
+              <td style="text-align:center;">97.98</td>
+              <td style="text-align:center;">75.20</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Chips Ahoy!</td>
+              <td style="text-align:center;">55.96</td>
+              <td style="text-align:center;">00.29</td>
+              <td style="text-align:center;">70.30</td>
+              <td style="text-align:center;">98.99</td>
+              <td style="text-align:center;">80.21</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">UCLMR</td>
+              <td style="text-align:center;">44.04</td>
+              <td style="text-align:center;">06.60</td>
+              <td style="text-align:center;">81.38</td>
+              <td style="text-align:center;">97.90</td>
+              <td style="text-align:center;">81.72</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Athene</td>
+              <td style="text-align:center;">44.72</td>
+              <td style="text-align:center;">09.47</td>
+              <td style="text-align:center;">80.89</td>
+              <td style="text-align:center;">99.25</td>
+              <td style="text-align:center;">81.97</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Talos</td>
+              <td style="text-align:center;">58.54</td>
+              <td style="text-align:center;">01.87</td>
+              <td style="text-align:center;">76.19</td>
+              <td style="text-align:center;">98.70</td>
+              <td style="text-align:center;">82.02</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">This work</td>
+              <td style="text-align:center;">64.90</td>
+              <td style="text-align:center;">27.26</td>
+              <td style="text-align:center;">84.41</td>
+              <td style="text-align:center;">99.12</td>
+              <td style="text-align:center;">86.66</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="sec-11">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span>
+          Acknowledgments</h2>
+        </div>
+      </header>
+      <p>This research was supported by the China Scholarship
+      Council (CSC) for award No. 201704910908.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">William Ferreira and
+        Andreas Vlachos. 2016. Emergent: a novel data-set for
+        stance classification. In <em><em>Proceedings of the 2016
+        conference of the North American chapter of the association
+        for computational linguistics: Human language
+        technologies</em></em> . 1163–1168.</li>
+        <li id="BibPLXBIB0002" label="[2]">Benjamin Riedel,
+        Isabelle Augenstein, Georgios&nbsp;P Spithourakis, and
+        Sebastian Riedel. 2017. A simple but tough-to-beat baseline
+        for the Fake News Challenge stance detection task.
+        <em><em>arXiv preprint arXiv:1707.03264</em></em>
+        (2017).</li>
+        <li id="BibPLXBIB0003" label="[3]">Jen Weedon, William
+        Nuland, and Alex Stamos. 2017. Information operations and
+        Facebook. <em><em>version</em></em> 1(2017), 27.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.fakenewschallenge.org/">http://www.fakenewschallenge.org/</a>.</p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "https://blog.talosintelligence.com/2017/06/talos-fake-news-challenge.html">https://blog.talosintelligence.com/2017/06/talos-fake-news-challenge.html</a>.</p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "https://goo.gl/5qDvPJ">https://goo.gl/5qDvPJ</a>.</p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a><a class=
+    "link-inline force-break" href=
+    "https://github.com/shangjingbo1226/fnc-1">https://github.com/shangjingbo1226/fnc-1</a>.</p>
+    <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a>Data set is
+    publicly available from <a class="link-inline force-break"
+    href="https://github.com/FakeNewsChallenge/fnc-1">https://github.com/FakeNewsChallenge/fnc-1</a>.</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186919">https://doi.org/10.1145/3184558.3186919</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Crowd-Machine Collaboration for Item Screening</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Crowd-Machine Collaboration for
+          Item Screening</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Evgeny Krivosheev Bahareh</span>
+          <span class="surName">Harandizadeh</span> University of
+          Trento, Italy, <a href=
+          "mailto:first.last@unitn.it">first.last@unitn.it</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Fabio</span> <span class=
+          "surName">Casati</span> University of Trento, Italy and
+          Tomsk Polytechnic University, Russia, <a href=
+          "mailto:first.last@unitn.it">first.last@unitn.it</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Boualem</span> <span class=
+          "surName">Benatallah</span> UNSW, Sydney, Australia,
+          <a href=
+          "mailto:boualem@cse.unsw.edu.au">boualem@cse.unsw.edu.au</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186946"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186946</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>In this paper we describe how crowd and machine
+        classifier can be efficiently combined to screen items that
+        satisfy a set of predicates. We show that this is a
+        recurring problem in many domains, present machine-human
+        (hybrid) algorithms that screen items efficiently and
+        estimate the gain over human-only or machine-only screening
+        in terms of performance and cost.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Computer systems
+        organization</strong> → <strong>Embedded systems;</strong>
+        <em>Redundancy;</em> Robotics; • <strong>Networks</strong>
+        → Network reliability;</small></p>
+      </div>
+      <div class="classifications">
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Evgeny Krivosheev Bahareh Harandizadeh, Fabio Casati, and
+          Boualem Benatallah. 2018. Crowd-Machine Collaboration for
+          Item Screening. In <em>WWW '18 Companion: The 2018 Web
+          Conference Companion,</em> <em>April 23–27, 2018,</em>
+          <em>Lyon, France. ACM, New York, NY, USA</em> 2 Pages.
+          <a href="https://doi.org/10.1145/3184558.3186946" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3186946</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <p>crowdsourcing, machine learning, hybrid systems,
+    classification</p>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span> Background and
+          Motivation</h2>
+        </div>
+      </header>
+      <p>A frequently occurring classification problem consists in
+      identifying items that pass a set of screening tests
+      (filters). This is not only common in medical diagnosis but
+      in many other fields as well, from database querying - where
+      we filter tuples based on predicates [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0007">7</a>], to hotel search - where
+      we filter places based on features of interest [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0005">5</a>], to
+      systematic literature reviews (SLR) - where we screen
+      candidate papers based on a set of criteria to assess whether
+      they are in scope for the review&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0002">2</a>]. The goal of this paper is
+      to understand how, given a set of trained classifiers whose
+      accuracy may or may not be known for the problem at hand (for
+      a specific query predicate, hotel feature, or paper topic),
+      we can combine machine learning (ML) and human (H)
+      classifiers to screen items efficiently in terms of cost of
+      querying the crowd, while ensuring an accuracy that is
+      acceptable for the given problem. To make the paper easier to
+      read and the problem concrete, we take the example of SLR
+      mentioned above, which is rather challenging in that each SLR
+      is different and each filtering predicate (called
+      <em>exclusion criterion</em> in that context) could be unique
+      to each SLR (e.g., ”exclude papers that do not study adults
+      85+ years old”). Abundant prior art discusses crowd-based
+      filtering (e.g., [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>]), while research on hybrid
+      classification is still in its infancy. Recent papers address
+      the problem of combining machine and crowd intelligence in
+      crowd-powered bots[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0008">8</a>] as well as in crowdsourced
+      classification[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>]. The problem we address here differs
+      from prior art in that i) we use the information provided by
+      each kind of classifier (machine and human) to improve the
+      effectiveness of the other kind so that they can be stronger
+      together and ii) we consider a probabilistic model that works
+      on a per filter and per item basis to minimize the overall
+      number of crowd votes.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Problem
+          Statement and Model</h2>
+        </div>
+      </header>
+      <p>We assume in input a set of items <em>i</em> ∈ <em>I</em>
+      to classify (in our example, these are papers to screen), a
+      set of filters <em>f</em> ∈ <em>F</em> (paper exclusion
+      criteria), a set of ML or H classifiers <em>c</em> ∈
+      <em>C</em>, and a loss function <em>L</em> =
+      <em>k</em>*<em>FE</em> + <em>FI</em>, modeled as a linear
+      combination of false exclusions FE and false inclusions FI,
+      which may carry a different relative weight <em>k</em> (e.g.,
+      most authors consider excluding relevant papers a more costly
+      error than including an irrelevant one). Each classifier
+      <em>c</em> = {<em>cost</em>, <em>a</em>(<em>f</em>),
+      <em>ρ</em>(<em>f</em>, <em>C</em>)}~ ∈ <em>C</em> is
+      associated with the cost of asking one vote on an (item,
+      filter) pair, with a filter-specific estimated accuracy (a
+      2x2 confusion matrix capturing probability of correct
+      decisions for positive and negative labels), and with its
+      correlation <em>ρ</em> with other classifiers. We specify
+      filter-specific accuracy as we have seen that accuracy can
+      vary greatly based on the filter (exclusion criteria) to be
+      evaluated, for both machines (as studied in the experiments
+      described later) and humans (as we reported
+      in&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0003">3</a>]).
+      We do not discuss here how to obtain ML classifiers as this
+      is the subject of ample literature: we merely assume they are
+      given, and that we may or may not have information on their
+      accuracy and correlation when applied to specific problem
+      (our set of candidate papers and exclusion criteria).
+      Consequently, we model accuracy as a beta distribution, where
+      we incorporate prior knowledge if available, else we assign
+      an initial uniform <em>Beta</em>(1, 1) distribution for both
+      positively and negatively labeled items. To simplify the
+      presentation we assume to have three kinds of classifiers:
+      machines (with zero cost per vote and <em>Beta</em>(1, 1)
+      accuracy), crowd (with cost 1 and also <em>Beta</em>(1, 1)
+      accuracy), and experts, with expert cost <em>ec</em> to which
+      for simplicity we assign perfect accuracy. Consistently with
+      crowdsourcing literature, we also assume that crowd and
+      experts’ opinions are independent, while in general we cannot
+      make this assumption for ML classifiers. Our goal is, given
+      quality parameters such as the loss function, to identify a
+      strategy that can efficiently (in terms of cost) query the
+      classifiers available and aggregate results while achieving
+      the quality goals.</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Strategies and
+          Experiments</h2>
+        </div>
+      </header>
+      <p>We base the hybrid machine-crowd classification strategy
+      on modifying the <em>shortest run</em> (SR) algorithm,
+      developed for crowd-only classification&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0003">3</a>]. SR proceeds by obtaining
+      a test dataset <em>T</em> from ”expensive” experts (usually
+      10-20 items) used to filter out low accuracy crowd workers,
+      and by performing a <em>baseline run</em> with the - cheaper
+      - crowd classifying a set of <em>B</em> items (usually
+      50-100) to estimate crowd accuracy and filter selectivity.
+      Based on this estimate, and on the (initially empty) set of
+      votes for the items to be classified, it then decides which
+      filter to apply first to which item, to maximize the
+      probability of screening the item out with few votes. It also
+      estimates the expected cost for crowd classification, leaving
+      items to experts when convenient [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0003">3</a>]. We extend SR because i)
+      it was designed for multi-filter screening and has shown to
+      perform better than baseline algorithms for crowd
+      classification, ii) it has a per paper and per item
+      probabilistic model that can leverage prior knowledge on
+      items and filters, and ML classifiers can provide such
+      knowledge, and iii) the algorithm can work with different
+      sizes for test <em>T</em> and baselines <em>B</em>. This is
+      important as test items can help us filter out ML classifiers
+      with an expected accuracy lower than a threshold <span class=
+      "inline-equation"><span class=
+      "tex">$\overline{a}$</span></span> (to be tuned as discussed
+      later), and the more extensive set of crowd-classified items
+      from the baseline can be used to a) assess independence among
+      ML classifiers (which is necessary if we want to pool votes
+      from ML classifiers with simple algorithms such as majority
+      voting), and b) build an ensemble model out of the ML
+      classifiers where the output of each ML classifier is a
+      feature [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0001">1</a>].
+      Therefore, the classification strategy proceeds as
+      follows:</p>
+      <ol class="list-no-style">
+        <li id="list1" label="(1)">Obtain gold dataset T from
+        expert and use it to screen ML classifiers and to use as
+        tests questions for crowd workers. If we start from a
+        Beta(1,1) uniform prior for a given filter, we know the
+        accuracy distribution goes to a <span class=
+        "inline-equation"><span class=
+        "tex">$Beta(1+correct\_answers,
+        1+failed\_answers)$</span></span> which has a known pdf and
+        mean.<br /></li>
+        <li id="list2" label="(2)">Perform a baseline run on
+        <em>B</em> items (on all filters), both to estimate crowd
+        accuracy on each filters and to get data for the next
+        step.<br /></li>
+        <li id="list3" label="(3)">Compute correlation among ML
+        classifiers and remove classifiers with correlation higher
+        than a threshold <em>c</em> that we tune empirically, so
+        that we can meaningfully use weighted majority voting to
+        combine the opinions of different ML
+        classifiers.<br /></li>
+        <li id="list4" label="(4)">Compute the probability that a
+        filter applies to an item by combining the vote of the
+        ensemble ML classifier (which now has a known accuracy).
+        Treat this value as a prior probability for the (filter,
+        item) pair and continue with SR until items are classified
+        by the crowd or until SR decides they are to be left to
+        experts.<br /></li>
+      </ol>
+      <p>Many variations are possible over this basic scheme,
+      including changing the size of test data <em>T</em> and
+      baseline <em>B</em> as well as building a model (e.g.,
+      logistic regression) to combine classifiers votes as opposed
+      to using majority voting, leveraging the baseline run.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186946/images/www18companion-186-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Expected loss vs price for different
+          algorithms. Correlation values between machines = [0.,
+          0.2, 0.3, 0.5, 0.7, 0.9]</span>
+        </div>
+      </figure>
+      <p></p>
+      <p><strong>Experiments.</strong> To assess the approach, we
+      ran experiments on Mechanical Turk (described in [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0003">3</a>]) as well as
+      leverage existing crowd datasets [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0006">6</a>]. In both cases the
+      experiments are related to SLRs with multiple filters and
+      include over 20000 crowd votes on over 4000 papers. We refer
+      to the cited papers for details on experiment design. We used
+      these datasets to get realistic data on crowd worker
+      accuracies, on variation of such accuracies by filter and on
+      filter power. czWe then built classifiers for each filter
+      using a variety of techniques (from KNN to random forest,
+      variations of naive Bayes, and others<a class="fn" href=
+      "#fn1" id="foot-fn1"><sup>1</sup></a>) and different sizes of
+      training data to get realistic information on classifier
+      accuracies and correlations. We obtained classifier
+      accuracies in the 0.5-0.95 range and correlations in the
+      0.2-0.9 range, and crowd accuracy in the 0.55-0.8 range. We
+      then used this data to simulate a variety of scenarios. In
+      Figure&nbsp;<a class="fig" href="#fig1">1</a> we compare the
+      results of applying machine only, crowd (with SR), and hybrid
+      strategy, to simulations of classifications for 1000 papers
+      and 4 filters (averages over 50 iterations). We simulate 10
+      ML classifiers with accuracy randomly selected from a
+      0.5-0.95 range and on which the algorithm assumes no prior
+      knowledge. We screen them with T=20 tests and keep the ones
+      with 0.95 probability of having an accuracy greater than 0.5.
+      The threshold for false exclusion error is set at 0.01 as in
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0003">3</a>] and the
+      weight K in the loss function is set to 5. We then plot the
+      average loss and price paid per item as the correlation among
+      classifiers vary from 0 to 0.9 (with price growing with the
+      correlation). As we can see, for a similar loss level, hybrid
+      algorithms significantly outperforms the crowd in terms of
+      price, with savings from 7.4% to 53.7% depending on
+      correlation. Notice that we disregard here the cost of
+      obtaining the classifier, which, if they are built from
+      scratch for this specific SLR, needs to be factored in when
+      estimating price and assessing the best strategy. If
+      classifiers accuracies worsen (e.g., lie in the 0.4-0.8 or
+      0.3-0.7 range), the savings also decrease approximately by a
+      factor of 2 and 4 respectively. For near-zero correlation
+      (very hard to achieve in practice) the ML-only strategy
+      becomes appealing, and then deteriorates. The reader can see
+      on the GitHub repository in footnote how results vary as we
+      change parameters and thresholds.</p>
+      <p><strong>Acknowledgements.</strong> This project has
+      received funding from the EU Horizon 2020 research and
+      innovation programme under the Marie Skodowska-Curie grant
+      agreement No 690962.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Saso Džeroski and
+        Bernard Ženko. 2004. Is Combining Classifiers with Stacking
+        Better than Selecting the Best One? <em><em>Machine
+        Learning</em></em> 54, 3 (01 Mar 2004), 255–273.</li>
+        <li id="BibPLXBIB0002" label="[2]">Byron C&nbsp;Wallace et
+        al. 2017. Identifying reports of randomized controlled
+        trials (RCTs) via a hybrid machine learning and
+        crowdsourcing approach. <em><em>J Am Med Inform
+        Assoc</em></em> (2017).</li>
+        <li id="BibPLXBIB0003" label="[3]">Evgeny Krivosheev,
+        Boualem Benatallah, and Fabio Casati. 2018. Crowd-based
+        Multi-predicate Screening of Papers in Literature Reviews.
+        In <em><em>Proceedings of WWW2018</em></em> . International
+        World Wide Web Conferences Steering Committee.</li>
+        <li id="BibPLXBIB0004" label="[4]">Evgeny Krivosheev,
+        Valentina Caforio, Boualem Benatallah, and Fabio Casati.
+        2017. Crowdsourcing Paper Screening in Systematic
+        Literature Reviews. In <em><em>Procs of Hcomp2017</em></em>
+        . AAAI.</li>
+        <li id="BibPLXBIB0005" label="[5]">Doren Lan, Katherine
+        Reed, Austin Shin, and Beth Trushkowsky. 2017. Dynamic
+        Filter: Adaptive Query Processing with the Crowd. In
+        <em><em>Procs of Hcomp2017</em></em> . AAAI.</li>
+        <li id="BibPLXBIB0006" label="[6]">Michael&nbsp;L.
+        Mortensen, Gaelen&nbsp;P. Adam, Thomas&nbsp;A. Trikalinos,
+        Tim Kraska, and Byron&nbsp;C. Wallace. 2016. An exploration
+        of crowdsourcing citation screening for systematic reviews.
+        <em><em>Research Synthesis Methods</em></em> (2016).
+        RSM-02-2016-0006.R4.</li>
+        <li id="BibPLXBIB0007" label="[7]">Aditya Parameswaran,
+        Stephen Boyd, Hector Garcia-Molina, Ashish Gupta, Neoklis
+        Polyzotis, and Jennifer Widom. 2014. Optimal crowd-powered
+        rating and filtering algorithms. In <em><em>Proceedings of
+        VLDB</em></em> . VLDB Endowment.</li>
+        <li id="BibPLXBIB0008" label="[8]">Denis Savenkov and
+        Eugene Agichtein. 2016. CRQA: Crowd-powered Real-time
+        Automatic Question Answering System. In <em><em>Procs of
+        Hcomp2016</em></em> . AAAI.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>see
+    jointresearch.net for details</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186946">https://doi.org/10.1145/3184558.3186946</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

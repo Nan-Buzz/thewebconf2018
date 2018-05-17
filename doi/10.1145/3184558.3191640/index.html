@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Detecting Biased Statements in Wikipedia</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "../../../data/dl.acm.org/pubs/lib/js/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Detecting Biased Statements in
+          Wikipedia</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Christoph</span> <span class=
+          "surName">Hube</span> L3S Research Center, Leibniz
+          University of Hannover Hannover, Germany {hube,
+          fetahu}@L3S.de
+        </div>
+        <div class="author">
+          <span class="givenName">Besnik</span> <span class=
+          "surName">Fetahu</span> L3S Research Center, Leibniz
+          University of Hannover Hannover, Germany {hube,
+          fetahu}@L3S.de
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191640"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191640</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Quality in Wikipedia is enforced through a set of
+        editing policies and guidelines recommended for Wikipedia
+        editors. Neutral point of view (NPOV) is one of the main
+        principles in Wikipedia, which ensures that for
+        controversial information all possible points of view are
+        represented proportionally. Furthermore, language used in
+        Wikipedia should be neutral and not
+        opinionated.</small></p>
+        <p><small>However, due to the large number of Wikipedia
+        articles and its operating principle based on a voluntary
+        basis of Wikipedia editors; quality assurances and
+        Wikipedia guidelines cannot always be enforced. Currently,
+        there are more than 40,000 articles, which are flagged with
+        NPOV or similar quality tags. Furthermore, these represent
+        only the portion of articles for which such quality issues
+        are explicitly flagged by the Wikipedia editors, however,
+        the real number may be higher considering that only a small
+        percentage of articles are of <em>good quality</em> or
+        <em>featured</em> as categorized by Wikipedia.</small></p>
+        <p><small>In this work, we focus on the case of
+        <em>language bias</em> at the sentence level in Wikipedia.
+        Language bias is a hard problem, as it represents a
+        subjective task and usually the linguistic cues are subtle
+        and can be determined only through its context. We propose
+        a supervised classification approach, which relies on an
+        automatically created <em>lexicon of bias words</em>, and
+        other <em>syntactical</em> and <em>semantic</em>
+        characteristics of biased statements.</small></p>
+        <p><small>We experimentally evaluate our approach on a
+        dataset consisting of biased and unbiased statements, and
+        show that we are able to detect biased statements with an
+        accuracy of 74%. Furthermore, we show that competitors that
+        determine bias words are not suitable for detecting biased
+        statements, which we outperform with a relative improvement
+        of over 20%.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Language Bias; Wikipedia
+          Quality; NPOV</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Christoph Hube and Besnik Fetahu. 2018. Detecting Biased
+          Statements in Wikipedia. In <em>WWW '18 Companion: The
+          2018 Web Conference Companion,</em> <em>April 23–27,
+          2018,</em> <em>Lyon, France. ACM, New York, NY, USA</em>
+          8 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3191640" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191640</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-2">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Wikipeda is one of the largest collaboratively created
+      encyclopedias. Its community of editors consist of more than
+      32 million registered editors only in the English Wikipedia.
+      However, only a small minority, specifically 127,000 editors
+      are active<a class="fn" href="#fn1" id=
+      "foot-fn1"><sup>1</sup></a>. Due to the diverse demographics
+      and interests of editors, to maintain the quality of the
+      provided information, Wikipedia has a set of editing
+      guidelines and policies.</p>
+      <p>One of the core policies is the <em>Neutral Point of
+      View</em> (NPOV)<a class="fn" href="#fn2" id=
+      "foot-fn2"><sup>2</sup></a>. It requires that for
+      controversial topics, Wikipedia editors should proportionally
+      represent all points of view. The core guidelines in NPOV are
+      to: (i) avoid stating <em>opinions as facts</em>, (ii) avoid
+      stating seriously <em>contested assertions as facts</em>,
+      (iii) avoid stating <em>facts as opinions</em>, (iv) prefer
+      <em>nonjudgemental language</em>, and (v) indicate the
+      relative <em>prominence of opposing views</em>.</p>
+      <p>Currently, there are approximately 40,000 Wikipedia pages
+      that are flagged with NPOV (or similar quality flaws) quality
+      issues. These represent explicit cases<a class="fn" href=
+      "#fn3" id="foot-fn3"><sup>3</sup></a> marked by Wikipedia
+      editors, where specific Wikipedia pages or statements
+      (sentences in Wikipedia articles) are deemed to be in
+      violation with the NPOV policy. Recasens et
+      al.&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0017">17</a>]
+      analyze these cases that go against the specific points from
+      the NPOV guidelines. They find common linguistic cues, such
+      as the cases of <em>framing bias</em>, where subjective words
+      or phrases are used that are linked to a particular point of
+      view (point (iv)), and <em>epistemological bias</em> which
+      focuses on the believability of a statement, thus violating
+      points (i) and (ii). Similarly, Martin&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0011">11</a>] shows the cases of biases
+      which are in violation with all guidelines of NPOV, an
+      experimental study carried out on his personal Wikipedia
+      page<a class="fn" href="#fn4" id=
+      "foot-fn4"><sup>4</sup></a>.</p>
+      <p>Ensuring that Wikipedia pages follow the core principles
+      in Wikipedia is a hard task. Firstly, due to the fact that
+      editors provide and maintain Wikipedia pages on a voluntarily
+      basis, the editor efforts are not always inline with the
+      demand by the general viewership of Wikipedia&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0021">21</a>] and as
+      such they cannot be redirected to pages that have quality
+      issues. Furthermore, there are documented cases, where
+      Wikipedia admins are responsible for policy violations and
+      pushing forward specific points of view on Wikipedia
+      pages&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0002">2</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0005">5</a>], thus,
+      going directly against the NPOV policy.</p>
+      <p>In this work, we address quality issues that deal with
+      language bias in Wikipedia statements that are in violation
+      with the points (i) – (iv). We classify <em>statements</em>
+      as being <em>biased</em> or <em>unbiased</em>. A
+      <em>statement</em> in our case corresponds to a
+      <em>sentence</em> in Wikipedia. We address one of the main
+      deficiencies of related work&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0017">17</a>], which focuses on
+      detecting <em>bias words</em>. In our work, we show that
+      similar to [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0013">13</a>],
+      words that introduce bias or violate NPOV are dependent on
+      the context in which they appear and furthermore the topic at
+      hand. Thus, our approach relies on an automatically generated
+      lexicon of bias words for a given set of Wikipedia pages
+      under consideration, and in addition to semantic and
+      syntactic features extracted from the classified
+      statements.</p>
+      <p>As an example of language bias consider the following
+      statement:</p>
+      <ul class="list-no-style">
+        <li id="list1" label="•">Sanders shocked his fellow
+        liberals by putting up a Soviet Union flag in his Senate
+        office.<br /></li>
+      </ul>
+      <p>The word <em>shocked</em> introduces bias in this
+      statement since it implies that <em>“putting a Soviet Union
+      flag in his office”</em> is a shocking act.</p>
+      <p>To this end, we make the following contributions in this
+      work:</p>
+      <ul class="list-no-style">
+        <li id="list2" label="•">propose an automated approach for
+        generating a lexicon of bias words from a set of Wikipedia
+        articles under consideration,<br /></li>
+        <li id="list3" label="•">an automated approach for
+        classifying Wikipedia statements as either <em>biased</em>
+        or <em>unbiased</em>,<br /></li>
+        <li id="list4" label="•">a human labelled dataset
+        consisting of biased and unbiased statements.<br /></li>
+      </ul>
+    </section>
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>Research on bias in Wikipedia has mostly focused on
+      different topics such as culture, gender and politics
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0001">1</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0008">8</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0020">20</a>] with some
+      of the existing research referring to language bias.</p>
+      <p>Greenstein and Zhu[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>] analyze political bias in Wikipedia
+      with a focus on US politics. They use the approach introduced
+      by Gentzkow and Shapiro[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>] that was initially developed to
+      determine newspaper slant. It relies on a list of 1000 terms
+      and phrases that are typically used by either republican or
+      democratic congress members. Greenstein and Zhu search for
+      these terms and phrases within Wikipedia articles about US
+      politics to measure in which spectrum (left or right leaning
+      politics) these articles are. They find that articles on
+      Wikipedia used to show a more liberal slant in average but
+      that this slant has decreased over time with the growth of
+      Wikipedia and more editors working on the articles. For the
+      seed extraction part of the approach we present in this paper
+      we also use articles related to US politics but instead of
+      measuring political bias our approach simply detects biased
+      statements using features that are not directly related to
+      the political domain and therefore can also be used outside
+      of this domain. Our extracted bias lexicon contains mostly
+      words that are not directly related to politics.</p>
+      <p>Iyyer et al.[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0008">8</a>] introduce an approach based on
+      Recursive Neural Networks to classify statements from
+      politicians in US Congressional floor debates and from
+      ideological books as either liberal or conservative. The
+      approach first splits the sentences into phrases and
+      classifies each phrase separately before incrementally
+      combining them. This allows for more sophisticated handling
+      of semantic compositions. For example the sentence <em>They
+      dubbed it the ”death tax” and created a big lie about its
+      adverse effects on small businesses</em> introduces liberal
+      bias even though it contains the more conservatively biased
+      phrase <em>death tax</em>. For sentence selection they use a
+      classifier with manually selected partisan unigrams as
+      features. Their model reaches up to 70% accuracy.</p>
+      <p>Yano et al.[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>] use crowdsourcing and statements
+      from political blogs to create a dataset with the degree of
+      bias and the type of bias (liberal or conservative) given for
+      each statement. For sentence selection they use features such
+      as <em>sticky bigrams</em>, emotion lexicons [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0015">15</a>], and <em>kill verbs</em>.
+      They also ask the workers for their political identification
+      and find that conservative workers are more likely to label a
+      statement as biased.</p>
+      <p>Wagner et al.[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0020">20</a>] use lexical bias, i.e. vocabulary
+      that is typically used to describe women and men, as one
+      dimension among other dimensions to analyze gender bias on
+      Wikipedia.</p>
+      <p>Recasens et al.[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0017">17</a>] tackle a language bias problem that
+      is similar to our problem. Given a sentence with known bias
+      they try to identify the most biased word using a machine
+      learning approach based on logistic regression and mostly
+      language features, i.e. word lists containing hedges, factive
+      verbs, assertive verbs, implicative verbs, report verbs,
+      entailments, and subjectives. They also use part of speech
+      and a bias lexicon with words that they extracted by
+      comparing the before and after form of Wikipedia articles for
+      revisions that contain a mention of POV in their revision
+      comment. The bias lexicon contains 654 words including many
+      words that do not directly introduce bias, such as
+      <em>america</em>, <em>person</em>, and <em>historical</em>.
+      In comparison the approach for extracting bias words
+      presented in this paper differs strongly from their approach
+      and our bias lexicon is more comprehensive including almost
+      10,000 words. Recasens et al. report accuracies of 0.34 for
+      finding the most biased word and 0.59 for having the most
+      biased word among the top 3 words. They also use
+      crowdsourcing to create a baseline for the given problem. The
+      results show that the task of identifying a bias word in a
+      given sentence is not trivial for human annotators. The human
+      annotators achieve an accuracy of 30%.</p>
+      <p>Another important topic in the context of Wikipedia is
+      vandalism detection [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0016">16</a>]. While vandalism detection uses some
+      methods that are also relevant for bias detection (e.g.
+      blacklisting), it is important to notice that bias detection
+      and vandalism detection are two different problems. Vandalism
+      refers to cases where editors deliberately lower the quality
+      of an article and are typically more obvious. In the case of
+      bias, editors might not be aware that their contribution
+      violates the NPOV.</p>
+    </section>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Language Bias
+          Detection Approach</h2>
+        </div>
+      </header>
+      <p>In this section we introduce our approach for language
+      bias detection. Our approach consists of two main steps: (i)
+      first, we construct a lexicon of bias words in
+      Section&nbsp;<a class="sec" href="#sec-5">3.1</a>, and (ii)
+      second, in Section&nbsp;<a class="sec" href="#sec-6">3.2</a>,
+      based on the bias word lexicon, and other features which
+      analyze statements at the syntactic and semantic level, train
+      a supervised model that determines if a statement is either
+      <em>biased</em> or <em>unbiased</em>.</p>
+      <section id="sec-5">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Bias Word
+            Lexicon Construction</h3>
+          </div>
+        </header>
+        <p>In the first step of our approach, we describe the
+        process of constructing automatically a lexicon of bias
+        words. Bias words vary across topics and language genres,
+        and as such generating automatically such lexicons is not
+        trivial. However, for a set of already known words that
+        might stir controversy or known to be inflammatory, recent
+        advances in word representations like word2vec, are quite
+        efficient in revealing words that are similar or used in
+        similar context for a given textual corpora.</p>
+        <p>The process of constructing a biased word lexicon
+        consists of two steps: (i) seed word extraction, and (ii)
+        bias word lexicon construction.</p>
+        <p><strong>Seed Words.</strong> . To construct a high
+        quality bias word lexicon for a domain (e.g.
+        <em>politics</em>), an important aspect is to find a set of
+        seed words from which we can expand in the corresponding
+        word vector space and extract words that indicate bias. In
+        this step, where minimal manual efforts are required, the
+        idea is to use word vectors from words are expected to have
+        a high density of bias words. In this way, we identify seed
+        words in an efficient manner.</p>
+        <p>Therefore, we use a corpus where we expect a higher
+        density of bias words than in Wikipedia.
+        Conservapedia<a class="fn" href="#fn5" id=
+        "foot-fn5"><sup>5</sup></a> is a Wiki shaped according to
+        right-conservative ideas, including strong criticism and
+        attacks especially on liberal politics and members of the
+        Democratic Party of the United States. Since no public
+        dataset is available, we crawl all Conservapedia articles
+        under the category <em>“Politics”</em> (and all its
+        subcategories). The dataset comprises a total of 11,793
+        articles<a class="fn" href="#fn6" id=
+        "foot-fn6"><sup>6</sup></a>, from which we compute word
+        representations through word2vec approach.</p>
+        <p>To expand the seed word list and thus have high quality
+        bias word lexicon, we use a small set of seed words that
+        are associated with a strong political ideology between
+        left and right in the US (e.g. media, immigrants,
+        abortion). For each word we manually go through the list of
+        closest words in their word representation and extract
+        words that seem to convey a strong opinion. For example,
+        among the top–100 closest words for the word <em>media</em>
+        are words such as <em>arrogance</em>, <em>whining</em>,
+        <em>despises</em> and <em>blatant</em>. We merge all
+        extracted words to one list. The final seed list contains
+        100 bias words.</p>
+        <p><strong>Bias Word Extraction</strong>. Given the list of
+        seed words, we extract a larger number of bias words using
+        the Wikipedia dataset of latest articles<a class="fn" href=
+        "#fn7" id="foot-fn7"><sup>7</sup></a>, from which we
+        compute word embeddings using word2Vec with the
+        <em>skip-gram</em> model. In the next step we exploit the
+        semantic relationships of word vectors to automatically
+        extract bias words given the seed words and a measure of
+        distance between word vectors. Mikolov et al.[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0012">12</a>] showed
+        that within the word2Vec vector space similar words are
+        grouped close to each other because they often appear in
+        similar context. A trivial approach would be to simply
+        extract the closest words for every seed word. In this
+        case, if the seed word is a bias word, we would presumably
+        retrieve bias words but also words that are related to the
+        given seed word but are not bias words. For example for the
+        seed word <em>“charismatic”</em> we find the word
+        <em>“preacher”</em> among the closest words in the vector
+        space.</p>
+        <p>To improve the extraction, we make use of another
+        property of word2Vec. Instead of extracting the closest
+        words of only one word, we compute the mean of multiple
+        seed words in the vector space and extract the closest
+        words for the resulting vector. This helps us to identify
+        clusters of bias words.</p>
+        <p>Table <a class="tbl" href="#tab1">1</a> shows an example
+        of the top 20 closest words for the single seed word
+        <em>indoctrinate</em> and a batch containing
+        <em>indoctrinate</em> and 9 other seed words. Our
+        observations suggest that the use of batches of seed words
+        leads to bias lexicons of higher quality.</p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Top 20 closest words for the single seed
+            word <em>indoctrinate</em> and the batch containing the
+            seed words: <em>indoctrinate, resentment, defying,
+            irreligious, renounce, slurs, ridiculing, disgust,
+            annoyance, misguided</em></span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">
+                <strong>Rank</strong></th>
+                <th style="text-align:left;"><strong>Single seed
+                word</strong></th>
+                <th><strong>Batch of seed words</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">1</td>
+                <td style="text-align:left;">cajole</td>
+                <td>hypocritical</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">2</td>
+                <td style="text-align:left;">emigrates</td>
+                <td>indifference</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">3</td>
+                <td style="text-align:left;">ingratiate</td>
+                <td>ardently</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">4</td>
+                <td style="text-align:left;">endear</td>
+                <td>professing</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">5</td>
+                <td style="text-align:left;">abscond</td>
+                <td>homophobic</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">6</td>
+                <td style="text-align:left;">americanize</td>
+                <td>mocking</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">7</td>
+                <td style="text-align:left;">reenlist</td>
+                <td>complacent</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">8</td>
+                <td style="text-align:left;">overawe</td>
+                <td>recant</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">9</td>
+                <td style="text-align:left;">disobey</td>
+                <td>hatred</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">10</td>
+                <td style="text-align:left;">reconnoiter</td>
+                <td>vilify</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">11</td>
+                <td style="text-align:left;">outmaneuver</td>
+                <td>scorn</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">12</td>
+                <td style="text-align:left;">helmswoman</td>
+                <td>downplaying</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">13</td>
+                <td style="text-align:left;">outflank</td>
+                <td>discrediting</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">14</td>
+                <td style="text-align:left;">renditioned</td>
+                <td>demeaning</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">15</td>
+                <td style="text-align:left;">redeploy</td>
+                <td>prejudices</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">16</td>
+                <td style="text-align:left;">seregil</td>
+                <td>humiliate</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">17</td>
+                <td style="text-align:left;">unnerve</td>
+                <td>determinedly</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">18</td>
+                <td style="text-align:left;">titzikan</td>
+                <td>frustration</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">19</td>
+                <td style="text-align:left;">unbeknown</td>
+                <td>ridicule</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">20</td>
+                <td style="text-align:left;">terrorise</td>
+                <td>disrespect</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>We split the seed word list randomly into <em>n</em> =
+        10 batches of equal size. For each batch of seed words we
+        compute the mean of the word vectors of all words in the
+        batch. Next, we extract the top 1000 closest words
+        according to the <em>cosine similarity</em> of the combined
+        vector. We use the extracted bias words as new seed words
+        to extract more bias words using the same procedure (only
+        one iteration). Afterwards we remove any duplicates. Table
+        <a class="tbl" href="#tab2">2</a> shows statistics for our
+        extracted bias lexicon. The lexicon contains 9742 words
+        with 42% of them tagged as nouns, 24% tagged as verbs, 22%
+        tagged as adjectives and 10% tagged as adverbs. The high
+        number of nouns is not surprising since nouns are the most
+        common part of speech in the English language. We provide
+        the final bias word lexicon at the paper URL<a class="fn"
+        href="#fn8" id="foot-fn8"><sup>8</sup></a>.</p>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Statistics about the extracted bias word
+            lexicon</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">nouns</th>
+                <th style="text-align:right;">4101</th>
+                <th>(42%)</th>
+              </tr>
+              <tr>
+                <th style="text-align:left;">verbs</th>
+                <th style="text-align:right;">2376</th>
+                <th>(24%)</th>
+              </tr>
+              <tr>
+                <th style="text-align:left;">adjectives</th>
+                <th style="text-align:right;">2172</th>
+                <th>(22%)</th>
+              </tr>
+              <tr>
+                <th style="text-align:left;">adverbs</th>
+                <th style="text-align:right;">997</th>
+                <th>(10%)</th>
+              </tr>
+              <tr>
+                <th style="text-align:left;">others</th>
+                <th style="text-align:right;">96</th>
+                <th>(1%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">total</td>
+                <td style="text-align:right;">9742</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-6">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Detecting
+            Biased Statements</h3>
+          </div>
+        </header>
+        <p>While the bias word lexicon is extracted from bias prone
+        seed words and their respective words that are close in the
+        word representations, as such they serve only as a weak
+        proxy for flagging biased statements. Figure&nbsp;<a class=
+        "fig" href="#fig1">1</a> shows the occurrence of bias words
+        from our lexicon in <em>biased</em> and <em>unbiased</em>
+        statements in our crowdsourced dataset. We will explain the
+        crowdsourcing process in Section&nbsp;<a class="sec" href=
+        "#sec-8">4.1</a>. Nearly 20% of the bias words do not
+        appear in biased statements, and a similar ratio appears in
+        both biased and unbiased statements. Such statistics reveal
+        the need for more robust features that encode the syntactic
+        and semantic representation of the statement they appear.
+        Listing&nbsp;1 shows an example of a bias word from our
+        lexicon appearing in a biased and non-biased statement.</p>
+        <p><img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191640/images/www18companion-379-img1.svg"
+        class="img-responsive" alt="" longdesc="" /></p>
+        <p>Table&nbsp;<a class="tbl" href="#tab3">3</a> shows the
+        complete list of features which we use to train a
+        supervised model for detecting biased statements. In the
+        following we describe the individual features and the
+        intuition behind using them for our task.</p>
+        <figure id="fig1">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191640/images/www18companion-379-fig1.jpg"
+          class="img-responsive" alt="Figure 1" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 1:</span>
+            <span class="figure-title">Bias word ambiguity in terms
+            of their occurrence in <em>biased</em> and
+            <em>unbiased</em> statements. The x-axis represents the
+            bias words grouped by their ratio of occurrence in
+            <em>biased</em> statements, indicating that a 70%
+            occurrence translates into 30% of occurrences in
+            <em>unbiased</em> statements.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p><strong>Bias Word Ratio.</strong> In this feature we
+        consider the percentage of words in a statement that are
+        part of the bias word lexicon. Considering the individual
+        words as features would lead to a sparse feature
+        representation, which poses a risk on overfitting in our
+        classification task. Thus, the ratio serves as an indicator
+        on how likely a statement is to be biased. The higher the
+        ratio the more likely it is that the statement is biased.
+        However, as shown in Listing&nbsp;1, bias words serve only
+        as a weak proxy for detecting biased statements, and as
+        such their use in isolation can lead to false
+        positives.</p>
+        <p><strong>Bias Word Context.</strong> For statements that
+        are biased, a common pattern is the particular use of bias
+        words in their context. Context is a key factor in this
+        case in distinguishing unbiased from biased statements
+        containing bias words. Therefore, we consider as a feature
+        the context in which a bias word appears, thus, for each
+        bias word occurrence, we consider the words in a window
+        consisting of the previous and next word. Additionally, we
+        extract the POS tag of the previous and next word, adjacent
+        to the bias word in a statement. The features in this case
+        are similar to extracting tri-grams, however, with the
+        restriction that one of the words is present in our bias
+        word lexicon. Additionally, in this group, we include the
+        distance between different bias words in a statement.</p>
+        <p><strong>LIWC Features.</strong> Linguistic inquiry word
+        count&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0015">15</a>] is a common tool on analyzing text
+        that contains subjective content. Through the use of
+        specific linguistic cues, it analyze for psychological and
+        psychometric clues such as the ratio of <em>anger, sad,
+        social</em> words. Furthermore, the difference between the
+        <em>style</em> and <em>content</em> words can reveal
+        interesting insights. For instance, the use of
+        <em>auxiliary verbs</em> can reveal that the statement
+        might contain emotional words. Auxiliary verbs are part of
+        what are considered to be as <em>function words</em>, other
+        psychological indicators that can be extracted from
+        function words are cues such as the <em>politeness,
+        formality</em> in language. These are all interesting in
+        our case as they go against the NPOV policies in Wikipedia.
+        We consider all feature categories from LIWC and for a
+        detailed explanation of all categories we refer to the
+        original paper&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0015">15</a>].</p>
+        <p><strong>POS Tag Distribution.</strong> We consider the
+        distribution of POS tags and sequences of adjacent POS tags
+        (e.g ⟨NN, NNP⟩) in a statement. The intuition here is that
+        we can harness syntactic regularities that may appear in
+        biased and unbiased statements. The features correspond to
+        the ratio of respective POS tags, or bigrams of POS tags in
+        a statement.</p>
+        <p><strong>Baseline Features.</strong> As baseline features
+        we consider the features introduced in a slightly similar
+        task by Recasens et al.&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0017">17</a>]. The features are geared towards
+        detecting biased words in a statement, and these consider
+        two main language biases, such as (i) epistemological and
+        (ii) framing bias. In the first case, the bias arises by
+        tweaking specific words and words of a specific POS tag,
+        such that the believability of a statement is changed. For
+        instance, the use of <em>subjective words</em>,
+        <em>implicative verbs</em>, <em>hedges</em> can change the
+        believability, i.e., phrasing an opinion as a fact, or
+        vice-versa. For the second case of <em>framing bias</em>,
+        there is a tendency on using slant words. Similarly as in
+        the case of <em>bias word context</em>, here too, as we aim
+        at detecting whether a statement is biased or not, the
+        context in which these words appear is crucial, therefore
+        we consider the pre/next word and their corresponding POS
+        tags as features.</p>
+        <p>Additional details are reported in Table&nbsp;<a class=
+        "tbl" href="#tab3">3</a>, where we indicate the values that
+        are assigned for specific features.</p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">The complete set of features used in our
+            approach for detecting biased statements.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:right;">
+                <strong>Feature</strong></th>
+                <th style="text-align:left;">
+                <strong>Value</strong></th>
+                <th style="text-align:center;">
+                <strong>Description</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:right;">Bias word ratio</td>
+                <td style="text-align:left;">percentage</td>
+                <td style="text-align:center;">Number of words in
+                the statement that occur in the bias word lexicon
+                (normalized).</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">Bias word
+                context</td>
+                <td style="text-align:left;">tokens</td>
+                <td style="text-align:center;">The adjacent words
+                to a bias word from our lexicon, additionally as
+                context we consider their respective POS tags.
+                Additionally, here, we include the distance amongst
+                bias words in a statement.</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">POS tag
+                unigram/bigram distribution</td>
+                <td style="text-align:left;">percentage</td>
+                <td style="text-align:center;">The ratio of a POS
+                tag or a bigram of POS tags (e.g. ⟨ JJ NNS⟩) in a
+                statement.</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">Sentiment</td>
+                <td style="text-align:left;">{neutral, negative,
+                positive}</td>
+                <td style="text-align:center;">Sentiment value as
+                labelled by Stanford's CoreNLP toolkit.</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">Report verb</td>
+                <td style="text-align:left;">boolean</td>
+                <td style="text-align:center;">
+                  Statement contains at least one word from the
+                  report verb list [<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0017">17</a>].
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">Implicative verb</td>
+                <td style="text-align:left;">boolean</td>
+                <td style="text-align:center;">
+                  Statement contains at least one word from the
+                  implicative verb list [<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0009">9</a>].
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">Assertive verb</td>
+                <td style="text-align:left;">boolean</td>
+                <td style="text-align:center;">
+                  Statement contains at least one word from the
+                  assertive verb list [<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0006">6</a>].
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">Factive verb</td>
+                <td style="text-align:left;">boolean</td>
+                <td style="text-align:center;">
+                  Statement contains at least one word from the
+                  factive verb list [<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0006">6</a>].
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">Positive word</td>
+                <td style="text-align:left;">boolean</td>
+                <td style="text-align:center;">
+                  Statement contains at least one word from the
+                  positive word list [<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0010">10</a>].
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">Negative word</td>
+                <td style="text-align:left;">boolean</td>
+                <td style="text-align:center;">
+                  Statement contains at least one word from the
+                  negative word list [<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0010">10</a>].
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">Weak subjective
+                word</td>
+                <td style="text-align:left;">boolean</td>
+                <td style="text-align:center;">
+                  Statement contains at least one word from the
+                  weak subjective word list [<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0018">18</a>].
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">Strong subjective
+                word</td>
+                <td style="text-align:left;">boolean</td>
+                <td style="text-align:center;">
+                  Statement contains at least one word from the
+                  strong subjective word list [<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0018">18</a>].
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">Hedge word</td>
+                <td style="text-align:left;">boolean</td>
+                <td style="text-align:center;">
+                  Statement contains at least one word from the
+                  hedge word list [<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0007">7</a>].
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">Baseline word
+                context</td>
+                <td style="text-align:left;">tokens</td>
+                <td style="text-align:center;">
+                  The adjacent words w.r.t to words from the
+                  <em>epistemological</em> and <em>framing</em>
+                  bias lexicons&nbsp;[<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0017">17</a>], and
+                  additionally the context w.r.t the POS tags.
+                  Similarly, here too, we include the distance
+                  amongst the different words from the lexicons in
+                  a statement.
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:right;">LIWC Features</td>
+                <td style="text-align:left;">percentage</td>
+                <td style="text-align:center;">
+                  LIWC features based on psychological and
+                  psychometric analysis&nbsp;[<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0015">15</a>].
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Evaluation</h2>
+        </div>
+      </header>
+      <p>In this section, we explain our evaluation setting. First,
+      we describe how we construct the ground-truth through
+      crowdsourcing and discuss its limitations. Second, we show
+      the evaluation results of our approach and its effectiveness
+      against competitors. Finally, we show the evaluation results
+      on a random sample of Wikipedia statements and the results
+      therein.</p>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span>
+            Crowdsourced Ground-Truth Construction</h3>
+          </div>
+        </header>
+        <p>To validate our approach on detecting biased statements
+        in Wikipedia, we needed to construct a ground-truth dataset
+        which exhibits similar characteristics. To the best of our
+        knowledge, there is no such ground-truth, which we can use
+        in our evaluation setting. The constructed ground-truth is
+        published at the provided paper URL.</p>
+        <p>We construct our ground-truth from statements extracted
+        from the Conservapedia dataset, which we describe in
+        Section&nbsp;<a class="sec" href="#sec-4">3</a>. The
+        reasons why we use Conservapedia instead of Wikipedia, are
+        the two fold: (i) Conservapedia has similar text genre, and
+        covers similar articles as Wikipedia, and (ii) the expected
+        amount of biased statements is much higher than in
+        Wikipedia. With respect to (ii) this has practical
+        implications. The amount of false positives (i.e., unbiased
+        statements) from Wikipedia would be too high for an
+        assessment in a crowdsourcing environment, which would be
+        costly in terms of money and time.</p>
+        <p>We construct our ground-truth through crowdsourcing. We
+        select 70 randomly chosen articles from the category
+        <em>Democratic Party</em>, which refers to the
+        <em>Democratic Party of the United States</em>, and 30
+        articles from the category <em>Republican Party</em>, which
+        refers to the <em>Republican Party of the United
+        States</em>. From the resulting set of articles, we split
+        their content into statements, where a statement consists
+        of a single sentence. From the corresponding set of
+        statements, we randomly sample 1000 statements for
+        assessment through crowdsourcing.</p>
+        <p>Figure&nbsp;<a class="fig" href="#fig2">2</a> shows the
+        crowdsourcing task preview, which we host in the
+        CrowdFlower platform<a class="fn" href="#fn9" id=
+        "foot-fn9"><sup>9</sup></a>. For each statement, we ask the
+        crowdworkers to assess if the statement is biased by
+        additionally providing the section in which the statement
+        occurs as contextual information, so that they can make a
+        better and more informed judgement. The options allow the
+        workers to choose the specific type of bias, for instance,
+        <em>“Opinion”</em> or <em>“Bias words”</em>, or <em>“No
+        bias”</em>. The crowdworkers can choose one of the
+        following options:</p>
+        <ul class="list-no-style">
+          <li id="uid21" label="a)"><em>Bias words</em> - The
+          statement contains bias words.<br /></li>
+          <li id="uid22" label="b)"><em>Opinion</em> - The
+          statement reflects an opinion.<br /></li>
+          <li id="uid23" label="c)"><em>Other bias</em> - The
+          statement might be factual, but adding it into the
+          section introduces bias.<br /></li>
+          <li id="uid24" label="d)"><em>No bias</em> - The
+          statement is objective with regard to the discussed
+          topic.<br /></li>
+        </ul>
+        <figure id="fig2">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191640/images/www18companion-379-fig2.jpg"
+          class="img-responsive" alt="Figure 2" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 2:</span>
+            <span class="figure-title">Crowdsourcing job setup for
+            evaluating statements whether they are biased or
+            unbiased.</span>
+          </div>
+        </figure>
+        <p>Workers were allowed to choose only one option. In cases
+        where both options (a) and (b) applied, we asked the
+        workers to choose option (a). Apart from the options, we
+        provided an optional field, where the workers could
+        indicate the bias words, which they identified in the
+        statement.</p>
+        <p>To account for the quality of the provided judgements by
+        the crowdworkers, we set in place unambiguous test
+        questions, which we use to filter out crowdworkers that do
+        not pass 50% of them. Furthermore, we restrict to
+        crowdworkers of <em>level 2</em> (as provided by
+        CrowdFlower, a workforce with high accuracy on previous
+        tasks).</p>
+        <p>Finally, for each statement we collect 3 judgements, and
+        for each judgement we pay <font style="normal">$</font>2 US
+        cents, and in case the crowdworkers provide us with the
+        bias words in the optional field, we pay an additional
+        <font style="normal">$</font>3 US cents. This results in a
+        total of 358 contributors, with 239 passing our quality
+        control tests. For each statement, we measure the
+        inter-rater agreement, where we convert the judgement into
+        a binary class of <em>biased</em> (with all its
+        sub-classes) and <em>unbiased</em>. The resulting agreement
+        rate as measured by Fleiss’ Kappa is <em>κ</em> = 0.35. Due
+        to the subjectivity of the task, we find this value to be
+        acceptable.</p>
+        <p>From the resulting ground-truth, we decided to exclude
+        statements that were classified as <em>other bias</em>.
+        This class is more related to <em>gatekeeping</em> and
+        <em>coverage</em> bias than to language bias. We also
+        excluded statements that were classified as
+        <em>opinion</em> since opinion detection is a different
+        field of research. The removed classes will be helpful for
+        future work where we plan to determine the type of bias for
+        a statement. Furthermore, we remove statements whose
+        judgements have a confidence score less than 0.6 as
+        provided by CrowdFlower, which is based on the workers’
+        agreement and the number of test questions that each worker
+        passed.</p>
+        <p>Table <a class="tbl" href="#tab4">4</a> shows statistics
+        about the final ground-truth. It contains a total of 685
+        statements with 323 being classified as <em>biased</em> and
+        362 as <em>not biased</em>.</p>
+        <div class="table-responsive" id="tab4">
+          <div class="table-caption">
+            <span class="table-number">Table 4:</span> <span class=
+            "table-title">Ground-truth statistics from the
+            crowdsourcing evaluation, before and after
+            filtering.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Statements Total</th>
+                <th style="text-align:left;">1000</th>
+              </tr>
+              <tr>
+                <th style="text-align:left;">Bias Words</th>
+                <th style="text-align:left;">383</th>
+              </tr>
+              <tr>
+                <th style="text-align:left;">Opinion</th>
+                <th style="text-align:left;">105</th>
+              </tr>
+              <tr>
+                <th style="text-align:left;">Other Bias</th>
+                <th style="text-align:left;">82</th>
+              </tr>
+              <tr>
+                <th style="text-align:left;">No Bias</th>
+                <th style="text-align:left;">430</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Statements (after
+                filtering)</td>
+                <td style="text-align:left;">685</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Biased</td>
+                <td style="text-align:left;">323</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Not Biased</td>
+                <td style="text-align:left;">362</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Detecting
+            biased Statements Evaluation</h3>
+          </div>
+        </header>
+        <p>In this section, we provide the evaluation results for
+        detecting biased statements. First, we provide the
+        evaluation results in our crowdsourced ground-truth
+        described in the previous section, and then analyze the
+        performance of our classifier in the setting of
+        Wikipedia.</p>
+        <p><strong>Learning Setup.</strong>. We train a classifier
+        based on the feature set in Table&nbsp;<a class="tbl" href=
+        "#tab3">3</a>. We use a RandomForest classifier as
+        implemented in [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0014">14</a>]. To avoid overfitting and have
+        better generalizable models, we perform a feature ranking
+        and choose the top-100 most important features based on the
+        <em>χ</em> <sup>2</sup> feature selection algorithm. The
+        top–100 features are provided as part of the paper dataset,
+        however, the most informative features in our case are
+        related to the ratio of biased words in a statement and
+        their context, LIWC features, and the context in which the
+        words (specifically the words from the lexicons in
+        Table&nbsp;<a class="tbl" href="#tab3">3</a>) encoding
+        framing and epistemological bias appear&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0017">17</a>]. We will
+        refer to our algorithm as <strong>DBWS</strong>.</p>
+        <p>We evaluate our classifier based on the crowdsourced
+        ground-truth (see Section&nbsp;<a class="sec" href=
+        "#sec-8">4.1</a>), and perform a 5-fold cross validation
+        approach. The distribution of <em>biased</em> and
+        <em>unbiased</em> statements is nearly evenly distributed,
+        with 47% being biased, and 53% unbiased.</p>
+        <p><strong>Baselines.</strong>. We compare our approach
+        against two baselines.</p>
+        <ol class="list-no-style">
+          <li id="list5" label="()">The first baseline is a simple
+          sentiment classification approach. We use the sentiment
+          classifier proposed by Rocher et al.&nbsp;[<a class="bib"
+            data-trigger="hover" data-toggle="popover"
+            data-placement="top" href="#BibPLXBIB0019">19</a>]. We
+            make a simplistic assumption that a <em>negative</em>
+            sentiment indicates a biased statement, and vice-versa
+            for <em>positive</em> sentiment.<br />
+          </li>
+          <li id="list6" label="()">The second baselines is the
+          bias word classifier by Recasens et al.&nbsp;[<a class=
+          "bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0017">17</a>], for
+          which we use a logistic regression, similar to their
+          original setting. The features of the second baseline are
+          incorporated in our approach. A statement is marked as
+          biased, if the classifier detects biased words in a
+          statement.<br />
+          </li>
+        </ol>
+        <p><strong>Performance.</strong> . Table&nbsp;<a class=
+        "tbl" href="#tab5">5</a> shows the performance of the
+        different approaches in detecting biased statements from
+        our crowd-sourced ground-truth. As expected, the first
+        competitor <strong>B1</strong>, which decides if a
+        statement is biased or not based on its sentiment performs
+        really poor, with a performance near to random guessing.
+        The accuracy is 52%. This shows the difficulty of the task,
+        where the statements follow the principles of using
+        objective language, and as such sentiment based approaches
+        do not work.</p>
+        <p>Next, the second baseline <strong>B2</strong>, whose
+        original task is to detect biased words, shows an
+        improvement over the sentiment classifier. The improvement
+        mostly comes from the use of specific lexicons which encode
+        the <em>epistemological</em> and <em>framing</em> bias in
+        statements. The accuracy is 65%, whereas in terms of
+        precision, the second baseline has a precision score of
+        <em>P</em> = 0.62 and similar recall score. However, as
+        mentioned earlier, an important factor on deciding if a
+        statement is biased lies in the combination of specific
+        lexicons like our bias word lexicon or language bias
+        lexicons&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0017">17</a>] in combination with the context in
+        which they occur.</p>
+        <p>Finally, our classifier <strong>DBWS</strong> achieves
+        the highest accuracy, with 73%. In terms of precision in
+        classifying biased statements, we achieve a precision score
+        of <em>P</em> = 0.74, and recall score of <em>P</em> =
+        0.66. This presents a relative improvement of nearly 20% in
+        contrast to the best performing competitor in terms of
+        precision, whereas for recall we have a 5% improvement.</p>
+        <div class="table-responsive" id="tab5">
+          <div class="table-caption">
+            <span class="table-number">Table 5:</span> <span class=
+            "table-title">Evaluation results on the crowdsourced
+            ground-truth. The precision, recall, and F1 scores are
+            with respect to the <em>biased</em> class.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Approach</th>
+                <th style="text-align:left;">Accuracy</th>
+                <th style="text-align:left;">P</th>
+                <th style="text-align:left;">R</th>
+                <th style="text-align:left;">F1</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">
+                <strong>DBWS</strong></td>
+                <td style="text-align:left;">0.73 (<span class=
+                "inline-equation"><span class="tex">$\blacktriangle
+                12\%$</span></span> )</td>
+                <td style="text-align:left;">0.74 (<span class=
+                "inline-equation"><span class="tex">$\blacktriangle
+                20\%$</span></span> )</td>
+                <td style="text-align:left;">0.66 (<span class=
+                "inline-equation"><span class="tex">$\blacktriangle
+                5\%$</span></span> )</td>
+                <td style="text-align:left;">0.69 (<span class=
+                "inline-equation"><span class="tex">$\blacktriangle
+                10\%$</span></span> )</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                <strong>B1</strong></td>
+                <td style="text-align:left;">0.52</td>
+                <td style="text-align:left;">0.48</td>
+                <td style="text-align:left;">0.03</td>
+                <td style="text-align:left;">0.06</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                <strong>B2</strong></td>
+                <td style="text-align:left;">0.65</td>
+                <td style="text-align:left;">0.62</td>
+                <td style="text-align:left;">0.63</td>
+                <td style="text-align:left;">0.63</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>Robustness – Wikipedia Evaluation.</strong>.</p>
+        <p>Despite the striking similarities between Conservapedia
+        and Wikipedia in terms of textual genre and coverage of
+        topics, there are fundamental differences in terms of
+        quality control and policies set in place to enforce such
+        policies.</p>
+        <p>Therefore, we perform a second evaluation on a random
+        sample of Wikipedia articles, which are of the same
+        categories as our crawled dataset from Conservapedia. To
+        have comparable articles, we look for exact matches of
+        article names, resulting in 1713 equivalent articles. From
+        the resulting articles, we extract their entire revision
+        history, which results in 2.2 million revisions in total.
+        Finally, we sample a set of 1000 revisions, from which we
+        extract 8,302 statements (after filtering out statements
+        shorter than 50 characters).</p>
+        <p>Next, we run our classifier <strong>DBWS</strong> which
+        we trained in our crowdsourced ground-truth from
+        Section&nbsp;<a class="sec" href="#sec-8">4.1</a>. From
+        8,302 statements, a total of 36% are flagged as being
+        biased. However, since we do not have the real labels of
+        the Wikipedia statements, we are interested in evaluating a
+        sample of <em>biased</em> statements from Wikipedia. Thus,
+        we take a random sample of 100 <em>biased</em> statements,
+        whose classification confidence is above 0.8, and we
+        manually evaluate the statements to assess whether they are
+        biased or unbiased. After increasing the classification
+        confidence to be above 0.8, from 36% we are left with
+        nearly 4% of biased statements.</p>
+        <div class="table-responsive" id="tab6">
+          <div class="table-caption">
+            <span class="table-number">Table 6:</span> <span class=
+            "table-title">Evaluation results on the Wikipedia
+            statements sample.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Articles</td>
+                <td style="text-align:left;">1,000</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Statements</td>
+                <td style="text-align:left;">8,302</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Biased</td>
+                <td style="text-align:left;">2,988</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Not Biased</td>
+                <td style="text-align:left;">5,314</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The resulting evaluation on the 100 sample of biased
+        statements from Wikipedia reveals that our classifier is
+        able to flag accurately biased statements with a precision
+        of <span class="inline-equation"><span class=
+        "tex">$P=66\%$</span></span> . It is important to note
+        here, that our classifier is pre-trained on the
+        crowdsourced ground-truth, and as such the language bias
+        signals are more stronger in that case, when compared to
+        subtle language bias in Wikipedia. However, a 4% number of
+        biased statements, presents a major result when put into
+        perspective into large amount of edits that happen in
+        Wikipedia.</p>
+        <p>The results are highly valuable and they have great
+        implications. First, it shows that our model can generalize
+        well over Wikipedia statements, where the language bias is
+        far more subtle when compared to Conservapedia. Second, our
+        crowdsourced ground-truth, despite the fact that we
+        generate it from an encyclopedia known to have high bias
+        and slant towards specific ideologies, due to its
+        comparably similar content it allows us to devise bias word
+        lexicons which can be applied efficiently in more neutral
+        context like Wikipedia.</p>
+      </section>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Conclusion and
+          Future Work</h2>
+        </div>
+      </header>
+      <p>In this work, we proposed a novel approach for detecting
+      biased statements in Wikipedia. We focus in the case of
+      language bias, for which we propose a semi-automated approach
+      (with minimal supervision) to construct a bias word lexicon
+      for a domain of interest, and furthermore together with
+      syntactic and semantic features which we extract from the
+      statements in which the bias word occurs, we can accurately
+      identify biased statements. We achieve reasonable precision
+      with <em>P</em> = 0.74, which presents a relative improvement
+      of 20% over word-level approaches that detect biased words in
+      statements.</p>
+      <p>Furthermore, we provide a new ground-truth dataset of
+      biased and unbiased statements, which can be used for further
+      improving research in detecting language bias. Finally, we
+      show that our approach trained in more explicitly biased
+      content like Conservapedia can generalize well over
+      Wikipedia, which is known to be of higher quality and where
+      the language biases are more subtle. On a small evaluation
+      over Wikipedia statements we achieve a precision of
+      <span class="inline-equation"><span class=
+      "tex">$P=66\%$</span></span> using our pre-trained classifier
+      in the constructed ground-truth from Conservapedia.</p>
+      <p>As future work, we plan to further improve the
+      classification results. A promising direction is to consider
+      information about a Wikipedia article coming from the talk
+      pages, where revisions and information to be added is
+      discussed by Wikipedia editors. This in addition can serve as
+      a means for constructing NPOV datasets based on distant
+      supervision approaches. Furthermore, we seek to refine the
+      granularity of our classifiers into detecting the different
+      language biases as shown in our crowd-sourcing
+      evaluation.</p>
+    </section>
+    <section id="sec-11">
+      <header>
+        <div class="title-info">
+          <h2>Acknowledgments</h2>
+        </div>
+      </header>
+      <p>This work is funded by the ERC Advanced Grant ALEXANDRIA
+      (grant no. 339233), DESIR (grant no. 31081), and H2020 AFEL
+      project (grant no. 687916).</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Ewa&nbsp;S Callahan and
+        Susan&nbsp;C Herring. 2011. Cultural bias in Wikipedia
+        content on famous persons. <em><em>JASIST</em></em> 62, 10
+        (2011).</li>
+        <li id="BibPLXBIB0002" label="[2]">Sanmay Das, Allen
+        Lavoie, and Malik Magdon-Ismail. 2013. Manipulation among
+        the arbiters of collective intelligence: How Wikipedia
+        administrators mold public opinion. In <em><em>22nd
+        CIKM</em></em> . ACM.</li>
+        <li id="BibPLXBIB0003" label="[3]">Matthew Gentzkow and
+        Jesse&nbsp;M Shapiro. 2010. What drives media slant?
+        Evidence from US daily newspapers.
+        <em><em>Econometrica</em></em> 78, 1 (2010).</li>
+        <li id="BibPLXBIB0004" label="[4]">Shane Greenstein and
+        Feng Zhu. 2012. <em><em>Collective intelligence and neutral
+        point of view: the case of Wikipedia</em></em> . Technical
+        Report. National Bureau of Economic Research.</li>
+        <li id="BibPLXBIB0005" label="[5]">Shane Greenstein and
+        Feng Zhu. 2012. Is Wikipedia Biased? <em><em>The American
+        economic review</em></em> 102, 3 (2012), 343–348.</li>
+        <li id="BibPLXBIB0006" label="[6]">Joan&nbsp;B Hooper.
+        1974. <em><em>On assertive predicates</em></em> . Indiana
+        University Linguistics Club.</li>
+        <li id="BibPLXBIB0007" label="[7]">Ken Hyland. 2005.
+        <em><em>Metadiscourse</em></em> . Wiley Online
+        Library.</li>
+        <li id="BibPLXBIB0008" label="[8]">Mohit Iyyer, Peter Enns,
+        Jordan Boyd-Graber, and Philip Resnik. 2014. Political
+        ideology detection using recursive neural networks. In
+        <em><em>Proceedings of the Association for Computational
+        Linguistics</em></em> . 1–11.</li>
+        <li id="BibPLXBIB0009" label="[9]">Lauri Karttunen. 1971.
+        Implicative verbs. <em><em>Language</em></em> (1971),
+        340–358.</li>
+        <li id="BibPLXBIB0010" label="[10]">Bing Liu, Minqing Hu,
+        and Junsheng Cheng. 2005. Opinion observer: analyzing and
+        comparing opinions on the web. In <em><em>Proceedings of
+        the 14th international conference on World Wide
+        Web</em></em> . ACM, 342–351.</li>
+        <li id="BibPLXBIB0011" label="[11]">Brian Martin. 2017.
+        Persistent Bias on Wikipedia: Methods and Responses.
+        <em><em>Social Science Computer Review</em></em> (2017),
+        0894439317715434.</li>
+        <li id="BibPLXBIB0012" label="[12]">Tomas Mikolov, Ilya
+        Sutskever, Kai Chen, Greg&nbsp;S Corrado, and Jeff Dean.
+        2013. Distributed representations of words and phrases and
+        their compositionality. In <em><em>Advances in neural
+        information processing systems</em></em> . 3111–3119.</li>
+        <li id="BibPLXBIB0013" label="[13]">Burt&nbsp;L Monroe,
+        Michael&nbsp;P Colaresi, and Kevin&nbsp;M Quinn. 2008.
+        Fightin'words: Lexical feature selection and evaluation for
+        identifying the content of political conflict.
+        <em><em>Political Analysis</em></em> 16, 4 (2008),
+        372–403.</li>
+        <li id="BibPLXBIB0014" label="[14]">F. Pedregosa, G.
+        Varoquaux, A. Gramfort, V. Michel, B. Thirion, O. Grisel,
+        M. Blondel, P. Prettenhofer, R. Weiss, V. Dubourg, J.
+        Vanderplas, A. Passos, D. Cournapeau, M. Brucher, M.
+        Perrot, and E. Duchesnay. 2011. Scikit-learn: Machine
+        Learning in Python. <em><em>Journal of Machine Learning
+        Research</em></em> 12 (2011), 2825–2830.</li>
+        <li id="BibPLXBIB0015" label="[15]">James&nbsp;W
+        Pennebaker, Martha&nbsp;E Francis, and Roger&nbsp;J Booth.
+        2001. Linguistic inquiry and word count: LIWC 2001.
+        <em><em>Mahway: Lawrence Erlbaum Associates</em></em> 71,
+        2001 (2001), 2001.</li>
+        <li id="BibPLXBIB0016" label="[16]">Martin Potthast, Benno
+        Stein, and Robert Gerling. 2008. Automatic vandalism
+        detection in Wikipedia. In <em><em>European Conference on
+        Information Retrieval</em></em> . Springer, 663–668.</li>
+        <li id="BibPLXBIB0017" label="[17]">Marta Recasens,
+        Cristian Danescu-Niculescu-Mizil, and Dan Jurafsky. 2013.
+        Linguistic Models for Analyzing and Detecting Biased
+        Language.. In <em><em>ACL (1)</em></em> . 1650–1659.</li>
+        <li id="BibPLXBIB0018" label="[18]">Ellen Riloff and Janyce
+        Wiebe. 2003. Learning extraction patterns for subjective
+        expressions. In <em><em>Proceedings of the 2003 conference
+        on Empirical methods in natural language
+        processing</em></em> . Association for Computational
+        Linguistics, 105–112.</li>
+        <li id="BibPLXBIB0019" label="[19]">Richard Socher, Alex
+        Perelygin, Jean Wu, Jason Chuang, Christopher&nbsp;D
+        Manning, Andrew Ng, and Christopher Potts. 2013. Recursive
+        deep models for semantic compositionality over a sentiment
+        treebank. In <em><em>Proceedings of the 2013 conference on
+        empirical methods in natural language processing</em></em>
+        . 1631–1642.</li>
+        <li id="BibPLXBIB0020" label="[20]">Claudia Wagner, David
+        Garcia, Mohsen Jadidi, and Markus Strohmaier. 2015. It's a
+        man's wikipedia? assessing gender inequality in an online
+        encyclopedia. <em><em>arXiv preprint
+        arXiv:1501.06307</em></em> (2015).</li>
+        <li id="BibPLXBIB0021" label="[21]">Morten Warncke-Wang,
+        Vivek Ranjan, Loren&nbsp;G. Terveen, and Brent&nbsp;J.
+        Hecht. 2015. Misalignment Between Supply and Demand of
+        Quality Content in Peer Production Communities. In <em><em>
+          Proceedings of the Ninth International Conference on Web
+          and Social Media, ICWSM 2015, University of Oxford,
+          Oxford, UK, May 26-29, 2015</em></em> . 493–502.
+          <a class="link-inline force-break" href=
+          "http://www.aaai.org/ocs/index.php/ICWSM/ICWSM15/paper/view/10591"
+          target=
+          "_blank">http://www.aaai.org/ocs/index.php/ICWSM/ICWSM15/paper/view/10591</a>
+        </li>
+        <li id="BibPLXBIB0022" label="[22]">Tae Yano, Philip
+        Resnik, and Noah&nbsp;A Smith. 2010. Shedding (a thousand
+        points of) light on biased language. In <em><em>Proceedings
+        of the NAACL HLT 2010 Workshop on Creating Speech and
+        Language Data with Amazon's Mechanical Turk</em></em> .
+        Association for Computational Linguistics, 152–158.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "https://en.wikipedia.org/wiki/Wikipedia:Wikipedians#Number_of_editors">https://en.wikipedia.org/wiki/Wikipedia:Wikipedians#Number_of_editors</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "https://en.wikipedia.org/wiki/Wikipedia:Neutral_point_of_view">https://en.wikipedia.org/wiki/Wikipedia:Neutral_point_of_view</a></p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a>This number may
+    as well be much higher for cases that are not spotted by the
+    Wikipedia editors.</p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a><a class=
+    "link-inline force-break" href=
+    "https://en.wikipedia.org/wiki/Brian_Martin_(social_scientist)">https://en.wikipedia.org/wiki/Brian_Martin_(social_scientist)</a></p>
+    <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.conservapedia.com">http://www.conservapedia.com</a></p>
+    <p id="fn6"><a href="#foot-fn6"><sup>6</sup></a>We preprocess
+    the data using Wiki Markup Cleaner. We also replace all numbers
+    with their respective written out words, remove all punctuation
+    and replace capital letters with small letters.</p>
+    <p id="fn7"><a href="#foot-fn7"><sup>7</sup></a><a class=
+    "link-inline force-break" href=
+    "https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2">https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2</a></p>
+    <p id="fn8"><a href="#foot-fn8"><sup>8</sup></a><a class=
+    "link-inline force-break" href=
+    "https://git.l3s.uni-hannover.de/hube/Bias_Word_Lists">https://git.l3s.uni-hannover.de/hube/Bias_Word_Lists</a></p>
+    <p id="fn9"><a href="#foot-fn9"><sup>9</sup></a><a class=
+    "link-inline force-break" href=
+    "https://crowdflower.com">https://crowdflower.com</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191640">https://doi.org/10.1145/3184558.3191640</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>
