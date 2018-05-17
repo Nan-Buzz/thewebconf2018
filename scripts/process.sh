@@ -21,8 +21,9 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   dest="$pathToDoi"/$doi/index.html
   echo "Saving to $dest"
   mkdir -p $(dirname "$dest")
+  cp  $html $dest
   # -file $pathToLog/something.txt
-  tidy --drop-empty-elements no -indent $html > $dest || true
+  #tidy --drop-empty-elements no -indent $html > $dest || true
 
   filename=$(echo "$html" | sed -r 's#&#&amp;#g')
   echo "Fixing image links"
