@@ -1,34 +1,34 @@
 #!/bin/bash
 
+set -e
+
 pathToData="../data/"
+pathToDoi="../doi"
 pathToLog="$pathToData"log/
 # rm -rf "$pathToData"
-mkdir "$pathToData"
-mkdir "$pathToLog"
+mkdir -p "$pathToData" "$pathToLog"
 
 sed -i "s#<tr><td><div class='utilities-area'><div class='logo-section'><div class='show-for-large-up'><a class='navbar-brand'> <img alt='ACM Logo' class='img-responsive' src='https://dl.acm.org/pubs/lib/images/acm_logo.jpg'></a></div><div class='hide-for-large-up'><a class='navbar-brand'> <img alt='ACM Logo' class='img-responsive' src='https://dl.acm.org/pubs/lib/images/acm_logo_mobile.jpg'></a></div></div></div></td></tr>##g" "$pathToData"dl.acm.org/pubs/lib/js/divTab.js
 
-while read i; do
-  id=${i#*\?};
-  echo "Processing $i:"
+for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
 
-  savedTo=$(head "$pathToLog""$id".log | grep -E 'Saving to: ‘' | sed -r 's#[^‘]*‘([^’]*)’.*#\1#')
+  echo "---"
+  echo "Processing $html"
 
-  pathToFile=${savedTo%\?*}
+  doi=$(sed -n "s,.*[\"']https://doi.org/\([^\"']*\).*,\1,p;q" $html)
 
-  filename=$(echo "$savedTo" | sed -r 's#&#&amp;#g')
+  echo "doi: $doi"
+  dest="$pathToDoi"/$doi/index.html
+  echo "Saving to $dest"
+  mkdir -p $(dirname "$dest")
+  # -file $pathToLog/something.txt
+  tidy --drop-empty-elements no -indent $html > $dest || true
 
-  filename=${filename##*/}
+  filename=$(echo "$html" | sed -r 's#&#&amp;#g')
+  echo "Fixing image links"
+  sed -i 's#http://deliveryimages.acm.org/#../../../data/deliveryimages.acm.org/#g' "$dest"
+  sed -i 's#https://dl.acm.org/pubs/lib/css/#../../../data/dl.acm.org/pubs/lib/css/#g' "$dest"
+  sed -i 's#https://dl.acm.org/pubs/lib/js/#../../../data/dl.acm.org/pubs/lib/js/#g' "$dest"
+  sed -i 's#https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/#../../../data/dl.acm.org/pubs/lib/js/#g' "$dest"
 
-  mv "$savedTo" "$pathToFile"
-
-  sed -i "s#$filename##g" "$pathToFile"
-  sed -i 's#http://deliveryimages.acm.org/#../../../../deliveryimages.acm.org/#g' "$pathToFile"
-  sed -i 's#https://dl.acm.org/pubs/lib/css/#../../../../dl.acm.org/pubs/lib/css/#g' "$pathToFile"
-  sed -i 's#https://dl.acm.org/pubs/lib/js/#../../../../dl.acm.org/pubs/lib/js/#g' "$pathToFile"
-  sed -i 's#https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/#../../../../dl.acm.org/pubs/lib/js/#g' "$pathToFile"
-
-#  firefox "$pathToFile"
-
-done < data.txt
-#done < test.txt
+done
