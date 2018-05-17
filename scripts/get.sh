@@ -54,13 +54,7 @@ while read i; do
 
   filename=${filename##*/}
 
-  mv "$savedTo" "$pathToFile"
-
-  sed -i "s#$filename##g" "$pathToFile"
-  sed -i 's#http://deliveryimages.acm.org/#../../../../deliveryimages.acm.org/#g' "$pathToFile"
-  sed -i 's#https://dl.acm.org/pubs/lib/css/#../../../../dl.acm.org/pubs/lib/css/#g' "$pathToFile"
-  sed -i 's#https://dl.acm.org/pubs/lib/js/#../../../../dl.acm.org/pubs/lib/js/#g' "$pathToFile"
-  sed -i 's#https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/#../../../../dl.acm.org/pubs/lib/js/#g' "$pathToFile"
+  mv "$savedTo" "$pathToFile"m
 
 #  firefox "$pathToFile"
 
