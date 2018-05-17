@@ -76,7 +76,7 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   )
 
 
-
+  # Let any crossref finish before we make another one
   wait
   filename=$(echo "$html" | sed -r 's#&#&amp;#g')
   echo "Fixing image links"
