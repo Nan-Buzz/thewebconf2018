@@ -26,6 +26,7 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   sed -i 's,DOCTYPE html> htmlhtmlhtmlhtmlhtmlhtml<html,DOCTYPE html><html,' $src
   # unknown <SubTitle> tag
   sed -i 's,SubTitle>,span>,g' $src
+  sed -i 's,Appendix>,div>,g' $src
   
 
   name=$(basename $html)
@@ -69,10 +70,10 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   echo "Tidying HTML"
   #Make sure you install from https://github.com/htacg/tidy-html5
 
-  tidy -quiet -file "$tidylogfile" --drop-empty-elements no -indent $src > $dest || (
+  tidy -quiet -file "$tidylogfile" --new-blocklevel-tags footnote --drop-empty-elements no -indent $src > $dest || (
     # Exit code 1 is just warnings, which we can ignore
     if [ $? -ne 1 ]; then 
-      echo "tidy failed, copying HTML as-is" >$tidylogfile
+      echo "tidy failed, copying HTML as-is" >>$tidylogfile
       echo "tidy failed, copying HTML as-is" >&2
       cp $src $dest
     fi;
