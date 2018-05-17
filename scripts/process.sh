@@ -17,8 +17,6 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   echo "---"
   echo "Processing $html"
 
-  # assume a self-DOI at the very bottom under ACM's 10.1145/ tree
-  # and a sub-id of 123.456 or 123
 
   name=$(basename $html)
   case "$name" in 
@@ -28,9 +26,13 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
     "p753-youngmann.html") doi="10.1145/3178876.3186156";;
     "p721-veen.html") doi="10.1145/3184558.3185978";;
     "p409-yoon.html") doi="10.1145/3178876.3186107";;    
+    "p659-kusmierczyk.html") doi="10.1145/3178876.3186147";;
+    "p1369-karypis.html") doi="10.1145/3184558.3191588";;
     *) 
       # The rest should match this pattern
-      doi=$(sed -n "s,.*[\"']https://doi.org/\(10.1145\/[0-9.]*\).*,\1,p;q" $html)
+      # assume a self-DOI at the very bottom under ACM's 10.1145/ tree
+      # and a sub-id of 123.456
+      doi=$(sed -n "s,.*[\"']https://doi.org/\(10.1145\/[0-9][0-9]*\.[0-9][0-9]*\).*,\1,p;q" $html)
   esac
 
   if [[ -z $doi ]] ; then
@@ -45,13 +47,24 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   json="$pathToDoi"/$doi/crossref.json
 
   crossreflog="$pathToLog"/$(echo $doi | sed s,/,_,g).crossref.log
-  echo Fetching crossref metadata for $doi
-  wget --output-file=$crossreflog -O $json https://api.crossref.org/v1/works/http://dx.doi.org/$doi &
+  if [ ! -f $json ] ; then
+    # FIXME: should really be in get.sh, but that does not know how 
+    # to find DOI
+    echo Fetching crossref metadata for $doi
+    wget --output-file=$crossreflog -O $json https://api.crossref.org/v1/works/http://dx.doi.org/$doi &
+  fi
 
   echo "Saving HTML to $dest"
   tidylogfile="$pathToLog"/$(echo $doi | sed s,/,_,g).tidy.log
   echo "Tidying HTML"
   #Make sure you install from https://github.com/htacg/tidy-html5
+
+  case "$doi" in
+    # Fix quite broken HTML headers before showing to HTML Tidy
+    "10.1145/3178876.3186114") sed -i 's,DOCTYPE html> htmlhtml<html,DOCTYPE html><html,' $html ;;
+    "10.1145/3184558.3188729") sed -i 's,DOCTYPE html> html<html,DOCTYPE html><html,' $html ;;
+    "10.1145/3184558.3186570") sed -i 's,DOCTYPE html> html<html,DOCTYPE html><html,' $html ;;
+  esac
 
   tidy -quiet -file "$tidylogfile" --drop-empty-elements no -indent $html > $dest || (
     # Exit code 1 is just warnings, which we can ignore
@@ -61,6 +74,8 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
       cp $html $dest
     fi;
   )
+
+
 
   wait
   filename=$(echo "$html" | sed -r 's#&#&amp;#g')
