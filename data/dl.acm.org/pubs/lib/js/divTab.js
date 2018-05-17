@@ -91,7 +91,7 @@ $(document).ready(function(){
 		});
 	});
 	$( "body" ).attr("id", "main");
-	$( "body" ).prepend( "<table><tbody><tr><td><div class='utilities-area'><div class='logo-section'><div class='show-for-large-up'><a class='navbar-brand'> <img alt='ACM Logo' class='img-responsive' src='https://dl.acm.org/pubs/lib/images/acm_logo.jpg'></a></div><div class='hide-for-large-up'><a class='navbar-brand'> <img alt='ACM Logo' class='img-responsive' src='https://dl.acm.org/pubs/lib/images/acm_logo_mobile.jpg'></a></div></div></div></td></tr><tr><td align='left'><button class='ArtNav' id='ArtNav' onclick='openNav(this)' tabindex='0'><span aria-hidden='true'>&#9776;</span><span class='ArticleNavi'> Article Navigation</span></button></td></tr></table>" );
+	$( "body" ).prepend( "<table><tbody><tr><td align='left'><button class='ArtNav' id='ArtNav' onclick='openNav(this)' tabindex='0'><span aria-hidden='true'>&#9776;</span><span class='ArticleNavi'> Article Navigation</span></button></td></tr></table>" );
 	$(document).click(function(e) {
 		if (e.target.id != 'ArtNav' && !$('#ArtNav').find(e.target).length && e.target.id != 'mySidenav' && !$('#mySidenav').find(e.target).length && $(e.target).attr('class') != 'nav-open') {
 			document.getElementById("mySidenav").style.width = "0";
