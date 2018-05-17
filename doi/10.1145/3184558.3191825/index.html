@@ -1,1 +1,708 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">  <head>  <title>Aspect-based Financial Sentiment Analysis with Deep Neural Networks</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>  </head>  <body id="main">  <section class="front-matter">   <section>    <header class="title-info">     <div class="journal-title">     <h1>      <span class="title">Aspect-based Financial Sentiment Analysis with Deep Neural Networks</span>      <br/>      <span class="subTitle"/>     </h1>     </div>    </header>    <div class="authorGroup">     <div class="author">     <span class="givenName">Shijia</span>      <span class="surName">E</span>,     Tongji University, Shanghai, China 201804, <a href="mailto:436_eshijia@tongji.edu.cn">436_eshijia@tongji.edu.cn</a>     </div>     <div class="author">     <span class="givenName">Li</span>      <span class="surName">Yang</span>,     Tongji University, Shanghai, China 201804, <a href="mailto:1452238@tongji.edu.cn">1452238@tongji.edu.cn</a>     </div>     <div class="author">     <span class="givenName">Mohan</span>      <span class="surName">Zhang</span>,     Tongji University, Shanghai, China 201804, <a href="mailto:zhangmohan@tongji.edu.cn">zhangmohan@tongji.edu.cn</a>     </div>     <div class="author">     <span class="givenName">Yang</span>      <span class="surName">Xiang</span>,     Tongji University, Shanghai, China 201804, <a href="mailto:shxiangyang@tongji.edu.cn">shxiangyang@tongji.edu.cn</a>     </div>                     </div>    <br/>    <div class="pubInfo">     <p>DOI: <a href="https://doi.org/10.1145/3184558.3191825" target="_blank">https://doi.org/10.1145/3184558.3191825</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">     <p>     <small>Aspect-based financial sentiment analysis, which aims to classify the text instance into a pre-defined aspect class and predict the sentiment score for the mentioned target. In this paper, we propose a neural network model, Attention-based LSTM model with the Aspect information (ALA), to solve the financial opinion mining problem introduced by the WWW 2018 shared task. The proposed neural network model can adapt to the financial dataset so that the neural network can effectively understand the semantic information of the short text. We evaluate our model with the 10-fold cross-validation, and we compare our model with a variety of related deep neural network models.</small>     </p>    </div>    <div class="CCSconcepts">     <p> <small> <span style="font-weight:bold;">CCS Concepts:</span> &#x2022;<strong> Computing methodologies </strong>&#x2192; <strong>Natural language processing;</strong> <strong>Neural networks;</strong> <em>Learning latent representations;</em></small> </p>    </div>    <div class="classifications">     <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>sentiment analysis; long short-term memory network; representation learning</small>     </span>     </div>     <br/>     <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Shijia E, Li Yang, Mohan Zhang, and Yang Xiang. 2018. Aspect-based Financial Sentiment Analysis with Deep Neural Networks. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 4 Pages. <a href="https://doi.org/10.1145/3184558.3191825" class="link-inline force-break"        target="_blank">https://doi.org/10.1145/3184558.3191825</a></small>     </p>     </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-5">    <header>     <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>     </div>    </header>    <p>Aspect-based financial sentiment analysis is a special task of short text classification problem with financial data. The core of the task is to model the sentence effectively and obtain the opinion of the text instance. Sentence modeling aims at representing sentences as meaningful features for tasks such as sentiment classification. Traditional sentence modeling uses the bag of words model which often suffers from the curse of dimensionality.</p>    <p>Recently, deep learning approaches have achieved a lot of success in many kinds of research including the sentence representation [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0009">9</a>], text parsing [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>], machine translation [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>], and sentiment classification [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>] [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0007">7</a>]. Among neural network models, long short-term memory neural network (LSTM) is an effective neural network model to represent the sentence, and it can handle sequences of any length and capture long-term dependencies.</p>    <p>In this paper, we use a new deep neural architecture called Attention-based LSTM model with the Aspect information (ALA) to model sentences. Our proposed solution is an end-to-end, unified architecture, and it does not need much feature engineering and human intervention.</p>    <p>To apply neural architectures for modeling sentence, the common method of current research is using word2vec method [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>] to convert the sentence into a word embedding sequence. In order to improve the generalization ability of this specific task, all the stock targets are processed into the same target work. Therefore, the proposed model can also handle the classified targets that have not been seen before.</p>    <p>The rest of this paper is structured as follows. Section 2 contains related work. In Section 3, we describe our proposed solution. Experimental results and discussions are presented in Section 4, and finally, we give some concluding remarks in Section 5.</p>   </section>   <section id="sec-6">    <header>     <div class="title-info">     <h2>      <span class="section-number">2</span> Related Work</h2>     </div>    </header>    <p>For the general short-text classification task, the CNN model is still widely used. The capability of capturing local correlations along with extracting higher-level correlations through pooling empowers CNN to model sentences naturally from consecutive context windows. Collobert et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>] apply convolutional filters to successive windows for a given sequence to extract global features by the max-pooling operation. Kim et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>] propose a CNN architecture with multiple filters and varying window sizes to capture word relations of varying sizes. Kalchbrenner et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>] propose a dynamic k-max pooling mechanism that is capable of explicitly capturing short and long-range relations. As for aspect level sentiment classification, Tang et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0012">12</a>] introduce a deep memory network which is able to capture the importance of each context word. However, it requires the aspects to appear in the training data many times, otherwise, the model cannot have a strong generalization ability. For the financial dataset provided by the task, many stock names appear only a few times, so we cannot apply the deep memory model directly.</p>   </section>   <section id="sec-7">    <header>     <div class="title-info">     <h2>      <span class="section-number">3</span> Model Description</h2>     </div>    </header>    <p>In this section, we describe the proposed ALA model to solve the aspect-based financial sentiment analysis problem and how we preprocess the training data. <figure id="fig1">     <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191825/images/www18companion-402-fig1.jpg" class="img-responsive" alt="Figure 1"       longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 1:</span>      <span class="figure-title">The overall framework of ALA model.</span>     </div>     </figure>    </p>    <section id="sec-8">     <header>     <div class="title-info">      <h3>       <span class="section-number">3.1</span> Data preprocessing</h3>     </div>     </header>     <p>For our proposed neural network architectures, word embedding is one of the necessary inputs. We use the provided word-level train set corpus to generate word vectors with word2vec [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0010">10</a>]. For the word which does not appear in the provided train set, we simply use zero vector to represent them. The pre-trained word vectors will be the initial weights of the embedding layer, and the word embedding can be updated during the training process. Another important thing is that, for all the different aspects, we change them into the same symbol &#x201C;T&#x201D; (it means <em>Target</em>). Therefore, our model can learn how the context words affect the sentiment of the aspect in the text instance.</p>    </section>    <section id="sec-9">     <header>     <div class="title-info">      <h3>       <span class="section-number">3.2</span> Long Short-Term Memory Network Layer</h3>     </div>     </header>     <p>The Long Short-Term Memory (LSTM) architecture contains special units called memory blocks in the recurrent hidden layer [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0003">3</a>]. At each time step, the output is controlled by a set of gates, i.e., the previous hidden state <em>h</em>     <sub>      <em>t</em> &#x2212; 1</sub>, the forget gate <em>f<sub>t</sub>     </em>, the input gate <em>i<sub>t</sub>     </em>, and the output gate <em>o<sub>t</sub>     </em>. With the input at the current time step <em>x<sub>t</sub>     </em>, those gates collectively decide how to update the current memory cell <em>c<sub>t</sub>     </em> and the current hidden state <em>h<sub>t</sub>     </em>. We use <em>d</em> to denote the memory dimension in the LSTM, and all vectors in this architecture share the same dimension. The LSTM transition functions are defined as follows: <div class="table-responsive" id="Xeq1">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \begin{split} &#x0026; i_t = \sigma (W_i * [h_{t-1}, x_t] + b_i) \\ &#x0026; f_t = \sigma (W_f * [h_{t-1}, x_t] + b_f) \\ &#x0026; q_t = tanh(W_q * [h_{t-1}, x_t] + b_q) \\ &#x0026; o_t = \sigma (W_o * [h_{t-1}, x_t] + b_o) \\ &#x0026;c_t = f_t \odot c_{t-1} + i_t \odot q_t \\ &#x0026; h_t = o_t \odot tanh(c_t) \\ \end{split} \end{equation} </span>       <br/>       <span class="equation-number">(1)</span>      </div>     </div> where <em>&#x03C3;</em> is the logistic sigmoid function that has an output in [0, 1], <em>tanh</em> denotes the hyperbolic tangent function that has an output in [ &#x2212; 1, 1], and &#x2299; denotes the element-wise multiplication. We can view <em>f<sub>t</sub>     </em> as the function to control what extent the information from the old memory cell is going to be thrown away, <em>i<sub>t</sub>     </em> to control how much new information is going to be stored in the current memory cell, and <em>o<sub>t</sub>     </em> to control what to output based on the memory cell <em>c<sub>t</sub>     </em>.</p>     <p>LSTM is explicitly designed for time-series data with learning long-term dependencies, and therefore, we choose LSTM to learn such dependencies in the sequence.</p>    </section>    <section id="sec-10">     <header>     <div class="title-info">      <h3>       <span class="section-number">3.3</span> Attention-based LSTM with the aspect information</h3>     </div>     </header>     <p>We believe that the sentiment score of a text instance is not only determined by the content but is also highly dependent on the given aspect. Therefore, it is worthwhile to explore the correlation between an aspect and the content of a text instance. To address this issue, we introduce an attention mechanism that captures the importance of context words in response to a given aspect.</p>     <p>As shown in Figure 1, the implementation of the attention-based LSTM is that keeping the intermediate outputs of the LSTM from each step of the input sequence and training the model to learn to pay selective attention to these input steps and relate them to the final distributed representation. On the basis of the typical LSTM layer, the vector representation of the aspect (<em>Emb<sub>aspect</sub>     </em>), which is randomly initialized by sampling from a uniform distribution and optimized during the training phase, will be used to determine the attention weights <em>&#x03B1;</em>. Therefore, <em>r</em> is the weighted representation of the input sequence. It is defined as follows: <div class="table-responsive" id="Xeq2">      <div class="display-equation">       <span class="tex mytex">\begin{equation} r = H\alpha ^T \end{equation} </span>       <br/>       <span class="equation-number">(2)</span>      </div>     </div> where H is the hidden vector. The final feature representation of the input sequence is computed as follows: <div class="table-responsive" id="Xeq3">      <div class="display-equation">       <span class="tex mytex">\begin{equation} h_{final} = tanh(W_rR + W_hH) \end{equation} </span>       <br/>       <span class="equation-number">(3)</span>      </div>     </div> where <em>W<sub>r</sub>     </em> and <em>W<sub>h</sub>     </em> are the parameters to be learned during the training phase. By leveraging attention mechanism, the ALA model incorporates the aspect information effectively and can learn the potential connection between context words and given aspect, which enables the model to focus different parts of a text instance when different aspects are concerned.</p>     <p>In our experiments, the different aspects presented in the training set can be used to assist the prediction of sentiment score. As for the FiQA task, the sentiment score prediction and aspect classification are two independent task. Therefore, when we submit our test result, we assume that all the samples in the test set have the same aspect. Even with that kind of pre-processing, the performance with the aspect information is still better than models without using any aspect information.</p>     <div class="table-responsive" id="tab1">     <div class="table-caption">      <span class="table-number">Table 1:</span>      <span class="table-title">The experimental results of the 10-fold cross-validation for the FiQA task-1.</span>     </div>     <table class="table">      <thead>       <tr>        <th style="text-align:center;">        <strong>Model</strong>        </th>        <th style="text-align:center;">        <strong>Aspect Classification</strong>        </th>        <th colspan="2" style="text-align:center;">        <strong>Sentiment Score Prediction</strong>        <hr/>        </th>       </tr>       <tr>        <th style="text-align:center;"/>        <th style="text-align:center;">Accuracy</th>        <th style="text-align:center;">MSE</th>        <th style="text-align:center;">        <em>R</em>        <sup>2</sup>        </th>       </tr> </thead> <tbody>       <tr>        <td style="text-align:center;">CNN</td>        <td style="text-align:center;">0.3512 (+/- 0.0032)</td>        <td style="text-align:center;">0.1164 (+/- 0.0108)</td>        <td style="text-align:center;">0.2580 (+/- 0.0805)</td>       </tr>       <tr>        <td style="text-align:center;">LSTM</td>        <td style="text-align:center;">0.3547 (+/- 0.0028)</td>        <td style="text-align:center;">0.1160 (+/- 0.0146)</td>        <td style="text-align:center;">0.2689 (+/- 0.0578)</td>       </tr>       <tr>        <td style="text-align:center;">DeepMem</td>        <td style="text-align:center;">0.3621 (+/- 0.0018)</td>        <td style="text-align:center;">0.1059 (+/- 0.0167)</td>        <td style="text-align:center;">0.3289 (+/- 0.0901)</td>       </tr>       <tr>        <td style="text-align:center;">        <strong>ALA</strong>        </td>        <td style="text-align:center;">        <strong>0.378 (+/- 0.0016)</strong>        </td>        <td style="text-align:center;">        <strong>0.1045 (+/- 0.0079)</strong>        </td>        <td style="text-align:center;">        <strong>0.3363 (+/- 0.0471)</strong>        </td>       </tr>      </tbody>     </table>     </div>     <div class="table-responsive" id="tab2">     <div class="table-caption">      <span class="table-number">Table 2:</span>      <span class="table-title">The final results with the ALA model.</span>     </div>     <table class="table">      <thead>       <tr>        <th style="text-align:center;">        <strong>Dataset</strong>        </th>        <th style="text-align:center;">        <strong>Aspect Classification</strong>        </th>        <th colspan="2" style="text-align:center;">        <strong>Sentiment Score Prediction</strong>        <hr/>        </th>       </tr>       <tr>        <th style="text-align:center;"/>        <th style="text-align:center;">Accuracy</th>        <th style="text-align:center;">MSE</th>        <th style="text-align:center;">        <em>R</em>        <sup>2</sup>        </th>       </tr> </thead> <tbody>       <tr>        <td style="text-align:center;">News headline</td>        <td style="text-align:center;">0.2688</td>        <td style="text-align:center;">0.1345</td>        <td style="text-align:center;">0.4579</td>       </tr>       <tr>        <td style="text-align:center;">Microblog message</td>        <td style="text-align:center;">0.8485</td>        <td style="text-align:center;">0.1041</td>        <td style="text-align:center;">0.0924</td>       </tr>      </tbody>     </table>     </div>    </section>    <section id="sec-11">     <header>     <div class="title-info">      <h3>       <span class="section-number">3.4</span> Dense Layer</h3>     </div>     </header>     <p>Suppose the output vector of ALA is [<em>x</em>     <sub>      <em>final</em>&#x2009;0</sub>, <em>x</em>     <sub>      <em>final</em>&#x2009;1</sub>, &#x2026;, <em>x</em>     <sub>      <em>final</em>&#x2009;      <em>n</em>     </sub>], the outputs of neurons in the dense layer are defined as follows: <div class="table-responsive" id="Xeq4">      <div class="display-equation">       <span class="tex mytex">\begin{equation} O_i = f(\sum w_{final\ i} * x_{final\ i} + b) \end{equation} </span>       <br/>       <span class="equation-number">(4)</span>      </div>     </div> where <em>f</em> is the <em>tanh</em> non-linear activation function. The final output of the dense layer is [<em>O</em>     <sub>0</sub>, <em>O</em>     <sub>1</sub>, &#x2026;, <em>O<sub>m</sub>     </em>] that will be the vector to be classified (for aspect classification) or predicated (for sentiment score). At last, we get the final label (or score) of the sentence using <em>softmax</em> with the standard categorical cross-entropy loss function (or using <em>logistic regression</em> with the MSE loss function).</p>    </section>   </section>   <section id="sec-12">    <header>     <div class="title-info">     <h2>      <span class="section-number">4</span> Experiments</h2>     </div>    </header>    <section id="sec-13">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.1</span> Dataset</h3>     </div>     </header>     <p>The dataset provided by this task contains 504 news headlines and 675 microblog messages, i.e. 1179 training samples. In this dataset, the sentiment scores of all text instances are ranged from -1 to 1, and there are 27 classification labels. The limited size of the training data also poses a challenge to this task.</p>    </section>    <section id="sec-14">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.2</span> Experimental Setup</h3>     </div>     </header>     <section id="sec-15">     <p><em>4.2.1 Parameter settings.</em> We evaluate our model with 10-fold cross-validation. During the training process, we utilized the pre-trained 300-dimensional word embedding as the initial embedding matrix. The batch size was 64. The number of hidden units for each LSTM layer is 300. We trained our model with Adam [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0006">6</a>] as the final optimization strategy. To avoid model overfitting, we add L2 regularization to the parameters of our model.</p>     </section>     <section id="sec-16">     <p><em>4.2.2 Baseline.</em> In our experiments, we also compare our model with several baseline models, such as the <em>Deep Memory</em> model proposed by Tang et al [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0012">12</a>], vanilla CNN, and LSTM models.</p>     </section>    </section>    <section id="sec-17">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.3</span> Results and Discussions</h3>     </div>     </header>     <p>The performance of the aspect classification and sentiment score prediction in our experiments is shown in Table 1. The final test results with the ALA model are shown in Table 2.</p>     <p>As the results shown in Table 1, we can find that: (1) For aspect classification, all the deep neural network models have not achieved high accuracy. (2) The ALA model can capture the key part of the sentence in response to the target aspect, and it can be well adapted to the unseen stock names. Therefore, among the several neural network architectures, ALA model can always get the best performance.</p>    </section>   </section>   <section id="sec-18">    <header>     <div class="title-info">     <h2>      <span class="section-number">5</span> Conclusion</h2>     </div>    </header>    <p>In this paper, we use the ALA neural network model for the aspect-based financial sentiment analysis. The ALA model can capture the most important part of a sentence for a target aspect. Experiments show that the ALA model obtains superior performance over several baseline models. For future work, a possible direction would be incorporating a few rule templates in the financial domain with deep neural networks to improve the performance of current methods.</p>   </section>  </section>  <section class="back-matter">   <section id="sec-19">    <header>     <div class="title-info">     <h2>ACKNOWLEDGMENTS</h2>     </div>    </header>    <p>The work is supported by the National Basic Research Program of China 97314 under Grant No.:&#x00A0; 2014CB340404 97314 , National Natural Science Foundation of China nsfc16 http://dx.doi.org/10.13039/501100001809 under Grant No.:&#x00A0; 71571136 nsfc16 and Science and Technology Commission of Shanghai Municipality stcsm http://dx.doi.org/10.13039/501100003399 under Grant No.:&#x00A0; 16JC1403000, 14511108002 stcsm .</p>   </section>   <section id="ref-001">    <header>     <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>     </div>    </header>    <ul class="bibUl">     <li id="BibPLXBIB0001" label="[1]">Ronan Collobert, Jason Weston, L&#x00E9;on Bottou, Michael Karlen, Koray Kavukcuoglu, and Pavel Kuksa. 2011. Natural language processing (almost) from scratch. <em>      <em>Journal of Machine Learning Research</em>     </em>12, Aug (2011), 2493&#x2013;2537.</li>     <li id="BibPLXBIB0002" label="[2]">Jacob Devlin, Rabih Zbib, Zhongqiang Huang, Thomas Lamar, Richard&#x00A0;M Schwartz, and John Makhoul. 2014. Fast and Robust Neural Network Joint Models for Statistical Machine Translation.. In <em>      <em>ACL (1)</em>     </em>. 1370&#x2013;1380.</li>     <li id="BibPLXBIB0003" label="[3]">Sepp Hochreiter and J&#x00FC;rgen Schmidhuber. 1997. Long short-term memory. <em>      <em>Neural computation</em>     </em>9, 8 (1997), 1735&#x2013;1780.</li>     <li id="BibPLXBIB0004" label="[4]">Nal Kalchbrenner, Edward Grefenstette, and Phil Blunsom. 2014. A convolutional neural network for modelling sentences. <em>      <em>arXiv preprint arXiv:1404.2188</em>     </em>(2014).</li>     <li id="BibPLXBIB0005" label="[5]">Yoon Kim. 2014. Convolutional neural networks for sentence classification. <em>      <em>arXiv preprint arXiv:1408.5882</em>     </em>(2014).</li>     <li id="BibPLXBIB0006" label="[6]">Diederik&#x00A0;P Kingma and Jimmy Ba. 2014. Adam: A method for stochastic optimization. <em>      <em>arXiv preprint arXiv:1412.6980</em>     </em>(2014).</li>     <li id="BibPLXBIB0007" label="[7]">Ji&#x00A0;Young Lee and Franck Dernoncourt. 2016. Sequential short-text classification with recurrent and convolutional neural networks. <em>      <em>arXiv preprint arXiv:1603.03827</em>     </em>(2016).</li>     <li id="BibPLXBIB0008" label="[8]">Tomas Mikolov, Kai Chen, Greg Corrado, and Jeffrey Dean. 2013. Efficient estimation of word representations in vector space. <em>      <em>arXiv preprint arXiv:1301.3781</em>     </em>(2013).</li>     <li id="BibPLXBIB0009" label="[9]">Tomas Mikolov, Ilya Sutskever, Kai Chen, Greg&#x00A0;S Corrado, and Jeff Dean. 2013. Distributed representations of words and phrases and their compositionality. In <em>      <em>Advances in neural information processing systems</em>     </em>. 3111&#x2013;3119.</li>     <li id="BibPLXBIB0010" label="[10]">Radim &#x0158;eh&#x016F;&#x0159;ek and Petr Sojka. 2010. Software Framework for Topic Modelling with Large Corpora. In <em>      <em>Proceedings of the LREC 2010 Workshop on New Challenges for NLP Frameworks</em>     </em>. ELRA, Valletta, Malta, 45&#x2013;50. <a class="link-inline force-break" href="http://is.muni.cz/publication/884893/en">http://is.muni.cz/publication/884893/en</a>.</li>     <li id="BibPLXBIB0011" label="[11]">Richard Socher, John Bauer, Christopher&#x00A0;D Manning, and Andrew&#x00A0;Y Ng. 2013. Parsing with Compositional Vector Grammars.. In <em>      <em>ACL (1)</em>     </em>. 455&#x2013;465.</li>     <li id="BibPLXBIB0012" label="[12]">Duyu Tang, Bing Qin, and Ting Liu. 2016. Aspect Level Sentiment Classification with Deep Memory Network. In <em>      <em>Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing</em>     </em>. 214&#x2013;224.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">     <h2>FOOTNOTE</h2>    </div>   </header>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>     <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3191825">https://doi.org/10.1145/3184558.3191825</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div>  </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Aspect-based Financial Sentiment Analysis with Deep Neural
+  Networks</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Aspect-based Financial Sentiment
+          Analysis with Deep Neural Networks</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Shijia</span> <span class=
+          "surName">E</span>, Tongji University, Shanghai, China
+          201804, <a href=
+          "mailto:436_eshijia@tongji.edu.cn">436_eshijia@tongji.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Li</span> <span class=
+          "surName">Yang</span>, Tongji University, Shanghai, China
+          201804, <a href=
+          "mailto:1452238@tongji.edu.cn">1452238@tongji.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Mohan</span> <span class=
+          "surName">Zhang</span>, Tongji University, Shanghai,
+          China 201804, <a href=
+          "mailto:zhangmohan@tongji.edu.cn">zhangmohan@tongji.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Yang</span> <span class=
+          "surName">Xiang</span>, Tongji University, Shanghai,
+          China 201804, <a href=
+          "mailto:shxiangyang@tongji.edu.cn">shxiangyang@tongji.edu.cn</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191825"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191825</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Aspect-based financial sentiment analysis, which
+        aims to classify the text instance into a pre-defined
+        aspect class and predict the sentiment score for the
+        mentioned target. In this paper, we propose a neural
+        network model, Attention-based LSTM model with the Aspect
+        information (ALA), to solve the financial opinion mining
+        problem introduced by the WWW 2018 shared task. The
+        proposed neural network model can adapt to the financial
+        dataset so that the neural network can effectively
+        understand the semantic information of the short text. We
+        evaluate our model with the 10-fold cross-validation, and
+        we compare our model with a variety of related deep neural
+        network models.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Computing methodologies</strong>
+        → <strong>Natural language processing;</strong>
+        <strong>Neural networks;</strong> <em>Learning latent
+        representations;</em></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>sentiment analysis; long
+          short-term memory network; representation
+          learning</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Shijia E, Li Yang, Mohan Zhang, and Yang Xiang. 2018.
+          Aspect-based Financial Sentiment Analysis with Deep
+          Neural Networks. In <em>WWW '18 Companion: The 2018 Web
+          Conference Companion,</em> <em>April 23–27, 2018,</em>
+          <em>Lyon, France. ACM, New York, NY, USA</em> 4 Pages.
+          <a href="https://doi.org/10.1145/3184558.3191825" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191825</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Aspect-based financial sentiment analysis is a special
+      task of short text classification problem with financial
+      data. The core of the task is to model the sentence
+      effectively and obtain the opinion of the text instance.
+      Sentence modeling aims at representing sentences as
+      meaningful features for tasks such as sentiment
+      classification. Traditional sentence modeling uses the bag of
+      words model which often suffers from the curse of
+      dimensionality.</p>
+      <p>Recently, deep learning approaches have achieved a lot of
+      success in many kinds of research including the sentence
+      representation [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>], text parsing [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0011">11</a>], machine translation
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0002">2</a>], and
+      sentiment classification [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>] [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>]. Among neural network models, long
+      short-term memory neural network (LSTM) is an effective
+      neural network model to represent the sentence, and it can
+      handle sequences of any length and capture long-term
+      dependencies.</p>
+      <p>In this paper, we use a new deep neural architecture
+      called Attention-based LSTM model with the Aspect information
+      (ALA) to model sentences. Our proposed solution is an
+      end-to-end, unified architecture, and it does not need much
+      feature engineering and human intervention.</p>
+      <p>To apply neural architectures for modeling sentence, the
+      common method of current research is using word2vec method
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0008">8</a>] to convert
+      the sentence into a word embedding sequence. In order to
+      improve the generalization ability of this specific task, all
+      the stock targets are processed into the same target work.
+      Therefore, the proposed model can also handle the classified
+      targets that have not been seen before.</p>
+      <p>The rest of this paper is structured as follows. Section 2
+      contains related work. In Section 3, we describe our proposed
+      solution. Experimental results and discussions are presented
+      in Section 4, and finally, we give some concluding remarks in
+      Section 5.</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>For the general short-text classification task, the CNN
+      model is still widely used. The capability of capturing local
+      correlations along with extracting higher-level correlations
+      through pooling empowers CNN to model sentences naturally
+      from consecutive context windows. Collobert et al. [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0001">1</a>] apply
+      convolutional filters to successive windows for a given
+      sequence to extract global features by the max-pooling
+      operation. Kim et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>] propose a CNN architecture with
+      multiple filters and varying window sizes to capture word
+      relations of varying sizes. Kalchbrenner et al. [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0004">4</a>] propose a
+      dynamic k-max pooling mechanism that is capable of explicitly
+      capturing short and long-range relations. As for aspect level
+      sentiment classification, Tang et al. [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0012">12</a>] introduce a deep memory
+      network which is able to capture the importance of each
+      context word. However, it requires the aspects to appear in
+      the training data many times, otherwise, the model cannot
+      have a strong generalization ability. For the financial
+      dataset provided by the task, many stock names appear only a
+      few times, so we cannot apply the deep memory model
+      directly.</p>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Model
+          Description</h2>
+        </div>
+      </header>
+      <p>In this section, we describe the proposed ALA model to
+      solve the aspect-based financial sentiment analysis problem
+      and how we preprocess the training data.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191825/images/www18companion-402-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">The overall framework of ALA model.</span>
+        </div>
+      </figure>
+      <p></p>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Data
+            preprocessing</h3>
+          </div>
+        </header>
+        <p>For our proposed neural network architectures, word
+        embedding is one of the necessary inputs. We use the
+        provided word-level train set corpus to generate word
+        vectors with word2vec [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0010">10</a>]. For the word which does not
+        appear in the provided train set, we simply use zero vector
+        to represent them. The pre-trained word vectors will be the
+        initial weights of the embedding layer, and the word
+        embedding can be updated during the training process.
+        Another important thing is that, for all the different
+        aspects, we change them into the same symbol “T” (it means
+        <em>Target</em>). Therefore, our model can learn how the
+        context words affect the sentiment of the aspect in the
+        text instance.</p>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Long
+            Short-Term Memory Network Layer</h3>
+          </div>
+        </header>
+        <p>The Long Short-Term Memory (LSTM) architecture contains
+        special units called memory blocks in the recurrent hidden
+        layer [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0003">3</a>]. At each time step, the output is
+        controlled by a set of gates, i.e., the previous hidden
+        state <em>h</em> <sub><em>t</em> − 1</sub>, the forget gate
+        <em>f<sub>t</sub></em> , the input gate
+        <em>i<sub>t</sub></em> , and the output gate
+        <em>o<sub>t</sub></em> . With the input at the current time
+        step <em>x<sub>t</sub></em> , those gates collectively
+        decide how to update the current memory cell
+        <em>c<sub>t</sub></em> and the current hidden state
+        <em>h<sub>t</sub></em> . We use <em>d</em> to denote the
+        memory dimension in the LSTM, and all vectors in this
+        architecture share the same dimension. The LSTM transition
+        functions are defined as follows:</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \begin{split}
+            &amp; i_t = \sigma (W_i * [h_{t-1}, x_t] + b_i) \\
+            &amp; f_t = \sigma (W_f * [h_{t-1}, x_t] + b_f) \\
+            &amp; q_t = tanh(W_q * [h_{t-1}, x_t] + b_q) \\ &amp;
+            o_t = \sigma (W_o * [h_{t-1}, x_t] + b_o) \\ &amp;c_t =
+            f_t \odot c_{t-1} + i_t \odot q_t \\ &amp; h_t = o_t
+            \odot tanh(c_t) \\ \end{split}
+            \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>where <em>σ</em> is the logistic sigmoid function
+        that has an output in [0, 1], <em>tanh</em> denotes the
+        hyperbolic tangent function that has an output in [ − 1,
+        1], and ⊙ denotes the element-wise multiplication. We can
+        view <em>f<sub>t</sub></em> as the function to control what
+        extent the information from the old memory cell is going to
+        be thrown away, <em>i<sub>t</sub></em> to control how much
+        new information is going to be stored in the current memory
+        cell, and <em>o<sub>t</sub></em> to control what to output
+        based on the memory cell <em>c<sub>t</sub></em> .
+        <p></p>
+        <p>LSTM is explicitly designed for time-series data with
+        learning long-term dependencies, and therefore, we choose
+        LSTM to learn such dependencies in the sequence.</p>
+      </section>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span>
+            Attention-based LSTM with the aspect information</h3>
+          </div>
+        </header>
+        <p>We believe that the sentiment score of a text instance
+        is not only determined by the content but is also highly
+        dependent on the given aspect. Therefore, it is worthwhile
+        to explore the correlation between an aspect and the
+        content of a text instance. To address this issue, we
+        introduce an attention mechanism that captures the
+        importance of context words in response to a given
+        aspect.</p>
+        <p>As shown in Figure 1, the implementation of the
+        attention-based LSTM is that keeping the intermediate
+        outputs of the LSTM from each step of the input sequence
+        and training the model to learn to pay selective attention
+        to these input steps and relate them to the final
+        distributed representation. On the basis of the typical
+        LSTM layer, the vector representation of the aspect
+        (<em>Emb<sub>aspect</sub></em> ), which is randomly
+        initialized by sampling from a uniform distribution and
+        optimized during the training phase, will be used to
+        determine the attention weights <em>α</em>. Therefore,
+        <em>r</em> is the weighted representation of the input
+        sequence. It is defined as follows:</p>
+        <div class="table-responsive" id="Xeq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} r = H\alpha ^T
+            \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>where H is the hidden vector. The final feature
+        representation of the input sequence is computed as
+        follows:
+        <div class="table-responsive" id="Xeq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} h_{final} =
+            tanh(W_rR + W_hH) \end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>where <em>W<sub>r</sub></em> and
+        <em>W<sub>h</sub></em> are the parameters to be learned
+        during the training phase. By leveraging attention
+        mechanism, the ALA model incorporates the aspect
+        information effectively and can learn the potential
+        connection between context words and given aspect, which
+        enables the model to focus different parts of a text
+        instance when different aspects are concerned.
+        <p></p>
+        <p>In our experiments, the different aspects presented in
+        the training set can be used to assist the prediction of
+        sentiment score. As for the FiQA task, the sentiment score
+        prediction and aspect classification are two independent
+        task. Therefore, when we submit our test result, we assume
+        that all the samples in the test set have the same aspect.
+        Even with that kind of pre-processing, the performance with
+        the aspect information is still better than models without
+        using any aspect information.</p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">The experimental results of the 10-fold
+            cross-validation for the FiQA task-1.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">
+                <strong>Model</strong></th>
+                <th style="text-align:center;"><strong>Aspect
+                Classification</strong></th>
+                <th colspan="2" style="text-align:center;">
+                  <strong>Sentiment Score Prediction</strong>
+                  <hr />
+                </th>
+              </tr>
+              <tr>
+                <th style="text-align:center;"></th>
+                <th style="text-align:center;">Accuracy</th>
+                <th style="text-align:center;">MSE</th>
+                <th style="text-align:center;"><em>R</em>
+                <sup>2</sup></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">CNN</td>
+                <td style="text-align:center;">0.3512 (+/-
+                0.0032)</td>
+                <td style="text-align:center;">0.1164 (+/-
+                0.0108)</td>
+                <td style="text-align:center;">0.2580 (+/-
+                0.0805)</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">LSTM</td>
+                <td style="text-align:center;">0.3547 (+/-
+                0.0028)</td>
+                <td style="text-align:center;">0.1160 (+/-
+                0.0146)</td>
+                <td style="text-align:center;">0.2689 (+/-
+                0.0578)</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">DeepMem</td>
+                <td style="text-align:center;">0.3621 (+/-
+                0.0018)</td>
+                <td style="text-align:center;">0.1059 (+/-
+                0.0167)</td>
+                <td style="text-align:center;">0.3289 (+/-
+                0.0901)</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">
+                <strong>ALA</strong></td>
+                <td style="text-align:center;"><strong>0.378 (+/-
+                0.0016)</strong></td>
+                <td style="text-align:center;"><strong>0.1045 (+/-
+                0.0079)</strong></td>
+                <td style="text-align:center;"><strong>0.3363 (+/-
+                0.0471)</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">The final results with the ALA
+            model.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">
+                <strong>Dataset</strong></th>
+                <th style="text-align:center;"><strong>Aspect
+                Classification</strong></th>
+                <th colspan="2" style="text-align:center;">
+                  <strong>Sentiment Score Prediction</strong>
+                  <hr />
+                </th>
+              </tr>
+              <tr>
+                <th style="text-align:center;"></th>
+                <th style="text-align:center;">Accuracy</th>
+                <th style="text-align:center;">MSE</th>
+                <th style="text-align:center;"><em>R</em>
+                <sup>2</sup></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">News headline</td>
+                <td style="text-align:center;">0.2688</td>
+                <td style="text-align:center;">0.1345</td>
+                <td style="text-align:center;">0.4579</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Microblog
+                message</td>
+                <td style="text-align:center;">0.8485</td>
+                <td style="text-align:center;">0.1041</td>
+                <td style="text-align:center;">0.0924</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.4</span> Dense
+            Layer</h3>
+          </div>
+        </header>
+        <p>Suppose the output vector of ALA is [<em>x</em>
+        <sub><em>final</em> 0</sub>, <em>x</em>
+        <sub><em>final</em> 1</sub>, …, <em>x</em>
+        <sub><em>final</em>  <em>n</em></sub> ], the outputs of
+        neurons in the dense layer are defined as follows:</p>
+        <div class="table-responsive" id="Xeq4">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} O_i = f(\sum
+            w_{final\ i} * x_{final\ i} + b)
+            \end{equation}</span><br />
+            <span class="equation-number">(4)</span>
+          </div>
+        </div>where <em>f</em> is the <em>tanh</em> non-linear
+        activation function. The final output of the dense layer is
+        [<em>O</em> <sub>0</sub>, <em>O</em> <sub>1</sub>, …,
+        <em>O<sub>m</sub></em> ] that will be the vector to be
+        classified (for aspect classification) or predicated (for
+        sentiment score). At last, we get the final label (or
+        score) of the sentence using <em>softmax</em> with the
+        standard categorical cross-entropy loss function (or using
+        <em>logistic regression</em> with the MSE loss function).
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-12">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span>
+          Experiments</h2>
+        </div>
+      </header>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span>
+            Dataset</h3>
+          </div>
+        </header>
+        <p>The dataset provided by this task contains 504 news
+        headlines and 675 microblog messages, i.e. 1179 training
+        samples. In this dataset, the sentiment scores of all text
+        instances are ranged from -1 to 1, and there are 27
+        classification labels. The limited size of the training
+        data also poses a challenge to this task.</p>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span>
+            Experimental Setup</h3>
+          </div>
+        </header>
+        <section id="sec-15">
+          <p><em>4.2.1 Parameter settings.</em> We evaluate our
+          model with 10-fold cross-validation. During the training
+          process, we utilized the pre-trained 300-dimensional word
+          embedding as the initial embedding matrix. The batch size
+          was 64. The number of hidden units for each LSTM layer is
+          300. We trained our model with Adam [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0006">6</a>] as the
+          final optimization strategy. To avoid model overfitting,
+          we add L2 regularization to the parameters of our
+          model.</p>
+        </section>
+        <section id="sec-16">
+          <p><em>4.2.2 Baseline.</em> In our experiments, we also
+          compare our model with several baseline models, such as
+          the <em>Deep Memory</em> model proposed by Tang et al
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0012">12</a>], vanilla CNN, and LSTM
+          models.</p>
+        </section>
+      </section>
+      <section id="sec-17">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span> Results and
+            Discussions</h3>
+          </div>
+        </header>
+        <p>The performance of the aspect classification and
+        sentiment score prediction in our experiments is shown in
+        Table 1. The final test results with the ALA model are
+        shown in Table 2.</p>
+        <p>As the results shown in Table 1, we can find that: (1)
+        For aspect classification, all the deep neural network
+        models have not achieved high accuracy. (2) The ALA model
+        can capture the key part of the sentence in response to the
+        target aspect, and it can be well adapted to the unseen
+        stock names. Therefore, among the several neural network
+        architectures, ALA model can always get the best
+        performance.</p>
+      </section>
+    </section>
+    <section id="sec-18">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>In this paper, we use the ALA neural network model for the
+      aspect-based financial sentiment analysis. The ALA model can
+      capture the most important part of a sentence for a target
+      aspect. Experiments show that the ALA model obtains superior
+      performance over several baseline models. For future work, a
+      possible direction would be incorporating a few rule
+      templates in the financial domain with deep neural networks
+      to improve the performance of current methods.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="sec-19">
+      <header>
+        <div class="title-info">
+          <h2>ACKNOWLEDGMENTS</h2>
+        </div>
+      </header>
+      <p>The work is supported by the National Basic Research
+      Program of China 97314 under Grant No.:&nbsp; 2014CB340404
+      97314 , National Natural Science Foundation of China nsfc16
+      http://dx.doi.org/10.13039/501100001809 under Grant
+      No.:&nbsp; 71571136 nsfc16 and Science and Technology
+      Commission of Shanghai Municipality stcsm
+      http://dx.doi.org/10.13039/501100003399 under Grant
+      No.:&nbsp; 16JC1403000, 14511108002 stcsm .</p>
+    </section>
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Ronan Collobert, Jason
+        Weston, Léon Bottou, Michael Karlen, Koray Kavukcuoglu, and
+        Pavel Kuksa. 2011. Natural language processing (almost)
+        from scratch. <em><em>Journal of Machine Learning
+        Research</em></em> 12, Aug (2011), 2493–2537.</li>
+        <li id="BibPLXBIB0002" label="[2]">Jacob Devlin, Rabih
+        Zbib, Zhongqiang Huang, Thomas Lamar, Richard&nbsp;M
+        Schwartz, and John Makhoul. 2014. Fast and Robust Neural
+        Network Joint Models for Statistical Machine Translation..
+        In <em><em>ACL (1)</em></em> . 1370–1380.</li>
+        <li id="BibPLXBIB0003" label="[3]">Sepp Hochreiter and
+        Jürgen Schmidhuber. 1997. Long short-term memory.
+        <em><em>Neural computation</em></em> 9, 8 (1997),
+        1735–1780.</li>
+        <li id="BibPLXBIB0004" label="[4]">Nal Kalchbrenner, Edward
+        Grefenstette, and Phil Blunsom. 2014. A convolutional
+        neural network for modelling sentences. <em><em>arXiv
+        preprint arXiv:1404.2188</em></em> (2014).</li>
+        <li id="BibPLXBIB0005" label="[5]">Yoon Kim. 2014.
+        Convolutional neural networks for sentence classification.
+        <em><em>arXiv preprint arXiv:1408.5882</em></em>
+        (2014).</li>
+        <li id="BibPLXBIB0006" label="[6]">Diederik&nbsp;P Kingma
+        and Jimmy Ba. 2014. Adam: A method for stochastic
+        optimization. <em><em>arXiv preprint
+        arXiv:1412.6980</em></em> (2014).</li>
+        <li id="BibPLXBIB0007" label="[7]">Ji&nbsp;Young Lee and
+        Franck Dernoncourt. 2016. Sequential short-text
+        classification with recurrent and convolutional neural
+        networks. <em><em>arXiv preprint arXiv:1603.03827</em></em>
+        (2016).</li>
+        <li id="BibPLXBIB0008" label="[8]">Tomas Mikolov, Kai Chen,
+        Greg Corrado, and Jeffrey Dean. 2013. Efficient estimation
+        of word representations in vector space. <em><em>arXiv
+        preprint arXiv:1301.3781</em></em> (2013).</li>
+        <li id="BibPLXBIB0009" label="[9]">Tomas Mikolov, Ilya
+        Sutskever, Kai Chen, Greg&nbsp;S Corrado, and Jeff Dean.
+        2013. Distributed representations of words and phrases and
+        their compositionality. In <em><em>Advances in neural
+        information processing systems</em></em> . 3111–3119.</li>
+        <li id="BibPLXBIB0010" label="[10]">Radim Řehůřek and Petr
+        Sojka. 2010. Software Framework for Topic Modelling with
+        Large Corpora. In <em><em>Proceedings of the LREC 2010
+        Workshop on New Challenges for NLP Frameworks</em></em> .
+        ELRA, Valletta, Malta, 45–50. <a class=
+        "link-inline force-break" href=
+        "http://is.muni.cz/publication/884893/en">http://is.muni.cz/publication/884893/en</a>.
+        </li>
+        <li id="BibPLXBIB0011" label="[11]">Richard Socher, John
+        Bauer, Christopher&nbsp;D Manning, and Andrew&nbsp;Y Ng.
+        2013. Parsing with Compositional Vector Grammars.. In
+        <em><em>ACL (1)</em></em> . 455–465.</li>
+        <li id="BibPLXBIB0012" label="[12]">Duyu Tang, Bing Qin,
+        and Ting Liu. 2016. Aspect Level Sentiment Classification
+        with Deep Memory Network. In <em><em>Proceedings of the
+        2016 Conference on Empirical Methods in Natural Language
+        Processing</em></em> . 214–224.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191825">https://doi.org/10.1145/3184558.3191825</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

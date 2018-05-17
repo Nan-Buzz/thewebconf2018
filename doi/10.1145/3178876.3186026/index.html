@@ -1,1 +1,1983 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> <head>  <title>User-guided Hierarchical Attention Network for Multi-modal Social Image Popularity Prediction</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script> </head> <body id="main">  <section class="front-matter">   <section>    <header class="title-info">    <div class="journal-title">     <h1>      <span class="title">User-guided Hierarchical Attention Network for Multi-modal Social Image Popularity Prediction</span>      <br/>      <span class="subTitle"/>     </h1>    </div>    </header>    <div class="authorGroup">    <div class="author"><a href="https://orcid.org/0000-0001-6763-8146" ref="author"><span class="givenName">Wei</span>      <span class="surName">Zhang</span>,</a>     Shanghai Key Laboratory of Trustworthy Computing East China Normal University, Putuo Qu, Shanghai Shi, China, <a href="mailto:zhangwei.thu2011@gmail.com">zhangwei.thu2011@gmail.com</a>    </div>    <div class="author">     <span class="givenName">Wen</span>     <span class="surName">Wang</span>,     Shanghai Key Laboratory of Trustworthy Computing East China Normal University, Putuo Qu, Shanghai Shi, China, <a href="mailto:51164500120@stu.ecnu.edu.cn">51164500120@stu.ecnu.edu.cn</a>    </div>    <div class="author">     <span class="givenName">Jun</span>     <span class="surName">Wang</span>,     Shanghai Key Laboratory of Trustworthy Computing East China Normal University, Putuo Qu, Shanghai Shi, China, <a href="mailto:jwang@sei.ecnu.edu.cn">jwang@sei.ecnu.edu.cn</a>    </div>    <div class="author">     <span class="givenName">Hongyuan</span>     <span class="surName">Zha</span>,     School of Computational Science and Engineering, Georgia Institute of Technology, Atlanta, Georgia, USA, <a href="mailto:zha@cc.gatech.edu">zha@cc.gatech.edu</a>    </div>                    </div>    <br/>    <div class="pubInfo">    <p>DOI: <a href="https://doi.org/10.1145/3178876.3186026" target="_blank">https://doi.org/10.1145/3178876.3186026</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3178876" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">    <p>     <small>Popularity prediction for the growing social images has opened unprecedented opportunities for wide commercial applications, such as precision advertising and recommender system. While a few studies have explored this significant task, little research has addressed its unstructured properties of both visual and textual modalities, and further considered to learn effective representation from multi-modalities for popularity prediction. To this end, we propose a model named User-guided Hierarchical Attention Network (UHAN) with two novel user-guided attention mechanisms to hierarchically attend both visual and textual modalities. It is capable of not only learning effective representation for each modality, but also fusing them to obtain an integrated multi-modal representation under the guidance of user embedding. As no benchmark dataset exists, we extend a publicly available social image dataset by adding the descriptions of images. The comprehensive experiments have demonstrated the rationality of our proposed UHAN and its better performance than several strong alternatives.</small>    </p>    </div>    <div class="CCSconcepts">    <p> <small> <span style="font-weight:bold;">CCS Concepts:</span> &#x2022;<strong> Information systems </strong>&#x2192; <strong>Content analysis and feature selection;</strong> <em>Personalization;</em> &#x2022;<strong> Computing methodologies </strong>&#x2192; Neural networks;</small> </p>    </div>    <div class="classifications">    <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>Social Image Popularity; Multi-modal Analysis; Attention Network</small>     </span>    </div>    <br/>    <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Wei Zhang, Wen Wang, Jun Wang, and Hongyuan Zha. 2018. User-guided Hierarchical Attention Network for Multi-modal Social Image Popularity Prediction. In <em>WWW 2018: The 2018 Web Conference,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 10 Pages. <a href="https://doi.org/10.1145/3178876.3186026" class="link-inline force-break"       target="_blank">https://doi.org/10.1145/3178876.3186026</a></small>     </p>    </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-5">    <header>    <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>    </div>    </header>    <p>In the era of Web 2.0, user-generated content (UGC) in online social networks becomes globally ubiquitous and prevalent with the development of information technology and thus incurs heavy information explosion. The task of UGC popularity prediction&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0035">35</a>] tries to infer total count of interactions between users and specific UGC (e.g., click, like, and view). This task is crucial for both content providers and consumers, and finds a wide range of real-world applications, including online advertising&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0020">20</a>] and recommender system&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>]. <figure id="fig1">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186026/images/www2018-35-fig1.jpg" class="img-responsive" alt="Figure 1"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 1:</span>      <span class="figure-title">Sampled examples of social images in our dataset. Each row corresponds to one user. The images in each row are sorted from more popular (left) to less popular (right).</span>     </div>    </figure>    <figure id="fig2">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186026/images/www2018-35-fig2.jpg" class="img-responsive" alt="Figure 2"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 2:</span>      <span class="figure-title">Diagram of user-guided hierarchical attention mechanism for an example from Flickr. &#x2297; denotes the user-guided intra-attention mechanism while &#x2295; represents the user-guided inter-attention mechanism. Red font in description indicates larger attention weights.</span>     </div>    </figure>    </p>    <p>Social image is perhaps one of the most representative UGC. It has gained a rapid growth in recent years and exists widely in various social medias, such as Flickr, Instagram, Pinterest, and WeChat. Due to different themes and purposes of different social medias, social images in these platforms contain not exactly the same elements. Among them, the three most common ones are social image itself (visual modality), its corresponding description (textual modality) and publisher (user). Naturally, the foregoing raises an interesting and fundamental challenge with regard to popularity prediction, i.e., how to effectively fuse knowledge from both visual and textual modalities while simultaneously consider user influence for predicting social image popularity.</p>    <p>While a few studies have investigated the problem of social image popularity prediction &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0009">9</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0040">40</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0041">41</a>], most of them largely rely on carefully designed hand-crafted features, but ignore to automatically learn joint and effective representation from multi-modalities, especially for unstructured modalities such as image and text. On the other hand, some studies have considered to combine some or all of user, text, and image information sources in their studies&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0023">23</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0029">29</a>], and multi-modal learning has achieved great success in tasks like visual question answering (VQA)&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>] and image captioning&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0015">15</a>]. Nevertheless, the effort of applying multi-modal learning to multi-modal image popularity prediction problem has not been observed, let alone further considering user influence in multi-modal learning for this problem.</p>    <p>In this paper, we propose a user-guided hierarchical attention network (UHAN) for addressing the social image popularity prediction problem, which is to predict the future popularity of a new image to be published on social media. UHAN proposes two novel user-guided attention mechanisms to hierarchically attend both visual and textual modalities (see Figure&#x00A0;<a class="fig" href="#fig2">2</a>). More specifically, the overall framework mainly consists of two attention layers which form a hierarchical attention network. In the bottom layer, the user-guided intra-attention mechanism with a personalized multi-modal embedding correlation scheme is proposed to learn effective embedding for each modality. In the middle layer, the user-guided inter-attention mechanism for cross-modal attention is developed to determine the relative importance of each modality for each user. Besides, we adopt a shortcut connection to associate the user embedding with the learned multi-modal embedding, hoping to verify its additional influence on popularity.</p>    <p>The intuition of utilizing user guidance behind our model is that each user has its own characteristics and preferences, which will influence the popularity of his images. To verify this, we sample several social images from three selected users and show them in Figure&#x00A0;<a class="fig" href="#fig1">1</a>. According to the illustration below the figure, we can easily find that the user in the middle row has several images about dogs and most of them are more popular than his other images. For the user in the bottom row, a similar phenomenon can be seen that his images about cultural and natural landscapes are more attractive for ordinary users. Moreover, it is intuitive that the visual and textual modalities are promising to complement each other. This is motivated by the example shown in Figure&#x00A0;<a class="fig" href="#fig2">2</a>, &#x201C;Yamaha R1&#x201D; is a major indicator for the bike in the image and vice versa. Jointly modeling them will help to capture more useful information. As there is no publicly available benchmark dataset which involves both unstructured visual and textual modalities, we build such a social image dataset by simply extending an existing publicly accessible dataset&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0040">40</a>] by crawling their corresponding descriptions and associating them with the entries in the dataset. We conduct comprehensive experiments on this dataset and have demonstrated that 1) our proposed UHAN could achieve better results than several strong alternatives, 2) both visual and textual modalities are indeed beneficial for the studied problem, and 3) the design of UHAN is rational, with two effective user-guided attention mechanisms.</p>    <p>The main contributions of this work can be summarized as threefold,</p>    <ul class="list-no-style">    <li id="list1" label="&#x2022;">We propose a novel user-guided hierarchical attention network that effectively learns multi-modal representation of user personalization, visual and textual modalities, and seamlessly integrates the representation learning and image popularity prediction into an end-to-end fashion.<br/></li>    <li id="list2" label="&#x2022;">Two novel user-guided attention mechanisms are presented, i.e., user-guided intra-attention mechanism to learn each unimodal representation and inter-attention mechanism to fuse multi-modal representations.<br/></li>    <li id="list3" label="&#x2022;">To verify the benefits of our model, we get a real-world multi-modal social image dataset by simply extending a publicly accessible dataset&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0040">40</a>] with crawled image title and introduction. We make the source code and the dataset<a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a>publicly available to facilitate other studies to repeat experiments and do further research.<br/></li>    </ul>   </section>   <section id="sec-6">    <header>    <div class="title-info">     <h2>      <span class="section-number">2</span> Related Work</h2>    </div>    </header>    <p>We briefly review relevant studies to our work from three aspects. Research of popularity prediction is first introduced, including different problem settings and methods. Afterwards, deep multi-modal learning models in literature are categorized and the connection to our model is clarified. Lastly, existing representative attention mechanisms are introduced and the novelty of ours is emphasized. <figure id="fig3">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186026/images/www2018-35-fig3.jpg" class="img-responsive" alt="Figure 3"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 3:</span>      <span class="figure-title">Architecture of our proposed model UHAN. For simplicity, the dimensions of user embedding and hidden state of LSTM are both set to 512, equal to that of visual modality. However, the above model can be easily extended to the situation that dimensions of different modalities are not equal, just by necessary linear transformation.</span>     </div>    </figure>    </p>    <section id="sec-7">    <header>     <div class="title-info">      <h3>       <span class="section-number">2.1</span> Popularity Prediction</h3>     </div>    </header>    <p>A large body of studies has focused on social media popularity prediction and this field of research has continued for more than half a decade&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0033">33</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0035">35</a>]. &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0008">8</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0027">27</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0037">37</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0045">45</a>] have studied social content prediction from the perspective of textual modality. Most of them are mainly based on hand-crafted features. For example, basic term frequencies and topic features extracted from topic modeling&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0003">3</a>] are considered. By leveraging the continuous time modeling ability of point process&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0010">10</a>], Zhao et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0045">45</a>] proposed to model dynamic tweet popularity and later Liu et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0042">42</a>] developed a feature-based point process to predict dynamic paper citation count. However, as&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0012">12</a>] emphasized, dynamic data of popularity are not easy to obtained, which limits its real application. Thus in this paper, we focus on predicting future popularity of new social images to be published on social media.</p>    <p>In recent years, visual modality has attracted increasing attention in literature &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0040">40</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0041">41</a>]. Among them, Chen et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0005">5</a>] adopted transductive learning, which needs to do model learning and prediction simultaneously and cannot be easily extended to online prediction. Since the method is proposed for predicting micro-video popularity, it is different from our task. Wu et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0040">40</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0041">41</a>] studied social image popularity from the perspective of sequential prediction. They model temporal context (i.e., feature from other images published previously) of target image for prediction, which is in parallel to our study. &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0009">9</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0016">16</a>] are the most relevant study to ours. However, they relies on time-consuming feature engineering to obtain various hand-crafted visual and textual features, and the feature representation and model learning are separated into two different stages.</p>    <p>In this paper, we explore social image popularity prediction problem by focusing on integrating the representation learning from unstructured textual and visual modalities and popularity prediction into a unified model.</p>    </section>    <section id="sec-8">    <header>     <div class="title-info">      <h3>       <span class="section-number">2.2</span> Deep Multi-modal Learning</h3>     </div>    </header>    <p>There exists a long history of studies on multi-modal learning&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0039">39</a>] which concentrates on learning from multiple sources with different modalities&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0044">44</a>]. In recent years, with the flourish of deep learning methodologies&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0021">21</a>], deep multi-modal learning models begin to catch up. As Ngiam et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0030">30</a>] summarized, deep multi-modal learning involves three types of settings: 1) multi-modal fusion, 2) cross modality learning, and 3) shared representation learning. Among them, multi-modal fusion satisfies our problem setting.</p>    <p>Nojavanasghari et al. &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0031">31</a>] studied persuasiveness prediction by fusing visual, acoustic and textual features with densely connected feed-forward neural network. Lynch et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0026">26</a>] proposed to concatenate deep visual features and bag-of-words based textual feature vector for learning to rank search results. To ensure fast similarity computation, hashing-based deep multi-modal learning are also proposed&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0014">14</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0038">38</a>]. Moreover, deep multi-modal learning has achieved a great success in VQA, developing from early simple multi-modal fusion&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0001">1</a>] to later more complex deep methods&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0017">17</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0029">29</a>]. However, to our knowledge, none of multi-modal deep learning methods has been proposed to multi-modal popularity prediction task, which motivates us to take a step towards this end.</p>    </section>    <section id="sec-9">    <header>     <div class="title-info">      <h3>       <span class="section-number">2.3</span> Attention Mechanism</h3>     </div>    </header>    <p>To select important regions from images&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0028">28</a>] or focus more on some specific words relevant to machine translation&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0002">2</a>], attention mechanism has been proposed and sprung up. As the motivation illustrated in Section&#x00A0;<a class="sec" href="#sec-5">1</a>, we focus more on multi-modal attention. It has two important applications, i.e., visual question answering&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0001">1</a>] and image captioning&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0015">15</a>]. Many standard multi-modal based methods only utilize textual representation to learn attention for visual representation&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0025">25</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0043">43</a>], without providing attentions to textual modality. Until recently, attentions to both visual and textual modalities are proposed, like dual attention networks&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0029">29</a>]. On the other hand, personalization is rarely considered by multi-modal attention learning methods except&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0007">7</a>]. However, this study only utilizes a single attention mechanism to generate word sequence, which leads the methodology fundamentally different from our proposed one which proposes user-guided hierarchical attention mechanism for multi-modal popularity prediction.</p>    </section>   </section>   <section id="sec-10">    <header>    <div class="title-info">     <h2>      <span class="section-number">3</span> Our Proposed UHAN</h2>    </div>    </header>    <p>The overall architecture of the proposed UHAN is presented in Figure&#x00A0;<a class="fig" href="#fig3">3</a>. The input to UHAN is a triple each time, consisting of textual representation, visual representation, and user representation, which will be clarified later. Based on this, UHAN first exploits the proposed user-guided intra-attention to learn attended embeddings for textual and visual modalities, respectively. Moreover, UHAN adopts the novel user-guided inter-attention to judge the importance of different modalities for specific users. Through this way, it further gets an attended multi-modal representation. Besides, a shortcut connection is adopted to associate user embedding with the learned multi-modal embedding for final popularity prediction.</p>    <p>Before we continue to specify the model, we first formally define the multi-modal social image popularity prediction problem and provide some basic notations (Section&#x00A0;<a class="sec" href="#sec-11">3.1</a>). Then we introduce the input representation for textual and visual modalities (Section&#x00A0;<a class="sec" href="#sec-12">3.2</a>). In what follows, we address the user-guided hierarchical attention mechanism (Section&#x00A0;<a class="sec" href="#sec-13">3.3</a>). Finally, popularity generation and its learning process are illustrated (Section&#x00A0;<a class="sec" href="#sec-14">3.4</a>).</p>    <section id="sec-11">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.1</span> Problem Definition</h3>     </div>    </header>    <p>Before we give the formulation of the studied problem, we first introduce some mathematical notations used later. Throughout this paper, we denote matrices by bold uppercase letters and vectors by bold lowercase letters, respectively. We first indicate social image set as <span class="inline-equation"><span class="tex">$\mathcal {I}$</span>     </span> and its size is <em>N</em>. As discussed in Section&#x00A0;<a class="sec" href="#sec-5">1</a>, we focus on the three most basic elements of social images. For the <em>i</em>-th image instance <span class="inline-equation"><span class="tex">$\mathcal {I}_i$</span>     </span> in the set, we denote its detailed representation as {<strong>V</strong>     <sup>      <em>i</em>     </sup>, <strong>H</strong>     <sup>      <em>i</em>     </sup>, <strong>u</strong>     <sup>      <em>i</em>     </sup>}, where <strong>V</strong>     <sup>      <em>i</em>     </sup>, <strong>H</strong>     <sup>      <em>i</em>     </sup>, and <strong>u</strong>     <sup>      <em>i</em>     </sup> correspond to visual representation, textual representation, and user representation, respectively. When the end time is determined, we can get the real popularity score of <span class="inline-equation"><span class="tex">$\mathcal {I}_i$</span>     </span> by considering the total number of interactions during the period of time, which is defined as <em>y<sub>i</sub>     </em>. Accordingly, we formally define the problem based on the above notations:</p>    <div class="problem" id="enc1">     <Label>Problem 1 (Multi-modal Social Image Popularity Prediction).</Label>     <p> Given a new image <span class="inline-equation"><span class="tex">$\mathcal {I}_i$</span>      </span> to be published on social media, the target is to learn a function <em>f</em>: <strong>V</strong>      <sup>       <em>i</em>      </sup>, <strong>H</strong>      <sup>       <em>i</em>      </sup>, <strong>u</strong>      <sup>       <em>i</em>      </sup> &#x2192; <em>y<sub>i</sub>      </em> to predict its popularity score in the end.</p>    </div>    <p>In what follows, we take the image instance <span class="inline-equation"><span class="tex">$\mathcal {I}_i$</span>     </span> as an example to introduce UHAN. For simplicity, we will omit the superscript <em>i</em> of related notations later. In this paper, we use the terms, i.e., embedding and representation, interchangeably.</p>    </section>    <section id="sec-12">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.2</span> Construction of Input Representation</h3>     </div>    </header>    <p>     <strong>Extracting visual representation:</strong>The image embedding is obtained by a pre-trained VGGNet model&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0034">34</a>]. To satisfy the requirement of the input size for the model, we first rescale all images to 448 &#x00D7; 448. By convention&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0029">29</a>], we regard the last pooling layer of VGGNet as a feature extractor to gain visual representation <strong>V</strong> = [<strong>v</strong>     <sub>1</sub>, &#x2026;, <strong>v</strong>     <sub>      <em>M</em>     </sub>] where <span class="inline-equation"><span class="tex">$\mathbf {v}_{m}\in \mathbb {R}^{512}$</span>     </span>. <em>M</em> denotes the number of image regions which is equal to 196 in this work. Consequently, an image can be expressed as 196 vectors, each of which has dimension 512.</p>    <p>     <strong>Encoding textual representation:</strong>For the social image <span class="inline-equation"><span class="tex">$\mathcal {I}_i$</span>     </span>, it has a description <span class="inline-equation"><span class="tex">$D = \lbrace \mathbf {w}_t\rbrace _{t=1}^{l}$</span>     </span> where <strong>w</strong>     <sub>      <em>t</em>     </sub> is a one-hot embedding at position <em>t</em>. <em>l</em> is the length of the description and should satisfy the requirement <em>l</em> &#x2264; <em>L</em>, where <em>L</em> is the maximum length of the description and denoted as 50 in Figure&#x00A0;<a class="fig" href="#fig3">3</a>. Hence we can get the original textual representation <strong>H</strong> = [<strong>w</strong>     <sub>1</sub>, &#x2026;, <strong>w</strong>     <sub>      <em>l</em>     </sub>], as required by the Problem&#x00A0;<a class="enc" href="#enc1">1</a>.</p>    <p>Due to the good performance of modeling word sequence to understand language &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0036">36</a>], we further adopt long-short term memory (LSTM)&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0013">13</a>] to encode the textual representation <strong>H</strong>. Before we feed the one-hot embeddings of words into LSTM, we first convert each of them into a low-dimensional dense vector <span class="inline-equation"><span class="tex">$\check{\mathbf {w}}_t$</span>     </span> by a word embedding matrix <strong>W</strong>     <sub>      <em>W</em>     </sub>: <div class="table-responsive" id="eq1">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \check{\mathbf {w}}_t = \mathbf {W}_W \mathbf {w}_t. \end{equation} </span>       <br/>       <span class="equation-number">(1)</span>      </div>     </div>    </p>    <p>After collecting the vectors <span class="inline-equation"><span class="tex">$\lbrace \check{\mathbf {w}}_t\rbrace _{t=1}^{l}$</span>     </span>, we feed them into LSTM to generate sequential hidden states. At each time step, a LSTM unit has an input gate <strong>i</strong>     <sub>      <em>t</em>     </sub>, output gate <strong>o</strong>     <sub>      <em>t</em>     </sub>, forget gate <strong>f</strong>     <sub>      <em>t</em>     </sub>, and cell state <strong>c</strong>     <sub>      <em>t</em>     </sub>. The corresponding hidden state <strong>h</strong>     <sub>      <em>t</em>     </sub> is calculated through the follow equations: <div class="table-responsive" id="eq2">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \mathbf {i}_t = \sigma (\mathbf {W}_{Wi}\check{\mathbf {w}}_t + \mathbf {W}_{Hi}\mathbf {h}_{t-1}+\mathbf {b}_i), \end{equation} </span>       <br/>       <span class="equation-number">(2)</span>      </div>     </div>     <div class="table-responsive" id="eq3">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \mathbf {f}_t = \sigma (\mathbf {W}_{Wf}\check{\mathbf {w}}_t + \mathbf {W}_{Hf}\mathbf {h}_{t-1}+\mathbf {b}_f), \end{equation} </span>       <br/>       <span class="equation-number">(3)</span>      </div>     </div>     <div class="table-responsive" id="eq4">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \mathbf {o}_t = \sigma (\mathbf {W}_{Wo}\check{\mathbf {w}}_t + \mathbf {W}_{Ho}\mathbf {h}_{t-1}+\mathbf {b}_o), \end{equation} </span>       <br/>       <span class="equation-number">(4)</span>      </div>     </div>     <div class="table-responsive" id="eq5">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \mathbf {c}_t = \mathbf {f}_t \circ \mathbf {c}_{t-1} + \mathbf {i}_t \circ \tanh (\mathbf {W}_{Wc}\check{\mathbf {w}}_t + \mathbf {W}_{Hc}\mathbf {h}_{t-1}+\mathbf {b}_c), \end{equation} </span>       <br/>       <span class="equation-number">(5)</span>      </div>     </div>     <div class="table-responsive" id="eq6">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \mathbf {h}_t = \mathbf {o}_t \circ \tanh (\mathbf {c}_t), \end{equation} </span>       <br/>       <span class="equation-number">(6)</span>      </div>     </div> where &#x25CB; is the Hadamard product. <strong>W</strong>     <sub>      <em>W</em> &#x00B7;</sub>, <strong>W</strong>     <sub>      <em>H</em> &#x00B7;</sub> and <strong>b</strong>     <sub>&#x00B7;</sub> are the parameters of LSTM to be learned. <em>&#x03C3;</em> is the sigmoid activation function. After recurrent computation for each time step, we gather a series of hidden states <span class="inline-equation"><span class="tex">$\lbrace \mathbf {h}_{t}\rbrace _{t=1}^l$</span>     </span>. We denote them as <span class="inline-equation"><span class="tex">$\check{\mathbf {H}}= [\mathbf {h}_1,\ldots ,\mathbf {h}_l]$</span>     </span> , which will be later used in the user-guided hierarchical attention computation.</p>    <p>     <strong>Encoding user representation:</strong>The publisher (user) of the social image <span class="inline-equation"><span class="tex">$\mathcal {I}_i$</span>     </span> is originally expressed as a one-hot representation <strong>u</strong>. To convert it into a low-dimensional embedding <span class="inline-equation"><span class="tex">$\check{\mathbf {u}}$</span>     </span>, we define a user embedding matrix <strong>W</strong>     <sub>      <em>U</em>     </sub> and perform the following transformation: <div class="table-responsive" id="eq7">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \check{\mathbf {u}}= \mathbf {W}_U \mathbf {u}. \end{equation} </span>       <br/>       <span class="equation-number">(7)</span>      </div>     </div> Intuitively, user embeddings could capture some user hidden characteristics such as preference, which will be used to guide the learning of multi-modal representation.</p>    <p>In summary, we have visual representation <strong>V</strong>, textual embeddings <span class="inline-equation"><span class="tex">$\check{\mathbf {H}}$</span>     </span>, and user embedding <span class="inline-equation"><span class="tex">$\check{\mathbf {u}}$</span>     </span> as input for the user-guided hierarchical attention computation. We should emphasize that UHAN will learn all the above parameters together, including the user and word embedding matrices, and the parameters of LSTM.</p>    </section>    <section id="sec-13">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.3</span> User-guided Hierarchical Attention Mechanism</h3>     </div>    </header>    <p>Our model UHAN performs user-guided intra-attention and inter-attention computations in different layers, which form a hierarchical attention network that could learn more suitable representations from visual and textual modalities.</p>    <p>     <strong>User-guided intra-attention mechanism:</strong>This attention mechanism is proposed to attend each modality to obtain textual and visual embeddings, respectively. Thus, it actually contains two attention computations, one for visual modality and the other for textual modality. However, we should emphasize that the attention computation for each modality is based on a personalized multi-modal embedding correlation scheme which involves user, visual and textual embeddings simultaneously.</p>    <p>We first explicitly indicate the dimension of all the input to the user-guided hierarchical attention computation, i.e., <span class="inline-equation"><span class="tex">$\mathbf {V}\in \mathbb {R}^{196\times 512}$</span>     </span>, <span class="inline-equation"><span class="tex">$\check{\mathbf {H}}\in \mathbb {R}^{\mathrm{L}\times \mathrm{K}_W}$</span>     </span>, and <span class="inline-equation"><span class="tex">$\check{\mathbf {u}}\in \mathbb {R}^{\mathrm{K}_U}$</span>     </span>. K<sub>      <em>W</em>     </sub> and K<sub>      <em>U</em>     </sub> are the dimensions of word and user embeddings, respectively. To be consistent with what Figure&#x00A0;<a class="fig" href="#fig3">3</a> shows, we let L = 50, K<sub>      <em>W</em>     </sub> = 512, and K<sub>      <em>U</em>     </sub> = 512 for ease of presentation. Before introducing how to compute the two attentions, we should clarify that the attentions for visual and textual modalities are calculated simultaneously.</p>    <p>     <strong>(1) Attention computation for visual modality.</strong> Based on the above specification, we illustrate how to implement the embedding correlation scheme to execute attention computation for visual modality. We convert textual embedding matrix into a vector representation <span class="inline-equation"><span class="tex">$\bar{\mathbf {h}}$</span>     </span> through the follow equation: <div class="table-responsive" id="eq8">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \bar{\mathbf {h}}= \frac{1}{l} \cdot \check{\mathbf {H}}\vec{ {1}}, \end{equation} </span>       <br/>       <span class="equation-number">(8)</span>      </div>     </div> where <span class="inline-equation"><span class="tex">$\vec{ {1}}$</span>     </span> is a vector with all elements to be 1. This equation can be regarded as a mean-pooling operation applied to the hidden states of the word sequence to get an integrated textual representation for attending visual modality. After that, the representations of user and text are both vectors.</p>    <p>We formally define the computational formula of personalized multi-modal embedding correlation scheme for determining the visual attention as follows: <div class="table-responsive" id="eq9">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \mathbf {r}_{V,m} = \mathbf {W}_{V}^{1}\Big (\tanh (\mathbf {W}_{Vv}^{1}\mathbf {v}_m) \circ \tanh (\mathbf {W}_{Vu}^{1}\check{\mathbf {u}}) \circ \tanh (\mathbf {W}_{Vt}^{1}\bar{\mathbf {h}})\Big), \end{equation} </span>       <br/>       <span class="equation-number">(9)</span>      </div>     </div> where <strong>r</strong>     <sub>      <em>V</em>, <em>m</em>     </sub> denotes the importance score of region <em>m</em> in the target image. tanh&#x2009; is adopted to ensure values of different modalities mapped to the same narrow space, which benefits gradient based optimization algorithms&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0018">18</a>]. The parameter matrices of intra-attention to visual modality satisfy the following requirements, i.e., <span class="inline-equation"><span class="tex">$\mathbf {W}_{V}^{1}\in \mathbb {R}^{1\times 512}$</span>     </span>, <span class="inline-equation"><span class="tex">$\mathbf {W}_{Vv}^{1},\mathbf {W}_{Vu}^{1}$</span>     </span> and <span class="inline-equation"><span class="tex">$\mathbf {W}_{Vt}^{1}\in \mathbb {R}^{512\times 512}$</span>     </span>. The intuitive interpretation of the above equation is that it could be regarded as calculating the relevance of each visual region to user and textual embeddings jointly. Therefore, user and text can guide attention learning of visual modality and indicate which region of image is important to reveal popularity. Suppose <em>&#x03B1;<sub>V</sub>     </em> denotes the probability distribution of attention importance, which is given by: <div class="table-responsive" id="eq10">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \alpha _{V} = \mathrm{Softmax}(\mathbf {r}_V). \end{equation} </span>       <br/>       <span class="equation-number">(10)</span>      </div>     </div> Finally, based on the attention distribution, we can gain an attended whole image representation <span class="inline-equation"><span class="tex">$\dot{\mathbf {v}}$</span>     </span> by: <div class="table-responsive" id="eq11">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \dot{\mathbf {v}}= \sum _m \alpha _{V,m}\cdot \mathbf {v}_{m}. \end{equation} </span>       <br/>       <span class="equation-number">(11)</span>      </div>     </div>    </p>    <p>     <strong>(2) Attention computation for textual modality.</strong> Following Equation&#x00A0;<a class="eqn" href="#eq8">8</a>, we first define the mean-pooling formula to get a vector representation <span class="inline-equation"><span class="tex">$\bar{\mathbf {v}}$</span>     </span> of visual modality as follows: <div class="table-responsive" id="eq12">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \bar{\mathbf {v}}= \frac{1}{196} \cdot \mathbf {V}\vec{ {1}}. \end{equation} </span>       <br/>       <span class="equation-number">(12)</span>      </div>     </div> Likewise, attentions to each hidden state representation of the word sequence are further calculated by: <div class="table-responsive" id="eq13">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \mathbf {r}_{T,t} = \mathbf {W}_{T}^{1}\Big (\tanh (\mathbf {W}_{Tt}^{1}\mathbf {h}_t) \circ \tanh (\mathbf {W}_{Tu}^{1}\check{\mathbf {u}}) \circ \tanh (\mathbf {W}_{Tv}^{1}\bar{\mathbf {v}})\Big), \end{equation} </span>       <br/>       <span class="equation-number">(13)</span>      </div>     </div>     <div class="table-responsive" id="eq14">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \alpha _{T} = \mathrm{Softmax}(\mathbf {r}_T), \end{equation} </span>       <br/>       <span class="equation-number">(14)</span>      </div>     </div> where the parameter matrices of intra-attention to textual modality satisfy <span class="inline-equation"><span class="tex">$\mathbf {W}_{T}^{1}\in \mathbb {R}^{1\times 512}$</span>     </span>, <span class="inline-equation"><span class="tex">$\mathbf {W}_{Tv}^{1},\mathbf {W}_{Tu}^{1}$</span>     </span> and <span class="inline-equation"><span class="tex">$\mathbf {W}_{Tt}^{1}\in \mathbb {R}^{512\times 512}$</span>     </span>. <strong>r</strong>     <sub>      <em>T</em>, <em>t</em>     </sub> represents the importance score of hidden state <strong>h</strong>     <sub>      <em>t</em>     </sub> and <em>&#x03B1;<sub>T</sub>     </em> denotes the probability distribution of attention importance as well. It is necessary to conduct the importance calculation since some words in a textual description, including its corresponding title, may be irrelevant to popularity and even off-topic. Consequently, we can get the attended whole text embedding <span class="inline-equation"><span class="tex">$\dot{\mathbf {h}}$</span>     </span> via the following equation: <div class="table-responsive" id="eq15">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \dot{\mathbf {h}}= \sum _t \alpha _{T,t}\cdot \mathbf {h}_{t}. \end{equation} </span>       <br/>       <span class="equation-number">(15)</span>      </div>     </div>    </p>    <p>In summary, we obtain the attended whole image embedding <span class="inline-equation"><span class="tex">$\dot{\mathbf {v}}$</span>     </span> and text embedding <span class="inline-equation"><span class="tex">$\dot{\mathbf {h}}$</span>     </span> through the user-guided intra-attention mechanism. We further feed these two embeddings into user-guided inter-attention computation.</p>    <p>     <strong>User-guided inter-attention mechanism:</strong>The inter-attention mechanism is proposed to capture different importance of the studied two modalities. The intuition lies in the aspect that different users have diverse concentrations on textual and visual modalities of their posted images. And even for the same user, when he is prepared to post an image, he might focus more on different modalities in different situations. The imbalance of attention mights makes the two modalities have different influence on popularity.</p>    <p>We denote the attention to visual modality as <em>a</em>     <sub>1</sub> and textual modality as <em>a</em>     <sub>2</sub>, satisfying <em>a</em>     <sub>1</sub> + <em>a</em>     <sub>2</sub> = 1. Then we define the formula to calculate <em>a</em>     <sub>1</sub> and <em>a</em>     <sub>2</sub> through the following equations: <div class="table-responsive" id="eq16">      <div class="display-equation">       <span class="tex mytex">\begin{equation} uv = \mathbf {W}_{UVT}^2\Big (\tanh (\mathbf {W}_{V}^{2}\dot{\mathbf {v}}) \circ \tanh (\mathbf {W}_{U}^{2}\check{\mathbf {u}})\Big), \end{equation} </span>       <br/>       <span class="equation-number">(16)</span>      </div>     </div>     <div class="table-responsive" id="eq17">      <div class="display-equation">       <span class="tex mytex">\begin{equation} ut = \mathbf {W}_{UVT}^2\Big (\tanh (\mathbf {W}_{T}^{2}\dot{\mathbf {h}}) \circ \tanh (\mathbf {W}_{U}^{2}\check{\mathbf {u}})\Big), \end{equation} </span>       <br/>       <span class="equation-number">(17)</span>      </div>     </div>     <div class="table-responsive" id="eq18">      <div class="display-equation">       <span class="tex mytex">\begin{equation} a_1 = \frac{\exp (uv)}{\exp (uv)+\exp (ut)}, \end{equation} </span>       <br/>       <span class="equation-number">(18)</span>      </div>     </div>     <div class="table-responsive" id="eq19">      <div class="display-equation">       <span class="tex mytex">\begin{equation} a_2 = \frac{\exp (ut)}{\exp (uv)+\exp (ut)}, \end{equation} </span>       <br/>       <span class="equation-number">(19)</span>      </div>     </div> where <em>uv</em> denotes the relevance score between user and visual modality, and <em>ut</em> corresponds to user and textual modality. The parameter matrices of inter-attention computation satisfy <span class="inline-equation"><span class="tex">$\mathbf {W}_{UVT}^2\in \mathbb {R}^{1\times 512}$</span>     </span>, <span class="inline-equation"><span class="tex">$\mathbf {W}_{U}^{2}, \mathbf {W}_{V}^{2}$</span>     </span> and <span class="inline-equation"><span class="tex">$\mathbf {W}_{T}^{2}\in \mathbb {R}^{512\times 512}$</span>     </span>. Upon this, we can compute the attended multi-modal embedding <strong>s</strong> as follows: <div class="table-responsive" id="eq20">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \mathbf {s}= a_1\cdot \dot{\mathbf {v}}+a_2\cdot \dot{\mathbf {h}}. \end{equation} </span>       <br/>       <span class="equation-number">(20)</span>      </div>     </div>    </p>    </section>    <section id="sec-14">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.4</span> Learning for Popularity Prediction</h3>     </div>    </header>    <p>To test whether the user embedding <span class="inline-equation"><span class="tex">$\check{\mathbf {u}}$</span>     </span> has additional influence on popularity besides its major role of guiding the computation of attention to multi-modalities, we adopt a shortcut connection strategy&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0011">11</a>] and calculate the updated multi-modal embedding as follows: <div class="table-responsive" id="eq21">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \mathbf {s}:= \mathbf {s}+ \mathbf {W}_{U}^3\check{\mathbf {u}}, \end{equation} </span>       <br/>       <span class="equation-number">(21)</span>      </div>     </div> where <span class="inline-equation"><span class="tex">$\mathbf {W}_{U}^3\in \mathbb {R}^{512\times 512}$</span>     </span>. After that, we utilize a simple 2-layer feed-forward neural network to generate final popularity prediction, which does not incur much model complexity and ensures the capacity of nonlinear modeling. More specifically, we define the computational formula as follows: <div class="table-responsive" id="eq22">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \hat{y} = \mathbf {W}_F^2\mathrm{ReLU}(\mathbf {W}_F^1\mathbf {s}+\mathbf {b}_F^1) + b^2, \end{equation} </span>       <br/>       <span class="equation-number">(22)</span>      </div>     </div> where ReLU represents the rectified linear unit, which is the nonlinear activation function with the form, ReLU(x) = max(0, x). <span class="inline-equation"><span class="tex">$\mathbf {W}_F^1\in \mathbb {R}^{512\times 512}$</span>     </span> and <span class="inline-equation"><span class="tex">$\mathbf {b}_F^1\in \mathbb {R}^{512}$</span>     </span> are the parameters of the first layer. <span class="inline-equation"><span class="tex">$\mathbf {W}_F^2\in \mathbb {R}^{512}$</span>     </span> and <span class="inline-equation"><span class="tex">$b^2\in \mathbb {R}$</span>     </span> are the second layer&#x0027;s parameters. And <span class="inline-equation"><span class="tex">$\hat{y}$</span>     </span> indicates the predicted popularity score we strive to generate.</p>    <p>We regard the learning of UHAN as a regression task. Mean square error (MSE) is adopted as the optimization metric. It is worth noting that the main focus of this paper is to consider how to effectively learn representation from unstructured visual and textual modalities for social image popularity prediction. Therefore, we do not consider modeling some structured and hand-crafted features such as social clues, user and sentiment features&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0009">9</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0027">27</a>]. However, our model could be easily extended to capture different features. One simple way is to concatenate the representation of features with the final multi-modal embedding <strong>s</strong> obtained by our model. Actually, we find this way can further improve the performance in our local test, which we do not introduce in the experiments.</p>    </section>   </section>   <section id="sec-15">    <header>    <div class="title-info">     <h2>      <span class="section-number">4</span> Experiment</h2>    </div>    </header>    <p>In this section, we present the detailed experimental results and some further analysis to answer the following essential research questions:</p>    <ul class="list-no-style">    <li id="uid38" label="Q1:">What are the prediction results of the proposed UHAN compared with other strong alternatives?<br/></li>    <li id="uid39" label="Q2:">Does the joint considering of visual and textual modalities indeed benefit the studied problem?<br/></li>    <li id="uid40" label="Q3:">How does each component of UHAN contribute to the prediction performance?<br/></li>    </ul>    <p>Keeping these questions in mind, we first provide the details of experimental setups, including the dataset, evaluation metrics, baselines, and implementation details. Afterwards, we answer the three questions in sequence. Besides, we conduct qualitative analysis by some case studies to show the intuitive sense of our proposed UHAN.</p>    <section id="sec-16">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.1</span> Experimental Setup</h3>     </div>    </header>    <section id="sec-17">     <p><em>4.1.1 Dataset.</em> To our knowledge, there is no publicly available social image dataset which contains both unstructured visual and textual modalities for popularity prediction. We build such a dataset by extending a publicly accessible dataset<a class="fn" href="#fn2" id="foot-fn2"><sup>2</sup></a> which is collected from Flickr&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0040">40</a>] and has only unstructured visual modality and some structured features. For each social image in the original dataset, we further crawl its corresponding title and introduction to form the unstructured textual modality.</p>     <p>Given this extended dataset, we conduct the following preprocessing procedures. We first remove all non-English characters, tokenize each text, and convert each word to lowercase. We further remove words with less than five occurrences in our dataset to keep them statistically significant. Afterwards, we remove images with its description less than five words, similar to the procedure adopt in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0022">22</a>]. Finally, we obtain the dataset in our experiment and release it along with the source code, as introduced in Section&#x00A0;<a class="sec" href="#sec-5">1</a>.</p>     <p>Overall, we have about 179K social images and the statistics of the dataset is summarized in Table&#x00A0;<a class="tbl" href="#tab1">1</a>. To evaluate the performance of UHAN and other adopted methods, we split the dataset in chronological order and regard the first 70% as our training dataset, which is a little more consistent with real situation than just randomly splitting. For the rest of the dataset, we randomly adopt one third as the validation dataset to determine optimal parameters and two thirds as the test dataset to report prediction performance. Note that each user in the dataset has enough images.</p>     <div class="table-responsive" id="tab1">      <div class="table-caption">       <span class="table-number">Table 1:</span>       <span class="table-title">Basic statistics of the dataset.</span>      </div>      <table class="table">       <tbody>       <tr>        <td style="text-align:center;"><strong>Data</strong>        </td>        <td style="text-align:center;">Image#</td>        <td style="text-align:center;">Word#</td>        <td style="text-align:center;">User#</td>        <td style="text-align:center;">Time Span</td>       </tr>       <tr>        <td style="text-align:center;">         <strong>Flickr179K</strong>        </td>        <td style="text-align:center;">179,686</td>        <td style="text-align:center;">70,170</td>        <td style="text-align:center;">128</td>        <td style="text-align:center;">2007-2013</td>       </tr>       </tbody>      </table>     </div>    </section>    <section id="sec-18">     <p><em>4.1.2 Evaluation Metrics.</em> As the studied problem belongs to regression task, we adopt two standard metrics, i.e., mean square errors (MSE) and mean absolute errors (MAE), which are widely used in literature&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0024">24</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0040">40</a>]. Denote <em>y<sub>i</sub>      </em> to be the ground truth for record <em>i</em> and <span class="inline-equation"><span class="tex">$\hat{y}_i$</span>      </span> to be the prediction value, we can calculate MSE and MAE as follows: <div class="table-responsive" id="eq23">       <div class="display-equation">       <span class="tex mytex">\begin{equation} \begin{split} &#x0026;\mathrm{MSE}= \frac{1}{n^{te}}\sum _{i=1}^{n^{te}} (y_i-\hat{y}_i)^2,\\ &#x0026;\mathrm{MAE}= \frac{1}{n^{te}}\sum _{i=1}^{n^{te}} |y_i-\hat{y}_i|, \end{split} \end{equation} </span>       <br/>       <span class="equation-number">(23)</span>       </div>      </div> where <em>n<sup>te</sup>      </em> is the size of test set. We adopt the popularity score <em>y<sub>i</sub>      </em> calculated by&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0040">40</a>], which is given by: <div class="table-responsive" id="eq24">       <div class="display-equation">       <span class="tex mytex">\begin{equation} y_i = \log _2(\frac{c_i}{d_i} + 1), \end{equation} </span>       <br/>       <span class="equation-number">(24)</span>       </div>      </div> where <em>c</em> is the total view count of the social image <em>i</em> and <em>d</em> represents how many days it has been from the time it has been posted to the specified end time.</p>    </section>    <section id="sec-19">     <p><em>4.1.3 Baselines.</em> We compare our proposed UHAN with several carefully selected alternative methods, including some strong baselines based on multi-modal learning or attention mechanism.</p>     <ul class="list-no-style">      <li id="list4" label="&#x2022;"><strong>HisAve.</strong> The first baseline is the simplest one which regards historical average popularity as prediction. It provides benchmark performance for other methods.<br/></li>      <li id="list5" label="&#x2022;"><strong>SVR.</strong>Based on various hand-crafted features, &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0016">16</a>] adopts support vector regression (SVR) for social image popularity prediction but without explicitly modeling unstructured textual modality. Following this, we additionally incorporate textual features such as TF-IDF and word embedding (GloVe&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0032">32</a>]) while keeping basic visual features such as color and deep learning based features. We have tried different combinations of feature types and report the best results.<br/></li>      <li id="list6" label="&#x2022;"><strong>DMF.</strong> It is a deep learning approach based on multi-modal learning. We adopt a similar deep multi-modal fusion (DMF) strategy widely used in literature&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0026">26</a>] to integrate visual representation from VGG and textual representation from LSTM.<br/></li>      <li id="list7" label="&#x2022;"><strong>DualAtt.</strong> The last strong baseline is inspired by a recent dual attention network which involves simultaneous visual and textual attentions&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0029">29</a>]. We adapt the one-layered version of the original one to our problem setting by utilizing user representation to guide attention learning.<br/></li>     </ul>     <p>To ensure robust comparison, we run each model three times and report their average performance. <figure id="fig4">       <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186026/images/www2018-35-fig4.jpg" class="img-responsive" alt="Figure 4"        longdesc=""/>       <div class="figure-caption">       <span class="figure-number">Figure 4:</span>       <span class="figure-title">Attention map visualization of two examples in our test dataset. Darker regions of images mean smaller attention weights. The lighter the font color is, the smaller attention weight the word will get.</span>       </div>      </figure>     </p>    </section>    <section id="sec-20">     <p><em>4.1.4 Implementation Details.</em> For textual modality, we set the maximum length of image description to 50 by truncating longer one. The dimension of word embedding and hidden state in LSTM are both set to 512. For visual modality, as introduced in Section&#x00A0;<a class="sec" href="#sec-12">3.2</a>, the input dimension to our model is 196 &#x00D7; 512. In addition, we set the dimension of user embedding to 512 as well.</p>     <p>We implement our proposed UHAN based on the Keras library. Adam with default parameter setting&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0019">19</a>] is adopted to optimize the model, with the mini-batch size of 128. We terminate the learning process with an early stopping strategy. More specifically, we test model performance on the validation dataset every 64 batches. When the best performance keeps unchanged for more than 20 iterations, the learning process will be stopped.</p>     <div class="table-responsive" id="tab2">      <div class="table-caption">       <span class="table-number">Table 2:</span>       <span class="table-title">Evaluation results of our proposed UHAN and other adopted baselines in terms of MSE and MAE.</span>      </div>      <table class="table">       <tbody>       <tr>        <td style="text-align:left;"><strong>Methods</strong>        </td>        <td style="text-align:center;">MSE</td>        <td style="text-align:center;">MAE</td>       </tr>       <tr>        <td style="text-align:left;">HisAve</td>        <td style="text-align:center;">4.070</td>        <td style="text-align:center;">1.575</td>       </tr>       <tr>        <td style="text-align:left;">SVR</td>        <td style="text-align:center;">3.193</td>        <td style="text-align:center;">1.385</td>       </tr>       <tr>        <td style="text-align:left;">DMF</td>        <td style="text-align:center;">3.004</td>        <td style="text-align:center;">1.339</td>       </tr>       <tr>        <td style="text-align:left;">DualAtt</td>        <td style="text-align:center;">2.412</td>        <td style="text-align:center;">1.185</td>       </tr>       <tr>        <td style="text-align:left;">UHAN (w/o u)</td>        <td style="text-align:center;">3.050</td>        <td style="text-align:center;">1.347</td>       </tr>       <tr>        <td style="text-align:left;">UHAN (w/o sc)</td>        <td style="text-align:center;">2.283</td>        <td style="text-align:center;">1.139</td>       </tr>       <tr>        <td style="text-align:left;">         <strong>UHAN</strong>        </td>        <td style="text-align:center;">         <strong>2.246</strong>        </td>        <td style="text-align:center;">         <strong>1.130</strong>        </td>       </tr>       </tbody>      </table>     </div>    </section>    </section>    <section id="sec-21">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.2</span> Model Comparison (<tt>       <strong>Q1</strong>       </tt>)</h3>     </div>    </header>    <p>Table&#x00A0;<a class="tbl" href="#tab2">2</a> shows the performance comparison between UHAN and the compared baselines in terms of MSE and MAE. First, we can see HisAve performs much worse than all the other methods. It is consistent with our expectation since it does not consider any useful information about visual and textual modalities. By comparing DMF and SVR, we find DMF performs better, showing that deep multi-modal fusion based method is promising for this task. DualAtt further improves DMN by a significant margin. It is intuitive that DualAtt is a strong baseline since we adapt it to the studied problem by performing user attention to both visual and textual modalities separately. The comparison also reveals that considering attention mechanism in multi-modal learning is beneficial.</p>    <p>We further verify the role of users in our proposed UHAN by providing its two simplified versions, i.e., UHAN (w/o sc) which just removes the shortcut connection and UHAN (w/o u) that completely disregards user embedding. By comparing UHAN with UHAN (w/o sc), we see slightly better improvements, which demonstrates that the user embedding mainly utilized for attention computation can also facilitate the prediction. By testing UHAN (w/o u), we can see a notable performance drop compared with UHAN. This phenomenon shows that proposing user guidance for attention learning is indeed effective.</p>    <p>In summary, UHAN and its variant UHAN (w/o sc) achieve the best results among all the methods, including gaining notable improvements over the strong baseline DualAtt. We could conclude that the framework is effective and behaves well among all the adopted methods, which can answer question <span class="inline-equation"><span class="tex">$\texttt {Q1}$</span>     </span>.</p>    </section>    <section id="sec-22">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.3</span> Modality Contribution (<tt>       <strong>Q2</strong>       </tt>)</h3>     </div>    </header>    <p>We choose two representative methods (SVR (not deep) and UHA (deep)) to test whether fusing visual and textual modalities indeed promote popularity prediction. We denote visual modality as V and textual modality as T for short, respectively. Thus &#x201C;(w/o V)&#x201D; means removing visual modality for corresponding methods and it is similar for &#x201C;(w/o T)&#x201D;.</p>    <div class="table-responsive" id="tab3">     <div class="table-caption">      <span class="table-number">Table 3:</span>      <span class="table-title">Performance test of unstructured modalities.</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;"><strong>Methods</strong>       </td>       <td style="text-align:center;">MSE</td>       <td style="text-align:center;">MAE</td>       </tr>       <tr>       <td style="text-align:left;">SVR (w/o V)</td>       <td style="text-align:center;">3.214</td>       <td style="text-align:center;">1.392</td>       </tr>       <tr>       <td style="text-align:left;">SVR (w/o T)</td>       <td style="text-align:center;">3.644</td>       <td style="text-align:center;">1.484</td>       </tr>       <tr>       <td style="text-align:left;">SVR</td>       <td style="text-align:center;">3.193</td>       <td style="text-align:center;">1.385</td>       </tr>       <tr>       <td style="text-align:left;">UHAN (w/o V)</td>       <td style="text-align:center;">2.321</td>       <td style="text-align:center;">1.151</td>       </tr>       <tr>       <td style="text-align:left;">UHAN (w/o T)</td>       <td style="text-align:center;">2.337</td>       <td style="text-align:center;">1.149</td>       </tr>       <tr>       <td style="text-align:left;">        <strong>UHAN</strong>       </td>       <td style="text-align:center;">        <strong>2.246</strong>       </td>       <td style="text-align:center;">        <strong>1.130</strong>       </td>       </tr>      </tbody>     </table>    </div>    <p>Table&#x00A0;<a class="tbl" href="#tab3">3</a> presents the results of modality test. We can see that for both the baseline SVR and our model UHAN, they would suffer a clear performance drop if either textual modality or visual modality is not considered. Besides, we find that the methods of &#x201C;(w/o V)&#x201D; behaves a little better than those of &#x201C;(w/o T)&#x201D;, which indicates that it might be easy to acquire knowledge from textual modality than visual modality since each words have more specific meanings than pixels. Finally, the methods of jointly fusing multi-modalities achieves the best results, reflecting that the two modalities might complement each other for the studied problem. Based on the above illustration, we can answer question <span class="inline-equation"><span class="tex">$\texttt {Q2}$</span>     </span> that joint considering of visual and textual modalities is indeed meaningful.</p>    </section>    <section id="sec-23">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.4</span> Ablation Study (<tt>       <strong>Q3</strong>       </tt>)</h3>     </div>    </header>    <p>We consider three major components of UHAN to test their contributions to final prediction. They are: 1) user-guided intra-attention mechanism, 2) user-guided inter-attention mechanism, and 3) shortcut connection of user embedding, just as introduced in Section&#x00A0;<a class="sec" href="#sec-21">4.2</a>.</p>    <div class="table-responsive" id="tab4">     <div class="table-caption">      <span class="table-number">Table 4:</span>      <span class="table-title">Contribution of different components of UHAN.</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;"><strong>Methods</strong>       </td>       <td style="text-align:center;">MSE</td>       <td style="text-align:center;">MAE</td>       </tr>       <tr>       <td style="text-align:left;">UHAN (w/o intra+inter)</td>       <td style="text-align:center;">2.316</td>       <td style="text-align:center;">1.150</td>       </tr>       <tr>       <td style="text-align:left;">UHAN (w/o intra)</td>       <td style="text-align:center;">2.265</td>       <td style="text-align:center;">1.138</td>       </tr>       <tr>       <td style="text-align:left;">UHAN (w/o inter)</td>       <td style="text-align:center;">2.271</td>       <td style="text-align:center;">1.139</td>       </tr>       <tr>       <td style="text-align:left;">UHAN (w/o sc)</td>       <td style="text-align:center;">2.283</td>       <td style="text-align:center;">1.139</td>       </tr>       <tr>       <td style="text-align:left;">        <strong>UHAN</strong>       </td>       <td style="text-align:center;">        <strong>2.246</strong>       </td>       <td style="text-align:center;">        <strong>1.130</strong>       </td>       </tr>      </tbody>     </table>    </div>    <p>Table&#x00A0;<a class="tbl" href="#tab4">4</a> shows the corresponding results. Each of the middle three methods removes one of the three major components. They behave nearly the same in MAE, but have different performance in terms of MSE. By comparing with them, we find that UHAN outperforms them in both metrics. We have conducted paired t-test to show the significance of UHAN over the three variants in terms of MAE and found the difference is significant. Moreover, we compare UHAN with UHAN (w/o intra+inter) and the notable performance gap further indicates the benefit of the proposed attention mechanism. Based on these results, we see the positive contribution of each component and can answer the question <span class="inline-equation"><span class="tex">$\texttt {Q3}$</span>     </span>.</p>    </section>    <section id="sec-24">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.5</span> Qualitative Analysis</h3>     </div>    </header>    <p>In addition to the above quantitative analysis, we visualize some attention maps generated by our model and some other methods to qualitatively analyze the performance. <figure id="fig5">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186026/images/www2018-35-fig5.jpg" class="img-responsive" alt="Figure 5"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 5:</span>       <span class="figure-title">Case study for our model. The left column shows the original examples while the right presents the attention maps generated by our proposed UHAN and popularity scores predicted by UHAN.</span>      </div>     </figure>     <strong>Different models for the same example:</strong>In order to intuitively verify the advantages of our proposed UHAN, especially for the user-guided hierarchical attention mechanism, we select two image instances from our test dataset and show their attention maps for the selected attention based models in Figure&#x00A0;<a class="fig" href="#fig4">4</a>.</p>    <p>We can first see our model clearly gains good visual attention maps in both two examples since it concentrates more on their key elements, which is consistent with human cognition. For the variant of our model, UHAN (w/o inter), its performance is slightly worse than UHAN in the first example, but is much worse in the second. This phenomenon indicates that the user-guided inter-attention mechanism could indeed influence the attention map learned for each modality. The attention maps generated by DualAtt seem to be not good for both images.</p>    <p>For the textual modality, our model shows good attentions to keywords in the descriptions. However, UHAN (w/o inter) presents an unexpected attention to the preposition &#x2018;in&#x2019; in the first example. For the model of DualAtt, its major attention focuses on &#x2018;muscadine vines&#x2019; in the first example. Nevertheless, this phrase might not be the one we want because it does not match with the key element in the image. Besides, its attention distribution in the second example seems to be a little chaotic. To sum up, this qualitative evaluation empirically demonstrates the effectiveness of UHAN, especially for its proposed attention mechanisms.</p>    <p>     <strong>Our model for different examples:</strong>According to the predictions generated by our model, we select two examples with good prediction results and one with bad results, and further show them in Figure&#x00A0;<a class="fig" href="#fig5">5</a>.</p>    <p>We can see clearly that the two examples in the top of the figure have good results. For both of them, the corresponding attention maps are shown in the left parts. Accordingly, we can easily focus on the important elements in the images, which meets our intuition that good attention results could lead better popularity prediction performance. Moreover, by considering the last example, we find that there seems to be no obvious object or other important elements in the image. It is even not easy for ordinary users to judge its quality and popularity. Actually, some background knowledge about aesthetics might be necessary. As a result, it might be one of the main reasons that lead to an obscure attention map and poor popularity prediction result. <figure id="fig6">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186026/images/www2018-35-fig6.jpg" class="img-responsive" alt="Figure 6"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 6:</span>       <span class="figure-title">Case study for personalization regarding attention generation.</span>      </div>     </figure>     <strong>User personalization:</strong>In Figure&#x00A0;<a class="fig" href="#fig6">6</a>, we select two users with different styles. &#x201C;User A&#x201D; usually posts images that contain people, while &#x201C;User B&#x201D; rarely posts this type of images, but prefers some other objects. Therefore, we can see that attention maps generated for the images of &#x201C;User A&#x201D; commonly focus on people. However, for the last image of the user, it is mainly about a plane. As it does not belong to his commonly related categories, the corresponding attention map seems to be not very good as well. However, we can see that the second image of &#x201C;User B&#x201D; is also about a plane. But this time the generated attention map seems to be good to capture the sketch of the plane. In short, users may have different degrees of personalization, which influences attention computation and leads personalized attention maps.</p>    </section>   </section>   <section id="sec-25">    <header>    <div class="title-info">     <h2>      <span class="section-number">5</span> Conclusion</h2>    </div>    </header>    <p>In this paper, we have studied the problem of multi-modal social image popularity prediction. To consider representation learning from multi-modalities for popularity prediction, which is often ignored by relevant studies, we have proposed a user-guided hierarchical attention network (UHAN) model. The major novelty of UHAN is the proposed user-guided hierarchical attention mechanism that can combine the representation learning of multi-modalities and popularity prediction in an end-to-end learning framework. We have built a large-scale multi-modal social image dataset by simply extending a publicly accessible dataset. The experiments have demonstrated the rationality of our proposed UHAN and its good performance compared with several other strong baselines.</p>   </section>   <section id="sec-26">    <header>    <div class="title-info">     <h2>Acknowledgments</h2>    </div>    </header>    <p>We thank the anonymous reviewers for their valuable and constructive comments. We also thank Bo Wu et al. for the released valuable dataset. This work was supported in part by NSFC (61702190), Shanghai Sailing Program (17YF1404500), SHMEC (16CG24), NSFC-Zhejiang (U1609220), and NSFC (61672231, 61672236). J. Wang is the corresponding author.</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>    <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>    </div>    </header>    <ul class="bibUl">    <li id="BibPLXBIB0001" label="[1]">Stanislaw Antol, Aishwarya Agrawal, Jiasen Lu, Margaret Mitchell, Dhruv Batra, C.&#x00A0;Lawrence Zitnick, and Devi Parikh. 2015. VQA: Visual Question Answering. In <em>      <em>ICCV</em>     </em>. 2425&#x2013;2433.</li>    <li id="BibPLXBIB0002" label="[2]">Dzmitry Bahdanau, Kyunghyun Cho, and Yoshua Bengio. 2014. Neural Machine Translation by Jointly Learning to Align and Translate. <em>      <em>CoRR</em>     </em>abs/1409.0473(2014). arxiv:1409.0473</li>    <li id="BibPLXBIB0003" label="[3]">David&#x00A0;M. Blei, Andrew&#x00A0;Y. Ng, and Michael&#x00A0;I. Jordan. 2003. Latent Dirichlet Allocation. <em>      <em>Journal of Machine Learning Research</em>     </em>3 (2003), 993&#x2013;1022.</li>    <li id="BibPLXBIB0004" label="[4]">Biao Chang, Hengshu Zhu, Yong Ge, Enhong Chen, Hui Xiong, and Chang Tan. 2014. Predicting the Popularity of Online Serials with Autoregressive Models. In <em>      <em>CIKM</em>     </em>. 1339&#x2013;1348.</li>    <li id="BibPLXBIB0005" label="[5]">Jingyuan Chen, Xuemeng Song, Liqiang Nie, Xiang Wang, Hanwang Zhang, and Tat-Seng Chua. 2016. Micro Tells Macro: Predicting the Popularity of Micro-Videos via a Transductive Model. In <em>      <em>MM</em>     </em>. 898&#x2013;907.</li>    <li id="BibPLXBIB0006" label="[6]">Kan Chen, Jiang Wang, Liang-Chieh Chen, Haoyuan Gao, Wei Xu, and Ram Nevatia. 2015. ABC-CNN: An Attention Based Convolutional Neural Network for Visual Question Answering. <em>      <em>CoRR</em>     </em>abs/1511.05960(2015). arxiv:1511.05960</li>    <li id="BibPLXBIB0007" label="[7]">Cesc Chunseong&#x00A0;Park, Byeongchang Kim, and Gunhee Kim. 2017. Attend to You: Personalized Image Captioning With Context Sequence Memory Networks. In <em>      <em>CVPR</em>     </em>. 895&#x2013;903.</li>    <li id="BibPLXBIB0008" label="[8]">Peng Cui, Fei Wang, Shaowei Liu, Mingdong Ou, Shiqiang Yang, and Lifeng Sun. 2011. Who should share what?: item-level social influence prediction for users and posts ranking. In <em>      <em>SIGIR</em>     </em>. 185&#x2013;194.</li>    <li id="BibPLXBIB0009" label="[9]">Francesco Gelli, Tiberio Uricchio, Marco Bertini, Alberto&#x00A0;Del Bimbo, and Shih-Fu Chang. 2015. Image Popularity Prediction in Social Media Using Sentiment and Context Features. In <em>      <em>MM</em>     </em>. 907&#x2013;910.</li>    <li id="BibPLXBIB0010" label="[10]">Alan&#x00A0;G Hawkes. 1971. Spectra of some self-exciting and mutually exciting point processes. <em>      <em>Biometrika</em>     </em> (1971), 83&#x2013;90.</li>    <li id="BibPLXBIB0011" label="[11]">Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. 2016. Deep Residual Learning for Image Recognition. In <em>      <em>CVPR</em>     </em>. 770&#x2013;778.</li>    <li id="BibPLXBIB0012" label="[12]">Xiangnan He, Ming Gao, Min-Yen Kan, Yiqun Liu, and Kazunari Sugiyama. 2014. Predicting the popularity of web 2.0 items based on user comments. In <em>      <em>SIGIR</em>     </em>. 233&#x2013;242.</li>    <li id="BibPLXBIB0013" label="[13]">Sepp Hochreiter and J&#x00FC;rgen Schmidhuber. 1997. Long short-term memory. <em>      <em>Neural computation</em>     </em>9, 8 (1997), 1735&#x2013;1780.</li>    <li id="BibPLXBIB0014" label="[14]">Yoonseop Kang, Saehoon Kim, and Seungjin Choi. 2012. Deep Learning to Hash with Multiple Representations. In <em>      <em>ICDM</em>     </em>. 930&#x2013;935.</li>    <li id="BibPLXBIB0015" label="[15]">Andrej Karpathy and Fei-Fei Li. 2015. Deep visual-semantic alignments for generating image descriptions. In <em>      <em>CVPR</em>     </em>. 3128&#x2013;3137.</li>    <li id="BibPLXBIB0016" label="[16]">Aditya Khosla, Atish&#x00A0;Das Sarma, and Raffay Hamid. 2014. What makes an image popular?. In <em>      <em>WWW</em>     </em>. 867&#x2013;876.</li>    <li id="BibPLXBIB0017" label="[17]">Jin-Hwa Kim, Sang-Woo Lee, Dong-Hyun Kwak, Min-Oh Heo, Jeonghee Kim, JungWoo Ha, and Byoung-Tak Zhang. 2016. Multimodal Residual Learning for Visual QA. In <em>      <em>NIPS</em>     </em>. 361&#x2013;369.</li>    <li id="BibPLXBIB0018" label="[18]">Jin-Hwa Kim, Kyoung-Woon On, Jeonghee Kim, Jung-Woo Ha, and Byoung-Tak Zhang. 2017. Hadamard product for low-rank bilinear pooling. <em>      <em>ICLR</em>     </em> (2017).</li>    <li id="BibPLXBIB0019" label="[19]">Diederik&#x00A0;P. Kingma and Jimmy Ba. 2014. Adam: A Method for Stochastic Optimization. In <em>      <em>ICLR</em>     </em>.</li>    <li id="BibPLXBIB0020" label="[20]">Himabindu Lakkaraju and Jitendra Ajmera. 2011. Attention prediction on social media brand pages. In <em>      <em>CIKM</em>     </em>. 2157&#x2013;2160.</li>    <li id="BibPLXBIB0021" label="[21]">Yann LeCun, Yoshua Bengio, and Geoffrey Hinton. 2015. Deep learning. <em>      <em>Nature</em>     </em>521, 7553 (2015), 436&#x2013;444.</li>    <li id="BibPLXBIB0022" label="[22]">Kathy Lee, Ashequl Qadir, Sadid&#x00A0;A. Hasan, Vivek&#x00A0;V. Datla, Aaditya Prakash, Joey Liu, and Oladimeji Farri. [n. d.]. Adverse Drug Event Detection in Tweets with Semi-Supervised Convolutional Neural Networks. In <em>      <em>WWW</em>     </em>. 705&#x2013;714.</li>    <li id="BibPLXBIB0023" label="[23]">Chee&#x00A0;Wee Leong, Rada Mihalcea, and Samer Hassan. 2010. Text Mining for Automatic Image Tagging. In <em>      <em>COLING</em>     </em>. 647&#x2013;655.</li>    <li id="BibPLXBIB0024" label="[24]">Cheng Li, Jiaqi Ma, Xiaoxiao Guo, and Qiaozhu Mei. 2017. DeepCas: An End-to-end Predictor of Information Cascades. In <em>      <em>WWW</em>     </em>. 577&#x2013;586.</li>    <li id="BibPLXBIB0025" label="[25]">Pan Lu, Hongsheng Li, Wei Zhang, Jianyong Wang, and Xiaogang Wang. 2018. Co-attending Free-form Regions and Detections with Multi-modal Multiplicative Feature Embedding for Visual Question Answering. In <em>      <em>AAAI</em>     </em>.</li>    <li id="BibPLXBIB0026" label="[26]">Corey Lynch, Kamelia Aryafar, and Josh Attenberg. 2016. Images Don&#x0027;t Lie: Transferring Deep Visual Semantic Features to Large-Scale Multimodal Learning to Rank. In <em>      <em>SIGKDD</em>     </em>. 541&#x2013;548.</li>    <li id="BibPLXBIB0027" label="[27]">Travis Martin, Jake&#x00A0;M. Hofman, Amit Sharma, Ashton Anderson, and Duncan&#x00A0;J. Watts. 2016. Exploring Limits to Prediction in Complex Social Systems. In <em>      <em>WWW</em>     </em>. 683&#x2013;694.</li>    <li id="BibPLXBIB0028" label="[28]">Volodymyr Mnih, Nicolas Heess, Alex Graves, and Koray Kavukcuoglu. 2014. Recurrent Models of Visual Attention. In <em>      <em>NIPS</em>     </em>. 2204&#x2013;2212.</li>    <li id="BibPLXBIB0029" label="[29]">Hyeonseob Nam, Jung-Woo Ha, and Jeonghee Kim. 2017. Dual Attention Networks for Multimodal Reasoning and Matching. In <em>      <em>CVPR</em>     </em>. 299&#x2013;307.</li>    <li id="BibPLXBIB0030" label="[30]">Jiquan Ngiam, Aditya Khosla, Mingyu Kim, Juhan Nam, Honglak Lee, and Andrew&#x00A0;Y. Ng. 2011. Multimodal Deep Learning. In <em>      <em>ICML</em>     </em>. 689&#x2013;696.</li>    <li id="BibPLXBIB0031" label="[31]">Behnaz Nojavanasghari, Deepak Gopinath, Jayanth Koushik, Tadas Baltrusaitis, and Louis-Philippe Morency. 2016. Deep multimodal fusion for persuasiveness prediction. In <em>      <em>ICML</em>     </em>. 284&#x2013;288.</li>    <li id="BibPLXBIB0032" label="[32]">Jeffrey Pennington, Richard Socher, and Christopher&#x00A0;D. Manning. 2014. Glove: Global Vectors for Word Representation. In <em>      <em>EMNLP</em>     </em>. 1532&#x2013;1543.</li>    <li id="BibPLXBIB0033" label="[33]">Marian-Andrei Rizoiu, Lexing Xie, Scott Sanner, Manuel Cebri&#x00E1;n, Honglin Yu, and Pascal&#x00A0;Van Hentenryck. 2017. Expecting to be HIP: Hawkes Intensity Processes for Social Media Popularity. In <em>      <em>WWW</em>     </em>. 735&#x2013;744.</li>    <li id="BibPLXBIB0034" label="[34]">Karen Simonyan and Andrew Zisserman. 2014. Very Deep Convolutional Networks for Large-Scale Image Recognition. <em>      <em>CoRR</em>     </em>abs/1409.1556(2014). arxiv:1409.1556</li>    <li id="BibPLXBIB0035" label="[35]">G&#x00E1;bor Szab&#x00F3; and Bernardo&#x00A0;A. Huberman. 2010. Predicting the popularity of online content. <em>      <em>Journal of Commun. ACM</em>     </em>53, 8 (2010), 80&#x2013;88.</li>    <li id="BibPLXBIB0036" label="[36]">Kai&#x00A0;Sheng Tai, Richard Socher, and Christopher&#x00A0;D. Manning. 2015. Improved Semantic Representations From Tree-Structured Long Short-Term Memory Networks. In <em>      <em>ACL</em>     </em>. 1556&#x2013;1566.</li>    <li id="BibPLXBIB0037" label="[37]">Oren Tsur and Ari Rappoport. 2012. What&#x0027;s in a hashtag?: content based prediction of the spread of ideas in microblogging communities. In <em>      <em>WSDM</em>     </em>. 643&#x2013;652.</li>    <li id="BibPLXBIB0038" label="[38]">Daixin Wang, Peng Cui, Mingdong Ou, and Wenwu Zhu. 2015. Deep Multimodal Hashing with Orthogonal Regularization. In <em>      <em>IJCAI</em>     </em>. 2291&#x2013;2297.</li>    <li id="BibPLXBIB0039" label="[39]">William&#x00A0;M Wells, Paul Viola, Hideki Atsumi, Shin Nakajima, and Ron Kikinis. 1996. Multi-modal volume registration by maximization of mutual information. <em>      <em>Medical image analysis</em>     </em>1, 1 (1996), 35&#x2013;51.</li>    <li id="BibPLXBIB0040" label="[40]">Bo Wu, Wen-Huang Cheng, Yongdong Zhang, Qiushi Huang, Jintao Li, and Tao Mei. 2017. Sequential Prediction of Social Media Popularity with Deep Temporal Context Networks. In <em>      <em>IJCAI</em>     </em>. 3062&#x2013;3068.</li>    <li id="BibPLXBIB0041" label="[41]">Bo Wu, Wen-Huang Cheng, Yongdong Zhang, and Tao Mei. 2016. Time Matters: Multi-scale Temporalization of Social Media Popularity. In <em>      <em>MM</em>     </em>. 1336&#x2013;1344.</li>    <li id="BibPLXBIB0042" label="[42]">Shuai Xiao, Junchi Yan, Changsheng Li, Bo Jin, Xiangfeng Wang, Xiaokang Yang, Stephen&#x00A0;M. Chu, and Hongyuan Zha. 2016. On Modeling and Predicting Individual Paper Citation Count over Time. In <em>      <em>IJCAI</em>     </em>. 2676&#x2013;2682.</li>    <li id="BibPLXBIB0043" label="[43]">Zichao Yang, Xiaodong He, Jianfeng Gao, Li Deng, and Alexander&#x00A0;J. Smola. 2016. Stacked Attention Networks for Image Question Answering. In <em>      <em>CVPR</em>     </em>. 21&#x2013;29.</li>    <li id="BibPLXBIB0044" label="[44]">Chao Zhang, Keyang Zhang, Quan Yuan, Haoruo Peng, Yu Zheng, Tim Hanratty, Shaowen Wang, and Jiawei Han. 2017. Regions, Periods, Activities: Uncovering Urban Dynamics via Cross-Modal Representation Learning. In <em>      <em>WWW</em>     </em>. 361&#x2013;370.</li>    <li id="BibPLXBIB0045" label="[45]">Qingyuan Zhao, Murat&#x00A0;A. Erdogdu, Hera&#x00A0;Y. He, Anand Rajaraman, and Jure Leskovec. 2015. SEISMIC: A Self-Exciting Point Process Model for Predicting Tweet Popularity. In <em>      <em>SIGKDD</em>     </em>. 1513&#x2013;1522.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">    <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class="link-inline force-break" href="https://github.com/Autumn945/UHAN">https://github.com/Autumn945/UHAN</a>   </p>   <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class="link-inline force-break"    href="https://github.com/social-media-prediction/MM17PredictionChallenge">https://github.com/social-media-prediction/MM17PredictionChallenge</a>   </p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>    <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5639-8/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3178876.3186026">https://doi.org/10.1145/3178876.3186026</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div> </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>User-guided Hierarchical Attention Network for Multi-modal
+  Social Image Popularity Prediction</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">User-guided Hierarchical
+          Attention Network for Multi-modal Social Image Popularity
+          Prediction</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <a href="https://orcid.org/0000-0001-6763-8146" ref=
+          "author"><span class="givenName">Wei</span> <span class=
+          "surName">Zhang</span>,</a> Shanghai Key Laboratory of
+          Trustworthy Computing East China Normal University, Putuo
+          Qu, Shanghai Shi, China, <a href=
+          "mailto:zhangwei.thu2011@gmail.com">zhangwei.thu2011@gmail.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Wen</span> <span class=
+          "surName">Wang</span>, Shanghai Key Laboratory of
+          Trustworthy Computing East China Normal University, Putuo
+          Qu, Shanghai Shi, China, <a href=
+          "mailto:51164500120@stu.ecnu.edu.cn">51164500120@stu.ecnu.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Jun</span> <span class=
+          "surName">Wang</span>, Shanghai Key Laboratory of
+          Trustworthy Computing East China Normal University, Putuo
+          Qu, Shanghai Shi, China, <a href=
+          "mailto:jwang@sei.ecnu.edu.cn">jwang@sei.ecnu.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Hongyuan</span> <span class=
+          "surName">Zha</span>, School of Computational Science and
+          Engineering, Georgia Institute of Technology, Atlanta,
+          Georgia, USA, <a href=
+          "mailto:zha@cc.gatech.edu">zha@cc.gatech.edu</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3178876.3186026"
+        target=
+        "_blank">https://doi.org/10.1145/3178876.3186026</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3178876" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Popularity prediction for the growing social
+        images has opened unprecedented opportunities for wide
+        commercial applications, such as precision advertising and
+        recommender system. While a few studies have explored this
+        significant task, little research has addressed its
+        unstructured properties of both visual and textual
+        modalities, and further considered to learn effective
+        representation from multi-modalities for popularity
+        prediction. To this end, we propose a model named
+        User-guided Hierarchical Attention Network (UHAN) with two
+        novel user-guided attention mechanisms to hierarchically
+        attend both visual and textual modalities. It is capable of
+        not only learning effective representation for each
+        modality, but also fusing them to obtain an integrated
+        multi-modal representation under the guidance of user
+        embedding. As no benchmark dataset exists, we extend a
+        publicly available social image dataset by adding the
+        descriptions of images. The comprehensive experiments have
+        demonstrated the rationality of our proposed UHAN and its
+        better performance than several strong
+        alternatives.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Information systems</strong> →
+        <strong>Content analysis and feature selection;</strong>
+        <em>Personalization;</em> • <strong>Computing
+        methodologies</strong> → Neural networks;</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Social Image Popularity;
+          Multi-modal Analysis; Attention Network</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Wei Zhang, Wen Wang, Jun Wang, and Hongyuan Zha. 2018.
+          User-guided Hierarchical Attention Network for
+          Multi-modal Social Image Popularity Prediction. In
+          <em>WWW 2018: The 2018 Web Conference,</em> <em>April
+          23–27, 2018,</em> <em>Lyon, France. ACM, New York, NY,
+          USA</em> 10 Pages. <a href=
+          "https://doi.org/10.1145/3178876.3186026" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3178876.3186026</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>In the era of Web 2.0, user-generated content (UGC) in
+      online social networks becomes globally ubiquitous and
+      prevalent with the development of information technology and
+      thus incurs heavy information explosion. The task of UGC
+      popularity prediction&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0035">35</a>] tries to infer total count of
+      interactions between users and specific UGC (e.g., click,
+      like, and view). This task is crucial for both content
+      providers and consumers, and finds a wide range of real-world
+      applications, including online advertising&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0020">20</a>] and
+      recommender system&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>].</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186026/images/www2018-35-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Sampled examples of social images in our
+          dataset. Each row corresponds to one user. The images in
+          each row are sorted from more popular (left) to less
+          popular (right).</span>
+        </div>
+      </figure>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186026/images/www2018-35-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">Diagram of user-guided hierarchical
+          attention mechanism for an example from Flickr. ⊗ denotes
+          the user-guided intra-attention mechanism while ⊕
+          represents the user-guided inter-attention mechanism. Red
+          font in description indicates larger attention
+          weights.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>Social image is perhaps one of the most representative
+      UGC. It has gained a rapid growth in recent years and exists
+      widely in various social medias, such as Flickr, Instagram,
+      Pinterest, and WeChat. Due to different themes and purposes
+      of different social medias, social images in these platforms
+      contain not exactly the same elements. Among them, the three
+      most common ones are social image itself (visual modality),
+      its corresponding description (textual modality) and
+      publisher (user). Naturally, the foregoing raises an
+      interesting and fundamental challenge with regard to
+      popularity prediction, i.e., how to effectively fuse
+      knowledge from both visual and textual modalities while
+      simultaneously consider user influence for predicting social
+      image popularity.</p>
+      <p>While a few studies have investigated the problem of
+      social image popularity prediction &nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0009">9</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0016">16</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0040">40</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0041">41</a>], most of them largely
+      rely on carefully designed hand-crafted features, but ignore
+      to automatically learn joint and effective representation
+      from multi-modalities, especially for unstructured modalities
+      such as image and text. On the other hand, some studies have
+      considered to combine some or all of user, text, and image
+      information sources in their studies&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0007">7</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0023">23</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0029">29</a>], and multi-modal learning
+      has achieved great success in tasks like visual question
+      answering (VQA)&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>] and image captioning&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0015">15</a>].
+      Nevertheless, the effort of applying multi-modal learning to
+      multi-modal image popularity prediction problem has not been
+      observed, let alone further considering user influence in
+      multi-modal learning for this problem.</p>
+      <p>In this paper, we propose a user-guided hierarchical
+      attention network (UHAN) for addressing the social image
+      popularity prediction problem, which is to predict the future
+      popularity of a new image to be published on social media.
+      UHAN proposes two novel user-guided attention mechanisms to
+      hierarchically attend both visual and textual modalities (see
+      Figure&nbsp;<a class="fig" href="#fig2">2</a>). More
+      specifically, the overall framework mainly consists of two
+      attention layers which form a hierarchical attention network.
+      In the bottom layer, the user-guided intra-attention
+      mechanism with a personalized multi-modal embedding
+      correlation scheme is proposed to learn effective embedding
+      for each modality. In the middle layer, the user-guided
+      inter-attention mechanism for cross-modal attention is
+      developed to determine the relative importance of each
+      modality for each user. Besides, we adopt a shortcut
+      connection to associate the user embedding with the learned
+      multi-modal embedding, hoping to verify its additional
+      influence on popularity.</p>
+      <p>The intuition of utilizing user guidance behind our model
+      is that each user has its own characteristics and
+      preferences, which will influence the popularity of his
+      images. To verify this, we sample several social images from
+      three selected users and show them in Figure&nbsp;<a class=
+      "fig" href="#fig1">1</a>. According to the illustration below
+      the figure, we can easily find that the user in the middle
+      row has several images about dogs and most of them are more
+      popular than his other images. For the user in the bottom
+      row, a similar phenomenon can be seen that his images about
+      cultural and natural landscapes are more attractive for
+      ordinary users. Moreover, it is intuitive that the visual and
+      textual modalities are promising to complement each other.
+      This is motivated by the example shown in
+      Figure&nbsp;<a class="fig" href="#fig2">2</a>, “Yamaha R1” is
+      a major indicator for the bike in the image and vice versa.
+      Jointly modeling them will help to capture more useful
+      information. As there is no publicly available benchmark
+      dataset which involves both unstructured visual and textual
+      modalities, we build such a social image dataset by simply
+      extending an existing publicly accessible
+      dataset&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0040">40</a>] by crawling their corresponding
+      descriptions and associating them with the entries in the
+      dataset. We conduct comprehensive experiments on this dataset
+      and have demonstrated that 1) our proposed UHAN could achieve
+      better results than several strong alternatives, 2) both
+      visual and textual modalities are indeed beneficial for the
+      studied problem, and 3) the design of UHAN is rational, with
+      two effective user-guided attention mechanisms.</p>
+      <p>The main contributions of this work can be summarized as
+      threefold,</p>
+      <ul class="list-no-style">
+        <li id="list1" label="•">We propose a novel user-guided
+        hierarchical attention network that effectively learns
+        multi-modal representation of user personalization, visual
+        and textual modalities, and seamlessly integrates the
+        representation learning and image popularity prediction
+        into an end-to-end fashion.<br /></li>
+        <li id="list2" label="•">Two novel user-guided attention
+        mechanisms are presented, i.e., user-guided intra-attention
+        mechanism to learn each unimodal representation and
+        inter-attention mechanism to fuse multi-modal
+        representations.<br /></li>
+        <li id="list3" label="•">To verify the benefits of our
+        model, we get a real-world multi-modal social image dataset
+        by simply extending a publicly accessible
+        dataset&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0040">40</a>] with crawled image title and
+        introduction. We make the source code and the
+        dataset<a class="fn" href="#fn1" id=
+        "foot-fn1"><sup>1</sup></a>publicly available to facilitate
+        other studies to repeat experiments and do further
+        research.<br />
+        </li>
+      </ul>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>We briefly review relevant studies to our work from three
+      aspects. Research of popularity prediction is first
+      introduced, including different problem settings and methods.
+      Afterwards, deep multi-modal learning models in literature
+      are categorized and the connection to our model is clarified.
+      Lastly, existing representative attention mechanisms are
+      introduced and the novelty of ours is emphasized.</p>
+      <figure id="fig3">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186026/images/www2018-35-fig3.jpg"
+        class="img-responsive" alt="Figure 3" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 3:</span> <span class=
+          "figure-title">Architecture of our proposed model UHAN.
+          For simplicity, the dimensions of user embedding and
+          hidden state of LSTM are both set to 512, equal to that
+          of visual modality. However, the above model can be
+          easily extended to the situation that dimensions of
+          different modalities are not equal, just by necessary
+          linear transformation.</span>
+        </div>
+      </figure>
+      <p></p>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Popularity
+            Prediction</h3>
+          </div>
+        </header>
+        <p>A large body of studies has focused on social media
+        popularity prediction and this field of research has
+        continued for more than half a decade&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0033">33</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0035">35</a>]. &nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0008">8</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0027">27</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0037">37</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0045">45</a>] have studied social
+        content prediction from the perspective of textual
+        modality. Most of them are mainly based on hand-crafted
+        features. For example, basic term frequencies and topic
+        features extracted from topic modeling&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0003">3</a>] are considered. By
+        leveraging the continuous time modeling ability of point
+        process&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0010">10</a>], Zhao et al.&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0045">45</a>] proposed to model
+        dynamic tweet popularity and later Liu et
+        al.&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0042">42</a>] developed a feature-based point
+        process to predict dynamic paper citation count. However,
+        as&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0012">12</a>] emphasized, dynamic data of
+        popularity are not easy to obtained, which limits its real
+        application. Thus in this paper, we focus on predicting
+        future popularity of new social images to be published on
+        social media.</p>
+        <p>In recent years, visual modality has attracted
+        increasing attention in literature &nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0005">5</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0016">16</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0040">40</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0041">41</a>]. Among them, Chen et
+        al.&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href="#BibPLXBIB0005">5</a>]
+        adopted transductive learning, which needs to do model
+        learning and prediction simultaneously and cannot be easily
+        extended to online prediction. Since the method is proposed
+        for predicting micro-video popularity, it is different from
+        our task. Wu et al.&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0040">40</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0041">41</a>] studied social image popularity
+        from the perspective of sequential prediction. They model
+        temporal context (i.e., feature from other images published
+        previously) of target image for prediction, which is in
+        parallel to our study. &nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0009">9</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0016">16</a>] are the most relevant study to
+        ours. However, they relies on time-consuming feature
+        engineering to obtain various hand-crafted visual and
+        textual features, and the feature representation and model
+        learning are separated into two different stages.</p>
+        <p>In this paper, we explore social image popularity
+        prediction problem by focusing on integrating the
+        representation learning from unstructured textual and
+        visual modalities and popularity prediction into a unified
+        model.</p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> Deep
+            Multi-modal Learning</h3>
+          </div>
+        </header>
+        <p>There exists a long history of studies on multi-modal
+        learning&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0039">39</a>] which concentrates on learning
+        from multiple sources with different
+        modalities&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0044">44</a>]. In recent years, with the
+        flourish of deep learning methodologies&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0021">21</a>], deep
+        multi-modal learning models begin to catch up. As Ngiam et
+        al.&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0030">30</a>] summarized, deep multi-modal
+        learning involves three types of settings: 1) multi-modal
+        fusion, 2) cross modality learning, and 3) shared
+        representation learning. Among them, multi-modal fusion
+        satisfies our problem setting.</p>
+        <p>Nojavanasghari et al. &nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0031">31</a>] studied persuasiveness
+        prediction by fusing visual, acoustic and textual features
+        with densely connected feed-forward neural network. Lynch
+        et al.&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0026">26</a>] proposed to concatenate deep
+        visual features and bag-of-words based textual feature
+        vector for learning to rank search results. To ensure fast
+        similarity computation, hashing-based deep multi-modal
+        learning are also proposed&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0014">14</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0038">38</a>]. Moreover, deep
+        multi-modal learning has achieved a great success in VQA,
+        developing from early simple multi-modal
+        fusion&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0001">1</a>] to later more complex deep
+        methods&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0017">17</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0029">29</a>]. However, to our knowledge, none
+        of multi-modal deep learning methods has been proposed to
+        multi-modal popularity prediction task, which motivates us
+        to take a step towards this end.</p>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.3</span> Attention
+            Mechanism</h3>
+          </div>
+        </header>
+        <p>To select important regions from images&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0028">28</a>] or focus
+        more on some specific words relevant to machine
+        translation&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0002">2</a>], attention mechanism has been
+        proposed and sprung up. As the motivation illustrated in
+        Section&nbsp;<a class="sec" href="#sec-5">1</a>, we focus
+        more on multi-modal attention. It has two important
+        applications, i.e., visual question
+        answering&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0001">1</a>] and image
+        captioning&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0015">15</a>]. Many standard multi-modal based
+        methods only utilize textual representation to learn
+        attention for visual representation&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0006">6</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0025">25</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0043">43</a>], without providing
+        attentions to textual modality. Until recently, attentions
+        to both visual and textual modalities are proposed, like
+        dual attention networks&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0029">29</a>]. On the other hand,
+        personalization is rarely considered by multi-modal
+        attention learning methods except&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0007">7</a>]. However, this study
+        only utilizes a single attention mechanism to generate word
+        sequence, which leads the methodology fundamentally
+        different from our proposed one which proposes user-guided
+        hierarchical attention mechanism for multi-modal popularity
+        prediction.</p>
+      </section>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Our Proposed
+          UHAN</h2>
+        </div>
+      </header>
+      <p>The overall architecture of the proposed UHAN is presented
+      in Figure&nbsp;<a class="fig" href="#fig3">3</a>. The input
+      to UHAN is a triple each time, consisting of textual
+      representation, visual representation, and user
+      representation, which will be clarified later. Based on this,
+      UHAN first exploits the proposed user-guided intra-attention
+      to learn attended embeddings for textual and visual
+      modalities, respectively. Moreover, UHAN adopts the novel
+      user-guided inter-attention to judge the importance of
+      different modalities for specific users. Through this way, it
+      further gets an attended multi-modal representation. Besides,
+      a shortcut connection is adopted to associate user embedding
+      with the learned multi-modal embedding for final popularity
+      prediction.</p>
+      <p>Before we continue to specify the model, we first formally
+      define the multi-modal social image popularity prediction
+      problem and provide some basic notations
+      (Section&nbsp;<a class="sec" href="#sec-11">3.1</a>). Then we
+      introduce the input representation for textual and visual
+      modalities (Section&nbsp;<a class="sec" href=
+      "#sec-12">3.2</a>). In what follows, we address the
+      user-guided hierarchical attention mechanism
+      (Section&nbsp;<a class="sec" href="#sec-13">3.3</a>).
+      Finally, popularity generation and its learning process are
+      illustrated (Section&nbsp;<a class="sec" href=
+      "#sec-14">3.4</a>).</p>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Problem
+            Definition</h3>
+          </div>
+        </header>
+        <p>Before we give the formulation of the studied problem,
+        we first introduce some mathematical notations used later.
+        Throughout this paper, we denote matrices by bold uppercase
+        letters and vectors by bold lowercase letters,
+        respectively. We first indicate social image set as
+        <span class="inline-equation"><span class="tex">$\mathcal
+        {I}$</span></span> and its size is <em>N</em>. As discussed
+        in Section&nbsp;<a class="sec" href="#sec-5">1</a>, we
+        focus on the three most basic elements of social images.
+        For the <em>i</em>-th image instance <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {I}_i$</span></span> in the set, we denote its detailed
+        representation as {<strong>V</strong> <sup><em>i</em></sup>
+        , <strong>H</strong> <sup><em>i</em></sup> ,
+        <strong>u</strong> <sup><em>i</em></sup> }, where
+        <strong>V</strong> <sup><em>i</em></sup> ,
+        <strong>H</strong> <sup><em>i</em></sup> , and
+        <strong>u</strong> <sup><em>i</em></sup> correspond to
+        visual representation, textual representation, and user
+        representation, respectively. When the end time is
+        determined, we can get the real popularity score of
+        <span class="inline-equation"><span class="tex">$\mathcal
+        {I}_i$</span></span> by considering the total number of
+        interactions during the period of time, which is defined as
+        <em>y<sub>i</sub></em> . Accordingly, we formally define
+        the problem based on the above notations:</p>
+        <div class="problem" id="enc1">
+          <label>Problem 1 (Multi-modal Social Image Popularity
+          Prediction).</label>
+          <p>Given a new image <span class=
+          "inline-equation"><span class="tex">$\mathcal
+          {I}_i$</span></span> to be published on social media, the
+          target is to learn a function <em>f</em>:
+          <strong>V</strong> <sup><em>i</em></sup> ,
+          <strong>H</strong> <sup><em>i</em></sup> ,
+          <strong>u</strong> <sup><em>i</em></sup> →
+          <em>y<sub>i</sub></em> to predict its popularity score in
+          the end.</p>
+        </div>
+        <p>In what follows, we take the image instance <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {I}_i$</span></span> as an example to introduce UHAN. For
+        simplicity, we will omit the superscript <em>i</em> of
+        related notations later. In this paper, we use the terms,
+        i.e., embedding and representation, interchangeably.</p>
+      </section>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span>
+            Construction of Input Representation</h3>
+          </div>
+        </header>
+        <p><strong>Extracting visual representation:</strong>The
+        image embedding is obtained by a pre-trained VGGNet
+        model&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0034">34</a>]. To satisfy the requirement of the
+        input size for the model, we first rescale all images to
+        448 × 448. By convention&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0029">29</a>], we regard the last pooling layer
+        of VGGNet as a feature extractor to gain visual
+        representation <strong>V</strong> = [<strong>v</strong>
+        <sub>1</sub>, …, <strong>v</strong> <sub><em>M</em></sub> ]
+        where <span class="inline-equation"><span class=
+        "tex">$\mathbf {v}_{m}\in \mathbb {R}^{512}$</span></span>
+        . <em>M</em> denotes the number of image regions which is
+        equal to 196 in this work. Consequently, an image can be
+        expressed as 196 vectors, each of which has dimension
+        512.</p>
+        <p><strong>Encoding textual representation:</strong>For the
+        social image <span class="inline-equation"><span class=
+        "tex">$\mathcal {I}_i$</span></span> , it has a description
+        <span class="inline-equation"><span class="tex">$D =
+        \lbrace \mathbf {w}_t\rbrace _{t=1}^{l}$</span></span>
+        where <strong>w</strong> <sub><em>t</em></sub> is a one-hot
+        embedding at position <em>t</em>. <em>l</em> is the length
+        of the description and should satisfy the requirement
+        <em>l</em> ≤ <em>L</em>, where <em>L</em> is the maximum
+        length of the description and denoted as 50 in
+        Figure&nbsp;<a class="fig" href="#fig3">3</a>. Hence we can
+        get the original textual representation <strong>H</strong>
+        = [<strong>w</strong> <sub>1</sub>, …, <strong>w</strong>
+        <sub><em>l</em></sub> ], as required by the
+        Problem&nbsp;<a class="enc" href="#enc1">1</a>.</p>
+        <p>Due to the good performance of modeling word sequence to
+        understand language &nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0036">36</a>], we further adopt long-short term
+        memory (LSTM)&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0013">13</a>] to encode the textual
+        representation <strong>H</strong>. Before we feed the
+        one-hot embeddings of words into LSTM, we first convert
+        each of them into a low-dimensional dense vector
+        <span class="inline-equation"><span class=
+        "tex">$\check{\mathbf {w}}_t$</span></span> by a word
+        embedding matrix <strong>W</strong> <sub><em>W</em></sub>
+        :</p>
+        <div class="table-responsive" id="eq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \check{\mathbf
+            {w}}_t = \mathbf {W}_W \mathbf {w}_t.
+            \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>After collecting the vectors <span class=
+        "inline-equation"><span class="tex">$\lbrace \check{\mathbf
+        {w}}_t\rbrace _{t=1}^{l}$</span></span> , we feed them into
+        LSTM to generate sequential hidden states. At each time
+        step, a LSTM unit has an input gate <strong>i</strong>
+        <sub><em>t</em></sub> , output gate <strong>o</strong>
+        <sub><em>t</em></sub> , forget gate <strong>f</strong>
+        <sub><em>t</em></sub> , and cell state <strong>c</strong>
+        <sub><em>t</em></sub> . The corresponding hidden state
+        <strong>h</strong> <sub><em>t</em></sub> is calculated
+        through the follow equations:</p>
+        <div class="table-responsive" id="eq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mathbf {i}_t
+            = \sigma (\mathbf {W}_{Wi}\check{\mathbf {w}}_t +
+            \mathbf {W}_{Hi}\mathbf {h}_{t-1}+\mathbf {b}_i),
+            \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>
+        <div class="table-responsive" id="eq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mathbf {f}_t
+            = \sigma (\mathbf {W}_{Wf}\check{\mathbf {w}}_t +
+            \mathbf {W}_{Hf}\mathbf {h}_{t-1}+\mathbf {b}_f),
+            \end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>
+        <div class="table-responsive" id="eq4">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mathbf {o}_t
+            = \sigma (\mathbf {W}_{Wo}\check{\mathbf {w}}_t +
+            \mathbf {W}_{Ho}\mathbf {h}_{t-1}+\mathbf {b}_o),
+            \end{equation}</span><br />
+            <span class="equation-number">(4)</span>
+          </div>
+        </div>
+        <div class="table-responsive" id="eq5">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mathbf {c}_t
+            = \mathbf {f}_t \circ \mathbf {c}_{t-1} + \mathbf {i}_t
+            \circ \tanh (\mathbf {W}_{Wc}\check{\mathbf {w}}_t +
+            \mathbf {W}_{Hc}\mathbf {h}_{t-1}+\mathbf {b}_c),
+            \end{equation}</span><br />
+            <span class="equation-number">(5)</span>
+          </div>
+        </div>
+        <div class="table-responsive" id="eq6">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mathbf {h}_t
+            = \mathbf {o}_t \circ \tanh (\mathbf {c}_t),
+            \end{equation}</span><br />
+            <span class="equation-number">(6)</span>
+          </div>
+        </div>where ○ is the Hadamard product. <strong>W</strong>
+        <sub><em>W</em> ·</sub>, <strong>W</strong> <sub><em>H</em>
+        ·</sub> and <strong>b</strong> <sub>·</sub> are the
+        parameters of LSTM to be learned. <em>σ</em> is the sigmoid
+        activation function. After recurrent computation for each
+        time step, we gather a series of hidden states <span class=
+        "inline-equation"><span class="tex">$\lbrace \mathbf
+        {h}_{t}\rbrace _{t=1}^l$</span></span> . We denote them as
+        <span class="inline-equation"><span class=
+        "tex">$\check{\mathbf {H}}= [\mathbf {h}_1,\ldots ,\mathbf
+        {h}_l]$</span></span> , which will be later used in the
+        user-guided hierarchical attention computation.
+        <p></p>
+        <p><strong>Encoding user representation:</strong>The
+        publisher (user) of the social image <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {I}_i$</span></span> is originally expressed as a one-hot
+        representation <strong>u</strong>. To convert it into a
+        low-dimensional embedding <span class=
+        "inline-equation"><span class="tex">$\check{\mathbf
+        {u}}$</span></span> , we define a user embedding matrix
+        <strong>W</strong> <sub><em>U</em></sub> and perform the
+        following transformation:</p>
+        <div class="table-responsive" id="eq7">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \check{\mathbf
+            {u}}= \mathbf {W}_U \mathbf {u}.
+            \end{equation}</span><br />
+            <span class="equation-number">(7)</span>
+          </div>
+        </div>Intuitively, user embeddings could capture some user
+        hidden characteristics such as preference, which will be
+        used to guide the learning of multi-modal representation.
+        <p></p>
+        <p>In summary, we have visual representation
+        <strong>V</strong>, textual embeddings <span class=
+        "inline-equation"><span class="tex">$\check{\mathbf
+        {H}}$</span></span> , and user embedding <span class=
+        "inline-equation"><span class="tex">$\check{\mathbf
+        {u}}$</span></span> as input for the user-guided
+        hierarchical attention computation. We should emphasize
+        that UHAN will learn all the above parameters together,
+        including the user and word embedding matrices, and the
+        parameters of LSTM.</p>
+      </section>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span> User-guided
+            Hierarchical Attention Mechanism</h3>
+          </div>
+        </header>
+        <p>Our model UHAN performs user-guided intra-attention and
+        inter-attention computations in different layers, which
+        form a hierarchical attention network that could learn more
+        suitable representations from visual and textual
+        modalities.</p>
+        <p><strong>User-guided intra-attention
+        mechanism:</strong>This attention mechanism is proposed to
+        attend each modality to obtain textual and visual
+        embeddings, respectively. Thus, it actually contains two
+        attention computations, one for visual modality and the
+        other for textual modality. However, we should emphasize
+        that the attention computation for each modality is based
+        on a personalized multi-modal embedding correlation scheme
+        which involves user, visual and textual embeddings
+        simultaneously.</p>
+        <p>We first explicitly indicate the dimension of all the
+        input to the user-guided hierarchical attention
+        computation, i.e., <span class=
+        "inline-equation"><span class="tex">$\mathbf {V}\in \mathbb
+        {R}^{196\times 512}$</span></span> , <span class=
+        "inline-equation"><span class="tex">$\check{\mathbf {H}}\in
+        \mathbb {R}^{\mathrm{L}\times \mathrm{K}_W}$</span></span>
+        , and <span class="inline-equation"><span class=
+        "tex">$\check{\mathbf {u}}\in \mathbb
+        {R}^{\mathrm{K}_U}$</span></span> . K <sub><em>W</em></sub>
+        and K <sub><em>U</em></sub> are the dimensions of word and
+        user embeddings, respectively. To be consistent with what
+        Figure&nbsp;<a class="fig" href="#fig3">3</a> shows, we let
+        L = 50, K <sub><em>W</em></sub> = 512, and K
+        <sub><em>U</em></sub> = 512 for ease of presentation.
+        Before introducing how to compute the two attentions, we
+        should clarify that the attentions for visual and textual
+        modalities are calculated simultaneously.</p>
+        <p><strong>(1) Attention computation for visual
+        modality.</strong> Based on the above specification, we
+        illustrate how to implement the embedding correlation
+        scheme to execute attention computation for visual
+        modality. We convert textual embedding matrix into a vector
+        representation <span class="inline-equation"><span class=
+        "tex">$\bar{\mathbf {h}}$</span></span> through the follow
+        equation:</p>
+        <div class="table-responsive" id="eq8">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \bar{\mathbf
+            {h}}= \frac{1}{l} \cdot \check{\mathbf {H}}\vec{ {1}},
+            \end{equation}</span><br />
+            <span class="equation-number">(8)</span>
+          </div>
+        </div>where <span class="inline-equation"><span class=
+        "tex">$\vec{ {1}}$</span></span> is a vector with all
+        elements to be 1. This equation can be regarded as a
+        mean-pooling operation applied to the hidden states of the
+        word sequence to get an integrated textual representation
+        for attending visual modality. After that, the
+        representations of user and text are both vectors.
+        <p></p>
+        <p>We formally define the computational formula of
+        personalized multi-modal embedding correlation scheme for
+        determining the visual attention as follows:</p>
+        <div class="table-responsive" id="eq9">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mathbf
+            {r}_{V,m} = \mathbf {W}_{V}^{1}\Big (\tanh (\mathbf
+            {W}_{Vv}^{1}\mathbf {v}_m) \circ \tanh (\mathbf
+            {W}_{Vu}^{1}\check{\mathbf {u}}) \circ \tanh (\mathbf
+            {W}_{Vt}^{1}\bar{\mathbf {h}})\Big),
+            \end{equation}</span><br />
+            <span class="equation-number">(9)</span>
+          </div>
+        </div>where <strong>r</strong> <sub><em>V</em>,
+        <em>m</em></sub> denotes the importance score of region
+        <em>m</em> in the target image. tanh  is adopted to ensure
+        values of different modalities mapped to the same narrow
+        space, which benefits gradient based optimization
+        algorithms&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0018">18</a>]. The parameter matrices of
+        intra-attention to visual modality satisfy the following
+        requirements, i.e., <span class=
+        "inline-equation"><span class="tex">$\mathbf {W}_{V}^{1}\in
+        \mathbb {R}^{1\times 512}$</span></span> , <span class=
+        "inline-equation"><span class="tex">$\mathbf
+        {W}_{Vv}^{1},\mathbf {W}_{Vu}^{1}$</span></span> and
+        <span class="inline-equation"><span class="tex">$\mathbf
+        {W}_{Vt}^{1}\in \mathbb {R}^{512\times 512}$</span></span>
+        . The intuitive interpretation of the above equation is
+        that it could be regarded as calculating the relevance of
+        each visual region to user and textual embeddings jointly.
+        Therefore, user and text can guide attention learning of
+        visual modality and indicate which region of image is
+        important to reveal popularity. Suppose
+        <em>α<sub>V</sub></em> denotes the probability distribution
+        of attention importance, which is given by:
+        <div class="table-responsive" id="eq10">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \alpha _{V} =
+            \mathrm{Softmax}(\mathbf {r}_V).
+            \end{equation}</span><br />
+            <span class="equation-number">(10)</span>
+          </div>
+        </div>Finally, based on the attention distribution, we can
+        gain an attended whole image representation <span class=
+        "inline-equation"><span class="tex">$\dot{\mathbf
+        {v}}$</span></span> by:
+        <div class="table-responsive" id="eq11">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \dot{\mathbf
+            {v}}= \sum _m \alpha _{V,m}\cdot \mathbf {v}_{m}.
+            \end{equation}</span><br />
+            <span class="equation-number">(11)</span>
+          </div>
+        </div>
+        <p></p>
+        <p><strong>(2) Attention computation for textual
+        modality.</strong> Following Equation&nbsp;<a class="eqn"
+        href="#eq8">8</a>, we first define the mean-pooling formula
+        to get a vector representation <span class=
+        "inline-equation"><span class="tex">$\bar{\mathbf
+        {v}}$</span></span> of visual modality as follows:</p>
+        <div class="table-responsive" id="eq12">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \bar{\mathbf
+            {v}}= \frac{1}{196} \cdot \mathbf {V}\vec{ {1}}.
+            \end{equation}</span><br />
+            <span class="equation-number">(12)</span>
+          </div>
+        </div>Likewise, attentions to each hidden state
+        representation of the word sequence are further calculated
+        by:
+        <div class="table-responsive" id="eq13">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mathbf
+            {r}_{T,t} = \mathbf {W}_{T}^{1}\Big (\tanh (\mathbf
+            {W}_{Tt}^{1}\mathbf {h}_t) \circ \tanh (\mathbf
+            {W}_{Tu}^{1}\check{\mathbf {u}}) \circ \tanh (\mathbf
+            {W}_{Tv}^{1}\bar{\mathbf {v}})\Big),
+            \end{equation}</span><br />
+            <span class="equation-number">(13)</span>
+          </div>
+        </div>
+        <div class="table-responsive" id="eq14">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \alpha _{T} =
+            \mathrm{Softmax}(\mathbf {r}_T),
+            \end{equation}</span><br />
+            <span class="equation-number">(14)</span>
+          </div>
+        </div>where the parameter matrices of intra-attention to
+        textual modality satisfy <span class=
+        "inline-equation"><span class="tex">$\mathbf {W}_{T}^{1}\in
+        \mathbb {R}^{1\times 512}$</span></span> , <span class=
+        "inline-equation"><span class="tex">$\mathbf
+        {W}_{Tv}^{1},\mathbf {W}_{Tu}^{1}$</span></span> and
+        <span class="inline-equation"><span class="tex">$\mathbf
+        {W}_{Tt}^{1}\in \mathbb {R}^{512\times 512}$</span></span>
+        . <strong>r</strong> <sub><em>T</em>, <em>t</em></sub>
+        represents the importance score of hidden state
+        <strong>h</strong> <sub><em>t</em></sub> and
+        <em>α<sub>T</sub></em> denotes the probability distribution
+        of attention importance as well. It is necessary to conduct
+        the importance calculation since some words in a textual
+        description, including its corresponding title, may be
+        irrelevant to popularity and even off-topic. Consequently,
+        we can get the attended whole text embedding <span class=
+        "inline-equation"><span class="tex">$\dot{\mathbf
+        {h}}$</span></span> via the following equation:
+        <div class="table-responsive" id="eq15">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \dot{\mathbf
+            {h}}= \sum _t \alpha _{T,t}\cdot \mathbf {h}_{t}.
+            \end{equation}</span><br />
+            <span class="equation-number">(15)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>In summary, we obtain the attended whole image embedding
+        <span class="inline-equation"><span class=
+        "tex">$\dot{\mathbf {v}}$</span></span> and text embedding
+        <span class="inline-equation"><span class=
+        "tex">$\dot{\mathbf {h}}$</span></span> through the
+        user-guided intra-attention mechanism. We further feed
+        these two embeddings into user-guided inter-attention
+        computation.</p>
+        <p><strong>User-guided inter-attention
+        mechanism:</strong>The inter-attention mechanism is
+        proposed to capture different importance of the studied two
+        modalities. The intuition lies in the aspect that different
+        users have diverse concentrations on textual and visual
+        modalities of their posted images. And even for the same
+        user, when he is prepared to post an image, he might focus
+        more on different modalities in different situations. The
+        imbalance of attention mights makes the two modalities have
+        different influence on popularity.</p>
+        <p>We denote the attention to visual modality as <em>a</em>
+        <sub>1</sub> and textual modality as <em>a</em>
+        <sub>2</sub>, satisfying <em>a</em> <sub>1</sub> +
+        <em>a</em> <sub>2</sub> = 1. Then we define the formula to
+        calculate <em>a</em> <sub>1</sub> and <em>a</em>
+        <sub>2</sub> through the following equations:</p>
+        <div class="table-responsive" id="eq16">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} uv = \mathbf
+            {W}_{UVT}^2\Big (\tanh (\mathbf {W}_{V}^{2}\dot{\mathbf
+            {v}}) \circ \tanh (\mathbf {W}_{U}^{2}\check{\mathbf
+            {u}})\Big), \end{equation}</span><br />
+            <span class="equation-number">(16)</span>
+          </div>
+        </div>
+        <div class="table-responsive" id="eq17">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} ut = \mathbf
+            {W}_{UVT}^2\Big (\tanh (\mathbf {W}_{T}^{2}\dot{\mathbf
+            {h}}) \circ \tanh (\mathbf {W}_{U}^{2}\check{\mathbf
+            {u}})\Big), \end{equation}</span><br />
+            <span class="equation-number">(17)</span>
+          </div>
+        </div>
+        <div class="table-responsive" id="eq18">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} a_1 =
+            \frac{\exp (uv)}{\exp (uv)+\exp (ut)},
+            \end{equation}</span><br />
+            <span class="equation-number">(18)</span>
+          </div>
+        </div>
+        <div class="table-responsive" id="eq19">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} a_2 =
+            \frac{\exp (ut)}{\exp (uv)+\exp (ut)},
+            \end{equation}</span><br />
+            <span class="equation-number">(19)</span>
+          </div>
+        </div>where <em>uv</em> denotes the relevance score between
+        user and visual modality, and <em>ut</em> corresponds to
+        user and textual modality. The parameter matrices of
+        inter-attention computation satisfy <span class=
+        "inline-equation"><span class="tex">$\mathbf {W}_{UVT}^2\in
+        \mathbb {R}^{1\times 512}$</span></span> , <span class=
+        "inline-equation"><span class="tex">$\mathbf {W}_{U}^{2},
+        \mathbf {W}_{V}^{2}$</span></span> and <span class=
+        "inline-equation"><span class="tex">$\mathbf {W}_{T}^{2}\in
+        \mathbb {R}^{512\times 512}$</span></span> . Upon this, we
+        can compute the attended multi-modal embedding
+        <strong>s</strong> as follows:
+        <div class="table-responsive" id="eq20">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mathbf {s}=
+            a_1\cdot \dot{\mathbf {v}}+a_2\cdot \dot{\mathbf {h}}.
+            \end{equation}</span><br />
+            <span class="equation-number">(20)</span>
+          </div>
+        </div>
+        <p></p>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.4</span> Learning
+            for Popularity Prediction</h3>
+          </div>
+        </header>
+        <p>To test whether the user embedding <span class=
+        "inline-equation"><span class="tex">$\check{\mathbf
+        {u}}$</span></span> has additional influence on popularity
+        besides its major role of guiding the computation of
+        attention to multi-modalities, we adopt a shortcut
+        connection strategy&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0011">11</a>] and calculate the updated
+        multi-modal embedding as follows:</p>
+        <div class="table-responsive" id="eq21">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mathbf {s}:=
+            \mathbf {s}+ \mathbf {W}_{U}^3\check{\mathbf {u}},
+            \end{equation}</span><br />
+            <span class="equation-number">(21)</span>
+          </div>
+        </div>where <span class="inline-equation"><span class=
+        "tex">$\mathbf {W}_{U}^3\in \mathbb {R}^{512\times
+        512}$</span></span> . After that, we utilize a simple
+        2-layer feed-forward neural network to generate final
+        popularity prediction, which does not incur much model
+        complexity and ensures the capacity of nonlinear modeling.
+        More specifically, we define the computational formula as
+        follows:
+        <div class="table-responsive" id="eq22">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \hat{y} =
+            \mathbf {W}_F^2\mathrm{ReLU}(\mathbf {W}_F^1\mathbf
+            {s}+\mathbf {b}_F^1) + b^2, \end{equation}</span><br />
+            <span class="equation-number">(22)</span>
+          </div>
+        </div>where ReLU represents the rectified linear unit,
+        which is the nonlinear activation function with the form,
+        ReLU(x) = max(0, x). <span class=
+        "inline-equation"><span class="tex">$\mathbf {W}_F^1\in
+        \mathbb {R}^{512\times 512}$</span></span> and <span class=
+        "inline-equation"><span class="tex">$\mathbf {b}_F^1\in
+        \mathbb {R}^{512}$</span></span> are the parameters of the
+        first layer. <span class="inline-equation"><span class=
+        "tex">$\mathbf {W}_F^2\in \mathbb {R}^{512}$</span></span>
+        and <span class="inline-equation"><span class="tex">$b^2\in
+        \mathbb {R}$</span></span> are the second layer's
+        parameters. And <span class="inline-equation"><span class=
+        "tex">$\hat{y}$</span></span> indicates the predicted
+        popularity score we strive to generate.
+        <p></p>
+        <p>We regard the learning of UHAN as a regression task.
+        Mean square error (MSE) is adopted as the optimization
+        metric. It is worth noting that the main focus of this
+        paper is to consider how to effectively learn
+        representation from unstructured visual and textual
+        modalities for social image popularity prediction.
+        Therefore, we do not consider modeling some structured and
+        hand-crafted features such as social clues, user and
+        sentiment features&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0009">9</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0016">16</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0027">27</a>]. However, our model could be
+        easily extended to capture different features. One simple
+        way is to concatenate the representation of features with
+        the final multi-modal embedding <strong>s</strong> obtained
+        by our model. Actually, we find this way can further
+        improve the performance in our local test, which we do not
+        introduce in the experiments.</p>
+      </section>
+    </section>
+    <section id="sec-15">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Experiment</h2>
+        </div>
+      </header>
+      <p>In this section, we present the detailed experimental
+      results and some further analysis to answer the following
+      essential research questions:</p>
+      <ul class="list-no-style">
+        <li id="uid38" label="Q1:">What are the prediction results
+        of the proposed UHAN compared with other strong
+        alternatives?<br /></li>
+        <li id="uid39" label="Q2:">Does the joint considering of
+        visual and textual modalities indeed benefit the studied
+        problem?<br /></li>
+        <li id="uid40" label="Q3:">How does each component of UHAN
+        contribute to the prediction performance?<br /></li>
+      </ul>
+      <p>Keeping these questions in mind, we first provide the
+      details of experimental setups, including the dataset,
+      evaluation metrics, baselines, and implementation details.
+      Afterwards, we answer the three questions in sequence.
+      Besides, we conduct qualitative analysis by some case studies
+      to show the intuitive sense of our proposed UHAN.</p>
+      <section id="sec-16">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span>
+            Experimental Setup</h3>
+          </div>
+        </header>
+        <section id="sec-17">
+          <p><em>4.1.1 Dataset.</em> To our knowledge, there is no
+          publicly available social image dataset which contains
+          both unstructured visual and textual modalities for
+          popularity prediction. We build such a dataset by
+          extending a publicly accessible dataset<a class="fn"
+          href="#fn2" id="foot-fn2"><sup>2</sup></a> which is
+          collected from Flickr&nbsp;[<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0040">40</a>] and has only unstructured visual
+          modality and some structured features. For each social
+          image in the original dataset, we further crawl its
+          corresponding title and introduction to form the
+          unstructured textual modality.</p>
+          <p>Given this extended dataset, we conduct the following
+          preprocessing procedures. We first remove all non-English
+          characters, tokenize each text, and convert each word to
+          lowercase. We further remove words with less than five
+          occurrences in our dataset to keep them statistically
+          significant. Afterwards, we remove images with its
+          description less than five words, similar to the
+          procedure adopt in&nbsp;[<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0022">22</a>]. Finally, we obtain the dataset
+          in our experiment and release it along with the source
+          code, as introduced in Section&nbsp;<a class="sec" href=
+          "#sec-5">1</a>.</p>
+          <p>Overall, we have about 179K social images and the
+          statistics of the dataset is summarized in
+          Table&nbsp;<a class="tbl" href="#tab1">1</a>. To evaluate
+          the performance of UHAN and other adopted methods, we
+          split the dataset in chronological order and regard the
+          first 70% as our training dataset, which is a little more
+          consistent with real situation than just randomly
+          splitting. For the rest of the dataset, we randomly adopt
+          one third as the validation dataset to determine optimal
+          parameters and two thirds as the test dataset to report
+          prediction performance. Note that each user in the
+          dataset has enough images.</p>
+          <div class="table-responsive" id="tab1">
+            <div class="table-caption">
+              <span class="table-number">Table 1:</span>
+              <span class="table-title">Basic statistics of the
+              dataset.</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:center;">
+                  <strong>Data</strong></td>
+                  <td style="text-align:center;">Image#</td>
+                  <td style="text-align:center;">Word#</td>
+                  <td style="text-align:center;">User#</td>
+                  <td style="text-align:center;">Time Span</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">
+                  <strong>Flickr179K</strong></td>
+                  <td style="text-align:center;">179,686</td>
+                  <td style="text-align:center;">70,170</td>
+                  <td style="text-align:center;">128</td>
+                  <td style="text-align:center;">2007-2013</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section id="sec-18">
+          <p><em>4.1.2 Evaluation Metrics.</em> As the studied
+          problem belongs to regression task, we adopt two standard
+          metrics, i.e., mean square errors (MSE) and mean absolute
+          errors (MAE), which are widely used in
+          literature&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0024">24</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0040">40</a>]. Denote <em>y<sub>i</sub></em>
+          to be the ground truth for record <em>i</em> and
+          <span class="inline-equation"><span class=
+          "tex">$\hat{y}_i$</span></span> to be the prediction
+          value, we can calculate MSE and MAE as follows:</p>
+          <div class="table-responsive" id="eq23">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}
+              \begin{split} &amp;\mathrm{MSE}= \frac{1}{n^{te}}\sum
+              _{i=1}^{n^{te}} (y_i-\hat{y}_i)^2,\\
+              &amp;\mathrm{MAE}= \frac{1}{n^{te}}\sum
+              _{i=1}^{n^{te}} |y_i-\hat{y}_i|, \end{split}
+              \end{equation}</span><br />
+              <span class="equation-number">(23)</span>
+            </div>
+          </div>where <em>n<sup>te</sup></em> is the size of test
+          set. We adopt the popularity score <em>y<sub>i</sub></em>
+          calculated by&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0040">40</a>], which is given by:
+          <div class="table-responsive" id="eq24">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} y_i = \log
+              _2(\frac{c_i}{d_i} + 1), \end{equation}</span><br />
+              <span class="equation-number">(24)</span>
+            </div>
+          </div>where <em>c</em> is the total view count of the
+          social image <em>i</em> and <em>d</em> represents how
+          many days it has been from the time it has been posted to
+          the specified end time.
+          <p></p>
+        </section>
+        <section id="sec-19">
+          <p><em>4.1.3 Baselines.</em> We compare our proposed UHAN
+          with several carefully selected alternative methods,
+          including some strong baselines based on multi-modal
+          learning or attention mechanism.</p>
+          <ul class="list-no-style">
+            <li id="list4" label="•"><strong>HisAve.</strong> The
+            first baseline is the simplest one which regards
+            historical average popularity as prediction. It
+            provides benchmark performance for other
+            methods.<br /></li>
+            <li id="list5" label="•">
+              <strong>SVR.</strong>Based on various hand-crafted
+              features, &nbsp;[<a class="bib" data-trigger="hover"
+              data-toggle="popover" data-placement="top" href=
+              "#BibPLXBIB0016">16</a>] adopts support vector
+              regression (SVR) for social image popularity
+              prediction but without explicitly modeling
+              unstructured textual modality. Following this, we
+              additionally incorporate textual features such as
+              TF-IDF and word embedding (GloVe&nbsp;[<a class="bib"
+              data-trigger="hover" data-toggle="popover"
+              data-placement="top" href="#BibPLXBIB0032">32</a>])
+              while keeping basic visual features such as color and
+              deep learning based features. We have tried different
+              combinations of feature types and report the best
+              results.<br />
+            </li>
+            <li id="list6" label="•">
+              <strong>DMF.</strong> It is a deep learning approach
+              based on multi-modal learning. We adopt a similar
+              deep multi-modal fusion (DMF) strategy widely used in
+              literature&nbsp;[<a class="bib" data-trigger="hover"
+              data-toggle="popover" data-placement="top" href=
+              "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger=
+              "hover" data-toggle="popover" data-placement="top"
+              href="#BibPLXBIB0026">26</a>] to integrate visual
+              representation from VGG and textual representation
+              from LSTM.<br />
+            </li>
+            <li id="list7" label="•">
+              <strong>DualAtt.</strong> The last strong baseline is
+              inspired by a recent dual attention network which
+              involves simultaneous visual and textual
+              attentions&nbsp;[<a class="bib" data-trigger="hover"
+              data-toggle="popover" data-placement="top" href=
+              "#BibPLXBIB0029">29</a>]. We adapt the one-layered
+              version of the original one to our problem setting by
+              utilizing user representation to guide attention
+              learning.<br />
+            </li>
+          </ul>
+          <p>To ensure robust comparison, we run each model three
+          times and report their average performance.</p>
+          <figure id="fig4">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186026/images/www2018-35-fig4.jpg"
+            class="img-responsive" alt="Figure 4" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 4:</span>
+              <span class="figure-title">Attention map
+              visualization of two examples in our test dataset.
+              Darker regions of images mean smaller attention
+              weights. The lighter the font color is, the smaller
+              attention weight the word will get.</span>
+            </div>
+          </figure>
+          <p></p>
+        </section>
+        <section id="sec-20">
+          <p><em>4.1.4 Implementation Details.</em> For textual
+          modality, we set the maximum length of image description
+          to 50 by truncating longer one. The dimension of word
+          embedding and hidden state in LSTM are both set to 512.
+          For visual modality, as introduced in
+          Section&nbsp;<a class="sec" href="#sec-12">3.2</a>, the
+          input dimension to our model is 196 × 512. In addition,
+          we set the dimension of user embedding to 512 as
+          well.</p>
+          <p>We implement our proposed UHAN based on the Keras
+          library. Adam with default parameter
+          setting&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0019">19</a>] is adopted to optimize the
+          model, with the mini-batch size of 128. We terminate the
+          learning process with an early stopping strategy. More
+          specifically, we test model performance on the validation
+          dataset every 64 batches. When the best performance keeps
+          unchanged for more than 20 iterations, the learning
+          process will be stopped.</p>
+          <div class="table-responsive" id="tab2">
+            <div class="table-caption">
+              <span class="table-number">Table 2:</span>
+              <span class="table-title">Evaluation results of our
+              proposed UHAN and other adopted baselines in terms of
+              MSE and MAE.</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:left;">
+                  <strong>Methods</strong></td>
+                  <td style="text-align:center;">MSE</td>
+                  <td style="text-align:center;">MAE</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">HisAve</td>
+                  <td style="text-align:center;">4.070</td>
+                  <td style="text-align:center;">1.575</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">SVR</td>
+                  <td style="text-align:center;">3.193</td>
+                  <td style="text-align:center;">1.385</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">DMF</td>
+                  <td style="text-align:center;">3.004</td>
+                  <td style="text-align:center;">1.339</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">DualAtt</td>
+                  <td style="text-align:center;">2.412</td>
+                  <td style="text-align:center;">1.185</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">UHAN (w/o u)</td>
+                  <td style="text-align:center;">3.050</td>
+                  <td style="text-align:center;">1.347</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">UHAN (w/o sc)</td>
+                  <td style="text-align:center;">2.283</td>
+                  <td style="text-align:center;">1.139</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">
+                  <strong>UHAN</strong></td>
+                  <td style="text-align:center;">
+                  <strong>2.246</strong></td>
+                  <td style="text-align:center;">
+                  <strong>1.130</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+      <section id="sec-21">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Model
+            Comparison ( <tt><strong>Q1</strong></tt> )</h3>
+          </div>
+        </header>
+        <p>Table&nbsp;<a class="tbl" href="#tab2">2</a> shows the
+        performance comparison between UHAN and the compared
+        baselines in terms of MSE and MAE. First, we can see HisAve
+        performs much worse than all the other methods. It is
+        consistent with our expectation since it does not consider
+        any useful information about visual and textual modalities.
+        By comparing DMF and SVR, we find DMF performs better,
+        showing that deep multi-modal fusion based method is
+        promising for this task. DualAtt further improves DMN by a
+        significant margin. It is intuitive that DualAtt is a
+        strong baseline since we adapt it to the studied problem by
+        performing user attention to both visual and textual
+        modalities separately. The comparison also reveals that
+        considering attention mechanism in multi-modal learning is
+        beneficial.</p>
+        <p>We further verify the role of users in our proposed UHAN
+        by providing its two simplified versions, i.e., UHAN (w/o
+        sc) which just removes the shortcut connection and UHAN
+        (w/o u) that completely disregards user embedding. By
+        comparing UHAN with UHAN (w/o sc), we see slightly better
+        improvements, which demonstrates that the user embedding
+        mainly utilized for attention computation can also
+        facilitate the prediction. By testing UHAN (w/o u), we can
+        see a notable performance drop compared with UHAN. This
+        phenomenon shows that proposing user guidance for attention
+        learning is indeed effective.</p>
+        <p>In summary, UHAN and its variant UHAN (w/o sc) achieve
+        the best results among all the methods, including gaining
+        notable improvements over the strong baseline DualAtt. We
+        could conclude that the framework is effective and behaves
+        well among all the adopted methods, which can answer
+        question <span class="inline-equation"><span class=
+        "tex">$\texttt {Q1}$</span></span> .</p>
+      </section>
+      <section id="sec-22">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span> Modality
+            Contribution ( <tt><strong>Q2</strong></tt> )</h3>
+          </div>
+        </header>
+        <p>We choose two representative methods (SVR (not deep) and
+        UHA (deep)) to test whether fusing visual and textual
+        modalities indeed promote popularity prediction. We denote
+        visual modality as V and textual modality as T for short,
+        respectively. Thus “(w/o V)” means removing visual modality
+        for corresponding methods and it is similar for “(w/o
+        T)”.</p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Performance test of unstructured
+            modalities.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">
+                <strong>Methods</strong></td>
+                <td style="text-align:center;">MSE</td>
+                <td style="text-align:center;">MAE</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">SVR (w/o V)</td>
+                <td style="text-align:center;">3.214</td>
+                <td style="text-align:center;">1.392</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">SVR (w/o T)</td>
+                <td style="text-align:center;">3.644</td>
+                <td style="text-align:center;">1.484</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">SVR</td>
+                <td style="text-align:center;">3.193</td>
+                <td style="text-align:center;">1.385</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">UHAN (w/o V)</td>
+                <td style="text-align:center;">2.321</td>
+                <td style="text-align:center;">1.151</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">UHAN (w/o T)</td>
+                <td style="text-align:center;">2.337</td>
+                <td style="text-align:center;">1.149</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                <strong>UHAN</strong></td>
+                <td style="text-align:center;">
+                <strong>2.246</strong></td>
+                <td style="text-align:center;">
+                <strong>1.130</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Table&nbsp;<a class="tbl" href="#tab3">3</a> presents
+        the results of modality test. We can see that for both the
+        baseline SVR and our model UHAN, they would suffer a clear
+        performance drop if either textual modality or visual
+        modality is not considered. Besides, we find that the
+        methods of “(w/o V)” behaves a little better than those of
+        “(w/o T)”, which indicates that it might be easy to acquire
+        knowledge from textual modality than visual modality since
+        each words have more specific meanings than pixels.
+        Finally, the methods of jointly fusing multi-modalities
+        achieves the best results, reflecting that the two
+        modalities might complement each other for the studied
+        problem. Based on the above illustration, we can answer
+        question <span class="inline-equation"><span class=
+        "tex">$\texttt {Q2}$</span></span> that joint considering
+        of visual and textual modalities is indeed meaningful.</p>
+      </section>
+      <section id="sec-23">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.4</span> Ablation
+            Study ( <tt><strong>Q3</strong></tt> )</h3>
+          </div>
+        </header>
+        <p>We consider three major components of UHAN to test their
+        contributions to final prediction. They are: 1) user-guided
+        intra-attention mechanism, 2) user-guided inter-attention
+        mechanism, and 3) shortcut connection of user embedding,
+        just as introduced in Section&nbsp;<a class="sec" href=
+        "#sec-21">4.2</a>.</p>
+        <div class="table-responsive" id="tab4">
+          <div class="table-caption">
+            <span class="table-number">Table 4:</span> <span class=
+            "table-title">Contribution of different components of
+            UHAN.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">
+                <strong>Methods</strong></td>
+                <td style="text-align:center;">MSE</td>
+                <td style="text-align:center;">MAE</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">UHAN (w/o
+                intra+inter)</td>
+                <td style="text-align:center;">2.316</td>
+                <td style="text-align:center;">1.150</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">UHAN (w/o intra)</td>
+                <td style="text-align:center;">2.265</td>
+                <td style="text-align:center;">1.138</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">UHAN (w/o inter)</td>
+                <td style="text-align:center;">2.271</td>
+                <td style="text-align:center;">1.139</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">UHAN (w/o sc)</td>
+                <td style="text-align:center;">2.283</td>
+                <td style="text-align:center;">1.139</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                <strong>UHAN</strong></td>
+                <td style="text-align:center;">
+                <strong>2.246</strong></td>
+                <td style="text-align:center;">
+                <strong>1.130</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Table&nbsp;<a class="tbl" href="#tab4">4</a> shows the
+        corresponding results. Each of the middle three methods
+        removes one of the three major components. They behave
+        nearly the same in MAE, but have different performance in
+        terms of MSE. By comparing with them, we find that UHAN
+        outperforms them in both metrics. We have conducted paired
+        t-test to show the significance of UHAN over the three
+        variants in terms of MAE and found the difference is
+        significant. Moreover, we compare UHAN with UHAN (w/o
+        intra+inter) and the notable performance gap further
+        indicates the benefit of the proposed attention mechanism.
+        Based on these results, we see the positive contribution of
+        each component and can answer the question <span class=
+        "inline-equation"><span class="tex">$\texttt
+        {Q3}$</span></span> .</p>
+      </section>
+      <section id="sec-24">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.5</span> Qualitative
+            Analysis</h3>
+          </div>
+        </header>
+        <p>In addition to the above quantitative analysis, we
+        visualize some attention maps generated by our model and
+        some other methods to qualitatively analyze the
+        performance.</p>
+        <figure id="fig5">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186026/images/www2018-35-fig5.jpg"
+          class="img-responsive" alt="Figure 5" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 5:</span>
+            <span class="figure-title">Case study for our model.
+            The left column shows the original examples while the
+            right presents the attention maps generated by our
+            proposed UHAN and popularity scores predicted by
+            UHAN.</span>
+          </div>
+        </figure><strong>Different models for the same
+        example:</strong>In order to intuitively verify the
+        advantages of our proposed UHAN, especially for the
+        user-guided hierarchical attention mechanism, we select two
+        image instances from our test dataset and show their
+        attention maps for the selected attention based models in
+        Figure&nbsp;<a class="fig" href="#fig4">4</a>.
+        <p></p>
+        <p>We can first see our model clearly gains good visual
+        attention maps in both two examples since it concentrates
+        more on their key elements, which is consistent with human
+        cognition. For the variant of our model, UHAN (w/o inter),
+        its performance is slightly worse than UHAN in the first
+        example, but is much worse in the second. This phenomenon
+        indicates that the user-guided inter-attention mechanism
+        could indeed influence the attention map learned for each
+        modality. The attention maps generated by DualAtt seem to
+        be not good for both images.</p>
+        <p>For the textual modality, our model shows good
+        attentions to keywords in the descriptions. However, UHAN
+        (w/o inter) presents an unexpected attention to the
+        preposition ‘in’ in the first example. For the model of
+        DualAtt, its major attention focuses on ‘muscadine vines’
+        in the first example. Nevertheless, this phrase might not
+        be the one we want because it does not match with the key
+        element in the image. Besides, its attention distribution
+        in the second example seems to be a little chaotic. To sum
+        up, this qualitative evaluation empirically demonstrates
+        the effectiveness of UHAN, especially for its proposed
+        attention mechanisms.</p>
+        <p><strong>Our model for different
+        examples:</strong>According to the predictions generated by
+        our model, we select two examples with good prediction
+        results and one with bad results, and further show them in
+        Figure&nbsp;<a class="fig" href="#fig5">5</a>.</p>
+        <p>We can see clearly that the two examples in the top of
+        the figure have good results. For both of them, the
+        corresponding attention maps are shown in the left parts.
+        Accordingly, we can easily focus on the important elements
+        in the images, which meets our intuition that good
+        attention results could lead better popularity prediction
+        performance. Moreover, by considering the last example, we
+        find that there seems to be no obvious object or other
+        important elements in the image. It is even not easy for
+        ordinary users to judge its quality and popularity.
+        Actually, some background knowledge about aesthetics might
+        be necessary. As a result, it might be one of the main
+        reasons that lead to an obscure attention map and poor
+        popularity prediction result.</p>
+        <figure id="fig6">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186026/images/www2018-35-fig6.jpg"
+          class="img-responsive" alt="Figure 6" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 6:</span>
+            <span class="figure-title">Case study for
+            personalization regarding attention generation.</span>
+          </div>
+        </figure><strong>User personalization:</strong>In
+        Figure&nbsp;<a class="fig" href="#fig6">6</a>, we select
+        two users with different styles. “User A” usually posts
+        images that contain people, while “User B” rarely posts
+        this type of images, but prefers some other objects.
+        Therefore, we can see that attention maps generated for the
+        images of “User A” commonly focus on people. However, for
+        the last image of the user, it is mainly about a plane. As
+        it does not belong to his commonly related categories, the
+        corresponding attention map seems to be not very good as
+        well. However, we can see that the second image of “User B”
+        is also about a plane. But this time the generated
+        attention map seems to be good to capture the sketch of the
+        plane. In short, users may have different degrees of
+        personalization, which influences attention computation and
+        leads personalized attention maps.
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-25">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>In this paper, we have studied the problem of multi-modal
+      social image popularity prediction. To consider
+      representation learning from multi-modalities for popularity
+      prediction, which is often ignored by relevant studies, we
+      have proposed a user-guided hierarchical attention network
+      (UHAN) model. The major novelty of UHAN is the proposed
+      user-guided hierarchical attention mechanism that can combine
+      the representation learning of multi-modalities and
+      popularity prediction in an end-to-end learning framework. We
+      have built a large-scale multi-modal social image dataset by
+      simply extending a publicly accessible dataset. The
+      experiments have demonstrated the rationality of our proposed
+      UHAN and its good performance compared with several other
+      strong baselines.</p>
+    </section>
+    <section id="sec-26">
+      <header>
+        <div class="title-info">
+          <h2>Acknowledgments</h2>
+        </div>
+      </header>
+      <p>We thank the anonymous reviewers for their valuable and
+      constructive comments. We also thank Bo Wu et al. for the
+      released valuable dataset. This work was supported in part by
+      NSFC (61702190), Shanghai Sailing Program (17YF1404500),
+      SHMEC (16CG24), NSFC-Zhejiang (U1609220), and NSFC (61672231,
+      61672236). J. Wang is the corresponding author.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Stanislaw Antol,
+        Aishwarya Agrawal, Jiasen Lu, Margaret Mitchell, Dhruv
+        Batra, C.&nbsp;Lawrence Zitnick, and Devi Parikh. 2015.
+        VQA: Visual Question Answering. In <em><em>ICCV</em></em> .
+        2425–2433.</li>
+        <li id="BibPLXBIB0002" label="[2]">Dzmitry Bahdanau,
+        Kyunghyun Cho, and Yoshua Bengio. 2014. Neural Machine
+        Translation by Jointly Learning to Align and Translate.
+        <em><em>CoRR</em></em> abs/1409.0473(2014).
+        arxiv:1409.0473</li>
+        <li id="BibPLXBIB0003" label="[3]">David&nbsp;M. Blei,
+        Andrew&nbsp;Y. Ng, and Michael&nbsp;I. Jordan. 2003. Latent
+        Dirichlet Allocation. <em><em>Journal of Machine Learning
+        Research</em></em> 3 (2003), 993–1022.</li>
+        <li id="BibPLXBIB0004" label="[4]">Biao Chang, Hengshu Zhu,
+        Yong Ge, Enhong Chen, Hui Xiong, and Chang Tan. 2014.
+        Predicting the Popularity of Online Serials with
+        Autoregressive Models. In <em><em>CIKM</em></em> .
+        1339–1348.</li>
+        <li id="BibPLXBIB0005" label="[5]">Jingyuan Chen, Xuemeng
+        Song, Liqiang Nie, Xiang Wang, Hanwang Zhang, and Tat-Seng
+        Chua. 2016. Micro Tells Macro: Predicting the Popularity of
+        Micro-Videos via a Transductive Model. In
+        <em><em>MM</em></em> . 898–907.</li>
+        <li id="BibPLXBIB0006" label="[6]">Kan Chen, Jiang Wang,
+        Liang-Chieh Chen, Haoyuan Gao, Wei Xu, and Ram Nevatia.
+        2015. ABC-CNN: An Attention Based Convolutional Neural
+        Network for Visual Question Answering.
+        <em><em>CoRR</em></em> abs/1511.05960(2015).
+        arxiv:1511.05960</li>
+        <li id="BibPLXBIB0007" label="[7]">Cesc
+        Chunseong&nbsp;Park, Byeongchang Kim, and Gunhee Kim. 2017.
+        Attend to You: Personalized Image Captioning With Context
+        Sequence Memory Networks. In <em><em>CVPR</em></em> .
+        895–903.</li>
+        <li id="BibPLXBIB0008" label="[8]">Peng Cui, Fei Wang,
+        Shaowei Liu, Mingdong Ou, Shiqiang Yang, and Lifeng Sun.
+        2011. Who should share what?: item-level social influence
+        prediction for users and posts ranking. In
+        <em><em>SIGIR</em></em> . 185–194.</li>
+        <li id="BibPLXBIB0009" label="[9]">Francesco Gelli, Tiberio
+        Uricchio, Marco Bertini, Alberto&nbsp;Del Bimbo, and
+        Shih-Fu Chang. 2015. Image Popularity Prediction in Social
+        Media Using Sentiment and Context Features. In
+        <em><em>MM</em></em> . 907–910.</li>
+        <li id="BibPLXBIB0010" label="[10]">Alan&nbsp;G Hawkes.
+        1971. Spectra of some self-exciting and mutually exciting
+        point processes. <em><em>Biometrika</em></em> (1971),
+        83–90.</li>
+        <li id="BibPLXBIB0011" label="[11]">Kaiming He, Xiangyu
+        Zhang, Shaoqing Ren, and Jian Sun. 2016. Deep Residual
+        Learning for Image Recognition. In <em><em>CVPR</em></em> .
+        770–778.</li>
+        <li id="BibPLXBIB0012" label="[12]">Xiangnan He, Ming Gao,
+        Min-Yen Kan, Yiqun Liu, and Kazunari Sugiyama. 2014.
+        Predicting the popularity of web 2.0 items based on user
+        comments. In <em><em>SIGIR</em></em> . 233–242.</li>
+        <li id="BibPLXBIB0013" label="[13]">Sepp Hochreiter and
+        Jürgen Schmidhuber. 1997. Long short-term memory.
+        <em><em>Neural computation</em></em> 9, 8 (1997),
+        1735–1780.</li>
+        <li id="BibPLXBIB0014" label="[14]">Yoonseop Kang, Saehoon
+        Kim, and Seungjin Choi. 2012. Deep Learning to Hash with
+        Multiple Representations. In <em><em>ICDM</em></em> .
+        930–935.</li>
+        <li id="BibPLXBIB0015" label="[15]">Andrej Karpathy and
+        Fei-Fei Li. 2015. Deep visual-semantic alignments for
+        generating image descriptions. In <em><em>CVPR</em></em> .
+        3128–3137.</li>
+        <li id="BibPLXBIB0016" label="[16]">Aditya Khosla,
+        Atish&nbsp;Das Sarma, and Raffay Hamid. 2014. What makes an
+        image popular?. In <em><em>WWW</em></em> . 867–876.</li>
+        <li id="BibPLXBIB0017" label="[17]">Jin-Hwa Kim, Sang-Woo
+        Lee, Dong-Hyun Kwak, Min-Oh Heo, Jeonghee Kim, JungWoo Ha,
+        and Byoung-Tak Zhang. 2016. Multimodal Residual Learning
+        for Visual QA. In <em><em>NIPS</em></em> . 361–369.</li>
+        <li id="BibPLXBIB0018" label="[18]">Jin-Hwa Kim,
+        Kyoung-Woon On, Jeonghee Kim, Jung-Woo Ha, and Byoung-Tak
+        Zhang. 2017. Hadamard product for low-rank bilinear
+        pooling. <em><em>ICLR</em></em> (2017).</li>
+        <li id="BibPLXBIB0019" label="[19]">Diederik&nbsp;P. Kingma
+        and Jimmy Ba. 2014. Adam: A Method for Stochastic
+        Optimization. In <em><em>ICLR</em></em> .</li>
+        <li id="BibPLXBIB0020" label="[20]">Himabindu Lakkaraju and
+        Jitendra Ajmera. 2011. Attention prediction on social media
+        brand pages. In <em><em>CIKM</em></em> . 2157–2160.</li>
+        <li id="BibPLXBIB0021" label="[21]">Yann LeCun, Yoshua
+        Bengio, and Geoffrey Hinton. 2015. Deep learning.
+        <em><em>Nature</em></em> 521, 7553 (2015), 436–444.</li>
+        <li id="BibPLXBIB0022" label="[22]">Kathy Lee, Ashequl
+        Qadir, Sadid&nbsp;A. Hasan, Vivek&nbsp;V. Datla, Aaditya
+        Prakash, Joey Liu, and Oladimeji Farri. [n. d.]. Adverse
+        Drug Event Detection in Tweets with Semi-Supervised
+        Convolutional Neural Networks. In <em><em>WWW</em></em> .
+        705–714.</li>
+        <li id="BibPLXBIB0023" label="[23]">Chee&nbsp;Wee Leong,
+        Rada Mihalcea, and Samer Hassan. 2010. Text Mining for
+        Automatic Image Tagging. In <em><em>COLING</em></em> .
+        647–655.</li>
+        <li id="BibPLXBIB0024" label="[24]">Cheng Li, Jiaqi Ma,
+        Xiaoxiao Guo, and Qiaozhu Mei. 2017. DeepCas: An End-to-end
+        Predictor of Information Cascades. In <em><em>WWW</em></em>
+        . 577–586.</li>
+        <li id="BibPLXBIB0025" label="[25]">Pan Lu, Hongsheng Li,
+        Wei Zhang, Jianyong Wang, and Xiaogang Wang. 2018.
+        Co-attending Free-form Regions and Detections with
+        Multi-modal Multiplicative Feature Embedding for Visual
+        Question Answering. In <em><em>AAAI</em></em> .</li>
+        <li id="BibPLXBIB0026" label="[26]">Corey Lynch, Kamelia
+        Aryafar, and Josh Attenberg. 2016. Images Don't Lie:
+        Transferring Deep Visual Semantic Features to Large-Scale
+        Multimodal Learning to Rank. In <em><em>SIGKDD</em></em> .
+        541–548.</li>
+        <li id="BibPLXBIB0027" label="[27]">Travis Martin,
+        Jake&nbsp;M. Hofman, Amit Sharma, Ashton Anderson, and
+        Duncan&nbsp;J. Watts. 2016. Exploring Limits to Prediction
+        in Complex Social Systems. In <em><em>WWW</em></em> .
+        683–694.</li>
+        <li id="BibPLXBIB0028" label="[28]">Volodymyr Mnih, Nicolas
+        Heess, Alex Graves, and Koray Kavukcuoglu. 2014. Recurrent
+        Models of Visual Attention. In <em><em>NIPS</em></em> .
+        2204–2212.</li>
+        <li id="BibPLXBIB0029" label="[29]">Hyeonseob Nam, Jung-Woo
+        Ha, and Jeonghee Kim. 2017. Dual Attention Networks for
+        Multimodal Reasoning and Matching. In
+        <em><em>CVPR</em></em> . 299–307.</li>
+        <li id="BibPLXBIB0030" label="[30]">Jiquan Ngiam, Aditya
+        Khosla, Mingyu Kim, Juhan Nam, Honglak Lee, and
+        Andrew&nbsp;Y. Ng. 2011. Multimodal Deep Learning. In
+        <em><em>ICML</em></em> . 689–696.</li>
+        <li id="BibPLXBIB0031" label="[31]">Behnaz Nojavanasghari,
+        Deepak Gopinath, Jayanth Koushik, Tadas Baltrusaitis, and
+        Louis-Philippe Morency. 2016. Deep multimodal fusion for
+        persuasiveness prediction. In <em><em>ICML</em></em> .
+        284–288.</li>
+        <li id="BibPLXBIB0032" label="[32]">Jeffrey Pennington,
+        Richard Socher, and Christopher&nbsp;D. Manning. 2014.
+        Glove: Global Vectors for Word Representation. In
+        <em><em>EMNLP</em></em> . 1532–1543.</li>
+        <li id="BibPLXBIB0033" label="[33]">Marian-Andrei Rizoiu,
+        Lexing Xie, Scott Sanner, Manuel Cebrián, Honglin Yu, and
+        Pascal&nbsp;Van Hentenryck. 2017. Expecting to be HIP:
+        Hawkes Intensity Processes for Social Media Popularity. In
+        <em><em>WWW</em></em> . 735–744.</li>
+        <li id="BibPLXBIB0034" label="[34]">Karen Simonyan and
+        Andrew Zisserman. 2014. Very Deep Convolutional Networks
+        for Large-Scale Image Recognition. <em><em>CoRR</em></em>
+        abs/1409.1556(2014). arxiv:1409.1556</li>
+        <li id="BibPLXBIB0035" label="[35]">Gábor Szabó and
+        Bernardo&nbsp;A. Huberman. 2010. Predicting the popularity
+        of online content. <em><em>Journal of Commun. ACM</em></em>
+        53, 8 (2010), 80–88.</li>
+        <li id="BibPLXBIB0036" label="[36]">Kai&nbsp;Sheng Tai,
+        Richard Socher, and Christopher&nbsp;D. Manning. 2015.
+        Improved Semantic Representations From Tree-Structured Long
+        Short-Term Memory Networks. In <em><em>ACL</em></em> .
+        1556–1566.</li>
+        <li id="BibPLXBIB0037" label="[37]">Oren Tsur and Ari
+        Rappoport. 2012. What's in a hashtag?: content based
+        prediction of the spread of ideas in microblogging
+        communities. In <em><em>WSDM</em></em> . 643–652.</li>
+        <li id="BibPLXBIB0038" label="[38]">Daixin Wang, Peng Cui,
+        Mingdong Ou, and Wenwu Zhu. 2015. Deep Multimodal Hashing
+        with Orthogonal Regularization. In <em><em>IJCAI</em></em>
+        . 2291–2297.</li>
+        <li id="BibPLXBIB0039" label="[39]">William&nbsp;M Wells,
+        Paul Viola, Hideki Atsumi, Shin Nakajima, and Ron Kikinis.
+        1996. Multi-modal volume registration by maximization of
+        mutual information. <em><em>Medical image
+        analysis</em></em> 1, 1 (1996), 35–51.</li>
+        <li id="BibPLXBIB0040" label="[40]">Bo Wu, Wen-Huang Cheng,
+        Yongdong Zhang, Qiushi Huang, Jintao Li, and Tao Mei. 2017.
+        Sequential Prediction of Social Media Popularity with Deep
+        Temporal Context Networks. In <em><em>IJCAI</em></em> .
+        3062–3068.</li>
+        <li id="BibPLXBIB0041" label="[41]">Bo Wu, Wen-Huang Cheng,
+        Yongdong Zhang, and Tao Mei. 2016. Time Matters:
+        Multi-scale Temporalization of Social Media Popularity. In
+        <em><em>MM</em></em> . 1336–1344.</li>
+        <li id="BibPLXBIB0042" label="[42]">Shuai Xiao, Junchi Yan,
+        Changsheng Li, Bo Jin, Xiangfeng Wang, Xiaokang Yang,
+        Stephen&nbsp;M. Chu, and Hongyuan Zha. 2016. On Modeling
+        and Predicting Individual Paper Citation Count over Time.
+        In <em><em>IJCAI</em></em> . 2676–2682.</li>
+        <li id="BibPLXBIB0043" label="[43]">Zichao Yang, Xiaodong
+        He, Jianfeng Gao, Li Deng, and Alexander&nbsp;J. Smola.
+        2016. Stacked Attention Networks for Image Question
+        Answering. In <em><em>CVPR</em></em> . 21–29.</li>
+        <li id="BibPLXBIB0044" label="[44]">Chao Zhang, Keyang
+        Zhang, Quan Yuan, Haoruo Peng, Yu Zheng, Tim Hanratty,
+        Shaowen Wang, and Jiawei Han. 2017. Regions, Periods,
+        Activities: Uncovering Urban Dynamics via Cross-Modal
+        Representation Learning. In <em><em>WWW</em></em> .
+        361–370.</li>
+        <li id="BibPLXBIB0045" label="[45]">Qingyuan Zhao,
+        Murat&nbsp;A. Erdogdu, Hera&nbsp;Y. He, Anand Rajaraman,
+        and Jure Leskovec. 2015. SEISMIC: A Self-Exciting Point
+        Process Model for Predicting Tweet Popularity. In
+        <em><em>SIGKDD</em></em> . 1513–1522.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "https://github.com/Autumn945/UHAN">https://github.com/Autumn945/UHAN</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "https://github.com/social-media-prediction/MM17PredictionChallenge">https://github.com/social-media-prediction/MM17PredictionChallenge</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5639-8/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3178876.3186026">https://doi.org/10.1145/3178876.3186026</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

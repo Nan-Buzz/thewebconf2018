@@ -1,1 +1,1425 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">  <head>  <title>Making the Most Cost-effective Decision in Online Paid Q&amp;A Community: An Expert Recommender System with Motivation Modeling and Knowledge Pricing</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>  </head>  <body id="main">  <section class="front-matter">   <section>    <header class="title-info">     <div class="journal-title">     <h1>      <span class="title">Making the Most Cost-effective Decision in Online Paid Q&amp;A Community: An Expert Recommender System with Motivation Modeling and Knowledge Pricing</span>      <br/>      <span class="subTitle"/>     </h1>     </div>    </header>    <div class="authorGroup">     <div class="author">     <span class="givenName">Yunhao</span>      <span class="surName">Zheng</span>,     Tianjin University, Tianjin, China, <a href="mailto:zhengyhjohn@tju.edu.cn">zhengyhjohn@tju.edu.cn</a>         </div>         <div class="author">     <span class="givenName">Xi</span>      <span class="surName">Zhang</span>,     Tianjin University, Tianjin, China, <a href="mailto:jackyzhang@tju.edu.cn">jackyzhang@tju.edu.cn</a>         </div>         <div class="author">     <span class="givenName">Yuting</span>      <span class="surName">Xiao</span>,     Tianjin University, Tianjin, China, <a href="mailto:xiaoytzoe@tju.edu.cn">xiaoytzoe@tju.edu.cn</a>         </div>        </div>    <br/>    <div class="pubInfo">     <p>DOI: <a href="https://doi.org/10.1145/3184558.3186349" target="_blank">https://doi.org/10.1145/3184558.3186349</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">     <p>     <small>Recommending proper experts to knowledge buyers is a significant problem in online paid Q&amp;A community (OPQC). Existing approaches for online expert recommendation have been mainly focused on exploiting semantic similarities and social network influence, while personalizing recommendation according to individuals&#x2019; motivations has not received much attention. In this paper, we propose a personalized expert recommender system, which integrates buyer&#x0027;s motivation for knowledge, social influence, and money in a unified framework. As an innovative application of cognitive computing, our recommender system is capable of providing users with the best matching experts so as to help them make the most cost-effective choice in OPQC. To this end, <em>Paragraph Vector</em> technique is implemented to construct domain knowledge base (KB) in a multilayer information retrieval (IR) framework. Then we perform knowledge pricing based on buyer&#x0027;s query and bid in the context of bilateral monopoly knowledge market. After that, a Markov Chain based method with user motivation learning is introduced to find the best matching experts. Finally, we evaluate the proposed approach using datasets collected from two OPQC. The experimental results show encouraging success as effectively offering reasonable personalization options. As an innovative approach to solve the expert matching problem in OPQC, this research provides flexibility in customizing the recommendation heuristics based on user motivation, and demonstrate its contribution to a higher rate of optimal knowledge seller-buyer matching.</small>     </p>    </div>    <div class="classifications">     <div class="author">     <span style="font-weight:bold;">      <small>KEYWORDS:</small>     </span>     <span class="keyword">      <small>Expert recommendation</small>, </span>     <span class="keyword">      <small>knowledge pricing</small>, </span>     <span class="keyword">      <small>motivation modeling</small>     </span>     </div>     <br/>     <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>Yunhao Zheng, Xi Zhang and Yuting Xiao. 2018. Making the Most Cost-effective Decision in Online Paid Q&amp;A Community: An Expert Recommender System with Motivation Modeling and Knowledge Pricing. In <em>Proceedings of The 2018 Web Conference Companion (WWW '18 Companion). ACM, New York, NY, USA, 15 pages.</em> <a href="https://doi.org/10.1145/3184558.3186349" target="_blank">https://doi.org/10.1145/3184558.3186349</a></small>     </p>     </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-001">    <header>     <div class="title-info">     <h2>INTRODUCTION</h2>     </div>    </header>    <p>In the era of knowledge economy and open innovation, besides organizational internal knowledge, knowledge outside the organization is also considered as an important resource to enhance the organizational competitiveness and innovation ability [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib1">1</a>]. More and more attention has been paid to the acquisition of knowledge from the external knowledge market [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib2">2</a>]. A marketplace for knowledge is an environment in which buyers and sellers trade their personal knowledge, according to the prescribed price and transaction pattern [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib3">3</a>], such as Online Paid Q&amp;A community (OPQC). Regarding knowledge as a commodity, OPQC is a price-based online knowledge market, where buyers seek knowledge providers who match their needs and invite them to provide paid question-answering services. OPQC is conducive to solving the knowledge sharing dilemma. Most of all, the imbalance between low benefits and high knowledge sharing costs is regulated by the income of paid Q&amp;A services.</p>    <p>In particular, with the help of information technology, the online knowledge markets have been proven to play a significant role in promoting knowledge sharing and knowledge dissemination [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib4">4</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib5">5</a>]. First, transactions bring economic incentives to online knowledge providers. And according to the social loafing theory, reputation, word-of-mouth and knowledge quality, provided by the electronic market, enhance knowledge sharing visibility and alleviate reluctance to share knowledge [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib6">6</a>]. Second, information technology provides support for resource search and supply-demand matching in the online knowledge market, which eliminate the information asymmetry between the two sides of knowledge transactions, and improve the efficiency of knowledge dissemination [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib7">7</a>].</p>    <p>In addition to passive knowledge discovery, recommendation mechanism is of vital importance to the knowledge markets [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib8">8</a>]. As recommendation, according to the user&#x0027;s preferences and needs, has been proved to have a significantly positive influence on users&#x2019; satisfaction [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib9">9</a>]. However, expert recommendation in OPQC is an extremely complex task, which requires not only consider the knowledge-based recommendations but also the impact of motivation and cognitive factors in the process of knowledge transaction.</p>    <p>Knowledge buyers' demand for Q&amp;A services is usually due to lacks of domain knowledge or knowledge repository [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib10">10</a>]. This indicates that knowledge buyers are most likely to be unfamiliar with the fields of their inquiry. For that reason, it is hard for a knowledge buyer to accurately find the most appropriate knowledge seller, who can satisfy their personalized demands for knowledge. What&#x0027;s more, the explosive growth of information and the complexity of the knowledge classification in yellow pages make it even more difficult to conduct efficient search for Q&amp;A expert [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib8">8</a>]. Therefore, a knowledge-based recommender system on the basis of experts&#x2019; domain knowledge and the context of users&#x2019; questions is critical to OPQC. Moreover, pricing mechanism is one of the most important motivators of knowledge transactions in OPQC. Excessive prices of Q&amp;A service will reduce the number of knowledge transactions and result in an inactive level of knowledge interaction. Meanwhile, a service price below cost, failing to satisfy knowledge suppliers&#x2019; expectations, will depress their willingness to participate in knowledge transactions.</p>    <p>The main value of this article lies in: <ul class="list-no-style">     <li>We proposed an early method to solve expert recommendation problems in the context of online paid Q&amp;A community (OPQC);<br/></li>     <li>In the model, we analyzed and modeled users motivation in participating OPQC activities, with knowledge pricing mechanism creatively adopted for expert selection;<br/></li>     <li>Our method is evaluated using large scale datasets from active OPQC. The results demonstrate good performance of our model in terms of accuracy and recall.<br/></li>     </ul>    </p>   </section>   <section id="sec-002">    <header>     <div class="title-info">     <h2>KNOWLEDGE-BASED IR FRAMEWORK</h2>     </div>    </header>    <p>In this section, we aim at extracting expert&#x0027;s domain knowledge from past Q&amp;A records, and find the best match when new queries come in. To reach our goal, we first introduce our approach to KB construction and expert profiling with the semantic description of expertise in terms of concepts and instances. We then illustrate our knowledge representation framework for OPQC. Finally, we present our similarity measure method for new queries.</p>    <section id="sec2Z1">     <header>     <div class="title-info">      <h3>       <span class="section-number">2.1</span> Document Embedding</h3>     </div>     </header>     <p>In natural language processing, document embedding, also known as distributed word representation [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib12">12</a>], work on representing documents and queries with low-dimensional real valued vectors. In a classic Vector Space Model [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib13">13</a>], given a corpus D of text documents available for training, each document in the space is represented by a vector <span class="inline-equation"><span class="tex">${d_i} = ( {{d_{i,1}},{d_{i,2}}, \ldots ,{d_{i,K}}} )$ </span>     </span>, representing the weighted annotations of knowledge concepts in the document. The semantic similarity of two texts can then be calculated as the cosine measure of two centroid vectors [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib8">8</a>]: <div class="table-responsive" id="eqn1">      <div class="display-equation">       <span class="tex mytex">\begin{equation} {\rm{cos}}\left( {{d_1},{d_2}} \right) = \frac{{{d_1}\cdot{d_2}}}{{\left| {\left| {{d_1}} \right|\left| \times \right|\left| {{d_2}} \right|} \right|}}\end{equation}</span>       <br/>       <span class="equation-number">(1)</span>      </div>     </div>     </p>     <p>Previous architectures for estimating continuous representations of words were proposed in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib14">14</a>-<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib18">18</a>]. In our model, we implement <em>Paragraph Vector</em>, a state-of-the-art unsupervised framework [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib18">18</a>] to perform document embedding for question texts in OPQC. After projecting every question to the vector space, we provide an intuitive visualization<a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a>of an expert&#x0027;s knowledge space in <a class="fig" href="#fig1">Fig. 1.</a>     </p>     <figure id="fig1">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186349/images/image1.jpg" class="img-responsive" alt="Figure 1:" longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 1:</span>      <span class="figure-title">Example of Knowledge Vector Space.</span>     </div>     </figure>    </section>    <section id="sec2Z2">     <header>     <div class="title-info">      <h3>       <span class="section-number">2.2</span> Knowledge Representation</h3>     </div>     </header>     <p>In this paper, we assume that we have a set of M experts in knowledge community: E = {<span class="inline-equation"><span class="tex">${e_1},{e_2}, \ldots ,{e_M}$ </span>     </span>}. For each expert <em>e<sub>i</sub>     </em>, we have his/her knowledge profile represented by a set of Q&amp;A records<span class="inline-equation"><span class="tex">${\rm{\;}}{r_i}{\rm{\;}} = {\rm{\;}}( {{r_{i,1}},{r_{i,2}} \ldots ,{r_{i,{L_n}}}{\rm{\;}}} )$ </span>     </span>, L<sub>n</sub> being the maximum number of questions corresponding to one expert. In OPQC, the answer is hidden from users except the ones who paid for it, and therefore to train an expert&#x0027;s knowledge profile, we represent each Q&amp;A record <span class="inline-equation"><span class="tex">${r_{i,j}}$ </span>     </span>, <em>j</em>=1,2, &#x2026;, L<sub>n</sub>, by a tuple <span class="inline-equation"><span class="tex">${r_{i,j}} = ( {{w_{i,j}},{a_{i,j}}} )$ </span>     </span>, where<span class="inline-equation"><span class="tex">${\rm{\;}}{w_{i,j}}$ </span>     </span> is the vectorized description of question <em>j</em> after document embedding, and <span class="inline-equation"><span class="tex">${a_{i,j}}$ </span>     </span> represents the quality of the answer according to users&#x2019; feedback. We believe that higher answer quality leads to more positive feedback in OPQC. Therefore, a larger value of <span class="inline-equation"><span class="tex">${a_{i,j}}$ </span>     </span> indicates better expertise of the field related.</p>     <p>After extracting question text to knowledge concepts, we perform transformation on the quality matrix to express domain expertise in a formal and processable way: <div class="table-responsive" id="eqn2">      <div class="display-equation">       <span class="tex mytex">\begin{equation}E = T \times a,\end{equation}</span>       <br/>       <span class="equation-number">(2)</span>      </div>     </div>as a result, <span class="inline-equation"><span class="tex">${e_{i,k}}$ </span>     </span>&#x2208; [0,1] measures the expertise intensity of expert <span class="inline-equation"><span class="tex">${e_i}$ </span>     </span>&#x2208; <em>E</em> for domain concept <em>c<sub>k</sub>     </em>&#x2208;<em>C</em>.</p>     <p>To provide an overview of our knowledge representation method, we present our multilayer framework adapted from an ontology-based personalization framework [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib19">19</a>] in <a class="fig" href="#fig2">Fig. 2</a>, with the following three layers: <ol class="list-no-style">      <li label="a)"><em>Item layer</em> D contains <em>N</em> raw text documents of question description;<br/></li>      <li label="b)"><em>Knowledge layer</em> C contains <em>K</em> knowledge concepts after document embedding, with weighted semantic annotations <span class="inline-equation"><span class="tex">${c_k} = ( {{c_{k,1}},{c_{k,2}}, \ldots ,{c_{k,N}}} )$ </span>       </span>;<br/></li>      <li label="c)"><em>User layer</em> E contains <em>M</em> expert entities, whose domain knowledge is represented as weighted expertise<span class="inline-equation"><span class="tex">${e_i} = ( {{e_{i,1}},{e_{i,2}}, \ldots ,{e_{i,K}}} )$ </span>       </span>.<br/></li>     </ol>     </p>     <figure id="fig2">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186349/images/image2.jpg" class="img-responsive" alt="Figure 2:" longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 2:</span>      <span class="figure-title">Knowledge Representation Framework; adapted from [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"        href="#bib19">19</a>].</span>     </div>     </figure>    </section>    <section id="sec2Z3">     <header>     <div class="title-info">      <h3>       <span class="section-number">2.3</span> Query Encoding and Expertise Measure</h3>     </div>     </header>     <p>With the knowledge representation method introduced above, we use are trieval model that works in two phase to perform query encoding. In the first phase, a new query is issued by knowledge buyers describing user&#x0027;s knowledge demand, and then projected to vector space as <strong>      <em>q<sub>d</sub>      </em></strong>. The second phase is similar to that in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib20">20</a>], where the query is processed against the KB using an inferencing mechanism, returning a set of knowledge concepts <strong>      <em>q<sub>c</sub>      </em></strong>. After encoding, the similarity of a query with an expert&#x0027;s domain knowledge can then be computed by cosine measure in (1).</p>     <p>To cope with the case of incomplete KB [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib21">21</a>] (i.e. the corresponding concept instances of query are missing in the knowledge source, and therefore pure knowledge-based similarity measure can perform poorly), we combine the domain concept similarity with text semantic similarity to perform complex expertise measuring, as in our experiment text semantic similarity could perform better in this case.</p>     <p>Thus, given the historical Q&amp;A records of an expert, when a new query <strong>      <em>q</em>     </strong> checks in, an expert&#x0027;s domain knowledge intensity on the field related can be inferred as: <div class="table-responsive">      <div class="display-equation">       <span class="tex mytex">\begin{equation*} {f_i}\left( {\vec q} \right) = t\mathop \sum \limits_{k = 1}^K sim\left( {{c_k},{q_c}} \right){e_{i,k}}\end{equation*}</span>       <br/>      </div>     </div>     <div class="table-responsive">      <div class="display-equation">       <span class="tex mytex">\begin{equation}\left( {1 - t} \right)\mathop \sum \limits_{j = 1}^N sim\left( {{d_j},{q_d}} \right){a_{i,j}}\end{equation}</span>       <br/>       <span class="equation-number">(3)</span>      </div>     </div>where <em>t</em> is set to 0.5 by default, and can be further adjusted on a case by case basis.</p>    </section>   </section>   <section id="sec1">    <header>     <div class="title-info">     <h2>      <span class="section-number">1:</span> USER MOTIVATION MODELING</h2>     </div>    </header>    <p>Knowledge buyers have multiple motivations when seeking knowledge service in OPQC. In order to better serve users with different types of demand, our system implements diverse approaches to expert recommendation with pre-designed motivation models. In this section, we define three types of motivation model based on widely-accepted theories. Firstly, knowledge profit is put forward based on self-interest theory, in considering the cost-benefit analysis made by knowledge buyers, together with the influence of knowledge depreciation creatively adopted [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib23">23</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib24">24</a>]. Secondly, social benefits are proposed from the perspective of social capital theory, taking the centrality of experts into account [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib25">25</a>]. And finally, the third motivation, monetary revenue, is added considering users&#x2019; intention to earn extra income in a special situation called &#x201C;eavesdrop&#x201D; in OPQC.</p>    <section id="sec3Z1">     <header>     <div class="title-info">      <h3>       <span class="section-number">3.1</span> Knowledge Profits</h3>     </div>     </header>     <p>From the perspective of rational man hypothesis, knowledge buyers tend to favor the most qualified experts with the highest reputation in the related field, in order to maximize the expected incoming knowledge value in a service. Given that knowledge is sold with price in OPQC, we model knowledge profits with pricing factor in this subsection, so as to distinguish the most knowledge-worthy experts for knowledge buyers.</p>     <p>We first discuss some market characteristics of OPQC. In knowledge transaction market, one piece of knowledge links only one seller with one buyer. In other word, knowledge service is customized, and therefore both sides have extreme bargaining power. Another typical feature of OPQC is incomplete information, which means a seller doesn&#x0027;t know the actual value of his knowledge for its buyer. Similarly, a buyer has little information of the actual knowledge cost of the seller. Thus, a seller&#x0027;s bid is mainly determined by his estimation of knowledge cost; a buyer&#x0027;s bid is mainly determined by his estimation of knowledge utility.</p>     <p>With the features discussed above, we consider knowledge transaction market as a new type of bilateral monopoly market [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib22">22</a>], and put forward the method of knowledge pricing.</p>     <p>     <em>Definition 3.1</em> (<strong>Knowledge Cost</strong>) Knowledge cost [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib23">23</a>] is the cost of knowledge seller, which mainly refers to the loss of competitiveness after knowledge sharing. Although a seller&#x0027;s knowledge cost is unknown to its buyer, it can be estimated by his bid <em>p<sub>s</sub>     </em>. In this paper, we adopt the uniform distribution to represent knowledge cost as <span class="inline-equation"><span class="tex">${c_i}\sim U( {0,{p_s}} )$ </span>     </span>. It follows that: <div class="table-responsive">      <div class="display-equation">       <span class="tex mytex">\begin{equation}Pr\left( {{c_i}} \right) = \frac{1}{{p_s^i}}\end{equation}</span>       <br/>       <span class="equation-number">(4)</span>      </div>     </div>     </p>     <p>     <em>Definition 3.2</em> (<strong>Knowledge Utility</strong>) Knowledge utility [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib23">23</a>] is the value of knowledge to a buyer. For the same piece of knowledge, its utility can vary from different buyers. In knowledge market, we assume that buyers are clear on how much the question values to them, since they are the subject of knowledge service. Therefore, we believe a buyer&#x0027;s bid <em>p<sub>b</sub>     </em> is presented with careful consideration, which can honestly represent the knowledge utility on the buyer. However, the quality of the answer is an uncertain factor. A good answer can create value far beyond the buyer&#x0027;s expectation, while a careless one may have limited utility. In this paper, we approximate such uncertainty with a Gaussian distribution <span class="inline-equation"><span class="tex">${u_i}\sim $ </span>     </span>     <em>N</em>     <span class="inline-equation"><span class="tex">$( {{p_b},{\sigma ^2}} )$ </span>     </span>. It follows that: <div class="table-responsive">      <div class="display-equation">       <span class="tex mytex">\begin{equation}Pr({u_i}|p_b^i,{\sigma _i}) = \frac{1}{{\sqrt {2\pi } {\sigma _i}}}\exp [ - \frac{{{{({u_i} - p_b^i)}^2}}}{{\sqrt {2\pi } {\sigma _i}^2}}],\end{equation} </span>       <br/>       <span class="equation-number">(5)</span>      </div>     </div>where <span class="inline-equation"><span class="tex">${\sigma _i} = 1/{f_i}( {{\rm{\vec q}}} )$ </span>     </span>. The formula in (5) indicates that if an expert is experienced in query <span class="inline-equation"><span class="tex">$\vec q\;$ </span>     </span>with a rather large value of <span class="inline-equation"><span class="tex">${f_i}( {\vec q} )$ </span>     </span>, the expected knowledge utility becomes more concentrated around buyer&#x0027;s bid.</p>     <p>     <em>Definition 3.3</em> (<strong>Knowledge Depreciation</strong>) Knowledge depreciation [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib24">24</a>] is the decline of knowledge utility as time goes by, because the continuous competition and dissemination of knowledge lower the knowledge scarcity.</p>     <p>Knowledge stored as information has no physical depreciation. However, in mass OPQC, knowledge is incessantly disseminating and colliding with fierce competition driven by price, which causes the decline of knowledge scarcity. Online knowledge buyers tend to prefer real-time Q&amp;A service, otherwise, they will possibly lose favor in online service and alternatively turn to other means like books or face-to-face consultation. Under this circumstance, knowledge with long delay will be less competitive and therefore of less value. Therefore, we consider knowledge depreciation as a significant factor influencing knowledge pricing in OPQC. In our model, we apply an exponential term to represent a buyer&#x0027;s dynamic knowledge utility decline with time: <div class="table-responsive">      <div class="display-equation">       <span class="tex mytex">\begin{equation} {u_i}\left( t \right) = {u_i}{e^{ - \lambda t}},\end{equation}</span>       <br/>       <span class="equation-number">(6)</span>      </div>     </div>where &#x03BB; is the depreciation coefficient, and <em>t</em> refers to the expected answer interval according to the expert&#x0027;s online activation.</p>     <p>The character of knowledge transaction determines that we cannot use marginal cost to perform knowledge pricing according to traditional economics. It&#x0027;s argued by Chatterjee and Samuelson [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib13">13</a>] that under incomplete information, transaction price under <em>Nash Equilibrium</em>is p* &#x2208; [c,u]. The transaction surplus <em>u-c</em> will be divided by each side. After infinite bargaining, the final transaction price will be [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib13">13</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib23">23</a>]: <div class="table-responsive">      <div class="display-equation">       <span class="tex mytex">\begin{equation}p* = c + \frac{{1 - {\delta _b}}}{{1 - {\delta _s}{\delta _b}}}(u - c),\end{equation} </span>       <br/>       <span class="equation-number">(7)</span>      </div>     </div>where <em>&#x03B4;<sub>s</sub>, &#x03B4;<sub>b</sub>     </em> are the discount rate of seller and buyer respectively, reflecting the patience of each side. <em>&#x03B4;<sub>s</sub>     </em> will be small when the number of potential competitors is large. As more choices for buyers will motivate sellers to become more eager to sell their knowledge. Similarly, <em>&#x03B4;<sub>b</sub>     </em> will be small when the buyer is urgent to seek the knowledge to solve his problem.</p>     <p>Then, in our model, we compute the transaction surplus on buyers to define expected knowledge profits in OPQC: <div class="table-responsive">      <div class="display-equation">       <span class="tex mytex">\begin{equation}K({e_i}) = E\left\{ {{c_i} + \frac{{1 - {\delta _b}}}{{1 - {\delta _s}{\delta _b}}}[{u_i}(t) - {c_i}] - p_s^i} \right\}\end{equation} </span>       <br/>       <span class="equation-number">(8)</span>      </div>     </div>     </p>    </section>    <section id="sec3Z2">     <header>     <div class="title-info">      <h3>       <span class="section-number">3.2</span> Social Benefits</h3>     </div>     </header>     <p>In addition to knowledge exchange, users are developing social connections through interactions in the online community, which is considered as their social resources. As suggested in social capital theory, social capital, including various types of resources in the social network of an individual, has a strong impact on knowledge sharing behavior [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib25">25</a>]. Specifically, we define the following types of OPQC users&#x2019; connection: following, Q&amp;A, eavesdropping and liking. <a class="fig" href="#fig3">Fig. 3</a> illustrates an expert&#x0027;s social network.</p>     <figure id="fig3">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186349/images/image3.jpg" class="img-responsive" alt="Figure 3:" longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 3:</span>      <span class="figure-title">Social Network in OPQC.</span>     </div>     </figure>     <figure id="fig4">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186349/images/image4.jpg" class="img-responsive" alt="Figure 4:" longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 4:</span>      <span class="figure-title">Personalized Recommendation Framework.</span>     </div>     </figure>     <p>Generally, an expert located in the center of network attracts higher user traffic and attention, together with greater authority and larger voice in his community. Moreover, when a knowledge buyer obtains knowledge service from an expert, his identity and the question description will become public in the expert&#x0027;s homepage. Then, the buyer can benefit from expert&#x0027;s social capital when getting exposed to a greater knowledge resource with increasing potential of building new connections. <ul class="list-no-style">      <li>Considering the fact above, the following motivation model is designed to target those users seeking the maximum social benefits through knowledge transaction.<br/></li>      <li>To estimate an expert&#x0027;s social capital in OPQC, we first initialize the centrality [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"        href="#bib26">26</a>] of every expert as the number of connected users in the network:<div class="table-responsive">        <div class="display-equation">        <span class="tex mytex">\begin{equation}{C_0}\left( {{e_i}} \right) = \mathop \sum \limits_{k = 1}^n \delta \left( {{e_i},{u_k}} \right)\end{equation}</span>        <br/>        <span class="equation-number">(9)</span>        </div>       </div>       <div class="table-responsive">        <div class="display-equation">        <span class="tex mytex">\begin{equation*}\delta ({e_i},{u_k}) = \left\{ \begin{array}{@{}l@{}} {\rm{ }}1{\rm{ if expert }}{e_i}{\rm{ and user }}{u_k}{\rm{ are connected}}\\ {\rm{ }}0{\rm{ otherwise}} \end{array} \right.\end{equation*}</span>        <br/>        </div>       </div>       <br/></li>      <li>Then, considering the cross effect of adjacent expert authority, PageRank methodology [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"        href="#bib27">27</a>] is implemented to better distinguish those influential experts in OPQC. The PageRank centrality at time <em>t</em> can be computed as:<div class="table-responsive">        <div class="display-equation">        <span class="tex mytex"/>        <br/>        <span class="equation-number">(10)</span>        </div>       </div>       <br/></li>      <li>where A is the normalized adjacency matrix that represents all connections between nodes.<span class="inline-equation"><span class="tex">${\rm{\;}}d_j^{out}\;$ </span>       </span>computes the out-degree of expert node <span class="inline-equation"><span class="tex">${e_{j\;}}$ </span>       </span>in network. <em>&#x03B1;</em> is the importance of adjacent expert&#x0027;s centrality. For example, a user in OPQC is followed by an expert with high centrality at time <em>t-&#x25B3;t</em>. At the next time <em>t</em>,he becomes more important in the network with increasing centrality due to social influence of the authorized expert.<br/></li>     </ul>     </p>    </section>    <section id="sec3Z3">     <header>     <div class="title-info">      <h3>       <span class="section-number">3.3</span> Monetary Revenue</h3>     </div>     </header>     <ul class="list-no-style">     <li label="&#x2022;">An interesting feature about OPQC is the &#x201C;eavesdrop with one dollar&#x201D; function, which enables other knowledge buyers to eavesdrop on the private answer paying only one dollar, regardless of the original price of the answer. The one dollar income goes fifty-fifty to the original knowledge seller and the buyer. This novel function helps motivate the generation of high-quality Q&amp;A as it rewards the asker (buyer) and answer (seller) with additional money from potential eavesdroppers.<br/></li>     <li label="&#x2022;">Two largest OPQC of China both apply this mechanism to promote low-cost knowledge spreading. After observing user behavior from our datasets, we find that with good selection of experts and questioning skills, some users are able to earn a considerable amount of money every time they raise a question.<br/></li>     <li label="&#x2022;">Thus, in consideration of user&#x0027;s demand to earn money by asking questions in OPQC, we define an expert&#x0027;s &#x201C;profitability&#x201D; as his measure of attraction to eavesdropping according to past Q&amp;A records:<div class="table-responsive">       <div class="display-equation">        <span class="tex mytex">\begin{equation}R({e_i}) = \left\{ \begin{array}{@{}l@{}} {\rm{ }}\frac{{\sum {\# eavesdropping} }}{{2 \times \# questions}} - price{\rm{ if }}income &gt; 0\\ {\rm{ }}0{\rm{ otherwise}} \end{array} \right.\end{equation} </span>        <br/>        <span class="equation-number">(11)</span>       </div>      </div>      <br/></li>     </ul>    </section>   </section>   <section id="sec2">    <header>     <div class="title-info">     <h2>      <span class="section-number">2.</span> PERSONALIZED RECOMMENDATIONS</h2>     </div>    </header>    <ul class="list-no-style">     <li>In this section, we present our personalized expert recommendation method. We aim at finding the experts that best match the demand of knowledge buyer, that is, the most &#x201C;cost-effective&#x201D; expert in terms of knowledge, social and monetary reward. First, an optimization framework [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib28">28</a>] is introduced to aggregate expert rankings according to different criteria. We then illustrate our method to learn the model for expert recommendation.<br/></li>    </ul>   </section>   <section id="sec-005">    <header>     <div class="title-info">     <h2>4.1Markov-Chain Based Rank Aggregation</h2>     </div>    </header>    <p>Given the individual expert ranking obtained by multiple motivation models, we introduce the rank aggregation framework in web search [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib29">29</a>] to perform comprehensive expert recommendation. First of all, some notations are defined. Given a set of experts E, a top-k list of ranking with respect to E is an ordering of <em>&#x03C4;<sup>(k)</sup>     </em>= [<em>e<sub>1</sub>     </em> &#x2265;<em>e<sub>2</sub>     </em>&#x2265; &#x2026;&#x2265; <em>e<sub>k</sub>     </em>], <em>e<sub>i</sub>     </em>&#x2208;E. Without loss of generality, we assume that &#x2265; denotes descending order.</p>    <p>In our model, let &#x03C4;<sub>1</sub>, &#x03C4;<sub>2</sub> and&#x03C4;<sub>3</sub> denote the ranking lists with respect to the criterion of optimal knowledge profits, social benefits and monetary revenue respectively. We then define our Markov Chain similar to that in metasearch [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib28">28</a>]: If the current state is expert <em>e<sub>i</sub>     </em>, the next state <em>e<sub>j</sub>     </em> is chosen uniformly from all experts ranking higher than or equals to <em>e<sub>i</sub>     </em> in a randomly selected ranking list &#x03C4;. <ul class="list-no-style">     <li>The transition matrix is then computed as the weighted arithmetic mean of transition probability matrices of base rankers, with weights <em>&#x03B8;</em> suggesting knowledge buyer&#x0027;s motivation in this case [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#bib28">28</a>]:<div class="table-responsive">       <div class="display-equation">        <span class="tex mytex">\begin{equation}P = \sum\limits_{l{\rm{ = }}1}^3 {{\theta _l}{P^{(l)}}} \end{equation} </span>        <br/>        <span class="equation-number">(12)</span>       </div>      </div>      <div class="table-responsive">       <div class="display-equation">        <span class="tex mytex">\begin{equation}P_{ij}^{(l)} = \left\{ \begin{array}{@{}l@{}} \frac{1}{m},{\rm{ }}{{\rm{e}}_j}{ \ge _{{\tau _l}}}{{\rm{e}}_i}\\ {\rm{ }}0{\rm{, otherwise}} \end{array} \right.\end{equation} </span>        <br/>        <span class="equation-number">(13)</span>       </div>      </div>      <br/></li>     </ul>where m represents the number of experts that rank higher than or equals to expert <em>e<sub>i</sub>     </em> in list <span class="inline-equation"><span class="tex">${\tau _l}$ </span>     </span>.</p>    <section id="sec4Z2">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.2</span> Motivation Learning</h3>     </div>     </header>     <p>With the framework introduced above, we now define input of our learning problem <span class="inline-equation"><span class="tex">$x_l^{( i )}$ </span>     </span>as the percentile of expert <em>e<sub>i</sub>     </em> in list &#x03C4;<sub>l</sub>, which is also regarded as his score in the sub-list. Meanwhile, <span class="inline-equation"><span class="tex">${y^{( i )}}$ </span>     </span>is defined to represent the vector of ground truth, where the actual expert selected by asker values 1 and others are set to 0. The problem can then be solved using a regression model, which has demonstrated great predictive power in user preference elicitation [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib31">31</a>]. The learning problem is formulized as: <div class="table-responsive">      <div class="display-equation">       <span class="tex mytex">\begin{equation}\mathop {\min }\limits_\theta J\left( {\theta ,{\rm{x}}} \right) = \mathop {\min }\limits_\theta \frac{1}{{2M}}\mathop \sum \limits_{i = 1}^M {\left( {{h_\theta }\left( {{x^{\left( i \right)}}} \right) - {y^{\left( i \right)}}} \right)^2}\end{equation}</span>       <br/>       <span class="equation-number">(14)</span>      </div>     </div>     <div class="table-responsive">      <div class="display-equation">       <span class="tex mytex">\begin{equation} {h_\theta }\left( {{x^{\left( i \right)}}} \right) = \mathop \sum \limits_{l = 1}^3 {\left( {{\theta _l}{P^{\left( l \right)}}} \right)^T}x_l^{\left( i \right)}\end{equation}</span>       <br/>       <span class="equation-number">(15)</span>      </div>     </div>     </p>     <p>where<span class="inline-equation"><span class="tex">$\;{h_\theta }( {{x^{( i )}}} ){\rm{\;}}$ </span>     </span>calculates the probability of recommending expert <em>e<sub>i</sub>     </em>. In learning, we aim at minimizing the disagreements between the ground truth and the output recommendation list. Learning details are shown in (16) and Algorithm <a class="tbl" href="#tb1">1.</a>     </p>     <div class="table-responsive" id="tb1">     <div class="table-caption">      <span class="table-number">Algorithm 1:</span>      <span class="table-title">Motivation Learning</span>     </div>     <table class="table">      <tbody>       <tr>        <td style="text-align:left;">1: initialize <span class="inline-equation"><span class="tex">$\theta $ </span>        </span> to random value&#x2208;[0,1]<br/>2: <strong>repeat</strong>        <br/>3: 	<strong>for</strong> k in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#bib1">1</a>,<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#bib2">2</a>,<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#bib3">3</a>] <strong>do</strong>        <br/>4: 	<strong>update</strong>        <span class="inline-equation"><span class="tex">${\theta _l} \leftarrow {\rm{\;}}{\theta _l} - {\rm{\varepsilon }}\frac{{\partial J( {{\theta _l}} )}}{{\partial {\theta _l}}}$ </span>        </span>        <br/>5: 	<strong>end</strong>        <br/>6: <strong>until</strong> Convergence</td>       </tr>      </tbody>     </table>     </div>     <p>     <div class="table-responsive">      <div class="display-equation">       <span class="tex mytex">\begin{equation}\frac{{\partial J\left( {{\theta _l}} \right)}}{{\partial {\theta _l}}} = \frac{1}{M}\mathop \sum \limits_{i = 1}^M \left( {{h_\theta }\left( {{x^{\left( i \right)}}} \right) - {y^{\left( i \right)}}} \right)x_l^{\left( i \right)}\end{equation}</span>       <br/>       <span class="equation-number">((16)</span>      </div>     </div>     </p>    </section>   </section>   <section id="sec3">    <header>     <div class="title-info">     <h2>      <span class="section-number">3.</span> EXPERIMENTAL RESULTS</h2>     </div>    </header>    <p>We conduct several experiments on real OPQC datasets to evaluate the performance of our expert recommender system.</p>    <section id="sec5Z1">     <header>     <div class="title-info">      <h3>       <span class="section-number">5.1</span> Experimental Data</h3>     </div>     </header>     <p>We evaluate the proposed approach by large-scale real data from two OPQCs. Both are highly popular communities with active domain experts and knowledge buyers creating thousands of knowledge transactions per day. The operating modes of two platforms are similar. Experts describe their fields of expertise and set their own unit price for answering each question in their profiles. Meanwhile, knowledge buyers send question description to desirable experts and then obtain personalized knowledge service after paying the price. Answers, in the form of voice, can be eavesdropped by other users costing one dollar, which goes half and half to reward the original asker and answer.</p>     <p>     <strong>      <em>Dataset A</em></strong>. The dataset includes 7,227 experts, 4,477 knowledge buyers with 171,534 transactions. Each transaction record contains the ID of seller and buyer, transaction price, #eavesdrop, #like, and the question content.</p>     <p>     <strong>      <em>Dataset B</em></strong>. The dataset includes 2,663 experts, 542 knowledge buyers with 14,336 tractions.</p>     <p>It should be noted that those experts and knowledge buyers with less than 5 transaction records were removed in both datasets, as the experiment expert&#x0027;s domain knowledge and user&#x0027;s motivation will be highly biased with extremely limited training data.</p>    </section>    <section id="sec5Z2">     <header>     <div class="title-info">      <h3>       <span class="section-number">5.2</span> Evaluation Metrics</h3>     </div>     </header>     <p>In our experiment, we randomly select 10 knowledge buyers from datasets. For each knowledge buyer, the first 80% Q&amp;A records are used as training data, and the other 20% are used as testing data. We learn the model and obtain the top-k recommendation list for the knowledge buyer with anew query. To investigate the overall performance of the recommender system, we use two evaluation metrics including Accuracy@k [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib30">30</a>] and Recall@k. <ul class="list-no-style">      <li><strong>        <em>Accuracy@k (A@k)</em>.</strong> To evaluate the effectiveness of our recommendation result, we adopt the metrics used in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"        href="#bib30">30</a>]. Specifically, for each Q&amp;A record in the test set <em>S<sub>test</sub>       </em>, we compute the score of each potential expert and then obtain the top-k list of recommendation corresponding to the buyer with a new query. If the ground truth expert is included in the list, we define it valid recommendation, otherwise, it&#x0027;s invalid. Accuracy@k is computed by the proportion of valid recommendation in the test set:<div class="table-responsive">        <div class="display-equation">        <span class="tex mytex">\begin{equation}Accuracy@k = \frac{{\# Valid\;recommendation}}{{\left| {{S_{test}}} \right|}}\end{equation}</span>        <br/>        <span class="equation-number">(17)</span>        </div>       </div>       <br/></li>     </ul>     </p>     <p>     <strong>      <em>Recall@k (R@k)</em>.</strong>Recall@k is defined to evaluate the ability to discover potential target expert. For each knowledge buyer, an expert is defined to be potential target only if they once have knowledge transaction in the training set, which indicates their possibility to become trading partners again when the buyer raises new questions. Similarly, after obtaining the top-k list for each test case, we compute the proportion of potential experts in the list of recommendation to evaluate the system&#x0027;s ability to recall potential target. The overall Recall@k is then computed as the average of all test cases: <div class="table-responsive">      <div class="display-equation">       <span class="tex mytex">\begin{equation}Recall@k = \frac{{\sum \# Potential\;expert}}{{k\left| {{S_{test}}} \right|}}\end{equation}</span>       <br/>       <span class="equation-number">(18)</span>      </div>     </div>     </p>    </section>    <section id="sec5Z3">     <header>     <div class="title-info">      <h3>       <span class="section-number">5.3</span> Recommendation Performance</h3>     </div>     </header>     <p>In this subsection, we present the experimental performance of our recommender system on our datasets, respectively. Since the idea of OPQC has lately arisen and attracted little attention, we are short of baselines for comparison in our experiment. However, our results can be considered as exploring work for future comparison and improvement.</p>     <p><a class="fig" href="#fig5">Fig. 5</a>, <a class="fig" href="#fig6">6</a> report the A@k and R@k result on two datasets, where k is 1, 5, and 10. The overall accuracy is satisfying, with an average A@10 of 0.358 for dataset A and 0.380 for dataset B, which means that in more than one third of all test cases, the actual expert selected by the user is precisely located and recommended in the top-10 list. It demonstrates that our recommender system can effectively capture user&#x0027;s motivation, find the matching experts and then generate reasonable recommendations in OPQC.</p>     <figure id="fig5">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186349/images/image13.jpg" class="img-responsive" alt="Figure 5:" longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 5:</span>      <span class="figure-title">Recommendation on Dataset A.</span>     </div>     </figure>     <figure id="fig6">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186349/images/image14.jpg" class="img-responsive" alt="Figure 6:" longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 6:</span>      <span class="figure-title">Recommendation on Dataset B.</span>     </div>     </figure>     <p>It is also observed that the recall performance varies greatly among users. The recall rate is generally higher for those users with a single strong motivation in the past buying behavior, which can be as high as 0.8 (see Fig <a class="fig" href="#fig6">6b</a>). For other users with relatively &#x201C;balanced&#x201D; motivation, our system shows conserved performance in discovering potential target expert.</p>     <p><a class="fig" href="#fig7">Fig. 7</a> provides an intuitive visualization of the motivation parameter &#x03B8; of askers selected in dataset A. According to the figure, the motivation for knowledge transaction in OPQC indeed differs among difference askers as we suppose earlier. It shows that some askers appear to be pure knowledge seekers always looking for the most professional experts; while some are clearly active money makers who pay his effort in targeting the most profitable experts before asking. Therefore, pure knowledge matching or network relations oriented methods cannot provide accurate recommendations in this case.</p>     <figure id="fig7">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186349/images/image15.jpg" class="img-responsive" alt="Figure 7:" longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 7:</span>      <span class="figure-title">Motivation Parameter &#x03B8;.</span>     </div>     </figure>    </section>    <section id="sec5Z4">     <header>     <div class="title-info">      <h3>       <span class="section-number">5.4</span> Discussion</h3>     </div>     </header>     <p>In the experiment, we consider the actual respondent expert selected by knowledge buyers as the ground truth. However, since users have limited view in reality, their choice may not actually be the optimal choice. Therefore, given the inborn limitation of OPQC user, the significance of our research is that it enables users to have easy access to their potential perfect match by learning the motivation from past behavior. In other word, our recommender system provides them with a broader view of personalized valuable expert information, and therefore contributes to a higher rate of optimal seller-buyer matching.</p>     <p>Another noteworthy finding is that the system performance might not keep increasing with more training examples. As shown in <a class="fig" href="#fig8">Fig. 8</a>, the overall performance initially goes up with increasing number of training examples as the system better captures user&#x0027;s motivation, but it drops significantly after the training set gets too large. We believe the reason is that in our model, for simplicity, we consider user motivation as rather static variables. In other word, we assume that a knowledge buyer who values knowledge profit the most would always look for the most qualified expert. However, user&#x0027;s interest and motivation for seeking knowledge are changing dynamically in reality. In this case, static modeling has its limitation in recommendation performance as it may overfit large training set.</p>     <figure id="fig8">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186349/images/image16.jpg" class="img-responsive" alt="Figure 8:" longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 8:</span>      <span class="figure-title">Performance with different #training examples.</span>     </div>     </figure>    </section>   </section>   <section id="sec4">    <header>     <div class="title-info">     <h2>      <span class="section-number">4.</span> CONCLUDING REMARKS</h2>     </div>    </header>    <p>In this research, an expert recommendation in OPQC is proposed, adopting cognitive mechanisms (e.g. social capital theory) to heighten computational intelligence. This personalized expert recommender system, under the consideration of multi-cognitive factors, is an early comprehensive framework to address the demand-supply matching problem in OPQC. The results of the experiment demonstrate that the proposed model is capable of generating reasonable recommendations, consistent with the motivation behind knowledge transaction behavior. Therefore, theoretical contributions of this research can be affirmed.</p>    <p>At the same time, this research, as an application of cognitive computing, also has certain practical value. Because with the help of our intelligent expert recommendation system, the continuous adoption of the community will be enhanced. Firstly, for a newly developing Q&amp;A community, such as OPQC, both the quality and the quantity of knowledge are essential to the platform. Our new expert recommendation system can increase the visibility of domain experts&#x2019; knowledge sharing behaviors. Thus, knowledge sharing dilemma caused by social loafing will be alleviated, and the quality of the Q&amp;A service will be improved on the whole platform. Secondly, high reflection speed and Q&amp;A service quality will raise the perceived usefulness of knowledge buyers&#x2019; online learning experience. And thirdly, taking knowledge pricing into consideration can help knowledge buyers making the most cost-effective choice in finding domain experts, therefore enhance satisfaction of community users.</p>    <p>For the ongoing and future work, improvement on the accuracy of recommendation results can be developed, with larger and richer datasets. At the same time, the problem of overfitting large-scale data needs to be noticed. To solve that problem, dynamic modeling can be adopted to capture the dynamic variation of user interest and preference, so as to increase the overall accuracy of recommendation.</p>   </section>  </section>  <section class="back-matter">   <section id="bib-sec-001">    <header>     <div class="title-info">     <h2 class="page-brake-head">REFERENCE</h2>     </div>    </header>    <ul class="bibUl">     <li id="bib1" label="[1]">Foss, N. J., Husted, K. and Michailova, S. Governing Knowledge Sharing in Organizations: Levels of Analysis, Governance Mechanisms, and Research Directions. Journal of Management Studies, 47, 3 (2010), 455&#x2013;482.</li>     <li id="bib2" label="[2]">Barratt, M. and Barratt, R. Exploring internal and external supply chain linkages: Evidence from the field. Journal of Operations Management, 29, 5 (2011), 514-528.</li>     <li id="bib3" label="[3]">Desouza, K. C., Awazu, Y., Yamakawa, S. and Umezawa, M. Facilitating knowledge management through market mechanism. Knowledge &amp; Process Management, 12, 2 (2005), 99&#x2013;107.</li>     <li id="bib4" label="[4]">O&#x0027;Reilly, P. and Finnegan, P. Intermediaries in inter-organisational networks: building a theory of electronic marketplace performance. European Journal of Information Systems, 19, 4 (2010), 462-480.</li>     <li id="bib5" label="[5]">Zhang, Z. and Sundaresan, S. Knowledge markets in firms: knowledge sharing with trust and signalling. Knowledge Management Research &amp; Practice, 8, 4 (2010), 322-339.</li>     <li id="bib6" label="[6]">Zhang, X., Pablos, P. O. D. and Zhou, Z. Effect of knowledge sharing visibility on incentive-based relationship in Electronic Knowledge Management Systems: An empirical investigation. Computers in Human Behavior, 29, 2 (2013), 307-313.</li>     <li id="bib7" label="[7]">Gans, J. S. and Stern, S. Is there a market for ideas? Social Science Electronic Publishing, 19, 3 (2010), 805-837.</li>     <li id="bib8" label="[8]">Li, M., Liu, L. and Li, C. B. An approach to expert recommendation based on fuzzy linguistic method and fuzzy text classification in knowledge management systems. Expert Systems with Applications, 38, 7 (2011), 8586-8596.</li>     <li id="bib9" label="[9]">Liang, T. P. and Lai, H. J. Discovering User Interests from Web Browsing Behavior: An Application to Internet News Services. In&#x00A0;<em>Proceedings of the&#x00A0;Hawaii International Conference on System Sciences</em>, 2002.</li>     <li id="bib10" label="[10]">Yimam-Seid, D. and Kobsa, A. Expert-Finding Systems for Organizations: Problem and Domain Analysis and the DEMOIR Approach. Journal of Organizational Computing &amp; Electronic Commerce, 13, 1 (2003), 1-24.</li>     <li id="bib11" label="[11]">Fazel-Zarandi, M., Devlin, H. J., Huang, Y. and Contractor, N. Expert recommendation based on social drivers, social network analysis, and semantic data representation. In&#x00A0;<em>Proceedings of the&#x00A0;International Workshop on Information Heterogeneity and Fusion in Recommender Systems</em>, 2011.</li>     <li id="bib12" label="[12]">Mikolov, T., Sutskever, I., Chen, K., Corrado, G. and Dean, J. Distributed Representations of Words and Phrases and their Compositionality. Advances in Neural Information Processing Systems, 26 (2013), 3111-3119.</li>     <li id="bib13" label="[13]">Chatterjee, K. and Samuelson, W. Bargaining under Incomplete Information. Operations Research, 31, 5 (1983), 835-851.</li>     <li id="bib14" label="[14]">Bengio, Y., Ducharme, R., Vincent, P. and Jauvin, C. A Neural Probabilistic Language Model. Journal of machine learning research, 3 (2003), 1137-1155.</li>     <li id="bib15" label="[15]">Collobert, R. and Weston, J. A unified architecture for natural language processing:deep neural networks with multitask learning<em>.</em> In<em>&#x00A0;Proceedings of the 25th international conference on Machine learning,</em> 2008.</li>     <li id="bib16" label="[16]">Mikolov, T., Chen, K., Corrado, G. and Dean, J. Efficient Estimation of Word Representations in Vector Space. Computer Science (2013).</li>     <li id="bib17" label="[17]">Mikolov, T., Karafi&#x00E1;t, M., Burget, L., Cernock&#x00FD;, J. and Khudanpur, S. Recurrent neural network based language model. In<em>&#x00A0;Proceedings of theConference of the International Speech Communication Association,</em> Japan, 2010.</li>     <li id="bib18" label="[18]">Le, Q. V. and Mikolov, T. Distributed Representations of Sentences and Documents, 4 (2014), II-1188.</li>     <li id="bib19" label="[19]">Cantador, I., Bellog&#x00ED;n, A. and Castells, P. A multilayer ontology-based hybrid recommendation model. Ai Communications, 21, 2008 (2008), 203-210.</li>     <li id="bib20" label="[20]">Castells, P., Fern&#x00E1;ndez, M., Vallet, D., Mylonas, P. and Avrithis, Y. Self-tuning Personalized Information Retrieval in an Ontology-Based Framework. Springer Berlin Heidelberg, 2005.</li>     <li id="bib21" label="[21]">Vallet, D., Fern&#x00E1;ndez, M. and Castells, P. An Ontology-based Information Retrieval Model. In <em>Proceedings of the European Semantic Web Conference</em>, 2005.</li>     <li id="bib22" label="[22]">Pavlou, A. Asymmetric information in a bilateral monopoly. Journal of Dynamics &amp; Games, 3, 2 (2017), 169-189.</li>     <li id="bib23" label="[23]">Zhou, B. The Pricing of Knowledge Transaction. Economic Research Journal (2007).</li>     <li id="bib24" label="[24]">Alston, J. M., Craig, B. J. and Pardey, P. G. Dynamics in the creation and depreciation of knowledge, and the returns to research. Eptd Discussion Papers (1998).</li>     <li id="bib25" label="[25]">Nahapiet, J. and Ghoshal, S. Chapter 6&#x00A0;&#x2013;&#x00A0;Social Capital, Intellectual Capital, and the Organizational Advantage. Knowledge &amp; Social Capital, 23, 2 (2000), 119-157.</li>     <li id="bib26" label="[26]">Freeman, L. C. Centrality in social networks conceptual clarification. Social Networks, 1, 3 (1978), 215-239.</li>     <li id="bib27" label="[27]">Brin, S. and Page, L. The anatomy of a large-scale hypertextual Web search engine.In <em>Proceedings of the International Conference on World Wide Web</em>, 1998.</li>     <li id="bib28" label="[28]">Liu, Y. T., Liu, T. Y., Qin, T., Ma, Z.-M. and Li, H. Supervised rank aggregation. In <em>Proceedings of the International Conference on World Wide Web</em>, 2007.</li>     <li id="bib29" label="[29]">Dwork, C., Kumar, R., Naor, M. and Sivakumar, D. Rank aggregation methods for the Web. In <em>Proceedings of the International Conference on World Wide Web</em>, 2001.</li>     <li id="bib30" label="[30]">Wang, H., Fu, Y., Wang, Q., Yin, H., Du, C. and Xiong, H. A Location-Sentiment-Aware Recommender System for Both Home-Town and Out-of-Town Users (2017), 1135-1143.</li>     <li id="bib31" label="[31]">Parra-Santander, D. and Amatriain X. 2011. Walk the talk: Analyzing the relation between implicit and explicit feedback for preference elicitation. In <em>Proceedings of the 19th International Conference on User Modeling</em>, Adaptation, and Personalization (UMAP&#x2019;11). Springer-Verlag, Berlin, Heidelberg, 255&#x2013;268.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">     <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>Principal Component Analysis (PCA) is applied for dimensionality reduction.</p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY 4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>     <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018 IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC BY 4.0 License. ACM ISBN 978-1-4503-5640-4/18/04&#x2026;$15.00.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3186349">https://doi.org/10.1145/3184558.3186349</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div>  </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Making the Most Cost-effective Decision in Online Paid
+  Q&amp;A Community: An Expert Recommender System with Motivation
+  Modeling and Knowledge Pricing</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Making the Most Cost-effective
+          Decision in Online Paid Q&amp;A Community: An Expert
+          Recommender System with Motivation Modeling and Knowledge
+          Pricing</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Yunhao</span> <span class=
+          "surName">Zheng</span>, Tianjin University, Tianjin,
+          China, <a href=
+          "mailto:zhengyhjohn@tju.edu.cn">zhengyhjohn@tju.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Xi</span> <span class=
+          "surName">Zhang</span>, Tianjin University, Tianjin,
+          China, <a href=
+          "mailto:jackyzhang@tju.edu.cn">jackyzhang@tju.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Yuting</span> <span class=
+          "surName">Xiao</span>, Tianjin University, Tianjin,
+          China, <a href=
+          "mailto:xiaoytzoe@tju.edu.cn">xiaoytzoe@tju.edu.cn</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186349"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186349</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Recommending proper experts to knowledge buyers
+        is a significant problem in online paid Q&amp;A community
+        (OPQC). Existing approaches for online expert
+        recommendation have been mainly focused on exploiting
+        semantic similarities and social network influence, while
+        personalizing recommendation according to individuals’
+        motivations has not received much attention. In this paper,
+        we propose a personalized expert recommender system, which
+        integrates buyer's motivation for knowledge, social
+        influence, and money in a unified framework. As an
+        innovative application of cognitive computing, our
+        recommender system is capable of providing users with the
+        best matching experts so as to help them make the most
+        cost-effective choice in OPQC. To this end, <em>Paragraph
+        Vector</em> technique is implemented to construct domain
+        knowledge base (KB) in a multilayer information retrieval
+        (IR) framework. Then we perform knowledge pricing based on
+        buyer's query and bid in the context of bilateral monopoly
+        knowledge market. After that, a Markov Chain based method
+        with user motivation learning is introduced to find the
+        best matching experts. Finally, we evaluate the proposed
+        approach using datasets collected from two OPQC. The
+        experimental results show encouraging success as
+        effectively offering reasonable personalization options. As
+        an innovative approach to solve the expert matching problem
+        in OPQC, this research provides flexibility in customizing
+        the recommendation heuristics based on user motivation, and
+        demonstrate its contribution to a higher rate of optimal
+        knowledge seller-buyer matching.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>KEYWORDS:</small></span>
+          <span class="keyword"><small>Expert
+          recommendation</small>,</span> <span class=
+          "keyword"><small>knowledge pricing</small>,</span>
+          <span class="keyword"><small>motivation
+          modeling</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Yunhao Zheng, Xi Zhang and Yuting Xiao. 2018. Making the
+          Most Cost-effective Decision in Online Paid Q&amp;A
+          Community: An Expert Recommender System with Motivation
+          Modeling and Knowledge Pricing. In <em>Proceedings of The
+          2018 Web Conference Companion (WWW '18 Companion). ACM,
+          New York, NY, USA, 15 pages.</em> <a href=
+          "https://doi.org/10.1145/3184558.3186349" target=
+          "_blank">https://doi.org/10.1145/3184558.3186349</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-001">
+      <header>
+        <div class="title-info">
+          <h2>INTRODUCTION</h2>
+        </div>
+      </header>
+      <p>In the era of knowledge economy and open innovation,
+      besides organizational internal knowledge, knowledge outside
+      the organization is also considered as an important resource
+      to enhance the organizational competitiveness and innovation
+      ability [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#bib1">1</a>]. More and
+      more attention has been paid to the acquisition of knowledge
+      from the external knowledge market [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib2">2</a>]. A marketplace for knowledge is an
+      environment in which buyers and sellers trade their personal
+      knowledge, according to the prescribed price and transaction
+      pattern [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#bib3">3</a>], such as
+      Online Paid Q&amp;A community (OPQC). Regarding knowledge as
+      a commodity, OPQC is a price-based online knowledge market,
+      where buyers seek knowledge providers who match their needs
+      and invite them to provide paid question-answering services.
+      OPQC is conducive to solving the knowledge sharing dilemma.
+      Most of all, the imbalance between low benefits and high
+      knowledge sharing costs is regulated by the income of paid
+      Q&amp;A services.</p>
+      <p>In particular, with the help of information technology,
+      the online knowledge markets have been proven to play a
+      significant role in promoting knowledge sharing and knowledge
+      dissemination [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib4">4</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib5">5</a>]. First, transactions bring economic incentives
+      to online knowledge providers. And according to the social
+      loafing theory, reputation, word-of-mouth and knowledge
+      quality, provided by the electronic market, enhance knowledge
+      sharing visibility and alleviate reluctance to share
+      knowledge [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#bib6">6</a>]. Second,
+      information technology provides support for resource search
+      and supply-demand matching in the online knowledge market,
+      which eliminate the information asymmetry between the two
+      sides of knowledge transactions, and improve the efficiency
+      of knowledge dissemination [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#bib7">7</a>].</p>
+      <p>In addition to passive knowledge discovery, recommendation
+      mechanism is of vital importance to the knowledge markets
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib8">8</a>]. As recommendation,
+      according to the user's preferences and needs, has been
+      proved to have a significantly positive influence on users’
+      satisfaction [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib9">9</a>]. However, expert recommendation in OPQC is an
+      extremely complex task, which requires not only consider the
+      knowledge-based recommendations but also the impact of
+      motivation and cognitive factors in the process of knowledge
+      transaction.</p>
+      <p>Knowledge buyers' demand for Q&amp;A services is usually
+      due to lacks of domain knowledge or knowledge repository
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib10">10</a>]. This indicates
+      that knowledge buyers are most likely to be unfamiliar with
+      the fields of their inquiry. For that reason, it is hard for
+      a knowledge buyer to accurately find the most appropriate
+      knowledge seller, who can satisfy their personalized demands
+      for knowledge. What's more, the explosive growth of
+      information and the complexity of the knowledge
+      classification in yellow pages make it even more difficult to
+      conduct efficient search for Q&amp;A expert [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib8">8</a>]. Therefore, a knowledge-based
+      recommender system on the basis of experts’ domain knowledge
+      and the context of users’ questions is critical to OPQC.
+      Moreover, pricing mechanism is one of the most important
+      motivators of knowledge transactions in OPQC. Excessive
+      prices of Q&amp;A service will reduce the number of knowledge
+      transactions and result in an inactive level of knowledge
+      interaction. Meanwhile, a service price below cost, failing
+      to satisfy knowledge suppliers’ expectations, will depress
+      their willingness to participate in knowledge
+      transactions.</p>
+      <p>The main value of this article lies in:</p>
+      <ul class="list-no-style">
+        <li>We proposed an early method to solve expert
+        recommendation problems in the context of online paid
+        Q&amp;A community (OPQC);<br /></li>
+        <li>In the model, we analyzed and modeled users motivation
+        in participating OPQC activities, with knowledge pricing
+        mechanism creatively adopted for expert
+        selection;<br /></li>
+        <li>Our method is evaluated using large scale datasets from
+        active OPQC. The results demonstrate good performance of
+        our model in terms of accuracy and recall.<br /></li>
+      </ul>
+      <p></p>
+    </section>
+    <section id="sec-002">
+      <header>
+        <div class="title-info">
+          <h2>KNOWLEDGE-BASED IR FRAMEWORK</h2>
+        </div>
+      </header>
+      <p>In this section, we aim at extracting expert's domain
+      knowledge from past Q&amp;A records, and find the best match
+      when new queries come in. To reach our goal, we first
+      introduce our approach to KB construction and expert
+      profiling with the semantic description of expertise in terms
+      of concepts and instances. We then illustrate our knowledge
+      representation framework for OPQC. Finally, we present our
+      similarity measure method for new queries.</p>
+      <section id="sec2Z1">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Document
+            Embedding</h3>
+          </div>
+        </header>
+        <p>In natural language processing, document embedding, also
+        known as distributed word representation [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#bib12">12</a>], work on representing documents
+        and queries with low-dimensional real valued vectors. In a
+        classic Vector Space Model [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#bib13">13</a>], given a corpus D of text documents
+        available for training, each document in the space is
+        represented by a vector <span class=
+        "inline-equation"><span class="tex">${d_i} = (
+        {{d_{i,1}},{d_{i,2}}, \ldots ,{d_{i,K}}} )$</span></span> ,
+        representing the weighted annotations of knowledge concepts
+        in the document. The semantic similarity of two texts can
+        then be calculated as the cosine measure of two centroid
+        vectors [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href="#bib8">8</a>]:</p>
+        <div class="table-responsive" id="eqn1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}
+            {\rm{cos}}\left( {{d_1},{d_2}} \right) =
+            \frac{{{d_1}\cdot{d_2}}}{{\left| {\left| {{d_1}}
+            \right|\left| \times \right|\left| {{d_2}} \right|}
+            \right|}}\end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>Previous architectures for estimating continuous
+        representations of words were proposed in [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#bib14">14</a>-<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#bib18">18</a>]. In our model, we implement <em>Paragraph
+        Vector</em>, a state-of-the-art unsupervised framework
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#bib18">18</a>] to perform
+        document embedding for question texts in OPQC. After
+        projecting every question to the vector space, we provide
+        an intuitive visualization<a class="fn" href="#fn1" id=
+        "foot-fn1"><sup>1</sup></a>of an expert's knowledge space
+        in <a class="fig" href="#fig1">Fig. 1.</a></p>
+        <figure id="fig1">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186349/images/image1.jpg"
+          class="img-responsive" alt="Figure 1:" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 1:</span>
+            <span class="figure-title">Example of Knowledge Vector
+            Space.</span>
+          </div>
+        </figure>
+      </section>
+      <section id="sec2Z2">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> Knowledge
+            Representation</h3>
+          </div>
+        </header>
+        <p>In this paper, we assume that we have a set of M experts
+        in knowledge community: E = {<span class=
+        "inline-equation"><span class="tex">${e_1},{e_2}, \ldots
+        ,{e_M}$</span></span> }. For each expert
+        <em>e<sub>i</sub></em> , we have his/her knowledge profile
+        represented by a set of Q&amp;A records<span class=
+        "inline-equation"><span class=
+        "tex">${\rm{\;}}{r_i}{\rm{\;}} = {\rm{\;}}(
+        {{r_{i,1}},{r_{i,2}} \ldots ,{r_{i,{L_n}}}{\rm{\;}}}
+        )$</span></span> , L<sub>n</sub> being the maximum number
+        of questions corresponding to one expert. In OPQC, the
+        answer is hidden from users except the ones who paid for
+        it, and therefore to train an expert's knowledge profile,
+        we represent each Q&amp;A record <span class=
+        "inline-equation"><span class=
+        "tex">${r_{i,j}}$</span></span> , <em>j</em>=1,2, …,
+        L<sub>n</sub>, by a tuple <span class=
+        "inline-equation"><span class="tex">${r_{i,j}} = (
+        {{w_{i,j}},{a_{i,j}}} )$</span></span> , where<span class=
+        "inline-equation"><span class=
+        "tex">${\rm{\;}}{w_{i,j}}$</span></span> is the vectorized
+        description of question <em>j</em> after document
+        embedding, and <span class="inline-equation"><span class=
+        "tex">${a_{i,j}}$</span></span> represents the quality of
+        the answer according to users’ feedback. We believe that
+        higher answer quality leads to more positive feedback in
+        OPQC. Therefore, a larger value of <span class=
+        "inline-equation"><span class=
+        "tex">${a_{i,j}}$</span></span> indicates better expertise
+        of the field related.</p>
+        <p>After extracting question text to knowledge concepts, we
+        perform transformation on the quality matrix to express
+        domain expertise in a formal and processable way:</p>
+        <div class="table-responsive" id="eqn2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}E = T \times
+            a,\end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>as a result, <span class=
+        "inline-equation"><span class=
+        "tex">${e_{i,k}}$</span></span> ∈ [0,1] measures the
+        expertise intensity of expert <span class=
+        "inline-equation"><span class="tex">${e_i}$</span></span> ∈
+        <em>E</em> for domain concept <em>c<sub>k</sub></em>
+        ∈<em>C</em>.
+        <p></p>
+        <p>To provide an overview of our knowledge representation
+        method, we present our multilayer framework adapted from an
+        ontology-based personalization framework [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#bib19">19</a>] in <a class="fig" href=
+        "#fig2">Fig. 2</a>, with the following three layers:</p>
+        <ol class="list-no-style">
+          <li label="a)"><em>Item layer</em> D contains <em>N</em>
+          raw text documents of question description;<br /></li>
+          <li label="b)"><em>Knowledge layer</em> C contains
+          <em>K</em> knowledge concepts after document embedding,
+          with weighted semantic annotations <span class=
+          "inline-equation"><span class="tex">${c_k} = (
+          {{c_{k,1}},{c_{k,2}}, \ldots ,{c_{k,N}}} )$</span></span>
+          ;<br /></li>
+          <li label="c)"><em>User layer</em> E contains <em>M</em>
+          expert entities, whose domain knowledge is represented as
+          weighted expertise<span class=
+          "inline-equation"><span class="tex">${e_i} = (
+          {{e_{i,1}},{e_{i,2}}, \ldots ,{e_{i,K}}} )$</span></span>
+          .<br /></li>
+        </ol>
+        <p></p>
+        <figure id="fig2">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186349/images/image2.jpg"
+          class="img-responsive" alt="Figure 2:" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 2:</span>
+            <span class="figure-title">Knowledge Representation
+            Framework; adapted from [<a class="bib" data-trigger=
+            "hover" data-toggle="popover" data-placement="top"
+            href="#bib19">19</a>].</span>
+          </div>
+        </figure>
+      </section>
+      <section id="sec2Z3">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.3</span> Query
+            Encoding and Expertise Measure</h3>
+          </div>
+        </header>
+        <p>With the knowledge representation method introduced
+        above, we use are trieval model that works in two phase to
+        perform query encoding. In the first phase, a new query is
+        issued by knowledge buyers describing user's knowledge
+        demand, and then projected to vector space as
+        <strong><em>q<sub>d</sub></em></strong> . The second phase
+        is similar to that in [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#bib20">20</a>], where the query is processed against the
+        KB using an inferencing mechanism, returning a set of
+        knowledge concepts <strong><em>q<sub>c</sub></em></strong>
+        . After encoding, the similarity of a query with an
+        expert's domain knowledge can then be computed by cosine
+        measure in (1).</p>
+        <p>To cope with the case of incomplete KB [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#bib21">21</a>] (i.e. the corresponding concept
+        instances of query are missing in the knowledge source, and
+        therefore pure knowledge-based similarity measure can
+        perform poorly), we combine the domain concept similarity
+        with text semantic similarity to perform complex expertise
+        measuring, as in our experiment text semantic similarity
+        could perform better in this case.</p>
+        <p>Thus, given the historical Q&amp;A records of an expert,
+        when a new query <strong><em>q</em></strong> checks in, an
+        expert's domain knowledge intensity on the field related
+        can be inferred as:</p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation*} {f_i}\left(
+            {\vec q} \right) = t\mathop \sum \limits_{k = 1}^K
+            sim\left( {{c_k},{q_c}}
+            \right){e_{i,k}}\end{equation*}</span><br />
+          </div>
+        </div>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}\left( {1 - t}
+            \right)\mathop \sum \limits_{j = 1}^N sim\left(
+            {{d_j},{q_d}}
+            \right){a_{i,j}}\end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>where <em>t</em> is set to 0.5 by default, and can be
+        further adjusted on a case by case basis.
+        <p></p>
+      </section>
+    </section>
+    <section id="sec1">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1:</span> USER
+          MOTIVATION MODELING</h2>
+        </div>
+      </header>
+      <p>Knowledge buyers have multiple motivations when seeking
+      knowledge service in OPQC. In order to better serve users
+      with different types of demand, our system implements diverse
+      approaches to expert recommendation with pre-designed
+      motivation models. In this section, we define three types of
+      motivation model based on widely-accepted theories. Firstly,
+      knowledge profit is put forward based on self-interest
+      theory, in considering the cost-benefit analysis made by
+      knowledge buyers, together with the influence of knowledge
+      depreciation creatively adopted [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#bib23">23</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib24">24</a>]. Secondly, social benefits are proposed from
+      the perspective of social capital theory, taking the
+      centrality of experts into account [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib25">25</a>]. And finally, the third
+      motivation, monetary revenue, is added considering users’
+      intention to earn extra income in a special situation called
+      “eavesdrop” in OPQC.</p>
+      <section id="sec3Z1">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Knowledge
+            Profits</h3>
+          </div>
+        </header>
+        <p>From the perspective of rational man hypothesis,
+        knowledge buyers tend to favor the most qualified experts
+        with the highest reputation in the related field, in order
+        to maximize the expected incoming knowledge value in a
+        service. Given that knowledge is sold with price in OPQC,
+        we model knowledge profits with pricing factor in this
+        subsection, so as to distinguish the most knowledge-worthy
+        experts for knowledge buyers.</p>
+        <p>We first discuss some market characteristics of OPQC. In
+        knowledge transaction market, one piece of knowledge links
+        only one seller with one buyer. In other word, knowledge
+        service is customized, and therefore both sides have
+        extreme bargaining power. Another typical feature of OPQC
+        is incomplete information, which means a seller doesn't
+        know the actual value of his knowledge for its buyer.
+        Similarly, a buyer has little information of the actual
+        knowledge cost of the seller. Thus, a seller's bid is
+        mainly determined by his estimation of knowledge cost; a
+        buyer's bid is mainly determined by his estimation of
+        knowledge utility.</p>
+        <p>With the features discussed above, we consider knowledge
+        transaction market as a new type of bilateral monopoly
+        market [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href="#bib22">22</a>], and
+        put forward the method of knowledge pricing.</p>
+        <p><em>Definition 3.1</em> (<strong>Knowledge
+        Cost</strong>) Knowledge cost [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#bib23">23</a>] is the cost of knowledge seller, which
+        mainly refers to the loss of competitiveness after
+        knowledge sharing. Although a seller's knowledge cost is
+        unknown to its buyer, it can be estimated by his bid
+        <em>p<sub>s</sub></em> . In this paper, we adopt the
+        uniform distribution to represent knowledge cost as
+        <span class="inline-equation"><span class="tex">${c_i}\sim
+        U( {0,{p_s}} )$</span></span> . It follows that:</p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}Pr\left(
+            {{c_i}} \right) =
+            \frac{1}{{p_s^i}}\end{equation}</span><br />
+            <span class="equation-number">(4)</span>
+          </div>
+        </div>
+        <p></p>
+        <p><em>Definition 3.2</em> (<strong>Knowledge
+        Utility</strong>) Knowledge utility [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#bib23">23</a>] is the value of knowledge to a
+        buyer. For the same piece of knowledge, its utility can
+        vary from different buyers. In knowledge market, we assume
+        that buyers are clear on how much the question values to
+        them, since they are the subject of knowledge service.
+        Therefore, we believe a buyer's bid <em>p<sub>b</sub></em>
+        is presented with careful consideration, which can honestly
+        represent the knowledge utility on the buyer. However, the
+        quality of the answer is an uncertain factor. A good answer
+        can create value far beyond the buyer's expectation, while
+        a careless one may have limited utility. In this paper, we
+        approximate such uncertainty with a Gaussian distribution
+        <span class="inline-equation"><span class="tex">${u_i}\sim
+        $</span></span> <em>N</em> <span class=
+        "inline-equation"><span class="tex">$( {{p_b},{\sigma ^2}}
+        )$</span></span> . It follows that:</p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class=
+            "tex mytex">\begin{equation}Pr({u_i}|p_b^i,{\sigma _i})
+            = \frac{1}{{\sqrt {2\pi } {\sigma _i}}}\exp [ -
+            \frac{{{{({u_i} - p_b^i)}^2}}}{{\sqrt {2\pi } {\sigma
+            _i}^2}}],\end{equation}</span><br />
+            <span class="equation-number">(5)</span>
+          </div>
+        </div>where <span class="inline-equation"><span class=
+        "tex">${\sigma _i} = 1/{f_i}( {{\rm{\vec q}}}
+        )$</span></span> . The formula in (5) indicates that if an
+        expert is experienced in query <span class=
+        "inline-equation"><span class="tex">$\vec
+        q\;$</span></span> with a rather large value of
+        <span class="inline-equation"><span class="tex">${f_i}(
+        {\vec q} )$</span></span> , the expected knowledge utility
+        becomes more concentrated around buyer's bid.
+        <p></p>
+        <p><em>Definition 3.3</em> (<strong>Knowledge
+        Depreciation</strong>) Knowledge depreciation [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#bib24">24</a>] is the decline
+        of knowledge utility as time goes by, because the
+        continuous competition and dissemination of knowledge lower
+        the knowledge scarcity.</p>
+        <p>Knowledge stored as information has no physical
+        depreciation. However, in mass OPQC, knowledge is
+        incessantly disseminating and colliding with fierce
+        competition driven by price, which causes the decline of
+        knowledge scarcity. Online knowledge buyers tend to prefer
+        real-time Q&amp;A service, otherwise, they will possibly
+        lose favor in online service and alternatively turn to
+        other means like books or face-to-face consultation. Under
+        this circumstance, knowledge with long delay will be less
+        competitive and therefore of less value. Therefore, we
+        consider knowledge depreciation as a significant factor
+        influencing knowledge pricing in OPQC. In our model, we
+        apply an exponential term to represent a buyer's dynamic
+        knowledge utility decline with time:</p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} {u_i}\left( t
+            \right) = {u_i}{e^{ - \lambda
+            t}},\end{equation}</span><br />
+            <span class="equation-number">(6)</span>
+          </div>
+        </div>where λ is the depreciation coefficient, and
+        <em>t</em> refers to the expected answer interval according
+        to the expert's online activation.
+        <p></p>
+        <p>The character of knowledge transaction determines that
+        we cannot use marginal cost to perform knowledge pricing
+        according to traditional economics. It's argued by
+        Chatterjee and Samuelson [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#bib13">13</a>] that under incomplete information,
+        transaction price under <em>Nash Equilibrium</em>is p* ∈
+        [c,u]. The transaction surplus <em>u-c</em> will be divided
+        by each side. After infinite bargaining, the final
+        transaction price will be [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#bib13">13</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#bib23">23</a>]:</p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}p* = c +
+            \frac{{1 - {\delta _b}}}{{1 - {\delta _s}{\delta
+            _b}}}(u - c),\end{equation}</span><br />
+            <span class="equation-number">(7)</span>
+          </div>
+        </div>where <em>δ<sub>s</sub>, δ<sub>b</sub></em> are the
+        discount rate of seller and buyer respectively, reflecting
+        the patience of each side. <em>δ<sub>s</sub></em> will be
+        small when the number of potential competitors is large. As
+        more choices for buyers will motivate sellers to become
+        more eager to sell their knowledge. Similarly,
+        <em>δ<sub>b</sub></em> will be small when the buyer is
+        urgent to seek the knowledge to solve his problem.
+        <p></p>
+        <p>Then, in our model, we compute the transaction surplus
+        on buyers to define expected knowledge profits in OPQC:</p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}K({e_i}) =
+            E\left\{ {{c_i} + \frac{{1 - {\delta _b}}}{{1 - {\delta
+            _s}{\delta _b}}}[{u_i}(t) - {c_i}] - p_s^i}
+            \right\}\end{equation}</span><br />
+            <span class="equation-number">(8)</span>
+          </div>
+        </div>
+        <p></p>
+      </section>
+      <section id="sec3Z2">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Social
+            Benefits</h3>
+          </div>
+        </header>
+        <p>In addition to knowledge exchange, users are developing
+        social connections through interactions in the online
+        community, which is considered as their social resources.
+        As suggested in social capital theory, social capital,
+        including various types of resources in the social network
+        of an individual, has a strong impact on knowledge sharing
+        behavior [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href="#bib25">25</a>].
+        Specifically, we define the following types of OPQC users’
+        connection: following, Q&amp;A, eavesdropping and liking.
+        <a class="fig" href="#fig3">Fig. 3</a> illustrates an
+        expert's social network.</p>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186349/images/image3.jpg"
+          class="img-responsive" alt="Figure 3:" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">Social Network in
+            OPQC.</span>
+          </div>
+        </figure>
+        <figure id="fig4">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186349/images/image4.jpg"
+          class="img-responsive" alt="Figure 4:" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 4:</span>
+            <span class="figure-title">Personalized Recommendation
+            Framework.</span>
+          </div>
+        </figure>
+        <p>Generally, an expert located in the center of network
+        attracts higher user traffic and attention, together with
+        greater authority and larger voice in his community.
+        Moreover, when a knowledge buyer obtains knowledge service
+        from an expert, his identity and the question description
+        will become public in the expert's homepage. Then, the
+        buyer can benefit from expert's social capital when getting
+        exposed to a greater knowledge resource with increasing
+        potential of building new connections.</p>
+        <ul class="list-no-style">
+          <li>Considering the fact above, the following motivation
+          model is designed to target those users seeking the
+          maximum social benefits through knowledge
+          transaction.<br /></li>
+          <li>To estimate an expert's social capital in OPQC, we
+          first initialize the centrality [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+            data-placement="top" href="#bib26">26</a>] of every
+            expert as the number of connected users in the network:
+            <div class="table-responsive">
+              <div class="display-equation">
+                <span class="tex mytex">\begin{equation}{C_0}\left(
+                {{e_i}} \right) = \mathop \sum \limits_{k = 1}^n
+                \delta \left( {{e_i},{u_k}}
+                \right)\end{equation}</span><br />
+                <span class="equation-number">(9)</span>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <div class="display-equation">
+                <span class="tex mytex">\begin{equation*}\delta
+                ({e_i},{u_k}) = \left\{ \begin{array}{@{}l@{}}
+                {\rm{ }}1{\rm{ if expert }}{e_i}{\rm{ and user
+                }}{u_k}{\rm{ are connected}}\\ {\rm{ }}0{\rm{
+                otherwise}} \end{array}
+                \right.\end{equation*}</span><br />
+              </div>
+            </div><br />
+          </li>
+          <li>Then, considering the cross effect of adjacent expert
+          authority, PageRank methodology [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+            data-placement="top" href="#bib27">27</a>] is
+            implemented to better distinguish those influential
+            experts in OPQC. The PageRank centrality at time
+            <em>t</em> can be computed as:
+            <div class="table-responsive">
+              <div class="display-equation">
+                <span class="tex mytex"></span><br />
+                <span class="equation-number">(10)</span>
+              </div>
+            </div><br />
+          </li>
+          <li>where A is the normalized adjacency matrix that
+          represents all connections between nodes.<span class=
+          "inline-equation"><span class=
+          "tex">${\rm{\;}}d_j^{out}\;$</span></span> computes the
+          out-degree of expert node <span class=
+          "inline-equation"><span class=
+          "tex">${e_{j\;}}$</span></span> in network. <em>α</em> is
+          the importance of adjacent expert's centrality. For
+          example, a user in OPQC is followed by an expert with
+          high centrality at time <em>t-△t</em>. At the next time
+          <em>t</em>,he becomes more important in the network with
+          increasing centrality due to social influence of the
+          authorized expert.<br /></li>
+        </ul>
+        <p></p>
+      </section>
+      <section id="sec3Z3">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span> Monetary
+            Revenue</h3>
+          </div>
+        </header>
+        <ul class="list-no-style">
+          <li label="•">An interesting feature about OPQC is the
+          “eavesdrop with one dollar” function, which enables other
+          knowledge buyers to eavesdrop on the private answer
+          paying only one dollar, regardless of the original price
+          of the answer. The one dollar income goes fifty-fifty to
+          the original knowledge seller and the buyer. This novel
+          function helps motivate the generation of high-quality
+          Q&amp;A as it rewards the asker (buyer) and answer
+          (seller) with additional money from potential
+          eavesdroppers.<br /></li>
+          <li label="•">Two largest OPQC of China both apply this
+          mechanism to promote low-cost knowledge spreading. After
+          observing user behavior from our datasets, we find that
+          with good selection of experts and questioning skills,
+          some users are able to earn a considerable amount of
+          money every time they raise a question.<br /></li>
+          <li label="•">Thus, in consideration of user's demand to
+          earn money by asking questions in OPQC, we define an
+          expert's “profitability” as his measure of attraction to
+          eavesdropping according to past Q&amp;A records:
+            <div class="table-responsive">
+              <div class="display-equation">
+                <span class="tex mytex">\begin{equation}R({e_i}) =
+                \left\{ \begin{array}{@{}l@{}} {\rm{ }}\frac{{\sum
+                {\# eavesdropping} }}{{2 \times \# questions}} -
+                price{\rm{ if }}income &gt; 0\\ {\rm{ }}0{\rm{
+                otherwise}} \end{array}
+                \right.\end{equation}</span><br />
+                <span class="equation-number">(11)</span>
+              </div>
+            </div><br />
+          </li>
+        </ul>
+      </section>
+    </section>
+    <section id="sec2">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2.</span> PERSONALIZED
+          RECOMMENDATIONS</h2>
+        </div>
+      </header>
+      <ul class="list-no-style">
+        <li>In this section, we present our personalized expert
+        recommendation method. We aim at finding the experts that
+        best match the demand of knowledge buyer, that is, the most
+        “cost-effective” expert in terms of knowledge, social and
+        monetary reward. First, an optimization framework
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href="#bib28">28</a>] is
+          introduced to aggregate expert rankings according to
+          different criteria. We then illustrate our method to
+          learn the model for expert recommendation.<br />
+        </li>
+      </ul>
+    </section>
+    <section id="sec-005">
+      <header>
+        <div class="title-info">
+          <h2>4.1Markov-Chain Based Rank Aggregation</h2>
+        </div>
+      </header>
+      <p>Given the individual expert ranking obtained by multiple
+      motivation models, we introduce the rank aggregation
+      framework in web search [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib29">29</a>] to perform comprehensive expert
+      recommendation. First of all, some notations are defined.
+      Given a set of experts E, a top-k list of ranking with
+      respect to E is an ordering of <em>τ<sup>(k)</sup></em> =
+      [<em>e<sub>1</sub></em> ≥<em>e<sub>2</sub></em> ≥ …≥
+      <em>e<sub>k</sub></em> ], <em>e<sub>i</sub></em> ∈E. Without
+      loss of generality, we assume that ≥ denotes descending
+      order.</p>
+      <p>In our model, let τ<sub>1</sub>, τ<sub>2</sub>
+      andτ<sub>3</sub> denote the ranking lists with respect to the
+      criterion of optimal knowledge profits, social benefits and
+      monetary revenue respectively. We then define our Markov
+      Chain similar to that in metasearch [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib28">28</a>]: If the current state is expert
+      <em>e<sub>i</sub></em> , the next state
+      <em>e<sub>j</sub></em> is chosen uniformly from all experts
+      ranking higher than or equals to <em>e<sub>i</sub></em> in a
+      randomly selected ranking list τ.</p>
+      <ul class="list-no-style">
+        <li>The transition matrix is then computed as the weighted
+        arithmetic mean of transition probability matrices of base
+        rankers, with weights <em>θ</em> suggesting knowledge
+        buyer's motivation in this case [<a class="bib"
+        data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#bib28">28</a>]:
+          <div class="table-responsive">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}P =
+              \sum\limits_{l{\rm{ = }}1}^3 {{\theta _l}{P^{(l)}}}
+              \end{equation}</span><br />
+              <span class="equation-number">(12)</span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}P_{ij}^{(l)}
+              = \left\{ \begin{array}{@{}l@{}} \frac{1}{m},{\rm{
+              }}{{\rm{e}}_j}{ \ge _{{\tau _l}}}{{\rm{e}}_i}\\ {\rm{
+              }}0{\rm{, otherwise}} \end{array}
+              \right.\end{equation}</span><br />
+              <span class="equation-number">(13)</span>
+            </div>
+          </div><br />
+        </li>
+      </ul>where m represents the number of experts that rank
+      higher than or equals to expert <em>e<sub>i</sub></em> in
+      list <span class="inline-equation"><span class="tex">${\tau
+      _l}$</span></span> .
+      <p></p>
+      <section id="sec4Z2">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Motivation
+            Learning</h3>
+          </div>
+        </header>
+        <p>With the framework introduced above, we now define input
+        of our learning problem <span class=
+        "inline-equation"><span class="tex">$x_l^{( i
+        )}$</span></span> as the percentile of expert
+        <em>e<sub>i</sub></em> in list τ<sub>l</sub>, which is also
+        regarded as his score in the sub-list. Meanwhile,
+        <span class="inline-equation"><span class="tex">${y^{( i
+        )}}$</span></span> is defined to represent the vector of
+        ground truth, where the actual expert selected by asker
+        values 1 and others are set to 0. The problem can then be
+        solved using a regression model, which has demonstrated
+        great predictive power in user preference elicitation
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#bib31">31</a>]. The learning
+        problem is formulized as:</p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}\mathop {\min
+            }\limits_\theta J\left( {\theta ,{\rm{x}}} \right) =
+            \mathop {\min }\limits_\theta \frac{1}{{2M}}\mathop
+            \sum \limits_{i = 1}^M {\left( {{h_\theta }\left(
+            {{x^{\left( i \right)}}} \right) - {y^{\left( i
+            \right)}}} \right)^2}\end{equation}</span><br />
+            <span class="equation-number">(14)</span>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} {h_\theta
+            }\left( {{x^{\left( i \right)}}} \right) = \mathop \sum
+            \limits_{l = 1}^3 {\left( {{\theta _l}{P^{\left( l
+            \right)}}} \right)^T}x_l^{\left( i
+            \right)}\end{equation}</span><br />
+            <span class="equation-number">(15)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>where<span class="inline-equation"><span class=
+        "tex">$\;{h_\theta }( {{x^{( i )}}}
+        ){\rm{\;}}$</span></span> calculates the probability of
+        recommending expert <em>e<sub>i</sub></em> . In learning,
+        we aim at minimizing the disagreements between the ground
+        truth and the output recommendation list. Learning details
+        are shown in (16) and Algorithm <a class="tbl" href=
+        "#tb1">1.</a></p>
+        <div class="table-responsive" id="tb1">
+          <div class="table-caption">
+            <span class="table-number">Algorithm 1:</span>
+            <span class="table-title">Motivation Learning</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">
+                  1: initialize <span class=
+                  "inline-equation"><span class="tex">$\theta
+                  $</span></span> to random value∈[0,1]<br />
+                  2: <strong>repeat</strong><br />
+                  3: <strong>for</strong> k in [<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href="#bib1">1</a>,<a class=
+                  "bib" data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href="#bib2">2</a>,<a class=
+                  "bib" data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href="#bib3">3</a>]
+                  <strong>do</strong><br />
+                  4: <strong>update</strong> <span class=
+                  "inline-equation"><span class="tex">${\theta _l}
+                  \leftarrow {\rm{\;}}{\theta _l} -
+                  {\rm{\varepsilon }}\frac{{\partial J( {{\theta
+                  _l}} )}}{{\partial {\theta
+                  _l}}}$</span></span><br />
+                  5: <strong>end</strong><br />
+                  6: <strong>until</strong> Convergence
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p></p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}\frac{{\partial
+            J\left( {{\theta _l}} \right)}}{{\partial {\theta _l}}}
+            = \frac{1}{M}\mathop \sum \limits_{i = 1}^M \left(
+            {{h_\theta }\left( {{x^{\left( i \right)}}} \right) -
+            {y^{\left( i \right)}}} \right)x_l^{\left( i
+            \right)}\end{equation}</span><br />
+            <span class="equation-number">((16)</span>
+          </div>
+        </div>
+        <p></p>
+      </section>
+    </section>
+    <section id="sec3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3.</span> EXPERIMENTAL
+          RESULTS</h2>
+        </div>
+      </header>
+      <p>We conduct several experiments on real OPQC datasets to
+      evaluate the performance of our expert recommender
+      system.</p>
+      <section id="sec5Z1">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span>
+            Experimental Data</h3>
+          </div>
+        </header>
+        <p>We evaluate the proposed approach by large-scale real
+        data from two OPQCs. Both are highly popular communities
+        with active domain experts and knowledge buyers creating
+        thousands of knowledge transactions per day. The operating
+        modes of two platforms are similar. Experts describe their
+        fields of expertise and set their own unit price for
+        answering each question in their profiles. Meanwhile,
+        knowledge buyers send question description to desirable
+        experts and then obtain personalized knowledge service
+        after paying the price. Answers, in the form of voice, can
+        be eavesdropped by other users costing one dollar, which
+        goes half and half to reward the original asker and
+        answer.</p>
+        <p><strong><em>Dataset A</em></strong>. The dataset
+        includes 7,227 experts, 4,477 knowledge buyers with 171,534
+        transactions. Each transaction record contains the ID of
+        seller and buyer, transaction price, #eavesdrop, #like, and
+        the question content.</p>
+        <p><strong><em>Dataset B</em></strong>. The dataset
+        includes 2,663 experts, 542 knowledge buyers with 14,336
+        tractions.</p>
+        <p>It should be noted that those experts and knowledge
+        buyers with less than 5 transaction records were removed in
+        both datasets, as the experiment expert's domain knowledge
+        and user's motivation will be highly biased with extremely
+        limited training data.</p>
+      </section>
+      <section id="sec5Z2">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> Evaluation
+            Metrics</h3>
+          </div>
+        </header>
+        <p>In our experiment, we randomly select 10 knowledge
+        buyers from datasets. For each knowledge buyer, the first
+        80% Q&amp;A records are used as training data, and the
+        other 20% are used as testing data. We learn the model and
+        obtain the top-k recommendation list for the knowledge
+        buyer with anew query. To investigate the overall
+        performance of the recommender system, we use two
+        evaluation metrics including Accuracy@k [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#bib30">30</a>] and Recall@k.</p>
+        <ul class="list-no-style">
+          <li>
+            <strong><em>Accuracy@k (A@k)</em>.</strong> To evaluate
+            the effectiveness of our recommendation result, we
+            adopt the metrics used in [<a class="bib" data-trigger=
+            "hover" data-toggle="popover" data-placement="top"
+            href="#bib30">30</a>]. Specifically, for each Q&amp;A
+            record in the test set <em>S<sub>test</sub></em> , we
+            compute the score of each potential expert and then
+            obtain the top-k list of recommendation corresponding
+            to the buyer with a new query. If the ground truth
+            expert is included in the list, we define it valid
+            recommendation, otherwise, it's invalid. Accuracy@k is
+            computed by the proportion of valid recommendation in
+            the test set:
+            <div class="table-responsive">
+              <div class="display-equation">
+                <span class="tex mytex">\begin{equation}Accuracy@k
+                = \frac{{\# Valid\;recommendation}}{{\left|
+                {{S_{test}}} \right|}}\end{equation}</span><br />
+                <span class="equation-number">(17)</span>
+              </div>
+            </div><br />
+          </li>
+        </ul>
+        <p></p>
+        <p><strong><em>Recall@k (R@k)</em>.</strong>Recall@k is
+        defined to evaluate the ability to discover potential
+        target expert. For each knowledge buyer, an expert is
+        defined to be potential target only if they once have
+        knowledge transaction in the training set, which indicates
+        their possibility to become trading partners again when the
+        buyer raises new questions. Similarly, after obtaining the
+        top-k list for each test case, we compute the proportion of
+        potential experts in the list of recommendation to evaluate
+        the system's ability to recall potential target. The
+        overall Recall@k is then computed as the average of all
+        test cases:</p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation}Recall@k =
+            \frac{{\sum \# Potential\;expert}}{{k\left|
+            {{S_{test}}} \right|}}\end{equation}</span><br />
+            <span class="equation-number">(18)</span>
+          </div>
+        </div>
+        <p></p>
+      </section>
+      <section id="sec5Z3">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.3</span>
+            Recommendation Performance</h3>
+          </div>
+        </header>
+        <p>In this subsection, we present the experimental
+        performance of our recommender system on our datasets,
+        respectively. Since the idea of OPQC has lately arisen and
+        attracted little attention, we are short of baselines for
+        comparison in our experiment. However, our results can be
+        considered as exploring work for future comparison and
+        improvement.</p>
+        <p><a class="fig" href="#fig5">Fig. 5</a>, <a class="fig"
+        href="#fig6">6</a> report the A@k and R@k result on two
+        datasets, where k is 1, 5, and 10. The overall accuracy is
+        satisfying, with an average A@10 of 0.358 for dataset A and
+        0.380 for dataset B, which means that in more than one
+        third of all test cases, the actual expert selected by the
+        user is precisely located and recommended in the top-10
+        list. It demonstrates that our recommender system can
+        effectively capture user's motivation, find the matching
+        experts and then generate reasonable recommendations in
+        OPQC.</p>
+        <figure id="fig5">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186349/images/image13.jpg"
+          class="img-responsive" alt="Figure 5:" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 5:</span>
+            <span class="figure-title">Recommendation on Dataset
+            A.</span>
+          </div>
+        </figure>
+        <figure id="fig6">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186349/images/image14.jpg"
+          class="img-responsive" alt="Figure 6:" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 6:</span>
+            <span class="figure-title">Recommendation on Dataset
+            B.</span>
+          </div>
+        </figure>
+        <p>It is also observed that the recall performance varies
+        greatly among users. The recall rate is generally higher
+        for those users with a single strong motivation in the past
+        buying behavior, which can be as high as 0.8 (see Fig
+        <a class="fig" href="#fig6">6b</a>). For other users with
+        relatively “balanced” motivation, our system shows
+        conserved performance in discovering potential target
+        expert.</p>
+        <p><a class="fig" href="#fig7">Fig. 7</a> provides an
+        intuitive visualization of the motivation parameter θ of
+        askers selected in dataset A. According to the figure, the
+        motivation for knowledge transaction in OPQC indeed differs
+        among difference askers as we suppose earlier. It shows
+        that some askers appear to be pure knowledge seekers always
+        looking for the most professional experts; while some are
+        clearly active money makers who pay his effort in targeting
+        the most profitable experts before asking. Therefore, pure
+        knowledge matching or network relations oriented methods
+        cannot provide accurate recommendations in this case.</p>
+        <figure id="fig7">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186349/images/image15.jpg"
+          class="img-responsive" alt="Figure 7:" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 7:</span>
+            <span class="figure-title">Motivation Parameter
+            θ.</span>
+          </div>
+        </figure>
+      </section>
+      <section id="sec5Z4">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.4</span>
+            Discussion</h3>
+          </div>
+        </header>
+        <p>In the experiment, we consider the actual respondent
+        expert selected by knowledge buyers as the ground truth.
+        However, since users have limited view in reality, their
+        choice may not actually be the optimal choice. Therefore,
+        given the inborn limitation of OPQC user, the significance
+        of our research is that it enables users to have easy
+        access to their potential perfect match by learning the
+        motivation from past behavior. In other word, our
+        recommender system provides them with a broader view of
+        personalized valuable expert information, and therefore
+        contributes to a higher rate of optimal seller-buyer
+        matching.</p>
+        <p>Another noteworthy finding is that the system
+        performance might not keep increasing with more training
+        examples. As shown in <a class="fig" href="#fig8">Fig.
+        8</a>, the overall performance initially goes up with
+        increasing number of training examples as the system better
+        captures user's motivation, but it drops significantly
+        after the training set gets too large. We believe the
+        reason is that in our model, for simplicity, we consider
+        user motivation as rather static variables. In other word,
+        we assume that a knowledge buyer who values knowledge
+        profit the most would always look for the most qualified
+        expert. However, user's interest and motivation for seeking
+        knowledge are changing dynamically in reality. In this
+        case, static modeling has its limitation in recommendation
+        performance as it may overfit large training set.</p>
+        <figure id="fig8">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186349/images/image16.jpg"
+          class="img-responsive" alt="Figure 8:" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 8:</span>
+            <span class="figure-title">Performance with different
+            #training examples.</span>
+          </div>
+        </figure>
+      </section>
+    </section>
+    <section id="sec4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4.</span> CONCLUDING
+          REMARKS</h2>
+        </div>
+      </header>
+      <p>In this research, an expert recommendation in OPQC is
+      proposed, adopting cognitive mechanisms (e.g. social capital
+      theory) to heighten computational intelligence. This
+      personalized expert recommender system, under the
+      consideration of multi-cognitive factors, is an early
+      comprehensive framework to address the demand-supply matching
+      problem in OPQC. The results of the experiment demonstrate
+      that the proposed model is capable of generating reasonable
+      recommendations, consistent with the motivation behind
+      knowledge transaction behavior. Therefore, theoretical
+      contributions of this research can be affirmed.</p>
+      <p>At the same time, this research, as an application of
+      cognitive computing, also has certain practical value.
+      Because with the help of our intelligent expert
+      recommendation system, the continuous adoption of the
+      community will be enhanced. Firstly, for a newly developing
+      Q&amp;A community, such as OPQC, both the quality and the
+      quantity of knowledge are essential to the platform. Our new
+      expert recommendation system can increase the visibility of
+      domain experts’ knowledge sharing behaviors. Thus, knowledge
+      sharing dilemma caused by social loafing will be alleviated,
+      and the quality of the Q&amp;A service will be improved on
+      the whole platform. Secondly, high reflection speed and
+      Q&amp;A service quality will raise the perceived usefulness
+      of knowledge buyers’ online learning experience. And thirdly,
+      taking knowledge pricing into consideration can help
+      knowledge buyers making the most cost-effective choice in
+      finding domain experts, therefore enhance satisfaction of
+      community users.</p>
+      <p>For the ongoing and future work, improvement on the
+      accuracy of recommendation results can be developed, with
+      larger and richer datasets. At the same time, the problem of
+      overfitting large-scale data needs to be noticed. To solve
+      that problem, dynamic modeling can be adopted to capture the
+      dynamic variation of user interest and preference, so as to
+      increase the overall accuracy of recommendation.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="bib-sec-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCE</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="bib1" label="[1]">Foss, N. J., Husted, K. and
+        Michailova, S. Governing Knowledge Sharing in
+        Organizations: Levels of Analysis, Governance Mechanisms,
+        and Research Directions. Journal of Management Studies, 47,
+        3 (2010), 455–482.</li>
+        <li id="bib2" label="[2]">Barratt, M. and Barratt, R.
+        Exploring internal and external supply chain linkages:
+        Evidence from the field. Journal of Operations Management,
+        29, 5 (2011), 514-528.</li>
+        <li id="bib3" label="[3]">Desouza, K. C., Awazu, Y.,
+        Yamakawa, S. and Umezawa, M. Facilitating knowledge
+        management through market mechanism. Knowledge &amp;
+        Process Management, 12, 2 (2005), 99–107.</li>
+        <li id="bib4" label="[4]">O'Reilly, P. and Finnegan, P.
+        Intermediaries in inter-organisational networks: building a
+        theory of electronic marketplace performance. European
+        Journal of Information Systems, 19, 4 (2010), 462-480.</li>
+        <li id="bib5" label="[5]">Zhang, Z. and Sundaresan, S.
+        Knowledge markets in firms: knowledge sharing with trust
+        and signalling. Knowledge Management Research &amp;
+        Practice, 8, 4 (2010), 322-339.</li>
+        <li id="bib6" label="[6]">Zhang, X., Pablos, P. O. D. and
+        Zhou, Z. Effect of knowledge sharing visibility on
+        incentive-based relationship in Electronic Knowledge
+        Management Systems: An empirical investigation. Computers
+        in Human Behavior, 29, 2 (2013), 307-313.</li>
+        <li id="bib7" label="[7]">Gans, J. S. and Stern, S. Is
+        there a market for ideas? Social Science Electronic
+        Publishing, 19, 3 (2010), 805-837.</li>
+        <li id="bib8" label="[8]">Li, M., Liu, L. and Li, C. B. An
+        approach to expert recommendation based on fuzzy linguistic
+        method and fuzzy text classification in knowledge
+        management systems. Expert Systems with Applications, 38, 7
+        (2011), 8586-8596.</li>
+        <li id="bib9" label="[9]">Liang, T. P. and Lai, H. J.
+        Discovering User Interests from Web Browsing Behavior: An
+        Application to Internet News Services.
+        In&nbsp;<em>Proceedings of the&nbsp;Hawaii International
+        Conference on System Sciences</em>, 2002.</li>
+        <li id="bib10" label="[10]">Yimam-Seid, D. and Kobsa, A.
+        Expert-Finding Systems for Organizations: Problem and
+        Domain Analysis and the DEMOIR Approach. Journal of
+        Organizational Computing &amp; Electronic Commerce, 13, 1
+        (2003), 1-24.</li>
+        <li id="bib11" label="[11]">Fazel-Zarandi, M., Devlin, H.
+        J., Huang, Y. and Contractor, N. Expert recommendation
+        based on social drivers, social network analysis, and
+        semantic data representation. In&nbsp;<em>Proceedings of
+        the&nbsp;International Workshop on Information
+        Heterogeneity and Fusion in Recommender Systems</em>,
+        2011.</li>
+        <li id="bib12" label="[12]">Mikolov, T., Sutskever, I.,
+        Chen, K., Corrado, G. and Dean, J. Distributed
+        Representations of Words and Phrases and their
+        Compositionality. Advances in Neural Information Processing
+        Systems, 26 (2013), 3111-3119.</li>
+        <li id="bib13" label="[13]">Chatterjee, K. and Samuelson,
+        W. Bargaining under Incomplete Information. Operations
+        Research, 31, 5 (1983), 835-851.</li>
+        <li id="bib14" label="[14]">Bengio, Y., Ducharme, R.,
+        Vincent, P. and Jauvin, C. A Neural Probabilistic Language
+        Model. Journal of machine learning research, 3 (2003),
+        1137-1155.</li>
+        <li id="bib15" label="[15]">Collobert, R. and Weston, J. A
+        unified architecture for natural language processing:deep
+        neural networks with multitask learning<em>.</em>
+        In<em>&nbsp;Proceedings of the 25th international
+        conference on Machine learning,</em> 2008.</li>
+        <li id="bib16" label="[16]">Mikolov, T., Chen, K., Corrado,
+        G. and Dean, J. Efficient Estimation of Word
+        Representations in Vector Space. Computer Science
+        (2013).</li>
+        <li id="bib17" label="[17]">Mikolov, T., Karafiát, M.,
+        Burget, L., Cernocký, J. and Khudanpur, S. Recurrent neural
+        network based language model. In<em>&nbsp;Proceedings of
+        theConference of the International Speech Communication
+        Association,</em> Japan, 2010.</li>
+        <li id="bib18" label="[18]">Le, Q. V. and Mikolov, T.
+        Distributed Representations of Sentences and Documents, 4
+        (2014), II-1188.</li>
+        <li id="bib19" label="[19]">Cantador, I., Bellogín, A. and
+        Castells, P. A multilayer ontology-based hybrid
+        recommendation model. Ai Communications, 21, 2008 (2008),
+        203-210.</li>
+        <li id="bib20" label="[20]">Castells, P., Fernández, M.,
+        Vallet, D., Mylonas, P. and Avrithis, Y. Self-tuning
+        Personalized Information Retrieval in an Ontology-Based
+        Framework. Springer Berlin Heidelberg, 2005.</li>
+        <li id="bib21" label="[21]">Vallet, D., Fernández, M. and
+        Castells, P. An Ontology-based Information Retrieval Model.
+        In <em>Proceedings of the European Semantic Web
+        Conference</em>, 2005.</li>
+        <li id="bib22" label="[22]">Pavlou, A. Asymmetric
+        information in a bilateral monopoly. Journal of Dynamics
+        &amp; Games, 3, 2 (2017), 169-189.</li>
+        <li id="bib23" label="[23]">Zhou, B. The Pricing of
+        Knowledge Transaction. Economic Research Journal
+        (2007).</li>
+        <li id="bib24" label="[24]">Alston, J. M., Craig, B. J. and
+        Pardey, P. G. Dynamics in the creation and depreciation of
+        knowledge, and the returns to research. Eptd Discussion
+        Papers (1998).</li>
+        <li id="bib25" label="[25]">Nahapiet, J. and Ghoshal, S.
+        Chapter 6&nbsp;–&nbsp;Social Capital, Intellectual Capital,
+        and the Organizational Advantage. Knowledge &amp; Social
+        Capital, 23, 2 (2000), 119-157.</li>
+        <li id="bib26" label="[26]">Freeman, L. C. Centrality in
+        social networks conceptual clarification. Social Networks,
+        1, 3 (1978), 215-239.</li>
+        <li id="bib27" label="[27]">Brin, S. and Page, L. The
+        anatomy of a large-scale hypertextual Web search engine.In
+        <em>Proceedings of the International Conference on World
+        Wide Web</em>, 1998.</li>
+        <li id="bib28" label="[28]">Liu, Y. T., Liu, T. Y., Qin,
+        T., Ma, Z.-M. and Li, H. Supervised rank aggregation. In
+        <em>Proceedings of the International Conference on World
+        Wide Web</em>, 2007.</li>
+        <li id="bib29" label="[29]">Dwork, C., Kumar, R., Naor, M.
+        and Sivakumar, D. Rank aggregation methods for the Web. In
+        <em>Proceedings of the International Conference on World
+        Wide Web</em>, 2001.</li>
+        <li id="bib30" label="[30]">Wang, H., Fu, Y., Wang, Q.,
+        Yin, H., Du, C. and Xiong, H. A Location-Sentiment-Aware
+        Recommender System for Both Home-Town and Out-of-Town Users
+        (2017), 1135-1143.</li>
+        <li id="bib31" label="[31]">Parra-Santander, D. and
+        Amatriain X. 2011. Walk the talk: Analyzing the relation
+        between implicit and explicit feedback for preference
+        elicitation. In <em>Proceedings of the 19th International
+        Conference on User Modeling</em>, Adaptation, and
+        Personalization (UMAP’11). Springer-Verlag, Berlin,
+        Heidelberg, 255–268.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>Principal
+    Component Analysis (PCA) is applied for dimensionality
+    reduction.</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY 4.0) license. Authors
+      reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018 IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC BY 4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04…$15.00.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186349">https://doi.org/10.1145/3184558.3186349</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

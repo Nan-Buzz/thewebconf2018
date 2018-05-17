@@ -1,1 +1,917 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">  <head>  <title>Concept Embedded Topic Modeling Technique</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>  </head>  <body id="main">  <section class="front-matter">   <section>    <header class="title-info">     <div class="journal-title">     <h1>      <span class="title">Concept Embedded Topic Modeling Technique</span>      <br/>      <span class="subTitle"/>     </h1>     </div>    </header>    <div class="authorGroup">     <div class="author">     <span class="givenName">Dakshi T. Kapugama</span>      <span class="surName">Geeganage</span>,     Queensland University of Technology, Brisbane, Australia, <a href="mailto:dakshi.geeganage@hdr.qut.edu.au">dakshi.geeganage@hdr.qut.edu.au</a>         </div>        </div>    <br/>    <div class="pubInfo">     <p>DOI: <a href="https://doi.org/10.1145/3184558.3186571" target="_blank">https://doi.org/10.1145/3184558.3186571</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">     <p>     <small>Text contents are overloaded with the digitization of the data and new contents are transmitted through many sources by generating a large volume of information, which spreads all over the world through different communication media. Therefore, text data is available everywhere and reading, understanding and analysing the text data has become a main activity in daily routine. With the increment of the volume and the variety of information, organizing and searching, the required information has become vital. Topic modelling is the state of the art for information organization, understanding and extracting the content. Most of the prevailing topic models use the probabilistic approaches and consider the frequency and the co-occurrence to discover the topics from collections of documents. The proposed research aims to address the existing problems of topic modeling by introducing a concept embedded topic model which generates the most relevant and meaningful topics by understanding the content. The research includes approaches to understand the semantic elements from the content, domain identification of concepts and provide most suitable topics without getting the number of topics from the user beforehand. Capturing the semantics of document collections and generating the most related set of topics according to the actual meaning will be the significance of this research.</small>     </p>    </div>    <div class="classifications">     <div class="author">     <span style="font-weight:bold;">      <small>KEYWORDS:</small>     </span>     <span class="keyword">      <small>Topic modeling</small>, </span>     <span class="keyword">      <small>semantics</small>, </span>     <span class="keyword">      <small>concepts</small>     </span>     </div>     <br/>     <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>Dakshi T. Kapugama Geeganage. 2018. Concept Embedded Topic Modeling Technique. In <em>Proceedings of The 2018 Web Conference Companion (WWW'2018 Companion). ACM, New York, NY, USA, 6 pages.</em> <a href="https://doi.org/10.1145/3184558.3186571" class="link-inline force-break"        target="_blank">https://doi.org/10.1145/3184558.3186571</a></small>     </p>     </div>    </div>   </section>  </section>  <section class="body">   <section id="sec1">    <header>     <div class="title-info">     <h2>      <span class="section-number">1</span> INTRODUCTION</h2>     </div>    </header>    <p>Digital information has become an essential element in human activities. Most of the contents available as text data and human beings are overloaded with these text data. The exploration of new information has become a habitat in human lives and people tend to use information in their day today routine. People are too much relying on electronic text than ever before with the interactions with &#x201C;web, social media, instant messaging to online transactions, government intelligence, and digitized libraries&#x201D; [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib1">1</a>].</p>    <p>Text data is playing a vital role in social media [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib2">2</a>] to convey the ideas and messages while large volume of text contents are transmitting through different social media like Facebook, Twitter and Linkedin. For example, tweets are belonging to a variety of topics and it is indeed challenging to extract the meaning of the texts and categorize them into topics [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib3">3</a>]. Text data about an organization will be helpful to maintain the sustainability of that organization and most of the customers provide feedbacks and reviews [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib2">2</a>] through online media. With the increment of the volume and the variety of information, organizing and searching, the required information has become vital. Most of the time, the quality of the text contents would be a problem and there are so many noisy contents available to mislead the core idea. The factors such as variety, complexity and the volume demoralize the possibility of human intervention for information organization and searching. Among the various approaches of information organization, understanding and extracting the content, topic modelling has become the most popular approach and the state of the art.</p>    <section id="sec1Z1">     <header>     <div class="title-info">      <h3>       <span class="section-number">1.1</span> Problem</h3>     </div>     </header>     <p>Topic models are algorithms [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib4">4</a>] to extract the topics (specific word distribution), which are hidden in the unstructured contents of collections of documents. Topic modelling contains the methods for organizing, understanding and summarizing large collections of textual information. Topic modeling allows users to discover the hidden topical patterns and helps them to annotate the documents according to the topics. Finding patterns of words in document collections and suggesting an appropriate topic similar to the human understanding can be defined as complex tasks. It is important to model the topics similar to the human perception by understanding the meaning of the collections of documents. Nevertheless, most of the prevailing topic models use the probabilistic approaches [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib5">5</a>-<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib8">8</a>] to discover the topics by considering the frequency and the co-occurrences. The probabilistic models run according to a generative process that includes hidden variables and contain &#x201C;a joint probability distribution over both observed and hidden random variables&#x201D; [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib4">4</a>]. Accordingly, the words of the documents and the topic structure will be the main building blocks. Hence, the semantics of the content will not be considered to interpret the topics from the collections of documents. Poor quality text contents may lead to generate meaningless and irrelevant topics. In addition to that, the users are required to define the number of topics before starting the topic modelling process; hence, it automatically creates excess set of meaningless topics from the collections of documents.</p>     <p>The concepts reflect the meanings of the contents and relationships will express in-depth explanations about the concepts. In this research, a concept embedded topic modeling technique will be developed to identify the semantic elements or meaningful terms from collections of documents and ontology driven approach is used to understand the concepts and relationships. Further, the concepts will be categorized according to the domains and list of topics will be determined by the related domains. Domains and concepts will be weighted to interpret the semantic meaning of the contents. A concept layer will be incorporated to generate semantically meaningful topics somewhat similar to human perception and understanding.</p>    </section>    <section id="sec1Z2">     <header>     <div class="title-info">      <h3>       <span class="section-number">1.2</span> Research Questions</h3>     </div>     </header>     <p>The research aims to develop a novel concept embedded topic modelling approach that generates semantically meaningful topic models from collections of documents by considering the semantics of the content. To achieve this aim, the following research questions will be addressed in this work. <ol class="list-no-style">      <li label="1.">How to define an approach to understand semantic elements from a collection of documents?<ol class="list-no-style">        <li label="a.">How to identify different types of semantic elements available in document collections?<br/></li>        <li label="b.">How to identify features/connectivity existing among the identified semantic elements?<br/></li>        <li label="c.">How to use an ontology driven approach to extract the different types of semantic information with their relevant features and connectivity in each document/s?<br/></li>        <li label="d.">How to interpret the meaning of the semantic elements (concepts and relationships) using the ontology?<br/></li>       </ol>       <br/></li>      <li label="2.">How to categorize the concepts according to their domain?<ol class="list-no-style">        <li label="a.">How to identify the domains of each concept?<br/></li>        <li label="b.">How to use a clustering mechanism to categorize the concepts related to the domain?<br/></li>       </ol>       <br/></li>      <li label="3.">How to incorporate concepts into a topic model? <ol class="list-no-style">        <li label="a.">How to weight the domains and concepts to interpret the topics in the document collection?<br/></li>        <li label="b.">How to formulate a concept layer in a topic model to express the semantic validity of the topics in the topic model?<br/></li>        <li label="c.">How to formulate the relationship in between concepts, words and topics in the topic model?<br/></li>       </ol>       <br/></li>     </ol>     </p>    </section>   </section>   <section id="sec2">    <header>     <div class="title-info">     <h2>      <span class="section-number">2</span> STATE OF THE ART</h2>     </div>    </header>    <p>Topic modelling is a research area, which suggests suitable topics for a collection of documents after mining the content of the text. Numerous efforts have been made to model the topics using different algorithms and techniques. Probabilistic models have been popular among the topic modeling techniques and the word usage has been taken into consideration. Latent Semantic Analysis (LSA) [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib5">5</a>], Probabilistic Latent Semantic Analysis (PLSA) [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib7">7</a>] and Latent Dirichlet Allocation (LDA) [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib8">8</a>] are the main probabilistic approaches used in topic modeling researches. LSA [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib5">5</a>] is a Natural Language Processing (NLP) driven approach to generate a vector-based representation for texts to extract semantics. LSA examines the occurrences of words in sentences, paragraphs or documents and represents the text as a matrix. The frequency of words with the corresponding row in the passage will appear on the cells and LSA assigns &#x201C;singular value decomposition (SVD) to the matrix&#x201D; [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib5">5</a>]. PLSA [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib7">7</a>] was introduced to overcome the prevailing limitations in LSA and PLSA is based on an aspect model that contains latent variables to consider the co-occurrence of texts.</p>    <p>Nevertheless, PLSA has not facilitated to handle at level of documents. LDA [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib8">8</a>] is designed for text corpora and content is represented as random mixtures over latent topics. LDA is based on a three-level hierarchical Bayesian model and distribution over words will be described by the topics. There are many researches, which developed the approaches based on probabilistic techniques, and most of the researchers have presented hybrid approaches with LDA.</p>    <p>&#x201C;Maximum Matched Pattern-based Topic Model (MPBTM)&#x201D; [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib9">9</a>] was developed to generate a pattern-based topic model on document collections and it contains a ranking technique to discover related documents which aligned the topic model. The specialty here in this approach [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib9">9</a>] is, it includes the semantic structure from topic modelling and the statistical significance from the most representative patterns. With the popularity of the social media, researches have paid their attention to summarize the contents available in social media. Hash (#) tags were primarily used in Facebook, Instagram and Twitter for searching similar type of topics and contents together. User conversations [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib10">10</a>] related to the Twitter feeds have been considered in topic modelling and Twitter replies belong to same user were combined to create a single document. Topic models were trained using LDA and the Author-Topic Model (ATM) on contents that were previously pooled. The assumption of coherence between user-to-user interaction and related topics was used to extract most relevant topic. LDA and author-topic model [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib11">11</a>] were used to extract the topics in Twitter and the Author-Topic Model has been implemented with some improvements to LDA.</p>    <p>Some researchers have used different taxonomies and represented as fixed ontology [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib3">3</a>] by considering the structure to store the knowledge about the topics of their interest. Ontology was used as an effective knowledge representation technique to grab the semantics of frequently discussed topics on Twitter. After recognizing the importance of semantics in topic modeling, Yang et al.[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib3">3</a>] considered other sources of information for integrative topic inference such as &#x201C;embedded URL, #hashtag, @mention, named entities, interacting users and other context information&#x201D; during the ontology modelling. Asfari et al.[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib12">12</a>] focused to model users' interests when extracting topics from their tweets. They have combined the LDA to extract topics from tweets with a taxonomy (in this case, ODP) as an external knowledge source. The research was focused on meanings of the words to discover the high-level topics published in the Twitter and extracted users&#x2019; topics of interest by examining the terms they mentioned in users&#x2019; tweets. Tang et al.[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib13">13</a>] presented a four layer topic modeling approach by embedding a concept layer into the traditional topic model and accordingly topic is considered as set of concepts. &#x201C;Conceptualization LDA&#x201D; (CLDA) was introduced as an extension to the LDA by embedding the set of concepts. Probase[15] was used as the concept knowledge base to derive the concepts from the collections of documents. While Tang et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib13">13</a>] tried to embed the concept layer inside the topic model, Chemudugunta et al.[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib14">14</a>] demonstrated a probabilistic approach which uses hybrid techniques of semantic knowledge and topics based on the data. ontology and LDA were combined together to mine the topics from collections of documents by considering there is a strong relationship among ontology concepts and set of topics.</p>    <section id="sec2Z1">     <header>     <div class="title-info">      <h3>       <span class="section-number">2.1</span> Research Gap</h3>     </div>     </header>     <p>The following problems were highlighted after an extensive study about literature. <ul class="list-no-style">      <li label="&#x2022;">Probabilistic models do not focus on the semantics of the content instead of word frequency and co-occurrence.<br/></li>     </ul>     </p>     <p>LSA, PLSA and LDA are the main probabilistic topic models and many researches were conducted based on one of these models or combining some of the techniques. LDA is the most popular and improved topic model, accordingly documents are considered as probability distribution over topics. Word frequency and co-occurrence were considered as the major facts during the topic modelling process and set of topics were generated accordingly. Human perceives the content by understanding the meaning but the probabilistic topic models do not focus on the semantics or the meaning of the content instead of the word counts. Hence meaningless topics will be generated without grasping the semantics of the content. <ul class="list-no-style">      <li label="&#x2022;">Generating meaningless and irrelevant topics due to focusing on the number of topics to be generated rather than the most related topics from the content.<br/></li>     </ul>     </p>     <p>Number of topics should be specified before starting the topic modelling process in LDA and due to that less relevant and meaningless topics will be generated. Since the topic model needs to generate the specified number of topics, it will prioritize to output the requested number of topics rather than the relevancy and appropriateness. <ul class="list-no-style">      <li label="&#x2022;">Ontology based topic modelling approaches focus to find the meaning of single words instead of the concepts and describing relationships.<br/></li>     </ul>     </p>     <p>Some of the researches were conducted to address the issue of neglecting the semantic meaning of the content by combining ontology driven approaches. Most of the approaches use an external ontology or WordNet and attempted to check the meanings of the words given in the content. Single words were mapped instead of considering the concepts and associated relationships. Therefore, it was not possible to highlight the prominent concepts, which need to be a topic. <ul class="list-no-style">      <li label="&#x2022;">Ontology based topic modelling approaches will have problems when there are totally new concepts and collections of documents.<br/></li>     </ul>     </p>     <p>Most of the ontology based approaches are not smart enough to handle the new concepts which are not given in the ontology due to the poor learning process. Same time Topic modeling approaches consider collections of documents as the input but most of the ontology modeling approaches with acceptable accuracy were capable enough to process only a single document or a paragraph to grasp the semantic meaning.</p>    </section>   </section>   <section id="sec3">    <header>     <div class="title-info">     <h2>      <span class="section-number">3</span> PROPOSED APPROACH</h2>     </div>    </header>    <p>The proposed research will generate a novel topic modelling approach which prioritizes the semantic concepts and tries to grasp the semantic meaning of the content by overcoming the limitation of &#x201C;generating meaningless topics&#x201D; in prevailing topic modelling approaches. Therefore Probase[15] will be used to interpret the identified concepts and relationships, since it contains &#x201C;5,376,526 unique concepts, 12,501,527 unique instances, and 85,101,174 IsA relations&#x201D;[15]. Reuters Corpus Volume I (RCV1)[16] will be used as the text dataset for generating topic models, which is popularly used in text mining research area. The research contains three phases and high-level architecture of the research is elaborated in <a class="fig" href="#fig1">Fig. 1</a>.</p>    <figure id="fig1">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186571/images/www18companion-125-fig1.jpg" class="img-responsive" alt="Figure 1:" longdesc=""/>     <div class="figure-caption">     <span class="figure-number">Figure 1:</span>     <span class="figure-title">High-level architecture of the research.</span>     </div>    </figure>    <p>Phase 1: Semantic elements extraction from collections of documents</p>    <p>The aim of the phase 1 is to identify the semantically meaningful elements from collections of documents and as the first step, content is pre-processed to eliminate the unnecessary language elements and constructs. A novel algorithm is introduced to derive the groups of semantically related concepts and a lexical data base has been used to discover the related words together. WordNet synonyms (sysnsets) have been applied to generate the groups of semantically related terms. First, important terms are filtered using the tf.idf (term frequency * inverse document frequency) and WordNet is used to find the related and similar meaning words of the identified terms from collections of documents. Then all the related words are grouped together and cluster to derive the groups of semantically related terms. Then groups of semantically relevant terms are interpreted in terms of concepts. Probase [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib15">15</a>] is used to interpret the concepts in more meaningful manner. For each document, the concepts will be identified while some concepts will be annotated as prominent concepts based on their relationships. Finally, set of concepts will be generated as the sematic elements at the end of this phase.</p>    <p>Algorithm <a class="tbl" href="#alg1">1A</a>. generates groups of semantically related terms.</p>    <div class="table-responsive" id="alg1">     <div class="table-caption">     <span class="table-number">Algorithm 1A:</span>     <span class="table-title">Identify groups of related words.</span>     </div>     <table class="table">     <tbody>      <tr>       <td>        <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186571/images/www18companion-125-fig2.jpg" class="img-responsive" alt="" longdesc=""/>       </td>      </tr>     </tbody>     </table>    </div>    <p>The terms in each cluster in <em>G</em> are considered as semantically related because they are grouped together based on their synonyms and each cluster represents some concept. The next step is to annotate each cluster with concepts in Probase. A simple way to annotate the clusters is to map the terms in each cluster to the concepts and the most relevant concepts to a cluster will be used to annotate that cluster. A simple algorithm is given in Algorithm <a class="tbl" href="#alg2">1B</a>. In step 5, (<em>c</em>|<em>t</em>) represents the strength of the mapping <em>t</em>&#x2192;<em>c</em> provided in Probase.</p>    <div class="table-responsive" id="alg2">     <div class="table-caption">     <span class="table-number">Algorithm 1B:</span>     <span class="table-title">Identify most relevant concepts.</span>     </div>     <table class="table">     <tbody>      <tr>       <td>        <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186571/images/www18companion-125-fig3.jpg" class="img-responsive" alt="" longdesc=""/>       </td>      </tr>     </tbody>     </table>    </div>    <p>Phase 2: Concept categorisation and domain clustering</p>    <p>The groups of concepts generated in the phase-1 will be further processed to determine the domain of each identified concept. A new algorithm will be presented to identify the domain of each concept and concepts will be categorized according to the domain. Finally, the collection of documents may contain set of identified domains and the concepts and the relationships associated with each domain. The result will contain list of domains, which can be found in the certain document collection. The list of domains will be further processed to identify the most relevant set of domains for the given document collection. A fuzzy based clustering mechanism will be applied to find the number of important domains with respect to the concepts and relationships.</p>    <p>Phase 3: Generate a concept embedded topic modelling technique</p>    <p>A novel algorithm will be introduced to weight the words, concepts and domains according to the phase-1 and phase-2 outcomes. A concept layer will be formulated to express the relationship and association among the words, concepts and domains. The main research finding of this phase is the concept embedded topic modelling approach and a topic model will be generated based on the domains and concepts associated with the collection of documents. Finally, semantically meaningful topics will be derived based on the concept embedded topic modeling technique and the most relevant topics will be generated. In most of the existing topic models, user need to provide the number of topics beforehand and due to that meaningless topics and less relevant topics will be generated. Nevertheless, specialty here in this research is, most related set of topics will be generated based on the relevance to the collections of documents instead of focusing the number of topics to be generated.</p>   </section>   <section id="sec4">    <header>     <div class="title-info">     <h2>      <span class="section-number">4</span> METHODOLOGY</h2>     </div>    </header>    <p>This research focuses on developing a concept embedded topic modeling technique and the action research methodology will be used as the research paradigm. Following set of novel algorithms will be introduced during each phase in the research study. <ol class="list-no-style">     <li label="1.">Semantic elements identification algorithm<br/></li>     <li label="2.">Domain identification algorithm<br/></li>     <li label="3.">Concept and domain clustering algorithm<br/></li>     <li label="4.">Word, concept , domain weighting algorithm<br/></li>     <li label="5.">Concept embedded layer to generate the concept embedded topic modeling technique<br/></li>     </ol>    </p>    <p>Algorithms and concept embedded topic modelling approach are implemented using python programming language. The research will be endowed with the innovations of text mining, ontology modeling, clustering and topic modeling techniques.</p>    <p>Each algorithm will be tested to ensure the accuracy of the results and effectiveness of the algorithm. Finally, the concept embedded topic modeling technique will be evaluated using Reuters Corpus Volume I (RCV1)[16] dataset which is a typical dataset in text categorization. Further, accuracy, precision and recall will be used as the evaluation matrix to evaluate the concept embedded topic modeling technique.</p>   </section>   <section id="sec5">    <header>     <div class="title-info">     <h2>      <span class="section-number">5</span> RESULTS</h2>     </div>    </header>    <p>Algorithm <a class="tbl" href="#alg1">1.A</a> and <a class="tbl" href="#alg1">1.B</a> have been implemented and applied on RCV1 dataset. 10 groups of semantically related terms and the most related concepts are generated as the output of the algorithm <a class="tbl" href="#alg1">1.A</a> and <a class="tbl" href="#alg1">1.B</a>. The result is shown in the Table <a class="tbl" href="#tb1">1</a>.</p>    <div class="table-responsive" id="tb1">     <div class="table-caption">     <span class="table-number">Table 1:</span>     <span class="table-title">Most relevant concepts for each term group.</span>     </div>     <table class="table">     <thead>      <tr>       <th style="text-align:left;">Group</th>       <th style="text-align:left;">Groups of related terms</th>       <th style="text-align:left;">Related concepts</th>      </tr>     </thead>     <tbody>      <tr>       <td style="text-align:left;">G1</td>       <td style="text-align:left;">{news, word, intelligence}</td>       <td style="text-align:left;">{Information, topic, factor}</td>      </tr>      <tr>       <td style="text-align:left;">G2</td>       <td style="text-align:left;">{money}</td>       <td style="text-align:left;">{resource, valuable, item}</td>      </tr>      <tr>       <td style="text-align:left;">G3</td>       <td style="text-align:left;">{risk, danger, chance, gamble}</td>       <td style="text-align:left;">{factor, topic, concept}</td>      </tr>      <tr>       <td style="text-align:left;">G4</td>       <td style="text-align:left;">{government, authority, administration, politic}</td>       <td style="text-align:left;">{organization, area, topic}</td>      </tr>      <tr>       <td style="text-align:left;">G5</td>       <td style="text-align:left;">{security, protection}</td>       <td style="text-align:left;">{issue, service, factor}</td>      </tr>      <tr>       <td style="text-align:left;">G6</td>       <td style="text-align:left;">{group}</td>       <td style="text-align:left;">{group, feature, object}</td>      </tr>      <tr>       <td style="text-align:left;">G7</td>       <td style="text-align:left;">{people}</td>       <td style="text-align:left;">{object, resource, entity}</td>      </tr>      <tr>       <td style="text-align:left;">G8</td>       <td style="text-align:left;">{commonwealth, state, country, united states}</td>       <td style="text-align:left;">{entity, country, nation}</td>      </tr>      <tr>       <td style="text-align:left;">G9</td>       <td style="text-align:left;">{law, police}</td>       <td style="text-align:left;">{profession, institution, area}</td>      </tr>      <tr>       <td style="text-align:left;">G10</td>       <td style="text-align:left;">{human, public, global, world, man, earth, worldwide}</td>       <td style="text-align:left;">{topic, concept, specie}</td>      </tr>     </tbody>     </table>    </div>    <p>It is noted that the algorithms have grouped the related terms and mapped the most related concepts by considering the semantics of the content.</p>   </section>   <section id="sec6">    <header>     <div class="title-info">     <h2>      <span class="section-number">6</span> CONCLUSIONS AND FUTURE WORKS</h2>     </div>    </header>    <p>Text data plays a major role in World Wide Web, social media, e-commerce and digital libraries. Large volume of text contents available and there is a vital requirement to understand them accurately. The flow of the information may vary and text data will be transmitted from any part of the world with the interaction of the web. Hence it is difficult to rely on the quality of the contents. Large volume of poor quality text data is transmitting in social medias and it is important to understand and categorize them into relevant topics. Customer reviews and user recommendations play a significant role in e-commerce and most of the companies collect the reviews through online medias. Understanding, analysing and classifying the feedbacks is beneficial for both organizations and users. Topic modeling is the state of the art of organizing, understanding and summarizing the large collections of textual information. Nevertheless, most of the prevailing topic modelling techniques are based on probabilistic methods and the frequency, co-occurrence of the words will be considered. Further the number of possible topics should be specified beforehand to the topic modelling process. This hinders the process of finding most suitable and semantically meaningful topics from the collection of documents.</p>    <p>The proposed research is aiming to address the existing issues and planning to introduce a concept embedded topic model which generates the most suitable topics by understanding the content from the collections of documents.</p>    <p>The research includes approaches to understand the semantic elements from the content, domain identification of concepts and provide most suitable topics without getting the number of topics from the user beforehand. The outcomes of the research will boost up the capabilities of topic modelling by understanding the semantics of the documents rather than the word counts given in the collection and furthermore it will remove the meaningless and irrelevant topics from the topics list somewhat similar to the human perception.</p>   </section>  </section>  <section class="back-matter">   <section id="bib-sec-001">    <header>     <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>     </div>    </header>    <ul class="bibUl">     <li id="bib1" label="[1]">Evans, J. and Aceves, P. 2016. Machine Translation: Mining Text for Social Theory. <em>Annual Review of Sociology</em>. 42, 1 (2016), 21-50. DOI = <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1146/annurev-soc-081715-074206">https://doi.org/10.1146/annurev-soc-081715-074206</a></li>     <li id="bib2" label="[2]">Gentzkow, M., Kelly, B. and Taddy, M. 2017. Text as Data. In <em>preparation for Journal of Economic Literature</em> (2017). DOI = <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.3386/w23276">10.3386/w23276</a></li>     <li id="bib3" label="[3]">Yang, S., Kolcz, A., Schlaikjer, A. and Gupta, P. 2014. Large-scale high-precision topic modeling on twitter. <em>Proceedings of the 20th ACM SIGKDD international conference on Knowledge discovery and data mining - KDD '14</em>. (2014). DOI = <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/2623330.2623336">10.1145/2623330.2623336</a></li>     <li id="bib4" label="[4]">Blei, D. 2012. Probabilistic topic models. <em>Communications of the ACM</em>. 55, 4 (2012), 77. DOI = <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/2133806.2133826">10.1145/2133806.2133826</a></li>     <li id="bib5" label="[5]">Landauer, T., Foltz, P. and Laham, D. 1998. An introduction to latent semantic analysis. <em>Discourse Processes</em>. 25, 2-3 (1998), 259-284. DOI= <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1080/01638539809545028">https://doi.org/10.1080/01638539809545028</a></li>     <li id="bib6" label="[6]">Steyvers, M., and Griffiths, T. (2006) Probabilistic topic models. In T. Landauer, D. Mcnamara, S. Dennis, &amp; W. Kintsch (Eds.), Latent Semantic Analysis: A Road to Meaning. 427-448.</li>     <li id="bib7" label="[7]">Hofmann, T. 1999. Probabilistic latent semantic analysis. <em>Proceedings of the fifteenth conference on Uncertainty in artificial intelligence</em>. (1999), 289-296.</li>     <li id="bib8" label="[8]">Blei, D., Ng, A. and Jordan, M. 2003. Latent dirichlet allocation. <em>The Journal of Machine Learning Research</em>. 3, (2003), 993-1022.</li>     <li id="bib9" label="[9]">Gao, Y., Xu, Y. and Li, Y. 2015. Pattern-based Topics for Document Modelling in Information Filtering. <em>IEEE Transactions on Knowledge and Data Engineering</em>. 27, 6 (2015), 1629-1642. DOI = <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1109/TKDE.2014.2384497">10.1109/TKDE.2014.2384497</a></li>     <li id="bib10" label="[10]Alvarez-Melis,">D. and Saveski, M. 2016. Topic Modeling in Twitter: Aggregating Tweets by Conversations. <em>Proceedings of the Tenth International AAAI Conference on Web and Social Media (ICWSM 2016).</em> (2016).</li>     <li id="bib11" label="[11]">Hong, L. and Davison, B. 2010. Empirical study of topic modeling in Twitter. <em>Proceedings of the First Workshop on Social Media Analytics - SOMA '10</em>. (2010). DOI = <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/1964858.1964870">10.1145/1964858.1964870</a></li>     <li id="bib12" label="[12]">Asfari, O., Hannachi, L., Bentayeb, F. and Boussaid, O. 2013. Ontological Topic Modeling to Extract Twitter users' Topics of Interest. <em>The 8th International Conference on Information Technology and Applications (ICITA 2013)</em>. (2013), 141-146.</li>     <li id="bib13" label="[13]">Tang, Y., Mao, X., Huang, H., Shi, X. and Wen, G. 2017. Conceptualization topic modeling. <em>Multimedia Tools and Applications.</em> (2017). DOI = <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1007/s11042-017-5145-4">https://doi.org/10.1007/s11042-017-5145-4</a></li>     <li id="bib14" label="[14]">Chemudugunta, C., Holloway, A., Smyth, P. and Steyvers, M. 2008. Modeling Documents by Combining Semantic Concepts with Unsupervised Statistical Learning. <em>Lecture Notes in Computer Science</em>. (2008), 229-244. DOI = <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1007/978-3-540-88564-1_15">https://doi.org/10.1007/978-3-540-88564-1_15</a></li>     <li id="bib15" label="[15]">Wu, W., Li, H., Wang, H. and Zhu, K. 2012. Probase. <em>Proceedings of the 2012 international conference on Management of Data - SIGMOD '12.</em> (2012). DOI = <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/2213836.2213891">10.1145/2213836.2213891</a></li>     <li id="bib16" label="[16]">Lewis, D., Yang, Y., Rose, T. and Li, F. 2004. RCV1: A New Benchmark Collection for Text Categorization Research. <em>The Journal of Machine Learning Research</em>. 5, (2004), 361-397.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">     <h2>FOOTNOTE</h2>    </div>   </header>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY 4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>     <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018 IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC BY 4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3186571">https://doi.org/10.1145/3184558.3186571</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div>  </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Concept Embedded Topic Modeling Technique</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Concept Embedded Topic Modeling
+          Technique</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Dakshi T. Kapugama</span>
+          <span class="surName">Geeganage</span>, Queensland
+          University of Technology, Brisbane, Australia, <a href=
+          "mailto:dakshi.geeganage@hdr.qut.edu.au">dakshi.geeganage@hdr.qut.edu.au</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186571"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186571</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Text contents are overloaded with the
+        digitization of the data and new contents are transmitted
+        through many sources by generating a large volume of
+        information, which spreads all over the world through
+        different communication media. Therefore, text data is
+        available everywhere and reading, understanding and
+        analysing the text data has become a main activity in daily
+        routine. With the increment of the volume and the variety
+        of information, organizing and searching, the required
+        information has become vital. Topic modelling is the state
+        of the art for information organization, understanding and
+        extracting the content. Most of the prevailing topic models
+        use the probabilistic approaches and consider the frequency
+        and the co-occurrence to discover the topics from
+        collections of documents. The proposed research aims to
+        address the existing problems of topic modeling by
+        introducing a concept embedded topic model which generates
+        the most relevant and meaningful topics by understanding
+        the content. The research includes approaches to understand
+        the semantic elements from the content, domain
+        identification of concepts and provide most suitable topics
+        without getting the number of topics from the user
+        beforehand. Capturing the semantics of document collections
+        and generating the most related set of topics according to
+        the actual meaning will be the significance of this
+        research.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>KEYWORDS:</small></span>
+          <span class="keyword"><small>Topic
+          modeling</small>,</span> <span class=
+          "keyword"><small>semantics</small>,</span> <span class=
+          "keyword"><small>concepts</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Dakshi T. Kapugama Geeganage. 2018. Concept Embedded
+          Topic Modeling Technique. In <em>Proceedings of The 2018
+          Web Conference Companion (WWW'2018 Companion). ACM, New
+          York, NY, USA, 6 pages.</em> <a href=
+          "https://doi.org/10.1145/3184558.3186571" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3186571</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec1">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          INTRODUCTION</h2>
+        </div>
+      </header>
+      <p>Digital information has become an essential element in
+      human activities. Most of the contents available as text data
+      and human beings are overloaded with these text data. The
+      exploration of new information has become a habitat in human
+      lives and people tend to use information in their day today
+      routine. People are too much relying on electronic text than
+      ever before with the interactions with “web, social media,
+      instant messaging to online transactions, government
+      intelligence, and digitized libraries” [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib1">1</a>].</p>
+      <p>Text data is playing a vital role in social media
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib2">2</a>] to convey the ideas
+      and messages while large volume of text contents are
+      transmitting through different social media like Facebook,
+      Twitter and Linkedin. For example, tweets are belonging to a
+      variety of topics and it is indeed challenging to extract the
+      meaning of the texts and categorize them into topics
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib3">3</a>]. Text data about an
+      organization will be helpful to maintain the sustainability
+      of that organization and most of the customers provide
+      feedbacks and reviews [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib2">2</a>] through online media. With the increment of
+      the volume and the variety of information, organizing and
+      searching, the required information has become vital. Most of
+      the time, the quality of the text contents would be a problem
+      and there are so many noisy contents available to mislead the
+      core idea. The factors such as variety, complexity and the
+      volume demoralize the possibility of human intervention for
+      information organization and searching. Among the various
+      approaches of information organization, understanding and
+      extracting the content, topic modelling has become the most
+      popular approach and the state of the art.</p>
+      <section id="sec1Z1">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">1.1</span>
+            Problem</h3>
+          </div>
+        </header>
+        <p>Topic models are algorithms [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#bib4">4</a>] to extract the topics (specific
+        word distribution), which are hidden in the unstructured
+        contents of collections of documents. Topic modelling
+        contains the methods for organizing, understanding and
+        summarizing large collections of textual information. Topic
+        modeling allows users to discover the hidden topical
+        patterns and helps them to annotate the documents according
+        to the topics. Finding patterns of words in document
+        collections and suggesting an appropriate topic similar to
+        the human understanding can be defined as complex tasks. It
+        is important to model the topics similar to the human
+        perception by understanding the meaning of the collections
+        of documents. Nevertheless, most of the prevailing topic
+        models use the probabilistic approaches [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#bib5">5</a>-<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#bib8">8</a>] to discover the topics by considering the
+        frequency and the co-occurrences. The probabilistic models
+        run according to a generative process that includes hidden
+        variables and contain “a joint probability distribution
+        over both observed and hidden random variables” [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#bib4">4</a>]. Accordingly, the
+        words of the documents and the topic structure will be the
+        main building blocks. Hence, the semantics of the content
+        will not be considered to interpret the topics from the
+        collections of documents. Poor quality text contents may
+        lead to generate meaningless and irrelevant topics. In
+        addition to that, the users are required to define the
+        number of topics before starting the topic modelling
+        process; hence, it automatically creates excess set of
+        meaningless topics from the collections of documents.</p>
+        <p>The concepts reflect the meanings of the contents and
+        relationships will express in-depth explanations about the
+        concepts. In this research, a concept embedded topic
+        modeling technique will be developed to identify the
+        semantic elements or meaningful terms from collections of
+        documents and ontology driven approach is used to
+        understand the concepts and relationships. Further, the
+        concepts will be categorized according to the domains and
+        list of topics will be determined by the related domains.
+        Domains and concepts will be weighted to interpret the
+        semantic meaning of the contents. A concept layer will be
+        incorporated to generate semantically meaningful topics
+        somewhat similar to human perception and understanding.</p>
+      </section>
+      <section id="sec1Z2">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">1.2</span> Research
+            Questions</h3>
+          </div>
+        </header>
+        <p>The research aims to develop a novel concept embedded
+        topic modelling approach that generates semantically
+        meaningful topic models from collections of documents by
+        considering the semantics of the content. To achieve this
+        aim, the following research questions will be addressed in
+        this work.</p>
+        <ol class="list-no-style">
+          <li label="1.">How to define an approach to understand
+          semantic elements from a collection of documents?
+            <ol class="list-no-style">
+              <li label="a.">How to identify different types of
+              semantic elements available in document
+              collections?<br /></li>
+              <li label="b.">How to identify features/connectivity
+              existing among the identified semantic
+              elements?<br /></li>
+              <li label="c.">How to use an ontology driven approach
+              to extract the different types of semantic
+              information with their relevant features and
+              connectivity in each document/s?<br /></li>
+              <li label="d.">How to interpret the meaning of the
+              semantic elements (concepts and relationships) using
+              the ontology?<br /></li>
+            </ol><br />
+          </li>
+          <li label="2.">How to categorize the concepts according
+          to their domain?
+            <ol class="list-no-style">
+              <li label="a.">How to identify the domains of each
+              concept?<br /></li>
+              <li label="b.">How to use a clustering mechanism to
+              categorize the concepts related to the
+              domain?<br /></li>
+            </ol><br />
+          </li>
+          <li label="3.">How to incorporate concepts into a topic
+          model?
+            <ol class="list-no-style">
+              <li label="a.">How to weight the domains and concepts
+              to interpret the topics in the document
+              collection?<br /></li>
+              <li label="b.">How to formulate a concept layer in a
+              topic model to express the semantic validity of the
+              topics in the topic model?<br /></li>
+              <li label="c.">How to formulate the relationship in
+              between concepts, words and topics in the topic
+              model?<br /></li>
+            </ol><br />
+          </li>
+        </ol>
+        <p></p>
+      </section>
+    </section>
+    <section id="sec2">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> STATE OF THE
+          ART</h2>
+        </div>
+      </header>
+      <p>Topic modelling is a research area, which suggests
+      suitable topics for a collection of documents after mining
+      the content of the text. Numerous efforts have been made to
+      model the topics using different algorithms and techniques.
+      Probabilistic models have been popular among the topic
+      modeling techniques and the word usage has been taken into
+      consideration. Latent Semantic Analysis (LSA) [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib5">5</a>], Probabilistic Latent Semantic
+      Analysis (PLSA) [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib7">7</a>] and Latent Dirichlet Allocation (LDA)
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib8">8</a>] are the main
+      probabilistic approaches used in topic modeling researches.
+      LSA [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#bib5">5</a>] is a
+      Natural Language Processing (NLP) driven approach to generate
+      a vector-based representation for texts to extract semantics.
+      LSA examines the occurrences of words in sentences,
+      paragraphs or documents and represents the text as a matrix.
+      The frequency of words with the corresponding row in the
+      passage will appear on the cells and LSA assigns “singular
+      value decomposition (SVD) to the matrix” [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib5">5</a>]. PLSA [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#bib7">7</a>] was introduced to overcome the prevailing
+      limitations in LSA and PLSA is based on an aspect model that
+      contains latent variables to consider the co-occurrence of
+      texts.</p>
+      <p>Nevertheless, PLSA has not facilitated to handle at level
+      of documents. LDA [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib8">8</a>] is designed for text corpora and content is
+      represented as random mixtures over latent topics. LDA is
+      based on a three-level hierarchical Bayesian model and
+      distribution over words will be described by the topics.
+      There are many researches, which developed the approaches
+      based on probabilistic techniques, and most of the
+      researchers have presented hybrid approaches with LDA.</p>
+      <p>“Maximum Matched Pattern-based Topic Model (MPBTM)”
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib9">9</a>] was developed to
+      generate a pattern-based topic model on document collections
+      and it contains a ranking technique to discover related
+      documents which aligned the topic model. The specialty here
+      in this approach [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib9">9</a>] is, it includes the semantic structure from
+      topic modelling and the statistical significance from the
+      most representative patterns. With the popularity of the
+      social media, researches have paid their attention to
+      summarize the contents available in social media. Hash (#)
+      tags were primarily used in Facebook, Instagram and Twitter
+      for searching similar type of topics and contents together.
+      User conversations [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib10">10</a>] related to the Twitter feeds have been
+      considered in topic modelling and Twitter replies belong to
+      same user were combined to create a single document. Topic
+      models were trained using LDA and the Author-Topic Model
+      (ATM) on contents that were previously pooled. The assumption
+      of coherence between user-to-user interaction and related
+      topics was used to extract most relevant topic. LDA and
+      author-topic model [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib11">11</a>] were used to extract the topics in Twitter
+      and the Author-Topic Model has been implemented with some
+      improvements to LDA.</p>
+      <p>Some researchers have used different taxonomies and
+      represented as fixed ontology [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#bib3">3</a>] by considering the structure to store the
+      knowledge about the topics of their interest. Ontology was
+      used as an effective knowledge representation technique to
+      grab the semantics of frequently discussed topics on Twitter.
+      After recognizing the importance of semantics in topic
+      modeling, Yang et al.[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib3">3</a>] considered other sources of information for
+      integrative topic inference such as “embedded URL, #hashtag,
+      @mention, named entities, interacting users and other context
+      information” during the ontology modelling. Asfari et
+      al.[<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib12">12</a>] focused to model
+      users' interests when extracting topics from their tweets.
+      They have combined the LDA to extract topics from tweets with
+      a taxonomy (in this case, ODP) as an external knowledge
+      source. The research was focused on meanings of the words to
+      discover the high-level topics published in the Twitter and
+      extracted users’ topics of interest by examining the terms
+      they mentioned in users’ tweets. Tang et al.[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib13">13</a>] presented a four layer topic
+      modeling approach by embedding a concept layer into the
+      traditional topic model and accordingly topic is considered
+      as set of concepts. “Conceptualization LDA” (CLDA) was
+      introduced as an extension to the LDA by embedding the set of
+      concepts. Probase[15] was used as the concept knowledge base
+      to derive the concepts from the collections of documents.
+      While Tang et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib13">13</a>] tried to embed the concept layer inside the
+      topic model, Chemudugunta et al.[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#bib14">14</a>] demonstrated a probabilistic approach which
+      uses hybrid techniques of semantic knowledge and topics based
+      on the data. ontology and LDA were combined together to mine
+      the topics from collections of documents by considering there
+      is a strong relationship among ontology concepts and set of
+      topics.</p>
+      <section id="sec2Z1">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Research
+            Gap</h3>
+          </div>
+        </header>
+        <p>The following problems were highlighted after an
+        extensive study about literature.</p>
+        <ul class="list-no-style">
+          <li label="•">Probabilistic models do not focus on the
+          semantics of the content instead of word frequency and
+          co-occurrence.<br /></li>
+        </ul>
+        <p></p>
+        <p>LSA, PLSA and LDA are the main probabilistic topic
+        models and many researches were conducted based on one of
+        these models or combining some of the techniques. LDA is
+        the most popular and improved topic model, accordingly
+        documents are considered as probability distribution over
+        topics. Word frequency and co-occurrence were considered as
+        the major facts during the topic modelling process and set
+        of topics were generated accordingly. Human perceives the
+        content by understanding the meaning but the probabilistic
+        topic models do not focus on the semantics or the meaning
+        of the content instead of the word counts. Hence
+        meaningless topics will be generated without grasping the
+        semantics of the content.</p>
+        <ul class="list-no-style">
+          <li label="•">Generating meaningless and irrelevant
+          topics due to focusing on the number of topics to be
+          generated rather than the most related topics from the
+          content.<br /></li>
+        </ul>
+        <p></p>
+        <p>Number of topics should be specified before starting the
+        topic modelling process in LDA and due to that less
+        relevant and meaningless topics will be generated. Since
+        the topic model needs to generate the specified number of
+        topics, it will prioritize to output the requested number
+        of topics rather than the relevancy and
+        appropriateness.</p>
+        <ul class="list-no-style">
+          <li label="•">Ontology based topic modelling approaches
+          focus to find the meaning of single words instead of the
+          concepts and describing relationships.<br /></li>
+        </ul>
+        <p></p>
+        <p>Some of the researches were conducted to address the
+        issue of neglecting the semantic meaning of the content by
+        combining ontology driven approaches. Most of the
+        approaches use an external ontology or WordNet and
+        attempted to check the meanings of the words given in the
+        content. Single words were mapped instead of considering
+        the concepts and associated relationships. Therefore, it
+        was not possible to highlight the prominent concepts, which
+        need to be a topic.</p>
+        <ul class="list-no-style">
+          <li label="•">Ontology based topic modelling approaches
+          will have problems when there are totally new concepts
+          and collections of documents.<br /></li>
+        </ul>
+        <p></p>
+        <p>Most of the ontology based approaches are not smart
+        enough to handle the new concepts which are not given in
+        the ontology due to the poor learning process. Same time
+        Topic modeling approaches consider collections of documents
+        as the input but most of the ontology modeling approaches
+        with acceptable accuracy were capable enough to process
+        only a single document or a paragraph to grasp the semantic
+        meaning.</p>
+      </section>
+    </section>
+    <section id="sec3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> PROPOSED
+          APPROACH</h2>
+        </div>
+      </header>
+      <p>The proposed research will generate a novel topic
+      modelling approach which prioritizes the semantic concepts
+      and tries to grasp the semantic meaning of the content by
+      overcoming the limitation of “generating meaningless topics”
+      in prevailing topic modelling approaches. Therefore
+      Probase[15] will be used to interpret the identified concepts
+      and relationships, since it contains “5,376,526 unique
+      concepts, 12,501,527 unique instances, and 85,101,174 IsA
+      relations”[15]. Reuters Corpus Volume I (RCV1)[16] will be
+      used as the text dataset for generating topic models, which
+      is popularly used in text mining research area. The research
+      contains three phases and high-level architecture of the
+      research is elaborated in <a class="fig" href="#fig1">Fig.
+      1</a>.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186571/images/www18companion-125-fig1.jpg"
+        class="img-responsive" alt="Figure 1:" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">High-level architecture of the
+          research.</span>
+        </div>
+      </figure>
+      <p>Phase 1: Semantic elements extraction from collections of
+      documents</p>
+      <p>The aim of the phase 1 is to identify the semantically
+      meaningful elements from collections of documents and as the
+      first step, content is pre-processed to eliminate the
+      unnecessary language elements and constructs. A novel
+      algorithm is introduced to derive the groups of semantically
+      related concepts and a lexical data base has been used to
+      discover the related words together. WordNet synonyms
+      (sysnsets) have been applied to generate the groups of
+      semantically related terms. First, important terms are
+      filtered using the tf.idf (term frequency * inverse document
+      frequency) and WordNet is used to find the related and
+      similar meaning words of the identified terms from
+      collections of documents. Then all the related words are
+      grouped together and cluster to derive the groups of
+      semantically related terms. Then groups of semantically
+      relevant terms are interpreted in terms of concepts. Probase
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib15">15</a>] is used to
+      interpret the concepts in more meaningful manner. For each
+      document, the concepts will be identified while some concepts
+      will be annotated as prominent concepts based on their
+      relationships. Finally, set of concepts will be generated as
+      the sematic elements at the end of this phase.</p>
+      <p>Algorithm <a class="tbl" href="#alg1">1A</a>. generates
+      groups of semantically related terms.</p>
+      <div class="table-responsive" id="alg1">
+        <div class="table-caption">
+          <span class="table-number">Algorithm 1A:</span>
+          <span class="table-title">Identify groups of related
+          words.</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td><img src=
+              "../../../data/deliveryimages.acm.org/10.1145/3190000/3186571/images/www18companion-125-fig2.jpg"
+              class="img-responsive" alt="" longdesc="" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The terms in each cluster in <em>G</em> are considered as
+      semantically related because they are grouped together based
+      on their synonyms and each cluster represents some concept.
+      The next step is to annotate each cluster with concepts in
+      Probase. A simple way to annotate the clusters is to map the
+      terms in each cluster to the concepts and the most relevant
+      concepts to a cluster will be used to annotate that cluster.
+      A simple algorithm is given in Algorithm <a class="tbl" href=
+      "#alg2">1B</a>. In step 5, (<em>c</em>|<em>t</em>) represents
+      the strength of the mapping <em>t</em>→<em>c</em> provided in
+      Probase.</p>
+      <div class="table-responsive" id="alg2">
+        <div class="table-caption">
+          <span class="table-number">Algorithm 1B:</span>
+          <span class="table-title">Identify most relevant
+          concepts.</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td><img src=
+              "../../../data/deliveryimages.acm.org/10.1145/3190000/3186571/images/www18companion-125-fig3.jpg"
+              class="img-responsive" alt="" longdesc="" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Phase 2: Concept categorisation and domain clustering</p>
+      <p>The groups of concepts generated in the phase-1 will be
+      further processed to determine the domain of each identified
+      concept. A new algorithm will be presented to identify the
+      domain of each concept and concepts will be categorized
+      according to the domain. Finally, the collection of documents
+      may contain set of identified domains and the concepts and
+      the relationships associated with each domain. The result
+      will contain list of domains, which can be found in the
+      certain document collection. The list of domains will be
+      further processed to identify the most relevant set of
+      domains for the given document collection. A fuzzy based
+      clustering mechanism will be applied to find the number of
+      important domains with respect to the concepts and
+      relationships.</p>
+      <p>Phase 3: Generate a concept embedded topic modelling
+      technique</p>
+      <p>A novel algorithm will be introduced to weight the words,
+      concepts and domains according to the phase-1 and phase-2
+      outcomes. A concept layer will be formulated to express the
+      relationship and association among the words, concepts and
+      domains. The main research finding of this phase is the
+      concept embedded topic modelling approach and a topic model
+      will be generated based on the domains and concepts
+      associated with the collection of documents. Finally,
+      semantically meaningful topics will be derived based on the
+      concept embedded topic modeling technique and the most
+      relevant topics will be generated. In most of the existing
+      topic models, user need to provide the number of topics
+      beforehand and due to that meaningless topics and less
+      relevant topics will be generated. Nevertheless, specialty
+      here in this research is, most related set of topics will be
+      generated based on the relevance to the collections of
+      documents instead of focusing the number of topics to be
+      generated.</p>
+    </section>
+    <section id="sec4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span>
+          METHODOLOGY</h2>
+        </div>
+      </header>
+      <p>This research focuses on developing a concept embedded
+      topic modeling technique and the action research methodology
+      will be used as the research paradigm. Following set of novel
+      algorithms will be introduced during each phase in the
+      research study.</p>
+      <ol class="list-no-style">
+        <li label="1.">Semantic elements identification
+        algorithm<br /></li>
+        <li label="2.">Domain identification algorithm<br /></li>
+        <li label="3.">Concept and domain clustering
+        algorithm<br /></li>
+        <li label="4.">Word, concept , domain weighting
+        algorithm<br /></li>
+        <li label="5.">Concept embedded layer to generate the
+        concept embedded topic modeling technique<br /></li>
+      </ol>
+      <p></p>
+      <p>Algorithms and concept embedded topic modelling approach
+      are implemented using python programming language. The
+      research will be endowed with the innovations of text mining,
+      ontology modeling, clustering and topic modeling
+      techniques.</p>
+      <p>Each algorithm will be tested to ensure the accuracy of
+      the results and effectiveness of the algorithm. Finally, the
+      concept embedded topic modeling technique will be evaluated
+      using Reuters Corpus Volume I (RCV1)[16] dataset which is a
+      typical dataset in text categorization. Further, accuracy,
+      precision and recall will be used as the evaluation matrix to
+      evaluate the concept embedded topic modeling technique.</p>
+    </section>
+    <section id="sec5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> RESULTS</h2>
+        </div>
+      </header>
+      <p>Algorithm <a class="tbl" href="#alg1">1.A</a> and
+      <a class="tbl" href="#alg1">1.B</a> have been implemented and
+      applied on RCV1 dataset. 10 groups of semantically related
+      terms and the most related concepts are generated as the
+      output of the algorithm <a class="tbl" href="#alg1">1.A</a>
+      and <a class="tbl" href="#alg1">1.B</a>. The result is shown
+      in the Table <a class="tbl" href="#tb1">1</a>.</p>
+      <div class="table-responsive" id="tb1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">Most relevant concepts for each term
+          group.</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Group</th>
+              <th style="text-align:left;">Groups of related
+              terms</th>
+              <th style="text-align:left;">Related concepts</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:left;">G1</td>
+              <td style="text-align:left;">{news, word,
+              intelligence}</td>
+              <td style="text-align:left;">{Information, topic,
+              factor}</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">G2</td>
+              <td style="text-align:left;">{money}</td>
+              <td style="text-align:left;">{resource, valuable,
+              item}</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">G3</td>
+              <td style="text-align:left;">{risk, danger, chance,
+              gamble}</td>
+              <td style="text-align:left;">{factor, topic,
+              concept}</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">G4</td>
+              <td style="text-align:left;">{government, authority,
+              administration, politic}</td>
+              <td style="text-align:left;">{organization, area,
+              topic}</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">G5</td>
+              <td style="text-align:left;">{security,
+              protection}</td>
+              <td style="text-align:left;">{issue, service,
+              factor}</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">G6</td>
+              <td style="text-align:left;">{group}</td>
+              <td style="text-align:left;">{group, feature,
+              object}</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">G7</td>
+              <td style="text-align:left;">{people}</td>
+              <td style="text-align:left;">{object, resource,
+              entity}</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">G8</td>
+              <td style="text-align:left;">{commonwealth, state,
+              country, united states}</td>
+              <td style="text-align:left;">{entity, country,
+              nation}</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">G9</td>
+              <td style="text-align:left;">{law, police}</td>
+              <td style="text-align:left;">{profession,
+              institution, area}</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">G10</td>
+              <td style="text-align:left;">{human, public, global,
+              world, man, earth, worldwide}</td>
+              <td style="text-align:left;">{topic, concept,
+              specie}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>It is noted that the algorithms have grouped the related
+      terms and mapped the most related concepts by considering the
+      semantics of the content.</p>
+    </section>
+    <section id="sec6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> CONCLUSIONS AND
+          FUTURE WORKS</h2>
+        </div>
+      </header>
+      <p>Text data plays a major role in World Wide Web, social
+      media, e-commerce and digital libraries. Large volume of text
+      contents available and there is a vital requirement to
+      understand them accurately. The flow of the information may
+      vary and text data will be transmitted from any part of the
+      world with the interaction of the web. Hence it is difficult
+      to rely on the quality of the contents. Large volume of poor
+      quality text data is transmitting in social medias and it is
+      important to understand and categorize them into relevant
+      topics. Customer reviews and user recommendations play a
+      significant role in e-commerce and most of the companies
+      collect the reviews through online medias. Understanding,
+      analysing and classifying the feedbacks is beneficial for
+      both organizations and users. Topic modeling is the state of
+      the art of organizing, understanding and summarizing the
+      large collections of textual information. Nevertheless, most
+      of the prevailing topic modelling techniques are based on
+      probabilistic methods and the frequency, co-occurrence of the
+      words will be considered. Further the number of possible
+      topics should be specified beforehand to the topic modelling
+      process. This hinders the process of finding most suitable
+      and semantically meaningful topics from the collection of
+      documents.</p>
+      <p>The proposed research is aiming to address the existing
+      issues and planning to introduce a concept embedded topic
+      model which generates the most suitable topics by
+      understanding the content from the collections of
+      documents.</p>
+      <p>The research includes approaches to understand the
+      semantic elements from the content, domain identification of
+      concepts and provide most suitable topics without getting the
+      number of topics from the user beforehand. The outcomes of
+      the research will boost up the capabilities of topic
+      modelling by understanding the semantics of the documents
+      rather than the word counts given in the collection and
+      furthermore it will remove the meaningless and irrelevant
+      topics from the topics list somewhat similar to the human
+      perception.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="bib-sec-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="bib1" label="[1]">Evans, J. and Aceves, P. 2016.
+        Machine Translation: Mining Text for Social Theory.
+        <em>Annual Review of Sociology</em>. 42, 1 (2016), 21-50.
+        DOI = <a class="link-inline force-break" target="_blank"
+        href=
+        "https://doi.org/10.1146/annurev-soc-081715-074206">https://doi.org/10.1146/annurev-soc-081715-074206</a>
+        </li>
+        <li id="bib2" label="[2]">Gentzkow, M., Kelly, B. and
+        Taddy, M. 2017. Text as Data. In <em>preparation for
+        Journal of Economic Literature</em> (2017). DOI =
+          <a class="link-inline force-break" target="_blank" href=
+          "https://doi.org/10.3386/w23276">10.3386/w23276</a>
+        </li>
+        <li id="bib3" label="[3]">Yang, S., Kolcz, A., Schlaikjer,
+        A. and Gupta, P. 2014. Large-scale high-precision topic
+        modeling on twitter. <em>Proceedings of the 20th ACM SIGKDD
+        international conference on Knowledge discovery and data
+        mining - KDD '14</em>. (2014). DOI = <a class=
+        "link-inline force-break" target="_blank" href=
+        "https://doi.org/10.1145/2623330.2623336">10.1145/2623330.2623336</a>
+        </li>
+        <li id="bib4" label="[4]">Blei, D. 2012. Probabilistic
+        topic models. <em>Communications of the ACM</em>. 55, 4
+        (2012), 77. DOI = <a class="link-inline force-break"
+          target="_blank" href=
+          "https://doi.org/10.1145/2133806.2133826">10.1145/2133806.2133826</a>
+        </li>
+        <li id="bib5" label="[5]">Landauer, T., Foltz, P. and
+        Laham, D. 1998. An introduction to latent semantic
+        analysis. <em>Discourse Processes</em>. 25, 2-3 (1998),
+        259-284. DOI= <a class="link-inline force-break" target=
+        "_blank" href="https://doi.org/10.1080/01638539809545028">
+          https://doi.org/10.1080/01638539809545028</a>
+        </li>
+        <li id="bib6" label="[6]">Steyvers, M., and Griffiths, T.
+        (2006) Probabilistic topic models. In T. Landauer, D.
+        Mcnamara, S. Dennis, &amp; W. Kintsch (Eds.), Latent
+        Semantic Analysis: A Road to Meaning. 427-448.</li>
+        <li id="bib7" label="[7]">Hofmann, T. 1999. Probabilistic
+        latent semantic analysis. <em>Proceedings of the fifteenth
+        conference on Uncertainty in artificial intelligence</em>.
+        (1999), 289-296.</li>
+        <li id="bib8" label="[8]">Blei, D., Ng, A. and Jordan, M.
+        2003. Latent dirichlet allocation. <em>The Journal of
+        Machine Learning Research</em>. 3, (2003), 993-1022.</li>
+        <li id="bib9" label="[9]">Gao, Y., Xu, Y. and Li, Y. 2015.
+        Pattern-based Topics for Document Modelling in Information
+        Filtering. <em>IEEE Transactions on Knowledge and Data
+        Engineering</em>. 27, 6 (2015), 1629-1642. DOI =
+          <a class="link-inline force-break" target="_blank" href=
+          "https://doi.org/10.1109/TKDE.2014.2384497">10.1109/TKDE.2014.2384497</a>
+        </li>
+        <li id="bib10" label="[10]Alvarez-Melis,">D. and Saveski,
+        M. 2016. Topic Modeling in Twitter: Aggregating Tweets by
+        Conversations. <em>Proceedings of the Tenth International
+        AAAI Conference on Web and Social Media (ICWSM 2016).</em>
+        (2016).</li>
+        <li id="bib11" label="[11]">Hong, L. and Davison, B. 2010.
+        Empirical study of topic modeling in Twitter.
+        <em>Proceedings of the First Workshop on Social Media
+        Analytics - SOMA '10</em>. (2010). DOI = <a class=
+        "link-inline force-break" target="_blank" href=
+        "https://doi.org/10.1145/1964858.1964870">10.1145/1964858.1964870</a>
+        </li>
+        <li id="bib12" label="[12]">Asfari, O., Hannachi, L.,
+        Bentayeb, F. and Boussaid, O. 2013. Ontological Topic
+        Modeling to Extract Twitter users' Topics of Interest.
+        <em>The 8th International Conference on Information
+        Technology and Applications (ICITA 2013)</em>. (2013),
+        141-146.</li>
+        <li id="bib13" label="[13]">Tang, Y., Mao, X., Huang, H.,
+        Shi, X. and Wen, G. 2017. Conceptualization topic modeling.
+        <em>Multimedia Tools and Applications.</em> (2017). DOI =
+        <a class="link-inline force-break" target="_blank" href=
+        "https://doi.org/10.1007/s11042-017-5145-4">https://doi.org/10.1007/s11042-017-5145-4</a>
+        </li>
+        <li id="bib14" label="[14]">Chemudugunta, C., Holloway, A.,
+        Smyth, P. and Steyvers, M. 2008. Modeling Documents by
+        Combining Semantic Concepts with Unsupervised Statistical
+        Learning. <em>Lecture Notes in Computer Science</em>.
+        (2008), 229-244. DOI = <a class="link-inline force-break"
+        target="_blank" href=
+        "https://doi.org/10.1007/978-3-540-88564-1_15">https://doi.org/10.1007/978-3-540-88564-1_15</a>
+        </li>
+        <li id="bib15" label="[15]">Wu, W., Li, H., Wang, H. and
+        Zhu, K. 2012. Probase. <em>Proceedings of the 2012
+        international conference on Management of Data - SIGMOD
+        '12.</em> (2012). DOI = <a class="link-inline force-break"
+          target="_blank" href=
+          "https://doi.org/10.1145/2213836.2213891">10.1145/2213836.2213891</a>
+        </li>
+        <li id="bib16" label="[16]">Lewis, D., Yang, Y., Rose, T.
+        and Li, F. 2004. RCV1: A New Benchmark Collection for Text
+        Categorization Research. <em>The Journal of Machine
+        Learning Research</em>. 5, (2004), 361-397.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY 4.0) license. Authors
+      reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018 IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC BY 4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186571">https://doi.org/10.1145/3184558.3186571</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

@@ -1,1 +1,1637 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">  <head>  <title>Adaptive Optimisation For Continuous Multi-Way Joins Over RDF Streams</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>  </head>  <body id="main">  <section class="front-matter">   <section>    <header class="title-info">     <div class="journal-title">     <h1>      <span class="title">Adaptive Optimisation For Continuous Multi-Way Joins Over RDF Streams</span>      <br/>      <span class="subTitle"/>     </h1>     </div>    </header>    <div class="authorGroup">     <div class="author">     <span class="givenName">Danh</span>      <span class="surName">Le-Phuoc</span>     Technical University of Berlin, Berlin, Germany, <a href="mailto:danh.lephuoc@tu-berlin.de">danh.lephuoc@tu-berlin.de</a>     </div>        </div>    <br/>    <div class="pubInfo">     <p>DOI: <a href="https://doi.org/10.1145/3184558.3191653" target="_blank">https://doi.org/10.1145/3184558.3191653</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">     <p>     <small>The join operator is a core component of an RDF Stream Processing engine. The join operations usually dominate the processing load of a query execution plan. Due to the constantly updating nature of continuous queries, the query optimiser has to frequently change the optimal execution plan for a query. However, optimising the join executing plan for every execution step might be prohibitively expensive, hence, dynamic optimisation of continuous join operations is still a challenging problem so far. Therefore, this paper proposes the first adaptive optimisation approach towards this problem in the context of RDF Stream Processing. The approach comes with two dynamic cost-based optimisation algorithms which use a light-weight process to search for the best execution plan for every execution step. The experiments show the encouraging results towards this direction.</small>     </p>    </div>    <div class="CCSconcepts">     <p> <small> <span style="font-weight:bold;">CCS Concepts:</span> &#x2022;<strong> Information systems </strong>&#x2192; <strong>Join algorithms;</strong> <strong>Stream management;</strong> <em>Resource Description Framework (RDF);</em></small> </p>    </div>    <div class="classifications">     <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>RDF Stream Processing</small>, </span>     <span class="keyword">      <small> Adaptive Optimisation</small>, </span>     <span class="keyword">      <small> Continuous Multi-way joins</small>     </span>     </div>     <br/>     <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Danh Le-Phuoc. 2018. Adaptive Optimisation For Continuous Multi-Way Joins Over RDF Streams. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 9 Pages. <a href="https://doi.org/10.1145/3184558.3191653" class="link-inline force-break"        target="_blank">https://doi.org/10.1145/3184558.3191653</a></small>     </p>     </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-2">    <header>     <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>     </div>    </header>    <p>Most of current RDF Stream Processing (RSP) engines use the logical query operators introduced in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>] construct their logical query plans from the SPARQL-like query dialects of their choice. Subsequently, the query optimisation might be applied at the <em>logical level</em> by rewriting the plan to improve efficiency, called <em>algebraic optimisation</em>. The common rewriting rules such as reordering selection before joins and evaluating inexpensive predicates before complex ones were used in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>]. Particularly for continuous queries,&#x00A0;Arasu et&#x00A0;al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>] proposed rules on window-based operators such as commutative rules on time-based and count-based windows.</p>    <p>The logical query plan needs to be scheduled to be executed in the execution engine of a data stream management system (DSMS) with a physical plan composed of concrete physical operators and costs. As the data arrives to the engine continuously, the DSMS scheduler can use different equivalent physical plans to execute a logical query plan during the life-time of a query. Traditional DBMSs use selectivity information and available indices to choose efficient physical plans (e.g., those which require fewer disk accesses). However, this cost metric does not apply to (possibly approximate) continuous queries, where processing cost per-unit-time is more appropriate&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0027">27</a>]. Alternatively, if the stream arrival rates and output rates of query operators are known, then it may be possible to optimise for the highest output rate or to find a plan that takes the least time to output a given number of tuples&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0040">40</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0043">43</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0045">45</a>]. Finally, quality-of-service metrics such as response time may also be used in DSMS query optimisation&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0010">10</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0038">38</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0039">39</a>].</p>    <p>Optimisation by rescheduling physical query plans are similar to those used in relational databases, e.g., re-ordering a sequence of binary joins in order to minimise a particular cost metric. There has been work in join ordering for data streams in the context of the rate-based model&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0045">45</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0046">46</a>]. Furthermore, adaptive re-ordering of pipelined stream filters is studied in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>], and adaptive materialisation of intermediate join results are considered in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0007">7</a>]. Note the prevalence of the notion of adaptivity in query rescheduling: operators may need to be re-ordered on-the-fly in response to changes in system conditions. In particular, the cost of a query plan may change for three reasons: change in the processing time of an operator, change in the selectivity of a predicate, and change in the arrival rate of a stream&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>].</p>    <p>Join operator is a core component of an RDF Stream Processing engine as it usually uses a SPARQL-like language fragment consisting of basic graph patterns which are commonly translated to join operations. The join operations usually dominate the processing load of a query execution plan. Due to the constantly updating nature of the continuous query, the query optimiser has to frequently change the optimal execution plan for a query. However, optimising the join executing plan for every execution step might be prohibitively expensive, hence, dynamic optimisation of continuous join operation is a still challenging problem so far even in the wider context, i.e. DSMS (cf. Section&#x00A0;<a class="sec" href="#sec-15">6</a>). Learning from our experience implementing several version of CQELS engines in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0032">32</a>] and &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0031">31</a>], we propose the first adaptive optimisation approach towards this problem. This paper will presents this approach with two dynamic cost-based optimisation algorithms which use a light-weight process to search for best query plan. Our experiments in Section&#x00A0;<a class="sec" href="#sec-12">5</a> show the encouraging results towards this direction.</p>    <p>The rest of the paper is outlined as following. The next section will introduce the continuous multiway join with the general cost model for dynamically finding the optimal query plan in each execution step. Section&#x00A0;<a class="sec" href="#sec-6">3</a> will follow up with two adaptive optimisation algorithms. The experiments of such algorithms are reported in the following Section&#x00A0;<a class="sec" href="#sec-12">5</a>. Finally, we conclude the paper in Section&#x00A0;<a class="sec" href="#sec-16">7</a>.</p>   </section>   <section id="sec-3">    <header>     <div class="title-info">     <h2>      <span class="section-number">2</span> Continuous Multi-Way Joins over RDF Streams</h2>     </div>    </header>    <section id="sec-4">     <header>     <div class="title-info">      <h3>       <span class="section-number">2.1</span> Overview of Continuous Multiway Join</h3>     </div>     </header>     <p>The basic graph patterns associated with sliding windows in RSP query languages such as C-SPARQL&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0009">9</a>] or CQELS-QL&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0032">32</a>] could be translated to a multiway join query. A multiway join query can be evaluated by trees of binary, partially blocking, and pipelined join operators. However, this approach is not sufficient for processing streaming inputs that need to dynamically reorganise the evaluation tree in response to the changes of stream data. Therefore, similar to MJoin&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0046">46</a>], we introduce a single multiway join that works over more than two input buffers. This multiway join generates and propagates results in a single step without having to pass these results through a multi-stage binary execution pipeline. Because the multiway join is symmetric, without loss of generality, we extend the incremental equations of the binary join to the n-way join as shown in Equations&#x00A0;<a class="eqn" href="#eq1">1</a> and&#x00A0;<a class="eqn" href="#eq2">2</a> where the inserting and expiring happen in the input buffer <em>R</em>     <sup>1</sup> of window <em>W</em>     <sup>1</sup>. Note that, <em>R<sup>i</sup>     </em> is the input buffer of window <em>W<sub>i</sub>     </em> of each execution step for <em>i</em> = 1..<em>n</em>. In order to employ our ring-index for window buffers introduced in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0031">31</a>], we represent the incremental evaluation of these equations in Equation&#x00A0;<a class="eqn" href="#eq3">3</a> using the select operator <span class="inline-equation"><span class="tex">$\sigma _{\mu _1}(R^2)$</span>     </span>. The operator <span class="inline-equation"><span class="tex">$\sigma _{\mu _1}(R^2)$</span>     </span> returns all the mappings stored in the input buffer <em>R</em>     <sup>2</sup> which are compatible with <em>&#x03BC;</em>     <sub>1</sub>. As shown in the experimental result of [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0031">31</a>], this operator is supported by the high throughput <em>probe</em> method on the data structure that has ring-indexes on the variables to check the compatibility. <div class="table-responsive" id="eq1">      <div class="display-equation">       <span class="tex mytex">\begin{equation} (R^1\uplus \mu _1) \bowtie (R^2\cdots \bowtie {R^n})=(R^1{\bowtie }R^2\cdots \bowtie {R^n}) \cup (\mu {_1}\bowtie (R^2\cdots \bowtie {R^n})) \end{equation} </span>       <br/>       <span class="equation-number">(1)</span>      </div>     </div>     <div class="table-responsive" id="eq2">      <div class="display-equation">       <span class="tex mytex">\begin{equation} (R^1-\mu _1) \bowtie (R^2\cdots \bowtie {R^n})=(R^1{\bowtie }R^2\cdots \bowtie {R^n}) \setminus (\mu {_1}\bowtie (R^2\cdots \bowtie {R^n})) \end{equation} </span>       <br/>       <span class="equation-number">(2)</span>      </div>     </div>     <div class="table-responsive" id="eq3">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \mu {_1}\bowtie (R^2\cdots \bowtie {R^n})=(\lbrace \mu {_1}\rbrace \times \sigma _{\mu _1}(R^2))\bowtie (R^3\cdots \bowtie {R^n}) \end{equation} </span>       <br/>       <span class="equation-number">(3)</span>      </div>     </div>     </p>     <p>The evaluation of a new mapping <em>&#x03BC;</em>     <sub>1</sub> inserted in to the input buffer <em>R</em>     <sup>1</sup> is illustrated in Figure&#x00A0;<a class="fig" href="#fig1">1</a>. <figure id="fig1">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-fig1.jpg" class="img-responsive" alt="Figure 1"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 1:</span>       <span class="figure-title">Multiway join process.</span>      </div>     </figure>     </p>     <p>When a mapping <em>&#x03BC;</em>     <sub>1</sub> is inserted into the input buffer <em>R</em>     <sup>1</sup>, it will be used to probe one of the other input buffers <em>R</em>     <sup>2</sup>&#x22C5;&#x22C5;&#x22C5;<em>R<sup>n</sup>     </em>. Let us assume that <em>R</em>     <sup>2</sup> is the next input buffer in the probing sequence. For each mapping <span class="inline-equation"><span class="tex">$\mu _2^i$</span>     </span> in <em>R</em>     <sup>2</sup> that is compatible with <em>&#x03BC;</em>     <sub>1</sub>, an intermediate joined mapping in the form <span class="inline-equation"><span class="tex">$\mu _1\circ \mu _2^i$</span>     </span> is generated. Subsequently, <span class="inline-equation"><span class="tex">$\mu _1\circ \mu _2^i$</span>     </span> is recursively used to probe the other input buffers to generate the final mappings. When a buffer that does not return any compatible mapping is found, the probing sequence stops. For dealing with the data expiration of each buffer, we use the negative tuple approach which assigns &#x201D;negative signatures&#x201D; to the expired tuples to forward to upper operator to invalidate expired output of the join,. We call them as negative mappings respectively in this paper. Due to the page limit, we would like to refer readers to&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0031">31</a>] for further details.</p>     <p>Algorithm&#x00A0;1 shows our incremental evaluation algorithm for a multiway join with <em>n</em> input buffers. Lines&#x00A0;- handle new mappings and line&#x00A0; is for forwarding the negative mappings to the upper operator to deal with the expiration case&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0031">31</a>]. Line&#x00A0; calls the recursive sub-routine <em>probingPropagate</em> given in Algorithm&#x00A0;2 to initialise the probing sequence. The probing sequence is given in sub-routine <em>findNextProbWin</em> in line&#x00A0;. Each step of the probing sequence is dynamically identified by the output generated from previous steps. Therefore, the probing sequence plays an important role in the performance of this multiway join algorithm. Hence, the sub-routine <em>findNextProbWin</em> is the place holder to introduce the adaptive optimization algorithms in Section&#x00A0;<a class="sec" href="#sec-6">3</a>.</p>     <p>     <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-graphic2.jpg" class="img-responsive" alt=""       longdesc=""/>     </p>     <p>     <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-graphic3.jpg" class="img-responsive" alt=""       longdesc=""/>     </p>    </section>    <section id="sec-5">     <header>     <div class="title-info">      <h3>       <span class="section-number">2.2</span> Cost Model for Optimizing Multiway join</h3>     </div>     </header>     <p>Data stream sources may suffer fluctuations from data arrival, most of them from unpredictable, slow or bursty network traffic&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0044">44</a>]. On top of that, due to the streaming nature of the input, the data distribution is unpredictable, thus, making it difficult to have a model for operator selectivity&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0025">25</a>]. To deal with changes in the selectivity of the join predicates in multiway joins, we exploit our adaptive multiway join algorithm to find the best execution plans at run-time. As shown in section, we can use the sub-routine <em>findNextProbWin</em> to dynamically chose best sub-probing sequence for each new mapping arriving at an input window. A long this line, we will define the cost model to specify the criteria for choosing the best probing sequence for each new mapping at run-time. Base on the recursive nature of our continuous multiway join, the optimal cost function can be recursively defined in Definitions&#x00A0;<a class="eqn" href="#eq4">4</a> and&#x00A0;<a class="eqn" href="#eq5">5</a>. <div class="table-responsive" id="eq4">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \mathbb {C}(\mu \bowtie R)=\mathcal {C}(\sigma _{\mu }(R))+\mathcal {C}(\lbrace \mu \rbrace \times \sigma _{\mu }(R)) \end{equation} </span>       <br/>       <span class="equation-number">(4)</span>      </div>     </div>     <div class="table-responsive" id="eq5">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \begin{split} \mathbb {C}(\mu _{1}\bowtie \lbrace R^{2}\cdots {R^n}\rbrace)=\min _{i_{2} \in \lbrace 2..n\rbrace }\Big (\mathbb {C}(\mu _1 \bowtie R^{i_2})+\\\sum _{\mu ^{*}_{i_2} \in \sigma _{\mu _1}(R^{i_2})}\mathbb {C}((\mu _1\circ \mu ^{*}_{i_2})\bowtie (\lbrace R^{2}\cdots {R^n}\rbrace \setminus \lbrace {R^{i_2}}\rbrace))\Big) \end{split} \end{equation} </span>       <br/>       <span class="equation-number">(5)</span>      </div>     </div>     </p>     <p>Definition&#x00A0;<a class="eqn" href="#eq4">4</a> is the optimal cost for a binary join which has only one possible probing sequence. When a new mapping <em>&#x03BC;</em> arrives at an input buffer of the binary join, the only option to compute new results is to probe the other input buffer <em>R</em> for the mappings compatible with <em>&#x03BC;</em>. The cost includes <span class="inline-equation"><span class="tex">$\mathcal {C}(\sigma _{\mu }(R))$</span>     </span> as the cost of probing the input buffer and <span class="inline-equation"><span class="tex">$\mathcal {C}(\lbrace \mu \rbrace \times \sigma _{\mu }(R))$</span>     </span> as the cost of creating new mappings from <em>&#x03BC;</em> and the output of <em>&#x03C3;<sub>&#x03BC;</sub>     </em>(<em>R</em>). Definition&#x00A0;<a class="eqn" href="#eq5">5</a> is used to recursively choose the next input buffer for the probing sequence <em>&#x03BC;</em>     <sub>1</sub>&#x22C8;{<em>R</em>     <sup>2</sup>&#x22C5;&#x22C5;&#x22C5;<em>R<sup>n</sup>     </em>} that has the minimal cost, provided that the optimal costs of for all possible next probing sequences <span class="inline-equation"><span class="tex">$\mathbb {C}((\mu _1\circ \mu ^{*}_{i_2})\bowtie (\lbrace R^{2}\cdots {R^n}\rbrace \setminus \lbrace {R^{i_2}}\rbrace))$</span>     </span> are known. However, to compute the value of this cost function, we need to compute <span class="inline-equation"><span class="tex">$\mathbb {C}$</span>     </span> for all possible probing sequences, which is prohibitively expensive. Therefore, we aim at finding a near optimal probing sequence by approximating this cost function through two light-weight estimation methods described next.</p>    </section>   </section>   <section id="sec-6">    <header>     <div class="title-info">     <h2>      <span class="section-number">3</span> Adaptive Optimisation Algorithms</h2>     </div>    </header>    <section id="sec-7">     <header>     <div class="title-info">      <h3>       <span class="section-number">3.1</span> One-step Adaptation</h3>     </div>     </header>     <p>As shown by the experimental results of the throughput of the probing operation in &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0030">30</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0031">31</a>], we can assume that the cost of probing an input buffer can be estimated by a constant (<em>&#x03B3;<sub>&#x03C3;</sub>     </em>), since it does not change dramatically with respect to the sizes of the window buffers. Moreover, we can also assume that the cost of generating a mapping from two mappings is constant (<em>&#x03B3;</em>     <sub>&#x00D7;</sub>). Therefore, we have the following definitions for <em>&#x03B3;<sub>&#x03C3;</sub>     </em> and <em>&#x03B3;</em>     <sub>&#x00D7;</sub>. <div class="table-responsive" id="Xeq1">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \gamma _{\sigma }\approx \mathcal {C}(\sigma _{\mu }(R)) \text{ for every $\mu $ and $R$} \end{equation} </span>       <br/>       <span class="equation-number">(6)</span>      </div>     </div>     <div class="table-responsive" id="Xeq2">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \gamma _{\times } \approx \frac{\mathcal {C}(\lbrace \mu \rbrace \times \sigma _{\mu }(R))}{\left|{\sigma _{\mu }(R)}\right|} \text{ for every $\mu $ and $R$} \end{equation} </span>       <br/>       <span class="equation-number">(7)</span>      </div>     </div>     </p>     <p>To adapt to the changes in the input buffers, our one-step adaption method assumes that the costs of the next steps in the possible probing sequences are approximatively the same for each output generated from the current probing step. Definition&#x00A0;<a class="eqn" href="#eq6">8</a> approximates the cost of each next probing sequence <span class="inline-equation"><span class="tex">$(\lbrace R^{2}\cdots {R^n}\rbrace \setminus \lbrace {R^{i_2}}\rbrace)$</span>     </span> as a constant <em>&#x03B3;</em>     <sub>&#x22C8;</sub>: <div class="table-responsive" id="eq6">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \gamma _{\bowtie }\approx \mathbb {C}((\mu _1\circ \mu ^{*}_{i_2})\bowtie (\lbrace R^{2}\cdots {R^n}\rbrace \setminus \lbrace {R^{i_2}}\rbrace)) \end{equation} </span>       <br/>       <span class="equation-number">(8)</span>      </div>     </div>     </p>     <p>Hence, we have the approximate cost function for a probing sequence as shown below. <div class="table-responsive" id="Xeq3">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \mathbb {C}(\mu _{1}\bowtie \lbrace R^{2}\cdots {R^n}\rbrace)\approx \gamma _{\sigma }+(\gamma _{\times }+\gamma _{\bowtie })\min _{i_{2} \in \lbrace 2..n\rbrace }\left|{\sigma _{\mu }(R^{i_2})}\right| \end{equation} </span>       <br/>       <span class="equation-number">(9)</span>      </div>     </div>     </p>     <p>This approximation enables us to build a simple algorithm for finding the potentially best probing sequence by checking the cardinalities of all possible probing operations of a mapping <em>&#x03BC;</em> on k sliding windows {W[i<sub>1</sub>],..,W[i<sub>      <em>k</em>     </sub>]}. The algorithm is described in Algorithm&#x00A0;3. Note that this algorithm can use the counters stored in the ring index entries of the keys on the join predicates of the window buffer. Calling the probe function on a window at line&#x00A0; will return the index entries for identifying the cardinality of the probing output.</p>     <p>     <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-graphic4.jpg" class="img-responsive" alt=""       longdesc=""/>     </p>    </section>    <section id="sec-8">     <header>     <div class="title-info">      <h3>       <span class="section-number">3.2</span> Two-step<sup>+</sup> Adaptation</h3>     </div>     </header>     <p>The more probing sequences are possible for <em>&#x03BC;</em>     <sub>1</sub>&#x22C8;{<em>R</em>     <sup>2</sup>&#x22C5;&#x22C5;&#x22C5;<em>R<sup>n</sup>     </em>} the harder it gets to compute the cost function given in Definition&#x00A0;<a class="eqn" href="#eq5">5</a>. We analyse the number of possible probing sequences of a join query based on its join graph. A join graph consists a set of windows as its vertices. Two vertices are connected if two windows share a join predicate (same mapping variable). Figure&#x00A0;<a class="fig" href="#fig2">2</a> depicts four join graphs for two 4-way joins and two 6-way joins. Note that each vertex is labeled with name of the shared mapping variable. Join graphs connected as a line as in Figure&#x00A0;2a and Figure&#x00A0;2c are called linear joins. If a mapping <em>&#x03BC;</em>     <sub>1</sub> comes from both ends of the linear join, there is only one possible probing sequence. For instance, the only possible probing sequence for <em>&#x03BC;</em>     <sub>1</sub>&#x22C8;{<em>R</em>     <sup>2</sup>, <em>R</em>     <sup>3</sup>, <em>R</em>     <sup>4</sup>} is <em>&#x03BC;</em>     <sub>1</sub>&#x22C8;<em>R</em>     <sup>2</sup>&#x22C8;<em>R</em>     <sup>3</sup>&#x22C8;<em>R</em>     <sup>4</sup>. Therefore, it is easy to estimate <span class="inline-equation"><span class="tex">$\mathbb {C}(\mu _{1}\bowtie \lbrace R^{2}\cdots {R^n}\rbrace)$</span>     </span> in this case. For instance, by monitoring the probing operation with the given probing sequence, its cost can be stored in an extra field of the ring index entry of the index used for the join predicate&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0031">31</a>]. <figure id="fig2">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-fig2.jpg" class="img-responsive" alt="Figure 2"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 2:</span>       <span class="figure-title">Join graphs.</span>      </div>     </figure>     </p>     <p>Another interesting property of linear joins is that the inner nodes have only two connections to two separate linear subjoins. This property can be used to efficiently estimate the probing sequences in a linear join by breaking the graph into smaller linear sub-joins. The join graphs that have the star and bushy topologies like Figure&#x00A0;2b and Figure&#x00A0;2d are called star join and bushy join, respectively. The higher the connectivity of the graph, the more complicated it becomes to compute the <em>min</em> part in Definition&#x00A0;<a class="eqn" href="#eq5">5</a>. However, we have found a useful property for the high connectivity vertices as shown in the following equation. <div class="table-responsive" id="Xeq4">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \begin{split} \mu \bowtie (\lbrace R^{i_1}\cdots {R^{i^m}}\rbrace)=\sigma _{\mu }(R^{i_1})&#x0026;\times \cdots \times \sigma _{\mu }(R^{i_m}) \\\text{if} \quad dom(R^{i_j}){\cap }dom(R^{i_k}){\subseteq }dom(\mu)\quad \forall j,k\in [1..m]{\wedge }j{\ne }k \end{split} \end{equation} </span>       <br/>       <span class="equation-number">(10)</span>      </div>     </div>     </p>     <p>This property says that the Cartesian product of the all outputs of probing operations <span class="inline-equation"><span class="tex">$\sigma _{\mu }(R^{i_j})$</span>     </span>, using the mapping <em>&#x03BC;</em> on the input buffers <span class="inline-equation"><span class="tex">$R^{i_j}$</span>     </span>, is equivalent to the join operation <span class="inline-equation"><span class="tex">$\mu \bowtie (\lbrace R^{i_1}\cdots {R^{i^m}}\rbrace)$</span>     </span>. The condition, called <em>short-cut condition</em>, is met when <em>&#x03BC;</em> contains all shared variables of pairs of distinct input buffers. Based on these properties, we can provide an approximation function <em>&#x03B3;<sub>approx</sub>     </em> for <span class="inline-equation"><span class="tex">$\mathbb {C}((\mu _1\circ \mu ^{*}_{i_2})\bowtie (\lbrace R^{2}\cdots {R^n}\rbrace \setminus \lbrace {R^{i_2}}\rbrace))$</span>     </span>. An improved cost approximation function is shown in Definition&#x00A0;<a class="eqn" href="#eq7">11</a>. <div class="table-responsive" id="eq7">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \begin{split} \mathbb {C}(\mu _{1}\bowtie \lbrace R^{2}\cdots {R^n}\rbrace)\approx \gamma _{\sigma }+\min _{i_{2} \in \lbrace 2..n\rbrace }&#x0026;\Big (\left|{\sigma _{\mu _1}(R^{i_2})}\right|\sum _{\mu ^{*}_{i_2} \in \sigma _{\mu _1}(R^{i_2})}\big (\gamma _{\times } + \\\gamma _{approx}((\mu _1\circ \mu ^{*}_{i_2})\bowtie (\lbrace R^{2}\cdots {R^n}\rbrace \setminus \lbrace R^{i_2}\rbrace))\big)\Big) \end{split} \end{equation} </span>       <br/>       <span class="equation-number">(11)</span>      </div>     </div>     </p>     <p>Based on this definition, we propose the two-step<sup>+</sup> algorithm to enable short-cut joins shown in Algorithm&#x00A0;4. Lines&#x00A0;- check the short-cut condition. When the short-cut-condition is not met, the algorithm calls the sub-routine <span class="inline-equation"><span class="tex">$findNextProbWin\_MinCost$</span>     </span> to find the next buffer to probe based on the approximate costs.</p>     <p>     <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-graphic9.jpg" class="img-responsive" alt=""       longdesc=""/>     </p>     <p>This sub-routine is described in Algorithm&#x00A0;5. It finds the next input buffer that potentially leads to the minimal cost value. Lines&#x00A0;- check if all estimations <em>&#x03B3;<sub>approx</sub>     </em> are available. Then, the best probing sequence will be determined in lines&#x00A0;-. If one of the estimations needed is not available, the algorithm will switch to the one-step algorithm to find the probing sequence as shown in lines&#x00A0;-. In the process, line&#x00A0; will turn on the operator monitor to measure the time spent for this probing sequence, and then assign this value to <em>&#x03B3;<sub>approx</sub>     </em> for the next executions. To direct the probing sequence to the short-cut condition, we assign a zero cost for <span class="inline-equation"><span class="tex">$\gamma _{approx}(\mu \bowtie (\lbrace R^{i_1}\cdots {R^{i^m}}\rbrace))$</span>     </span> if <span class="inline-equation"><span class="tex">$\mu \bowtie (\lbrace R^{i_1}\cdots {R^{i^m}}\rbrace)$</span>     </span> that meets the short-cut condition.</p>     <p>     <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-graphic10.jpg" class="img-responsive" alt=""       longdesc=""/>     </p>    </section>   </section>   <section id="sec-9">    <header>     <div class="title-info">     <h2>      <span class="section-number">4</span> Adaptive Optimization for Multiple Multiway Joins</h2>     </div>    </header>    <section id="sec-10">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.1</span> Multiple-Join Operator</h3>     </div>     </header>     <p>To share the computations and the memory when processing multiple joins that have the same set of input buffers, we modify the multiway join algorithm in Section&#x00A0;<a class="sec" href="#sec-4">2.1</a> associated with the adaptive optimization algorithms in Section&#x00A0;<a class="sec" href="#sec-6">3</a> to build a shared join operator, i.e, the multiple join operator. Let us assume <em>m</em> multiple window joins <span class="inline-equation"><span class="tex">$W^1_j\cdots \bowtie {W^m_j}$</span>     </span> where j=1...k and <span class="inline-equation"><span class="tex">$W^i_j$</span>     </span> is a window buffer extracted from the RDF stream <em>S<sup>i</sup>     </em>, i=1...n. Let <span class="inline-equation"><span class="tex">$W^i_{max}$</span>     </span> be the window buffer that has a window size equal to the maximum window size over all <span class="inline-equation"><span class="tex">$W^i_j$</span>     </span>, j=1...k. Then, the containment property&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0024">24</a>] as shown in Definition&#x00A0;<a class="eqn" href="#eq8">12</a> holds. <div class="table-responsive" id="eq8">      <div class="display-equation">       <span class="tex mytex">\begin{equation} W^1_j\cdots \bowtie {W^n_j} \subseteq W^1_{max}\cdots \bowtie {W^n_{max}} \end{equation} </span>       <br/>       <span class="equation-number">(12)</span>      </div>     </div>     </p>     <p>Due to this property, the processing of the query <span class="inline-equation"><span class="tex">$W^1_{max}\cdots \bowtie {W^n_{max}}$</span>     </span> produces an output that contains the outputs of all queries <span class="inline-equation"><span class="tex">$W^1_j\cdots \bowtie {W^n_j}$</span>     </span>, j=1...k. Therefore, the join component only has to execute a single multiway query for <span class="inline-equation"><span class="tex">$W^1_{max}\cdots \bowtie {W^n_{max}}$</span>     </span>. In the routing component, each resulting mapping has to be routed to the query that takes it as an input. We call the routing component of the multiple join operator <em>router</em>. The router maintains a sorted list of the windows relevant to each join. The windows are ordered by window sizes in increasing order. Each output mapping is traversed to its constituent leaf-mappings to find the mappings which are valid within valid time intervals of the windows. When a mapping satisfies the time condition of a query, it is routed to the query&#x0027;s output buffer. Figure&#x00A0;<a class="fig" href="#fig3">3</a> illustrates a multiple join operator for 3 queries over 2 streams <em>S</em>     <sup>1</sup> and <em>S</em>     <sup>2</sup> where <span class="inline-equation"><span class="tex">$Q_{1}=W^1_1\bowtie {W^2_1}$</span>     </span>, <span class="inline-equation"><span class="tex">$Q_{2}=W^1_2\bowtie {W^2_2}$</span>     </span> and <span class="inline-equation"><span class="tex">$Q_{3}=W^1_3\bowtie {W^2_3}$</span>     </span>. This multiple join operator connects the 2-way join operator <span class="inline-equation"><span class="tex">$W^1_{max}{\bowtie }W^2_{max}$</span>     </span> to its router where <span class="inline-equation"><span class="tex">$W^1_{max}=W^1_3$</span>     </span> and <span class="inline-equation"><span class="tex">$W^2_{max}=W^2_3$</span>     </span>. The left-hand side of the figure shows how the router delivers the output mappings from the 2-way join to each query. For instance, when the new mapping &#x27E8;<em>a</em>     <sub>1</sub>, <em>b</em>     <sub>6</sub>&#x27E9; arrives at the stream <em>S</em>     <sup>1</sup>, the 2-way join probes the input buffer <span class="inline-equation"><span class="tex">$W^2_{max}$</span>     </span> to generate two output mappings &#x27E8;<em>a</em>     <sub>1</sub>, <em>b</em>     <sub>6</sub>, <em>c</em>     <sub>1</sub>&#x27E9; and &#x27E8;<em>a</em>     <sub>1</sub>, <em>b</em>     <sub>6</sub>, <em>c</em>     <sub>5</sub>&#x27E9;. Based on the window conditions of each query, the router routes &#x27E8;<em>a</em>     <sub>1</sub>, <em>b</em>     <sub>6</sub>, <em>c</em>     <sub>5</sub>&#x27E9; to <em>Q</em>     <sub>1</sub> and <em>Q</em>     <sub>2</sub> and both &#x27E8;<em>a</em>     <sub>1</sub>, <em>b</em>     <sub>6</sub>, <em>c</em>     <sub>1</sub>&#x27E9; and &#x27E8;<em>a</em>     <sub>1</sub>, <em>b</em>     <sub>6</sub>, <em>c</em>     <sub>5</sub>&#x27E9; to <em>Q</em>     <sub>3</sub>. <figure id="fig3">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-fig3.jpg" class="img-responsive" alt="Figure 3"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 3:</span>       <span class="figure-title">Shared Windows Example.</span>      </div>     </figure>     </p>    </section>    <section id="sec-11">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.2</span> Networks of Multiple Join Operators for Shared Window Joins</h3>     </div>     </header>     <p>In the general case, the concurrent queries registered to the system only share subsets of the streams involved in their queries. Therefore, we create a network of multiple join operators to enable sharing the execution of sub-queries for a group of queries. Each multiple join operator is created for a group of joins that share the same set of streams. Figure&#x00A0;<a class="fig" href="#fig4">4</a> illustrates a network for 4 queries over 4 streams <em>S</em>     <sup>1</sup>, <em>S</em>     <sup>2</sup>, <em>S</em>     <sup>3</sup> and <em>S</em>     <sup>4</sup>, where <span class="inline-equation"><span class="tex">$Q_{1}=W^1_1\bowtie {W^2_1}\bowtie {W^3_1}$</span>     </span>, <span class="inline-equation"><span class="tex">$Q_{2}=W^2_2\bowtie {W^3_2}$</span>     </span>     <span class="inline-equation"><span class="tex">$Q_{3}=W^2_3\bowtie {W^3_3}\bowtie {W^4_3}$</span>     </span> and <span class="inline-equation"><span class="tex">$Q_{4}=W^2_4\bowtie {W^3_4}\bowtie {W^4 _4}$</span>     </span>. This network is composed of three multiple join operators <span class="inline-equation"><span class="tex">$\bowtie ^M_1$</span>     </span>, <span class="inline-equation"><span class="tex">$\bowtie ^M_2$</span>     </span> and <span class="inline-equation"><span class="tex">$\bowtie ^M_3$</span>     </span> where <span class="inline-equation"><span class="tex">$\bowtie ^M_1$</span>     </span> is for <em>Q</em>     <sub>1</sub>, <span class="inline-equation"><span class="tex">$\bowtie ^M_2$</span>     </span> is for <em>Q</em>     <sub>2</sub> and <span class="inline-equation"><span class="tex">$\bowtie ^M_3$</span>     </span> for <em>Q</em>     <sub>3</sub> and <em>Q</em>     <sub>4</sub>. <figure id="fig4">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-fig4.jpg" class="img-responsive" alt="Figure 4"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 4:</span>       <span class="figure-title">A Network of Multiple Join Operators.</span>      </div>     </figure>     </p>     <p>To reduce the amount of memory allocated for the window buffers, the network only uses one buffer for each stream. This buffer contains all window buffers on that stream. For example, the input buffer <span class="inline-equation"><span class="tex">$W^2_{max}$</span>     </span> on the stream <em>S</em>     <sup>2</sup> contains the windows <span class="inline-equation"><span class="tex">$W^2_1$</span>     </span>, <span class="inline-equation"><span class="tex">$W^2_1$</span>     </span>, <span class="inline-equation"><span class="tex">$W^2_2$</span>     </span>, <span class="inline-equation"><span class="tex">$W^2_3$</span>     </span> and <span class="inline-equation"><span class="tex">$W^2_4$</span>     </span>. Therefore, multiple join operators in the network share subsets of all input buffers created for the network. This enables an incremental evaluation for the network in the same way as for multiway joins. Algorithm&#x00A0;6 presents the probing propagation process in the network.</p>     <p>     <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-graphic13.jpg" class="img-responsive" alt=""       longdesc=""/>     </p>     <p>The algorithm recursively propagates the probing operations to find possible outputs in the join component, before forwarding join outputs to the routing component. When a new mapping arrives at an input window, it will trigger a probing graph that contains all probing sequences of the multiple joins that consumes that new mapping. For instance, a new mapping <em>&#x03BC;</em>     <sub>2</sub> in the stream <em>S</em>     <sup>2</sup> will trigger the following probing sequences: <span class="inline-equation"><span class="tex">$seq_1=\mu _2\bowtie \lbrace W^1_{max},W^3_{max}\rbrace$</span>     </span> for <span class="inline-equation"><span class="tex">$\bowtie ^M_1$</span>     </span>, <span class="inline-equation"><span class="tex">$seq_2=\mu _2\bowtie {W^3_{max}}$</span>     </span> for <span class="inline-equation"><span class="tex">$\bowtie ^M_2$</span>     </span> and <span class="inline-equation"><span class="tex">$seq_3=\mu _2\bowtie \lbrace W^3_{max},W^4_{max}\rbrace$</span>     </span> for <span class="inline-equation"><span class="tex">$\bowtie ^M_3$</span>     </span>. They form the probing graph depicted in Figure&#x00A0;<a class="fig" href="#fig5">5</a>, in which they share a probing sub-sequence <em>seq</em>     <sub>2</sub>. Note that the solid lines represent for probing sequences inside the multiway joins and the broken lines represent for routing paths from the multiway joins to the corresponding routers.The output mappings of this shared probing sequence can either be delivered to the router of <span class="inline-equation"><span class="tex">$\bowtie ^M_2$</span>     </span> or be used for further processing in <em>seq</em>     <sub>1</sub> or <em>seq</em>     <sub>3</sub>. <figure id="fig5">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-fig5.jpg" class="img-responsive" alt="Figure 5"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 5:</span>       <span class="figure-title">A probing graph.</span>      </div>     </figure>     </p>     <p>At each stage of the probing graph, the algorithm checks if the mapping used for the probing is the output of a multiple join operator. In this case, the mapping is sent to the router of this multiple join operator (lines&#x00A0;-). Line&#x00A0; is used to check if the propagated mapping can be used to generate joined results by a multiple join operator. If so, line&#x00A0; chooses the one that has the smallest set of inputs. This multiple join operator applies the two-step<sup>+</sup> algorithm for choosing the best probing sequence on a single multiway join (line&#x00A0;).The algorithm is only applied to the subset of the input buffers that have been processed on the sequence created by propagated mappings.</p>    </section>   </section>   <section id="sec-12">    <header>     <div class="title-info">     <h2>      <span class="section-number">5</span> Experimental Results</h2>     </div>    </header>    <p>In this section, we present our experimental results via two types of experiments. The first type aims to show how two optimisation algorithms in Section&#x00A0;<a class="sec" href="#sec-6">3</a> behave in a single multiway join. The second one will focus on algorithms presented in Section&#x00A0;<a class="sec" href="#sec-9">4</a>. The implementations of these algorithms are based on the latest version of CQELS engine&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0031">31</a>] which will be open sourced at <em>http://cqels.org/ </em>. The experiments are executed on a standard workstation with Debian Squeeze AMD64 2x E5606 Intel Quad- Core Xeon 2.13GHz with 16GB RAM, running the Java SE Runtime Environment (build 1.7.0_51-b13) Java HotSpot 64-Bit Server VM. <figure id="fig6">     <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-fig6.jpg" class="img-responsive" alt="Figure 6"       longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 6:</span>      <span class="figure-title">Join throughputs of optimisation algorithms.</span>     </div>     </figure>    </p>    <section id="sec-13">     <header>     <div class="title-info">      <h3>       <span class="section-number">5.1</span> Single Multiway join</h3>     </div>     </header>     <p>In the first type of the experiments on single multiway join queries we compare them against the fixed probing sequences used in in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0030">30</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0031">31</a>]. We also compare them against the ESPER engine&#x00A0;<a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a> which serves as the baseline. Similar to previous experiments, we have created an ad-hoc data structure specifically for each window buffer. We have measured the throughputs for the four types of queries given in Figure&#x00A0;<a class="fig" href="#fig2">2</a> with different window sizes. As shown in &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0030">30</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0031">31</a>], the ratio of the number of distinct values in the join predicates to the window size has a significant impact in the throughput of the join operator. Hence, we fix this ratio in all test runs. To check the adaptability of the algorithms, in each test run, we stream solution mappings to the window buffers with three stages. In the first stage, we fill the window buffers with mappings to keep the selectivity on the join predicate at 100%. Then, in the next stage, we stream the same number of mappings but with a selectivity of 10% to test if the engines could adapt to the changes of the new selectivity. Finally, in the last stage, we stream the same number of mappings with the selectivity of 100%.</p>     <p>Figure&#x00A0;<a class="fig" href="#fig6">6</a> reports on the experimental results. The results show that the two-step<sup>+</sup> algorithm outperforms the other algorithms by orders of magnitude. For the 6-way join with the bushy graph, ESPER reported an out-of-heap-size error for window sizes greater than 100 mappings. In summary, the one-step algorithm performs 175%-400% better than the fixed probing sequence algorithm. The two-step<sup>+</sup> algorithm provides in average a throughput which is twice as high as the one given by the one-step algorithm. The higher the likelyhood of short-cut joins, the higher the throughput of the two-step<sup>+</sup>. In particular, the 4-way join with star graph and 6-way join with bushy graph produces more than 7 times and 10 times higher throughputs than the one-step-based version, respectively. <figure id="fig7">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-fig7.jpg" class="img-responsive" alt="Figure 7"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 7:</span>       <span class="figure-title">Join throughputs of multiple query optimisation.</span>      </div>     </figure>     </p>    </section>    <section id="sec-14">     <header>     <div class="title-info">      <h3>       <span class="section-number">5.2</span> Multiple Multiway Joins</h3>     </div>     </header>     <p>In the next type of experiments, we evaluate the performance of the multiple query optimisation algorithm by testing its scalability when the number of concurrent queries increases. The evaluation includes three cases: The first two cases are 2-way joins and 3-way joins that share the same 2 and 3 streams respectively. In the third case, there is a mixture of three query types, namely 2-way joins, 3-ways join, and 4-way joins whose input streams are randomly chosen from 4 streams. The window size of each input stream is chosen randomly between 100,000 and 200,000 mappings. In each case we executed a series of runs for a number of queries ranging from 2 to 1,000. For each test run, we first register its concurrent queries, then we filled up all windows. After all windows were filled, we measured the processing throughput of the engine used. The engine consumes incoming data distributed evenly among 4 streams. In these experiments, we also used ESPER with ad-hoc data structures for each stream as the baseline engine and we compared against the CQELS engine equipped with the multiple query optimiser.</p>     <p>Figure&#x00A0;<a class="fig" href="#fig7">7</a> shows the experimental results. We can see that the throughput of ESPER drops rapidly when the number of queries increases. The sudden stops in the plot line are due to out-of-heap error during the processing. In all tests, the throughput of CQELS only decreases marginally. This stems from the fact that adding more queries only adds small additional loads on the routers, while the number of streams are unchanged. Since the processing load only depends on the maximum window sizes of all query windows on each input stream, this guarantees scalability.</p>    </section>   </section>   <section id="sec-15">    <header>     <div class="title-info">     <h2>      <span class="section-number">6</span> Background &#x0026; Related Work</h2>     </div>    </header>    <p>Initial efforts on adaptive query plans include mid-query re-optimisation&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0026">26</a>] and query scrambling, where the objective was to pre-empt operators that become blocked and to schedule other operators instead&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0044">44</a>]. To further increase adaptivity, instead of maintaining a rigid tree-structured query plan, the Eddies approach&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>] performs scheduling of each tuple separately by routing it through the operators that make up the query plan. Thereby, the operators of the query plan are dynamically re-ordered to adapt to the current system conditions. This is driven by tuple routing policies that attempt to find which operators are fast and selective, such that those operators are executed first. This approach was applied to continuous queries in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0036">36</a>] and was evaluated in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0017">17</a>]. The extended version for multi-way joins can be found in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0037">37</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0042">42</a>]. On top of that, it was also extended to consider semantic information such as attribute correlations during routing&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>]). For distributed settings, the queue length is considered as a third factor for tuple routing strategies&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0041">41</a>].</p>    <p>To achieve adaptivity, the processing engine has to deal with some overheads. The first overhead is having to re-route each tuple separately. The next overhead is migrating internal states stored in some operators from the current query plan to the new query plan that has a new arrangement of operators. The issue of state migration across query plans was studied in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0018">18</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0050">50</a>]. More details on adaptive query processing can be found in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>].</p>    <p>When there are multiple continuous queries registered, memory and computing resources can be shared to optimise the overall processing. For selection queries, a possible multi-query optimisation is to index the query predicates and store auxiliary information in each tuple that identify which queries it satisfies&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0012">12</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0029">29</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0035">35</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0048">48</a>]. When a new tuple arrives for processing, its attribute values are extracted and matched against the query index to see which queries are satisfied by this tuple. Data and queries may be thought of as duals, in some cases reducing query processing to a multi-way join of the query predicate index and the data tables&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0035">35</a>]. Indexing range predicates is discussed in &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0035">35</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0048">48</a>], whereas a predicate index on multiple attributes is presented in &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0034">34</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0035">35</a>].</p>    <p>In addition, memory usage may be reduced by sharing internal data structures that store operators&#x2019; states&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0020">20</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0049">49</a>]. Moreover, in the context of complex queries containing stateful operators such as joins, computation may be shared by building a common query plan &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0015">15</a>]. For example, queries belonging to the same group may share a plan, which produces the union of the results needed by the individual queries. A final selection is then applied to the shared result set and new answers are routed to the appropriate queries. An interesting tradeoff appears between doing similar work multiple times and doing too much unnecessary work. Techniques that balance this tradeoff are presented in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0028">28</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0047">47</a>]. For example, suppose that the workload includes several queries referencing a join of the same windows, but having a different selection predicate. If a shared query plan performs the join first and then routes the output to the appropriate queries, it is possible that unnecessary tuples are generated, because, some of the joined tuples may not satisfy any selection predicate. On the other hand, if each query performs its selection first and then joins the surviving tuples, then the join operator cannot be shared and the same tuples will be probed many times. Finally, sharing a single join operator among queries referencing different window sizes is discussed in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0023">23</a>].</p>    <p>Even there are several lines of work on adaptive query optimisation and optimisation of continuous query execution in general in the last 20 years, most of the proposed approaches are implemented and tested in a single system or a limited sets of systems within small scopes of certain application domains. Therefore, to the best of our knowledge, there have not been any insightful investigation of dynamic optimisation at physical execution level in the context of RDF Stream Processing, especially in multiway join query. Therefore, we made the first effort modelling the problem to design the adaptive optimisation algorithms in Section&#x00A0;<a class="sec" href="#sec-6">3</a> test in our engine CQELS&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0031">31</a>]. Note that, there is a derived work&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0033">33</a>] from our continuous multiway join concept that was firstly introduced in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0030">30</a>]. The algorithms and cost models of this work were inspired from ours.</p>   </section>   <section id="sec-16">    <header>     <div class="title-info">     <h2>      <span class="section-number">7</span> Conclusions</h2>     </div>    </header>    <p>The paper presents our effort on addressing a very challenging problem of dynamic optimisation of join operation in continuous query over RDF Streams which we believe is a very central performance problem of RSP engines. We modelled the join operations on RDF Streams as a continuous multiway join which help us to introduces a general recursive cost model. Via this cost model, we propose two approximation versions which help us to introduce two light-weight adaptive optimisation algorithms. Our experimental results on simulated data show very encourage performance gain in controlled settings. This opens up interesting and potential options for implementing dynamic query optimisers for RSP engines.</p>   </section>   <section id="sec-17">    <header>     <div class="title-info">     <h2>Acknowledgement</h2>     </div>    </header>    <p>This research has been supported by the Marie Sklodowska-Curie Programme H2020-MSCA-IF-2014 under Grant No. 661180.</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>     <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>     </div>    </header>    <ul class="bibUl">     <li id="BibPLXBIB0001" label="[1]">Daniel&#x00A0;J. Abadi, Don Carney, Ugur &#x00C7;etintemel, Mitch Cherniack, Christian Convey, Sangdon Lee, Michael Stonebraker, Nesime Tatbul, and Stan Zdonik. 2003. Aurora: a new model and architecture for data stream management. <em>      <em>The VLDB Journal</em>     </em>12, 2 (Aug. 2003), 120&#x2013;139.</li>     <li id="BibPLXBIB0002" label="[2]">Laurent Amsaleg, Michael&#x00A0;J. Franklin, Anthony Tomasic, and Tolga Urhan. 1996. Scrambling query plans to cope with unexpected delays. In <em>      <em>Proceedings of the fourth international conference on on Parallel and distributed information systems</em>     </em>(<em>DIS &#x2019;96</em>). IEEE Computer Society, Washington, DC, USA, 208&#x2013;219.</li>     <li id="BibPLXBIB0003" label="[3]">Arvind Arasu, Shivnath Babu, and Jennifer Widom. 2006. The CQL continuous query language: semantic foundations and query execution. <em>      <em>The VLDB Journal</em>     </em>15, 2 (2006), 121&#x2013;142.</li>     <li id="BibPLXBIB0004" label="[4]">Ron Avnur and Joseph&#x00A0;M. Hellerstein. 2000. Eddies: continuously adaptive query processing. <em>      <em>SIGMOD Rec.</em>     </em>29, 2 (2000), 261&#x2013;272.</li>     <li id="BibPLXBIB0005" label="[5]">Shivnath Babu. 2005. Adaptive query processing in the looking glass. In <em>      <em>Second Biennial Conference on Innovative Data Systems Research (CIDR&#x2019;05)</em>     </em>. 238&#x2013;249.</li>     <li id="BibPLXBIB0006" label="[6]">Shivnath Babu, Rajeev Motwani, Kamesh Munagala, Itaru Nishizawa, and Jennifer Widom. 2004. Adaptive ordering of pipelined stream filters. In <em>      <em>Proceedings of the 2004 ACM SIGMOD international conference on Management of data</em>     </em>(<em>SIGMOD &#x2019;04</em>). ACM, New York, NY, USA, 407&#x2013;418.</li>     <li id="BibPLXBIB0007" label="[7]">Shivnath Babu, Kamesh Munagala, Jennifer Widom, and Rajeev Motwani. 2005. Adaptive Caching for Continuous Queries. In <em>      <em>Proceedings of the 21st International Conference on Data Engineering</em>     </em>(<em>ICDE &#x2019;05</em>). IEEE Computer Society, Washington, DC, USA, 118&#x2013;129.</li>     <li id="BibPLXBIB0008" label="[8]">Shivnath Babu, Utkarsh Srivastava, and Jennifer Widom. 2004. Exploiting k-constraints to reduce memory overhead in continuous queries over data streams. <em>      <em>ACM Trans. Database Syst.</em>     </em>29, 3 (Sept. 2004), 545&#x2013;580.</li>     <li id="BibPLXBIB0009" label="[9]">Davide&#x00A0;Francesco Barbieri, Daniele Braga, Stefano Ceri, and Michael Grossniklaus. 2010. An execution environment for C-SPARQL queries. In <em>      <em>Proceedings of the 13th International Conference on Extending Database Technology</em>     </em>(<em>EDBT &#x2019;10</em>). ACM, New York, NY, USA, 441&#x2013;452. <a class="link-inline force-break" href="https://doi.org/10.1145/1739041.1739095"      target="_blank">https://doi.org/10.1145/1739041.1739095</a></li>     <li id="BibPLXBIB0010" label="[10]">Henrike Berthold, Sven Schmidt, Wolfgang Lehner, and Claude-Joachim Hamann. 2005. Integrated resource management for data stream systems. In <em>      <em>Proceedings of the 2005 ACM symposium on Applied computing</em>     </em>(<em>SAC &#x2019;05</em>). ACM, New York, NY, USA, 555&#x2013;562.</li>     <li id="BibPLXBIB0011" label="[11]">Pedro Bizarro, Shivnath Babu, David DeWitt, and Jennifer Widom. 2005. Content-based routing: different plans for different data. In <em>      <em>Proceedings of the 31st international conference on Very large data bases</em>     </em>(<em>VLDB &#x2019;05</em>). VLDB Endowment, 757&#x2013;768.</li>     <li id="BibPLXBIB0012" label="[12]">Chris Carnes, J.&#x00A0;B. Park, and Albert Vernon. 1999. Scalable Trigger Processing. In <em>      <em>Proceedings of the 15th International Conference on Data Engineering</em>     </em>(<em>ICDE &#x2019;99</em>). IEEE Computer Society, Washington, DC, USA, 266&#x2013;.</li>     <li id="BibPLXBIB0013" label="[13]">Sirish Chandrasekaran and Michael&#x00A0;J. Franklin. 2003. PSoup: a system for streaming queries over streaming data. <em>      <em>The VLDB Journal</em>     </em>12, 2 (Aug. 2003), 140&#x2013;156.</li>     <li id="BibPLXBIB0014" label="[14]">Jianjun Chen, David&#x00A0;J. DeWitt, and Jeffrey&#x00A0;F. Naughton. 2002. Design and Evaluation of Alternative Selection Placement Strategies in Optimizing Continuous Queries. In <em>      <em>Proceedings of the 18th International Conference on Data Engineering</em>     </em>(<em>ICDE &#x2019;02</em>). Washington, DC, USA.</li>     <li id="BibPLXBIB0015" label="[15]">Jianjun Chen, David&#x00A0;J. DeWitt, Feng Tian, and Yuan Wang. 2000. NiagaraCQ: a scalable continuous query system for Internet databases. <em>      <em>SIGMOD Rec.</em>     </em>29, 2 (2000), 379&#x2013;390.</li>     <li id="BibPLXBIB0016" label="[16]">Matthew Denny and Michael&#x00A0;J. Franklin. 2005. Predicate result range caching for continuous queries. In <em>      <em>Proceedings of the 2005 ACM SIGMOD international conference on Management of data</em>     </em>(<em>SIGMOD &#x2019;05</em>). ACM, New York, NY, USA, 646&#x2013;657.</li>     <li id="BibPLXBIB0017" label="[17]">Amol Deshpande. 2004. An initial study of overheads of eddies. <em>      <em>SIGMOD Rec.</em>     </em>33, 1 (March 2004), 44&#x2013;49.</li>     <li id="BibPLXBIB0018" label="[18]">Amol Deshpande and Joseph&#x00A0;M. Hellerstein. 2004. Lifting the burden of history from adaptive query processing. In <em>      <em>Proceedings of the Thirtieth international conference on Very large data bases - Volume 30</em>     </em>(<em>VLDB &#x2019;04</em>). VLDB Endowment, 948&#x2013;959.</li>     <li id="BibPLXBIB0019" label="[19]">Amol Deshpande, Zachary Ives, and Vijayshankar Raman. 2007. Adaptive query processing. <em>      <em>Found. Trends databases</em>     </em>1 (January 2007), 140. Issue 1.</li>     <li id="BibPLXBIB0020" label="[20]">Alin Dobra, Minos&#x00A0;N. Garofalakis, Johannes Gehrke, and Rajeev Rastogi. 2004. Sketch-Based Multi-query Processing over Data Streams. In <em>      <em>9th International Conference on Extending Database Technology, EDBT 2004</em>     </em>. 551&#x2013;568.</li>     <li id="BibPLXBIB0021" label="[21]">Lukasz Golab, Theodore Johnson, and Oliver Spatscheck. 2008. Prefilter: predicate pushdown at streaming speeds. In <em>      <em>Proceedings of the 2nd international workshop on Scalable stream processing system</em>     </em>(<em>SSPS &#x2019;08</em>). ACM, New York, NY, USA, 29&#x2013;37.</li>     <li id="BibPLXBIB0022" label="[22]">Anastasios Gounaris, Norman&#x00A0;W. Paton, Alvaro A.&#x00A0;A. Fernandes, and Rizos Sakellariou. 2002. Adaptive Query Processing: A Survey. In <em>      <em>Proceedings of the 19th British National Conference on Databases: Advances in Databases</em>     </em>(<em>BNCOD 19</em>). Springer-Verlag, London, UK, UK, 11&#x2013;25.</li>     <li id="BibPLXBIB0023" label="[23]">Moustafa&#x00A0;A. Hammad, Walid&#x00A0;G. Aref, and Ahmed&#x00A0;K. Elmagarmid. 2005. Optimizing in-order execution of continuous queries over streamed sensor data. In <em>      <em>Proceedings of the 17th international conference on Scientific and statistical database management</em>     </em>(<em>SSDBM&#x2019;2005</em>). Lawrence Berkeley Laboratory, Berkeley, CA, US, 143&#x2013;146.</li>     <li id="BibPLXBIB0024" label="[24]">Moustafa&#x00A0;A. Hammad, Michael&#x00A0;J. Franklin, Walid&#x00A0;G. Aref, and Ahmed&#x00A0;K. Elmagarmid. 2003. Scheduling for shared window joins over data streams. In <em>      <em>Proceedings of the 29th international conference on Very large data bases - Volume 29</em>     </em>(<em>VLDB &#x2019;03</em>). VLDB Endowment, 297&#x2013;308.</li>     <li id="BibPLXBIB0025" label="[25]">Zachary&#x00A0;G. Ives, Daniela Florescu, Marc Friedman, Alon Levy, and Daniel&#x00A0;S. Weld. 1999. An adaptive query execution system for data integration. In <em>      <em>Proceedings of the 1999 ACM SIGMOD international conference on Management of data</em>     </em>(<em>SIGMOD &#x2019;99</em>). ACM, New York, NY, USA, 299&#x2013;310. <a class="link-inline force-break" href="https://doi.org/10.1145/304182.304209"      target="_blank">https://doi.org/10.1145/304182.304209</a></li>     <li id="BibPLXBIB0026" label="[26]">Navin Kabra and David&#x00A0;J. DeWitt. 1998. Efficient mid-query re-optimization of sub-optimal query execution plans. <em>      <em>SIGMOD Rec.</em>     </em>27, 2 (June 1998), 106&#x2013;117. <a class="link-inline force-break" href="https://doi.org/10.1145/276305.276315"      target="_blank">https://doi.org/10.1145/276305.276315</a></li>     <li id="BibPLXBIB0027" label="[27]">Jaewoo Kang, Jeffrey&#x00A0;F. Naughton, and Stratis Viglas. 2003. Evaluating Window Joins over Unbounded Streams. In <em>      <em>Proceedings of the 19th International Conference on Data Engineering</em>     </em>(<em>ICDE&#x2019;03</em>). 341&#x2013;352.</li>     <li id="BibPLXBIB0028" label="[28]">Sailesh Krishnamurthy, Michael&#x00A0;J. Franklin, Joseph&#x00A0;M. Hellerstein, and Garrett Jacobson. 2004. The case for precision sharing. In <em>      <em>Proceedings of the Thirtieth international conference on Very large data bases - Volume 30</em>     </em>(<em>VLDB &#x2019;04</em>). VLDB Endowment, 972&#x2013;984.</li>     <li id="BibPLXBIB0029" label="[29]">Sailesh Krishnamurthy, Chung Wu, and Michael Franklin. 2006. On-the-fly sharing for streamed aggregation. In <em>      <em>Proceedings of the 2006 ACM SIGMOD international conference on Management of data</em>     </em>(<em>SIGMOD &#x2019;06</em>). ACM, New York, NY, USA, 623&#x2013;634.</li>     <li id="BibPLXBIB0030" label="[30]">Danh Le-Phuoc. 2013. <em>A Native and Adaptive Approach for Linked Stream Data Processing</em>. Ph.D. Dissertation. Digital Enterprise Research Institute, National University of Ireland, Galway.</li>     <li id="BibPLXBIB0031" label="[31]">Danh Le-Phuoc. 2017. Operator-aware approach for boosting performance in RDF stream processing. <em>      <em>Web Semantics: Science, Services and Agents on the World Wide Web</em>     </em>42 (2017), 38 &#x2013; 54. <a class="link-inline force-break"      href="https://doi.org/10.1016/j.websem.2016.04.001"      target="_blank">https://doi.org/10.1016/j.websem.2016.04.001</a></li>     <li id="BibPLXBIB0032" label="[32]">Danh Le-Phuoc, Minh Dao-Tran, Josiane&#x00A0;Xavier Parreira, and Manfred Hauswirth. 2011. A Native and Adaptive Approach for Unified Processing of Linked Streams and Linked Data. In <em>      <em>Proceedings of 10th International Semantic Web Conference</em>     </em>. 370&#x2013;388.</li>     <li id="BibPLXBIB0033" label="[33]">Chan Le&#x00A0;Van, Feng Gao, and Muhammad&#x00A0;Intizar Ali. 2017. Optimizing the Performance of Concurrent RDF Stream Processing Queries. In <em>      <em>The Semantic Web</em>     </em>, Eva Blomqvist, Diana Maynard, Aldo Gangemi, Rinke Hoekstra, Pascal Hitzler, and Olaf Hartig (Eds.). Springer International Publishing, Cham, 238&#x2013;253.</li>     <li id="BibPLXBIB0034" label="[34]">Ken C.&#x00A0;K. Lee, Hong&#x00A0;Va Leong, and Antonio Si. 2004. QUAY: A Data Stream Processing System Using Chunking. In <em>      <em>Proceedings of the International Database Engineering and Applications Symposium</em>     </em>(<em>IDEAS &#x2019;04</em>). IEEE Computer Society, Washington, DC, USA, 17&#x2013;26.</li>     <li id="BibPLXBIB0035" label="[35]">Hyo-Sang Lim, Jae-Gil Lee, Min-Jae Lee, Kyu-Young Whang, and Il-Yeol Song. 2006. Continuous query processing in data streams using duality of data and queries. In <em>      <em>Proceedings of the 2006 ACM SIGMOD international conference on Management of data</em>     </em>(<em>SIGMOD &#x2019;06</em>). New York, NY, USA, 313&#x2013;324.</li>     <li id="BibPLXBIB0036" label="[36]">Samuel Madden, Mehul Shah, Joseph&#x00A0;M. Hellerstein, and Vijayshankar Raman. 2002. Continuously adaptive continuous queries over streams. In <em>      <em>2002 ACM SIGMOD International Conference on Management of Data</em>     </em>. 49&#x2013;60.</li>     <li id="BibPLXBIB0037" label="[37]">Vijayshankar Raman, Amol Deshpande, and Joseph&#x00A0;M. Hellerstein. 2003. Using State Modules for Adaptive Query Processing. In <em>      <em>Proceedings of the 19th International Conference on Data Engineering</em>     </em>(<em>ICDE&#x2019;03</em>). 353&#x2013;364.</li>     <li id="BibPLXBIB0038" label="[38]">Sven Schmidt, Henrike Berthold, and Wolfgang Lehner. 2004. QStream: deterministic querying of data streams. In <em>      <em>Proceedings of the Thirtieth international conference on Very large data bases - Volume 30</em>     </em>(<em>VLDB &#x2019;04</em>). VLDB Endowment, 1365&#x2013;1368.</li>     <li id="BibPLXBIB0039" label="[39]">Sven Schmidt, Thomas Legler, Sebastian Sch&#x00E4;r, and Wolfgang Lehner. 2005. Robust real-time query processing with QStream. In <em>      <em>Proceedings of the 31st international conference on Very large data bases</em>     </em>(<em>VLDB &#x2019;05</em>). VLDB Endowment, 1299&#x2013;1301.</li>     <li id="BibPLXBIB0040" label="[40]">Yufei Tao, Man&#x00A0;Lung Yiu, Dimitris Papadias, Marios Hadjieleftheriou, and Nikos Mamoulis. 2005. RPJ: producing fast join results on streams through rate-based optimization. In <em>      <em>Proceedings of the 2005 ACM SIGMOD international conference on Management of data</em>     </em>(<em>SIGMOD &#x2019;05</em>). ACM, New York, NY, USA, 371&#x2013;382.</li>     <li id="BibPLXBIB0041" label="[41]">Feng Tian and David&#x00A0;J. DeWitt. 2003. Tuple routing strategies for distributed eddies. In <em>      <em>Proceedings of the 29th international conference on Very large data bases - Volume 29</em>     </em>(<em>VLDB &#x2019;03</em>). VLDB Endowment, 333&#x2013;344.</li>     <li id="BibPLXBIB0042" label="[42]">Wee&#x00A0;Hyong Tok and St&#x00E9;phane Bressan. 2002. Efficient and Adaptive Processing of Multiple Continuous Queries. In <em>      <em>Proceedings of the 8th International Conference on Extending Database Technology: Advances in Database Technology</em>     </em>(<em>EDBT &#x2019;02</em>). Springer-Verlag, London, UK, UK, 215&#x2013;232.</li>     <li id="BibPLXBIB0043" label="[43]">Tolga Urhan and Michael&#x00A0;J. Franklin. 2001. Dynamic Pipeline Scheduling for Improving Interactive Query Performance. In <em>      <em>Proceedings of the 27th International Conference on Very Large Data Bases</em>     </em>(<em>VLDB &#x2019;01</em>). Morgan Kaufmann Publishers Inc., San Francisco, CA, USA, 501&#x2013;510.</li>     <li id="BibPLXBIB0044" label="[44]">Tolga Urhan, Michael&#x00A0;J. Franklin, and Laurent Amsaleg. 1998. Cost-based query scrambling for initial delays. In <em>      <em>Proceedings of the 1998 ACM SIGMOD international conference on Management of data</em>     </em>(<em>SIGMOD &#x2019;98</em>). ACM, New York, NY, USA, 130&#x2013;141.</li>     <li id="BibPLXBIB0045" label="[45]">Stratis&#x00A0;D. Viglas and Jeffrey&#x00A0;F. Naughton. 2002. Rate-based query optimization for streaming information sources. In <em>      <em>Proceedings of the 2002 ACM SIGMOD international conference on Management of data</em>     </em>(<em>SIGMOD &#x2019;02</em>). ACM, New York, NY, USA, 37&#x2013;48.</li>     <li id="BibPLXBIB0046" label="[46]">Stratis&#x00A0;D. Viglas, Jeffrey&#x00A0;F. Naughton, and Josef Burger. 2003. Maximizing the output rate of multi-way join queries over streaming information sources. In <em>      <em>Proceedings of the 29th international conference on Very large data bases - Volume 29</em>     </em>(<em>VLDB &#x2019;03</em>). VLDB Endowment, 285&#x2013;296.</li>     <li id="BibPLXBIB0047" label="[47]">Song Wang, Elke Rundensteiner, Samrat Ganguly, and Sudeept Bhatnagar. 2006. State-slice: new paradigm of multi-query optimization of window-based stream queries. In <em>      <em>Proceedings of the 32nd international conference on Very large data bases</em>     </em>(<em>VLDB &#x2019;06</em>). VLDB Endowment, 619&#x2013;630.</li>     <li id="BibPLXBIB0048" label="[48]">Kun-Lung Wu, Shyh-Kwei Chen, and Philip&#x00A0;S. Yu. 2004. Interval query indexing for efficient stream processing. In <em>      <em>Proceedings of the thirteenth ACM international conference on Information and knowledge management</em>     </em>(<em>CIKM &#x2019;04</em>). ACM, New York, NY, USA, 88&#x2013;97.</li>     <li id="BibPLXBIB0049" label="[49]">Rui Zhang, Nick Koudas, Beng&#x00A0;Chin Ooi, and Divesh Srivastava. 2005. Multiple aggregations over data streams. In <em>      <em>Proceedings of the 2005 ACM SIGMOD international conference on Management of data</em>     </em>(<em>SIGMOD &#x2019;05</em>). ACM, New Yorks, NY, USA, 299&#x2013;310.</li>     <li id="BibPLXBIB0050" label="[50]">Yali Zhu, Elke&#x00A0;A. Rundensteiner, and George&#x00A0;T. Heineman. 2004. Dynamic plan migration for continuous queries over data streams. In <em>      <em>Proceedings of the 2004 ACM SIGMOD international conference on Management of data</em>     </em>(<em>SIGMOD &#x2019;04</em>). ACM, New York, NY, USA, 431&#x2013;442.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">     <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class="link-inline force-break" href="https://github.com/espertechinc/esper">https://github.com/espertechinc/esper</a>   </p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>     <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3191653">https://doi.org/10.1145/3184558.3191653</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div>  </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Adaptive Optimisation For Continuous Multi-Way Joins Over
+  RDF Streams</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Adaptive Optimisation For
+          Continuous Multi-Way Joins Over RDF Streams</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Danh</span> <span class=
+          "surName">Le-Phuoc</span> Technical University of Berlin,
+          Berlin, Germany, <a href=
+          "mailto:danh.lephuoc@tu-berlin.de">danh.lephuoc@tu-berlin.de</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191653"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191653</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>The join operator is a core component of an RDF
+        Stream Processing engine. The join operations usually
+        dominate the processing load of a query execution plan. Due
+        to the constantly updating nature of continuous queries,
+        the query optimiser has to frequently change the optimal
+        execution plan for a query. However, optimising the join
+        executing plan for every execution step might be
+        prohibitively expensive, hence, dynamic optimisation of
+        continuous join operations is still a challenging problem
+        so far. Therefore, this paper proposes the first adaptive
+        optimisation approach towards this problem in the context
+        of RDF Stream Processing. The approach comes with two
+        dynamic cost-based optimisation algorithms which use a
+        light-weight process to search for the best execution plan
+        for every execution step. The experiments show the
+        encouraging results towards this direction.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Information systems</strong> →
+        <strong>Join algorithms;</strong> <strong>Stream
+        management;</strong> <em>Resource Description Framework
+        (RDF);</em></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>RDF Stream
+          Processing</small>,</span> <span class=
+          "keyword"><small>Adaptive Optimisation</small>,</span>
+          <span class="keyword"><small>Continuous Multi-way
+          joins</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Danh Le-Phuoc. 2018. Adaptive Optimisation For Continuous
+          Multi-Way Joins Over RDF Streams. In <em>WWW '18
+          Companion: The 2018 Web Conference Companion,</em>
+          <em>April 23–27, 2018,</em> <em>Lyon, France. ACM, New
+          York, NY, USA</em> 9 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3191653" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191653</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-2">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Most of current RDF Stream Processing (RSP) engines use
+      the logical query operators introduced in&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0003">3</a>] construct
+      their logical query plans from the SPARQL-like query dialects
+      of their choice. Subsequently, the query optimisation might
+      be applied at the <em>logical level</em> by rewriting the
+      plan to improve efficiency, called <em>algebraic
+      optimisation</em>. The common rewriting rules such as
+      reordering selection before joins and evaluating inexpensive
+      predicates before complex ones were used in&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0008">8</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0021">21</a>].
+      Particularly for continuous queries,&nbsp;Arasu et&nbsp;al.
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0003">3</a>] proposed
+      rules on window-based operators such as commutative rules on
+      time-based and count-based windows.</p>
+      <p>The logical query plan needs to be scheduled to be
+      executed in the execution engine of a data stream management
+      system (DSMS) with a physical plan composed of concrete
+      physical operators and costs. As the data arrives to the
+      engine continuously, the DSMS scheduler can use different
+      equivalent physical plans to execute a logical query plan
+      during the life-time of a query. Traditional DBMSs use
+      selectivity information and available indices to choose
+      efficient physical plans (e.g., those which require fewer
+      disk accesses). However, this cost metric does not apply to
+      (possibly approximate) continuous queries, where processing
+      cost per-unit-time is more appropriate&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0027">27</a>]. Alternatively, if the
+      stream arrival rates and output rates of query operators are
+      known, then it may be possible to optimise for the highest
+      output rate or to find a plan that takes the least time to
+      output a given number of tuples&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0040">40</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0043">43</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0045">45</a>]. Finally,
+      quality-of-service metrics such as response time may also be
+      used in DSMS query optimisation&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0001">1</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0010">10</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0038">38</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0039">39</a>].</p>
+      <p>Optimisation by rescheduling physical query plans are
+      similar to those used in relational databases, e.g.,
+      re-ordering a sequence of binary joins in order to minimise a
+      particular cost metric. There has been work in join ordering
+      for data streams in the context of the rate-based
+      model&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0045">45</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0046">46</a>].
+      Furthermore, adaptive re-ordering of pipelined stream filters
+      is studied in&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>], and adaptive materialisation of
+      intermediate join results are considered in&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0007">7</a>]. Note the
+      prevalence of the notion of adaptivity in query rescheduling:
+      operators may need to be re-ordered on-the-fly in response to
+      changes in system conditions. In particular, the cost of a
+      query plan may change for three reasons: change in the
+      processing time of an operator, change in the selectivity of
+      a predicate, and change in the arrival rate of a
+      stream&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>].</p>
+      <p>Join operator is a core component of an RDF Stream
+      Processing engine as it usually uses a SPARQL-like language
+      fragment consisting of basic graph patterns which are
+      commonly translated to join operations. The join operations
+      usually dominate the processing load of a query execution
+      plan. Due to the constantly updating nature of the continuous
+      query, the query optimiser has to frequently change the
+      optimal execution plan for a query. However, optimising the
+      join executing plan for every execution step might be
+      prohibitively expensive, hence, dynamic optimisation of
+      continuous join operation is a still challenging problem so
+      far even in the wider context, i.e. DSMS (cf.
+      Section&nbsp;<a class="sec" href="#sec-15">6</a>). Learning
+      from our experience implementing several version of CQELS
+      engines in&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0032">32</a>] and &nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0031">31</a>], we propose the first
+      adaptive optimisation approach towards this problem. This
+      paper will presents this approach with two dynamic cost-based
+      optimisation algorithms which use a light-weight process to
+      search for best query plan. Our experiments in
+      Section&nbsp;<a class="sec" href="#sec-12">5</a> show the
+      encouraging results towards this direction.</p>
+      <p>The rest of the paper is outlined as following. The next
+      section will introduce the continuous multiway join with the
+      general cost model for dynamically finding the optimal query
+      plan in each execution step. Section&nbsp;<a class="sec"
+      href="#sec-6">3</a> will follow up with two adaptive
+      optimisation algorithms. The experiments of such algorithms
+      are reported in the following Section&nbsp;<a class="sec"
+      href="#sec-12">5</a>. Finally, we conclude the paper in
+      Section&nbsp;<a class="sec" href="#sec-16">7</a>.</p>
+    </section>
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Continuous
+          Multi-Way Joins over RDF Streams</h2>
+        </div>
+      </header>
+      <section id="sec-4">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Overview of
+            Continuous Multiway Join</h3>
+          </div>
+        </header>
+        <p>The basic graph patterns associated with sliding windows
+        in RSP query languages such as C-SPARQL&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0009">9</a>] or
+        CQELS-QL&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0032">32</a>] could be translated to a multiway
+        join query. A multiway join query can be evaluated by trees
+        of binary, partially blocking, and pipelined join
+        operators. However, this approach is not sufficient for
+        processing streaming inputs that need to dynamically
+        reorganise the evaluation tree in response to the changes
+        of stream data. Therefore, similar to MJoin&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0046">46</a>], we
+        introduce a single multiway join that works over more than
+        two input buffers. This multiway join generates and
+        propagates results in a single step without having to pass
+        these results through a multi-stage binary execution
+        pipeline. Because the multiway join is symmetric, without
+        loss of generality, we extend the incremental equations of
+        the binary join to the n-way join as shown in
+        Equations&nbsp;<a class="eqn" href="#eq1">1</a>
+        and&nbsp;<a class="eqn" href="#eq2">2</a> where the
+        inserting and expiring happen in the input buffer
+        <em>R</em> <sup>1</sup> of window <em>W</em> <sup>1</sup>.
+        Note that, <em>R<sup>i</sup></em> is the input buffer of
+        window <em>W<sub>i</sub></em> of each execution step for
+        <em>i</em> = 1..<em>n</em>. In order to employ our
+        ring-index for window buffers introduced in&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0031">31</a>], we
+        represent the incremental evaluation of these equations in
+        Equation&nbsp;<a class="eqn" href="#eq3">3</a> using the
+        select operator <span class="inline-equation"><span class=
+        "tex">$\sigma _{\mu _1}(R^2)$</span></span> . The operator
+        <span class="inline-equation"><span class="tex">$\sigma
+        _{\mu _1}(R^2)$</span></span> returns all the mappings
+        stored in the input buffer <em>R</em> <sup>2</sup> which
+        are compatible with <em>μ</em> <sub>1</sub>. As shown in
+        the experimental result of [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0031">31</a>], this operator is supported by the
+        high throughput <em>probe</em> method on the data structure
+        that has ring-indexes on the variables to check the
+        compatibility.</p>
+        <div class="table-responsive" id="eq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} (R^1\uplus \mu
+            _1) \bowtie (R^2\cdots \bowtie {R^n})=(R^1{\bowtie
+            }R^2\cdots \bowtie {R^n}) \cup (\mu {_1}\bowtie
+            (R^2\cdots \bowtie {R^n})) \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>
+        <div class="table-responsive" id="eq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} (R^1-\mu _1)
+            \bowtie (R^2\cdots \bowtie {R^n})=(R^1{\bowtie
+            }R^2\cdots \bowtie {R^n}) \setminus (\mu {_1}\bowtie
+            (R^2\cdots \bowtie {R^n})) \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>
+        <div class="table-responsive" id="eq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mu
+            {_1}\bowtie (R^2\cdots \bowtie {R^n})=(\lbrace \mu
+            {_1}\rbrace \times \sigma _{\mu _1}(R^2))\bowtie
+            (R^3\cdots \bowtie {R^n}) \end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>The evaluation of a new mapping <em>μ</em> <sub>1</sub>
+        inserted in to the input buffer <em>R</em> <sup>1</sup> is
+        illustrated in Figure&nbsp;<a class="fig" href=
+        "#fig1">1</a>.</p>
+        <figure id="fig1">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-fig1.jpg"
+          class="img-responsive" alt="Figure 1" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 1:</span>
+            <span class="figure-title">Multiway join
+            process.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>When a mapping <em>μ</em> <sub>1</sub> is inserted into
+        the input buffer <em>R</em> <sup>1</sup>, it will be used
+        to probe one of the other input buffers <em>R</em>
+        <sup>2</sup>⋅⋅⋅<em>R<sup>n</sup></em> . Let us assume that
+        <em>R</em> <sup>2</sup> is the next input buffer in the
+        probing sequence. For each mapping <span class=
+        "inline-equation"><span class="tex">$\mu
+        _2^i$</span></span> in <em>R</em> <sup>2</sup> that is
+        compatible with <em>μ</em> <sub>1</sub>, an intermediate
+        joined mapping in the form <span class=
+        "inline-equation"><span class="tex">$\mu _1\circ \mu
+        _2^i$</span></span> is generated. Subsequently,
+        <span class="inline-equation"><span class="tex">$\mu
+        _1\circ \mu _2^i$</span></span> is recursively used to
+        probe the other input buffers to generate the final
+        mappings. When a buffer that does not return any compatible
+        mapping is found, the probing sequence stops. For dealing
+        with the data expiration of each buffer, we use the
+        negative tuple approach which assigns ”negative signatures”
+        to the expired tuples to forward to upper operator to
+        invalidate expired output of the join,. We call them as
+        negative mappings respectively in this paper. Due to the
+        page limit, we would like to refer readers
+        to&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0031">31</a>] for further details.</p>
+        <p>Algorithm&nbsp;1 shows our incremental evaluation
+        algorithm for a multiway join with <em>n</em> input
+        buffers. Lines&nbsp;- handle new mappings and line&nbsp; is
+        for forwarding the negative mappings to the upper operator
+        to deal with the expiration case&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0031">31</a>]. Line&nbsp; calls the
+        recursive sub-routine <em>probingPropagate</em> given in
+        Algorithm&nbsp;2 to initialise the probing sequence. The
+        probing sequence is given in sub-routine
+        <em>findNextProbWin</em> in line&nbsp;. Each step of the
+        probing sequence is dynamically identified by the output
+        generated from previous steps. Therefore, the probing
+        sequence plays an important role in the performance of this
+        multiway join algorithm. Hence, the sub-routine
+        <em>findNextProbWin</em> is the place holder to introduce
+        the adaptive optimization algorithms in
+        Section&nbsp;<a class="sec" href="#sec-6">3</a>.</p>
+        <p><img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-graphic2.jpg"
+        class="img-responsive" alt="" longdesc="" /></p>
+        <p><img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-graphic3.jpg"
+        class="img-responsive" alt="" longdesc="" /></p>
+      </section>
+      <section id="sec-5">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> Cost Model
+            for Optimizing Multiway join</h3>
+          </div>
+        </header>
+        <p>Data stream sources may suffer fluctuations from data
+        arrival, most of them from unpredictable, slow or bursty
+        network traffic&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0044">44</a>]. On top of that, due to the
+        streaming nature of the input, the data distribution is
+        unpredictable, thus, making it difficult to have a model
+        for operator selectivity&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0025">25</a>]. To deal with changes in the
+        selectivity of the join predicates in multiway joins, we
+        exploit our adaptive multiway join algorithm to find the
+        best execution plans at run-time. As shown in section, we
+        can use the sub-routine <em>findNextProbWin</em> to
+        dynamically chose best sub-probing sequence for each new
+        mapping arriving at an input window. A long this line, we
+        will define the cost model to specify the criteria for
+        choosing the best probing sequence for each new mapping at
+        run-time. Base on the recursive nature of our continuous
+        multiway join, the optimal cost function can be recursively
+        defined in Definitions&nbsp;<a class="eqn" href=
+        "#eq4">4</a> and&nbsp;<a class="eqn" href="#eq5">5</a>.</p>
+        <div class="table-responsive" id="eq4">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mathbb
+            {C}(\mu \bowtie R)=\mathcal {C}(\sigma _{\mu
+            }(R))+\mathcal {C}(\lbrace \mu \rbrace \times \sigma
+            _{\mu }(R)) \end{equation}</span><br />
+            <span class="equation-number">(4)</span>
+          </div>
+        </div>
+        <div class="table-responsive" id="eq5">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \begin{split}
+            \mathbb {C}(\mu _{1}\bowtie \lbrace R^{2}\cdots
+            {R^n}\rbrace)=\min _{i_{2} \in \lbrace 2..n\rbrace
+            }\Big (\mathbb {C}(\mu _1 \bowtie R^{i_2})+\\\sum _{\mu
+            ^{*}_{i_2} \in \sigma _{\mu _1}(R^{i_2})}\mathbb
+            {C}((\mu _1\circ \mu ^{*}_{i_2})\bowtie (\lbrace
+            R^{2}\cdots {R^n}\rbrace \setminus \lbrace
+            {R^{i_2}}\rbrace))\Big) \end{split}
+            \end{equation}</span><br />
+            <span class="equation-number">(5)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>Definition&nbsp;<a class="eqn" href="#eq4">4</a> is the
+        optimal cost for a binary join which has only one possible
+        probing sequence. When a new mapping <em>μ</em> arrives at
+        an input buffer of the binary join, the only option to
+        compute new results is to probe the other input buffer
+        <em>R</em> for the mappings compatible with <em>μ</em>. The
+        cost includes <span class="inline-equation"><span class=
+        "tex">$\mathcal {C}(\sigma _{\mu }(R))$</span></span> as
+        the cost of probing the input buffer and <span class=
+        "inline-equation"><span class="tex">$\mathcal {C}(\lbrace
+        \mu \rbrace \times \sigma _{\mu }(R))$</span></span> as the
+        cost of creating new mappings from <em>μ</em> and the
+        output of <em>σ<sub>μ</sub></em> (<em>R</em>).
+        Definition&nbsp;<a class="eqn" href="#eq5">5</a> is used to
+        recursively choose the next input buffer for the probing
+        sequence <em>μ</em> <sub>1</sub>⋈{<em>R</em>
+        <sup>2</sup>⋅⋅⋅<em>R<sup>n</sup></em> } that has the
+        minimal cost, provided that the optimal costs of for all
+        possible next probing sequences <span class=
+        "inline-equation"><span class="tex">$\mathbb {C}((\mu
+        _1\circ \mu ^{*}_{i_2})\bowtie (\lbrace R^{2}\cdots
+        {R^n}\rbrace \setminus \lbrace
+        {R^{i_2}}\rbrace))$</span></span> are known. However, to
+        compute the value of this cost function, we need to compute
+        <span class="inline-equation"><span class="tex">$\mathbb
+        {C}$</span></span> for all possible probing sequences,
+        which is prohibitively expensive. Therefore, we aim at
+        finding a near optimal probing sequence by approximating
+        this cost function through two light-weight estimation
+        methods described next.</p>
+      </section>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Adaptive
+          Optimisation Algorithms</h2>
+        </div>
+      </header>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> One-step
+            Adaptation</h3>
+          </div>
+        </header>
+        <p>As shown by the experimental results of the throughput
+        of the probing operation in &nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0030">30</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0031">31</a>], we can assume that the
+        cost of probing an input buffer can be estimated by a
+        constant (<em>γ<sub>σ</sub></em> ), since it does not
+        change dramatically with respect to the sizes of the window
+        buffers. Moreover, we can also assume that the cost of
+        generating a mapping from two mappings is constant
+        (<em>γ</em> <sub>×</sub>). Therefore, we have the following
+        definitions for <em>γ<sub>σ</sub></em> and <em>γ</em>
+        <sub>×</sub>.</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \gamma
+            _{\sigma }\approx \mathcal {C}(\sigma _{\mu }(R))
+            \text{ for every $\mu $ and $R$}
+            \end{equation}</span><br />
+            <span class="equation-number">(6)</span>
+          </div>
+        </div>
+        <div class="table-responsive" id="Xeq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \gamma
+            _{\times } \approx \frac{\mathcal {C}(\lbrace \mu
+            \rbrace \times \sigma _{\mu }(R))}{\left|{\sigma _{\mu
+            }(R)}\right|} \text{ for every $\mu $ and $R$}
+            \end{equation}</span><br />
+            <span class="equation-number">(7)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>To adapt to the changes in the input buffers, our
+        one-step adaption method assumes that the costs of the next
+        steps in the possible probing sequences are approximatively
+        the same for each output generated from the current probing
+        step. Definition&nbsp;<a class="eqn" href="#eq6">8</a>
+        approximates the cost of each next probing sequence
+        <span class="inline-equation"><span class="tex">$(\lbrace
+        R^{2}\cdots {R^n}\rbrace \setminus \lbrace
+        {R^{i_2}}\rbrace)$</span></span> as a constant <em>γ</em>
+        <sub>⋈</sub>:</p>
+        <div class="table-responsive" id="eq6">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \gamma
+            _{\bowtie }\approx \mathbb {C}((\mu _1\circ \mu
+            ^{*}_{i_2})\bowtie (\lbrace R^{2}\cdots {R^n}\rbrace
+            \setminus \lbrace {R^{i_2}}\rbrace))
+            \end{equation}</span><br />
+            <span class="equation-number">(8)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>Hence, we have the approximate cost function for a
+        probing sequence as shown below.</p>
+        <div class="table-responsive" id="Xeq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mathbb
+            {C}(\mu _{1}\bowtie \lbrace R^{2}\cdots
+            {R^n}\rbrace)\approx \gamma _{\sigma }+(\gamma _{\times
+            }+\gamma _{\bowtie })\min _{i_{2} \in \lbrace
+            2..n\rbrace }\left|{\sigma _{\mu }(R^{i_2})}\right|
+            \end{equation}</span><br />
+            <span class="equation-number">(9)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>This approximation enables us to build a simple
+        algorithm for finding the potentially best probing sequence
+        by checking the cardinalities of all possible probing
+        operations of a mapping <em>μ</em> on k sliding windows
+        {W[i<sub>1</sub>],..,W[i <sub><em>k</em></sub> ]}. The
+        algorithm is described in Algorithm&nbsp;3. Note that this
+        algorithm can use the counters stored in the ring index
+        entries of the keys on the join predicates of the window
+        buffer. Calling the probe function on a window at
+        line&nbsp; will return the index entries for identifying
+        the cardinality of the probing output.</p>
+        <p><img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-graphic4.jpg"
+        class="img-responsive" alt="" longdesc="" /></p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span>
+            Two-step<sup>+</sup> Adaptation</h3>
+          </div>
+        </header>
+        <p>The more probing sequences are possible for <em>μ</em>
+        <sub>1</sub>⋈{<em>R</em>
+        <sup>2</sup>⋅⋅⋅<em>R<sup>n</sup></em> } the harder it gets
+        to compute the cost function given in
+        Definition&nbsp;<a class="eqn" href="#eq5">5</a>. We
+        analyse the number of possible probing sequences of a join
+        query based on its join graph. A join graph consists a set
+        of windows as its vertices. Two vertices are connected if
+        two windows share a join predicate (same mapping variable).
+        Figure&nbsp;<a class="fig" href="#fig2">2</a> depicts four
+        join graphs for two 4-way joins and two 6-way joins. Note
+        that each vertex is labeled with name of the shared mapping
+        variable. Join graphs connected as a line as in
+        Figure&nbsp;2a and Figure&nbsp;2c are called linear joins.
+        If a mapping <em>μ</em> <sub>1</sub> comes from both ends
+        of the linear join, there is only one possible probing
+        sequence. For instance, the only possible probing sequence
+        for <em>μ</em> <sub>1</sub>⋈{<em>R</em> <sup>2</sup>,
+        <em>R</em> <sup>3</sup>, <em>R</em> <sup>4</sup>} is
+        <em>μ</em> <sub>1</sub>⋈<em>R</em> <sup>2</sup>⋈<em>R</em>
+        <sup>3</sup>⋈<em>R</em> <sup>4</sup>. Therefore, it is easy
+        to estimate <span class="inline-equation"><span class=
+        "tex">$\mathbb {C}(\mu _{1}\bowtie \lbrace R^{2}\cdots
+        {R^n}\rbrace)$</span></span> in this case. For instance, by
+        monitoring the probing operation with the given probing
+        sequence, its cost can be stored in an extra field of the
+        ring index entry of the index used for the join
+        predicate&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0031">31</a>].</p>
+        <figure id="fig2">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-fig2.jpg"
+          class="img-responsive" alt="Figure 2" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 2:</span>
+            <span class="figure-title">Join graphs.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>Another interesting property of linear joins is that the
+        inner nodes have only two connections to two separate
+        linear subjoins. This property can be used to efficiently
+        estimate the probing sequences in a linear join by breaking
+        the graph into smaller linear sub-joins. The join graphs
+        that have the star and bushy topologies like Figure&nbsp;2b
+        and Figure&nbsp;2d are called star join and bushy join,
+        respectively. The higher the connectivity of the graph, the
+        more complicated it becomes to compute the <em>min</em>
+        part in Definition&nbsp;<a class="eqn" href="#eq5">5</a>.
+        However, we have found a useful property for the high
+        connectivity vertices as shown in the following
+        equation.</p>
+        <div class="table-responsive" id="Xeq4">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \begin{split}
+            \mu \bowtie (\lbrace R^{i_1}\cdots
+            {R^{i^m}}\rbrace)=\sigma _{\mu }(R^{i_1})&amp;\times
+            \cdots \times \sigma _{\mu }(R^{i_m}) \\\text{if} \quad
+            dom(R^{i_j}){\cap }dom(R^{i_k}){\subseteq
+            }dom(\mu)\quad \forall j,k\in [1..m]{\wedge }j{\ne }k
+            \end{split} \end{equation}</span><br />
+            <span class="equation-number">(10)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>This property says that the Cartesian product of the all
+        outputs of probing operations <span class=
+        "inline-equation"><span class="tex">$\sigma _{\mu
+        }(R^{i_j})$</span></span> , using the mapping <em>μ</em> on
+        the input buffers <span class=
+        "inline-equation"><span class="tex">$R^{i_j}$</span></span>
+        , is equivalent to the join operation <span class=
+        "inline-equation"><span class="tex">$\mu \bowtie (\lbrace
+        R^{i_1}\cdots {R^{i^m}}\rbrace)$</span></span> . The
+        condition, called <em>short-cut condition</em>, is met when
+        <em>μ</em> contains all shared variables of pairs of
+        distinct input buffers. Based on these properties, we can
+        provide an approximation function
+        <em>γ<sub>approx</sub></em> for <span class=
+        "inline-equation"><span class="tex">$\mathbb {C}((\mu
+        _1\circ \mu ^{*}_{i_2})\bowtie (\lbrace R^{2}\cdots
+        {R^n}\rbrace \setminus \lbrace
+        {R^{i_2}}\rbrace))$</span></span> . An improved cost
+        approximation function is shown in
+        Definition&nbsp;<a class="eqn" href="#eq7">11</a>.</p>
+        <div class="table-responsive" id="eq7">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \begin{split}
+            \mathbb {C}(\mu _{1}\bowtie \lbrace R^{2}\cdots
+            {R^n}\rbrace)\approx \gamma _{\sigma }+\min _{i_{2} \in
+            \lbrace 2..n\rbrace }&amp;\Big (\left|{\sigma _{\mu
+            _1}(R^{i_2})}\right|\sum _{\mu ^{*}_{i_2} \in \sigma
+            _{\mu _1}(R^{i_2})}\big (\gamma _{\times } + \\\gamma
+            _{approx}((\mu _1\circ \mu ^{*}_{i_2})\bowtie (\lbrace
+            R^{2}\cdots {R^n}\rbrace \setminus \lbrace
+            R^{i_2}\rbrace))\big)\Big) \end{split}
+            \end{equation}</span><br />
+            <span class="equation-number">(11)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>Based on this definition, we propose the
+        two-step<sup>+</sup> algorithm to enable short-cut joins
+        shown in Algorithm&nbsp;4. Lines&nbsp;- check the short-cut
+        condition. When the short-cut-condition is not met, the
+        algorithm calls the sub-routine <span class=
+        "inline-equation"><span class=
+        "tex">$findNextProbWin\_MinCost$</span></span> to find the
+        next buffer to probe based on the approximate costs.</p>
+        <p><img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-graphic9.jpg"
+        class="img-responsive" alt="" longdesc="" /></p>
+        <p>This sub-routine is described in Algorithm&nbsp;5. It
+        finds the next input buffer that potentially leads to the
+        minimal cost value. Lines&nbsp;- check if all estimations
+        <em>γ<sub>approx</sub></em> are available. Then, the best
+        probing sequence will be determined in lines&nbsp;-. If one
+        of the estimations needed is not available, the algorithm
+        will switch to the one-step algorithm to find the probing
+        sequence as shown in lines&nbsp;-. In the process,
+        line&nbsp; will turn on the operator monitor to measure the
+        time spent for this probing sequence, and then assign this
+        value to <em>γ<sub>approx</sub></em> for the next
+        executions. To direct the probing sequence to the short-cut
+        condition, we assign a zero cost for <span class=
+        "inline-equation"><span class="tex">$\gamma _{approx}(\mu
+        \bowtie (\lbrace R^{i_1}\cdots
+        {R^{i^m}}\rbrace))$</span></span> if <span class=
+        "inline-equation"><span class="tex">$\mu \bowtie (\lbrace
+        R^{i_1}\cdots {R^{i^m}}\rbrace)$</span></span> that meets
+        the short-cut condition.</p>
+        <p><img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-graphic10.jpg"
+        class="img-responsive" alt="" longdesc="" /></p>
+      </section>
+    </section>
+    <section id="sec-9">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Adaptive
+          Optimization for Multiple Multiway Joins</h2>
+        </div>
+      </header>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span>
+            Multiple-Join Operator</h3>
+          </div>
+        </header>
+        <p>To share the computations and the memory when processing
+        multiple joins that have the same set of input buffers, we
+        modify the multiway join algorithm in
+        Section&nbsp;<a class="sec" href="#sec-4">2.1</a>
+        associated with the adaptive optimization algorithms in
+        Section&nbsp;<a class="sec" href="#sec-6">3</a> to build a
+        shared join operator, i.e, the multiple join operator. Let
+        us assume <em>m</em> multiple window joins <span class=
+        "inline-equation"><span class="tex">$W^1_j\cdots \bowtie
+        {W^m_j}$</span></span> where j=1...k and <span class=
+        "inline-equation"><span class="tex">$W^i_j$</span></span>
+        is a window buffer extracted from the RDF stream
+        <em>S<sup>i</sup></em> , i=1...n. Let <span class=
+        "inline-equation"><span class=
+        "tex">$W^i_{max}$</span></span> be the window buffer that
+        has a window size equal to the maximum window size over all
+        <span class="inline-equation"><span class=
+        "tex">$W^i_j$</span></span> , j=1...k. Then, the
+        containment property&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0024">24</a>] as shown in
+        Definition&nbsp;<a class="eqn" href="#eq8">12</a>
+        holds.</p>
+        <div class="table-responsive" id="eq8">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} W^1_j\cdots
+            \bowtie {W^n_j} \subseteq W^1_{max}\cdots \bowtie
+            {W^n_{max}} \end{equation}</span><br />
+            <span class="equation-number">(12)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>Due to this property, the processing of the query
+        <span class="inline-equation"><span class=
+        "tex">$W^1_{max}\cdots \bowtie {W^n_{max}}$</span></span>
+        produces an output that contains the outputs of all queries
+        <span class="inline-equation"><span class=
+        "tex">$W^1_j\cdots \bowtie {W^n_j}$</span></span> ,
+        j=1...k. Therefore, the join component only has to execute
+        a single multiway query for <span class=
+        "inline-equation"><span class="tex">$W^1_{max}\cdots
+        \bowtie {W^n_{max}}$</span></span> . In the routing
+        component, each resulting mapping has to be routed to the
+        query that takes it as an input. We call the routing
+        component of the multiple join operator <em>router</em>.
+        The router maintains a sorted list of the windows relevant
+        to each join. The windows are ordered by window sizes in
+        increasing order. Each output mapping is traversed to its
+        constituent leaf-mappings to find the mappings which are
+        valid within valid time intervals of the windows. When a
+        mapping satisfies the time condition of a query, it is
+        routed to the query's output buffer. Figure&nbsp;<a class=
+        "fig" href="#fig3">3</a> illustrates a multiple join
+        operator for 3 queries over 2 streams <em>S</em>
+        <sup>1</sup> and <em>S</em> <sup>2</sup> where <span class=
+        "inline-equation"><span class="tex">$Q_{1}=W^1_1\bowtie
+        {W^2_1}$</span></span> , <span class=
+        "inline-equation"><span class="tex">$Q_{2}=W^1_2\bowtie
+        {W^2_2}$</span></span> and <span class=
+        "inline-equation"><span class="tex">$Q_{3}=W^1_3\bowtie
+        {W^2_3}$</span></span> . This multiple join operator
+        connects the 2-way join operator <span class=
+        "inline-equation"><span class="tex">$W^1_{max}{\bowtie
+        }W^2_{max}$</span></span> to its router where <span class=
+        "inline-equation"><span class=
+        "tex">$W^1_{max}=W^1_3$</span></span> and <span class=
+        "inline-equation"><span class=
+        "tex">$W^2_{max}=W^2_3$</span></span> . The left-hand side
+        of the figure shows how the router delivers the output
+        mappings from the 2-way join to each query. For instance,
+        when the new mapping ⟨<em>a</em> <sub>1</sub>, <em>b</em>
+        <sub>6</sub>⟩ arrives at the stream <em>S</em>
+        <sup>1</sup>, the 2-way join probes the input buffer
+        <span class="inline-equation"><span class=
+        "tex">$W^2_{max}$</span></span> to generate two output
+        mappings ⟨<em>a</em> <sub>1</sub>, <em>b</em> <sub>6</sub>,
+        <em>c</em> <sub>1</sub>⟩ and ⟨<em>a</em> <sub>1</sub>,
+        <em>b</em> <sub>6</sub>, <em>c</em> <sub>5</sub>⟩. Based on
+        the window conditions of each query, the router routes
+        ⟨<em>a</em> <sub>1</sub>, <em>b</em> <sub>6</sub>,
+        <em>c</em> <sub>5</sub>⟩ to <em>Q</em> <sub>1</sub> and
+        <em>Q</em> <sub>2</sub> and both ⟨<em>a</em> <sub>1</sub>,
+        <em>b</em> <sub>6</sub>, <em>c</em> <sub>1</sub>⟩ and
+        ⟨<em>a</em> <sub>1</sub>, <em>b</em> <sub>6</sub>,
+        <em>c</em> <sub>5</sub>⟩ to <em>Q</em> <sub>3</sub>.</p>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-fig3.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">Shared Windows
+            Example.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Networks of
+            Multiple Join Operators for Shared Window Joins</h3>
+          </div>
+        </header>
+        <p>In the general case, the concurrent queries registered
+        to the system only share subsets of the streams involved in
+        their queries. Therefore, we create a network of multiple
+        join operators to enable sharing the execution of
+        sub-queries for a group of queries. Each multiple join
+        operator is created for a group of joins that share the
+        same set of streams. Figure&nbsp;<a class="fig" href=
+        "#fig4">4</a> illustrates a network for 4 queries over 4
+        streams <em>S</em> <sup>1</sup>, <em>S</em> <sup>2</sup>,
+        <em>S</em> <sup>3</sup> and <em>S</em> <sup>4</sup>, where
+        <span class="inline-equation"><span class=
+        "tex">$Q_{1}=W^1_1\bowtie {W^2_1}\bowtie
+        {W^3_1}$</span></span> , <span class=
+        "inline-equation"><span class="tex">$Q_{2}=W^2_2\bowtie
+        {W^3_2}$</span></span> <span class=
+        "inline-equation"><span class="tex">$Q_{3}=W^2_3\bowtie
+        {W^3_3}\bowtie {W^4_3}$</span></span> and <span class=
+        "inline-equation"><span class="tex">$Q_{4}=W^2_4\bowtie
+        {W^3_4}\bowtie {W^4 _4}$</span></span> . This network is
+        composed of three multiple join operators <span class=
+        "inline-equation"><span class="tex">$\bowtie
+        ^M_1$</span></span> , <span class=
+        "inline-equation"><span class="tex">$\bowtie
+        ^M_2$</span></span> and <span class=
+        "inline-equation"><span class="tex">$\bowtie
+        ^M_3$</span></span> where <span class=
+        "inline-equation"><span class="tex">$\bowtie
+        ^M_1$</span></span> is for <em>Q</em> <sub>1</sub>,
+        <span class="inline-equation"><span class="tex">$\bowtie
+        ^M_2$</span></span> is for <em>Q</em> <sub>2</sub> and
+        <span class="inline-equation"><span class="tex">$\bowtie
+        ^M_3$</span></span> for <em>Q</em> <sub>3</sub> and
+        <em>Q</em> <sub>4</sub>.</p>
+        <figure id="fig4">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-fig4.jpg"
+          class="img-responsive" alt="Figure 4" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 4:</span>
+            <span class="figure-title">A Network of Multiple Join
+            Operators.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>To reduce the amount of memory allocated for the window
+        buffers, the network only uses one buffer for each stream.
+        This buffer contains all window buffers on that stream. For
+        example, the input buffer <span class=
+        "inline-equation"><span class=
+        "tex">$W^2_{max}$</span></span> on the stream <em>S</em>
+        <sup>2</sup> contains the windows <span class=
+        "inline-equation"><span class="tex">$W^2_1$</span></span> ,
+        <span class="inline-equation"><span class=
+        "tex">$W^2_1$</span></span> , <span class=
+        "inline-equation"><span class="tex">$W^2_2$</span></span> ,
+        <span class="inline-equation"><span class=
+        "tex">$W^2_3$</span></span> and <span class=
+        "inline-equation"><span class="tex">$W^2_4$</span></span> .
+        Therefore, multiple join operators in the network share
+        subsets of all input buffers created for the network. This
+        enables an incremental evaluation for the network in the
+        same way as for multiway joins. Algorithm&nbsp;6 presents
+        the probing propagation process in the network.</p>
+        <p><img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-graphic13.jpg"
+        class="img-responsive" alt="" longdesc="" /></p>
+        <p>The algorithm recursively propagates the probing
+        operations to find possible outputs in the join component,
+        before forwarding join outputs to the routing component.
+        When a new mapping arrives at an input window, it will
+        trigger a probing graph that contains all probing sequences
+        of the multiple joins that consumes that new mapping. For
+        instance, a new mapping <em>μ</em> <sub>2</sub> in the
+        stream <em>S</em> <sup>2</sup> will trigger the following
+        probing sequences: <span class=
+        "inline-equation"><span class="tex">$seq_1=\mu _2\bowtie
+        \lbrace W^1_{max},W^3_{max}\rbrace$</span></span> for
+        <span class="inline-equation"><span class="tex">$\bowtie
+        ^M_1$</span></span> , <span class=
+        "inline-equation"><span class="tex">$seq_2=\mu _2\bowtie
+        {W^3_{max}}$</span></span> for <span class=
+        "inline-equation"><span class="tex">$\bowtie
+        ^M_2$</span></span> and <span class=
+        "inline-equation"><span class="tex">$seq_3=\mu _2\bowtie
+        \lbrace W^3_{max},W^4_{max}\rbrace$</span></span> for
+        <span class="inline-equation"><span class="tex">$\bowtie
+        ^M_3$</span></span> . They form the probing graph depicted
+        in Figure&nbsp;<a class="fig" href="#fig5">5</a>, in which
+        they share a probing sub-sequence <em>seq</em>
+        <sub>2</sub>. Note that the solid lines represent for
+        probing sequences inside the multiway joins and the broken
+        lines represent for routing paths from the multiway joins
+        to the corresponding routers.The output mappings of this
+        shared probing sequence can either be delivered to the
+        router of <span class="inline-equation"><span class=
+        "tex">$\bowtie ^M_2$</span></span> or be used for further
+        processing in <em>seq</em> <sub>1</sub> or <em>seq</em>
+        <sub>3</sub>.</p>
+        <figure id="fig5">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-fig5.jpg"
+          class="img-responsive" alt="Figure 5" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 5:</span>
+            <span class="figure-title">A probing graph.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>At each stage of the probing graph, the algorithm checks
+        if the mapping used for the probing is the output of a
+        multiple join operator. In this case, the mapping is sent
+        to the router of this multiple join operator
+        (lines&nbsp;-). Line&nbsp; is used to check if the
+        propagated mapping can be used to generate joined results
+        by a multiple join operator. If so, line&nbsp; chooses the
+        one that has the smallest set of inputs. This multiple join
+        operator applies the two-step<sup>+</sup> algorithm for
+        choosing the best probing sequence on a single multiway
+        join (line&nbsp;).The algorithm is only applied to the
+        subset of the input buffers that have been processed on the
+        sequence created by propagated mappings.</p>
+      </section>
+    </section>
+    <section id="sec-12">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Experimental
+          Results</h2>
+        </div>
+      </header>
+      <p>In this section, we present our experimental results via
+      two types of experiments. The first type aims to show how two
+      optimisation algorithms in Section&nbsp;<a class="sec" href=
+      "#sec-6">3</a> behave in a single multiway join. The second
+      one will focus on algorithms presented in
+      Section&nbsp;<a class="sec" href="#sec-9">4</a>. The
+      implementations of these algorithms are based on the latest
+      version of CQELS engine&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0031">31</a>] which will be open sourced at
+      <em>http://cqels.org/</em> . The experiments are executed on
+      a standard workstation with Debian Squeeze AMD64 2x E5606
+      Intel Quad- Core Xeon 2.13GHz with 16GB RAM, running the Java
+      SE Runtime Environment (build 1.7.0_51-b13) Java HotSpot
+      64-Bit Server VM.</p>
+      <figure id="fig6">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-fig6.jpg"
+        class="img-responsive" alt="Figure 6" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 6:</span> <span class=
+          "figure-title">Join throughputs of optimisation
+          algorithms.</span>
+        </div>
+      </figure>
+      <p></p>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span> Single
+            Multiway join</h3>
+          </div>
+        </header>
+        <p>In the first type of the experiments on single multiway
+        join queries we compare them against the fixed probing
+        sequences used in in&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0030">30</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0031">31</a>]. We also compare them against the
+        ESPER engine&nbsp;<a class="fn" href="#fn1" id=
+        "foot-fn1"><sup>1</sup></a> which serves as the baseline.
+        Similar to previous experiments, we have created an ad-hoc
+        data structure specifically for each window buffer. We have
+        measured the throughputs for the four types of queries
+        given in Figure&nbsp;<a class="fig" href="#fig2">2</a> with
+        different window sizes. As shown in &nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0030">30</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0031">31</a>], the ratio of the
+        number of distinct values in the join predicates to the
+        window size has a significant impact in the throughput of
+        the join operator. Hence, we fix this ratio in all test
+        runs. To check the adaptability of the algorithms, in each
+        test run, we stream solution mappings to the window buffers
+        with three stages. In the first stage, we fill the window
+        buffers with mappings to keep the selectivity on the join
+        predicate at 100%. Then, in the next stage, we stream the
+        same number of mappings but with a selectivity of 10% to
+        test if the engines could adapt to the changes of the new
+        selectivity. Finally, in the last stage, we stream the same
+        number of mappings with the selectivity of 100%.</p>
+        <p>Figure&nbsp;<a class="fig" href="#fig6">6</a> reports on
+        the experimental results. The results show that the
+        two-step<sup>+</sup> algorithm outperforms the other
+        algorithms by orders of magnitude. For the 6-way join with
+        the bushy graph, ESPER reported an out-of-heap-size error
+        for window sizes greater than 100 mappings. In summary, the
+        one-step algorithm performs 175%-400% better than the fixed
+        probing sequence algorithm. The two-step<sup>+</sup>
+        algorithm provides in average a throughput which is twice
+        as high as the one given by the one-step algorithm. The
+        higher the likelyhood of short-cut joins, the higher the
+        throughput of the two-step<sup>+</sup>. In particular, the
+        4-way join with star graph and 6-way join with bushy graph
+        produces more than 7 times and 10 times higher throughputs
+        than the one-step-based version, respectively.</p>
+        <figure id="fig7">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191653/images/www18companion-392-fig7.jpg"
+          class="img-responsive" alt="Figure 7" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 7:</span>
+            <span class="figure-title">Join throughputs of multiple
+            query optimisation.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> Multiple
+            Multiway Joins</h3>
+          </div>
+        </header>
+        <p>In the next type of experiments, we evaluate the
+        performance of the multiple query optimisation algorithm by
+        testing its scalability when the number of concurrent
+        queries increases. The evaluation includes three cases: The
+        first two cases are 2-way joins and 3-way joins that share
+        the same 2 and 3 streams respectively. In the third case,
+        there is a mixture of three query types, namely 2-way
+        joins, 3-ways join, and 4-way joins whose input streams are
+        randomly chosen from 4 streams. The window size of each
+        input stream is chosen randomly between 100,000 and 200,000
+        mappings. In each case we executed a series of runs for a
+        number of queries ranging from 2 to 1,000. For each test
+        run, we first register its concurrent queries, then we
+        filled up all windows. After all windows were filled, we
+        measured the processing throughput of the engine used. The
+        engine consumes incoming data distributed evenly among 4
+        streams. In these experiments, we also used ESPER with
+        ad-hoc data structures for each stream as the baseline
+        engine and we compared against the CQELS engine equipped
+        with the multiple query optimiser.</p>
+        <p>Figure&nbsp;<a class="fig" href="#fig7">7</a> shows the
+        experimental results. We can see that the throughput of
+        ESPER drops rapidly when the number of queries increases.
+        The sudden stops in the plot line are due to out-of-heap
+        error during the processing. In all tests, the throughput
+        of CQELS only decreases marginally. This stems from the
+        fact that adding more queries only adds small additional
+        loads on the routers, while the number of streams are
+        unchanged. Since the processing load only depends on the
+        maximum window sizes of all query windows on each input
+        stream, this guarantees scalability.</p>
+      </section>
+    </section>
+    <section id="sec-15">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Background
+          &amp; Related Work</h2>
+        </div>
+      </header>
+      <p>Initial efforts on adaptive query plans include mid-query
+      re-optimisation&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0026">26</a>] and query scrambling, where the
+      objective was to pre-empt operators that become blocked and
+      to schedule other operators instead&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0002">2</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0044">44</a>]. To further increase
+      adaptivity, instead of maintaining a rigid tree-structured
+      query plan, the Eddies approach&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0004">4</a>] performs scheduling of
+      each tuple separately by routing it through the operators
+      that make up the query plan. Thereby, the operators of the
+      query plan are dynamically re-ordered to adapt to the current
+      system conditions. This is driven by tuple routing policies
+      that attempt to find which operators are fast and selective,
+      such that those operators are executed first. This approach
+      was applied to continuous queries in&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0013">13</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0036">36</a>] and was evaluated
+      in&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0017">17</a>].
+      The extended version for multi-way joins can be found
+      in&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0037">37</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0042">42</a>]. On top of
+      that, it was also extended to consider semantic information
+      such as attribute correlations during routing&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0011">11</a>]). For
+      distributed settings, the queue length is considered as a
+      third factor for tuple routing strategies&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0041">41</a>].</p>
+      <p>To achieve adaptivity, the processing engine has to deal
+      with some overheads. The first overhead is having to re-route
+      each tuple separately. The next overhead is migrating
+      internal states stored in some operators from the current
+      query plan to the new query plan that has a new arrangement
+      of operators. The issue of state migration across query plans
+      was studied in&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0018">18</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0050">50</a>]. More details on adaptive query
+      processing can be found in&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0019">19</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>].</p>
+      <p>When there are multiple continuous queries registered,
+      memory and computing resources can be shared to optimise the
+      overall processing. For selection queries, a possible
+      multi-query optimisation is to index the query predicates and
+      store auxiliary information in each tuple that identify which
+      queries it satisfies&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0012">12</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0029">29</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0035">35</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0048">48</a>]. When a new tuple arrives for
+      processing, its attribute values are extracted and matched
+      against the query index to see which queries are satisfied by
+      this tuple. Data and queries may be thought of as duals, in
+      some cases reducing query processing to a multi-way join of
+      the query predicate index and the data tables&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0013">13</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0035">35</a>]. Indexing
+      range predicates is discussed in &nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0035">35</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0048">48</a>], whereas a predicate
+      index on multiple attributes is presented in &nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0034">34</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0035">35</a>].</p>
+      <p>In addition, memory usage may be reduced by sharing
+      internal data structures that store operators’
+      states&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0016">16</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0020">20</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0049">49</a>]. Moreover,
+      in the context of complex queries containing stateful
+      operators such as joins, computation may be shared by
+      building a common query plan &nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0015">15</a>]. For example, queries
+      belonging to the same group may share a plan, which produces
+      the union of the results needed by the individual queries. A
+      final selection is then applied to the shared result set and
+      new answers are routed to the appropriate queries. An
+      interesting tradeoff appears between doing similar work
+      multiple times and doing too much unnecessary work.
+      Techniques that balance this tradeoff are presented
+      in&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0014">14</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0028">28</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0047">47</a>]. For
+      example, suppose that the workload includes several queries
+      referencing a join of the same windows, but having a
+      different selection predicate. If a shared query plan
+      performs the join first and then routes the output to the
+      appropriate queries, it is possible that unnecessary tuples
+      are generated, because, some of the joined tuples may not
+      satisfy any selection predicate. On the other hand, if each
+      query performs its selection first and then joins the
+      surviving tuples, then the join operator cannot be shared and
+      the same tuples will be probed many times. Finally, sharing a
+      single join operator among queries referencing different
+      window sizes is discussed in&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0023">23</a>].</p>
+      <p>Even there are several lines of work on adaptive query
+      optimisation and optimisation of continuous query execution
+      in general in the last 20 years, most of the proposed
+      approaches are implemented and tested in a single system or a
+      limited sets of systems within small scopes of certain
+      application domains. Therefore, to the best of our knowledge,
+      there have not been any insightful investigation of dynamic
+      optimisation at physical execution level in the context of
+      RDF Stream Processing, especially in multiway join query.
+      Therefore, we made the first effort modelling the problem to
+      design the adaptive optimisation algorithms in
+      Section&nbsp;<a class="sec" href="#sec-6">3</a> test in our
+      engine CQELS&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0031">31</a>]. Note that, there is a derived
+      work&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0033">33</a>]
+      from our continuous multiway join concept that was firstly
+      introduced in&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0030">30</a>]. The algorithms and cost models of
+      this work were inspired from ours.</p>
+    </section>
+    <section id="sec-16">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">7</span>
+          Conclusions</h2>
+        </div>
+      </header>
+      <p>The paper presents our effort on addressing a very
+      challenging problem of dynamic optimisation of join operation
+      in continuous query over RDF Streams which we believe is a
+      very central performance problem of RSP engines. We modelled
+      the join operations on RDF Streams as a continuous multiway
+      join which help us to introduces a general recursive cost
+      model. Via this cost model, we propose two approximation
+      versions which help us to introduce two light-weight adaptive
+      optimisation algorithms. Our experimental results on
+      simulated data show very encourage performance gain in
+      controlled settings. This opens up interesting and potential
+      options for implementing dynamic query optimisers for RSP
+      engines.</p>
+    </section>
+    <section id="sec-17">
+      <header>
+        <div class="title-info">
+          <h2>Acknowledgement</h2>
+        </div>
+      </header>
+      <p>This research has been supported by the Marie
+      Sklodowska-Curie Programme H2020-MSCA-IF-2014 under Grant No.
+      661180.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Daniel&nbsp;J. Abadi,
+        Don Carney, Ugur Çetintemel, Mitch Cherniack, Christian
+        Convey, Sangdon Lee, Michael Stonebraker, Nesime Tatbul,
+        and Stan Zdonik. 2003. Aurora: a new model and architecture
+        for data stream management. <em><em>The VLDB
+        Journal</em></em> 12, 2 (Aug. 2003), 120–139.</li>
+        <li id="BibPLXBIB0002" label="[2]">Laurent Amsaleg,
+        Michael&nbsp;J. Franklin, Anthony Tomasic, and Tolga Urhan.
+        1996. Scrambling query plans to cope with unexpected
+        delays. In <em><em>Proceedings of the fourth international
+        conference on on Parallel and distributed information
+        systems</em></em> (<em>DIS ’96</em>). IEEE Computer
+        Society, Washington, DC, USA, 208–219.</li>
+        <li id="BibPLXBIB0003" label="[3]">Arvind Arasu, Shivnath
+        Babu, and Jennifer Widom. 2006. The CQL continuous query
+        language: semantic foundations and query execution.
+        <em><em>The VLDB Journal</em></em> 15, 2 (2006),
+        121–142.</li>
+        <li id="BibPLXBIB0004" label="[4]">Ron Avnur and
+        Joseph&nbsp;M. Hellerstein. 2000. Eddies: continuously
+        adaptive query processing. <em><em>SIGMOD Rec.</em></em>
+        29, 2 (2000), 261–272.</li>
+        <li id="BibPLXBIB0005" label="[5]">Shivnath Babu. 2005.
+        Adaptive query processing in the looking glass. In
+        <em><em>Second Biennial Conference on Innovative Data
+        Systems Research (CIDR’05)</em></em> . 238–249.</li>
+        <li id="BibPLXBIB0006" label="[6]">Shivnath Babu, Rajeev
+        Motwani, Kamesh Munagala, Itaru Nishizawa, and Jennifer
+        Widom. 2004. Adaptive ordering of pipelined stream filters.
+        In <em><em>Proceedings of the 2004 ACM SIGMOD international
+        conference on Management of data</em></em> (<em>SIGMOD
+        ’04</em>). ACM, New York, NY, USA, 407–418.</li>
+        <li id="BibPLXBIB0007" label="[7]">Shivnath Babu, Kamesh
+        Munagala, Jennifer Widom, and Rajeev Motwani. 2005.
+        Adaptive Caching for Continuous Queries. In
+        <em><em>Proceedings of the 21st International Conference on
+        Data Engineering</em></em> (<em>ICDE ’05</em>). IEEE
+        Computer Society, Washington, DC, USA, 118–129.</li>
+        <li id="BibPLXBIB0008" label="[8]">Shivnath Babu, Utkarsh
+        Srivastava, and Jennifer Widom. 2004. Exploiting
+        k-constraints to reduce memory overhead in continuous
+        queries over data streams. <em><em>ACM Trans. Database
+        Syst.</em></em> 29, 3 (Sept. 2004), 545–580.</li>
+        <li id="BibPLXBIB0009" label="[9]">Davide&nbsp;Francesco
+        Barbieri, Daniele Braga, Stefano Ceri, and Michael
+        Grossniklaus. 2010. An execution environment for C-SPARQL
+        queries. In <em><em>Proceedings of the 13th International
+        Conference on Extending Database Technology</em></em>
+        (<em>EDBT ’10</em>). ACM, New York, NY, USA, 441–452.
+        <a class="link-inline force-break" href=
+        "https://doi.org/10.1145/1739041.1739095" target="_blank">
+          https://doi.org/10.1145/1739041.1739095</a>
+        </li>
+        <li id="BibPLXBIB0010" label="[10]">Henrike Berthold, Sven
+        Schmidt, Wolfgang Lehner, and Claude-Joachim Hamann. 2005.
+        Integrated resource management for data stream systems. In
+        <em><em>Proceedings of the 2005 ACM symposium on Applied
+        computing</em></em> (<em>SAC ’05</em>). ACM, New York, NY,
+        USA, 555–562.</li>
+        <li id="BibPLXBIB0011" label="[11]">Pedro Bizarro, Shivnath
+        Babu, David DeWitt, and Jennifer Widom. 2005. Content-based
+        routing: different plans for different data. In
+        <em><em>Proceedings of the 31st international conference on
+        Very large data bases</em></em> (<em>VLDB ’05</em>). VLDB
+        Endowment, 757–768.</li>
+        <li id="BibPLXBIB0012" label="[12]">Chris Carnes,
+        J.&nbsp;B. Park, and Albert Vernon. 1999. Scalable Trigger
+        Processing. In <em><em>Proceedings of the 15th
+        International Conference on Data Engineering</em></em>
+        (<em>ICDE ’99</em>). IEEE Computer Society, Washington, DC,
+        USA, 266–.</li>
+        <li id="BibPLXBIB0013" label="[13]">Sirish Chandrasekaran
+        and Michael&nbsp;J. Franklin. 2003. PSoup: a system for
+        streaming queries over streaming data. <em><em>The VLDB
+        Journal</em></em> 12, 2 (Aug. 2003), 140–156.</li>
+        <li id="BibPLXBIB0014" label="[14]">Jianjun Chen,
+        David&nbsp;J. DeWitt, and Jeffrey&nbsp;F. Naughton. 2002.
+        Design and Evaluation of Alternative Selection Placement
+        Strategies in Optimizing Continuous Queries. In
+        <em><em>Proceedings of the 18th International Conference on
+        Data Engineering</em></em> (<em>ICDE ’02</em>). Washington,
+        DC, USA.</li>
+        <li id="BibPLXBIB0015" label="[15]">Jianjun Chen,
+        David&nbsp;J. DeWitt, Feng Tian, and Yuan Wang. 2000.
+        NiagaraCQ: a scalable continuous query system for Internet
+        databases. <em><em>SIGMOD Rec.</em></em> 29, 2 (2000),
+        379–390.</li>
+        <li id="BibPLXBIB0016" label="[16]">Matthew Denny and
+        Michael&nbsp;J. Franklin. 2005. Predicate result range
+        caching for continuous queries. In <em><em>Proceedings of
+        the 2005 ACM SIGMOD international conference on Management
+        of data</em></em> (<em>SIGMOD ’05</em>). ACM, New York, NY,
+        USA, 646–657.</li>
+        <li id="BibPLXBIB0017" label="[17]">Amol Deshpande. 2004.
+        An initial study of overheads of eddies. <em><em>SIGMOD
+        Rec.</em></em> 33, 1 (March 2004), 44–49.</li>
+        <li id="BibPLXBIB0018" label="[18]">Amol Deshpande and
+        Joseph&nbsp;M. Hellerstein. 2004. Lifting the burden of
+        history from adaptive query processing. In
+        <em><em>Proceedings of the Thirtieth international
+        conference on Very large data bases - Volume 30</em></em>
+        (<em>VLDB ’04</em>). VLDB Endowment, 948–959.</li>
+        <li id="BibPLXBIB0019" label="[19]">Amol Deshpande, Zachary
+        Ives, and Vijayshankar Raman. 2007. Adaptive query
+        processing. <em><em>Found. Trends databases</em></em> 1
+        (January 2007), 140. Issue 1.</li>
+        <li id="BibPLXBIB0020" label="[20]">Alin Dobra,
+        Minos&nbsp;N. Garofalakis, Johannes Gehrke, and Rajeev
+        Rastogi. 2004. Sketch-Based Multi-query Processing over
+        Data Streams. In <em><em>9th International Conference on
+        Extending Database Technology, EDBT 2004</em></em> .
+        551–568.</li>
+        <li id="BibPLXBIB0021" label="[21]">Lukasz Golab, Theodore
+        Johnson, and Oliver Spatscheck. 2008. Prefilter: predicate
+        pushdown at streaming speeds. In <em><em>Proceedings of the
+        2nd international workshop on Scalable stream processing
+        system</em></em> (<em>SSPS ’08</em>). ACM, New York, NY,
+        USA, 29–37.</li>
+        <li id="BibPLXBIB0022" label="[22]">Anastasios Gounaris,
+        Norman&nbsp;W. Paton, Alvaro A.&nbsp;A. Fernandes, and
+        Rizos Sakellariou. 2002. Adaptive Query Processing: A
+        Survey. In <em><em>Proceedings of the 19th British National
+        Conference on Databases: Advances in Databases</em></em>
+        (<em>BNCOD 19</em>). Springer-Verlag, London, UK, UK,
+        11–25.</li>
+        <li id="BibPLXBIB0023" label="[23]">Moustafa&nbsp;A.
+        Hammad, Walid&nbsp;G. Aref, and Ahmed&nbsp;K. Elmagarmid.
+        2005. Optimizing in-order execution of continuous queries
+        over streamed sensor data. In <em><em>Proceedings of the
+        17th international conference on Scientific and statistical
+        database management</em></em> (<em>SSDBM’2005</em>).
+        Lawrence Berkeley Laboratory, Berkeley, CA, US,
+        143–146.</li>
+        <li id="BibPLXBIB0024" label="[24]">Moustafa&nbsp;A.
+        Hammad, Michael&nbsp;J. Franklin, Walid&nbsp;G. Aref, and
+        Ahmed&nbsp;K. Elmagarmid. 2003. Scheduling for shared
+        window joins over data streams. In <em><em>Proceedings of
+        the 29th international conference on Very large data bases
+        - Volume 29</em></em> (<em>VLDB ’03</em>). VLDB Endowment,
+        297–308.</li>
+        <li id="BibPLXBIB0025" label="[25]">Zachary&nbsp;G. Ives,
+        Daniela Florescu, Marc Friedman, Alon Levy, and
+        Daniel&nbsp;S. Weld. 1999. An adaptive query execution
+        system for data integration. In <em><em>Proceedings of the
+        1999 ACM SIGMOD international conference on Management of
+        data</em></em> (<em>SIGMOD ’99</em>). ACM, New York, NY,
+        USA, 299–310. <a class="link-inline force-break" href=
+        "https://doi.org/10.1145/304182.304209" target=
+        "_blank">https://doi.org/10.1145/304182.304209</a>
+        </li>
+        <li id="BibPLXBIB0026" label="[26]">Navin Kabra and
+        David&nbsp;J. DeWitt. 1998. Efficient mid-query
+        re-optimization of sub-optimal query execution plans. <em>
+          <em>SIGMOD Rec.</em></em> 27, 2 (June 1998), 106–117.
+          <a class="link-inline force-break" href=
+          "https://doi.org/10.1145/276305.276315" target=
+          "_blank">https://doi.org/10.1145/276305.276315</a>
+        </li>
+        <li id="BibPLXBIB0027" label="[27]">Jaewoo Kang,
+        Jeffrey&nbsp;F. Naughton, and Stratis Viglas. 2003.
+        Evaluating Window Joins over Unbounded Streams. In
+        <em><em>Proceedings of the 19th International Conference on
+        Data Engineering</em></em> (<em>ICDE’03</em>).
+        341–352.</li>
+        <li id="BibPLXBIB0028" label="[28]">Sailesh Krishnamurthy,
+        Michael&nbsp;J. Franklin, Joseph&nbsp;M. Hellerstein, and
+        Garrett Jacobson. 2004. The case for precision sharing. In
+        <em><em>Proceedings of the Thirtieth international
+        conference on Very large data bases - Volume 30</em></em>
+        (<em>VLDB ’04</em>). VLDB Endowment, 972–984.</li>
+        <li id="BibPLXBIB0029" label="[29]">Sailesh Krishnamurthy,
+        Chung Wu, and Michael Franklin. 2006. On-the-fly sharing
+        for streamed aggregation. In <em><em>Proceedings of the
+        2006 ACM SIGMOD international conference on Management of
+        data</em></em> (<em>SIGMOD ’06</em>). ACM, New York, NY,
+        USA, 623–634.</li>
+        <li id="BibPLXBIB0030" label="[30]">Danh Le-Phuoc. 2013.
+        <em>A Native and Adaptive Approach for Linked Stream Data
+        Processing</em>. Ph.D. Dissertation. Digital Enterprise
+        Research Institute, National University of Ireland,
+        Galway.</li>
+        <li id="BibPLXBIB0031" label="[31]">Danh Le-Phuoc. 2017.
+        Operator-aware approach for boosting performance in RDF
+        stream processing. <em><em>Web Semantics: Science, Services
+        and Agents on the World Wide Web</em></em> 42 (2017), 38 –
+        54. <a class="link-inline force-break" href=
+        "https://doi.org/10.1016/j.websem.2016.04.001" target=
+        "_blank">https://doi.org/10.1016/j.websem.2016.04.001</a>
+        </li>
+        <li id="BibPLXBIB0032" label="[32]">Danh Le-Phuoc, Minh
+        Dao-Tran, Josiane&nbsp;Xavier Parreira, and Manfred
+        Hauswirth. 2011. A Native and Adaptive Approach for Unified
+        Processing of Linked Streams and Linked Data. In
+        <em><em>Proceedings of 10th International Semantic Web
+        Conference</em></em> . 370–388.</li>
+        <li id="BibPLXBIB0033" label="[33]">Chan Le&nbsp;Van, Feng
+        Gao, and Muhammad&nbsp;Intizar Ali. 2017. Optimizing the
+        Performance of Concurrent RDF Stream Processing Queries. In
+        <em><em>The Semantic Web</em></em> , Eva Blomqvist, Diana
+        Maynard, Aldo Gangemi, Rinke Hoekstra, Pascal Hitzler, and
+        Olaf Hartig (Eds.). Springer International Publishing,
+        Cham, 238–253.</li>
+        <li id="BibPLXBIB0034" label="[34]">Ken C.&nbsp;K. Lee,
+        Hong&nbsp;Va Leong, and Antonio Si. 2004. QUAY: A Data
+        Stream Processing System Using Chunking. In
+        <em><em>Proceedings of the International Database
+        Engineering and Applications Symposium</em></em> (<em>IDEAS
+        ’04</em>). IEEE Computer Society, Washington, DC, USA,
+        17–26.</li>
+        <li id="BibPLXBIB0035" label="[35]">Hyo-Sang Lim, Jae-Gil
+        Lee, Min-Jae Lee, Kyu-Young Whang, and Il-Yeol Song. 2006.
+        Continuous query processing in data streams using duality
+        of data and queries. In <em><em>Proceedings of the 2006 ACM
+        SIGMOD international conference on Management of
+        data</em></em> (<em>SIGMOD ’06</em>). New York, NY, USA,
+        313–324.</li>
+        <li id="BibPLXBIB0036" label="[36]">Samuel Madden, Mehul
+        Shah, Joseph&nbsp;M. Hellerstein, and Vijayshankar Raman.
+        2002. Continuously adaptive continuous queries over
+        streams. In <em><em>2002 ACM SIGMOD International
+        Conference on Management of Data</em></em> . 49–60.</li>
+        <li id="BibPLXBIB0037" label="[37]">Vijayshankar Raman,
+        Amol Deshpande, and Joseph&nbsp;M. Hellerstein. 2003. Using
+        State Modules for Adaptive Query Processing. In
+        <em><em>Proceedings of the 19th International Conference on
+        Data Engineering</em></em> (<em>ICDE’03</em>).
+        353–364.</li>
+        <li id="BibPLXBIB0038" label="[38]">Sven Schmidt, Henrike
+        Berthold, and Wolfgang Lehner. 2004. QStream: deterministic
+        querying of data streams. In <em><em>Proceedings of the
+        Thirtieth international conference on Very large data bases
+        - Volume 30</em></em> (<em>VLDB ’04</em>). VLDB Endowment,
+        1365–1368.</li>
+        <li id="BibPLXBIB0039" label="[39]">Sven Schmidt, Thomas
+        Legler, Sebastian Schär, and Wolfgang Lehner. 2005. Robust
+        real-time query processing with QStream. In
+        <em><em>Proceedings of the 31st international conference on
+        Very large data bases</em></em> (<em>VLDB ’05</em>). VLDB
+        Endowment, 1299–1301.</li>
+        <li id="BibPLXBIB0040" label="[40]">Yufei Tao,
+        Man&nbsp;Lung Yiu, Dimitris Papadias, Marios
+        Hadjieleftheriou, and Nikos Mamoulis. 2005. RPJ: producing
+        fast join results on streams through rate-based
+        optimization. In <em><em>Proceedings of the 2005 ACM SIGMOD
+        international conference on Management of data</em></em>
+        (<em>SIGMOD ’05</em>). ACM, New York, NY, USA,
+        371–382.</li>
+        <li id="BibPLXBIB0041" label="[41]">Feng Tian and
+        David&nbsp;J. DeWitt. 2003. Tuple routing strategies for
+        distributed eddies. In <em><em>Proceedings of the 29th
+        international conference on Very large data bases - Volume
+        29</em></em> (<em>VLDB ’03</em>). VLDB Endowment,
+        333–344.</li>
+        <li id="BibPLXBIB0042" label="[42]">Wee&nbsp;Hyong Tok and
+        Stéphane Bressan. 2002. Efficient and Adaptive Processing
+        of Multiple Continuous Queries. In <em><em>Proceedings of
+        the 8th International Conference on Extending Database
+        Technology: Advances in Database Technology</em></em>
+        (<em>EDBT ’02</em>). Springer-Verlag, London, UK, UK,
+        215–232.</li>
+        <li id="BibPLXBIB0043" label="[43]">Tolga Urhan and
+        Michael&nbsp;J. Franklin. 2001. Dynamic Pipeline Scheduling
+        for Improving Interactive Query Performance. In
+        <em><em>Proceedings of the 27th International Conference on
+        Very Large Data Bases</em></em> (<em>VLDB ’01</em>). Morgan
+        Kaufmann Publishers Inc., San Francisco, CA, USA,
+        501–510.</li>
+        <li id="BibPLXBIB0044" label="[44]">Tolga Urhan,
+        Michael&nbsp;J. Franklin, and Laurent Amsaleg. 1998.
+        Cost-based query scrambling for initial delays. In
+        <em><em>Proceedings of the 1998 ACM SIGMOD international
+        conference on Management of data</em></em> (<em>SIGMOD
+        ’98</em>). ACM, New York, NY, USA, 130–141.</li>
+        <li id="BibPLXBIB0045" label="[45]">Stratis&nbsp;D. Viglas
+        and Jeffrey&nbsp;F. Naughton. 2002. Rate-based query
+        optimization for streaming information sources. In
+        <em><em>Proceedings of the 2002 ACM SIGMOD international
+        conference on Management of data</em></em> (<em>SIGMOD
+        ’02</em>). ACM, New York, NY, USA, 37–48.</li>
+        <li id="BibPLXBIB0046" label="[46]">Stratis&nbsp;D. Viglas,
+        Jeffrey&nbsp;F. Naughton, and Josef Burger. 2003.
+        Maximizing the output rate of multi-way join queries over
+        streaming information sources. In <em><em>Proceedings of
+        the 29th international conference on Very large data bases
+        - Volume 29</em></em> (<em>VLDB ’03</em>). VLDB Endowment,
+        285–296.</li>
+        <li id="BibPLXBIB0047" label="[47]">Song Wang, Elke
+        Rundensteiner, Samrat Ganguly, and Sudeept Bhatnagar. 2006.
+        State-slice: new paradigm of multi-query optimization of
+        window-based stream queries. In <em><em>Proceedings of the
+        32nd international conference on Very large data
+        bases</em></em> (<em>VLDB ’06</em>). VLDB Endowment,
+        619–630.</li>
+        <li id="BibPLXBIB0048" label="[48]">Kun-Lung Wu, Shyh-Kwei
+        Chen, and Philip&nbsp;S. Yu. 2004. Interval query indexing
+        for efficient stream processing. In <em><em>Proceedings of
+        the thirteenth ACM international conference on Information
+        and knowledge management</em></em> (<em>CIKM ’04</em>).
+        ACM, New York, NY, USA, 88–97.</li>
+        <li id="BibPLXBIB0049" label="[49]">Rui Zhang, Nick Koudas,
+        Beng&nbsp;Chin Ooi, and Divesh Srivastava. 2005. Multiple
+        aggregations over data streams. In <em><em>Proceedings of
+        the 2005 ACM SIGMOD international conference on Management
+        of data</em></em> (<em>SIGMOD ’05</em>). ACM, New Yorks,
+        NY, USA, 299–310.</li>
+        <li id="BibPLXBIB0050" label="[50]">Yali Zhu, Elke&nbsp;A.
+        Rundensteiner, and George&nbsp;T. Heineman. 2004. Dynamic
+        plan migration for continuous queries over data streams. In
+        <em><em>Proceedings of the 2004 ACM SIGMOD international
+        conference on Management of data</em></em> (<em>SIGMOD
+        ’04</em>). ACM, New York, NY, USA, 431–442.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "https://github.com/espertechinc/esper">https://github.com/espertechinc/esper</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191653">https://doi.org/10.1145/3184558.3191653</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

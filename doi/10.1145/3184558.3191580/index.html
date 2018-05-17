@@ -1,1 +1,1674 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> <head>  <title>A User-Centric Diversity by Design Recommender System for the Movie Application Domain</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script> </head> <body id="main">  <section class="front-matter">   <section>    <header class="title-info">    <div class="journal-title">     <h1>      <span class="title">A User-Centric Diversity by Design Recommender System for the Movie Application Domain</span>      <br/>      <span class="subTitle"/>     </h1>    </div>    </header>    <div class="authorGroup">    <div class="author">     <span class="givenName">Michele</span>     <span class="surName">Zanitti</span>     CMI, Aalborg University Copenhagen, Denmark, <a href="mailto:mzanit15@student.aau.dk">mzanit15@student.aau.dk</a>    </div>    <div class="author">     <span class="givenName">Sokol</span>     <span class="surName">Kosta</span>     CMI, Aalborg University Copenhagen, Denmark, <a href="mailto:sok@cmi.aau.dk">sok@cmi.aau.dk</a>    </div>    <div class="author">     <span class="givenName">Jannick</span>     <span class="surName">S&#x00F8;rensen</span>     CMI, Aalborg University Copenhagen, Denmark, <a href="mailto:js@cmi.aau.dk">js@cmi.aau.dk</a>    </div>                </div>    <br/>    <div class="pubInfo">    <p>DOI: <a href="https://doi.org/10.1145/3184558.3191580" target="_blank">https://doi.org/10.1145/3184558.3191580</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">    <p>     <small>Recommender systems (RS) have seen widespread adoption across the Internet. However, by emphasizing personalization through the optimization of accuracy-focused metrics, <em>over</em>-<em>personalization</em> may emerge, with negative effects on the user experience. A countermeasure to the problem is to diversify recommendations. In this paper, we present a solution that addresses the problem in the context of a movie application domain. The solution enhances diversity on four related dimensions, namely global coverage, local coverage, novelty, and redundancy. The proposed solution is designed to diversify users profiles, modeled on categorical preferences, within the same group in the recommendation filtering. We evaluate our approach on the Movielens dataset and show that our algorithm yields better results compared to random selection distant neighbors and performs comparably to one of the current state of the art solutions.</small>    </p>    </div>    <div class="classifications">    <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>Recommender systems; diversity recommendation; user modelling; user clustering; movie recommendation; personalization</small>     </span>    </div>    <br/>    <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Michele Zanitti, Sokol Kosta, and Jannick S&#x00F8;rensen. 2018. A User-Centric Diversity by Design Recommender System for the Movie Application Domain. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 9 Pages. <a href="https://doi.org/10.1145/3184558.3191580" class="link-inline force-break"       target="_blank">https://doi.org/10.1145/3184558.3191580</a></small>     </p>    </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-4">    <header>    <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>    </div>    </header>    <p>By exploiting user&#x0027;s preferences, recommender systems (RS) filter out irrelevant options and select only a personalized subset of items. Moreover, RS aim to promote the discovery of content to leverage the long-tail distributed consumption. There is an increasing concern regarding the issue of content over-personalization. If recommendations only mirror individual preferences, the resulting over-personalization could impact negatively the user satisfaction&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0017">17</a>]. Whilst accuracy is important for user satisfaction, it is merely one ingredient. One approach is to diversify the recommendations for the users so that they do not meet their preferences completely&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>]: diversified recommendations come at the expense of being inaccurate, but could contribute in a better item discoverability and a multi-faceted interpretation of user intentions&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>].</p>    <p>Our work provides the following contributions: <em>i)</em> a user-centric diversification framework which identifies the dimensions on which diversity can be modeled for RS. <em>ii)</em> We construct a novel category-based user model. <em>iii)</em> We propose a recommendation approach which implements diversity by design for the movie application domain, with the goal of finding dissimilar users and recommend items from their preferred categories.</p>    <p>The paper is organized as follows: Section&#x00A0;<a class="sec" href="#sec-5">2</a> presents diversity as a theoretical concept, and popular metrics evaluating the quality of a diversification algorithm. Section&#x00A0;<a class="sec" href="#sec-6">3</a> provides a comprehensive overview of current diversification solutions. In Section&#x00A0;<a class="sec" href="#sec-7">4</a>, we describe our contributions: the proposed diversification framework and the recommendation approach with embedded diversity. In section&#x00A0;<a class="sec" href="#sec-15">5</a> we implement the proposed approach and evaluate the diversification levels reached by finding dissimilar users. For the implementation, we prepare the data by using the Movielens dataset, containing the user ratings, in conjunction with the IMDb metadata of the rated movies, relevant for the movie application domain. We then compare the proposed approach to a baseline method based on random diversification of users and to a state of the art method. Lastly, in Section&#x00A0;<a class="sec" href="#sec-25">6</a> we discuss the results of the experimental evaluation and provide our plans for future work.</p>   </section>   <section id="sec-5">    <header>    <div class="title-info">     <h2>      <span class="section-number">2</span> Background</h2>    </div>    </header>    <p>The concept of diversity is often understood as <em>heterogeneity</em>. Several techniques are available to quantify the diversity of a set of elements, depending on the interpretation of the concept itself&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0010">10</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>]. Stirling&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>] identifies three properties related to diversity and proposes a general framework to analyze it by considering the categories into which elements can be classified:</p>    <p>    <strong>Variety</strong>: <em>&#x201C;is the number of categories into which system elements are apportioned&#x201D;</em>, i.e., the number of categories present in a set, independently from the elements within each, is a signal of diversity.</p>    <p>    <strong>Balance</strong>: <em>&#x201C;is a function of the pattern of apportionment of elements across categories&#x201D;</em>. This assesses the extent to which categories are equally represented, through the relative distribution of elements.</p>    <p>    <strong>Disparity</strong>: <em>&#x201C;refers to the manner and degree in which the elements may be distinguished&#x201D;</em>. This property assesses the specificity of each category (i.e., how can be easily distinguished), determining the dissimilarity as a signal of diversity.</p>    <p>Several works have proposed evaluation metrics for diversity in RS.</p>    <p>The <em>Binomial Diversity (BD)</em>&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0020">20</a>], includes two parameters to evaluate the diversity in order to minimize the occurrences of similar items and to maximize the recommended items range with respect to the user preferences and to the item catalogue: coverage and redundancy. For a list <em>L</em> of recommendations, BD is measured as: <em>BD<sub>L</sub>    </em> = <em>coverage<sub>L</sub>    </em> &#x00B7; <em>nonRedundancy<sub>L</sub>    </em>, where <em>coverage<sub>L</sub>    </em> can be considered either locally, in terms of user experience, or globally, as the ability of the recommender to consider multiple item categories&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>].</p>    <p>Ziegler et al. define the <em>Intra List Similarity (ILS)</em> as the aggregate similarity between pairs of items in a set so that the lower it is, the higher the diversity and vice versa&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>]. For all items in a list <em>L</em> and a pair of items <em>i</em> and <em>j</em>, <em>ILS<sub>L</sub>    </em> is: <div class="table-responsive" id="eq1">     <div class="display-equation">      <span class="tex mytex">\begin{equation} ILS_L = \frac{1}{2}\sum _{i\in L}\sum _{j\in L, j\ne i}sim(i,j) \end{equation} </span>      <br/>      <span class="equation-number">(1)</span>     </div>    </div>    </p>    <p>Following Stirling&#x0027;s definition&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>], we propose an adaptation of Ziegler&#x0027;s <em>ILS</em> that considers the similarity of a pair of categories in which the recommended items are apportioned, instead of the single items. In fact, this metric can consider the disparity contained in the recommendation list, measured by the similarity by the items&#x2019; categories.</p>    <p>Murakami et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0015">15</a>] define the <em>unexpectedness level</em> as the difference of the recommended items to the expected (as obvious) set of recommendations. However, since this definition works on single items, we adapt it to consider the user profile in terms of item categories. In the rest of the paper, we define the level of unexpectedness for a recommendation set <em>L</em>, considering the expected recommendation categories <em>C<sub>u</sub>    </em> for user <em>u</em>, as follows: <div class="table-responsive" id="eq2">     <div class="display-equation">      <span class="tex mytex">\begin{equation} unexpectedness_L = \frac{\left| C_u \setminus C_L \right|}{\left| C_u \right|} \end{equation} </span>      <br/>      <span class="equation-number">(2)</span>     </div>    </div> where, the item categories of the recommended list are <em>C<sub>L</sub>    </em>, in which each item is apportioned, and <em>C<sub>u</sub>    </em> is similarly defined but for the items the user has already experienced.</p>    <p>Lastly, we formulate a metric for estimating the redundancy obtained with a list of recommendations for a given user as the amount of items falling in the same category. We claim that the category-based <em>ILS</em> can be treated as a redundancy metric if the similarity between categories is as follows: <span class="inline-equation"><span class="tex">$sim(C_i,c) = \left\lbrace {\begin{array}{*10c}1 &#x0026; C_i = c \\ 0 &#x0026; otherwise \end{array}}\right.$</span>    </span>.</p>    <p>In this case, the proposed metric considers only the categories <em>C<sub>u</sub>    </em> covered by <em>u</em>, which are the expected ones, and for a recommendation list, the &#x201C;good&#x201D; redundancy can be estimated as follows: <div class="table-responsive" id="eq3">     <div class="display-equation">      <span class="tex mytex">\begin{equation} redundancy_{L,u} = \frac{1}{2}\sum _{i\in L,C_i\in C_u\cap C_L}\sum _{c\in C_u}sim(C_i,c) \end{equation} </span>      <br/>      <span class="equation-number">(3)</span>     </div>    </div> where the redundancy is the <em>categoryILS<sub>L</sub>    </em> of each covered category with respect to the recommendations list.</p>   </section>   <section id="sec-6">    <header>    <div class="title-info">     <h2>      <span class="section-number">3</span> Related Work</h2>    </div>    </header>    <p>RS literature distinguishes two paradigms of diversification methods depending on the level at which is achieved, namely diversity modeling and post-filtering approaches&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>].</p>    <p>The former solutions aim to enhance the filtering step by combining diversification criteria prior to the extraction of a set of recommendations. Instead, post-filtering methods process the set of candidate items after the filtering step through re-ranking strategies to extract the subset that satisfy the specified diversification and quality criteria [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>]. Castells et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>] provide a unified understanding of diversity with an extensive survey on evaluation metrics, but a limited overview of diversification methods. Hence, we refer to [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0012">12</a>], which provides an updated survey of both methods and evaluation metrics.</p>    <p>Ziegler et al. <em>topic diversification</em> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>]: this technique is devised to <em>&#x201C;balance and diversify personalized recommendations lists in order to reflect the user&#x0027;s complete spectrum of interests&#x201D;</em> and falls into the post-filtering solutions as it takes recommended items in input to re-rank and extract a diversified subset of items. Interesting, but perhaps unsurprising, is the application of item similarity, a content-based metric, to diversify the item set.</p>    <p>Vargas et al. <em>binomial diversity</em> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0020">20</a>]: instead of using item similarity, Vargas et al. proposed a definition of diversity encompassing the genre coverage, genre redundancy and the recommendation list size awareness. Still, since it works by re-ranking an initial recommendation, it falls into post-filtering approaches. Here, it is interesting how the technique approaches diversity taking not only the similarity, but also coverage and redundancy into account: coverage is achieved through finding the genres present in a recommendation set, compared to all genres, considering also that users themselves have preferences over certain genres and thus, some are more relevant than others. Redundancy in turn is defined as the frequency of each genre in the item set. The resulting method thus aims to maximize coverage of genres considering the user preferences while decreasing redundant genres [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0020">20</a>].</p>    <p>    <em>ClusDiv</em>&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>] uses clustering to group items in the catalogue from the explicit ratings rather than on item descriptions (although this is not a necessary prerequisite), and recommends items from different clusters. Compared to re-ranking methods such as [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>], using item clusters resulted quicker and achieved similar diversification results. The authors employed k-Means as the clustering method to generate clusters which were subsequently used to create a users&#x2013;to-clusters weights matrix. However, as it takes a precomputed list of recommendations, it is a post-filtering approach.</p>    <p>    <em>Neighbor Diversification</em>&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>] proposes to retrieve a set of diverse users, by using explicit ratings, to an active user; recommendations are then extracted from these distant neighbors. Diversity is evaluated also considering the catalogue coverage, the novelty and the accuracy. An unexpected (and perhaps serendipitous) finding is that the accuracy levels, in terms of precision and recall, as the user diversity threshold increases, do not drop and in some cases can also increase, thus suggesting that the trade-off between accuracy and diversity may hold when considering items, but other factors come into play when users are considered.</p>    <p>    <em>XploDiv</em>&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>] employs Stirling&#x0027;s definition to suggest that the balance affects the trade-off between relevance and diversity and a novel diversification method has been devised to deal with the trade-off and with the user&#x0027;s openness tendency (to explore novel items or to exploit her preferences). The parameters to control the two trade-offs are tunable and dynamically learned, to allow a fine grained control of exploitative or exploratory diversity. Unlike the previous method, XploDiv is devised as a post-filtering approach and requires a set of recommended items.</p>   </section>   <section id="sec-7">    <header>    <div class="title-info">     <h2>      <span class="section-number">4</span> A novel diversification framework</h2>    </div>    </header>    <figure id="fig1">    <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig1.jpg" class="img-responsive" alt="Figure 1"      longdesc=""/>    <div class="figure-caption">     <span class="figure-number">Figure 1:</span>     <span class="figure-title">Proposed user-centric diversification framework: each small circle refers to the size of category-based preferences (small: low preference, see top-left corner); the three big circles stemming from the centre refer to the addressed diversity properties (global coverage, redundancy, local coverage and novelty).</span>    </div>    </figure>    <p>Given that the metrics presented focus on specific aspects to evaluate the diversity of a recommendation list, we unify these aspects and propose a user-centric conceptual diversification framework (Figure&#x00A0;<a class="fig" href="#fig1">1</a>) built on top of four general dimensions where diversity can be controlled and evaluated for the individual user, namely: local coverage, global coverage, redundancy (Equation&#x00A0;<a class="eqn" href="#eq3">3</a>), and novelty (Equation&#x00A0;<a class="eqn" href="#eq2">2</a>). We adapt Stirling&#x0027;s definition&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>] to accommodate the concept of users as mixtures of categories and that categories of items are weighted differently, since the concepts of personalization and user preference (either explicit or implicit) in RS conflict with how equally important the original definition treats the diversity of categories. In particular, user preferences would undoubtedly conflict with the property of balance, which instead assumes that &#x201C;the more even the balance, the greater the diversity&#x201D;&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>]. So, a relaxed version of the diversity definition would allow to adjust the level of personalization for a particular user (in terms of balance), in relation to her preferences, while maintaining an acceptable level of heterogeneity thanks to the other properties (variety and disparity).</p>    <p>Since the majority of methods presented in Section&#x00A0;<a class="sec" href="#sec-6">3</a> falls into the post-filtering category, we propose a diversification technique that is tightly coupled to the recommendation filtering, therefore can be formulated as a diversity modeling, in contrast to a post-filtering approach. In fact, post-filtering methods require an initial set of candidate recommendations as input to be diversified. This class of methods being dependent on the set, has the downside of requiring that the set is already diversified. This step is bypassed by the other class of approaches, which arguably allows a greater control of the diversification output. A high-level depict of the rationale behind the our diversity modeling approach is visualized in Figure&#x00A0;<a class="fig" href="#fig2">2</a>. <figure id="fig2">     <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig2.jpg" class="img-responsive" alt="Figure 2"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 2:</span>      <span class="figure-title">Proposed diversification approach: filtering distant neighbors (orange points) in the same cluster of users.</span>     </div>    </figure>    </p>    <p>We suggest to utilize the categories of items as a way for modeling the user preferences and then, compute a list of recommendations by selecting distant neighbors for the active user. Moreover, in order to maintain a baseline level of accuracy in the neighbor filtering, we propose to group users together: from the users within the same cluster, only the distant ones are retrieved, while the nearest neighbors are filtered out. While retrieving the most similar users may be beneficial for the accuracy of the system, we argue that providing recommendations from distant users may increase the likelihood that the items are diverse and therefore, the chances for serendipitous encounters with novel items. Diversifying users would help to decrease the preference polarization by allowing more opportunities from the experience of different types of items. As a first idea, the approach would retrieve the distant neighbors from the same cluster, since we expect that the baseline within-group similarity can be a threshold for considering common preferences and therefore, the accuracy VS diversity trade-off, so that the users may not be completely dissimilar. It is important to recall that diversity is applied to the individual active user profile; hence, we consider five dimensions on which trade-offs between the user preferences and the other users&#x2019; can appear:</p>    <p>    <strong>Neighbor distance</strong>: The accuracy VS diversity trade-off is controlled by the pairwise diversity between the active user and the other users in the same group. As such, the diversity of the retrieved users should follow a parameter which can be tuned externally.</p>    <p>    <strong>Variety of categories (global coverage)</strong>: The number of categories that should appear in the recommendation list (without considering their disparity or the novelty to the user profile) depends on the length of the desired recommendation list and should be controlled to ensure that not too many or too few categories will appear. By controlling the variety of categories, the user will have the opportunity to navigate a list of recommendations with items belonging to many or few categories, hence, it can also be understood as the property of global coverage. Also, the variety implicitly controls the category disparity, as it seems reasonable that with low variety of categories comes a low disparity and vice-versa.</p>    <p>    <strong>Disparity of categories (novelty and local coverage)</strong>: The heterogeneity of the categories is the result of the novelty VS local coverage trade-off between the favorite categories for the active user and the distant neighbors&#x2019;; therefore, it considers how many of the novels and how many of the covered categories should be used to select the items.</p>    <p>    <strong>Variety of items</strong>: Similarly to the selection of the number of categories for the recommendation list, the variety of items considers how many items to show in the list. The variety of items is proportional to the variety of categories, as the number of categories increases, also the number of items should increase. The variety of items, in terms of list size, has been acknowledged to influence the coverage and redundancy of the recommended set&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0020">20</a>]. In fact, it seems reasonable to generate recommendations from a number of categories proportional to the desired list length (i.e., for short lists, few categories and vice-versa); as such it is proposed to control the variety of categories accordingly.</p>    <p>    <strong>Item recommendation list balance (redundancy)</strong>: The last trade-off is controlled by the number of items belonging to the same category that should appear in the final list of recommendations. This trade-off is between balance and redundancy to control the visibility of each category; the bigger the redundancy, the more items belonging to the same category and vice-versa.</p>    <p>The designed technique takes inspiration from Yang et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>]. However, the aspects on which the proposed approach differs from [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>] are as follows: i) In [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>], the neighborhood is produced by maximizing the significance between the active user and the users in the neighborhood and subsequently selected. The proposed approach instead includes an additional step, the formation of groups of users, which considers a baseline similarity among the users within the same group. ii) In [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>], the significance between two users is calculated to take into consideration the accuracy-diversity trade-off, controlled by a tunable parameter. The proposed approach extracts the users within the same group and, using a similar method, it controls the similarity VS diversity trade-off. iii) The technique illustrated in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>] utilizes solely the rating dataset, whereas we exploit both ratings and metadata. iv) In [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>], the objective is to predict the ratings for unseen items for the active user, while here the ratings are the starting point to categorize user preferences. Nevertheless, there can be an additional step in the proposed approach to predict the relevance of a certain category for the active user, given the similarity between the user and the distant users and the preferences for their categories. v) However, the major difference lies in the categorization of user preferences (apart from the creation of groups of users), not included in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>].</p>    <section id="sec-8">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.1</span> Preprocessing Modules</h3>     </div>    </header>    <p>We design the feature extraction modules, delegated to the transformation of user and item profiles into structures suitable for the recommendation procedure: item categorization, user category-based profile modeling and user group formation.</p>    <section id="sec-9">     <p><em>4.1.1 Item categories construction.</em> The first step in the recommendation preprocessing methodology applies the vision of the diversity definition to compose a taxonomy of item categories (Figure&#x00A0;<a class="fig" href="#fig3">3</a>). <figure id="fig3">       <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig3.jpg" class="img-responsive" alt="Figure 3"        longdesc=""/>       <div class="figure-caption">       <span class="figure-number">Figure 3:</span>       <span class="figure-title">Item categories construction.</span>       </div>      </figure>     </p>     <p>We propose to use the LSA methodology&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0006">6</a>] as a preliminary step to the clustering analysis of the items to find the latent similarities based on the original extracted features: the feature occurrence matrix is computed, then TF-IDF (a weighting scheme operating on terms <em>t</em> contained in a document <em>d</em>, belonging to a collection of documents <em>D</em>) transformed to find a potentially unbiased subset of features and calculate their relevance scores for each item. Secondly, the item profiles dimensionality is inspected and SVD is applied to reduce the dataset dimensionality in order to extract latent features upon which items are compared. Clustering analysis is performed on the factorized item profiles, according to the criteria of similarity/distance metrics, clustering algorithm and number of desired clusters; specifically, the number of clusters is subordinated to a qualitative and quantitative analysis, in order to limit the creation of redundant clusters (i.e., having similar items in separate clusters), which can also be highly specialized and a potential cause of overfitting. As a result, the item categories are created and each item is labeled accordingly. <figure id="fig4">       <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig4.jpg" class="img-responsive" alt="Figure 4"        longdesc=""/>       <div class="figure-caption">       <span class="figure-number">Figure 4:</span>       <span class="figure-title">Modeling the category-based user profiles.</span>       </div>      </figure>     </p>    </section>    <section id="sec-10">     <p><em>4.1.2 Category-based user preference modeling.</em> models the user profiles according to the item categories. We extract the positive ratings for individual users according to their average ratings and individual thresholds <em>&#x03C4;</em>, to remove the bias of different rating scales. This model assumes that the ratings are explicit, nevertheless, we argue that the same argument can also apply to implicit ratings. Figure&#x00A0;<a class="fig" href="#fig4">4</a> illustrates the process, which uses the output of the previous preprocessing modules as input to model user preferences and extracts the category-based user profiles. Two matrices are used for this purpose: <em>R</em>, containing the positive ratings of users <em>u</em> on items <em>i</em>, and the cluster matrix <em>C</em>, a boolean item <em>i</em> to cluster <em>c</em> association matrix. The profile of user <em>u</em> is constructed with the matrix <em>P</em>      <sub>       <em>u</em>, <em>c</em>      </sub>, where <em>c</em> is a cluster (or category) of items, and each element of the preference matrix is defined as follows: from the preliminary user profiles, the categories to which positively rated items are apportioned are extracted and the profiles are initially encoded with each category raw frequency (numerator of Eq.&#x00A0;<a class="eqn" href="#eq4">4</a>). Then, each user profile is divided by the number of categories experienced. By transforming the raw category frequencies into their proportion to the user profile, the differences towards users having experienced more categories and users having more focused interests may be more comparable using profile proportions, rather than raw frequencies and average ratings. <div class="table-responsive" id="eq4">       <div class="display-equation">       <span class="tex mytex">\begin{equation} P_{u,c} = \frac{\sum _{i \in I_{u,c}} C_{i,c}}{\sum _{c\forall c\in C_u}\sum _{i\in I_{u,c}} C_{i,c}}, \mbox{where:} \end{equation} </span>       <br/>       <span class="equation-number">(4)</span>       </div>      </div>     </p>     <ul class="list-no-style">      <li id="list1" label="&#x2022;"><em>I<sub>u</sub>       </em>       <sub>       <em>&#x03C4;</em>       </sub> = {<em>i</em>|<em>r</em>       <sub>       <em>u</em>, <em>i</em>       </sub> &#x2265; <em>&#x03C4;</em>, &#x2200;<em>r</em>       <sub>       <em>u</em>, <em>i</em>       </sub> &#x2208; <em>R<sub>u</sub>       </em>} is the set of items rated positively by <em>u</em>;<br/></li>      <li id="list2" label="&#x2022;"><em>R<sub>u</sub>       </em> is the set of ratings for user <em>u</em>;<br/></li>      <li id="list3" label="&#x2022;"><em>I</em>       <sub>       <em>u</em>, <em>c</em>       </sub> = {<em>i</em>|<em>C</em>       <sub>       <em>i</em>, <em>c</em>       </sub> &#x2260; 0, &#x2200;<em>i</em> &#x2208; <em>I<sub>u</sub>       </em>       <sub>       <em>&#x03C4;</em>       </sub>, <em>c</em> &#x2208; <em>C</em>} is the set of items rated by <em>u</em>, belonging to category <em>c</em>;<br/></li>      <li id="list4" label="&#x2022;"><em>C<sub>u</sub>       </em> = {<em>c</em>|<em>C</em>       <sub>       <em>i</em>, <em>c</em>       </sub> &#x2260; 0, &#x2200;<em>c</em> &#x2208; <em>C</em>, &#x2200;<em>i</em> &#x2208; <em>I<sub>u</sub>       </em>       <sub>       <em>&#x03C4;</em>       </sub>} is the set of categories for which <em>u</em> has experience;<br/></li>      <li id="list5" label="&#x2022;"><em>C</em>       <sub>       <em>i</em>, <em>c</em>       </sub> denotes the occurrence of category for each item in rated above threshold <em>&#x03C4;</em>.<br/></li>     </ul>     <figure id="fig5">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig5.jpg" class="img-responsive" alt="Figure 5"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 5:</span>       <span class="figure-title">User clustering process.</span>      </div>     </figure>    </section>    <section id="sec-11">     <p><em>4.1.3 User groups formation.</em> We assume that users can form groups based on their similar preferences, otherwise collaborative filtering would not be possible. Moreover, by clustering the users, a basic similarity to the active user could be guaranteed, which defines also an implicit measure of recommendation relevance. Thus, by receiving the output of the category-based user profile modeling process, the steps are illustrated in Figure&#x00A0;<a class="fig" href="#fig5">5</a>. This process, similarly to item categorization applies a variant of TFIDF used in LSA [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0006">6</a>] to the category-based profiles, namely CFIUF (category frequency, inverse user frequency), aiming to model the similarities of users by weighting the category scores for each user. Subsequently, the normalized CFIUF-weighted user profiles are used for the clustering analysis, whose methodology is identical to the item categorization process. As a result, the groups of users are created and the recommendation procedure can be explained in detail.</p>    </section>    </section>    <section id="sec-12">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.2</span> Diversification Module</h3>     </div>    </header>    <p>We divide the diversification procedure in two major steps which require the presence of the active user: <em>(1)</em> Transformation of the active user to her category-based profile; and <em>(2)</em> Formation of the distant neighborhood.</p>    <section id="sec-13">     <p><em>4.2.1 Active user profile modeling and classification.</em> This module is required as the active user profile is expected to contain the raw ratings for each consumed items. Here, the role of the preprocessing modules described in the previous section is to transform the active user profile into the category-based one. Once the active user has been transformed into the CFIUF-weighted profile, the classification to a group of users is achieved through the selection of the nearest cluster, which can be computed using k-Nnearest Neighbor on the clusters. <figure id="fig6">       <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig6.jpg" class="img-responsive" alt="Figure 6"        longdesc=""/>       <div class="figure-caption">       <span class="figure-number">Figure 6:</span>       <span class="figure-title">Diversification procedure in detail.</span>       </div>      </figure>     </p>    </section>    <section id="sec-14">     <p><em>4.2.2 Distant neighborhood formation: accuracy VS diversity.</em> This is the pivotal step of the diversification procedure, as it involves the control of the diversity between the users within the same cluster (Figure&#x00A0;<a class="fig" href="#fig6">6</a>) and arguably, the control of the recommendation list diversity. The most significantly diverse users within the same cluster are filtered, as opposed to nearest neighbors, according to Equation&#x00A0;<a class="eqn" href="#eq5">5</a>. As such, we expect that the categories of items from distant users will appear different but not radically, from the active user (since the prerequisite of the recommendations is to be still accurate to the active user preferences). In order to control the neighbor diversification, we introduce an external parameter <em>&#x03B1;</em> to determine the pairwise diversity significance, similarly to [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0021">21</a>]. For a given user and another user <em>u</em> belonging to the same cluster <em>c</em>, the diversity significance <em>s</em> is calculated as follows: <div class="table-responsive" id="eq5">       <div class="display-equation">       <span class="tex mytex">\begin{equation} s(u,v) = (1-\alpha)\cdot (1-d(u,v)) + \alpha \cdot (d(u,v)), \end{equation} </span>       <br/>       <span class="equation-number">(5)</span>       </div>      </div> where the diversity is proportional to the growth of <em>&#x03B1;</em>, hence, the larger <em>&#x03B1;</em>, the greater the diversity; <em>d</em>(<em>u</em>, <em>v</em>) is the distance between the active user <em>u</em> and user <em>v</em>; and (1 &#x2212; <em>&#x03B1;</em>) and <em>&#x03B1;</em> respectively control the similarity and distance trade-off between the two users. Hence the <em>k</em> most significant users are extracted so that the significance between users <em>u</em> and <em>v</em> is maximized as: <div class="table-responsive" id="eq6">       <div class="display-equation">       <span class="tex mytex">\begin{equation} \overline{V} = argmax_{v\in V}(s(u,v)) \end{equation} </span>       <br/>       <span class="equation-number">(6)</span>       </div>      </div> where <span class="inline-equation"><span class="tex">$\overline{V}$</span>      </span>, set of distant neighbors, is the result of the maximized diversification significance.</p>    </section>    </section>   </section>   <section id="sec-15">    <header>    <div class="title-info">     <h2>      <span class="section-number">5</span> Implementation and Evaluation</h2>    </div>    </header>    <p>Here we address the item categorization and user profile modeling and we finish by providing the experiment setup to measure the diversification levels reached through extraction of distant neighbors. We hypothesize that the items can form more or less homogeneous categories, the users can be clustered according to such categories and finally, that the selection of distant users within the same clusters can fulfill the accuracy VS diversity trade-off.</p>    <section id="sec-16">    <header>     <div class="title-info">      <h3>       <span class="section-number">5.1</span> Feature Engineering and Data Preparation</h3>     </div>    </header>    <p>As a result of this process, the initial user and item profiles are modeled and ready to be preprocessed in the second phase according to the full recommendation procedure.</p>    <p>We apply the proposed diversification approach to the small Movielens dataset [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0007">7</a>], maintained by GroupLens Research, which provides around 100K explicit ratings of 671 users for 9125 movies. Along with this dataset, we extracted the metadata from IMDb<a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a> to describe the items for the categorization step. <figure id="fig7">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig7.jpg" class="img-responsive" alt="Figure 7"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 7:</span>       <span class="figure-title">Movielens long tail distribution.</span>      </div>     </figure>    </p>    <section id="sec-17">     <p><em>5.1.1 Characterizing user ratings in Movielens.</em> We analyze the Movielens dataset for discovering the rating distributions, popularity biases, and differences in rating scales, to distinguish between <em>enthusiastic</em> and <em>demanding</em> users. As a result, we select the individual rating threshold to consider positive preferences. Users have rated the movies on a clear long-tail distribution, which is better depicted in Figure&#x00A0;<a class="fig" href="#fig7">7</a>: the majority has rated less than 500 movies. <figure id="fig8">       <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig8.jpg" class="img-responsive" alt="Figure 8"        longdesc=""/>       <div class="figure-caption">       <span class="figure-number">Figure 8:</span>       <span class="figure-title">Movielens rating pattern distribution.</span>       </div>      </figure>     </p>     <p>The individual rating patterns are depicted in Figure&#x00A0;<a class="fig" href="#fig8">8</a>, through global rating density and average rating distributions. Generally, individual averages tend to be more compact near 3.5 and 4 (in rating scale), following that users tend to give high ratings, but the presence of lower and higher averages suggests and clearly proves that users have different rating behaviours. The existence of varying rating scales is also supported by [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0018">18</a>] and reinforced by an analysis performed on the effect of the rating scale granularity [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0005">5</a>]. Moreover, we uncover the existence of subjective scales at which users adhere when rating movies [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0009">9</a>]: as preferences are subjective, we need to standardize ratings so that individual biases can be removed to compare rating scales objectively and finally, to extract the positive preferences. We choose the z-score standardization&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0009">9</a>] to transform individual ratings and extract only the positive ones as we suppose that the positive preferences are simply those above the individual average. However, this approach still ignores the preferences for users having only high ratings. Therefore, we differentiate the threshold for either users with low and high standards as follows: <div class="table-responsive" id="eq7">       <div class="display-equation">       <span class="tex mytex">\begin{equation} \tau _u = \left\lbrace {\begin{array}{*10c}\mu _u^{\prime } &#x0026; if \mu _u {\lt} 4 \\ 4 &#x0026; if \mu _u \ge 4, \end{array}}\right. \end{equation} </span>       <br/>       <span class="equation-number">(7)</span>       </div>      </div> where <em>&#x03BC;<sub>u</sub>      </em> is the average rating of <em>u</em> prior to standardization, so that the threshold can assume values 4 where the average is equal or above 4, and <span class="inline-equation"><span class="tex">$\mu ^{\prime }_u$</span>      </span> (as the mean rating after standardization, which is always 0) for the other users. <figure id="fig9">       <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig9.jpg" class="img-responsive" alt="Figure 9"        longdesc=""/>       <div class="figure-caption">       <span class="figure-number">Figure 9:</span>       <span class="figure-title">Genres of the movies retrieved from IMDb.</span>       </div>      </figure>     </p>    </section>    <section id="sec-18">     <p><em>5.1.2 Characterizing movies from IMDb metadata.</em> To provide the items with a content-based profile and not rely on ratings, we extracted descriptive metadata (<em>cast, company, countries, director, genres, keywords, languages, composer, release date, writer</em>) from IMDb, using the identifiers of the movies rated in Movielens. We notice that there is a prevalence of drama and comedy genres, which are present in around half of the extracted movies, followed by thriller and romance, present in around 20% of the movies as shown by genre inspection, Figure&#x00A0;<a class="fig" href="#fig9">9</a>. We also stabilize the dataset, since it presented missing values after the extraction<a class="fn" href="#fn2" id="foot-fn2"><sup>2</sup></a> by:</p>     <ol class="list-no-style">      <li id="list6" label="(1)">Transforming the release date in only the year of release, from the IMDb format, complete with country, day and month of release. For movies without release date from IMDb, use the release given in the Movielens dataset.<br/></li>      <li id="list7" label="(2)">Filling missing keywords using common instances from the first occurring genre of affected movies and determine a relevance threshold.<br/></li>      <li id="list8" label="(3)">Filling missing languages and countries of production using common instances from movies with these features. Keeping the remaining missing features.<br/></li>     </ol>    </section>    </section>    <section id="sec-19">    <header>     <div class="title-info">      <h3>       <span class="section-number">5.2</span> Item categorization</h3>     </div>    </header>    <p>For this task, we sample movies with at least 3 ratings and at least an average rating of 3 from the full Movielens dataset. We then follow the process depicted in Figure&#x00A0;<a class="fig" href="#fig3">3</a> with the metadata extracted. The parameters utilized in the item categorization are listed in Table&#x00A0;<a class="tbl" href="#tab1">1</a>.</p>    <div class="table-responsive" id="tab1">     <div class="table-caption">      <span class="table-number">Table 1:</span>      <span class="table-title">Parameters and methods for item categorization.</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;">Item Categorization parameters</td>       <td>values</td>       </tr>       <tr>       <td style="text-align:left;"># movies</td>       <td>3685</td>       </tr>       <tr>       <td style="text-align:left;">TFIDF formula</td>       <td>        <span class="inline-equation"><span class="tex">$f(t,D) \cdot \log \frac{\left| D \right|}{df(t)}+1$</span>        </span>       </td>       </tr>       <tr>       <td style="text-align:left;">minimum document frequency</td>       <td>2</td>       </tr>       <tr>       <td style="text-align:left;">maximum document frequency</td>       <td>90%</td>       </tr>       <tr>       <td style="text-align:left;">k singular values (SVD)</td>       <td>500</td>       </tr>       <tr>       <td style="text-align:left;">distance metric</td>       <td>normalized Euclidean</td>       </tr>       <tr>       <td style="text-align:left;">clustering algorithm</td>       <td>Ward agglomerative</td>       </tr>       <tr>       <td style="text-align:left;"># clusters</td>       <td>43</td>       </tr>      </tbody>     </table>    </div>    </section>    <section id="sec-20">    <header>     <div class="title-info">      <h3>       <span class="section-number">5.3</span> User group formation</h3>     </div>    </header>    <p>Similarly to how we implemented the item categorization procedure, we model the user preferences according to Equation&#x00A0;<a class="eqn" href="#eq4">4</a> and following Figures&#x00A0;<a class="fig" href="#fig4">4</a> and <a class="fig" href="#fig5">5</a>, by considering the sampled movies; thus, the number of ratings, above individual threshold account for 55416 out of 82600 for the 3685 movies considered. For this task, the parameters utilized are listed in Table&#x00A0;<a class="tbl" href="#tab2">2</a>. We select hierarchical clustering and evaluated the number of optimal clusters following the merge height elbow plot, under the criterion that the groups should allow a certain level of heterogeneity as the cluster size implicitly controls the user diversification. For the diversification approach to work, we expressively search for a clustering solution that would neither form too specific nor too generic groups of users.</p>    <div class="table-responsive" id="tab2">     <div class="table-caption">      <span class="table-number">Table 2:</span>      <span class="table-title">Parameters and methods for user groups formation.</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;">User Groups formation parameters</td>       <td>values</td>       </tr>       <tr>       <td style="text-align:left;"># ratings above <em>&#x03C4;</em>       </td>       <td>55461</td>       </tr>       <tr>       <td style="text-align:left;"># users</td>       <td>671</td>       </tr>       <tr>       <td style="text-align:left;">TFIDF formula</td>       <td>        <span class="inline-equation"><span class="tex">$f(t,D) \cdot \log \frac{\left| D \right|}{df(t)+1}$</span>        </span>       </td>       </tr>       <tr>       <td style="text-align:left;">distance metric</td>       <td>normalized Euclidean</td>       </tr>       <tr>       <td style="text-align:left;">clustering algorithm</td>       <td>Ward agglomerative</td>       </tr>       <tr>       <td style="text-align:left;"># item categories</td>       <td>43</td>       </tr>       <tr>       <td style="text-align:left;"># clusters</td>       <td>15</td>       </tr>      </tbody>     </table>    </div>    </section>    <section id="sec-21">    <header>     <div class="title-info">      <h3>       <span class="section-number">5.4</span> Diversification Evaluation</h3>     </div>    </header>    <p>In order to understand the diversification reached through the user clustering and distant neighborhood formation, we set up the following experimental evaluation. Specifically, our goal is to quantify how our proposed approach answers the following hypotheses:</p>    <ul class="list-no-style">     <li id="list9" label="&#x2022;">The approach can tune the diversification among users within the same clusters and therefore, control the trade off between user similarity and distance.<br/></li>     <li id="list10" label="&#x2022;">The approach performs better than baseline diversification approaches, such as random diversification.<br/></li>     <li id="list11" label="&#x2022;">The approach performs comparably to [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0021">21</a>] as state of the art diversification method.<br/></li>     <li id="list12" label="&#x2022;">The neighbors extraction with clusters produces a lower maximum yielded diversity than without (i.e. full user space).<br/></li>    </ul>    <section id="sec-22">     <p><em>5.4.1 Evaluation of the distant neighborhood formation.</em> The user dataset from Movielens requires a training phase and a test phase for the offline evaluation. In the training phase, we cluster the users with the parameters listed in Table&#x00A0;<a class="tbl" href="#tab2">2</a>. Next, we classify the test user profiles on the clusters created at the training phase, by performing <em>kNN</em> on the closest 11 users to determine the suitable cluster. Lastly, for each of the classified test users, the distant neighborhood is formed for different values of <em>&#x03B1;</em>, with Equation&#x00A0;<a class="eqn" href="#eq5">5</a> on the cosine distances to find the significance scores. The cosine distance is utilized as it can be easily integrated in the significance score formula, which requires both similarities and distances and more importantly, since the Euclidean distance does not have an opposite metric to calculate the similarities. We then retrieve the top<em>K</em> neighbors according to Equation&#x00A0;<a class="eqn" href="#eq6">6</a>. Finally, we evaluate the proposed diversification approach (N) against the following methods:</p>     <ul class="list-no-style">      <li id="list13" label="&#x2022;"><em>RANDN</em>, the baseline method which randomly extracts the neighbors in the full user space.<br/></li>      <li id="list14" label="&#x2022;"><em>FULLN</em>, extracting the neighbors in the full user space following Equation&#x00A0;<a class="eqn" href="#eq5">5</a>.<br/></li>      <li id="list15" label="&#x2022;"><em>DNCF</em>, the state of the art approach from [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0021">21</a>] which extracts distant neighbors from the active user&#x0027;s cluster.<br/></li>      <li id="list16" label="&#x2022;"><em>FULLDNCF</em> from [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0021">21</a>], extracting distant neighbors from the full user space.<br/></li>     </ul>     <p>Following the hypotheses, we expect that the user diversity can be controlled through Equation&#x00A0;<a class="eqn" href="#eq5">5</a>, considering that the evaluation at this stage allows only to measure the diversity on the distant neighbors and to reach actual recommendations, different experimental procedures are required. We expect the yielded diversity of the distant neighbors to the test users to be directly proportional to&#x00A0;<em>&#x03B1;</em>. Moreover, since the distant neighbors are selected from the same cluster, we also expect <em>i)</em> the resulting diversity not to be as high as with random neighborhood formation and <em>ii)</em> to be less varied than with distant neighbors extracted from the full user space.</p>    </section>    <section id="sec-23">     <p><em>5.4.2 Evaluation procedure setup.</em> We split the user dataset so that 80% of the users are used to train the algorithm, learn the user preference categories and form the clusters of users. The remaining 20% of users are kept for the testing phase. We use the user profiles built on item categories for the experiment. Regarding the diversification parameter <em>&#x03B1;</em>, we study the behaviour of the proposed approach for values: <em>&#x03B1;</em> = {0, 0.2, 0.4, 0.6, 0.8, 1}. The values range from 0 (traditional similarity based neighbor formation, expected low heterogeneity) to varying diversification (expected low to high heterogeneity), and 1 (where the farthest users are selected, with expected high heterogeneity), respectively.</p>     <p>We also study the effect of the neighborhood&#x0027;s size with <em>k</em> = {5, 10, 15} top<em>K</em> neighbors on the yielded diversity. For the evaluation metric, we adopt the ISS metric from [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0021">21</a>], considering the dissimilarity between pairs of users as the complement of similarity. Henceforth, the ISS metric is regarded as Intra-Set Diversity metric (ISD) and calculated as follows for the users within the neighbor set <span class="inline-equation"><span class="tex">$\overline{V}_u$</span>      </span> of the active user <em>u</em>: <div class="table-responsive" id="eq8">       <div class="display-equation">       <span class="tex mytex">\begin{equation} ISD_{\overline{V}_u} = 2 \frac{\sum _{v,w \in \overline{V}_u, v\ne w} d(v,w)}{\left| \overline{V}_u \right| \cdot (\left| \overline{V}_u \right|-1)} \end{equation} </span>       <br/>       <span class="equation-number">(8)</span>       </div>      </div>     </p>     <figure id="fig10">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig10.jpg" class="img-responsive"       alt="Figure 10"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 10:</span>       <span class="figure-title">Intra-Set Diversity comparison of proposed approach (N) on full user space variant (FULLN), randomized approach (RANDN) and distant neighbor-based collaborative filtering (DNCF, FULLDNCF) on increasing values of <em>&#x03B1;</em>.</span>      </div>     </figure>    </section>    <section id="sec-24">     <p><em>5.4.3 Empirical results and analysis of the user diversification approaches.</em> The results of the experiment can be inspected in Figure&#x00A0;<a class="fig" href="#fig10">10</a>. The <em>x</em>-axis represents the values for which the user diversification has been conducted. On the <em>y</em>-axis, the resulting ISD scores are produced and represent the overall diversity of the users for the proposed approach N, together with the results of FULLN, DNCF and FULLDNCF methods, and the baseline RANDN method, which serves as the anchoring measure for the analysis. Each curve is labeled considering the significant neighbors for varying neighborhood sizes (5, 10, 15).</p>     <p>A general trend can be noted for the distant neighbors extracted from the same clusters (N): the proposed approach N show a crescent trend from low to high diversity, which tends to smoothen as the neighborhood size increases. Moreover, for N the ISD range varies as expected (between 0.25 and 0.52 for <em>k</em> = 5 neighbors). Instead the ISD range for the FULLN approach is wider (between 0.3 and 0.8 for <em>k</em> = 5). Surprisingly, the diversification levels do not chance as expected: instead of following a smooth curve, the changes in diversity are moderately sudden, especially for <em>k</em> = 5. In particular, there seems to be a discontinuity between <em>&#x03B1;</em> = 0.4 and <em>&#x03B1;</em> = 0.6 which causes this trend (for both N and FULLN), as with smaller and larger <em>&#x03B1;</em>, the ISD does not capture other variations in the neighbor diversity. This behaviour is imputable to Equation&#x00A0;<a class="eqn" href="#eq5">5</a>, which controls the neighbor extraction for the active user: with the current formula, the extracted neighbors are the same for <em>&#x03B1;</em> &#x2264; 0.4 and <em>&#x03B1;</em> &#x2265; 0.6 and therefore, the ISD scores do not vary. On the other hand, the results of RANDN, appear more constant (with ISD scores around &#x223C; 0.64) than N and FULLN, with smaller variations in the diversity and contradictory results as the diversification level increases, producing an initially descending ISD, which increases at full diversification (<em>&#x03B1;</em> = 1).</p>     <p>With the methods DNCF and FULLDNCF, the ISD scores are more consistent and varied, ranging from &#x223C; 0.26 to 0.7 for DNCF and 0.3 to 0.9 for FULLDNCF. Compared to N, DNCF also produces the same ISD scores at <em>&#x03B1;</em> = 0, while at maximum diversity (<em>&#x03B1;</em> = 1), the results show a visible variation in the ISD scores: while the maximum ISD score reached by N is 0.55, it accounts at &#x223C; 0.7 for DNCF. The FULLN and FULLDNCF methods also perform in a similar fashion (FULLDNCF has a greater maximum ISD of 0.9 compared to 0.8 of FULLN).</p>     <p>The results of this experiment suggest to better model the similarity VS diversity trade-off (Equation&#x00A0;<a class="eqn" href="#eq5">5</a>) to remove the evident discontinuity affecting the ISD scores. Nevertheless, we can confirm the hypothesis concerning the proportionality between the diversification levels and the diversity reached, suggesting that the proposed within-cluster neighbor diversification may be worth of consideration in the next stage of this work.</p>     <p>Moreover, the hypotheses on the increasing diversification levels for distant neighbors within the same cluster are valid to the extent of the maximum dissimilarity between any pair of users in the same cluster: as the users within the same groups share a theoretical baseline similarity, it would be unreasonable to expect a constant increment of the ISD scores, also considering the group sizes. To support this statement, the maximum ISD scores for the approaches (N and DNCF) using clusters of users are lower than the scores of FULLN and FULLDNCF, which operate on the full user space. As Figure&#x00A0;<a class="fig" href="#fig10">10</a> shows, the ISD scores are influenced by the clusters of users: the ISD for N and DNCF (within-cluster) are lower than the scores of FULLN and FULLDNCF, which operate on the full user space, conforming with our last hypothesis.</p>    </section>    </section>   </section>   <section id="sec-25">    <header>    <div class="title-info">     <h2>      <span class="section-number">6</span> Conclusions and Future Work</h2>    </div>    </header>    <p>In this paper, we proposed a user-centric conceptual framework to control the recommendation diversity for individual users, considering relevant aspects to evaluate against individual preferences. We therefore defined diversity on the basis of four properties: local coverage (familiarity with current preferences), global coverage (the system&#x0027;s abilities to cover the item catalogue), novelty (unfamiliarity with current preferences) and redundancy (the amount of similar items).</p>    <p>Following the proposed framework, we subsequently developed a diversification procedure which can be incorporated by design into the recommendation filtering prior to the extraction of items. We developed a LSA-based user modeling based on categories of favourite items (see Figure&#x00A0;<a class="fig" href="#fig4">4</a>). Then we clustered groups of similar users to allow a baseline accuracy among the preferences of each group member. We evaluated our approach on the diversification of neighbors for active users by adopting the ISD metric [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>] and proved that by adjusting the diversity levels of the held-out users it is possible to extract different neighbors (for both the proposed and state of the art approach) from which we can obtain a list of recommendations. Yet, the limitations of Equation&#x00A0;<a class="eqn" href="#eq5">5</a>, notably the adoption of a simple similarity VS diversity trade-off are the major cause of extracting always the same users for diversification levels <em>&#x03B1;</em> &#x2264; 0.4 and <em>&#x03B1;</em> &#x2265; 0.6, even if the ISD scores vary similarly to the state of the art method (Figure&#x00A0;<a class="fig" href="#fig10">10</a>).</p>    <p>As we tested only the diversification of the distant neighborhoods, we will pursue the complete recommendation procedure and test how our approach impacts the user satisfaction in terms of recommendation quality. Also, the limitations on the preference modeling and the neighbor significance formulas suggest an area for future optimization. Moreover, we will devise a better item categorization procedure to include or remove specific metadata and base it on individual or aggregate metadata. Lastly, we will extend our framework with contextual factors (temporal changes of user preferences, time and location), as the motivations behind variety seeking behaviors comprise both internal and external factors [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>]. For this purpose, we will test our framework and approach on other datasets than Movielens in conjunction with online experiments.</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>    <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>    </div>    </header>    <ul class="bibUl">    <li id="BibPLXBIB0001" label="[1]">Gediminas Adomavicius and Young&#x00A0;Ok Kwon. 2009. Toward more diverse recommendations: Item re-ranking methods for recommender systems. (2009). <a class="link-inline force-break"      href="https://experts.umn.edu/en/publications/toward-more-diverse-recommendations-item-re-ranking-methods-for-r"      target="_blank">https://experts.umn.edu/en/publications/toward-more-diverse-recommendations-item-re-ranking-methods-for-r</a></li>    <li id="BibPLXBIB0002" label="[2]">Tevfik Aytekin and Mahmut&#x00A0;Ozge Karakaya. 2014. Clustering-based diversity improvement in top-N recommendation. <em>      <em>Journal of Intelligent Information Systems</em>     </em>42, 1 (2 2014), 1&#x2013;18. <a class="link-inline force-break"      href="https://doi.org/10.1007/s10844-013-0252-9"      target="_blank">https://doi.org/10.1007/s10844-013-0252-9</a></li>    <li id="BibPLXBIB0003" label="[3]">Andrea Carrillo, Barraza-Urbina, Benjamin Heitmann, Conor Hayes, and Angela Ramos. 2015. XploDiv: Diversification Approach for Recommender Systems. (1 2015). <a class="link-inline force-break" href="https://doi.org/10.13025/S8PC74"      target="_blank">https://doi.org/10.13025/S8PC74</a></li>    <li id="BibPLXBIB0004" label="[4]">Pablo Castells, Neil&#x00A0;J. Hurley, and Saul Vargas. 2015. Novelty and Diversity in Recommender Systems. In <em>      <em>Recommender Systems Handbook</em>     </em>. Springer US, Boston, MA, 881&#x2013;918. <a class="link-inline force-break"      href="https://doi.org/10.1007/978-1-4899-7637-6_26"      target="_blank">https://doi.org/10.1007/978-1-4899-7637-6_26</a></li>    <li id="BibPLXBIB0005" label="[5]">Federica Cena, Cristina Gena, Pierluigi Grillo, Tsvi Kuflik, Fabiana Vernero, and Alan&#x00A0;J. Wecker. 2017. How scales influence user rating behaviour in recommender systems. <em>      <em>Behaviour &#x0026; Information Technology</em>     </em> (5 2017), 1&#x2013;20. <a class="link-inline force-break"      href="https://doi.org/10.1080/0144929X.2017.1322145"      target="_blank">https://doi.org/10.1080/0144929X.2017.1322145</a></li>    <li id="BibPLXBIB0006" label="[6]">Scott Deerwester, Scott Deerwester, Susan&#x00A0;T. Dumais, George&#x00A0;W. Furnas, Thomas&#x00A0;K. Landauer, and Richard Harshman. 1990. Indexing by latent semantic analysis. <em>      <em>JOURNAL OF THE AMERICAN SOCIETY FOR INFORMATION SCIENCE</em>     </em>41, 6(1990), 391&#x2013;407. <a class="link-inline force-break"      href="http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.108.8490"      target="_blank">http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.108.8490</a></li>    <li id="BibPLXBIB0007" label="[7]">F&#x00A0;Maxwell Harper and Joseph&#x00A0;A Konstan. 2015. The MovieLens Datasets: History and Context. <em>      <em>ACM Trans. Interact. Intell. Syst.</em>     </em>5, 4 (2015), 19:1&#x2013;19:19. <a class="link-inline force-break" href="https://doi.org/10.1145/2827872"      target="_blank">https://doi.org/10.1145/2827872</a></li>    <li id="BibPLXBIB0008" label="[8]">Jonathan&#x00A0;L. Herlocker, Joseph&#x00A0;A. Konstan, Loren&#x00A0;G. Terveen, and John&#x00A0;T. Riedl. 2004. Evaluating collaborative filtering recommender systems. <em>      <em>ACM Transactions on Information Systems</em>     </em>22, 1 (2004), 5&#x2013;53. <a class="link-inline force-break" href="https://doi.org/10.1145/963770.963772"      target="_blank">https://doi.org/10.1145/963770.963772</a></li>    <li id="BibPLXBIB0009" label="[9]">Thomas Hofmann and Thomas. 2004. Latent semantic models for collaborative filtering. <em>      <em>ACM Transactions on Information Systems</em>     </em>22, 1 (1 2004), 89&#x2013;115. <a class="link-inline force-break" href="https://doi.org/10.1145/963770.963774"      target="_blank">https://doi.org/10.1145/963770.963774</a></li>    <li id="BibPLXBIB0010" label="[10]">KENNETH JUNGE. 1994. Diversity of ideas about diversity measurement. <em>      <em>Scandinavian Journal of Psychology</em>     </em>35, 1 (3 1994), 16&#x2013;26. <a class="link-inline force-break"      href="https://doi.org/10.1111/j.1467-9450.1994.tb00929.x"      target="_blank">https://doi.org/10.1111/j.1467-9450.1994.tb00929.x</a></li>    <li id="BibPLXBIB0011" label="[11]">Marius Kaminskas and Derek Bridge. 2016. Diversity, Serendipity, Novelty, and Coverage. <em>      <em>ACM Transactions on Interactive Intelligent Systems</em>     </em>7, 1 (12 2016), 1&#x2013;42. <a class="link-inline force-break" href="https://doi.org/10.1145/2926720"      target="_blank">https://doi.org/10.1145/2926720</a></li>    <li id="BibPLXBIB0012" label="[12]">Matev&#x017E; Kunaver and Toma&#x017E; Po&#x017E;rl. 2017. Diversity in recommender systems &#x2013; A survey. <em>      <em>Knowledge-Based Systems</em>     </em>123 (2017), 154&#x2013;162. <a class="link-inline force-break"      href="https://doi.org/10.1016/j.knosys.2017.02.009"      target="_blank">https://doi.org/10.1016/j.knosys.2017.02.009</a></li>    <li id="BibPLXBIB0013" label="[13]">Leigh McAlister and Edgar Pessemier. [n. d.]. Variety Seeking Behavior: An Interdisciplinary Review. <em>      <em>Journal of Consumer Research</em>     </em>9 ([n. d.]), 311&#x2013;322. <a class="link-inline force-break" href="https://doi.org/10.2307/2488626"      target="_blank">https://doi.org/10.2307/2488626</a></li>    <li id="BibPLXBIB0014" label="[14]">Sean&#x00A0;M. McNee, John Riedl, and Joseph&#x00A0;A. Konstan. 2006. Being accurate is not enough. In <em>      <em>CHI &#x2019;06 extended abstracts on Human factors in computing systems - CHI EA &#x2019;06</em>     </em>. 1097. <a class="link-inline force-break" href="https://doi.org/10.1145/1125451.1125659"      target="_blank">https://doi.org/10.1145/1125451.1125659</a></li>    <li id="BibPLXBIB0015" label="[15]">Tomoko Murakami, Koichiro Mori, and Ryohei Orihara. 2007. Metrics for Evaluating the Serendipity of Recommendation Lists. In <em>      <em>New Frontiers in Artificial Intelligence</em>     </em>. Springer Berlin Heidelberg, Berlin, Heidelberg, 40&#x2013;46. <a class="link-inline force-break"      href="https://doi.org/10.1007/978-3-540-78197-4_5"      target="_blank">https://doi.org/10.1007/978-3-540-78197-4_5</a></li>    <li id="BibPLXBIB0016" label="[16]">Klaus Nehring and Clemens Puppe. 2002. A Theory of Diversity. <em>      <em>Econometrica</em>     </em>70, 3 (5 2002), 1155&#x2013;1198. <a class="link-inline force-break" href="https://doi.org/10.1111/1468-0262.00321"      target="_blank">https://doi.org/10.1111/1468-0262.00321</a></li>    <li id="BibPLXBIB0017" label="[17]">Tien&#x00A0;T. Nguyen, Pik-Mai Hui, F.&#x00A0;Maxwell Harper, Loren Terveen, and Joseph&#x00A0;A. Konstan. 2014. Exploring the filter bubble. In <em>      <em>Proceedings of the 23rd international conference on World wide web - WWW &#x2019;14</em>     </em>. ACM Press, New York, New York, USA, 677&#x2013;686. <a class="link-inline force-break" href="https://doi.org/10.1145/2566486.2568012"      target="_blank">https://doi.org/10.1145/2566486.2568012</a></li>    <li id="BibPLXBIB0018" label="[18]">J.&#x00A0;Ben Schafer, Dan Frankowski, Jon Herlocker, and Shilad Sen. 2007. Collaborative Filtering Recommender Systems. In <em>      <em>The Adaptive Web</em>     </em>. Springer Berlin Heidelberg, Berlin, Heidelberg, 291&#x2013;324. <a class="link-inline force-break"      href="https://doi.org/10.1007/978-3-540-72079-9_9"      target="_blank">https://doi.org/10.1007/978-3-540-72079-9_9</a></li>    <li id="BibPLXBIB0019" label="[19]">Andy Stirling. 2007. A general framework for analysing diversity in science, technology and society. <em>      <em>Journal of The Royal Society Interface</em>     </em>4, 15 (2007). <a class="link-inline force-break"      href="http://rsif.royalsocietypublishing.org/content/4/15/707"      target="_blank">http://rsif.royalsocietypublishing.org/content/4/15/707</a></li>    <li id="BibPLXBIB0020" label="[20]">Sa&#x00FA;l Vargas, Linas Baltrunas, Alexandros Karatzoglou, and Pablo Castells. 2014. Coverage, redundancy and size-awareness in genre diversity for recommender systems. In <em>      <em>Proceedings of the 8th ACM Conference on Recommender systems - RecSys &#x2019;14</em>     </em>. ACM Press, New York, New York, USA, 209&#x2013;216. <a class="link-inline force-break" href="https://doi.org/10.1145/2645710.2645743"      target="_blank">https://doi.org/10.1145/2645710.2645743</a></li>    <li id="BibPLXBIB0021" label="[21]">Chao Yang, Cong&#x00A0;Cong Ai, and Ren&#x00A0;Fa Li. 2013. Neighbor Diversification-Based Collaborative Filtering for Improving Recommendation Lists. In <em>      <em>2013 IEEE 10th International Conference on High Performance Computing and Communications &#x0026; 2013 IEEE International Conference on Embedded and Ubiquitous Computing</em>     </em>. IEEE, 1658&#x2013;1664. <a class="link-inline force-break"      href="https://doi.org/10.1109/HPCC.and.EUC.2013.234"      target="_blank">https://doi.org/10.1109/HPCC.and.EUC.2013.234</a></li>    <li id="BibPLXBIB0022" label="[22]">Cai-Nicolas Ziegler, Sean&#x00A0;M. McNee, Joseph&#x00A0;A. Konstan, and Georg Lausen. 2005. Improving recommendation lists through topic diversification. In <em>      <em>Proceedings of the 14th international conference on World Wide Web - WWW &#x2019;05</em>     </em>. ACM Press, New York, New York, USA, 22. <a class="link-inline force-break" href="https://doi.org/10.1145/1060745.1060754"      target="_blank">https://doi.org/10.1145/1060745.1060754</a></li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">    <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>The metadata have been extracted from the available interfaces at <a class="link-inline force-break" href="http://www.imdb.com/interfaces/">http://www.imdb.com/interfaces/</a>. </p>   <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a>We perform the stabilization process observing that a lack of features cannot be naively interpreted as an error (e.g., the lack of cast for documentary movies is due to the fact that a cast is often not required).</p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>    <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3191580">https://doi.org/10.1145/3184558.3191580</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div> </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>A User-Centric Diversity by Design Recommender System for
+  the Movie Application Domain</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">A User-Centric Diversity by
+          Design Recommender System for the Movie Application
+          Domain</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Michele</span> <span class=
+          "surName">Zanitti</span> CMI, Aalborg University
+          Copenhagen, Denmark, <a href=
+          "mailto:mzanit15@student.aau.dk">mzanit15@student.aau.dk</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Sokol</span> <span class=
+          "surName">Kosta</span> CMI, Aalborg University
+          Copenhagen, Denmark, <a href=
+          "mailto:sok@cmi.aau.dk">sok@cmi.aau.dk</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Jannick</span> <span class=
+          "surName">Sørensen</span> CMI, Aalborg University
+          Copenhagen, Denmark, <a href=
+          "mailto:js@cmi.aau.dk">js@cmi.aau.dk</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191580"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191580</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Recommender systems (RS) have seen widespread
+        adoption across the Internet. However, by emphasizing
+        personalization through the optimization of
+        accuracy-focused metrics,
+        <em>over</em>-<em>personalization</em> may emerge, with
+        negative effects on the user experience. A countermeasure
+        to the problem is to diversify recommendations. In this
+        paper, we present a solution that addresses the problem in
+        the context of a movie application domain. The solution
+        enhances diversity on four related dimensions, namely
+        global coverage, local coverage, novelty, and redundancy.
+        The proposed solution is designed to diversify users
+        profiles, modeled on categorical preferences, within the
+        same group in the recommendation filtering. We evaluate our
+        approach on the Movielens dataset and show that our
+        algorithm yields better results compared to random
+        selection distant neighbors and performs comparably to one
+        of the current state of the art solutions.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Recommender systems;
+          diversity recommendation; user modelling; user
+          clustering; movie recommendation;
+          personalization</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Michele Zanitti, Sokol Kosta, and Jannick Sørensen. 2018.
+          A User-Centric Diversity by Design Recommender System for
+          the Movie Application Domain. In <em>WWW '18 Companion:
+          The 2018 Web Conference Companion,</em> <em>April 23–27,
+          2018,</em> <em>Lyon, France. ACM, New York, NY, USA</em>
+          9 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3191580" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191580</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>By exploiting user's preferences, recommender systems (RS)
+      filter out irrelevant options and select only a personalized
+      subset of items. Moreover, RS aim to promote the discovery of
+      content to leverage the long-tail distributed consumption.
+      There is an increasing concern regarding the issue of content
+      over-personalization. If recommendations only mirror
+      individual preferences, the resulting over-personalization
+      could impact negatively the user satisfaction&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0017">17</a>]. Whilst
+      accuracy is important for user satisfaction, it is merely one
+      ingredient. One approach is to diversify the recommendations
+      for the users so that they do not meet their preferences
+      completely&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0008">8</a>]: diversified recommendations come at
+      the expense of being inaccurate, but could contribute in a
+      better item discoverability and a multi-faceted
+      interpretation of user intentions&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0014">14</a>].</p>
+      <p>Our work provides the following contributions: <em>i)</em>
+      a user-centric diversification framework which identifies the
+      dimensions on which diversity can be modeled for RS.
+      <em>ii)</em> We construct a novel category-based user model.
+      <em>iii)</em> We propose a recommendation approach which
+      implements diversity by design for the movie application
+      domain, with the goal of finding dissimilar users and
+      recommend items from their preferred categories.</p>
+      <p>The paper is organized as follows: Section&nbsp;<a class=
+      "sec" href="#sec-5">2</a> presents diversity as a theoretical
+      concept, and popular metrics evaluating the quality of a
+      diversification algorithm. Section&nbsp;<a class="sec" href=
+      "#sec-6">3</a> provides a comprehensive overview of current
+      diversification solutions. In Section&nbsp;<a class="sec"
+      href="#sec-7">4</a>, we describe our contributions: the
+      proposed diversification framework and the recommendation
+      approach with embedded diversity. In section&nbsp;<a class=
+      "sec" href="#sec-15">5</a> we implement the proposed approach
+      and evaluate the diversification levels reached by finding
+      dissimilar users. For the implementation, we prepare the data
+      by using the Movielens dataset, containing the user ratings,
+      in conjunction with the IMDb metadata of the rated movies,
+      relevant for the movie application domain. We then compare
+      the proposed approach to a baseline method based on random
+      diversification of users and to a state of the art method.
+      Lastly, in Section&nbsp;<a class="sec" href="#sec-25">6</a>
+      we discuss the results of the experimental evaluation and
+      provide our plans for future work.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Background</h2>
+        </div>
+      </header>
+      <p>The concept of diversity is often understood as
+      <em>heterogeneity</em>. Several techniques are available to
+      quantify the diversity of a set of elements, depending on the
+      interpretation of the concept itself&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0010">10</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0016">16</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0019">19</a>]. Stirling&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0019">19</a>] identifies
+      three properties related to diversity and proposes a general
+      framework to analyze it by considering the categories into
+      which elements can be classified:</p>
+      <p><strong>Variety</strong>: <em>“is the number of categories
+      into which system elements are apportioned”</em>, i.e., the
+      number of categories present in a set, independently from the
+      elements within each, is a signal of diversity.</p>
+      <p><strong>Balance</strong>: <em>“is a function of the
+      pattern of apportionment of elements across categories”</em>.
+      This assesses the extent to which categories are equally
+      represented, through the relative distribution of
+      elements.</p>
+      <p><strong>Disparity</strong>: <em>“refers to the manner and
+      degree in which the elements may be distinguished”</em>. This
+      property assesses the specificity of each category (i.e., how
+      can be easily distinguished), determining the dissimilarity
+      as a signal of diversity.</p>
+      <p>Several works have proposed evaluation metrics for
+      diversity in RS.</p>
+      <p>The <em>Binomial Diversity (BD)</em>&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0020">20</a>], includes two parameters
+      to evaluate the diversity in order to minimize the
+      occurrences of similar items and to maximize the recommended
+      items range with respect to the user preferences and to the
+      item catalogue: coverage and redundancy. For a list
+      <em>L</em> of recommendations, BD is measured as:
+      <em>BD<sub>L</sub></em> = <em>coverage<sub>L</sub></em> ·
+      <em>nonRedundancy<sub>L</sub></em> , where
+      <em>coverage<sub>L</sub></em> can be considered either
+      locally, in terms of user experience, or globally, as the
+      ability of the recommender to consider multiple item
+      categories&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>].</p>
+      <p>Ziegler et al. define the <em>Intra List Similarity
+      (ILS)</em> as the aggregate similarity between pairs of items
+      in a set so that the lower it is, the higher the diversity
+      and vice versa&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>]. For all items in a list <em>L</em>
+      and a pair of items <em>i</em> and <em>j</em>,
+      <em>ILS<sub>L</sub></em> is:</p>
+      <div class="table-responsive" id="eq1">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} ILS_L =
+          \frac{1}{2}\sum _{i\in L}\sum _{j\in L, j\ne i}sim(i,j)
+          \end{equation}</span><br />
+          <span class="equation-number">(1)</span>
+        </div>
+      </div>
+      <p></p>
+      <p>Following Stirling's definition&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0019">19</a>], we propose an adaptation
+      of Ziegler's <em>ILS</em> that considers the similarity of a
+      pair of categories in which the recommended items are
+      apportioned, instead of the single items. In fact, this
+      metric can consider the disparity contained in the
+      recommendation list, measured by the similarity by the items’
+      categories.</p>
+      <p>Murakami et al.&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>] define the <em>unexpectedness
+      level</em> as the difference of the recommended items to the
+      expected (as obvious) set of recommendations. However, since
+      this definition works on single items, we adapt it to
+      consider the user profile in terms of item categories. In the
+      rest of the paper, we define the level of unexpectedness for
+      a recommendation set <em>L</em>, considering the expected
+      recommendation categories <em>C<sub>u</sub></em> for user
+      <em>u</em>, as follows:</p>
+      <div class="table-responsive" id="eq2">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} unexpectedness_L
+          = \frac{\left| C_u \setminus C_L \right|}{\left| C_u
+          \right|} \end{equation}</span><br />
+          <span class="equation-number">(2)</span>
+        </div>
+      </div>where, the item categories of the recommended list are
+      <em>C<sub>L</sub></em> , in which each item is apportioned,
+      and <em>C<sub>u</sub></em> is similarly defined but for the
+      items the user has already experienced.
+      <p></p>
+      <p>Lastly, we formulate a metric for estimating the
+      redundancy obtained with a list of recommendations for a
+      given user as the amount of items falling in the same
+      category. We claim that the category-based <em>ILS</em> can
+      be treated as a redundancy metric if the similarity between
+      categories is as follows: <span class=
+      "inline-equation"><span class="tex">$sim(C_i,c) =
+      \left\lbrace {\begin{array}{*10c}1 &amp; C_i = c \\ 0 &amp;
+      otherwise \end{array}}\right.$</span></span> .</p>
+      <p>In this case, the proposed metric considers only the
+      categories <em>C<sub>u</sub></em> covered by <em>u</em>,
+      which are the expected ones, and for a recommendation list,
+      the “good” redundancy can be estimated as follows:</p>
+      <div class="table-responsive" id="eq3">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} redundancy_{L,u}
+          = \frac{1}{2}\sum _{i\in L,C_i\in C_u\cap C_L}\sum _{c\in
+          C_u}sim(C_i,c) \end{equation}</span><br />
+          <span class="equation-number">(3)</span>
+        </div>
+      </div>where the redundancy is the
+      <em>categoryILS<sub>L</sub></em> of each covered category
+      with respect to the recommendations list.
+      <p></p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>RS literature distinguishes two paradigms of
+      diversification methods depending on the level at which is
+      achieved, namely diversity modeling and post-filtering
+      approaches&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>].</p>
+      <p>The former solutions aim to enhance the filtering step by
+      combining diversification criteria prior to the extraction of
+      a set of recommendations. Instead, post-filtering methods
+      process the set of candidate items after the filtering step
+      through re-ranking strategies to extract the subset that
+      satisfy the specified diversification and quality criteria
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0001">1</a>]. Castells
+      et al. [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0004">4</a>]
+      provide a unified understanding of diversity with an
+      extensive survey on evaluation metrics, but a limited
+      overview of diversification methods. Hence, we refer to
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0012">12</a>], which
+      provides an updated survey of both methods and evaluation
+      metrics.</p>
+      <p>Ziegler et al. <em>topic diversification</em> [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0022">22</a>]: this
+      technique is devised to <em>“balance and diversify
+      personalized recommendations lists in order to reflect the
+      user's complete spectrum of interests”</em> and falls into
+      the post-filtering solutions as it takes recommended items in
+      input to re-rank and extract a diversified subset of items.
+      Interesting, but perhaps unsurprising, is the application of
+      item similarity, a content-based metric, to diversify the
+      item set.</p>
+      <p>Vargas et al. <em>binomial diversity</em> [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0020">20</a>]: instead of using item
+      similarity, Vargas et al. proposed a definition of diversity
+      encompassing the genre coverage, genre redundancy and the
+      recommendation list size awareness. Still, since it works by
+      re-ranking an initial recommendation, it falls into
+      post-filtering approaches. Here, it is interesting how the
+      technique approaches diversity taking not only the
+      similarity, but also coverage and redundancy into account:
+      coverage is achieved through finding the genres present in a
+      recommendation set, compared to all genres, considering also
+      that users themselves have preferences over certain genres
+      and thus, some are more relevant than others. Redundancy in
+      turn is defined as the frequency of each genre in the item
+      set. The resulting method thus aims to maximize coverage of
+      genres considering the user preferences while decreasing
+      redundant genres [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0020">20</a>].</p>
+      <p><em>ClusDiv</em>&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>] uses clustering to group items in the
+      catalogue from the explicit ratings rather than on item
+      descriptions (although this is not a necessary prerequisite),
+      and recommends items from different clusters. Compared to
+      re-ranking methods such as [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>], using item clusters resulted
+      quicker and achieved similar diversification results. The
+      authors employed k-Means as the clustering method to generate
+      clusters which were subsequently used to create a
+      users–to-clusters weights matrix. However, as it takes a
+      precomputed list of recommendations, it is a post-filtering
+      approach.</p>
+      <p><em>Neighbor Diversification</em>&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0021">21</a>] proposes to retrieve a
+      set of diverse users, by using explicit ratings, to an active
+      user; recommendations are then extracted from these distant
+      neighbors. Diversity is evaluated also considering the
+      catalogue coverage, the novelty and the accuracy. An
+      unexpected (and perhaps serendipitous) finding is that the
+      accuracy levels, in terms of precision and recall, as the
+      user diversity threshold increases, do not drop and in some
+      cases can also increase, thus suggesting that the trade-off
+      between accuracy and diversity may hold when considering
+      items, but other factors come into play when users are
+      considered.</p>
+      <p><em>XploDiv</em>&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>] employs Stirling's definition to
+      suggest that the balance affects the trade-off between
+      relevance and diversity and a novel diversification method
+      has been devised to deal with the trade-off and with the
+      user's openness tendency (to explore novel items or to
+      exploit her preferences). The parameters to control the two
+      trade-offs are tunable and dynamically learned, to allow a
+      fine grained control of exploitative or exploratory
+      diversity. Unlike the previous method, XploDiv is devised as
+      a post-filtering approach and requires a set of recommended
+      items.</p>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> A novel
+          diversification framework</h2>
+        </div>
+      </header>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Proposed user-centric diversification
+          framework: each small circle refers to the size of
+          category-based preferences (small: low preference, see
+          top-left corner); the three big circles stemming from the
+          centre refer to the addressed diversity properties
+          (global coverage, redundancy, local coverage and
+          novelty).</span>
+        </div>
+      </figure>
+      <p>Given that the metrics presented focus on specific aspects
+      to evaluate the diversity of a recommendation list, we unify
+      these aspects and propose a user-centric conceptual
+      diversification framework (Figure&nbsp;<a class="fig" href=
+      "#fig1">1</a>) built on top of four general dimensions where
+      diversity can be controlled and evaluated for the individual
+      user, namely: local coverage, global coverage, redundancy
+      (Equation&nbsp;<a class="eqn" href="#eq3">3</a>), and novelty
+      (Equation&nbsp;<a class="eqn" href="#eq2">2</a>). We adapt
+      Stirling's definition&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0019">19</a>] to accommodate the concept of users
+      as mixtures of categories and that categories of items are
+      weighted differently, since the concepts of personalization
+      and user preference (either explicit or implicit) in RS
+      conflict with how equally important the original definition
+      treats the diversity of categories. In particular, user
+      preferences would undoubtedly conflict with the property of
+      balance, which instead assumes that “the more even the
+      balance, the greater the diversity”&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0019">19</a>]. So, a relaxed version of
+      the diversity definition would allow to adjust the level of
+      personalization for a particular user (in terms of balance),
+      in relation to her preferences, while maintaining an
+      acceptable level of heterogeneity thanks to the other
+      properties (variety and disparity).</p>
+      <p>Since the majority of methods presented in
+      Section&nbsp;<a class="sec" href="#sec-6">3</a> falls into
+      the post-filtering category, we propose a diversification
+      technique that is tightly coupled to the recommendation
+      filtering, therefore can be formulated as a diversity
+      modeling, in contrast to a post-filtering approach. In fact,
+      post-filtering methods require an initial set of candidate
+      recommendations as input to be diversified. This class of
+      methods being dependent on the set, has the downside of
+      requiring that the set is already diversified. This step is
+      bypassed by the other class of approaches, which arguably
+      allows a greater control of the diversification output. A
+      high-level depict of the rationale behind the our diversity
+      modeling approach is visualized in Figure&nbsp;<a class="fig"
+      href="#fig2">2</a>.</p>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">Proposed diversification approach:
+          filtering distant neighbors (orange points) in the same
+          cluster of users.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>We suggest to utilize the categories of items as a way for
+      modeling the user preferences and then, compute a list of
+      recommendations by selecting distant neighbors for the active
+      user. Moreover, in order to maintain a baseline level of
+      accuracy in the neighbor filtering, we propose to group users
+      together: from the users within the same cluster, only the
+      distant ones are retrieved, while the nearest neighbors are
+      filtered out. While retrieving the most similar users may be
+      beneficial for the accuracy of the system, we argue that
+      providing recommendations from distant users may increase the
+      likelihood that the items are diverse and therefore, the
+      chances for serendipitous encounters with novel items.
+      Diversifying users would help to decrease the preference
+      polarization by allowing more opportunities from the
+      experience of different types of items. As a first idea, the
+      approach would retrieve the distant neighbors from the same
+      cluster, since we expect that the baseline within-group
+      similarity can be a threshold for considering common
+      preferences and therefore, the accuracy VS diversity
+      trade-off, so that the users may not be completely
+      dissimilar. It is important to recall that diversity is
+      applied to the individual active user profile; hence, we
+      consider five dimensions on which trade-offs between the user
+      preferences and the other users’ can appear:</p>
+      <p><strong>Neighbor distance</strong>: The accuracy VS
+      diversity trade-off is controlled by the pairwise diversity
+      between the active user and the other users in the same
+      group. As such, the diversity of the retrieved users should
+      follow a parameter which can be tuned externally.</p>
+      <p><strong>Variety of categories (global coverage)</strong>:
+      The number of categories that should appear in the
+      recommendation list (without considering their disparity or
+      the novelty to the user profile) depends on the length of the
+      desired recommendation list and should be controlled to
+      ensure that not too many or too few categories will appear.
+      By controlling the variety of categories, the user will have
+      the opportunity to navigate a list of recommendations with
+      items belonging to many or few categories, hence, it can also
+      be understood as the property of global coverage. Also, the
+      variety implicitly controls the category disparity, as it
+      seems reasonable that with low variety of categories comes a
+      low disparity and vice-versa.</p>
+      <p><strong>Disparity of categories (novelty and local
+      coverage)</strong>: The heterogeneity of the categories is
+      the result of the novelty VS local coverage trade-off between
+      the favorite categories for the active user and the distant
+      neighbors’; therefore, it considers how many of the novels
+      and how many of the covered categories should be used to
+      select the items.</p>
+      <p><strong>Variety of items</strong>: Similarly to the
+      selection of the number of categories for the recommendation
+      list, the variety of items considers how many items to show
+      in the list. The variety of items is proportional to the
+      variety of categories, as the number of categories increases,
+      also the number of items should increase. The variety of
+      items, in terms of list size, has been acknowledged to
+      influence the coverage and redundancy of the recommended
+      set&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0020">20</a>].
+      In fact, it seems reasonable to generate recommendations from
+      a number of categories proportional to the desired list
+      length (i.e., for short lists, few categories and
+      vice-versa); as such it is proposed to control the variety of
+      categories accordingly.</p>
+      <p><strong>Item recommendation list balance
+      (redundancy)</strong>: The last trade-off is controlled by
+      the number of items belonging to the same category that
+      should appear in the final list of recommendations. This
+      trade-off is between balance and redundancy to control the
+      visibility of each category; the bigger the redundancy, the
+      more items belonging to the same category and vice-versa.</p>
+      <p>The designed technique takes inspiration from Yang et
+      al.&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0021">21</a>].
+      However, the aspects on which the proposed approach differs
+      from [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0021">21</a>]
+      are as follows: i) In [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0021">21</a>], the neighborhood is produced by
+      maximizing the significance between the active user and the
+      users in the neighborhood and subsequently selected. The
+      proposed approach instead includes an additional step, the
+      formation of groups of users, which considers a baseline
+      similarity among the users within the same group. ii) In
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0021">21</a>], the
+      significance between two users is calculated to take into
+      consideration the accuracy-diversity trade-off, controlled by
+      a tunable parameter. The proposed approach extracts the users
+      within the same group and, using a similar method, it
+      controls the similarity VS diversity trade-off. iii) The
+      technique illustrated in [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0021">21</a>] utilizes solely the rating dataset,
+      whereas we exploit both ratings and metadata. iv) In
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0021">21</a>], the
+      objective is to predict the ratings for unseen items for the
+      active user, while here the ratings are the starting point to
+      categorize user preferences. Nevertheless, there can be an
+      additional step in the proposed approach to predict the
+      relevance of a certain category for the active user, given
+      the similarity between the user and the distant users and the
+      preferences for their categories. v) However, the major
+      difference lies in the categorization of user preferences
+      (apart from the creation of groups of users), not included
+      in&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href=
+      "#BibPLXBIB0021">21</a>].</p>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span>
+            Preprocessing Modules</h3>
+          </div>
+        </header>
+        <p>We design the feature extraction modules, delegated to
+        the transformation of user and item profiles into
+        structures suitable for the recommendation procedure: item
+        categorization, user category-based profile modeling and
+        user group formation.</p>
+        <section id="sec-9">
+          <p><em>4.1.1 Item categories construction.</em> The first
+          step in the recommendation preprocessing methodology
+          applies the vision of the diversity definition to compose
+          a taxonomy of item categories (Figure&nbsp;<a class="fig"
+          href="#fig3">3</a>).</p>
+          <figure id="fig3">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig3.jpg"
+            class="img-responsive" alt="Figure 3" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 3:</span>
+              <span class="figure-title">Item categories
+              construction.</span>
+            </div>
+          </figure>
+          <p></p>
+          <p>We propose to use the LSA methodology&nbsp;[<a class=
+          "bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0006">6</a>] as a
+          preliminary step to the clustering analysis of the items
+          to find the latent similarities based on the original
+          extracted features: the feature occurrence matrix is
+          computed, then TF-IDF (a weighting scheme operating on
+          terms <em>t</em> contained in a document <em>d</em>,
+          belonging to a collection of documents <em>D</em>)
+          transformed to find a potentially unbiased subset of
+          features and calculate their relevance scores for each
+          item. Secondly, the item profiles dimensionality is
+          inspected and SVD is applied to reduce the dataset
+          dimensionality in order to extract latent features upon
+          which items are compared. Clustering analysis is
+          performed on the factorized item profiles, according to
+          the criteria of similarity/distance metrics, clustering
+          algorithm and number of desired clusters; specifically,
+          the number of clusters is subordinated to a qualitative
+          and quantitative analysis, in order to limit the creation
+          of redundant clusters (i.e., having similar items in
+          separate clusters), which can also be highly specialized
+          and a potential cause of overfitting. As a result, the
+          item categories are created and each item is labeled
+          accordingly.</p>
+          <figure id="fig4">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig4.jpg"
+            class="img-responsive" alt="Figure 4" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 4:</span>
+              <span class="figure-title">Modeling the
+              category-based user profiles.</span>
+            </div>
+          </figure>
+          <p></p>
+        </section>
+        <section id="sec-10">
+          <p><em>4.1.2 Category-based user preference
+          modeling.</em> models the user profiles according to the
+          item categories. We extract the positive ratings for
+          individual users according to their average ratings and
+          individual thresholds <em>τ</em>, to remove the bias of
+          different rating scales. This model assumes that the
+          ratings are explicit, nevertheless, we argue that the
+          same argument can also apply to implicit ratings.
+          Figure&nbsp;<a class="fig" href="#fig4">4</a> illustrates
+          the process, which uses the output of the previous
+          preprocessing modules as input to model user preferences
+          and extracts the category-based user profiles. Two
+          matrices are used for this purpose: <em>R</em>,
+          containing the positive ratings of users <em>u</em> on
+          items <em>i</em>, and the cluster matrix <em>C</em>, a
+          boolean item <em>i</em> to cluster <em>c</em> association
+          matrix. The profile of user <em>u</em> is constructed
+          with the matrix <em>P</em> <sub><em>u</em>,
+          <em>c</em></sub> , where <em>c</em> is a cluster (or
+          category) of items, and each element of the preference
+          matrix is defined as follows: from the preliminary user
+          profiles, the categories to which positively rated items
+          are apportioned are extracted and the profiles are
+          initially encoded with each category raw frequency
+          (numerator of Eq.&nbsp;<a class="eqn" href="#eq4">4</a>).
+          Then, each user profile is divided by the number of
+          categories experienced. By transforming the raw category
+          frequencies into their proportion to the user profile,
+          the differences towards users having experienced more
+          categories and users having more focused interests may be
+          more comparable using profile proportions, rather than
+          raw frequencies and average ratings.</p>
+          <div class="table-responsive" id="eq4">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} P_{u,c} =
+              \frac{\sum _{i \in I_{u,c}} C_{i,c}}{\sum _{c\forall
+              c\in C_u}\sum _{i\in I_{u,c}} C_{i,c}}, \mbox{where:}
+              \end{equation}</span><br />
+              <span class="equation-number">(4)</span>
+            </div>
+          </div>
+          <p></p>
+          <ul class="list-no-style">
+            <li id="list1" label="•"><em>I<sub>u</sub></em>
+            <sub><em>τ</em></sub> = {<em>i</em>|<em>r</em>
+            <sub><em>u</em>, <em>i</em></sub> ≥ <em>τ</em>,
+            ∀<em>r</em> <sub><em>u</em>, <em>i</em></sub> ∈
+            <em>R<sub>u</sub></em> } is the set of items rated
+            positively by <em>u</em>;<br /></li>
+            <li id="list2" label="•"><em>R<sub>u</sub></em> is the
+            set of ratings for user <em>u</em>;<br /></li>
+            <li id="list3" label="•"><em>I</em> <sub><em>u</em>,
+            <em>c</em></sub> = {<em>i</em>|<em>C</em>
+            <sub><em>i</em>, <em>c</em></sub> ≠ 0, ∀<em>i</em> ∈
+            <em>I<sub>u</sub></em> <sub><em>τ</em></sub> ,
+            <em>c</em> ∈ <em>C</em>} is the set of items rated by
+            <em>u</em>, belonging to category
+            <em>c</em>;<br /></li>
+            <li id="list4" label="•"><em>C<sub>u</sub></em> =
+            {<em>c</em>|<em>C</em> <sub><em>i</em>,
+            <em>c</em></sub> ≠ 0, ∀<em>c</em> ∈ <em>C</em>,
+            ∀<em>i</em> ∈ <em>I<sub>u</sub></em>
+            <sub><em>τ</em></sub> } is the set of categories for
+            which <em>u</em> has experience;<br /></li>
+            <li id="list5" label="•"><em>C</em> <sub><em>i</em>,
+            <em>c</em></sub> denotes the occurrence of category for
+            each item in rated above threshold
+            <em>τ</em>.<br /></li>
+          </ul>
+          <figure id="fig5">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig5.jpg"
+            class="img-responsive" alt="Figure 5" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 5:</span>
+              <span class="figure-title">User clustering
+              process.</span>
+            </div>
+          </figure>
+        </section>
+        <section id="sec-11">
+          <p><em>4.1.3 User groups formation.</em> We assume that
+          users can form groups based on their similar preferences,
+          otherwise collaborative filtering would not be possible.
+          Moreover, by clustering the users, a basic similarity to
+          the active user could be guaranteed, which defines also
+          an implicit measure of recommendation relevance. Thus, by
+          receiving the output of the category-based user profile
+          modeling process, the steps are illustrated in
+          Figure&nbsp;<a class="fig" href="#fig5">5</a>. This
+          process, similarly to item categorization applies a
+          variant of TFIDF used in LSA [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0006">6</a>] to the
+          category-based profiles, namely CFIUF (category
+          frequency, inverse user frequency), aiming to model the
+          similarities of users by weighting the category scores
+          for each user. Subsequently, the normalized
+          CFIUF-weighted user profiles are used for the clustering
+          analysis, whose methodology is identical to the item
+          categorization process. As a result, the groups of users
+          are created and the recommendation procedure can be
+          explained in detail.</p>
+        </section>
+      </section>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span>
+            Diversification Module</h3>
+          </div>
+        </header>
+        <p>We divide the diversification procedure in two major
+        steps which require the presence of the active user:
+        <em>(1)</em> Transformation of the active user to her
+        category-based profile; and <em>(2)</em> Formation of the
+        distant neighborhood.</p>
+        <section id="sec-13">
+          <p><em>4.2.1 Active user profile modeling and
+          classification.</em> This module is required as the
+          active user profile is expected to contain the raw
+          ratings for each consumed items. Here, the role of the
+          preprocessing modules described in the previous section
+          is to transform the active user profile into the
+          category-based one. Once the active user has been
+          transformed into the CFIUF-weighted profile, the
+          classification to a group of users is achieved through
+          the selection of the nearest cluster, which can be
+          computed using k-Nnearest Neighbor on the clusters.</p>
+          <figure id="fig6">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig6.jpg"
+            class="img-responsive" alt="Figure 6" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 6:</span>
+              <span class="figure-title">Diversification procedure
+              in detail.</span>
+            </div>
+          </figure>
+          <p></p>
+        </section>
+        <section id="sec-14">
+          <p><em>4.2.2 Distant neighborhood formation: accuracy VS
+          diversity.</em> This is the pivotal step of the
+          diversification procedure, as it involves the control of
+          the diversity between the users within the same cluster
+          (Figure&nbsp;<a class="fig" href="#fig6">6</a>) and
+          arguably, the control of the recommendation list
+          diversity. The most significantly diverse users within
+          the same cluster are filtered, as opposed to nearest
+          neighbors, according to Equation&nbsp;<a class="eqn"
+          href="#eq5">5</a>. As such, we expect that the categories
+          of items from distant users will appear different but not
+          radically, from the active user (since the prerequisite
+          of the recommendations is to be still accurate to the
+          active user preferences). In order to control the
+          neighbor diversification, we introduce an external
+          parameter <em>α</em> to determine the pairwise diversity
+          significance, similarly to [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0021">21</a>]. For a given user and another
+          user <em>u</em> belonging to the same cluster <em>c</em>,
+          the diversity significance <em>s</em> is calculated as
+          follows:</p>
+          <div class="table-responsive" id="eq5">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} s(u,v) =
+              (1-\alpha)\cdot (1-d(u,v)) + \alpha \cdot (d(u,v)),
+              \end{equation}</span><br />
+              <span class="equation-number">(5)</span>
+            </div>
+          </div>where the diversity is proportional to the growth
+          of <em>α</em>, hence, the larger <em>α</em>, the greater
+          the diversity; <em>d</em>(<em>u</em>, <em>v</em>) is the
+          distance between the active user <em>u</em> and user
+          <em>v</em>; and (1 − <em>α</em>) and <em>α</em>
+          respectively control the similarity and distance
+          trade-off between the two users. Hence the <em>k</em>
+          most significant users are extracted so that the
+          significance between users <em>u</em> and <em>v</em> is
+          maximized as:
+          <div class="table-responsive" id="eq6">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} \overline{V}
+              = argmax_{v\in V}(s(u,v)) \end{equation}</span><br />
+              <span class="equation-number">(6)</span>
+            </div>
+          </div>where <span class="inline-equation"><span class=
+          "tex">$\overline{V}$</span></span> , set of distant
+          neighbors, is the result of the maximized diversification
+          significance.
+          <p></p>
+        </section>
+      </section>
+    </section>
+    <section id="sec-15">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Implementation
+          and Evaluation</h2>
+        </div>
+      </header>
+      <p>Here we address the item categorization and user profile
+      modeling and we finish by providing the experiment setup to
+      measure the diversification levels reached through extraction
+      of distant neighbors. We hypothesize that the items can form
+      more or less homogeneous categories, the users can be
+      clustered according to such categories and finally, that the
+      selection of distant users within the same clusters can
+      fulfill the accuracy VS diversity trade-off.</p>
+      <section id="sec-16">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span> Feature
+            Engineering and Data Preparation</h3>
+          </div>
+        </header>
+        <p>As a result of this process, the initial user and item
+        profiles are modeled and ready to be preprocessed in the
+        second phase according to the full recommendation
+        procedure.</p>
+        <p>We apply the proposed diversification approach to the
+        small Movielens dataset [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0007">7</a>], maintained by GroupLens Research,
+        which provides around 100K explicit ratings of 671 users
+        for 9125 movies. Along with this dataset, we extracted the
+        metadata from IMDb<a class="fn" href="#fn1" id=
+        "foot-fn1"><sup>1</sup></a> to describe the items for the
+        categorization step.</p>
+        <figure id="fig7">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig7.jpg"
+          class="img-responsive" alt="Figure 7" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 7:</span>
+            <span class="figure-title">Movielens long tail
+            distribution.</span>
+          </div>
+        </figure>
+        <p></p>
+        <section id="sec-17">
+          <p><em>5.1.1 Characterizing user ratings in
+          Movielens.</em> We analyze the Movielens dataset for
+          discovering the rating distributions, popularity biases,
+          and differences in rating scales, to distinguish between
+          <em>enthusiastic</em> and <em>demanding</em> users. As a
+          result, we select the individual rating threshold to
+          consider positive preferences. Users have rated the
+          movies on a clear long-tail distribution, which is better
+          depicted in Figure&nbsp;<a class="fig" href=
+          "#fig7">7</a>: the majority has rated less than 500
+          movies.</p>
+          <figure id="fig8">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig8.jpg"
+            class="img-responsive" alt="Figure 8" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 8:</span>
+              <span class="figure-title">Movielens rating pattern
+              distribution.</span>
+            </div>
+          </figure>
+          <p></p>
+          <p>The individual rating patterns are depicted in
+          Figure&nbsp;<a class="fig" href="#fig8">8</a>, through
+          global rating density and average rating distributions.
+          Generally, individual averages tend to be more compact
+          near 3.5 and 4 (in rating scale), following that users
+          tend to give high ratings, but the presence of lower and
+          higher averages suggests and clearly proves that users
+          have different rating behaviours. The existence of
+          varying rating scales is also supported by [<a class=
+          "bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0018">18</a>] and
+          reinforced by an analysis performed on the effect of the
+          rating scale granularity [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0005">5</a>]. Moreover, we uncover the
+          existence of subjective scales at which users adhere when
+          rating movies [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0009">9</a>]: as preferences are subjective,
+          we need to standardize ratings so that individual biases
+          can be removed to compare rating scales objectively and
+          finally, to extract the positive preferences. We choose
+          the z-score standardization&nbsp;[<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0009">9</a>] to
+          transform individual ratings and extract only the
+          positive ones as we suppose that the positive preferences
+          are simply those above the individual average. However,
+          this approach still ignores the preferences for users
+          having only high ratings. Therefore, we differentiate the
+          threshold for either users with low and high standards as
+          follows:</p>
+          <div class="table-responsive" id="eq7">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} \tau _u =
+              \left\lbrace {\begin{array}{*10c}\mu _u^{\prime }
+              &amp; if \mu _u {\lt} 4 \\ 4 &amp; if \mu _u \ge 4,
+              \end{array}}\right. \end{equation}</span><br />
+              <span class="equation-number">(7)</span>
+            </div>
+          </div>where <em>μ<sub>u</sub></em> is the average rating
+          of <em>u</em> prior to standardization, so that the
+          threshold can assume values 4 where the average is equal
+          or above 4, and <span class=
+          "inline-equation"><span class="tex">$\mu ^{\prime
+          }_u$</span></span> (as the mean rating after
+          standardization, which is always 0) for the other users.
+          <figure id="fig9">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig9.jpg"
+            class="img-responsive" alt="Figure 9" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 9:</span>
+              <span class="figure-title">Genres of the movies
+              retrieved from IMDb.</span>
+            </div>
+          </figure>
+          <p></p>
+        </section>
+        <section id="sec-18">
+          <p><em>5.1.2 Characterizing movies from IMDb
+          metadata.</em> To provide the items with a content-based
+          profile and not rely on ratings, we extracted descriptive
+          metadata (<em>cast, company, countries, director, genres,
+          keywords, languages, composer, release date, writer</em>)
+          from IMDb, using the identifiers of the movies rated in
+          Movielens. We notice that there is a prevalence of drama
+          and comedy genres, which are present in around half of
+          the extracted movies, followed by thriller and romance,
+          present in around 20% of the movies as shown by genre
+          inspection, Figure&nbsp;<a class="fig" href=
+          "#fig9">9</a>. We also stabilize the dataset, since it
+          presented missing values after the extraction<a class=
+          "fn" href="#fn2" id="foot-fn2"><sup>2</sup></a> by:</p>
+          <ol class="list-no-style">
+            <li id="list6" label="(1)">Transforming the release
+            date in only the year of release, from the IMDb format,
+            complete with country, day and month of release. For
+            movies without release date from IMDb, use the release
+            given in the Movielens dataset.<br /></li>
+            <li id="list7" label="(2)">Filling missing keywords
+            using common instances from the first occurring genre
+            of affected movies and determine a relevance
+            threshold.<br /></li>
+            <li id="list8" label="(3)">Filling missing languages
+            and countries of production using common instances from
+            movies with these features. Keeping the remaining
+            missing features.<br /></li>
+          </ol>
+        </section>
+      </section>
+      <section id="sec-19">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> Item
+            categorization</h3>
+          </div>
+        </header>
+        <p>For this task, we sample movies with at least 3 ratings
+        and at least an average rating of 3 from the full Movielens
+        dataset. We then follow the process depicted in
+        Figure&nbsp;<a class="fig" href="#fig3">3</a> with the
+        metadata extracted. The parameters utilized in the item
+        categorization are listed in Table&nbsp;<a class="tbl"
+        href="#tab1">1</a>.</p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Parameters and methods for item
+            categorization.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Item Categorization
+                parameters</td>
+                <td>values</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"># movies</td>
+                <td>3685</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">TFIDF formula</td>
+                <td><span class="inline-equation"><span class=
+                "tex">$f(t,D) \cdot \log \frac{\left| D
+                \right|}{df(t)}+1$</span></span></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">minimum document
+                frequency</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">maximum document
+                frequency</td>
+                <td>90%</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">k singular values
+                (SVD)</td>
+                <td>500</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">distance metric</td>
+                <td>normalized Euclidean</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">clustering
+                algorithm</td>
+                <td>Ward agglomerative</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"># clusters</td>
+                <td>43</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-20">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.3</span> User group
+            formation</h3>
+          </div>
+        </header>
+        <p>Similarly to how we implemented the item categorization
+        procedure, we model the user preferences according to
+        Equation&nbsp;<a class="eqn" href="#eq4">4</a> and
+        following Figures&nbsp;<a class="fig" href="#fig4">4</a>
+        and <a class="fig" href="#fig5">5</a>, by considering the
+        sampled movies; thus, the number of ratings, above
+        individual threshold account for 55416 out of 82600 for the
+        3685 movies considered. For this task, the parameters
+        utilized are listed in Table&nbsp;<a class="tbl" href=
+        "#tab2">2</a>. We select hierarchical clustering and
+        evaluated the number of optimal clusters following the
+        merge height elbow plot, under the criterion that the
+        groups should allow a certain level of heterogeneity as the
+        cluster size implicitly controls the user diversification.
+        For the diversification approach to work, we expressively
+        search for a clustering solution that would neither form
+        too specific nor too generic groups of users.</p>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Parameters and methods for user groups
+            formation.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">User Groups formation
+                parameters</td>
+                <td>values</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"># ratings above
+                <em>τ</em></td>
+                <td>55461</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"># users</td>
+                <td>671</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">TFIDF formula</td>
+                <td><span class="inline-equation"><span class=
+                "tex">$f(t,D) \cdot \log \frac{\left| D
+                \right|}{df(t)+1}$</span></span></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">distance metric</td>
+                <td>normalized Euclidean</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">clustering
+                algorithm</td>
+                <td>Ward agglomerative</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"># item categories</td>
+                <td>43</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"># clusters</td>
+                <td>15</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-21">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.4</span>
+            Diversification Evaluation</h3>
+          </div>
+        </header>
+        <p>In order to understand the diversification reached
+        through the user clustering and distant neighborhood
+        formation, we set up the following experimental evaluation.
+        Specifically, our goal is to quantify how our proposed
+        approach answers the following hypotheses:</p>
+        <ul class="list-no-style">
+          <li id="list9" label="•">The approach can tune the
+          diversification among users within the same clusters and
+          therefore, control the trade off between user similarity
+          and distance.<br /></li>
+          <li id="list10" label="•">The approach performs better
+          than baseline diversification approaches, such as random
+          diversification.<br /></li>
+          <li id="list11" label="•">The approach performs
+          comparably to [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0021">21</a>] as state of the art
+          diversification method.<br />
+          </li>
+          <li id="list12" label="•">The neighbors extraction with
+          clusters produces a lower maximum yielded diversity than
+          without (i.e. full user space).<br /></li>
+        </ul>
+        <section id="sec-22">
+          <p><em>5.4.1 Evaluation of the distant neighborhood
+          formation.</em> The user dataset from Movielens requires
+          a training phase and a test phase for the offline
+          evaluation. In the training phase, we cluster the users
+          with the parameters listed in Table&nbsp;<a class="tbl"
+          href="#tab2">2</a>. Next, we classify the test user
+          profiles on the clusters created at the training phase,
+          by performing <em>kNN</em> on the closest 11 users to
+          determine the suitable cluster. Lastly, for each of the
+          classified test users, the distant neighborhood is formed
+          for different values of <em>α</em>, with
+          Equation&nbsp;<a class="eqn" href="#eq5">5</a> on the
+          cosine distances to find the significance scores. The
+          cosine distance is utilized as it can be easily
+          integrated in the significance score formula, which
+          requires both similarities and distances and more
+          importantly, since the Euclidean distance does not have
+          an opposite metric to calculate the similarities. We then
+          retrieve the top<em>K</em> neighbors according to
+          Equation&nbsp;<a class="eqn" href="#eq6">6</a>. Finally,
+          we evaluate the proposed diversification approach (N)
+          against the following methods:</p>
+          <ul class="list-no-style">
+            <li id="list13" label="•"><em>RANDN</em>, the baseline
+            method which randomly extracts the neighbors in the
+            full user space.<br /></li>
+            <li id="list14" label="•">
+              <em>FULLN</em>, extracting the neighbors in the full
+              user space following Equation&nbsp;<a class="eqn"
+              href="#eq5">5</a>.<br />
+            </li>
+            <li id="list15" label="•">
+              <em>DNCF</em>, the state of the art approach from
+              [<a class="bib" data-trigger="hover" data-toggle=
+              "popover" data-placement="top" href=
+              "#BibPLXBIB0021">21</a>] which extracts distant
+              neighbors from the active user's cluster.<br />
+            </li>
+            <li id="list16" label="•">
+              <em>FULLDNCF</em> from [<a class="bib" data-trigger=
+              "hover" data-toggle="popover" data-placement="top"
+              href="#BibPLXBIB0021">21</a>], extracting distant
+              neighbors from the full user space.<br />
+            </li>
+          </ul>
+          <p>Following the hypotheses, we expect that the user
+          diversity can be controlled through
+          Equation&nbsp;<a class="eqn" href="#eq5">5</a>,
+          considering that the evaluation at this stage allows only
+          to measure the diversity on the distant neighbors and to
+          reach actual recommendations, different experimental
+          procedures are required. We expect the yielded diversity
+          of the distant neighbors to the test users to be directly
+          proportional to&nbsp;<em>α</em>. Moreover, since the
+          distant neighbors are selected from the same cluster, we
+          also expect <em>i)</em> the resulting diversity not to be
+          as high as with random neighborhood formation and
+          <em>ii)</em> to be less varied than with distant
+          neighbors extracted from the full user space.</p>
+        </section>
+        <section id="sec-23">
+          <p><em>5.4.2 Evaluation procedure setup.</em> We split
+          the user dataset so that 80% of the users are used to
+          train the algorithm, learn the user preference categories
+          and form the clusters of users. The remaining 20% of
+          users are kept for the testing phase. We use the user
+          profiles built on item categories for the experiment.
+          Regarding the diversification parameter <em>α</em>, we
+          study the behaviour of the proposed approach for values:
+          <em>α</em> = {0, 0.2, 0.4, 0.6, 0.8, 1}. The values range
+          from 0 (traditional similarity based neighbor formation,
+          expected low heterogeneity) to varying diversification
+          (expected low to high heterogeneity), and 1 (where the
+          farthest users are selected, with expected high
+          heterogeneity), respectively.</p>
+          <p>We also study the effect of the neighborhood's size
+          with <em>k</em> = {5, 10, 15} top<em>K</em> neighbors on
+          the yielded diversity. For the evaluation metric, we
+          adopt the ISS metric from [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0021">21</a>], considering the dissimilarity
+          between pairs of users as the complement of similarity.
+          Henceforth, the ISS metric is regarded as Intra-Set
+          Diversity metric (ISD) and calculated as follows for the
+          users within the neighbor set <span class=
+          "inline-equation"><span class=
+          "tex">$\overline{V}_u$</span></span> of the active user
+          <em>u</em>:</p>
+          <div class="table-responsive" id="eq8">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}
+              ISD_{\overline{V}_u} = 2 \frac{\sum _{v,w \in
+              \overline{V}_u, v\ne w} d(v,w)}{\left| \overline{V}_u
+              \right| \cdot (\left| \overline{V}_u \right|-1)}
+              \end{equation}</span><br />
+              <span class="equation-number">(8)</span>
+            </div>
+          </div>
+          <p></p>
+          <figure id="fig10">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191580/images/www18companion-319-fig10.jpg"
+            class="img-responsive" alt="Figure 10" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 10:</span>
+              <span class="figure-title">Intra-Set Diversity
+              comparison of proposed approach (N) on full user
+              space variant (FULLN), randomized approach (RANDN)
+              and distant neighbor-based collaborative filtering
+              (DNCF, FULLDNCF) on increasing values of
+              <em>α</em>.</span>
+            </div>
+          </figure>
+        </section>
+        <section id="sec-24">
+          <p><em>5.4.3 Empirical results and analysis of the user
+          diversification approaches.</em> The results of the
+          experiment can be inspected in Figure&nbsp;<a class="fig"
+          href="#fig10">10</a>. The <em>x</em>-axis represents the
+          values for which the user diversification has been
+          conducted. On the <em>y</em>-axis, the resulting ISD
+          scores are produced and represent the overall diversity
+          of the users for the proposed approach N, together with
+          the results of FULLN, DNCF and FULLDNCF methods, and the
+          baseline RANDN method, which serves as the anchoring
+          measure for the analysis. Each curve is labeled
+          considering the significant neighbors for varying
+          neighborhood sizes (5, 10, 15).</p>
+          <p>A general trend can be noted for the distant neighbors
+          extracted from the same clusters (N): the proposed
+          approach N show a crescent trend from low to high
+          diversity, which tends to smoothen as the neighborhood
+          size increases. Moreover, for N the ISD range varies as
+          expected (between 0.25 and 0.52 for <em>k</em> = 5
+          neighbors). Instead the ISD range for the FULLN approach
+          is wider (between 0.3 and 0.8 for <em>k</em> = 5).
+          Surprisingly, the diversification levels do not chance as
+          expected: instead of following a smooth curve, the
+          changes in diversity are moderately sudden, especially
+          for <em>k</em> = 5. In particular, there seems to be a
+          discontinuity between <em>α</em> = 0.4 and <em>α</em> =
+          0.6 which causes this trend (for both N and FULLN), as
+          with smaller and larger <em>α</em>, the ISD does not
+          capture other variations in the neighbor diversity. This
+          behaviour is imputable to Equation&nbsp;<a class="eqn"
+          href="#eq5">5</a>, which controls the neighbor extraction
+          for the active user: with the current formula, the
+          extracted neighbors are the same for <em>α</em> ≤ 0.4 and
+          <em>α</em> ≥ 0.6 and therefore, the ISD scores do not
+          vary. On the other hand, the results of RANDN, appear
+          more constant (with ISD scores around ∼ 0.64) than N and
+          FULLN, with smaller variations in the diversity and
+          contradictory results as the diversification level
+          increases, producing an initially descending ISD, which
+          increases at full diversification (<em>α</em> = 1).</p>
+          <p>With the methods DNCF and FULLDNCF, the ISD scores are
+          more consistent and varied, ranging from ∼ 0.26 to 0.7
+          for DNCF and 0.3 to 0.9 for FULLDNCF. Compared to N, DNCF
+          also produces the same ISD scores at <em>α</em> = 0,
+          while at maximum diversity (<em>α</em> = 1), the results
+          show a visible variation in the ISD scores: while the
+          maximum ISD score reached by N is 0.55, it accounts at ∼
+          0.7 for DNCF. The FULLN and FULLDNCF methods also perform
+          in a similar fashion (FULLDNCF has a greater maximum ISD
+          of 0.9 compared to 0.8 of FULLN).</p>
+          <p>The results of this experiment suggest to better model
+          the similarity VS diversity trade-off
+          (Equation&nbsp;<a class="eqn" href="#eq5">5</a>) to
+          remove the evident discontinuity affecting the ISD
+          scores. Nevertheless, we can confirm the hypothesis
+          concerning the proportionality between the
+          diversification levels and the diversity reached,
+          suggesting that the proposed within-cluster neighbor
+          diversification may be worth of consideration in the next
+          stage of this work.</p>
+          <p>Moreover, the hypotheses on the increasing
+          diversification levels for distant neighbors within the
+          same cluster are valid to the extent of the maximum
+          dissimilarity between any pair of users in the same
+          cluster: as the users within the same groups share a
+          theoretical baseline similarity, it would be unreasonable
+          to expect a constant increment of the ISD scores, also
+          considering the group sizes. To support this statement,
+          the maximum ISD scores for the approaches (N and DNCF)
+          using clusters of users are lower than the scores of
+          FULLN and FULLDNCF, which operate on the full user space.
+          As Figure&nbsp;<a class="fig" href="#fig10">10</a> shows,
+          the ISD scores are influenced by the clusters of users:
+          the ISD for N and DNCF (within-cluster) are lower than
+          the scores of FULLN and FULLDNCF, which operate on the
+          full user space, conforming with our last hypothesis.</p>
+        </section>
+      </section>
+    </section>
+    <section id="sec-25">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Conclusions and
+          Future Work</h2>
+        </div>
+      </header>
+      <p>In this paper, we proposed a user-centric conceptual
+      framework to control the recommendation diversity for
+      individual users, considering relevant aspects to evaluate
+      against individual preferences. We therefore defined
+      diversity on the basis of four properties: local coverage
+      (familiarity with current preferences), global coverage (the
+      system's abilities to cover the item catalogue), novelty
+      (unfamiliarity with current preferences) and redundancy (the
+      amount of similar items).</p>
+      <p>Following the proposed framework, we subsequently
+      developed a diversification procedure which can be
+      incorporated by design into the recommendation filtering
+      prior to the extraction of items. We developed a LSA-based
+      user modeling based on categories of favourite items (see
+      Figure&nbsp;<a class="fig" href="#fig4">4</a>). Then we
+      clustered groups of similar users to allow a baseline
+      accuracy among the preferences of each group member. We
+      evaluated our approach on the diversification of neighbors
+      for active users by adopting the ISD metric [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0021">21</a>] and proved that by
+      adjusting the diversity levels of the held-out users it is
+      possible to extract different neighbors (for both the
+      proposed and state of the art approach) from which we can
+      obtain a list of recommendations. Yet, the limitations of
+      Equation&nbsp;<a class="eqn" href="#eq5">5</a>, notably the
+      adoption of a simple similarity VS diversity trade-off are
+      the major cause of extracting always the same users for
+      diversification levels <em>α</em> ≤ 0.4 and <em>α</em> ≥ 0.6,
+      even if the ISD scores vary similarly to the state of the art
+      method (Figure&nbsp;<a class="fig" href="#fig10">10</a>).</p>
+      <p>As we tested only the diversification of the distant
+      neighborhoods, we will pursue the complete recommendation
+      procedure and test how our approach impacts the user
+      satisfaction in terms of recommendation quality. Also, the
+      limitations on the preference modeling and the neighbor
+      significance formulas suggest an area for future
+      optimization. Moreover, we will devise a better item
+      categorization procedure to include or remove specific
+      metadata and base it on individual or aggregate metadata.
+      Lastly, we will extend our framework with contextual factors
+      (temporal changes of user preferences, time and location), as
+      the motivations behind variety seeking behaviors comprise
+      both internal and external factors [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0013">13</a>]. For this purpose, we
+      will test our framework and approach on other datasets than
+      Movielens in conjunction with online experiments.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Gediminas Adomavicius
+        and Young&nbsp;Ok Kwon. 2009. Toward more diverse
+        recommendations: Item re-ranking methods for recommender
+        systems. (2009). <a class="link-inline force-break" href=
+        "https://experts.umn.edu/en/publications/toward-more-diverse-recommendations-item-re-ranking-methods-for-r"
+          target=
+          "_blank">https://experts.umn.edu/en/publications/toward-more-diverse-recommendations-item-re-ranking-methods-for-r</a>
+        </li>
+        <li id="BibPLXBIB0002" label="[2]">Tevfik Aytekin and
+        Mahmut&nbsp;Ozge Karakaya. 2014. Clustering-based diversity
+        improvement in top-N recommendation. <em><em>Journal of
+        Intelligent Information Systems</em></em> 42, 1 (2 2014),
+        1–18. <a class="link-inline force-break" href=
+        "https://doi.org/10.1007/s10844-013-0252-9" target=
+        "_blank">https://doi.org/10.1007/s10844-013-0252-9</a>
+        </li>
+        <li id="BibPLXBIB0003" label="[3]">Andrea Carrillo,
+        Barraza-Urbina, Benjamin Heitmann, Conor Hayes, and Angela
+        Ramos. 2015. XploDiv: Diversification Approach for
+        Recommender Systems. (1 2015). <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.13025/S8PC74" target=
+        "_blank">https://doi.org/10.13025/S8PC74</a>
+        </li>
+        <li id="BibPLXBIB0004" label="[4]">Pablo Castells,
+        Neil&nbsp;J. Hurley, and Saul Vargas. 2015. Novelty and
+        Diversity in Recommender Systems. In <em><em>Recommender
+        Systems Handbook</em></em> . Springer US, Boston, MA,
+        881–918. <a class="link-inline force-break" href=
+        "https://doi.org/10.1007/978-1-4899-7637-6_26" target=
+        "_blank">https://doi.org/10.1007/978-1-4899-7637-6_26</a>
+        </li>
+        <li id="BibPLXBIB0005" label="[5]">Federica Cena, Cristina
+        Gena, Pierluigi Grillo, Tsvi Kuflik, Fabiana Vernero, and
+        Alan&nbsp;J. Wecker. 2017. How scales influence user rating
+        behaviour in recommender systems. <em><em>Behaviour &amp;
+        Information Technology</em></em> (5 2017), 1–20.
+          <a class="link-inline force-break" href=
+          "https://doi.org/10.1080/0144929X.2017.1322145" target=
+          "_blank">https://doi.org/10.1080/0144929X.2017.1322145</a>
+        </li>
+        <li id="BibPLXBIB0006" label="[6]">Scott Deerwester, Scott
+        Deerwester, Susan&nbsp;T. Dumais, George&nbsp;W. Furnas,
+        Thomas&nbsp;K. Landauer, and Richard Harshman. 1990.
+        Indexing by latent semantic analysis. <em><em>JOURNAL OF
+        THE AMERICAN SOCIETY FOR INFORMATION SCIENCE</em></em> 41,
+        6(1990), 391–407. <a class="link-inline force-break"
+          href="http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.108.8490"
+          target=
+          "_blank">http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.108.8490</a>
+        </li>
+        <li id="BibPLXBIB0007" label="[7]">F&nbsp;Maxwell Harper
+        and Joseph&nbsp;A Konstan. 2015. The MovieLens Datasets:
+        History and Context. <em><em>ACM Trans. Interact. Intell.
+        Syst.</em></em> 5, 4 (2015), 19:1–19:19. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/2827872" target=
+        "_blank">https://doi.org/10.1145/2827872</a>
+        </li>
+        <li id="BibPLXBIB0008" label="[8]">Jonathan&nbsp;L.
+        Herlocker, Joseph&nbsp;A. Konstan, Loren&nbsp;G. Terveen,
+        and John&nbsp;T. Riedl. 2004. Evaluating collaborative
+        filtering recommender systems. <em><em>ACM Transactions on
+        Information Systems</em></em> 22, 1 (2004), 5–53.
+          <a class="link-inline force-break" href=
+          "https://doi.org/10.1145/963770.963772" target=
+          "_blank">https://doi.org/10.1145/963770.963772</a>
+        </li>
+        <li id="BibPLXBIB0009" label="[9]">Thomas Hofmann and
+        Thomas. 2004. Latent semantic models for collaborative
+        filtering. <em><em>ACM Transactions on Information
+        Systems</em></em> 22, 1 (1 2004), 89–115. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/963770.963774" target=
+        "_blank">https://doi.org/10.1145/963770.963774</a>
+        </li>
+        <li id="BibPLXBIB0010" label="[10]">KENNETH JUNGE. 1994.
+        Diversity of ideas about diversity measurement.
+        <em><em>Scandinavian Journal of Psychology</em></em> 35, 1
+        (3 1994), 16–26. <a class="link-inline force-break" href=
+        "https://doi.org/10.1111/j.1467-9450.1994.tb00929.x"
+          target="_blank">https://doi.org/10.1111/j.1467-9450.1994.tb00929.x</a>
+        </li>
+        <li id="BibPLXBIB0011" label="[11]">Marius Kaminskas and
+        Derek Bridge. 2016. Diversity, Serendipity, Novelty, and
+        Coverage. <em><em>ACM Transactions on Interactive
+        Intelligent Systems</em></em> 7, 1 (12 2016), 1–42.
+        <a class="link-inline force-break" href=
+        "https://doi.org/10.1145/2926720" target=
+        "_blank">https://doi.org/10.1145/2926720</a>
+        </li>
+        <li id="BibPLXBIB0012" label="[12]">Matevž Kunaver and
+        Tomaž Požrl. 2017. Diversity in recommender systems – A
+        survey. <em><em>Knowledge-Based Systems</em></em> 123
+        (2017), 154–162. <a class="link-inline force-break" href=
+        "https://doi.org/10.1016/j.knosys.2017.02.009" target=
+        "_blank">https://doi.org/10.1016/j.knosys.2017.02.009</a>
+        </li>
+        <li id="BibPLXBIB0013" label="[13]">Leigh McAlister and
+        Edgar Pessemier. [n. d.]. Variety Seeking Behavior: An
+        Interdisciplinary Review. <em><em>Journal of Consumer
+        Research</em></em> 9 ([n. d.]), 311–322. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.2307/2488626" target=
+        "_blank">https://doi.org/10.2307/2488626</a>
+        </li>
+        <li id="BibPLXBIB0014" label="[14]">Sean&nbsp;M. McNee,
+        John Riedl, and Joseph&nbsp;A. Konstan. 2006. Being
+        accurate is not enough. In <em><em>CHI ’06 extended
+        abstracts on Human factors in computing systems - CHI EA
+        ’06</em></em> . 1097. <a class="link-inline force-break"
+        href="https://doi.org/10.1145/1125451.1125659" target=
+        "_blank">https://doi.org/10.1145/1125451.1125659</a>
+        </li>
+        <li id="BibPLXBIB0015" label="[15]">Tomoko Murakami,
+        Koichiro Mori, and Ryohei Orihara. 2007. Metrics for
+        Evaluating the Serendipity of Recommendation Lists. In <em>
+          <em>New Frontiers in Artificial Intelligence</em></em> .
+          Springer Berlin Heidelberg, Berlin, Heidelberg, 40–46.
+          <a class="link-inline force-break" href=
+          "https://doi.org/10.1007/978-3-540-78197-4_5" target=
+          "_blank">https://doi.org/10.1007/978-3-540-78197-4_5</a>
+        </li>
+        <li id="BibPLXBIB0016" label="[16]">Klaus Nehring and
+        Clemens Puppe. 2002. A Theory of Diversity.
+        <em><em>Econometrica</em></em> 70, 3 (5 2002), 1155–1198.
+        <a class="link-inline force-break" href=
+        "https://doi.org/10.1111/1468-0262.00321" target="_blank">
+          https://doi.org/10.1111/1468-0262.00321</a>
+        </li>
+        <li id="BibPLXBIB0017" label="[17]">Tien&nbsp;T. Nguyen,
+        Pik-Mai Hui, F.&nbsp;Maxwell Harper, Loren Terveen, and
+        Joseph&nbsp;A. Konstan. 2014. Exploring the filter bubble.
+        In <em><em>Proceedings of the 23rd international conference
+        on World wide web - WWW ’14</em></em> . ACM Press, New
+        York, New York, USA, 677–686. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/2566486.2568012" target="_blank">
+          https://doi.org/10.1145/2566486.2568012</a>
+        </li>
+        <li id="BibPLXBIB0018" label="[18]">J.&nbsp;Ben Schafer,
+        Dan Frankowski, Jon Herlocker, and Shilad Sen. 2007.
+        Collaborative Filtering Recommender Systems. In <em><em>The
+        Adaptive Web</em></em> . Springer Berlin Heidelberg,
+        Berlin, Heidelberg, 291–324. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1007/978-3-540-72079-9_9" target=
+        "_blank">https://doi.org/10.1007/978-3-540-72079-9_9</a>
+        </li>
+        <li id="BibPLXBIB0019" label="[19]">Andy Stirling. 2007. A
+        general framework for analysing diversity in science,
+        technology and society. <em><em>Journal of The Royal
+        Society Interface</em></em> 4, 15 (2007). <a class=
+        "link-inline force-break" href=
+        "http://rsif.royalsocietypublishing.org/content/4/15/707"
+        target=
+        "_blank">http://rsif.royalsocietypublishing.org/content/4/15/707</a>
+        </li>
+        <li id="BibPLXBIB0020" label="[20]">Saúl Vargas, Linas
+        Baltrunas, Alexandros Karatzoglou, and Pablo Castells.
+        2014. Coverage, redundancy and size-awareness in genre
+        diversity for recommender systems. In <em><em>Proceedings
+        of the 8th ACM Conference on Recommender systems - RecSys
+        ’14</em></em> . ACM Press, New York, New York, USA,
+        209–216. <a class="link-inline force-break" href=
+        "https://doi.org/10.1145/2645710.2645743" target="_blank">
+          https://doi.org/10.1145/2645710.2645743</a>
+        </li>
+        <li id="BibPLXBIB0021" label="[21]">Chao Yang,
+        Cong&nbsp;Cong Ai, and Ren&nbsp;Fa Li. 2013. Neighbor
+        Diversification-Based Collaborative Filtering for Improving
+        Recommendation Lists. In <em><em>2013 IEEE 10th
+        International Conference on High Performance Computing and
+        Communications &amp; 2013 IEEE International Conference on
+        Embedded and Ubiquitous Computing</em></em> . IEEE,
+        1658–1664. <a class="link-inline force-break" href=
+        "https://doi.org/10.1109/HPCC.and.EUC.2013.234" target=
+        "_blank">https://doi.org/10.1109/HPCC.and.EUC.2013.234</a>
+        </li>
+        <li id="BibPLXBIB0022" label="[22]">Cai-Nicolas Ziegler,
+        Sean&nbsp;M. McNee, Joseph&nbsp;A. Konstan, and Georg
+        Lausen. 2005. Improving recommendation lists through topic
+        diversification. In <em><em>Proceedings of the 14th
+        international conference on World Wide Web - WWW
+        ’05</em></em> . ACM Press, New York, New York, USA, 22.
+        <a class="link-inline force-break" href=
+        "https://doi.org/10.1145/1060745.1060754" target="_blank">
+          https://doi.org/10.1145/1060745.1060754</a>
+        </li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>The metadata
+    have been extracted from the available interfaces at <a class=
+    "link-inline force-break" href=
+    "http://www.imdb.com/interfaces/">http://www.imdb.com/interfaces/</a>.</p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a>We perform the
+    stabilization process observing that a lack of features cannot
+    be naively interpreted as an error (e.g., the lack of cast for
+    documentary movies is due to the fact that a cast is often not
+    required).</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191580">https://doi.org/10.1145/3184558.3191580</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

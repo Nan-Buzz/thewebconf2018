@@ -1,1 +1,727 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> <head>  <title>Ontology-based recommender system in higher education</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script> </head> <body id="main">  <section class="front-matter">   <section>    <header class="title-info">    <div class="journal-title">     <h1>      <span class="title">Ontology-based recommender system in higher education</span>      <br/>      <span class="subTitle"/>     </h1>    </div>    </header>    <div class="authorGroup">    <div class="author">     <span class="givenName">Charbel</span>     <span class="surName">Obeid</span>,     LIRIS, University Lyon 1, France, <a href="mailto:cobeid@liris.cnrs.fr">cobeid@liris.cnrs.fr</a>        </div>        <div class="author">     <span class="givenName">Inaya</span>     <span class="surName">Lahoud</span>,     Galatasaray University, Turkey, <a href="mailto:clahoud@gsu.edu.tr">clahoud@gsu.edu.tr</a>        </div>        <div class="author">     <span class="givenName">Hicham El</span>     <span class="surName">Khoury</span>,     Lebanese University, Lebanon, <a href="mailto:hkhoury@ul.edu.lb">hkhoury@ul.edu.lb</a>        </div>        <div class="author">     <span class="givenName">Pierre-Antoine</span>     <span class="surName">Champin</span>,     LIRIS, University Lyon 1, France, <a href="mailto:pierre-antoine.champin@univ-lyon1.fr">pierre-antoine.champin@univ-lyon1.fr</a>        </div>        </div>    <br/>    <div class="pubInfo">    <p>DOI: <a href="https://doi.org/10.1145/3184558.3191533" target="_blank">https://doi.org/10.1145/3184558.3191533</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">    <p>     <small>Academic advising is limited in its ability to assist students in identifying academic pathways. Selecting a major and a university is a challenging process rife with anxiety. Students at high school are not sure how to match their interests with their working future or major. Therefore, high school students need guidance and support. Moreover, students need to filter, prioritize and efficiently get appropriate information from the web in order to solve the problem of information overload. This paper represents an approach for developing ontology-based recommender system improved with machine learning techniques to orient students in higher education. The proposed recommender system is an assessment tool for students&#x2019; vocational strengths and weaknesses, interests and capabilities. The main objective of our ontology-based recommender system is to identify the student requirements, interests, preferences and capabilities to recommend the appropriate major and university for each one.</small>    </p>    </div>    <div class="classifications">    <div class="author">     <span style="font-weight:bold;">      <small>KEYWORDS:</small>     </span>     <span class="keyword">      <small>Recommender system</small>, </span>     <span class="keyword">      <small>ontology-based</small>, </span>     <span class="keyword">      <small>education</small>     </span>    </div>    <br/>    <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>Charbel Obeid, Inaya Lahoud, Hicham El Khoury and Pierre-Antoine Champin. 2018. G`XCACOntology-based recommender system in higher education. In <em>Proceedings of The 2018 Web Conference Companion (WWW'2018 Companion). ACM, New York, NY, USA, 5 pages.</em> <a href="https://doi.org/10.1145/3178876. EKM0797s"       class="link-inline force-break"       target="_blank">https://doi.org/10.1145/3178876. EKM0797s</a></small>     </p>    </div>    </div>   </section>  </section>  <section class="body">   <section id="sec1">    <header>    <div class="title-info">     <h2>      <span class="section-number">1</span> INTRODUCTION</h2>    </div>    </header>    <p>College or university is a time of major transition for most students. Research has found that 75% of students enter college without having final decisions made about their careers, or even majors. Researchers Gordon and Cuseo [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib11">11</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib15">15</a>] estimate that 50% &#x2013; 75% of college students will change their major at least once during their college career. In France, an algorithm assigns randomly a major to each high school student which obligates many students to go into a domain they never planned to study, and this may eventually lead them to drop out of education [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib16">16</a>].</p>    <p>A major challenge for students is the difficulty to consolidate data from disparate information sources. Here comes the big issue where students at high school struggle to find online useful and accurate information that can have an impact on their plans. If we identify students&#x2019; interests, we can direct them toward enrichment opportunities like programs of study and resources in order to explore universities&#x2019; majors.</p>    <p>Thus, the overall purpose of this system is to enable students to make well-informed educational choices, which are tailored to their overall career and educational goals. Students will use our recommender system to get instant access anytime to a cutting-edge, user-friendly, interactive platform that gives them clear, comprehensive information they will need to navigate their way toward their higher education.</p>    <p>To support personalization, we propose a recommender system that can be used to assist students in finding the relevant major and university, by using the semantic web and machine learning techniques. The Semantic web is an extension of the current web, in which information is given defined meaning, enabling machines and users to cooperate [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib4">4</a>]. Moreover, machines will become able to process and "understand" the data. Ontology is the backbone of semantic web. An ontology is a formal and explicit specification of a shared conceptualization. It consists of concepts namely entities, attributes and properties related to a domain. Using ontologies facilitate the parsing, reasoning, sharing and reusing of knowledge. It has proven its utility in many recommender systems [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib2">2</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib7">7</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib17">17</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib19">19</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib25">25</a>], regardless the domain of application, by improving the quality and the personalization of results.</p>    <p>Ontologies will be used in our system to model higher education institution, employment, and student. Whereas machine learning techniques will be used to learn the profiles of graduate/alumni students in order to make recommendation for the high school students. Usually, machine learning is used for classification, filtering and clustering [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib1">1</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib8">8</a>]. It explores methods for machines to learn how to act without being explicitly programmed.</p>    <p>This paper presents a framework of a semantic recommender system for higher education. The rest of this paper is organized as follows: In Section <a class="sec" href="#sec2">2</a>, a brief overview of the research background and related works is presented. Section <a class="sec" href="#sec3">3</a> shows the proposed framework of the recommendation system. Finally, conclusions and directions for future study are illustrated in Section <a class="sec" href="#sec4">4</a>.</p>   </section>   <section id="sec2">    <header>    <div class="title-info">     <h2>      <span class="section-number">2</span> BACKGROUND AND LITERATURE REVIEW</h2>    </div>    </header>    <section id="sec2Z1">    <header>     <div class="title-info">      <h3>       <span class="section-number">2.1</span> Recommender systems (RS)</h3>     </div>    </header>    <p>RS are information filtering systems that assist users in finding contents, products or services (such as web sites, books, digital products, movies, songs, travel destinations and e-learning materials) by implicitly or explicitly collecting preferences from other users [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib5">5</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib20">20</a>], or analyzing their behaviors [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib18">18</a>]. The computing task can be based on explicit user&#x0027;s preferences, (e.g. the user give a score to product), or implicit, preferences are inferred by the system, depending on user behavior (e.g. choices of browsing on an online shopping site). There are six different classes of recommendation approaches [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib9">9</a>]:</p>    <p>     <em>Content-based:</em> The system learns to recommend items that are similar to the ones that the user liked in the past. The similarity of items is calculated based on the features associated with the compared items.</p>    <p>     <em>Collaborative filtering:</em> Recommends to the active user the items that other users with similar tastes liked in the past. The similarity in taste of two users is calculated based on the similarity in the rating history of the users.</p>    <p>     <em>Demographic:</em> This type of system recommends items based on the demographic profile of the user. The assumption is that different recommendations should be generated for different demographic niches.</p>    <p>     <em>Knowledge-based:</em> Knowledge-based systems recommend items based on specific domain knowledge about how certain item features meet user&#x0027;s needs and preferences and, ultimately, how the item is useful for the user. Notable knowledge based recommender systems are case-based.</p>    <p>     <em>Community-based:</em> This type of system recommends items based on the preferences of the users friends. This technique follows the epigram &#x201C;Tell me who your friends are, and I will tell you who you are&#x201D;.</p>    <p>     <em>Hybrid recommender systems:</em> These RSs are based on the combination of the above mentioned techniques.</p>    <p>[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib22">22</a>] presented in his paper a comparative table of different systems based on the above recommendation approaches, in the e-learning domain. As our objective is to orient students in higher education basing on the data of alumni students, the collaborative filtering approach is limited for our case. Thus, we decided to combine it with knowledge-based (ontologies) to resolve the limitation of this method. We will present in the next section how the ontology contribute to the accuracy of the model.</p>    </section>    <section id="sec2Z2">    <header>     <div class="title-info">      <h3>       <span class="section-number">2.2</span> Ontology-based recommender system</h3>     </div>    </header>    <p>Different ontology-based recommendation approaches have been developed using a variety of methods. For instance, Actualis SARL is specialized in the distribution of a press review. To reduce the diversity of information, the company developed a recommender system to recommend customized review for each customer. In paper [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib25">25</a>], authors presented a recommender system based on the semantic description of articles and customer profile. The architecture of the system is based on two layers. The first is the Intelligence layer, used to manage information extraction. The second is the semantic ontology-based Layer, used to manage specialized knowledge to represent profiles and articles. Furthermore, the concept of the semantic web is used for improving e-learning. In this paper [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib14">14</a>], authors proposed a semantic recommender system approach for e-learning use to assist learners in finding suitable Learning Objectives. Moreover, the system can assist the instructors to suggest new resources to enhance the courses syllabus. This system is built with a query keywords extension using the semantic relations and the ontology reasoning. Similar to above two approaches, authors presented in this paper [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib10">10</a>] a personalized ontology-based recommendation system to represent items and user-profiles in order to provide personalized services using semantic web applications. This paper shows high accuracy when semantically enhanced methods are applied in recommendation systems. Developers experimented this system on the Netflix movie-dataset. The evaluation shows that the semantics-based methods of the recommender system improved the recommendations&#x2019; accuracy. A recommendation system based on an ontology can also solve the cold start problem that depend on insufficient user information from the past [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib23">23</a>]. Indeed, this problem occurs due to an initial lack of ratings for new users, hence it becomes impossible to make reliable recommendations. To avoid this problem in our system, we will invite new users to complete their profile with their personal information, preferences, and by responding to some questions. Then, we create the user profile model based on the user ontology model.</p>    </section>    <section id="sec2Z3">    <header>     <div class="title-info">      <h3>       <span class="section-number">2.3</span> Improving recommender systems with machine learning</h3>     </div>    </header>    <p>Integrating machine learning techniques in recommender system certainly will improve the recommendation accuracy. In this paper [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib13">13</a>], authors proposed a courses recommender system to learners based on their profiles. This system used weka open source software which consists of a collection of machine learning algorithms and implemented k-means algorithm to create learners' profiles supported by their data on Moodle. Besides above approach, in this paper [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib24">24</a>] authors presented the item-based approach and the user based approach to recommend recipes based on preferences of the user ratings. Tanimoto Coefficient Similarity and Log Likelihood Similarity were used to compute similarities between different recipes for the item-based approach. Euclidean Distance and Pearson Correlation were used for user based approach. Results show the performance of the user based approach is found to be better than the item-based approach. Furthermore, in this paper [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib1">1</a>] authors presented an E-learning Course Recommender system based on machine learning techniques that identifies the behavior of students interested in particular courses. Authors compared different combination of data mining algorithms such as Classification &amp; association rule algorithm, Association Rule Mining of classified &amp; clustered data, clustering &amp; association rule algorithm. Results show that the combination clustering, classification &amp; association rule algorithm is the best one.</p>    <p>As we explained before, our goal is to guide students in the choice of their specialization after the high school. Our system is based on alumni students&#x2019; data. Therefore, we will pretreat these data, generate students&#x2019; profiles models in order to learn the path of each one of them, and then cluster them by detecting the frequent models.</p>    </section>    <section id="sec2Z4">    <header>     <div class="title-info">      <h3>       <span class="section-number">2.4</span> Ontology-based recommender system with machine learning techniques</h3>     </div>    </header>    <p>Integrating machine learning techniques with ontology-based recommender systems lead to many remarkable revolution in improvement of recommendation system processes [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib12">12</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib21">21</a>]. For instance, authors in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib3">3</a>] proposed a travel content-based recommender system that uses ontology information to calculate the degree of similarity between user&#x0027;s preferences and point of interest to provide personalized recommendations. The system generalizes user preferences through machine learning techniques. The proposed system overcomes sparse data problem of the traditional content-based recommender using Spreading Activation. Furthermore in paper [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#bib6">6</a>], authors proposed an ontology-based recommender system with rules generated by data mining techniques. Instructors can use this system to predict learners&#x2019; progress and performance. The results were very satisfying and verified the generated rules with small deviation error prediction.</p>    <p>The combination of ontology-based recommender system with machine learning techniques is a promising approach for improving recommendation accuracy. Therefore after verifying the approaches of the different systems mentioned in section 2, we chose to implement this combination of techniques and processes.</p>    </section>   </section>   <section id="sec3">    <header>    <div class="title-info">     <h2>      <span class="section-number">3</span> THE PROPOSED SEMANTIC RECOMMENDER SYSTEM</h2>    </div>    </header>    <p>In this section we present the main components and characteristics of the ontology-based recommender system we are developing, which makes use of semantic-based methods and machine learning techniques to enhance stages of the personalization process. This system will recommend majors and universities to high school students based on the path of graduate students. We mean by that students with minimum bachelor degree. The idea is to learn their paths by collecting data related to their interests centers during high school, their major at university and if we can in which domain they work actually. The proposed recommender system is presented in Figure <a class="fig" href="#fig1">1.</a>    </p>    <figure id="fig1">    <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191533/images/image1.jpg" class="img-responsive" alt="Figure 1:" longdesc=""/>    <div class="figure-caption">     <span class="figure-number">Figure 1:</span>     <span class="figure-title">Recommender system approach.</span>    </div>    </figure>    <p>Our recommender system has four main parts, the first is for data collection by two modes: explicit data collection, which is based on what student will fill in his profile, and implicit data collection by proposing a survey to graduate students in order to gather information about their profiles and interests.</p>    <p>A second part for the ontology that provides a good support for our system and plays an important role because it is used to model the knowledge of the domain.</p>    <p>A third part for processing information using machine learning techniques, creating and clustering graduate students' profiles models and send the results to the hybrid recommendation engine. The fourth part is for making the similarity between students and interests, generating recommendations and saving a file of recommendations by student to be used in the upcoming processes.</p>    <p>Our system is not based on students' grades but rather on their skills, interests and preferences. Since we don&#x0027;t have information about the real situations and experiences of graduate students, we prepared a survey to collect required data. We choose to disseminate this survey to French and Lebanese students through their universities&#x2019; portals. Here comes the job of the machine learning techniques to filter and cluster collected data. We will try many algorithms by the future such as k-mode, self-organizing map and hierarchical clustering algorithms, and select the best one for our case. Sample of our survey questions: <ul class="list-no-style">     <li label="&#x25A0;">What were your academic interests at school?<br/></li>     <li label="&#x25A0;">What are your outside interests (hobbies)?<br/></li>     <li label="&#x25A0;">How would you rate your high school level on the following?<br/></li>        <ul class="list-no-style">     <li label="&#x25CB;">Humanities (literature, philosophy, religion, others)<br/></li>     <li label="&#x25CB;">Fine Arts (music, theatre, &#x2026;)<br/></li>    </ul> 			 </ul>     <ul class="list-no-style">     <li label="&#x25A0;">What high school subjects did you like most? Least?<br/></li>     <li label="&#x25A0;">How important were these criteria when you chose your major/university?<br/></li>    <ul class="list-no-style">     <li label="&#x25CB;">Financial criterion (Registration fees, quality of life, housing, &#x2026;)<br/></li>     <li label="&#x25CB;">Geographical criterion (big city, distance home-university, &#x2026;)<br/></li>     <li label="&#x25CB;">Reputation (rank of university, university- company relationships, &#x2026;)<br/></li>    </ul> 			 </ul> 			 <ul class="list-no-style"> 				 <li label="&#x25A0;">How likely are you to change your current university major?<br/></li>     <li label="&#x25A0;">How well do your major meet your need or interests?<br/></li>     <li label="&#x25A0;">What kind of job/career interests you?<br/></li>    </ul>    </p>    <p>These questions are presented in this paper in simplified version. Some of our questions are multiple choice like shown above. In this case student should rate each choice by checking the corresponding defined rate. For instance, in the question &#x201C;How would you rate your high school grades on the following?&#x201D; student should rate each subcategory such as literature by the following rates: Excellent, Very Good, Good, Fair, Poor, and Very Bad. Likewise, In the question &#x201C;How important were these criteria when you chose your major/university?&#x201D;, student should rate each criterion by the following rates: Extremely important, very important, moderately important, slightly important and not at all important.</p>    <p>Our ontologies are built using Prot&#x00E9;g&#x00E9; ontology editor. They are linked between them and some of their concepts are linked to defined vocabularies online. The higher education institution ontology contains information such as name, code, ranking, tuition, address, and majors. Student ontology concerns the student profile information and his preferences. The employment ontology contains information about the average salary and the employment rate per domain.</p>   </section>   <section id="sec4">    <header>    <div class="title-info">     <h2>      <span class="section-number">4</span> CONCLUSIONS AND FUTURE WORK</h2>    </div>    </header>    <p>Building an effective recommender system based on Semantic Web technology is clearly a long-term effort that needs coherent representations along with simple tools to create, publish, query and visualize generic semantic web data. This paper proposes the use of ontology-based recommender system to provide personalized information, in particular, providing recommendations to assist students in finding and selecting the relevant university and major to their field of interest. Our system will use machine learning techniques to analyze graduate students&#x2019; profiles in order to propose to a new student top N majors and universities related to his profile.</p>   </section>  </section>  <section class="back-matter">   <section id="bib-sec-001">    <header>    <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>    </div>    </header>    <ul class="bibUl">    <li id="bib1" label="[1]">Aher, S.B. and Lobo, L.M.R.J. 2013. Combination of Machine Learning Algorithms for Recommendation of Courses in E-Learning System Based on Historical Data. <em>Know.-Based Syst.</em>51, 1 (Oct. 2013), 1&#x2013;14. DOI:<a class="link-inline force-break"      href="https://doi.org/10.1016/j.knosys.2013.04.015">https://doi.org/10.1016/j.knosys.2013.04.015</a>.</li>    <li id="bib2" label="[2]">Albatayneh, N.A. <em>et al.</em> 2018. Utilizing Learners&#x2019; Negative Ratings in Semantic Content-based Recommender System for e-Learning Forum. <em>Journal of Educational Technology &amp; Society</em>. 21, 1 (2018), 112&#x2013;125.</li>    <li id="bib3" label="[3]">Bahramian, Z. and Abbaspour, R.A. 2015. An Ontology-Based Tourism Recommender System Based on Spreading Activation Model. <em>ISPRS - International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences</em>. 15, (Dec. 2015), 83&#x2013;90. DOI:<a class="link-inline force-break"      href="https://doi.org/10.5194/isprsarchives-XL-1-W5-83-2015">https://doi.org/10.5194/isprsarchives-XL-1-W5-83-2015</a>.</li>    <li id="bib4" label="[4]">Berners-Lee, T. <em>et al.</em> 2001. The semantic web. <em>Scientific american</em>. 284, 5 (2001), 28&#x2013;37.</li>    <li id="bib5" label="[5]">Bobadilla, J. <em>et al.</em> 2013. Recommender systems survey. <em>Knowledge-Based Systems</em>. 46, (Jul. 2013), 109&#x2013;132. DOI:<a class="link-inline force-break"      href="https://doi.org/10.1016/j.knosys.2013.03.012">https://doi.org/10.1016/j.knosys.2013.03.012</a>.</li>    <li id="bib6" label="[6]">Boufardea, E. and Garofalakis, J. 2012. A Predictive System for Distance Learning Based on Ontologies and Data Mining. (Jul. 2012), 151&#x2013;158.</li>    <li id="bib7" label="[7]">Bouza, A. <em>et al.</em> 2008. SemTree: ontology-based decision tree algorithm for recommender systems. <em>Bouza, A; Reif, G; Bernstein, A; Gall, H (2008). SemTree: ontology-based decision tree algorithm for recommender systems. In: International Semantic Web Conference, Karlsruhe, Germany, 26 October 2008 - 30 October 2008.</em> (Karlsruhe, Germany, Oct. 2008).</li>    <li id="bib8" label="[8]">Bresfelean, V.P. 2009. Data Mining Applications in Higher Education and Academic Intelligence Management. <em>Theory and Novel Applications of Machine Learning</em>. Meng Joo Er and Yi Zhou. 209&#x2013;228.</li>    <li id="bib9" label="[9]">Burke, R. 2007. Hybrid Web Recommender Systems. <em>The Adaptive Web</em>. Springer, Berlin, Heidelberg. 377&#x2013;408.</li>    <li id="bib10" label="[10]">Codina, V. and Ceccaroni, L. 2010. A Recommendation System for the Semantic Web. <em>Distributed Computing and Artificial Intelligence</em>. Springer, Berlin, Heidelberg. 45&#x2013;52.</li>    <li id="bib11" label="[11]">Cuseo, J. 2003. Academic advisement and student retention: Empirical connections and systemic interventions. <em>National Academic Advising Association</em>. (2003).</li>    <li id="bib12" label="[12]">Dou, D. <em>et al.</em> 2015. Semantic data mining: A survey of ontology-based approaches. <em>Proceedings of the 2015 IEEE 9th International Conference on Semantic Computing (IEEE ICSC 2015)</em> (Feb. 2015), 244&#x2013;251.</li>    <li id="bib13" label="[13]">Dwivedi, S. and Rawat, B. 2017. An Architecture for Recommendation of Courses in E-learning. <em>International Journal of Information Technology and Computer Science</em>. 9, (Apr. 2017), 39&#x2013;47. DOI:<a class="link-inline force-break"      href="https://doi.org/10.5815/ijitcs.2017.04.06">https://doi.org/10.5815/ijitcs.2017.04.06</a>.</li>    <li id="bib14" label="[14]">Fraihat, S. and Shambour, Q. 2015. A framework of semantic recommender system for e-learning. <em>Journal of Software</em>. 10, 3 (2015), 317&#x2013;330.</li>    <li id="bib15" label="[15]">Gordon, V.N. 2007. <em>The Undecided College Student: An Academic And Career Advising Challenge</em>. Charles C Thomas Pub Ltd.</li>    <li id="bib16" label="[16]">Goux, D. <em>et al.</em> 2017. Adjusting Your Dreams? High School Plans and Dropout Behaviour. <em>The Economic Journal</em>. 127, 602 (Jun. 2017), 1025&#x2013;1046. DOI:<a class="link-inline force-break" href="https://doi.org/10.1111/ecoj.12317">https://doi.org/10.1111/ecoj.12317</a>.</li>    <li id="bib17" label="[17]">Gu, Y.-F. 2013. Research on personalized recommendation system in e-learning based on semantic web. <em>proceedings of the 3rd international conference on multimedia technology (ICMT 2013)</em> (2013), 1046&#x2013;1053.</li>    <li id="bib18" label="[18]">Isinkaye, F.O. <em>et al.</em> 2015. Recommendation systems: Principles, methods and evaluation. <em>Egyptian Informatics Journal</em>. 16, 3 (Nov. 2015), 261&#x2013;273. DOI:<a class="link-inline force-break"      href="https://doi.org/10.1016/j.eij.2015.06.005">https://doi.org/10.1016/j.eij.2015.06.005</a>.</li>    <li id="bib19" label="[19]">Ouf, S. <em>et al.</em> 2017. A proposed paradigm for smart learning environment based on semantic web. <em>Computers in Human Behavior</em>. 72, (Jul. 2017), 796&#x2013;818. DOI:<a class="link-inline force-break"      href="https://doi.org/10.1016/j.chb.2016.08.030">https://doi.org/10.1016/j.chb.2016.08.030</a>.</li>    <li id="bib20" label="[20]">Park, D.H. <em>et al.</em> 2012. A literature review and classification of recommender systems research. <em>Expert Systems with Applications</em>. 39, 11 (Sep. 2012), 10059&#x2013;10072. DOI:<a class="link-inline force-break"      href="https://doi.org/10.1016/j.eswa.2012.02.038">https://doi.org/10.1016/j.eswa.2012.02.038</a>.</li>    <li id="bib21" label="[21]">Ristoski, P. and Paulheim, H. 2016. Semantic Web in data mining and knowledge discovery: A comprehensive survey. <em>Web Semantics: Science, Services and Agents on the World Wide Web</em>. 36, (Jan. 2016), 1&#x2013;22. DOI:<a class="link-inline force-break"      href="https://doi.org/10.1016/j.websem.2016.01.001">https://doi.org/10.1016/j.websem.2016.01.001</a>.</li>    <li id="bib22" label="[22]">Shishehchi, S. <em>et al.</em> 2010. A proposed semantic recommendation system for e-learning: A rule and ontology based e-learning recommendation system. <em>2010 International Symposium on Information Technology</em> (Jun. 2010), 1&#x2013;5.</li>    <li id="bib23" label="[23]">Tarus, J.K. <em>et al.</em> 2017. A hybrid knowledge-based recommender system for e-learning based on ontology and sequential pattern mining. <em>Future Generation Computer Systems</em>. 72, (Jul. 2017), 37&#x2013;48. DOI:<a class="link-inline force-break"      href="https://doi.org/10.1016/j.future.2017.02.049">https://doi.org/10.1016/j.future.2017.02.049</a>.</li>    <li id="bib24" label="[24]">Vivek, M.B. <em>et al.</em> 2018. Machine Learning Based Food Recipe Recommendation System. <em>Proceedings of International Conference on Cognition and Recognition</em>. Springer, Singapore. 11&#x2013;19.</li>    <li id="bib25" label="[25]">Werner, D. <em>et al.</em> 2012. Ontology-based Recommender System of Economic Articles.<em>8th International Conference on Web Information Systems and Technologies</em>. (Apr. 2012), 725&#x2013;728.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">    <h2>FOOTNOTE</h2>    </div>   </header>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY 4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>    <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018 IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC BY 4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3191533">https://doi.org/10.1145/3184558.3191533</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div> </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Ontology-based recommender system in higher
+  education</title><!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Ontology-based recommender system
+          in higher education</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Charbel</span> <span class=
+          "surName">Obeid</span>, LIRIS, University Lyon 1, France,
+          <a href=
+          "mailto:cobeid@liris.cnrs.fr">cobeid@liris.cnrs.fr</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Inaya</span> <span class=
+          "surName">Lahoud</span>, Galatasaray University, Turkey,
+          <a href=
+          "mailto:clahoud@gsu.edu.tr">clahoud@gsu.edu.tr</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Hicham El</span> <span class=
+          "surName">Khoury</span>, Lebanese University, Lebanon,
+          <a href="mailto:hkhoury@ul.edu.lb">hkhoury@ul.edu.lb</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Pierre-Antoine</span>
+          <span class="surName">Champin</span>, LIRIS, University
+          Lyon 1, France, <a href=
+          "mailto:pierre-antoine.champin@univ-lyon1.fr">pierre-antoine.champin@univ-lyon1.fr</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191533"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191533</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Academic advising is limited in its ability to
+        assist students in identifying academic pathways. Selecting
+        a major and a university is a challenging process rife with
+        anxiety. Students at high school are not sure how to match
+        their interests with their working future or major.
+        Therefore, high school students need guidance and support.
+        Moreover, students need to filter, prioritize and
+        efficiently get appropriate information from the web in
+        order to solve the problem of information overload. This
+        paper represents an approach for developing ontology-based
+        recommender system improved with machine learning
+        techniques to orient students in higher education. The
+        proposed recommender system is an assessment tool for
+        students’ vocational strengths and weaknesses, interests
+        and capabilities. The main objective of our ontology-based
+        recommender system is to identify the student requirements,
+        interests, preferences and capabilities to recommend the
+        appropriate major and university for each one.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>KEYWORDS:</small></span>
+          <span class="keyword"><small>Recommender
+          system</small>,</span> <span class=
+          "keyword"><small>ontology-based</small>,</span>
+          <span class="keyword"><small>education</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Charbel Obeid, Inaya Lahoud, Hicham El Khoury and
+          Pierre-Antoine Champin. 2018. G`XCACOntology-based
+          recommender system in higher education. In
+          <em>Proceedings of The 2018 Web Conference Companion
+          (WWW'2018 Companion). ACM, New York, NY, USA, 5
+          pages.</em> <a href=
+          "https://doi.org/10.1145/3178876.%20EKM0797s" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3178876.
+          EKM0797s</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec1">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          INTRODUCTION</h2>
+        </div>
+      </header>
+      <p>College or university is a time of major transition for
+      most students. Research has found that 75% of students enter
+      college without having final decisions made about their
+      careers, or even majors. Researchers Gordon and Cuseo
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib11">11</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib15">15</a>] estimate that 50% – 75% of
+      college students will change their major at least once during
+      their college career. In France, an algorithm assigns
+      randomly a major to each high school student which obligates
+      many students to go into a domain they never planned to
+      study, and this may eventually lead them to drop out of
+      education [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#bib16">16</a>].</p>
+      <p>A major challenge for students is the difficulty to
+      consolidate data from disparate information sources. Here
+      comes the big issue where students at high school struggle to
+      find online useful and accurate information that can have an
+      impact on their plans. If we identify students’ interests, we
+      can direct them toward enrichment opportunities like programs
+      of study and resources in order to explore universities’
+      majors.</p>
+      <p>Thus, the overall purpose of this system is to enable
+      students to make well-informed educational choices, which are
+      tailored to their overall career and educational goals.
+      Students will use our recommender system to get instant
+      access anytime to a cutting-edge, user-friendly, interactive
+      platform that gives them clear, comprehensive information
+      they will need to navigate their way toward their higher
+      education.</p>
+      <p>To support personalization, we propose a recommender
+      system that can be used to assist students in finding the
+      relevant major and university, by using the semantic web and
+      machine learning techniques. The Semantic web is an extension
+      of the current web, in which information is given defined
+      meaning, enabling machines and users to cooperate [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib4">4</a>]. Moreover, machines
+      will become able to process and "understand" the data.
+      Ontology is the backbone of semantic web. An ontology is a
+      formal and explicit specification of a shared
+      conceptualization. It consists of concepts namely entities,
+      attributes and properties related to a domain. Using
+      ontologies facilitate the parsing, reasoning, sharing and
+      reusing of knowledge. It has proven its utility in many
+      recommender systems [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib2">2</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib7">7</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib17">17</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib19">19</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib25">25</a>], regardless the domain of application, by
+      improving the quality and the personalization of results.</p>
+      <p>Ontologies will be used in our system to model higher
+      education institution, employment, and student. Whereas
+      machine learning techniques will be used to learn the
+      profiles of graduate/alumni students in order to make
+      recommendation for the high school students. Usually, machine
+      learning is used for classification, filtering and clustering
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib1">1</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib8">8</a>]. It explores methods for machines
+      to learn how to act without being explicitly programmed.</p>
+      <p>This paper presents a framework of a semantic recommender
+      system for higher education. The rest of this paper is
+      organized as follows: In Section <a class="sec" href=
+      "#sec2">2</a>, a brief overview of the research background
+      and related works is presented. Section <a class="sec" href=
+      "#sec3">3</a> shows the proposed framework of the
+      recommendation system. Finally, conclusions and directions
+      for future study are illustrated in Section <a class="sec"
+      href="#sec4">4</a>.</p>
+    </section>
+    <section id="sec2">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> BACKGROUND AND
+          LITERATURE REVIEW</h2>
+        </div>
+      </header>
+      <section id="sec2Z1">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Recommender
+            systems (RS)</h3>
+          </div>
+        </header>
+        <p>RS are information filtering systems that assist users
+        in finding contents, products or services (such as web
+        sites, books, digital products, movies, songs, travel
+        destinations and e-learning materials) by implicitly or
+        explicitly collecting preferences from other users
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#bib5">5</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#bib20">20</a>], or analyzing their behaviors
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#bib18">18</a>]. The computing
+        task can be based on explicit user's preferences, (e.g. the
+        user give a score to product), or implicit, preferences are
+        inferred by the system, depending on user behavior (e.g.
+        choices of browsing on an online shopping site). There are
+        six different classes of recommendation approaches
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#bib9">9</a>]:</p>
+        <p><em>Content-based:</em> The system learns to recommend
+        items that are similar to the ones that the user liked in
+        the past. The similarity of items is calculated based on
+        the features associated with the compared items.</p>
+        <p><em>Collaborative filtering:</em> Recommends to the
+        active user the items that other users with similar tastes
+        liked in the past. The similarity in taste of two users is
+        calculated based on the similarity in the rating history of
+        the users.</p>
+        <p><em>Demographic:</em> This type of system recommends
+        items based on the demographic profile of the user. The
+        assumption is that different recommendations should be
+        generated for different demographic niches.</p>
+        <p><em>Knowledge-based:</em> Knowledge-based systems
+        recommend items based on specific domain knowledge about
+        how certain item features meet user's needs and preferences
+        and, ultimately, how the item is useful for the user.
+        Notable knowledge based recommender systems are
+        case-based.</p>
+        <p><em>Community-based:</em> This type of system recommends
+        items based on the preferences of the users friends. This
+        technique follows the epigram “Tell me who your friends
+        are, and I will tell you who you are”.</p>
+        <p><em>Hybrid recommender systems:</em> These RSs are based
+        on the combination of the above mentioned techniques.</p>
+        <p>[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href="#bib22">22</a>]
+        presented in his paper a comparative table of different
+        systems based on the above recommendation approaches, in
+        the e-learning domain. As our objective is to orient
+        students in higher education basing on the data of alumni
+        students, the collaborative filtering approach is limited
+        for our case. Thus, we decided to combine it with
+        knowledge-based (ontologies) to resolve the limitation of
+        this method. We will present in the next section how the
+        ontology contribute to the accuracy of the model.</p>
+      </section>
+      <section id="sec2Z2">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span>
+            Ontology-based recommender system</h3>
+          </div>
+        </header>
+        <p>Different ontology-based recommendation approaches have
+        been developed using a variety of methods. For instance,
+        Actualis SARL is specialized in the distribution of a press
+        review. To reduce the diversity of information, the company
+        developed a recommender system to recommend customized
+        review for each customer. In paper [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#bib25">25</a>], authors presented a
+        recommender system based on the semantic description of
+        articles and customer profile. The architecture of the
+        system is based on two layers. The first is the
+        Intelligence layer, used to manage information extraction.
+        The second is the semantic ontology-based Layer, used to
+        manage specialized knowledge to represent profiles and
+        articles. Furthermore, the concept of the semantic web is
+        used for improving e-learning. In this paper [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#bib14">14</a>], authors
+        proposed a semantic recommender system approach for
+        e-learning use to assist learners in finding suitable
+        Learning Objectives. Moreover, the system can assist the
+        instructors to suggest new resources to enhance the courses
+        syllabus. This system is built with a query keywords
+        extension using the semantic relations and the ontology
+        reasoning. Similar to above two approaches, authors
+        presented in this paper [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#bib10">10</a>] a personalized ontology-based
+        recommendation system to represent items and user-profiles
+        in order to provide personalized services using semantic
+        web applications. This paper shows high accuracy when
+        semantically enhanced methods are applied in recommendation
+        systems. Developers experimented this system on the Netflix
+        movie-dataset. The evaluation shows that the
+        semantics-based methods of the recommender system improved
+        the recommendations’ accuracy. A recommendation system
+        based on an ontology can also solve the cold start problem
+        that depend on insufficient user information from the past
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#bib23">23</a>]. Indeed, this
+        problem occurs due to an initial lack of ratings for new
+        users, hence it becomes impossible to make reliable
+        recommendations. To avoid this problem in our system, we
+        will invite new users to complete their profile with their
+        personal information, preferences, and by responding to
+        some questions. Then, we create the user profile model
+        based on the user ontology model.</p>
+      </section>
+      <section id="sec2Z3">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.3</span> Improving
+            recommender systems with machine learning</h3>
+          </div>
+        </header>
+        <p>Integrating machine learning techniques in recommender
+        system certainly will improve the recommendation accuracy.
+        In this paper [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#bib13">13</a>], authors proposed a courses recommender
+        system to learners based on their profiles. This system
+        used weka open source software which consists of a
+        collection of machine learning algorithms and implemented
+        k-means algorithm to create learners' profiles supported by
+        their data on Moodle. Besides above approach, in this paper
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#bib24">24</a>] authors
+        presented the item-based approach and the user based
+        approach to recommend recipes based on preferences of the
+        user ratings. Tanimoto Coefficient Similarity and Log
+        Likelihood Similarity were used to compute similarities
+        between different recipes for the item-based approach.
+        Euclidean Distance and Pearson Correlation were used for
+        user based approach. Results show the performance of the
+        user based approach is found to be better than the
+        item-based approach. Furthermore, in this paper [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#bib1">1</a>] authors presented
+        an E-learning Course Recommender system based on machine
+        learning techniques that identifies the behavior of
+        students interested in particular courses. Authors compared
+        different combination of data mining algorithms such as
+        Classification &amp; association rule algorithm,
+        Association Rule Mining of classified &amp; clustered data,
+        clustering &amp; association rule algorithm. Results show
+        that the combination clustering, classification &amp;
+        association rule algorithm is the best one.</p>
+        <p>As we explained before, our goal is to guide students in
+        the choice of their specialization after the high school.
+        Our system is based on alumni students’ data. Therefore, we
+        will pretreat these data, generate students’ profiles
+        models in order to learn the path of each one of them, and
+        then cluster them by detecting the frequent models.</p>
+      </section>
+      <section id="sec2Z4">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.4</span>
+            Ontology-based recommender system with machine learning
+            techniques</h3>
+          </div>
+        </header>
+        <p>Integrating machine learning techniques with
+        ontology-based recommender systems lead to many remarkable
+        revolution in improvement of recommendation system
+        processes [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href="#bib12">12</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#bib21">21</a>]. For instance,
+        authors in [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#bib3">3</a>] proposed a travel content-based recommender
+        system that uses ontology information to calculate the
+        degree of similarity between user's preferences and point
+        of interest to provide personalized recommendations. The
+        system generalizes user preferences through machine
+        learning techniques. The proposed system overcomes sparse
+        data problem of the traditional content-based recommender
+        using Spreading Activation. Furthermore in paper [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#bib6">6</a>], authors proposed
+        an ontology-based recommender system with rules generated
+        by data mining techniques. Instructors can use this system
+        to predict learners’ progress and performance. The results
+        were very satisfying and verified the generated rules with
+        small deviation error prediction.</p>
+        <p>The combination of ontology-based recommender system
+        with machine learning techniques is a promising approach
+        for improving recommendation accuracy. Therefore after
+        verifying the approaches of the different systems mentioned
+        in section 2, we chose to implement this combination of
+        techniques and processes.</p>
+      </section>
+    </section>
+    <section id="sec3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> THE PROPOSED
+          SEMANTIC RECOMMENDER SYSTEM</h2>
+        </div>
+      </header>
+      <p>In this section we present the main components and
+      characteristics of the ontology-based recommender system we
+      are developing, which makes use of semantic-based methods and
+      machine learning techniques to enhance stages of the
+      personalization process. This system will recommend majors
+      and universities to high school students based on the path of
+      graduate students. We mean by that students with minimum
+      bachelor degree. The idea is to learn their paths by
+      collecting data related to their interests centers during
+      high school, their major at university and if we can in which
+      domain they work actually. The proposed recommender system is
+      presented in Figure <a class="fig" href="#fig1">1.</a></p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191533/images/image1.jpg"
+        class="img-responsive" alt="Figure 1:" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Recommender system approach.</span>
+        </div>
+      </figure>
+      <p>Our recommender system has four main parts, the first is
+      for data collection by two modes: explicit data collection,
+      which is based on what student will fill in his profile, and
+      implicit data collection by proposing a survey to graduate
+      students in order to gather information about their profiles
+      and interests.</p>
+      <p>A second part for the ontology that provides a good
+      support for our system and plays an important role because it
+      is used to model the knowledge of the domain.</p>
+      <p>A third part for processing information using machine
+      learning techniques, creating and clustering graduate
+      students' profiles models and send the results to the hybrid
+      recommendation engine. The fourth part is for making the
+      similarity between students and interests, generating
+      recommendations and saving a file of recommendations by
+      student to be used in the upcoming processes.</p>
+      <p>Our system is not based on students' grades but rather on
+      their skills, interests and preferences. Since we don't have
+      information about the real situations and experiences of
+      graduate students, we prepared a survey to collect required
+      data. We choose to disseminate this survey to French and
+      Lebanese students through their universities’ portals. Here
+      comes the job of the machine learning techniques to filter
+      and cluster collected data. We will try many algorithms by
+      the future such as k-mode, self-organizing map and
+      hierarchical clustering algorithms, and select the best one
+      for our case. Sample of our survey questions:</p>
+      <ul class="list-no-style">
+        <li label="■">What were your academic interests at
+        school?<br /></li>
+        <li label="■">What are your outside interests
+        (hobbies)?<br /></li>
+        <li label="■">How would you rate your high school level on
+        the following?<br /></li>
+        <ul class="list-no-style">
+          <li label="○">Humanities (literature, philosophy,
+          religion, others)<br /></li>
+          <li label="○">Fine Arts (music, theatre, …)<br /></li>
+        </ul>
+      </ul>
+      <ul class="list-no-style">
+        <li label="■">What high school subjects did you like most?
+        Least?<br /></li>
+        <li label="■">How important were these criteria when you
+        chose your major/university?<br /></li>
+        <ul class="list-no-style">
+          <li label="○">Financial criterion (Registration fees,
+          quality of life, housing, …)<br /></li>
+          <li label="○">Geographical criterion (big city, distance
+          home-university, …)<br /></li>
+          <li label="○">Reputation (rank of university, university-
+          company relationships, …)<br /></li>
+        </ul>
+      </ul>
+      <ul class="list-no-style">
+        <li label="■">How likely are you to change your current
+        university major?<br /></li>
+        <li label="■">How well do your major meet your need or
+        interests?<br /></li>
+        <li label="■">What kind of job/career interests
+        you?<br /></li>
+      </ul>
+      <p></p>
+      <p>These questions are presented in this paper in simplified
+      version. Some of our questions are multiple choice like shown
+      above. In this case student should rate each choice by
+      checking the corresponding defined rate. For instance, in the
+      question “How would you rate your high school grades on the
+      following?” student should rate each subcategory such as
+      literature by the following rates: Excellent, Very Good,
+      Good, Fair, Poor, and Very Bad. Likewise, In the question
+      “How important were these criteria when you chose your
+      major/university?”, student should rate each criterion by the
+      following rates: Extremely important, very important,
+      moderately important, slightly important and not at all
+      important.</p>
+      <p>Our ontologies are built using Protégé ontology editor.
+      They are linked between them and some of their concepts are
+      linked to defined vocabularies online. The higher education
+      institution ontology contains information such as name, code,
+      ranking, tuition, address, and majors. Student ontology
+      concerns the student profile information and his preferences.
+      The employment ontology contains information about the
+      average salary and the employment rate per domain.</p>
+    </section>
+    <section id="sec4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> CONCLUSIONS AND
+          FUTURE WORK</h2>
+        </div>
+      </header>
+      <p>Building an effective recommender system based on Semantic
+      Web technology is clearly a long-term effort that needs
+      coherent representations along with simple tools to create,
+      publish, query and visualize generic semantic web data. This
+      paper proposes the use of ontology-based recommender system
+      to provide personalized information, in particular, providing
+      recommendations to assist students in finding and selecting
+      the relevant university and major to their field of interest.
+      Our system will use machine learning techniques to analyze
+      graduate students’ profiles in order to propose to a new
+      student top N majors and universities related to his
+      profile.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="bib-sec-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="bib1" label="[1]">Aher, S.B. and Lobo, L.M.R.J.
+        2013. Combination of Machine Learning Algorithms for
+        Recommendation of Courses in E-Learning System Based on
+        Historical Data. <em>Know.-Based Syst.</em>51, 1 (Oct.
+        2013), 1–14. DOI:<a class="link-inline force-break" href=
+        "https://doi.org/10.1016/j.knosys.2013.04.015">https://doi.org/10.1016/j.knosys.2013.04.015</a>.
+        </li>
+        <li id="bib2" label="[2]">Albatayneh, N.A. <em>et al.</em>
+        2018. Utilizing Learners’ Negative Ratings in Semantic
+        Content-based Recommender System for e-Learning Forum.
+        <em>Journal of Educational Technology &amp; Society</em>.
+        21, 1 (2018), 112–125.</li>
+        <li id="bib3" label="[3]">Bahramian, Z. and Abbaspour, R.A.
+        2015. An Ontology-Based Tourism Recommender System Based on
+        Spreading Activation Model. <em>ISPRS - International
+        Archives of the Photogrammetry, Remote Sensing and Spatial
+        Information Sciences</em>. 15, (Dec. 2015), 83–90.
+        DOI:<a class="link-inline force-break" href=
+        "https://doi.org/10.5194/isprsarchives-XL-1-W5-83-2015">https://doi.org/10.5194/isprsarchives-XL-1-W5-83-2015</a>.
+        </li>
+        <li id="bib4" label="[4]">Berners-Lee, T. <em>et al.</em>
+        2001. The semantic web. <em>Scientific american</em>. 284,
+        5 (2001), 28–37.</li>
+        <li id="bib5" label="[5]">Bobadilla, J. <em>et al.</em>
+        2013. Recommender systems survey. <em>Knowledge-Based
+        Systems</em>. 46, (Jul. 2013), 109–132. DOI:<a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1016/j.knosys.2013.03.012">https://doi.org/10.1016/j.knosys.2013.03.012</a>.
+        </li>
+        <li id="bib6" label="[6]">Boufardea, E. and Garofalakis, J.
+        2012. A Predictive System for Distance Learning Based on
+        Ontologies and Data Mining. (Jul. 2012), 151–158.</li>
+        <li id="bib7" label="[7]">Bouza, A. <em>et al.</em> 2008.
+        SemTree: ontology-based decision tree algorithm for
+        recommender systems. <em>Bouza, A; Reif, G; Bernstein, A;
+        Gall, H (2008). SemTree: ontology-based decision tree
+        algorithm for recommender systems. In: International
+        Semantic Web Conference, Karlsruhe, Germany, 26 October
+        2008 - 30 October 2008.</em> (Karlsruhe, Germany, Oct.
+        2008).</li>
+        <li id="bib8" label="[8]">Bresfelean, V.P. 2009. Data
+        Mining Applications in Higher Education and Academic
+        Intelligence Management. <em>Theory and Novel Applications
+        of Machine Learning</em>. Meng Joo Er and Yi Zhou.
+        209–228.</li>
+        <li id="bib9" label="[9]">Burke, R. 2007. Hybrid Web
+        Recommender Systems. <em>The Adaptive Web</em>. Springer,
+        Berlin, Heidelberg. 377–408.</li>
+        <li id="bib10" label="[10]">Codina, V. and Ceccaroni, L.
+        2010. A Recommendation System for the Semantic Web.
+        <em>Distributed Computing and Artificial Intelligence</em>.
+        Springer, Berlin, Heidelberg. 45–52.</li>
+        <li id="bib11" label="[11]">Cuseo, J. 2003. Academic
+        advisement and student retention: Empirical connections and
+        systemic interventions. <em>National Academic Advising
+        Association</em>. (2003).</li>
+        <li id="bib12" label="[12]">Dou, D. <em>et al.</em> 2015.
+        Semantic data mining: A survey of ontology-based
+        approaches. <em>Proceedings of the 2015 IEEE 9th
+        International Conference on Semantic Computing (IEEE ICSC
+        2015)</em> (Feb. 2015), 244–251.</li>
+        <li id="bib13" label="[13]">Dwivedi, S. and Rawat, B. 2017.
+        An Architecture for Recommendation of Courses in
+        E-learning. <em>International Journal of Information
+        Technology and Computer Science</em>. 9, (Apr. 2017),
+        39–47. DOI:<a class="link-inline force-break" href=
+        "https://doi.org/10.5815/ijitcs.2017.04.06">https://doi.org/10.5815/ijitcs.2017.04.06</a>.
+        </li>
+        <li id="bib14" label="[14]">Fraihat, S. and Shambour, Q.
+        2015. A framework of semantic recommender system for
+        e-learning. <em>Journal of Software</em>. 10, 3 (2015),
+        317–330.</li>
+        <li id="bib15" label="[15]">Gordon, V.N. 2007. <em>The
+        Undecided College Student: An Academic And Career Advising
+        Challenge</em>. Charles C Thomas Pub Ltd.</li>
+        <li id="bib16" label="[16]">Goux, D. <em>et al.</em> 2017.
+        Adjusting Your Dreams? High School Plans and Dropout
+        Behaviour. <em>The Economic Journal</em>. 127, 602 (Jun.
+        2017), 1025–1046. DOI:<a class="link-inline force-break"
+        href=
+        "https://doi.org/10.1111/ecoj.12317">https://doi.org/10.1111/ecoj.12317</a>.
+        </li>
+        <li id="bib17" label="[17]">Gu, Y.-F. 2013. Research on
+        personalized recommendation system in e-learning based on
+        semantic web. <em>proceedings of the 3rd international
+        conference on multimedia technology (ICMT 2013)</em>
+        (2013), 1046–1053.</li>
+        <li id="bib18" label="[18]">Isinkaye, F.O. <em>et al.</em>
+        2015. Recommendation systems: Principles, methods and
+        evaluation. <em>Egyptian Informatics Journal</em>. 16, 3
+        (Nov. 2015), 261–273. DOI:<a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1016/j.eij.2015.06.005">https://doi.org/10.1016/j.eij.2015.06.005</a>.
+        </li>
+        <li id="bib19" label="[19]">Ouf, S. <em>et al.</em> 2017. A
+        proposed paradigm for smart learning environment based on
+        semantic web. <em>Computers in Human Behavior</em>. 72,
+        (Jul. 2017), 796–818. DOI:<a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1016/j.chb.2016.08.030">https://doi.org/10.1016/j.chb.2016.08.030</a>.
+        </li>
+        <li id="bib20" label="[20]">Park, D.H. <em>et al.</em>
+        2012. A literature review and classification of recommender
+        systems research. <em>Expert Systems with
+        Applications</em>. 39, 11 (Sep. 2012), 10059–10072.
+        DOI:<a class="link-inline force-break" href=
+        "https://doi.org/10.1016/j.eswa.2012.02.038">https://doi.org/10.1016/j.eswa.2012.02.038</a>.
+        </li>
+        <li id="bib21" label="[21]">Ristoski, P. and Paulheim, H.
+        2016. Semantic Web in data mining and knowledge discovery:
+        A comprehensive survey. <em>Web Semantics: Science,
+        Services and Agents on the World Wide Web</em>. 36, (Jan.
+        2016), 1–22. DOI:<a class="link-inline force-break" href=
+        "https://doi.org/10.1016/j.websem.2016.01.001">https://doi.org/10.1016/j.websem.2016.01.001</a>.
+        </li>
+        <li id="bib22" label="[22]">Shishehchi, S. <em>et al.</em>
+        2010. A proposed semantic recommendation system for
+        e-learning: A rule and ontology based e-learning
+        recommendation system. <em>2010 International Symposium on
+        Information Technology</em> (Jun. 2010), 1–5.</li>
+        <li id="bib23" label="[23]">Tarus, J.K. <em>et al.</em>
+        2017. A hybrid knowledge-based recommender system for
+        e-learning based on ontology and sequential pattern mining.
+        <em>Future Generation Computer Systems</em>. 72, (Jul.
+        2017), 37–48. DOI:<a class="link-inline force-break"
+          href="https://doi.org/10.1016/j.future.2017.02.049">https://doi.org/10.1016/j.future.2017.02.049</a>.
+        </li>
+        <li id="bib24" label="[24]">Vivek, M.B. <em>et al.</em>
+        2018. Machine Learning Based Food Recipe Recommendation
+        System. <em>Proceedings of International Conference on
+        Cognition and Recognition</em>. Springer, Singapore.
+        11–19.</li>
+        <li id="bib25" label="[25]">Werner, D. <em>et al.</em>
+        2012. Ontology-based Recommender System of Economic
+        Articles.<em>8th International Conference on Web
+        Information Systems and Technologies</em>. (Apr. 2012),
+        725–728.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY 4.0) license. Authors
+      reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018 IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC BY 4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191533">https://doi.org/10.1145/3184558.3191533</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

@@ -1,1 +1,1892 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">  <head>  <title>Camel: Content-Aware and Meta-path Augmented Metric Learning for Author Identification</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>  </head>  <body id="main">  <section class="front-matter">   <section>    <header class="title-info">     <div class="journal-title">     <h1>      <span class="title">Camel: Content-Aware and Meta-path Augmented Metric Learning for Author Identification</span>      <br/>      <span class="subTitle"/>     </h1>     </div>    </header>    <div class="authorGroup">     <div class="author">     <span class="givenName">Chuxu</span>      <span class="surName">Zhang</span>,     University of Notre Dame, Notre Dame, IN 46556USA, <a href="mailto:czhang11@nd.edu">czhang11@nd.edu</a>     </div>     <div class="author">     <span class="givenName">Chao</span>      <span class="surName">Huang</span>,     University of Notre Dame, Notre Dame, IN 46556USA, <a href="mailto:chuang7@nd.edu">chuang7@nd.edu</a>     </div>     <div class="author">     <span class="givenName">Lu</span>      <span class="surName">Yu</span>,     King Abdullah University of Science and Technology, Thuwal, 23955SA, <a href="mailto:lu.yu@kaust.edu.sa">lu.yu@kaust.edu.sa</a>     </div>     <div class="author">     <span class="givenName">Xiangliang</span>      <span class="surName">Zhang</span>,     King Abdullah University of Science and Technology, Thuwal, 23955SA, <a href="mailto:xiangliang.zhang@kaust.edu.sa">xiangliang.zhang@kaust.edu.sa</a>     </div>     <div class="author">     <span class="givenName">Nitesh V.</span>      <span class="surName">Chawla</span>,     University of Notre Dame, Notre Dame, IN 46556USA, <a href="mailto:nchawla@nd.edu">nchawla@nd.edu</a>     </div>                         </div>    <br/>    <div class="pubInfo">     <p>DOI: <a href="https://doi.org/10.1145/3178876.3186152" target="_blank">https://doi.org/10.1145/3178876.3186152</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3178876" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">     <p>     <small>In this paper, we study the problem of author identification in big scholarly data, which is to effectively rank potential authors for each anonymous paper by using historical data. Most of the existing de-anonymization approaches predict relevance score of paper-author pair via feature engineering, which is not only time and storage consuming, but also introduces irrelevant and redundant features or miss important attributes. Representation learning can automate the feature generation process by learning node embeddings in academic network to infer the correlation of paper-author pair. However, the learned embeddings are often for general purpose (independent of the specific task), or based on network structure only (without considering the node content). To address these issues and make a further progress in solving the author identification problem, we propose Camel, a content-aware and meta-path augmented metric learning model. Specifically, first, the directly correlated paper-author pairs are modeled based on distance metric learning by introducing a push loss function. Next, the paper content embedding encoded by the gated recurrent neural network is integrated into the distance loss. Moreover, the historical bibliographic data of papers is utilized to construct an academic heterogeneous network, wherein a meta-path guided walk integrative learning module based on the task-dependent and content-aware Skipgram model is designed to formulate the correlations between each paper and its indirect author neighbors, and further augments the model. Extensive experiments demonstrate that Camel outperforms the state-of-the-art baselines. It achieves an average improvement of 6.3% over the best baseline method.</small>     </p>    </div>    <div class="classifications">     <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>Author Identification; Heterogeneous Networks; Representation Learning; Metric Learning; Deep Learning</small>     </span>     </div>     <br/>     <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Chuxu Zhang, Chao Huang, Lu Yu, Xiangliang Zhang, and Nitesh V. Chawla. 2018. Camel: Content-Aware and Meta-path Augmented Metric Learning for Author Identification. In <em>WWW 2018: The 2018 Web Conference,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 10 Pages. <a href="https://doi.org/10.1145/3178876.3186152" class="link-inline force-break"        target="_blank">https://doi.org/10.1145/3178876.3186152</a></small>     </p>     </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-6">    <header>     <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>     </div>    </header>    <p>With the fast growth of academic data collections by various online services such as Google Scholar, Microsoft Academic and AMiner, big scholarly data mining problems have gained a lot of attention in the past decade. Typical examples include scientific impact modeling and prediction [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0023">23</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0024">24</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0031">31</a>], academic heterogeneous network analysis [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0012">12</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0025">25</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0026">26</a>], personalized recommendation [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0017">17</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>].</p>    <p>In this paper, we consider the problem of author identification for each anonymous paper in big scholarly data, which was proposed and briefly investigated in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0009">9</a>], and has been further studied in recent works [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>]. Specifically, as illustration in Figure <a class="fig" href="#fig1">1</a>, given an anonymous paper with content/attributes (e.g., abstract), we would like to design a machine learning model to predict the potential authors of this paper by using the historical data. Solutions of the problem bring broad implications to the academic community. Let&#x0027;s take the double-blind review process in many conferences (e.g., WWW 2018) as an example. Although the authors of the paper under double-blind review process are invisible to the reviewers, they sometimes can still be unveiled by the paper content. Thus our work can serve as a study for helping existing review systems to answer the question that whether or not double-blind review process is really effective [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0029">29</a>]. In addition, the proposed model can infer for each query paper the potential authors, which can be useful for general information retrieval or recommender system design such as reviewer recommendation [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0030">30</a>]. <figure id="fig1">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-fig1.jpg" class="img-responsive" alt="Figure 1"       longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 1:</span>      <span class="figure-title">Illustration of author identification problem.</span>     </div>     </figure>    </p>    <p>To solve the author identification problem, supervised leaning models have been applied to predict the correlation between paper and author, such as the ones used in the top solutions [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0015">15</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0035">35</a>] of 2013 KDD Cup author-paper pair identification challenge and the multimodal approach in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>]. However, these methods heavily rely on time consuming and storage intensive feature engineering, which may extract irrelevant and redundant features or miss important features. In the past few years, a number of network embedding models [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0020">20</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0027">27</a>] have been proposed to automatically learn node representations that can be further utilized in various academic mining tasks such as paper-author correlation inference and similar authors/venues search. Although the proximity among nodes is preserved by dense vectors, these methods learn general purpose embeddings that are independent of task and not suitable for the specific problem. To address this drawback, Chen et al. proposed HetNetE [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>], a task-guided heterogeneous network embedding model, which outperforms the existing baselines. However, HetNetE mainly uses network structure and ignores semantic content of paper. In addition, it searches correlations among all kind of nodes (such as paper, reference and venue) for optimization.</p>    <p>To address above issues and make a further progress in solving the author identification problem, we develop Camel, a <strong>     <span style="text-decoration: underline;">c</span>     </strong>ontent-<strong>     <span style="text-decoration: underline;">a</span>     </strong>ware and <strong>     <span style="text-decoration: underline;">me</span>     </strong>ta-path augmented <strong>     <span style="text-decoration: underline;">me</span>     </strong>tric <strong>     <span style="text-decoration: underline;">l</span>     </strong>earning model. First, we model the historical data of direct paper-author relations via distance metric learning according to the specific task. Next, we introduce the gated recurrent units to encode paper content and integrate the semantic embedding into the metric learning model. Moreover, we use the historical bibliographic data of papers to construct academic heterogeneous network, wherein we further design a learning module to augment the model. The augmented module employs meta-path walks to capture correlations between each paper and its indirect author neighbors and further formulate them via a task-dependent and content-aware Skipgram model. Finally, a sampling based mini-batch gradient descent algorithm is designed to infer model parameters.</p>    <p>To summarize, the main contributions of our work are:</p>    <ul class="list-no-style">     <li id="list1" label="&#x2022;">We develop a model, i.e., Camel, to solve the author identification problem. Camel performs joint optimization of content encoder based distance metric learning and Skipgram model based meta-path walk integrative learning.<br/></li>     <li id="list2" label="&#x2022;">We design the corresponding optimization strategy and training algorithm for Camel. The learned model only needs partial content (i.e., abstract) of the target paper as the input and effectively predict the authors for each new paper in big scholarly data.<br/></li>     <li id="list3" label="&#x2022;">We conduct extensive evaluations and analytical experiments to show the effectiveness of Camel on the well known AMiner dataset. The results demonstrate that our method outperforms a number of baseline methods and achieves a 6.3% average improvement over the best baseline.<br/></li>    </ul>   </section>   <section id="sec-7">    <header>     <div class="title-info">     <h2>      <span class="section-number">2</span> Problem Definition</h2>     </div>    </header>    <p>In this section, we first introduce the concepts of heterogeneous networks and meta-path, then formally define the author identification problem in big scholarly data.</p>    <p>     <div class="definition" id="enc1">     <Label>Definition 2.1.</Label>     <p> (<strong>Heterogeneous Networks</strong>) A heterogeneous network (HetNet) [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0026">26</a>] is defined as a network <em>G</em> = (<em>V</em>, <em>E</em>, <em>O<sub>V</sub>      </em>, <em>R<sub>E</sub>      </em>) with multiple types of nodes <em>V</em> and links <em>E</em>. <em>O<sub>V</sub>      </em> and <em>R<sub>E</sub>      </em> represent the sets of objects and relation types. Each node <em>v</em> &#x2208; <em>V</em> and each link <em>e</em> &#x2208; <em>E</em> are associated with a node type mapping function <em>&#x03C8;<sub>v</sub>      </em>: <em>V</em> &#x2192; <em>O<sub>V</sub>      </em> and a link type mapping function <em>&#x03C8;<sub>e</sub>      </em>: <em>E</em> &#x2192; <em>R<sub>E</sub>      </em>.</p>     </div>    </p>    <p>The academic network in big scholarly data can be seen as a HetNet, as shown in Figure <a class="fig" href="#fig2">2</a>(a). The set of node types <em>O<sub>V</sub>     </em> in the network includes <em>organization</em> (O), <em>author</em> (A), <em>paper</em> (P) and <em>venue</em> (V), and the set of link types <em>R<sub>E</sub>     </em> includes <em>author-write-paper</em>, <em>author-affiliate-organization</em>, <em>paper-cite-paper</em>, <em>paper-publish-venue</em>.</p>    <p>     <div class="definition" id="enc2">     <Label>Definition 2.2.</Label>     <p> (<strong>Meta-path</strong>) A meta-path [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0025">25</a>] in <em>G</em> = (<em>V</em>, <em>E</em>, <em>O<sub>V</sub>      </em>, <em>R<sub>E</sub>      </em>) is defined in the form of <span class="inline-equation"><span class="tex">$o_{1}\overset{r_{1}}{\rightarrow }o_{2}\overset{r_{2}}{\rightarrow }\cdots \overset{r_{m-1}}{\rightarrow }o_{m}$</span>      </span>, where <em>o<sub>i</sub>      </em> &#x2208; <em>O<sub>V</sub>      </em>, <em>r<sub>i</sub>      </em> &#x2208; <em>R<sub>E</sub>      </em> and <em>r</em> = <em>r</em>      <sub>1</sub>*<em>r</em>      <sub>2</sub>&#x22C5;&#x22C5;&#x22C5;*<em>r</em>      <sub>       <em>m</em> &#x2212; 1</sub> represents a compositional relation between relation types <em>r</em>      <sub>1</sub> and <em>r</em>      <sub>       <em>m</em> &#x2212; 1</sub>.</p>     </div>    </p>    <p>For example, in Figure <a class="fig" href="#fig2">2</a>(b), a meta-path &#x201C;APA&#x201D; extracted from HetNet denotes the coauthor relationship on a paper between two authors, and &#x201C;APVPA&#x201D; represents two authors publish papers in the same venue.</p>    <p>     <div class="definition" id="enc3">     <Label>Definition 2.3.</Label>     <p> (<strong>Author Identification Problem</strong>) Given a set of previous papers <em>I</em>      <sub>< <em>T</em>      </sub> published before timestamp <em>T</em>, accompanying with bibliographic information (i.e., authors, abstract content, references and venue), the task is to rank all potential authors <em>u</em> &#x2208; <em>U</em> (<em>U</em>: set of all authors) for each new anonymous paper <em>v</em> &#x2208; <em>I</em>      <sub>&#x2265; <em>T</em>      </sub> (<em>I</em>      <sub>&#x2265; <em>T</em>      </sub>: set of papers published in or after <em>T</em>), such that its top ranked authors are true authors of <em>v</em>.</p>     </div>    </p>    <figure id="fig2">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-fig2.jpg" class="img-responsive" alt="Figure 2"      longdesc=""/>     <div class="figure-caption">     <span class="figure-number">Figure 2:</span>     <span class="figure-title">Illustrations of (a) academic heterogeneous network and (b) meta-path schemes.</span>     </div>    </figure>   </section>   <section id="sec-8">    <header>     <div class="title-info">     <h2>      <span class="section-number">3</span> Proposed Model</h2>     </div>    </header>    <p>We present the content-aware metric learning model for solving the problem and use historical bibliographic data to construct HetNet for modeling multiple indirect paper-author relations captured by meta-path walks, which benefits and augments the model.</p>    <section id="sec-9">     <header>     <div class="title-info">      <h3>       <span class="section-number">3.1</span> Metric Learning with Gated Recurrent Neural Network</h3>     </div>     </header>     <p>We denote each paper <em>v</em> &#x2208; <em>I</em>     <sub>< <em>T</em>     </sub> as embedding <span class="inline-equation"><span class="tex">${\bf E}_{v} \in \mathbb {R}^{d}$</span>     </span> (<em>d</em>: dimension of embedding) via a content encoder <em>f</em>: <strong>E</strong>     <sub>      <em>v</em>     </sub> = <em>f</em>(<strong>p</strong>     <sub>      <em>v</em>     </sub>), where <strong>p</strong>     <sub>      <em>v</em>     </sub> denotes the word sequence of the paper abstract. Besides, feature vector <span class="inline-equation"><span class="tex">${\bf q}_{u} \in \mathbb {R}^{d}$</span>     </span> is used to represent each author <em>u</em> &#x2208; <em>U</em>. Considering distance metric [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0032">32</a>] satisfies better triangle inequality and transition property than inner-product, as demonstrated by CML [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0011">11</a>], we introduce the following push loss function to formulate triple relations (<em>v</em>, <em>u</em>, <em>u</em>&#x2032;): <div class="table-responsive" id="eq1">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \begin{split} \mathcal {L}_{Metric}= \sum _{v\in I_{{\lt}T}}\sum _{u \in l_{v}} \sum _{u^{\prime } \notin l_{v}} \Big [\xi +dist(v, u)^{2}-dist(v, u^{\prime })^{2}\Big ]_{+} \end{split} \end{equation} </span>       <br/>       <span class="equation-number">(1)</span>      </div>     </div> where <em>l<sub>v</sub>     </em> denotes the set of true authors of paper <em>v</em>, {<em>x</em>}<sub>+</sub> = <em>max</em>(<em>x</em>, 0) is a standard hinge loss and <em>&#x03BE;</em> is a safety margin size. The distance metric <em>dist</em>(<em>v</em>, <em>u</em>) between paper <em>v</em> and author <em>u</em> is defined as euclidean distance of feature representation: <div class="table-responsive" id="eq2">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \begin{split} dist(v, u) = ||{\bf E}_{v}-{\bf q}_{u}|| = ||f({\bf p}_{v})-{\bf q}_{u}|| \end{split} \end{equation} </span>       <br/>       <span class="equation-number">(2)</span>      </div>     </div> Hence, minimizing <span class="inline-equation"><span class="tex">$\mathcal {L}_{Metric}$</span>     </span> obeys paper <em>v</em>&#x2019;s relative distances to different (true/false) authors. <figure id="fig3">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-fig3.jpg" class="img-responsive" alt="Figure 3"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 3:</span>       <span class="figure-title">Illustrations of (a) paper content encoder based on gated recurrent neural network and (b) metric learning process for author identification.</span>      </div>     </figure>     </p>     <p>To encode paper abstract content to fixed length embeddings <span class="inline-equation"><span class="tex">${\bf E} \in \mathbb {R}^{|I|\times d}$</span>     </span> (<em>I</em>: set of all papers), we introduce the gated recurrent units (GRU), a specific type of recurrent neural network, which has been widely adopted for many applications such as machine translation [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0002">2</a>]. Figure <a class="fig" href="#fig3">3</a>(a) gives the illustration of paper content encoder. To be more specific, a paper is represented as a sequence of words: <span class="inline-equation"><span class="tex">$\lbrace w_{1}, w_{2}, \cdots , w_{t_{max}}\rbrace$</span>     </span>, followed by the word embeddings sequence: <span class="inline-equation"><span class="tex">$\lbrace {\bf x}_{1}, {\bf x}_{2}, \cdots , {\bf x}_{t_{max}}\rbrace$</span>     </span> trained by word2vec [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0018">18</a>], where <em>t<sub>max</sub>     </em> is the maximum length of paper abstract. For each step <em>t</em> with the input word embedding <strong>x</strong>     <sub>      <em>t</em>     </sub> and previous hidden state vector <strong>h</strong>     <sub>      <em>t</em> &#x2212; 1</sub>, the current hidden state vector <strong>h</strong>     <sub>      <em>t</em>     </sub> is updated by <strong>h</strong>     <sub>      <em>t</em>     </sub> = <strong>GRU</strong>(<strong>x</strong>     <sub>      <em>t</em>     </sub>, <strong>h</strong>     <sub>      <em>t</em> &#x2212; 1</sub>), where the GRU module is defined as: <div class="table-responsive" id="eq3">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \begin{split} &#x0026;{\bf z}_{t} = \sigma ({\bf A}_{z}{\bf x}_{t} + {\bf B}_{z}{\bf h}_{t-1}) \\ &#x0026; {\bf r}_{t} = \sigma ({\bf A}_{r}{\bf x}_{t} + {\bf B}_{r}{\bf h}_{t-1}) \\ &#x0026;{\bf \hat{h}}_{t} = \tanh [{\bf A}_{h}{\bf x}_{t} + {\bf B}_{h}({\bf r}_{t}\circ {\bf h}_{t-1})]\\ &#x0026; {\bf h}_{t} = {\bf z}_{t}\circ {\bf h}_{t-1} + (1-{\bf z}_{t})\circ {\bf \hat{h}}_{t} \end{split} \end{equation} </span>       <br/>       <span class="equation-number">(3)</span>      </div>     </div> where <em>&#x03C3;</em> is the sigmoid function, <strong>A</strong> and <strong>B</strong> are parameter matrices of GRU network, operator &#x25CB; denotes element-wise multiplication, <strong>z</strong>     <sub>      <em>t</em>     </sub> and <strong>r</strong>     <sub>      <em>t</em>     </sub> are update gate vector and reset gate vector, respectively. The GRU network encodes word embeddings to deep semantic embeddings <span class="inline-equation"><span class="tex">${\bf h} \in \mathbb {R}^{t_{max}\times d}$</span>     </span>, which is concatenated by a mean pooling layer to obtain the general semantic embedding of each paper. All of these steps construct the paper content encoder <em>f</em>. We have also explored other encoding architectures such as LSTM and achieved the similar result, as the discussion in Section 4.3.2.</p>     <p>According to <span class="inline-equation"><span class="tex">$\mathcal {L}_{Metric}$</span>     </span>, the target neighbors of each paper are its true authors and the model incorporates semantic information of papers via GRU based content encoder. To infer model&#x0027;s parameters, we can minimize <span class="inline-equation"><span class="tex">$\mathcal {L}_{Metric}$</span>     </span> via gradient descent approach. For true authors of a given paper, gradients of loss function pull them inward to create a smaller radius. As for the false authors, gradients push them outward until they are out of the perimeter by a safety margin. Illustration of such process is shown in Figure <a class="fig" href="#fig3">3</a>(b). Thereafter the learned encoder <em>f</em> for inferring the semantic embedding of each future paper <em>v</em> &#x2208; <em>I</em>     <sub>&#x2265; <em>T</em>     </sub> and the optimized author latent features can be utilized to rank all potential authors for <em>v</em> according to the relevance score (e.g., the inner product of embedding) between paper and author. The learned model only needs abstract content of the target paper as the input for prediction since <em>f</em> and author latent features are optimized by using historical training data.</p>    </section>    <section id="sec-10">     <header>     <div class="title-info">      <h3>       <span class="section-number">3.2</span> Model Augmentation via Meta-path Walk Integrative Learning</h3>     </div>     </header>     <p>In Section 3.1, <span class="inline-equation"><span class="tex">$\mathcal {L}_{Metric}$</span>     </span> essentially models direct triple relations, i.e., (<em>v</em>, <em>u</em>, <em>u</em>&#x2032;) - (paper-true author-false author), for each paper <em>v</em> &#x2208; <em>I</em>     <sub>< <em>T</em>     </sub>. However, there are multiple indirect relations between paper and author, which can be inferred from the HetNet of previous papers&#x2019; bibliographic data and beneficial to the model. Hence, we aim to further augment the content encoder based metric learning by enforcing the smoothness of representation among indirectly correlated paper-author neighbors on the academic HetNet.</p>     <section id="sec-11">     <p><em>3.2.1 Meta-path Walks.</em> Although we can naturally take random walk on HetNet to capture indirect paper-author relations, as did in Deepwalk [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0020">20</a>] and node2vec [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0006">6</a>], such random walks are biased on highly visible types of nodes and concentrated nodes, as demonstrated by metapath2vec [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0003">3</a>]. Thus we apply meta-path walks to capture indirect correlations between paper and author. Specifically, given a meta-path <span class="inline-equation"><span class="tex">$\mathcal {P} \equiv \left\lbrace o_{1}\overset{r_{1}}{\rightarrow }o_{2}\overset{r_{2}}{\rightarrow }\cdots o_{i}\overset{r_{i}}{\rightarrow }o_{i+1} \cdots \overset{r_{m-1}}{\rightarrow }o_{m}\right\rbrace$</span>      </span> on the academic HetNet <em>G</em> = (<em>V</em>, <em>E</em>, <em>O<sub>V</sub>      </em>, <em>R<sub>E</sub>      </em>), the transition probability of walk at step <em>t</em> is defined as: <div class="table-responsive" id="eq4">       <div class="display-equation">        <span class="tex mytex">\begin{equation} \begin{split} p(v^{t+1}|v^{t}_{i},\mathcal {P})= \left\lbrace {\begin{array}{*10c}\frac{1}{|N_{i+1}(v^{t}_{i})|}&#x0026; (v^{t+1},v^{t}_{i})\in E,~\psi (v^{t+1})=i+1\\ 0&#x0026; (v^{t+1},v^{t}_{i})\in E,~\psi (v^{t+1})\ne i+1\\ 0&#x0026; (v^{t+1},v^{t}_{i})\notin E \end{array}}\right. \end{split} \end{equation} </span>        <br/>        <span class="equation-number">(4)</span>       </div>      </div> where <span class="inline-equation"><span class="tex">$v^{t}_{i}\in o_{i}$</span>      </span> and <span class="inline-equation"><span class="tex">$N_{i+1}(v^{t}_{i})$</span>      </span> denotes the set of the <em>o</em>      <sub>       <em>i</em> + 1</sub> type of neighborhood of node <span class="inline-equation"><span class="tex">$v^{t}_{i}$</span>      </span>, which guarantees that <em>v</em>      <sup>       <em>t</em> + 1</sup> &#x2208; <em>o</em>      <sub>       <em>i</em> + 1</sub> and the flow of walk is conditioned on <span class="inline-equation"><span class="tex">$\mathcal {P}$</span>      </span>. In addition, we use symmetric meta-path whose first node type <em>o</em>      <sub>1</sub> is the same as the last one <em>o<sub>m</sub>      </em>. Each random walk guided by <span class="inline-equation"><span class="tex">$\mathcal {P}$</span>      </span> recursively samples nodes sequence until it meets the fixed length, leading to its ability in capturing both direct correlations and indirectly transitive relations between paper and author within the walk of setting <span class="inline-equation"><span class="tex">$\mathcal {P}$</span>      </span>, as illustrated by Figure <a class="fig" href="#fig4">4</a>. In this figure, we take walk w<sub>       <em>o</em>      </sub> &#x2261; {&#x22C5;&#x22C5;&#x22C5; &#x2192; <em>A</em>      <sub>1</sub> &#x2192; <em>P</em>      <sub>2</sub> &#x2192; <em>A</em>      <sub>3</sub> &#x2192; <em>P</em>      <sub>4</sub> &#x2192; <em>A</em>      <sub>4</sub> &#x2192; &#x22C5;&#x22C5;&#x22C5;} guided by <span class="inline-equation"><span class="tex">$\mathcal {P}\equiv \left\lbrace A\overset{write}{\rightarrow }P\overset{write^{-1}}{\rightarrow }A\right\rbrace$</span>      </span> as an example. Besides the direct paper-author connections, e.g., <em>A</em>      <sub>1</sub> writes <em>P</em>      <sub>2</sub> or <em>A</em>      <sub>4</sub> writes <em>P</em>      <sub>4</sub>, w<sub>       <em>o</em>      </sub> also captures indirect relations. For example, <em>A</em>      <sub>1</sub> may pay attention to <em>P</em>      <sub>4</sub> since s/he collaborates with <em>A</em>      <sub>3</sub> on <em>P</em>      <sub>2</sub>. Therefore, multiple useful indirect relations between paper and author will be inferred if we generate plenty of walks guided by different meta-path schemes and collect the surrounding author context of each paper node within each walk. <figure id="fig4">       <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-fig4.jpg" class="img-responsive" alt="Figure 4"        longdesc=""/>       <div class="figure-caption">        <span class="figure-number">Figure 4:</span>        <span class="figure-title">Illustration of the joint representation learning model with metric learning for formulating direct paper-author relations and meta-path walk integrative learning for modeling indirect paper-author correlations.</span>       </div>      </figure>     </p>     </section>     <section id="sec-12">     <p><em>3.2.2 Smoothness Constraint as Task-dependent and Content-aware Skipgram Model.</em> To formulate indirect paper-author relations within each walk and force the corresponding smoothness of representation, we design a <strong>       <span style="text-decoration: underline;">m</span>      </strong>eta-path guided <strong>       <span style="text-decoration: underline;">w</span>      </strong>alk <strong>       <span style="text-decoration: underline;">i</span>      </strong>ntegrative <strong>       <span style="text-decoration: underline;">l</span>      </strong>earning module (MWIL) based on the Skipgram model [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0018">18</a>], which has been widely adopted in recent works [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0020">20</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0034">34</a>] for representation learning on networks. Specifically, given a set of collected walks <span class="inline-equation"><span class="tex">$W_{\mathcal {P}}$</span>      </span> under the guidance of meta-path <span class="inline-equation"><span class="tex">$\mathcal {P}$</span>      </span>, the loss for predicting indirectly correlated author <em>u</em> of paper <em>v</em> is defined as: <div class="table-responsive" id="eq5">       <div class="display-equation">        <span class="tex mytex">\begin{equation} \begin{split} &#x0026;\mathcal {L}_{MWIL}^{\mathcal {P}}=-\sum _{ w \in W_{\mathcal {P}}} \sum _{v \in w} \sum _{{{\scriptstyle {\begin{array}{*10c}u \in w[I_{v}-\tau :I_{v}+\tau ]\\u\notin l_{v}\end{array}}}}}\log p(u|v,\mathcal {P})\\\end{split} \end{equation} </span>        <br/>        <span class="equation-number">(5)</span>       </div>      </div> where <em>&#x03C4;</em> is the window size of surrounding context and <em>I<sub>v</sub>      </em> indicates the position of <em>v</em> in walk w. The likelihood probability <span class="inline-equation"><span class="tex">$p(u|v,\mathcal {P})$</span>      </span> is defined as content-aware Softmax function: <div class="table-responsive" id="eq6">       <div class="display-equation">        <span class="tex mytex">\begin{equation} \begin{split} &#x0026;p(u|v,\mathcal {P})=\frac{exp\big [f({\bf p}_{v}){\bf q}_{u}\big ]}{\sum _{u^{\prime } \in C_{\mathcal {P}}}exp\big [f({\bf p}_{v}){\bf q}_{u^{\prime }}\big ]} \end{split} \end{equation} </span>        <br/>        <span class="equation-number">(6)</span>       </div>      </div> where <em>f</em> is the content encoder defined in Section 3.1, <span class="inline-equation"><span class="tex">$C_{\mathcal {P}}$</span>      </span> denotes the set of all authors in corpus <span class="inline-equation"><span class="tex">$W_{\mathcal {P}}$</span>      </span>. To train the Skipgram model, we apply the popular negative sampling approach [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0018">18</a>] to approximate the intractable normalization: <div class="table-responsive" id="eq7">       <div class="display-equation">        <span class="tex mytex">\begin{equation} \begin{split} &#x0026;\log p(u|v,\mathcal {P}) \approx \log \sigma \big [f({\bf p}_{v}){\bf q}_{u}\big ]+\sum _{i=1}^{k}\mathbb {E}_{u^{\prime }\sim P_{\mathcal {P}}(u^{\prime })}\Big \lbrace \log \sigma \big [-f({\bf p}_{v}){\bf q}_{u^{\prime }}\big ]\Big \rbrace \end{split} \end{equation} </span>        <br/>        <span class="equation-number">(7)</span>       </div>      </div> where <em>&#x03C3;</em> is the sigmoid function, <em>u</em>&#x2032; is the negative author node sampled from a pre-defined noise distribution <span class="inline-equation"><span class="tex">$P_{\mathcal {P}}(u^{\prime })$</span>      </span> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0018">18</a>] in <span class="inline-equation"><span class="tex">$C_{\mathcal {P}}$</span>      </span>, <em>k</em> is the number of negative samples. In our case, <em>k</em> makes little impact on the performance of propose model. Thus we choose <em>k</em> = 1 and <span class="inline-equation"><span class="tex">$\log p(u|v,\mathcal {P})$</span>      </span> is degenerated to the cross entropy loss of classifying pair (<em>u</em>, <em>u</em>&#x2032;) for <em>v</em>: <div class="table-responsive" id="eq8">       <div class="display-equation">        <span class="tex mytex">\begin{equation} \begin{split} &#x0026;-\log p(u|v,\mathcal {P}) =-\log \sigma \big [f({\bf p}_{v}){\bf q}_{u}\big ]-\log \sigma \big [-f({\bf p}_{v}){\bf q}_{u^{\prime }}\big ] \end{split} \end{equation} </span>        <br/>        <span class="equation-number">(8)</span>       </div>      </div> That is, for each positive author <em>u</em> of paper <em>v</em> within walk w, we sample a negative author <em>u</em>&#x2032; from <span class="inline-equation"><span class="tex">$C_{\mathcal {P}}$</span>      </span> according to <span class="inline-equation"><span class="tex">$P_{\mathcal {P}}(u^{\prime })$</span>      </span>.</p>     <p>Comparing to the objective function of metapath2vec [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0003">3</a>], <span class="inline-equation"><span class="tex">$\mathcal {L}_{MWIL}^{\mathcal {P}}$</span>      </span> has three main differences:</p>     <ul class="list-no-style">      <li id="list4" label="&#x2022;">It forces task-dependent smoothness constraint between paper and its indirectly correlated author neighbors but not among all kind of neighbor pairs for general purpose.<br/></li>      <li id="list5" label="&#x2022;">The likelihood probability for predicting surrounding context is degenerated to cross entropy loss of classifying the positive/negative authors for each paper.<br/></li>      <li id="list6" label="&#x2022;">More importantly, the paper representations are encoded by GRU content encoder <em>f</em> for integrating paper semantic information into model.<br/></li>     </ul>     </section>    </section>    <section id="sec-13">     <header>     <div class="title-info">      <h3>       <span class="section-number">3.3</span> Joint Model Inference</h3>     </div>     </header>     <p>The objective function of joint model is defined as the combination of <span class="inline-equation"><span class="tex">$\mathcal {L}_{Metric}$</span>     </span> and <span class="inline-equation"><span class="tex">$\mathcal {L}_{MWIL}^{\mathcal {P}}$</span>     </span>: <div class="table-responsive" id="eq9">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \begin{split} &#x0026;\mathcal {L}_{Joint}= \mathcal {L}_{Metric} + \gamma \sum _{\mathcal {P} \in S(\mathcal {P})}\mathcal {L}_{MWIL}^{\mathcal {P}} + \lambda \mathcal {L}_{reg} \end{split} \end{equation} </span>       <br/>       <span class="equation-number">(9)</span>      </div>     </div> where <span class="inline-equation"><span class="tex">$S(\mathcal {P})$</span>     </span> denotes all meta-path schemes, <span class="inline-equation"><span class="tex">$\mathcal {L}_{reg}$</span>     </span> is the regularization term for avoiding over-fitting, parameter <em>&#x03BB;</em> controls penalty of regularization, <em>&#x03B3;</em> is a trade-off factor between <span class="inline-equation"><span class="tex">$\mathcal {L}_{Metric}$</span>     </span> and <span class="inline-equation"><span class="tex">$\mathcal {L}_{MWIL}^{\mathcal {P}}$</span>     </span>. We denote all model parameters including the GRU network coefficients of paper content encoder and the author latent features as &#x0398;. Let <em>T<sub>Metric</sub>     </em> and <span class="inline-equation"><span class="tex">$T_{MWIL}^{\mathcal {P}}$</span>     </span> be the sets of (<em>v</em>, <em>u</em>, <em>u</em>&#x2032;) triples in <span class="inline-equation"><span class="tex">$ \mathcal {L}_{Metric}$</span>     </span> and (<em>v</em>, <em>u</em>, <em>u</em>&#x2032;) triples in <span class="inline-equation"><span class="tex">$\mathcal {L}_{MWIL}^{\mathcal {P}}$</span>     </span>, respectively. Thereafter we can rewrite <span class="inline-equation"><span class="tex">$\mathcal {L}_{Joint}$</span>     </span> as: <div class="table-responsive" id="eq10">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \begin{split} &#x0026; \mathcal {L}_{Joint} = \sum _{(v,u,u^{\prime })\in T_{Metric}} \Big [\xi +||f({\bf p}_{v})-{\bf q}_{u}||^{2}-||f({\bf p}_{v})-{\bf q}_{u^{\prime }}||^{2}\Big ]_{+}\\ &#x0026; + \gamma \sum _{\mathcal {P} \in S(\mathcal {P})} \sum _{(v,u,u^{\prime })\in T_{MWIL}^{\mathcal {P}}}-\Big \lbrace \log \sigma \big [f({\bf p}_{v}){\bf q}_{u}\big ]+\log \sigma \big [-f({\bf p}_{v}){\bf q}_{u^{\prime }}\big ]\Big \rbrace \\ &#x0026; +\lambda \left\Vert \Theta \right\Vert ^{2} \end{split} \end{equation} </span>       <br/>       <span class="equation-number">(10)</span>      </div>     </div> To minimize <span class="inline-equation"><span class="tex">$\mathcal {L}_{Joint}$</span>     </span>, we design a sampling based mini-batch Adam optimizer [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0013">13</a>]. The pseudocode of learning algorithm is summarized in Algorithm 1. The proposed model performs joint optimization of content encoder based metric learning and meta-path walk integrative learning thus we name it <strong>      <span style="text-decoration: underline;">c</span>     </strong>ontent-<strong>      <span style="text-decoration: underline;">a</span>     </strong>ware and <strong>      <span style="text-decoration: underline;">me</span>     </strong>ta-path augmented <strong>      <span style="text-decoration: underline;">me</span>     </strong>tric <strong>      <span style="text-decoration: underline;">l</span>     </strong>earning (Camel). <figure id="fig5">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-fig5.jpg" class="img-responsive" alt="" longdesc=""/>     </figure>     </p>    </section>   </section>   <section id="sec-14">    <header>     <div class="title-info">     <h2>      <span class="section-number">4</span> Experiments</h2>     </div>    </header>    <p>In this section, we conduct extensive evaluations and analytical experiments to compare Camel with various baselines. Case studies are also provided to show performance differences of different methods.</p>    <section id="sec-15">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.1</span> Experimental Design</h3>     </div>     </header>     <section id="sec-16">     <p><em>4.1.1 Dataset.</em> AMiner [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0028">28</a>] is a well known platform for academic search and mining, which contains millions of author and paper information from major computer science venues for more than 50 years. We utilize the AMiner dataset<a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a> of 10 years from 2006 to 2015, and remove the papers published in venues (e.g., workshop) with limited publications and the instances without semantic content (i.e., abstract). In addition, considering most of researchers pay attention to papers published in top venues and each research area has its own community, we extract one more subset data of six domains according to Google Scholar Metrics, namely Artificial Intelligence (AI), Data Mining (DM), Databases (DB), Information System (IS), Computer Vision (CV) and Computational Linguistics (CL). For each domain, we choose three top venues<a class="fn" href="#fn2" id="foot-fn2"><sup>2</sup></a> that are considered to have influential papers. The main statistics of two datasets (AMiner-Top and AMiner-Full) are summarized in Table <a class="tbl" href="#tab1">1</a>.</p>     <div class="table-responsive" id="tab1">      <div class="table-caption">       <span class="table-number">Table 1:</span>       <span class="table-title">Statistics of datasets used in this paper.</span>      </div>      <table class="table"> 					 <thead>        <tr>        <th style="text-align:center;">         <strong>Statistics</strong>        </th>        <th style="text-align:center;">         <strong>AMiner-Top</strong>        </th>        <th style="text-align:center;">         <strong>AMiner-Full</strong>        </th>        </tr> 					 </thead>       <tbody>        <tr>        <td style="text-align:center;"># authors</td>        <td style="text-align:center;">28,646</td>        <td style="text-align:center;">571,563</td>        </tr>        <tr>        <td style="text-align:center;"># papers</td>        <td style="text-align:center;">21,044</td>        <td style="text-align:center;">483,319</td>        </tr>        <tr>        <td style="text-align:center;"># venues</td>        <td style="text-align:center;">18</td>        <td style="text-align:center;">492</td>        </tr>        <tr>        <td style="text-align:center;"># citations</td>        <td style="text-align:center;">245,420</td>        <td style="text-align:center;">3,154,421</td>        </tr>        <tr>        <td style="text-align:center;">ave. # authors per paper</td>        <td style="text-align:center;">3.294</td>        <td style="text-align:center;">3.087</td>        </tr>       </tbody>      </table>     </div>     </section>     <section id="sec-17">     <p><em>4.1.2 Baseline Methods.</em> We consider nine baseline methods that span four types: (1) citation-based matching, (2) feature engineering based supervised learning, (3) pairwise ranking with content embedding and (4) heterogeneous network embedding.</p>     <ul class="list-no-style">      <li id="list7" label="&#x2022;"><strong>Citation-based matching.</strong> The approach was proposed in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"        href="#BibPLXBIB0009">9</a>] and represents each paper and author by citation-based vector, and further matches potential authors for each query paper according to the vector similarity (VecS).<br/></li>      <li id="list8" label="&#x2022;"><strong>Feature engineering based supervised learning.</strong> Such approaches have been utilized in top solutions [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"        href="#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"        href="#BibPLXBIB0015">15</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"        href="#BibPLXBIB0035">35</a>] for 2013 KDD Cup challenge. It first extracts both author features and paper-author paired features, and then utilizes supervised learning algorithms to predict the correlation score of each paper-author pair. Similar to HetNetE [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"        href="#BibPLXBIB0001">1</a>], we extract 16 kinds of features (as reported in Table <a class="tbl" href="#tab2">2</a>) based on AMiner data and select Bayes Regression (BayesR), Random Forest (RandF) and Neural Network (NeuN) as learning algorithms. In addition, an ensemble approach (MultiM) of three algorithms is introduced for comparison.<br/></li>      <li id="list9" label="&#x2022;"><strong>Pairwise ranking with content embedding.</strong> Another possibility to consider content information is to first encode each paper content embedding via language modeling and then apply pairwise ranking [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"        href="#BibPLXBIB0022">22</a>] (BPR, which utilizes the inner product to measure paper-author correlation) to learn author latent features. We apply two popular models Word2V [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"        href="#BibPLXBIB0018">18</a>] and Par2V [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"        href="#BibPLXBIB0014">14</a>] to generate paper embeddings. In addition, the joint learning model (GRUBPR) of GRU [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"        href="#BibPLXBIB0002">2</a>] based content encoder and BPR is also introduced for comparison. As Word2Vec generates embedding of each word in content, we concatenate the output with a mean pooling layer to obtain general embedding of each paper. The learned feature representations of paper and author are further utilized to predict the authors of each paper.<br/></li>      <li id="list10" label="&#x2022;"><strong>Heterogeneous network embedding.</strong> We also compare Camel with a recent model HetNetE in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"        href="#BibPLXBIB0001">1</a>], which optimizes feature representations of author and paper via task-guided heterogeneous network embedding, and further applies them to identify authors of each paper.<br/></li>     </ul>     <div class="table-responsive" id="tab2">      <div class="table-caption">       <span class="table-number">Table 2:</span>       <span class="table-title">Selected features of supervised learning baselines.</span>      </div>      <table class="table">       <tbody>        <tr>        <td style="text-align:left;">         <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-graphic6.jpg" class="img-responsive" alt="" longdesc=""/>        </td>        </tr>       </tbody>      </table>     </div>     </section>     <section id="sec-18">     <p><em>4.1.3 Evaluation Metrics.</em> As illustrated in problem definition, papers published before a given timestamp <em>T</em> are treated as training data and papers published in or after <em>T</em> (denoted as set <em>I</em>      <sub>&#x2265; <em>T</em>      </sub>) are left for evaluation. We use four popular metrics, i.e., Recall@k, Precision@k, F1 score and AUC, to evaluate the performance of each method.</p>     <ul class="list-no-style">      <li id="list11" label="&#x2022;"><strong>Recall@k.</strong> It shows the ratio of true authors being retrieved in the top-k return list, which can be computed according to: <div class="table-responsive" id="eq11">        <div class="display-equation">        <span class="tex mytex">\begin{equation} \begin{split} &#x0026;Rec@k = \frac{1}{|I_{\ge T}|}\sum _{v\in I_{\ge T}}\frac{|\hat{l}_{v} \bigcap l_{v}|}{|l_{v}|} \end{split} \end{equation} </span>        <br/>        <span class="equation-number">(11)</span>        </div>       </div> where <em>l<sub>v</sub>       </em> and <span class="inline-equation"><span class="tex">$\hat{l}_{v}$</span>       </span> denote the sets of true authors of paper <em>v</em> and top-k ranked authors by a specific method, respectively.<br/></li>      <li id="list12" label="&#x2022;"><strong>Precision@k.</strong> It reflects the accuracy of top-k ranked authors by a specific method and is defined as: <div class="table-responsive" id="eq12">        <div class="display-equation">        <span class="tex mytex">\begin{equation} \begin{split} &#x0026;Pre@k = \frac{1}{|I_{\ge T}|}\sum _{v\in I_{\ge T}}\frac{|\hat{l}_{v} \bigcap l_{v}|}{k} \end{split} \end{equation} </span>        <br/>        <span class="equation-number">(12)</span>        </div>       </div>       <br/></li>      <li id="list13" label="&#x2022;"><strong>F1 score.</strong> It balances the trade-off between precision and recall, and is defined as the harmonic average of precision and recall: <div class="table-responsive" id="eq13">        <div class="display-equation">        <span class="tex mytex">\begin{equation} \begin{split} &#x0026;F1 = 2\cdot \frac{precision \cdot recall}{precision + recall} \end{split} \end{equation} </span>        <br/>        <span class="equation-number">(13)</span>        </div>       </div>       <br/></li>      <li id="list14" label="&#x2022;"><strong>AUC.</strong> It measures the accuracy of pairwise orders between correlated and uncorrelated papers of each author, which is formulated as: <div class="table-responsive" id="eq14">        <div class="display-equation">        <span class="tex mytex">\begin{equation} \begin{split} &#x0026;AUC=\frac{1}{|I_{\ge T}|}\sum _{v\in I_{\ge T}}\frac{1}{|E(v)|}\sum _{(u,u^{\prime })\in E(v)}\delta (s_{vu}{\gt}s_{vu^{\prime }}) \end{split} \end{equation} </span>        <br/>        <span class="equation-number">(14)</span>        </div>       </div> where <em>E</em>(<em>v</em>) &#x2261; {(<em>u</em>, <em>u</em>&#x2032;)|<em>u</em> &#x2208; <em>l<sub>v</sub>       </em>, <em>u</em>&#x2032;&#x2209;<em>l<sub>v</sub>       </em>}.<br/></li>     </ul>     <p>For all evaluations, we set k = 10. A larger Recall@k, Precision@k, F1 or AUC value means a better performance.</p>     </section>     <section id="sec-19">     <p><em>4.1.4 Experimental Settings.</em> All information utilized for model training such as triple samples in Camel or the selected features in supervised learning baselines, are extracted from training data. We design two different training/test splits by setting <em>T</em> = 2012 and 2013. Besides, there are three key settings of experiments:</p>     <ul class="list-no-style">      <li id="list15" label="&#x2022;"><strong>Parameters.</strong>The embedding dimension <em>d</em> is set to 128 and the regularization parameter <em>&#x03BB;</em> equals 0.001. We fix hinge loss margin <em>&#x03BE;</em> = 0.1 for metric learning and window size <em>w</em> = 6 for meta-path walk augmentation. In addition, the trade-off factor <em>&#x03B3;</em> of the joint model equals 0.1.<br/></li>      <li id="list16" label="&#x2022;"><strong>Meta-path selections.</strong> We empirically investigate the performance of our model by greedily selecting and combining different meta-path walks and find that &#x201C;APA&#x201D;, &#x201C;APPA&#x201D; and &#x201C;APVPA&#x201D; are the most effective meta-path schemes. Notice that, &#x201C;APA&#x201D; denotes collaboration relationship, &#x201C;APPA&#x201D; represents citation link and &#x201C;APVPA&#x201D; indicates correlation in the same publication venue. The set of node sequences capture multiple correlations between paper and author under these meta-path settings.<br/></li>      <li id="list17" label="&#x2022;"><strong>Evaluation candidates.</strong> It is time consuming and memory intensive to extract and store features of all paper-author pairs (which amounts to over 2.7 &#x00D7; 10<sup>11</sup> pairs in AMiner-Full). The supervised learning algorithms cannot scale up to such large amount of data. Hence, we adopt the setting in HetNetE [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"        href="#BibPLXBIB0001">1</a>] that randomly samples a set of negative authors and combines it with the set of true authors to form a candidate set of total 100 authors for each paper. The reported results are averaged over 10 experiments of such setting. For completeness, we also conduct evaluation of different representation learning models on the whole authors set.<br/></li>     </ul>     <div class="table-responsive" id="tab3">      <div class="table-caption">       <span class="table-number">Table 3:</span>       <span class="table-title">Performance comparisons of different methods. The last row shows the average improvements (%) of Camel over different baselines. HetNetE is the best baseline (indicated by star notation) and Camel has the best performances (highlighted in bold) in all cases.</span>      </div>      <table class="table">       <tbody>        <tr>        <td style="text-align:left;">         <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-graphic7.jpg" class="img-responsive" alt="" longdesc=""/>        </td>        </tr>       </tbody>      </table>     </div>     <figure id="fig6">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-fig6.jpg" class="img-responsive" alt="Figure 5"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 5:</span>       <span class="figure-title">Result comparisons on the whole authors set. Camel significantly outperforms the others.</span>      </div>     </figure>     </section>    </section>    <section id="sec-20">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.2</span> Performance Comparison</h3>     </div>     </header>     <p>The performances of all methods are reported in Table <a class="tbl" href="#tab3">3</a>, where the best results are highlighted in bold and the best baselines are indicated by star notation. The last row of table reports the average improvements (%) of Camel over different baselines. The main takeaways from this table are summarized as follows:</p>     <ul class="list-no-style">     <li id="list18" label="&#x2022;">The pairwise ranking models with content embedding have better average performances than the supervised learning baselines with one algorithm (i.e., BayesR, RandF and NeuN), which suggests that the feature representations generated by content embedding are better for capturing the complicated paper-author relations than the simple features extracted directly from data. In addition, VecS achieves poor performance since there are some missing citation information in AMiner data.<br/></li>     <li id="list19" label="&#x2022;">HetNetE achieves better results than the supervised learning methods and the pairwise ranking models with content embedding, showing that the task-guided heterogeneous network embedding model generates task-specific feature representations and performs better than the other two for the author identification problem.<br/></li>     <li id="list20" label="&#x2022;">Camel performs best in all experimental settings. The average improvements of Camel over different baselines range from 6.3% to 158.7%, demonstrating the effectiveness of our proposed model.<br/></li>     </ul>     <p>To make thorough evaluation, we also conduct comparison experiment of Camel and two selected baselines (GRUBPR and HetNetE) on the whole author candidate set of AMiner-Top dataset. The results (in terms of <em>Rec</em>@100 and <em>Rec</em>@200) are shown in Figure <a class="fig" href="#fig6">5</a>. It can be seen that Camel significantly outperforms the other two methods (with 39.8% and 28.0% average improvements, respectively), which further shows the effectiveness of Camel. <figure id="fig7">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-fig7.jpg" class="img-responsive" alt="Figure 6"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 6:</span>       <span class="figure-title">The impacts of window size <em>&#x03C4;</em> and embedding dimension <em>d</em> on the performance of Camel. Camel achieves the best result when <em>&#x03C4;</em> is around 6 and <em>d</em> is around 128.</span>      </div>     </figure>     </p>    </section>    <section id="sec-21">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.3</span> Analysis and Discussion</h3>     </div>     </header>     <p>The analytical experiments in this section are based on AMiner-Top data, results in the other dataset reveal similar conclusion but are omitted due to page limit.</p>     <section id="sec-22">     <p><em>4.3.1 Parameters Sensitivity.</em> The hyper-parameters play important roles in Camel, as they determine how the model will be trained. We conduct experiments to analyze the impacts of two key parameters, i.e., the window size <em>&#x03C4;</em> of meta-path augmentation module and the embedding (latent feature) dimension <em>d</em> of author and paper. We investigate a specific parameter by changing its value and fixing the others. The performances of Camel (in terms of <em>Rec</em>@10 and <em>Pre</em>@10) on various settings of <em>&#x03C4;</em> and <em>d</em> are shown in Figure <a class="fig" href="#fig7">6</a>. According to this figure:</p>     <ul class="list-no-style">      <li id="list21" label="&#x2022;">With the increment of <em>&#x03C4;</em>, <em>Rec</em>@10 and <em>Pre</em>@10 increase at first since a larger window represents more useful indirect paper-author correlations. But when <em>&#x03C4;</em> goes beyond a certain value, the performances decrease with the further increment of <em>&#x03C4;</em> due to the possible involvement of uncorrelated noise. The best <em>&#x03C4;</em> is around 6.<br/></li>      <li id="list22" label="&#x2022;">Similar to <em>&#x03C4;</em>, an appropriate value should be set for <em>d</em> such that the best representations of author and paper are learned. The optimal value of <em>d</em> is around 128.<br/></li>     </ul>     <p>Besides <em>d</em> and <em>&#x03C4;</em>, we have also investigated the impacts of other hyper-parameters such as regularization parameter <em>&#x03BB;</em>, and revealed the similar point. Therefore the certain settings of the hyper-parameters result in the best performance of Camel.</p>     <div class="table-responsive" id="tab4">      <div class="table-caption">       <span class="table-number">Table 4:</span>       <span class="table-title">Performance comparisons of various proposed models w.r.t different analytical categories: (a) different components of the objective function; (b) different choices of random walk; (c) selection of meta-path scheme for random walk sampling and (d) selection of the recurrent unit for paper content encoder; (e) selection of paper-author correlation measurement.</span>      </div>      <table class="table">       <tbody>        <tr>        <td style="text-align:left;">         <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-graphic10.jpg" class="img-responsive" alt=""          longdesc=""/>        </td>        </tr>       </tbody>      </table>     </div>     <div class="table-responsive" id="tab5">      <div class="table-caption">       <span class="table-number">Table 5:</span>       <span class="table-title">Top ranked authors for two query papers and the corresponding embedding visualizations.</span>      </div>      <table class="table">       <tbody>        <tr>        <td style="text-align:left;">         <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-graphic11.jpg" class="img-responsive" alt=""          longdesc=""/>        </td>        </tr>       </tbody>      </table>     </div>     </section>     <section id="sec-23">     <p><em>4.3.2 Performances of Variant Proposed Models.</em> Camel is a joint representation learning model of content encoder based metric learning and meta-path walk integrative learning. Whether each learning component plays a role on the joint model? How meta-path schemes impact the model&#x0027;s performance? Whether the selection of recurrent unit or correlation measurement has influence on the model&#x0027;s performance? To answer these questions, we conduct experiments to evaluate the performances of variant proposed models w.r.t. different analytical categories:</p>     <ul class="list-no-style">      <li id="list23" label="&#x2022;"><strong>Objective Function.</strong>The joint objective function <span class="inline-equation"><span class="tex">$\mathcal {L}_{Joint}$</span>       </span> contains two main components: <span class="inline-equation"><span class="tex">$\mathcal {L}_{Metric}$</span>       </span> and <span class="inline-equation"><span class="tex">$\mathcal {L}_{MWIL}^{\mathcal {P}}$</span>       </span>. To shows the effectiveness of meta-path walk integrative learning module, we conduct evaluation for the model with only content encoder based metric learning, i.e., <span class="inline-equation"><span class="tex">$\mathcal {L}_{Metric}$</span>       </span>, and report its performance in Table <a class="tbl" href="#tab4">4</a> part (a). According to this result, we can find that Camel significantly outperforms <span class="inline-equation"><span class="tex">$\mathcal {L}_{Metric}$</span>       </span>, showing the large benefit of incorporating <span class="inline-equation"><span class="tex">$\mathcal {L}_{MWIL}^{\mathcal {P}}$</span>       </span> into the joint model.<br/></li>      <li id="list24" label="&#x2022;"><strong>Random Walk.</strong>We design a meta-path walk integrative learning module to augment the model. In order to show the larger benefit of meta-path walk over random walk, we design the joint learning model (Camel-RW) with random walk integrative learning module and compare it to Camel. As the result shown in Table <a class="tbl" href="#tab4">4</a> part (b), Camel has higher identification accuracy than Camel-RW. Thus the meta-path walk is better than the random walk for capturing indirect paper-author correlations on academic HetNet.<br/></li>      <li id="list25" label="&#x2022;"><strong>Meta-path Selection.</strong>In meta-path augmentation module, we select three kinds of meta-path schemes: &#x201C;APA&#x201D;, &#x201C;APPA&#x201D; and &#x201C;APVPA&#x201D;. To study the impacts of different meta-path schemes on the model&#x0027;s performance, we design three joint learning models, i.e., Camel-APA, Camel-APPA and Camel-APVPA, which are augmented by &#x201C;APA&#x201D;, &#x201C;APPA&#x201D; and &#x201C;APVPA&#x201D; walk integrative learning modules, respectively. The performances of three models are reported in Table <a class="tbl" href="#tab4">4</a> part (c). We can observe that Camel-APPA achieves relative better performance than the other two, indicating that an author tends to have stronger correlation/preference to his/her references than co-author&#x0027;s papers or papers published in the same venue. In addition, all of three models have worse performance than Camel, demonstrating that the combination of different meta-path schemes leads to better performance.<br/></li>      <li id="list26" label="&#x2022;"><strong>Recurrent Unit Selection.</strong>We select the GRU as the basic recurrent unit for paper content encoder of Camel. Besides GRU, there are various deep architectures constructed by different recurrent units for sequence modeling, such as long short term memory networks (LSTM). In order to test the influence of the recurrent unit selection on model&#x0027;s performance, we conduct comparison experiment between Camel and the model with LSTM (Camel-LSTM). According to the results shown in Table <a class="tbl" href="#tab4">4</a> part (d), Camel-LSTM and Camel have close performance. In other words, the selection of GRU or LSTM has little impact on the performance. We choose GRU since it has a more concise structure than LSTM for reducing training time.<br/></li>      <li id="list27" label="&#x2022;"><strong>Correlation Measurement.</strong>As illustrated in Section 3.1, we use distance metric rather than inner-product to measure the correlation between paper and author. To show the rationality of such a choice, we compare the performances of the model with <span class="inline-equation"><span class="tex">$\mathcal {L}_{Metric}$</span>       </span> and the baseline method GRUBPR since GRUBPR is a joint learning model of GRU based content encoder and pairwise ranking, which employs inner-product to measure paper-author correlation. According to the result shown in Table <a class="tbl" href="#tab4">4</a> part (a) and part (e), <span class="inline-equation"><span class="tex">$\mathcal {L}_{Metric}$</span>       </span> has better performance than GRUBPR in most cases, demonstrating distance metric is better than inner-product in measuring paper-author correlation for the author identification problem.<br/></li>     </ul>     <p>To summarize, according to the above discussion: (1) the meta-path walk integrative learning module brings large benefits to improve the proposed model; (2) meta-path walk is better than random walk for capturing indirect paper-author correlations on academic HetNet; (3) &#x201C;APPA&#x201D; is the best meta-path scheme among the three, while the combination of different meta-path schemes leads to the best performance of model; (4) the choice of different recurrent unit has little influence on model&#x0027;s performance; and (5) the distance metric is better than inner-product for measuring direct paper-author correlation.</p>     </section>    </section>    <section id="sec-24">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.4</span> Case Studies</h3>     </div>     </header>     <p>We present two case studies on AMiner-Top dataset to show the performance differences between Camel and two selected baselines, i.e., GRUBPR and HetNetE, which achieve relative better performances. Table <a class="tbl" href="#tab5">5</a> lists the top 10 ranked authors for two query papers published in WWW 2013 and WSDM 2013, respectively. For a better comparison, we also provide the embedding visualizations<a class="fn" href="#fn3" id="foot-fn3"><sup>3</sup></a> of the target papers and top authors ranked by different methods. Comparing to the authors set of a given paper, the number of whole author set is much larger. Besides, there are many false authors whose feature representations are quite similar to the true authors of target paper. Thus many of the true authors may not be presented in the top list. However, according to Table <a class="tbl" href="#tab5">5</a>, Camel achieves 2/5 and 2/4 w.r.t. <em>Rec</em>@100 in two cases, and predicts true authors more accurately than the other methods in top 10 lists, as shown by the authors (i.e., J. Leskovec and Q. Mei) highlighted in red color. In addition, the embeddings of top authors ranked by Camel cluster closer to the embeddings of the target paper and its true authors than those of HetNetE. We remove visualization result of GRUBPR due to its scattered behavior. Therefore, our model generates more accurate feature representations of paper and author, and achieves better performance than the other methods.</p>    </section>   </section>   <section id="sec-25">    <header>     <div class="title-info">     <h2>      <span class="section-number">5</span> Related Work</h2>     </div>    </header>    <p>In the past few years, some works have devoted to paper-author pair identification problem in big scholarly data, such as studies in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0009">9</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>] and various solutions in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0015">15</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0035">35</a>] for 2013 KDD Cup author-paper identification challenge. Most of these works focused on feature engineering and utilized supervised learning algorithms to infer the correlation between paper and author. However, feature engineering is time consuming and storage intensive, and the extracted features can be irrelevant, insufficient or redundant.</p>    <p>The representation learning models for networks have attracted a lot of attention in recent years. Most of these models [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0020">20</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0027">27</a>] preserve the proximities among nodes by learning vectorized representations. Some extended studies have been applied to various applications in big scholarly data such as node classification [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0007">7</a>]. Unlike task-independent attribute of these methods, Chen et al. proposed HetNetE [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>], a task-guided heterogeneous network embedding model. Comparing to the existing baselines, HetNetE achieves better performance for author identification problem. Despite the consideration of specific task for embedding generation, HetNetE ignores paper content (e.g., abstract) that contains useful semantic information and searches indirect correlations among all kind of nodes for augmentation.</p>    <p>Besides paper-author identification and network embedding, the loss function of our model for formulating direct paper-author correlations is based on distance metric learning [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0032">32</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0033">33</a>]. In addition, we introduce word embedding models [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0018">18</a>] and gated recurrent neural network [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0010">10</a>] to generate deep semantic embeddings of paper. Moreover, the design of meta-path walk integrative learning module is inspired by heterogeneous network analysis works [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0025">25</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0026">26</a>] as well as the Skipgram model [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0018">18</a>].</p>   </section>   <section id="sec-26">    <header>     <div class="title-info">     <h2>      <span class="section-number">6</span> Conclusion</h2>     </div>    </header>    <p>In this paper, we study the author identification problem in big scholarly data, and design a representation learning model, i.e., Camel, to solve it. The model performs joint optimization of GRU content encoder based metric learning and Skipgram model based meta-path walk integrative learning. The extensive experiments on the well known AMiner data demonstrate that Camel outperforms a number of baselines. Detail discussions are also provided to show the effectiveness of different components in Camel. Some potential future work includes: (1) the dynamics of author embeddings should be considered for the task since authors keep publishing new papers; (2) the attention-based RNN can be applied to generate better semantic embeddings of paper.</p>   </section>   <section id="sec-27">    <header>     <div class="title-info">     <h2>Acknowledgment</h2>     </div>    </header>    <p>This work is supported by the Army Research Laboratory under Cooperative Agreement Number W911NF-09-2-0053 and the National Science Foundation (NSF) grant IIS-1447795. The views and conclusions contained in this document are those of the authors and should not be interpreted as representing the official policies, either expressed or implied, of the Army Research Laboratory or the U.S. Government. The U.S. Government is authorized to reproduce and distribute reprints for Government purposes notwithstanding any copyright notation here on. This work is partially supported by King Abdullah University of Science and Technology (KAUST).</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>     <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>     </div>    </header>    <ul class="bibUl">     <li id="BibPLXBIB0001" label="[1]">Ting Chen and Yizhou Sun. 2017. Task-Guided and Path-Augmented Heterogeneous Network Embedding for Author Identification. In <em>      <em>WSDM</em></em>. 295&#x2013;304.</li>     <li id="BibPLXBIB0002" label="[2]">Kyunghyun Cho, Bart Van&#x00A0;Merri&#x00EB;nboer, Caglar Gulcehre, Dzmitry Bahdanau, Fethi Bougares, Holger Schwenk, and Yoshua Bengio. 2014. Learning phrase representations using RNN encoder-decoder for statistical machine translation. <em>      <em>arXiv:1406.1078</em>     </em> (2014).</li>     <li id="BibPLXBIB0003" label="[3]">Yuxiao Dong, Nitesh&#x00A0;V Chawla, and Ananthram Swami. 2017. metapath2vec: Scalable Representation Learning for Heterogeneous Networks. In <em>      <em>KDD</em></em>. 135&#x2013;144.</li>     <li id="BibPLXBIB0004" label="[4]">Yuxiao Dong, Reid&#x00A0;A Johnson, and Nitesh&#x00A0;V Chawla. 2015. Will this paper increase your h-index?: Scientific impact prediction. In <em>      <em>WSDM</em></em>. 149&#x2013;158.</li>     <li id="BibPLXBIB0005" label="[5]">Dmitry Efimov, Lucas Silva, and Benjamin Solecki. 2013. Kdd cup 2013-author-paper identification challenge: second place team. In <em>      <em>KDD Cup Workshop</em></em>.</li>     <li id="BibPLXBIB0006" label="[6]">Aditya Grover and Jure Leskovec. 2016. node2vec: Scalable feature learning for networks. In <em>      <em>KDD</em></em>. 855&#x2013;864.</li>     <li id="BibPLXBIB0007" label="[7]">Huan Gui, Jialu Liu, Fangbo Tao, Meng Jiang, Brandon Norick, and Jiawei Han. 2016. Large-scale embedding learning in heterogeneous event data. In <em>      <em>ICDM</em></em>. 907&#x2013;912.</li>     <li id="BibPLXBIB0008" label="[8]">Qi He, Jian Pei, Daniel Kifer, Prasenjit Mitra, and Lee Giles. 2010. Context-aware citation recommendation. In <em>      <em>WWW</em></em>. 421&#x2013;430.</li>     <li id="BibPLXBIB0009" label="[9]">Shawndra Hill and Foster Provost. 2003. The myth of the double-blind review?: author identification using only citations. <em>      <em>Acm Sigkdd Explorations Newsletter</em>     </em>5, 2 (2003), 179&#x2013;184.</li>     <li id="BibPLXBIB0010" label="[10]">Sepp Hochreiter and J&#x00FC;rgen Schmidhuber. 1997. Long short-term memory. <em>      <em>Neural computation</em>     </em>9, 8 (1997), 1735&#x2013;1780.</li>     <li id="BibPLXBIB0011" label="[11]">Cheng-Kang Hsieh, Longqi Yang, Yin Cui, Tsung-Yi Lin, Serge Belongie, and Deborah Estrin. 2017. Collaborative metric learning. In <em>      <em>WWW</em></em>. 193&#x2013;201.</li>     <li id="BibPLXBIB0012" label="[12]">Zhipeng Huang, Yudian Zheng, Reynold Cheng, Yizhou Sun, Nikos Mamoulis, and Xiang Li. 2016. Meta structure: Computing relevance in large heterogeneous information networks. In <em>      <em>KDD</em></em>. 1595&#x2013;1604.</li>     <li id="BibPLXBIB0013" label="[13]">Diederik&#x00A0;P Kingma and Jimmy Ba. 2014. Adam: A method for stochastic optimization. <em>      <em>arXiv preprint arXiv:1412.6980</em>     </em>(2014).</li>     <li id="BibPLXBIB0014" label="[14]">Quoc Le and Tomas Mikolov. 2014. Distributed representations of sentences and documents. In <em>      <em>ICML</em></em>. 1188&#x2013;1196.</li>     <li id="BibPLXBIB0015" label="[15]">Chun-Liang Li, Yu-Chuan Su, Ting-Wei Lin, Cheng-Hao Tsai, Wei-Cheng Chang, Kuan-Hao Huang, Tzu-Ming Kuo, Shan-Wei Lin, Young-San Lin, Yu-Chen Lu, <em>et al.</em> 2015. Combination of feature engineering and ranking models for paper-author identification in KDD Cup 2013. <em>      <em>JMLR</em>     </em>16, 1 (2015), 2921&#x2013;2947.</li>     <li id="BibPLXBIB0016" label="[16]">Xiang Liu, Torsten Suel, and Nasir Memon. 2014. A robust model for paper reviewer assignment. In <em>      <em>RecSys</em></em>. 25&#x2013;32.</li>     <li id="BibPLXBIB0017" label="[17]">Xiaozhong Liu, Yingying Yu, Chun Guo, and Yizhou Sun. 2014. Meta-path-based ranking with pseudo relevance feedback on heterogeneous graph for citation recommendation. In <em>      <em>CIKM</em></em>. 121&#x2013;130.</li>     <li id="BibPLXBIB0018" label="[18]">Tomas Mikolov, Ilya Sutskever, Kai Chen, Greg&#x00A0;S Corrado, and Jeff Dean. 2013. Distributed representations of words and phrases and their compositionality. In <em>      <em>NIPS</em></em>. 3111&#x2013;3119.</li>     <li id="BibPLXBIB0019" label="[19]">Mathias Payer, Ling Huang, Neil&#x00A0;Zhenqiang Gong, Kevin Borgolte, and Mario Frank. 2015. What you submit is who you are: A multimodal approach for deanonymizing scientific publications. <em>      <em>TIFS</em>     </em>10, 1 (2015), 200&#x2013;212.</li>     <li id="BibPLXBIB0020" label="[20]">Bryan Perozzi, Rami Al-Rfou, and Steven Skiena. 2014. Deepwalk: Online learning of social representations. In <em>      <em>KDD</em></em>. 701&#x2013;710.</li>     <li id="BibPLXBIB0021" label="[21]">Xiang Ren, Jialu Liu, Xiao Yu, Urvashi Khandelwal, Quanquan Gu, Lidan Wang, and Jiawei Han. 2014. Cluscite: Effective citation recommendation by information network-based clustering. In <em>      <em>KDD</em></em>. 821&#x2013;830.</li>     <li id="BibPLXBIB0022" label="[22]">Steffen Rendle, Christoph Freudenthaler, Zeno Gantner, and Lars Schmidt-Thieme. 2009. BPR: Bayesian personalized ranking from implicit feedback. In <em>      <em>UAI</em></em>. 452&#x2013;461.</li>     <li id="BibPLXBIB0023" label="[23]">Hua-Wei Shen, Dashun Wang, Chaoming Song, and Albert-L&#x00E1;szl&#x00F3; Barab&#x00E1;si. 2014. Modeling and Predicting Popularity Dynamics via Reinforced Poisson Processes. In <em>      <em>AAAI</em></em>, Vol.&#x00A0;14. 291&#x2013;297.</li>     <li id="BibPLXBIB0024" label="[24]">Roberta Sinatra, Dashun Wang, Pierre Deville, Chaoming Song, and Albert-L&#x00E1;szl&#x00F3; Barab&#x00E1;si. 2016. Quantifying the evolution of individual scientific impact. <em>      <em>Science</em>     </em>354, 6312 (2016), aaf5239.</li>     <li id="BibPLXBIB0025" label="[25]">Yizhou Sun, Jiawei Han, Xifeng Yan, Philip&#x00A0;S Yu, and Tianyi Wu. 2011. Pathsim: Meta path-based top-k similarity search in heterogeneous information networks. <em>      <em>VLDB</em>     </em>4, 11 (2011), 992&#x2013;1003.</li>     <li id="BibPLXBIB0026" label="[26]">Yizhou Sun, Brandon Norick, Jaiwei Han, Xifeng Yan, Philip Yu, and Xiao Yu. 2012. PathSelClus: Integrating Meta-Path Selection with User-Guided Object Clustering in Heterogeneous Information Networks. In <em>      <em>KDD</em></em>. 1348&#x2013;1356.</li>     <li id="BibPLXBIB0027" label="[27]">Jian Tang, Meng Qu, Mingzhe Wang, Ming Zhang, Jun Yan, and Qiaozhu Mei. 2015. Line: Large-scale information network embedding. In <em>      <em>WWW</em></em>. 1067&#x2013;1077.</li>     <li id="BibPLXBIB0028" label="[28]">Jie Tang, Jing Zhang, Limin Yao, Juanzi Li, Li Zhang, and Zhong Su. 2008. Arnetminer: extraction and mining of academic social networks. In <em>      <em>KDD</em></em>. 990&#x2013;998.</li>     <li id="BibPLXBIB0029" label="[29]">Andrew Tomkins, Min Zhang, and William&#x00A0;D Heavlin. 2017. Single versus Double Blind Reviewing at WSDM 2017. <em>      <em>arXiv preprint arXiv:1702.00502</em>     </em>(2017).</li>     <li id="BibPLXBIB0030" label="[30]">Susan Van&#x00A0;Rooyen, Fiona Godlee, Stephen Evans, Nick Black, and Richard Smith. 1999. Effect of open peer review on quality of reviews and on reviewers&#x2019; recommendations: a randomised trial. <em>      <em>BMJ</em>     </em>318, 7175 (1999), 23&#x2013;27.</li>     <li id="BibPLXBIB0031" label="[31]">Dashun Wang, Chaoming Song, and Albert-L&#x00E1;szl&#x00F3; Barab&#x00E1;si. 2013. Quantifying long-term scientific impact. <em>      <em>Science</em>     </em>342, 6154 (2013), 127&#x2013;132.</li>     <li id="BibPLXBIB0032" label="[32]">Kilian&#x00A0;Q Weinberger and Lawrence&#x00A0;K Saul. 2009. Distance metric learning for large margin nearest neighbor classification. <em>      <em>JMLR</em>     </em>10, 2 (2009), 207&#x2013;244.</li>     <li id="BibPLXBIB0033" label="[33]">Eric&#x00A0;P Xing, Michael&#x00A0;I Jordan, Stuart&#x00A0;J Russell, and Andrew&#x00A0;Y Ng. 2003. Distance metric learning with application to clustering with side-information. In <em>      <em>NIPS</em></em>. 521&#x2013;528.</li>     <li id="BibPLXBIB0034" label="[34]">Carl Yang, Lanxiao Bai, Chao Zhang, Quan Yuan, and Jiawei Han. 2017. Bridging Collaborative Filtering and Semi-Supervised Learning: A Neural Approach for POI Recommendation. In <em>      <em>KDD</em></em>. 1245&#x2013;1254.</li>     <li id="BibPLXBIB0035" label="[35]">Xing Zhao. 2013. The scorecard solution to the author-paper identification challenge. In <em>      <em>KDD Cup Workshop</em></em>. 4.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">     <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class="link-inline force-break" href="https://aminer.org/citation">https://aminer.org/citation</a></p>   <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a>AI: ICML, AAAI, IJCAI. DM: KDD, WSDM, ICDM. DB: SIGMOD, VLDB, ICDE. IS: WWW, SIGIR, CIKM. CV: CVPR, ICCV, ECCV. CL: ACL, EMNLP, NAACL.</p>   <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class="link-inline force-break" href="http://projector.tensorflow.org/">http://projector.tensorflow.org/</a>   </p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>     <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5639-8/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3178876.3186152">https://doi.org/10.1145/3178876.3186152</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div>  </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Camel: Content-Aware and Meta-path Augmented Metric
+  Learning for Author Identification</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Camel: Content-Aware and
+          Meta-path Augmented Metric Learning for Author
+          Identification</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Chuxu</span> <span class=
+          "surName">Zhang</span>, University of Notre Dame, Notre
+          Dame, IN 46556USA, <a href=
+          "mailto:czhang11@nd.edu">czhang11@nd.edu</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Chao</span> <span class=
+          "surName">Huang</span>, University of Notre Dame, Notre
+          Dame, IN 46556USA, <a href=
+          "mailto:chuang7@nd.edu">chuang7@nd.edu</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Lu</span> <span class=
+          "surName">Yu</span>, King Abdullah University of Science
+          and Technology, Thuwal, 23955SA, <a href=
+          "mailto:lu.yu@kaust.edu.sa">lu.yu@kaust.edu.sa</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Xiangliang</span> <span class=
+          "surName">Zhang</span>, King Abdullah University of
+          Science and Technology, Thuwal, 23955SA, <a href=
+          "mailto:xiangliang.zhang@kaust.edu.sa">xiangliang.zhang@kaust.edu.sa</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Nitesh V.</span> <span class=
+          "surName">Chawla</span>, University of Notre Dame, Notre
+          Dame, IN 46556USA, <a href=
+          "mailto:nchawla@nd.edu">nchawla@nd.edu</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3178876.3186152"
+        target=
+        "_blank">https://doi.org/10.1145/3178876.3186152</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3178876" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>In this paper, we study the problem of author
+        identification in big scholarly data, which is to
+        effectively rank potential authors for each anonymous paper
+        by using historical data. Most of the existing
+        de-anonymization approaches predict relevance score of
+        paper-author pair via feature engineering, which is not
+        only time and storage consuming, but also introduces
+        irrelevant and redundant features or miss important
+        attributes. Representation learning can automate the
+        feature generation process by learning node embeddings in
+        academic network to infer the correlation of paper-author
+        pair. However, the learned embeddings are often for general
+        purpose (independent of the specific task), or based on
+        network structure only (without considering the node
+        content). To address these issues and make a further
+        progress in solving the author identification problem, we
+        propose Camel, a content-aware and meta-path augmented
+        metric learning model. Specifically, first, the directly
+        correlated paper-author pairs are modeled based on distance
+        metric learning by introducing a push loss function. Next,
+        the paper content embedding encoded by the gated recurrent
+        neural network is integrated into the distance loss.
+        Moreover, the historical bibliographic data of papers is
+        utilized to construct an academic heterogeneous network,
+        wherein a meta-path guided walk integrative learning module
+        based on the task-dependent and content-aware Skipgram
+        model is designed to formulate the correlations between
+        each paper and its indirect author neighbors, and further
+        augments the model. Extensive experiments demonstrate that
+        Camel outperforms the state-of-the-art baselines. It
+        achieves an average improvement of 6.3% over the best
+        baseline method.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Author Identification;
+          Heterogeneous Networks; Representation Learning; Metric
+          Learning; Deep Learning</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Chuxu Zhang, Chao Huang, Lu Yu, Xiangliang Zhang, and
+          Nitesh V. Chawla. 2018. Camel: Content-Aware and
+          Meta-path Augmented Metric Learning for Author
+          Identification. In <em>WWW 2018: The 2018 Web
+          Conference,</em> <em>April 23–27, 2018,</em> <em>Lyon,
+          France. ACM, New York, NY, USA</em> 10 Pages. <a href=
+          "https://doi.org/10.1145/3178876.3186152" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3178876.3186152</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>With the fast growth of academic data collections by
+      various online services such as Google Scholar, Microsoft
+      Academic and AMiner, big scholarly data mining problems have
+      gained a lot of attention in the past decade. Typical
+      examples include scientific impact modeling and prediction
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0004">4</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0023">23</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0024">24</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0031">31</a>], academic
+      heterogeneous network analysis [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0012">12</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0025">25</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0026">26</a>], personalized recommendation
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0008">8</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0017">17</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0021">21</a>].</p>
+      <p>In this paper, we consider the problem of author
+      identification for each anonymous paper in big scholarly
+      data, which was proposed and briefly investigated in
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0009">9</a>], and has
+      been further studied in recent works [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0001">1</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0019">19</a>]. Specifically, as
+      illustration in Figure <a class="fig" href="#fig1">1</a>,
+      given an anonymous paper with content/attributes (e.g.,
+      abstract), we would like to design a machine learning model
+      to predict the potential authors of this paper by using the
+      historical data. Solutions of the problem bring broad
+      implications to the academic community. Let's take the
+      double-blind review process in many conferences (e.g., WWW
+      2018) as an example. Although the authors of the paper under
+      double-blind review process are invisible to the reviewers,
+      they sometimes can still be unveiled by the paper content.
+      Thus our work can serve as a study for helping existing
+      review systems to answer the question that whether or not
+      double-blind review process is really effective [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0001">1</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0029">29</a>]. In
+      addition, the proposed model can infer for each query paper
+      the potential authors, which can be useful for general
+      information retrieval or recommender system design such as
+      reviewer recommendation [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0030">30</a>].</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Illustration of author identification
+          problem.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>To solve the author identification problem, supervised
+      leaning models have been applied to predict the correlation
+      between paper and author, such as the ones used in the top
+      solutions [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0005">5</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0015">15</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0035">35</a>] of 2013
+      KDD Cup author-paper pair identification challenge and the
+      multimodal approach in [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0019">19</a>]. However, these methods heavily rely
+      on time consuming and storage intensive feature engineering,
+      which may extract irrelevant and redundant features or miss
+      important features. In the past few years, a number of
+      network embedding models [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0020">20</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0027">27</a>] have been proposed to automatically
+      learn node representations that can be further utilized in
+      various academic mining tasks such as paper-author
+      correlation inference and similar authors/venues search.
+      Although the proximity among nodes is preserved by dense
+      vectors, these methods learn general purpose embeddings that
+      are independent of task and not suitable for the specific
+      problem. To address this drawback, Chen et al. proposed
+      HetNetE [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0001">1</a>],
+      a task-guided heterogeneous network embedding model, which
+      outperforms the existing baselines. However, HetNetE mainly
+      uses network structure and ignores semantic content of paper.
+      In addition, it searches correlations among all kind of nodes
+      (such as paper, reference and venue) for optimization.</p>
+      <p>To address above issues and make a further progress in
+      solving the author identification problem, we develop Camel,
+      a <strong><span style=
+      "text-decoration: underline;">c</span></strong> ontent-
+      <strong><span style=
+      "text-decoration: underline;">a</span></strong> ware and
+      <strong><span style=
+      "text-decoration: underline;">me</span></strong> ta-path
+      augmented <strong><span style=
+      "text-decoration: underline;">me</span></strong> tric
+      <strong><span style=
+      "text-decoration: underline;">l</span></strong> earning
+      model. First, we model the historical data of direct
+      paper-author relations via distance metric learning according
+      to the specific task. Next, we introduce the gated recurrent
+      units to encode paper content and integrate the semantic
+      embedding into the metric learning model. Moreover, we use
+      the historical bibliographic data of papers to construct
+      academic heterogeneous network, wherein we further design a
+      learning module to augment the model. The augmented module
+      employs meta-path walks to capture correlations between each
+      paper and its indirect author neighbors and further formulate
+      them via a task-dependent and content-aware Skipgram model.
+      Finally, a sampling based mini-batch gradient descent
+      algorithm is designed to infer model parameters.</p>
+      <p>To summarize, the main contributions of our work are:</p>
+      <ul class="list-no-style">
+        <li id="list1" label="•">We develop a model, i.e., Camel,
+        to solve the author identification problem. Camel performs
+        joint optimization of content encoder based distance metric
+        learning and Skipgram model based meta-path walk
+        integrative learning.<br /></li>
+        <li id="list2" label="•">We design the corresponding
+        optimization strategy and training algorithm for Camel. The
+        learned model only needs partial content (i.e., abstract)
+        of the target paper as the input and effectively predict
+        the authors for each new paper in big scholarly
+        data.<br /></li>
+        <li id="list3" label="•">We conduct extensive evaluations
+        and analytical experiments to show the effectiveness of
+        Camel on the well known AMiner dataset. The results
+        demonstrate that our method outperforms a number of
+        baseline methods and achieves a 6.3% average improvement
+        over the best baseline.<br /></li>
+      </ul>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Problem
+          Definition</h2>
+        </div>
+      </header>
+      <p>In this section, we first introduce the concepts of
+      heterogeneous networks and meta-path, then formally define
+      the author identification problem in big scholarly data.</p>
+      <p></p>
+      <div class="definition" id="enc1">
+        <label>Definition 2.1.</label>
+        <p>(<strong>Heterogeneous Networks</strong>) A
+        heterogeneous network (HetNet) [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0026">26</a>] is defined as a network
+        <em>G</em> = (<em>V</em>, <em>E</em>,
+        <em>O<sub>V</sub></em> , <em>R<sub>E</sub></em> ) with
+        multiple types of nodes <em>V</em> and links <em>E</em>.
+        <em>O<sub>V</sub></em> and <em>R<sub>E</sub></em> represent
+        the sets of objects and relation types. Each node
+        <em>v</em> ∈ <em>V</em> and each link <em>e</em> ∈
+        <em>E</em> are associated with a node type mapping function
+        <em>ψ<sub>v</sub></em> : <em>V</em> →
+        <em>O<sub>V</sub></em> and a link type mapping function
+        <em>ψ<sub>e</sub></em> : <em>E</em> →
+        <em>R<sub>E</sub></em> .</p>
+      </div>
+      <p></p>
+      <p>The academic network in big scholarly data can be seen as
+      a HetNet, as shown in Figure <a class="fig" href=
+      "#fig2">2</a>(a). The set of node types
+      <em>O<sub>V</sub></em> in the network includes
+      <em>organization</em> (O), <em>author</em> (A),
+      <em>paper</em> (P) and <em>venue</em> (V), and the set of
+      link types <em>R<sub>E</sub></em> includes
+      <em>author-write-paper</em>,
+      <em>author-affiliate-organization</em>,
+      <em>paper-cite-paper</em>, <em>paper-publish-venue</em>.</p>
+      <p></p>
+      <div class="definition" id="enc2">
+        <label>Definition 2.2.</label>
+        <p>(<strong>Meta-path</strong>) A meta-path [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0025">25</a>] in <em>G</em> =
+        (<em>V</em>, <em>E</em>, <em>O<sub>V</sub></em> ,
+        <em>R<sub>E</sub></em> ) is defined in the form of
+        <span class="inline-equation"><span class=
+        "tex">$o_{1}\overset{r_{1}}{\rightarrow
+        }o_{2}\overset{r_{2}}{\rightarrow }\cdots
+        \overset{r_{m-1}}{\rightarrow }o_{m}$</span></span> , where
+        <em>o<sub>i</sub></em> ∈ <em>O<sub>V</sub></em> ,
+        <em>r<sub>i</sub></em> ∈ <em>R<sub>E</sub></em> and
+        <em>r</em> = <em>r</em> <sub>1</sub>*<em>r</em>
+        <sub>2</sub>⋅⋅⋅*<em>r</em> <sub><em>m</em> − 1</sub>
+        represents a compositional relation between relation types
+        <em>r</em> <sub>1</sub> and <em>r</em> <sub><em>m</em> −
+        1</sub>.</p>
+      </div>
+      <p></p>
+      <p>For example, in Figure <a class="fig" href=
+      "#fig2">2</a>(b), a meta-path “APA” extracted from HetNet
+      denotes the coauthor relationship on a paper between two
+      authors, and “APVPA” represents two authors publish papers in
+      the same venue.</p>
+      <p></p>
+      <div class="definition" id="enc3">
+        <label>Definition 2.3.</label>
+        <p>(<strong>Author Identification Problem</strong>) Given a
+        set of previous papers <em>I</em> <sub>&lt;
+        <em>T</em></sub> published before timestamp <em>T</em>,
+        accompanying with bibliographic information (i.e., authors,
+        abstract content, references and venue), the task is to
+        rank all potential authors <em>u</em> ∈ <em>U</em>
+        (<em>U</em>: set of all authors) for each new anonymous
+        paper <em>v</em> ∈ <em>I</em> <sub>≥ <em>T</em></sub>
+        (<em>I</em> <sub>≥ <em>T</em></sub> : set of papers
+        published in or after <em>T</em>), such that its top ranked
+        authors are true authors of <em>v</em>.</p>
+      </div>
+      <p></p>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">Illustrations of (a) academic
+          heterogeneous network and (b) meta-path schemes.</span>
+        </div>
+      </figure>
+    </section>
+    <section id="sec-8">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Proposed
+          Model</h2>
+        </div>
+      </header>
+      <p>We present the content-aware metric learning model for
+      solving the problem and use historical bibliographic data to
+      construct HetNet for modeling multiple indirect paper-author
+      relations captured by meta-path walks, which benefits and
+      augments the model.</p>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Metric
+            Learning with Gated Recurrent Neural Network</h3>
+          </div>
+        </header>
+        <p>We denote each paper <em>v</em> ∈ <em>I</em> <sub>&lt;
+        <em>T</em></sub> as embedding <span class=
+        "inline-equation"><span class="tex">${\bf E}_{v} \in
+        \mathbb {R}^{d}$</span></span> (<em>d</em>: dimension of
+        embedding) via a content encoder <em>f</em>:
+        <strong>E</strong> <sub><em>v</em></sub> =
+        <em>f</em>(<strong>p</strong> <sub><em>v</em></sub> ),
+        where <strong>p</strong> <sub><em>v</em></sub> denotes the
+        word sequence of the paper abstract. Besides, feature
+        vector <span class="inline-equation"><span class=
+        "tex">${\bf q}_{u} \in \mathbb {R}^{d}$</span></span> is
+        used to represent each author <em>u</em> ∈ <em>U</em>.
+        Considering distance metric [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0032">32</a>] satisfies better triangle
+        inequality and transition property than inner-product, as
+        demonstrated by CML [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0011">11</a>], we introduce the following push
+        loss function to formulate triple relations (<em>v</em>,
+        <em>u</em>, <em>u</em>′):</p>
+        <div class="table-responsive" id="eq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \begin{split}
+            \mathcal {L}_{Metric}= \sum _{v\in I_{{\lt}T}}\sum _{u
+            \in l_{v}} \sum _{u^{\prime } \notin l_{v}} \Big [\xi
+            +dist(v, u)^{2}-dist(v, u^{\prime })^{2}\Big ]_{+}
+            \end{split} \end{equation}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>where <em>l<sub>v</sub></em> denotes the set of true
+        authors of paper <em>v</em>, {<em>x</em>}<sub>+</sub> =
+        <em>max</em>(<em>x</em>, 0) is a standard hinge loss and
+        <em>ξ</em> is a safety margin size. The distance metric
+        <em>dist</em>(<em>v</em>, <em>u</em>) between paper
+        <em>v</em> and author <em>u</em> is defined as euclidean
+        distance of feature representation:
+        <div class="table-responsive" id="eq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \begin{split}
+            dist(v, u) = ||{\bf E}_{v}-{\bf q}_{u}|| = ||f({\bf
+            p}_{v})-{\bf q}_{u}|| \end{split}
+            \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>Hence, minimizing <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {L}_{Metric}$</span></span> obeys paper <em>v</em>’s
+        relative distances to different (true/false) authors.
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-fig3.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">Illustrations of (a) paper
+            content encoder based on gated recurrent neural network
+            and (b) metric learning process for author
+            identification.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>To encode paper abstract content to fixed length
+        embeddings <span class="inline-equation"><span class=
+        "tex">${\bf E} \in \mathbb {R}^{|I|\times d}$</span></span>
+        (<em>I</em>: set of all papers), we introduce the gated
+        recurrent units (GRU), a specific type of recurrent neural
+        network, which has been widely adopted for many
+        applications such as machine translation [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0002">2</a>]. Figure <a class="fig"
+        href="#fig3">3</a>(a) gives the illustration of paper
+        content encoder. To be more specific, a paper is
+        represented as a sequence of words: <span class=
+        "inline-equation"><span class="tex">$\lbrace w_{1}, w_{2},
+        \cdots , w_{t_{max}}\rbrace$</span></span> , followed by
+        the word embeddings sequence: <span class=
+        "inline-equation"><span class="tex">$\lbrace {\bf x}_{1},
+        {\bf x}_{2}, \cdots , {\bf
+        x}_{t_{max}}\rbrace$</span></span> trained by word2vec
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0018">18</a>], where
+        <em>t<sub>max</sub></em> is the maximum length of paper
+        abstract. For each step <em>t</em> with the input word
+        embedding <strong>x</strong> <sub><em>t</em></sub> and
+        previous hidden state vector <strong>h</strong>
+        <sub><em>t</em> − 1</sub>, the current hidden state vector
+        <strong>h</strong> <sub><em>t</em></sub> is updated by
+        <strong>h</strong> <sub><em>t</em></sub> =
+        <strong>GRU</strong>(<strong>x</strong>
+        <sub><em>t</em></sub> , <strong>h</strong> <sub><em>t</em>
+        − 1</sub>), where the GRU module is defined as:</p>
+        <div class="table-responsive" id="eq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \begin{split}
+            &amp;{\bf z}_{t} = \sigma ({\bf A}_{z}{\bf x}_{t} +
+            {\bf B}_{z}{\bf h}_{t-1}) \\ &amp; {\bf r}_{t} = \sigma
+            ({\bf A}_{r}{\bf x}_{t} + {\bf B}_{r}{\bf h}_{t-1}) \\
+            &amp;{\bf \hat{h}}_{t} = \tanh [{\bf A}_{h}{\bf x}_{t}
+            + {\bf B}_{h}({\bf r}_{t}\circ {\bf h}_{t-1})]\\ &amp;
+            {\bf h}_{t} = {\bf z}_{t}\circ {\bf h}_{t-1} + (1-{\bf
+            z}_{t})\circ {\bf \hat{h}}_{t} \end{split}
+            \end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>where <em>σ</em> is the sigmoid function,
+        <strong>A</strong> and <strong>B</strong> are parameter
+        matrices of GRU network, operator ○ denotes element-wise
+        multiplication, <strong>z</strong> <sub><em>t</em></sub>
+        and <strong>r</strong> <sub><em>t</em></sub> are update
+        gate vector and reset gate vector, respectively. The GRU
+        network encodes word embeddings to deep semantic embeddings
+        <span class="inline-equation"><span class="tex">${\bf h}
+        \in \mathbb {R}^{t_{max}\times d}$</span></span> , which is
+        concatenated by a mean pooling layer to obtain the general
+        semantic embedding of each paper. All of these steps
+        construct the paper content encoder <em>f</em>. We have
+        also explored other encoding architectures such as LSTM and
+        achieved the similar result, as the discussion in Section
+        4.3.2.
+        <p></p>
+        <p>According to <span class="inline-equation"><span class=
+        "tex">$\mathcal {L}_{Metric}$</span></span> , the target
+        neighbors of each paper are its true authors and the model
+        incorporates semantic information of papers via GRU based
+        content encoder. To infer model's parameters, we can
+        minimize <span class="inline-equation"><span class=
+        "tex">$\mathcal {L}_{Metric}$</span></span> via gradient
+        descent approach. For true authors of a given paper,
+        gradients of loss function pull them inward to create a
+        smaller radius. As for the false authors, gradients push
+        them outward until they are out of the perimeter by a
+        safety margin. Illustration of such process is shown in
+        Figure <a class="fig" href="#fig3">3</a>(b). Thereafter the
+        learned encoder <em>f</em> for inferring the semantic
+        embedding of each future paper <em>v</em> ∈ <em>I</em>
+        <sub>≥ <em>T</em></sub> and the optimized author latent
+        features can be utilized to rank all potential authors for
+        <em>v</em> according to the relevance score (e.g., the
+        inner product of embedding) between paper and author. The
+        learned model only needs abstract content of the target
+        paper as the input for prediction since <em>f</em> and
+        author latent features are optimized by using historical
+        training data.</p>
+      </section>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Model
+            Augmentation via Meta-path Walk Integrative
+            Learning</h3>
+          </div>
+        </header>
+        <p>In Section 3.1, <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {L}_{Metric}$</span></span> essentially models direct
+        triple relations, i.e., (<em>v</em>, <em>u</em>,
+        <em>u</em>′) - (paper-true author-false author), for each
+        paper <em>v</em> ∈ <em>I</em> <sub>&lt; <em>T</em></sub> .
+        However, there are multiple indirect relations between
+        paper and author, which can be inferred from the HetNet of
+        previous papers’ bibliographic data and beneficial to the
+        model. Hence, we aim to further augment the content encoder
+        based metric learning by enforcing the smoothness of
+        representation among indirectly correlated paper-author
+        neighbors on the academic HetNet.</p>
+        <section id="sec-11">
+          <p><em>3.2.1 Meta-path Walks.</em> Although we can
+          naturally take random walk on HetNet to capture indirect
+          paper-author relations, as did in Deepwalk [<a class=
+          "bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0020">20</a>] and
+          node2vec [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0006">6</a>], such random walks are biased on
+          highly visible types of nodes and concentrated nodes, as
+          demonstrated by metapath2vec [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0003">3</a>]. Thus
+          we apply meta-path walks to capture indirect correlations
+          between paper and author. Specifically, given a meta-path
+          <span class="inline-equation"><span class="tex">$\mathcal
+          {P} \equiv \left\lbrace o_{1}\overset{r_{1}}{\rightarrow
+          }o_{2}\overset{r_{2}}{\rightarrow }\cdots
+          o_{i}\overset{r_{i}}{\rightarrow }o_{i+1} \cdots
+          \overset{r_{m-1}}{\rightarrow
+          }o_{m}\right\rbrace$</span></span> on the academic HetNet
+          <em>G</em> = (<em>V</em>, <em>E</em>,
+          <em>O<sub>V</sub></em> , <em>R<sub>E</sub></em> ), the
+          transition probability of walk at step <em>t</em> is
+          defined as:</p>
+          <div class="table-responsive" id="eq4">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}
+              \begin{split} p(v^{t+1}|v^{t}_{i},\mathcal {P})=
+              \left\lbrace
+              {\begin{array}{*10c}\frac{1}{|N_{i+1}(v^{t}_{i})|}&amp;
+              (v^{t+1},v^{t}_{i})\in E,~\psi (v^{t+1})=i+1\\ 0&amp;
+              (v^{t+1},v^{t}_{i})\in E,~\psi (v^{t+1})\ne i+1\\
+              0&amp; (v^{t+1},v^{t}_{i})\notin E
+              \end{array}}\right. \end{split}
+              \end{equation}</span><br />
+              <span class="equation-number">(4)</span>
+            </div>
+          </div>where <span class="inline-equation"><span class=
+          "tex">$v^{t}_{i}\in o_{i}$</span></span> and <span class=
+          "inline-equation"><span class=
+          "tex">$N_{i+1}(v^{t}_{i})$</span></span> denotes the set
+          of the <em>o</em> <sub><em>i</em> + 1</sub> type of
+          neighborhood of node <span class=
+          "inline-equation"><span class=
+          "tex">$v^{t}_{i}$</span></span> , which guarantees that
+          <em>v</em> <sup><em>t</em> + 1</sup> ∈ <em>o</em>
+          <sub><em>i</em> + 1</sub> and the flow of walk is
+          conditioned on <span class="inline-equation"><span class=
+          "tex">$\mathcal {P}$</span></span> . In addition, we use
+          symmetric meta-path whose first node type <em>o</em>
+          <sub>1</sub> is the same as the last one
+          <em>o<sub>m</sub></em> . Each random walk guided by
+          <span class="inline-equation"><span class="tex">$\mathcal
+          {P}$</span></span> recursively samples nodes sequence
+          until it meets the fixed length, leading to its ability
+          in capturing both direct correlations and indirectly
+          transitive relations between paper and author within the
+          walk of setting <span class=
+          "inline-equation"><span class="tex">$\mathcal
+          {P}$</span></span> , as illustrated by Figure <a class=
+          "fig" href="#fig4">4</a>. In this figure, we take walk w
+          <sub><em>o</em></sub> ≡ {⋅⋅⋅ → <em>A</em> <sub>1</sub> →
+          <em>P</em> <sub>2</sub> → <em>A</em> <sub>3</sub> →
+          <em>P</em> <sub>4</sub> → <em>A</em> <sub>4</sub> → ⋅⋅⋅}
+          guided by <span class="inline-equation"><span class=
+          "tex">$\mathcal {P}\equiv \left\lbrace
+          A\overset{write}{\rightarrow
+          }P\overset{write^{-1}}{\rightarrow
+          }A\right\rbrace$</span></span> as an example. Besides the
+          direct paper-author connections, e.g., <em>A</em>
+          <sub>1</sub> writes <em>P</em> <sub>2</sub> or <em>A</em>
+          <sub>4</sub> writes <em>P</em> <sub>4</sub>, w
+          <sub><em>o</em></sub> also captures indirect relations.
+          For example, <em>A</em> <sub>1</sub> may pay attention to
+          <em>P</em> <sub>4</sub> since s/he collaborates with
+          <em>A</em> <sub>3</sub> on <em>P</em> <sub>2</sub>.
+          Therefore, multiple useful indirect relations between
+          paper and author will be inferred if we generate plenty
+          of walks guided by different meta-path schemes and
+          collect the surrounding author context of each paper node
+          within each walk.
+          <figure id="fig4">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-fig4.jpg"
+            class="img-responsive" alt="Figure 4" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 4:</span>
+              <span class="figure-title">Illustration of the joint
+              representation learning model with metric learning
+              for formulating direct paper-author relations and
+              meta-path walk integrative learning for modeling
+              indirect paper-author correlations.</span>
+            </div>
+          </figure>
+          <p></p>
+        </section>
+        <section id="sec-12">
+          <p><em>3.2.2 Smoothness Constraint as Task-dependent and
+          Content-aware Skipgram Model.</em> To formulate indirect
+          paper-author relations within each walk and force the
+          corresponding smoothness of representation, we design a
+          <strong><span style=
+          "text-decoration: underline;">m</span></strong> eta-path
+          guided <strong><span style=
+          "text-decoration: underline;">w</span></strong> alk
+          <strong><span style=
+          "text-decoration: underline;">i</span></strong>
+          ntegrative <strong><span style=
+          "text-decoration: underline;">l</span></strong> earning
+          module (MWIL) based on the Skipgram model [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0018">18</a>], which
+          has been widely adopted in recent works [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0003">3</a>,
+          <a class="bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0006">6</a>,
+          <a class="bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0020">20</a>,
+          <a class="bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0034">34</a>] for
+          representation learning on networks. Specifically, given
+          a set of collected walks <span class=
+          "inline-equation"><span class="tex">$W_{\mathcal
+          {P}}$</span></span> under the guidance of meta-path
+          <span class="inline-equation"><span class="tex">$\mathcal
+          {P}$</span></span> , the loss for predicting indirectly
+          correlated author <em>u</em> of paper <em>v</em> is
+          defined as:</p>
+          <div class="table-responsive" id="eq5">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}
+              \begin{split} &amp;\mathcal {L}_{MWIL}^{\mathcal
+              {P}}=-\sum _{ w \in W_{\mathcal {P}}} \sum _{v \in w}
+              \sum _{{{\scriptstyle {\begin{array}{*10c}u \in
+              w[I_{v}-\tau :I_{v}+\tau ]\\u\notin
+              l_{v}\end{array}}}}}\log p(u|v,\mathcal
+              {P})\\\end{split} \end{equation}</span><br />
+              <span class="equation-number">(5)</span>
+            </div>
+          </div>where <em>τ</em> is the window size of surrounding
+          context and <em>I<sub>v</sub></em> indicates the position
+          of <em>v</em> in walk w. The likelihood probability
+          <span class="inline-equation"><span class=
+          "tex">$p(u|v,\mathcal {P})$</span></span> is defined as
+          content-aware Softmax function:
+          <div class="table-responsive" id="eq6">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}
+              \begin{split} &amp;p(u|v,\mathcal {P})=\frac{exp\big
+              [f({\bf p}_{v}){\bf q}_{u}\big ]}{\sum _{u^{\prime }
+              \in C_{\mathcal {P}}}exp\big [f({\bf p}_{v}){\bf
+              q}_{u^{\prime }}\big ]} \end{split}
+              \end{equation}</span><br />
+              <span class="equation-number">(6)</span>
+            </div>
+          </div>where <em>f</em> is the content encoder defined in
+          Section 3.1, <span class="inline-equation"><span class=
+          "tex">$C_{\mathcal {P}}$</span></span> denotes the set of
+          all authors in corpus <span class=
+          "inline-equation"><span class="tex">$W_{\mathcal
+          {P}}$</span></span> . To train the Skipgram model, we
+          apply the popular negative sampling approach [<a class=
+          "bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0018">18</a>] to
+          approximate the intractable normalization:
+          <div class="table-responsive" id="eq7">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}
+              \begin{split} &amp;\log p(u|v,\mathcal {P}) \approx
+              \log \sigma \big [f({\bf p}_{v}){\bf q}_{u}\big
+              ]+\sum _{i=1}^{k}\mathbb {E}_{u^{\prime }\sim
+              P_{\mathcal {P}}(u^{\prime })}\Big \lbrace \log
+              \sigma \big [-f({\bf p}_{v}){\bf q}_{u^{\prime }}\big
+              ]\Big \rbrace \end{split} \end{equation}</span><br />
+              <span class="equation-number">(7)</span>
+            </div>
+          </div>where <em>σ</em> is the sigmoid function,
+          <em>u</em>′ is the negative author node sampled from a
+          pre-defined noise distribution <span class=
+          "inline-equation"><span class="tex">$P_{\mathcal
+          {P}}(u^{\prime })$</span></span> [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0018">18</a>] in
+          <span class="inline-equation"><span class=
+          "tex">$C_{\mathcal {P}}$</span></span> , <em>k</em> is
+          the number of negative samples. In our case, <em>k</em>
+          makes little impact on the performance of propose model.
+          Thus we choose <em>k</em> = 1 and <span class=
+          "inline-equation"><span class="tex">$\log p(u|v,\mathcal
+          {P})$</span></span> is degenerated to the cross entropy
+          loss of classifying pair (<em>u</em>, <em>u</em>′) for
+          <em>v</em>:
+          <div class="table-responsive" id="eq8">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}
+              \begin{split} &amp;-\log p(u|v,\mathcal {P}) =-\log
+              \sigma \big [f({\bf p}_{v}){\bf q}_{u}\big ]-\log
+              \sigma \big [-f({\bf p}_{v}){\bf q}_{u^{\prime }}\big
+              ] \end{split} \end{equation}</span><br />
+              <span class="equation-number">(8)</span>
+            </div>
+          </div>That is, for each positive author <em>u</em> of
+          paper <em>v</em> within walk w, we sample a negative
+          author <em>u</em>′ from <span class=
+          "inline-equation"><span class="tex">$C_{\mathcal
+          {P}}$</span></span> according to <span class=
+          "inline-equation"><span class="tex">$P_{\mathcal
+          {P}}(u^{\prime })$</span></span> .
+          <p></p>
+          <p>Comparing to the objective function of metapath2vec
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0003">3</a>], <span class=
+          "inline-equation"><span class="tex">$\mathcal
+          {L}_{MWIL}^{\mathcal {P}}$</span></span> has three main
+          differences:</p>
+          <ul class="list-no-style">
+            <li id="list4" label="•">It forces task-dependent
+            smoothness constraint between paper and its indirectly
+            correlated author neighbors but not among all kind of
+            neighbor pairs for general purpose.<br /></li>
+            <li id="list5" label="•">The likelihood probability for
+            predicting surrounding context is degenerated to cross
+            entropy loss of classifying the positive/negative
+            authors for each paper.<br /></li>
+            <li id="list6" label="•">More importantly, the paper
+            representations are encoded by GRU content encoder
+            <em>f</em> for integrating paper semantic information
+            into model.<br /></li>
+          </ul>
+        </section>
+      </section>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span> Joint Model
+            Inference</h3>
+          </div>
+        </header>
+        <p>The objective function of joint model is defined as the
+        combination of <span class="inline-equation"><span class=
+        "tex">$\mathcal {L}_{Metric}$</span></span> and
+        <span class="inline-equation"><span class="tex">$\mathcal
+        {L}_{MWIL}^{\mathcal {P}}$</span></span> :</p>
+        <div class="table-responsive" id="eq9">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \begin{split}
+            &amp;\mathcal {L}_{Joint}= \mathcal {L}_{Metric} +
+            \gamma \sum _{\mathcal {P} \in S(\mathcal {P})}\mathcal
+            {L}_{MWIL}^{\mathcal {P}} + \lambda \mathcal {L}_{reg}
+            \end{split} \end{equation}</span><br />
+            <span class="equation-number">(9)</span>
+          </div>
+        </div>where <span class="inline-equation"><span class=
+        "tex">$S(\mathcal {P})$</span></span> denotes all meta-path
+        schemes, <span class="inline-equation"><span class=
+        "tex">$\mathcal {L}_{reg}$</span></span> is the
+        regularization term for avoiding over-fitting, parameter
+        <em>λ</em> controls penalty of regularization, <em>γ</em>
+        is a trade-off factor between <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {L}_{Metric}$</span></span> and <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {L}_{MWIL}^{\mathcal {P}}$</span></span> . We denote all
+        model parameters including the GRU network coefficients of
+        paper content encoder and the author latent features as Θ.
+        Let <em>T<sub>Metric</sub></em> and <span class=
+        "inline-equation"><span class="tex">$T_{MWIL}^{\mathcal
+        {P}}$</span></span> be the sets of (<em>v</em>, <em>u</em>,
+        <em>u</em>′) triples in <span class=
+        "inline-equation"><span class="tex">$ \mathcal
+        {L}_{Metric}$</span></span> and (<em>v</em>, <em>u</em>,
+        <em>u</em>′) triples in <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {L}_{MWIL}^{\mathcal {P}}$</span></span> , respectively.
+        Thereafter we can rewrite <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {L}_{Joint}$</span></span> as:
+        <div class="table-responsive" id="eq10">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \begin{split}
+            &amp; \mathcal {L}_{Joint} = \sum _{(v,u,u^{\prime
+            })\in T_{Metric}} \Big [\xi +||f({\bf p}_{v})-{\bf
+            q}_{u}||^{2}-||f({\bf p}_{v})-{\bf q}_{u^{\prime
+            }}||^{2}\Big ]_{+}\\ &amp; + \gamma \sum _{\mathcal {P}
+            \in S(\mathcal {P})} \sum _{(v,u,u^{\prime })\in
+            T_{MWIL}^{\mathcal {P}}}-\Big \lbrace \log \sigma \big
+            [f({\bf p}_{v}){\bf q}_{u}\big ]+\log \sigma \big
+            [-f({\bf p}_{v}){\bf q}_{u^{\prime }}\big ]\Big \rbrace
+            \\ &amp; +\lambda \left\Vert \Theta \right\Vert ^{2}
+            \end{split} \end{equation}</span><br />
+            <span class="equation-number">(10)</span>
+          </div>
+        </div>To minimize <span class=
+        "inline-equation"><span class="tex">$\mathcal
+        {L}_{Joint}$</span></span> , we design a sampling based
+        mini-batch Adam optimizer [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0013">13</a>]. The pseudocode of learning
+        algorithm is summarized in Algorithm 1. The proposed model
+        performs joint optimization of content encoder based metric
+        learning and meta-path walk integrative learning thus we
+        name it <strong><span style=
+        "text-decoration: underline;">c</span></strong> ontent-
+        <strong><span style=
+        "text-decoration: underline;">a</span></strong> ware and
+        <strong><span style=
+        "text-decoration: underline;">me</span></strong> ta-path
+        augmented <strong><span style=
+        "text-decoration: underline;">me</span></strong> tric
+        <strong><span style=
+        "text-decoration: underline;">l</span></strong> earning
+        (Camel).
+        <figure id="fig5">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-fig5.jpg"
+          class="img-responsive" alt="" longdesc="" />
+        </figure>
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-14">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span>
+          Experiments</h2>
+        </div>
+      </header>
+      <p>In this section, we conduct extensive evaluations and
+      analytical experiments to compare Camel with various
+      baselines. Case studies are also provided to show performance
+      differences of different methods.</p>
+      <section id="sec-15">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span>
+            Experimental Design</h3>
+          </div>
+        </header>
+        <section id="sec-16">
+          <p><em>4.1.1 Dataset.</em> AMiner [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0028">28</a>] is a
+          well known platform for academic search and mining, which
+          contains millions of author and paper information from
+          major computer science venues for more than 50 years. We
+          utilize the AMiner dataset<a class="fn" href="#fn1" id=
+          "foot-fn1"><sup>1</sup></a> of 10 years from 2006 to
+          2015, and remove the papers published in venues (e.g.,
+          workshop) with limited publications and the instances
+          without semantic content (i.e., abstract). In addition,
+          considering most of researchers pay attention to papers
+          published in top venues and each research area has its
+          own community, we extract one more subset data of six
+          domains according to Google Scholar Metrics, namely
+          Artificial Intelligence (AI), Data Mining (DM), Databases
+          (DB), Information System (IS), Computer Vision (CV) and
+          Computational Linguistics (CL). For each domain, we
+          choose three top venues<a class="fn" href="#fn2" id=
+          "foot-fn2"><sup>2</sup></a> that are considered to have
+          influential papers. The main statistics of two datasets
+          (AMiner-Top and AMiner-Full) are summarized in Table
+          <a class="tbl" href="#tab1">1</a>.</p>
+          <div class="table-responsive" id="tab1">
+            <div class="table-caption">
+              <span class="table-number">Table 1:</span>
+              <span class="table-title">Statistics of datasets used
+              in this paper.</span>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="text-align:center;">
+                  <strong>Statistics</strong></th>
+                  <th style="text-align:center;">
+                  <strong>AMiner-Top</strong></th>
+                  <th style="text-align:center;">
+                  <strong>AMiner-Full</strong></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:center;"># authors</td>
+                  <td style="text-align:center;">28,646</td>
+                  <td style="text-align:center;">571,563</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"># papers</td>
+                  <td style="text-align:center;">21,044</td>
+                  <td style="text-align:center;">483,319</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"># venues</td>
+                  <td style="text-align:center;">18</td>
+                  <td style="text-align:center;">492</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"># citations</td>
+                  <td style="text-align:center;">245,420</td>
+                  <td style="text-align:center;">3,154,421</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">ave. # authors per
+                  paper</td>
+                  <td style="text-align:center;">3.294</td>
+                  <td style="text-align:center;">3.087</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section id="sec-17">
+          <p><em>4.1.2 Baseline Methods.</em> We consider nine
+          baseline methods that span four types: (1) citation-based
+          matching, (2) feature engineering based supervised
+          learning, (3) pairwise ranking with content embedding and
+          (4) heterogeneous network embedding.</p>
+          <ul class="list-no-style">
+            <li id="list7" label="•">
+              <strong>Citation-based matching.</strong> The
+              approach was proposed in [<a class="bib"
+              data-trigger="hover" data-toggle="popover"
+              data-placement="top" href="#BibPLXBIB0009">9</a>] and
+              represents each paper and author by citation-based
+              vector, and further matches potential authors for
+              each query paper according to the vector similarity
+              (VecS).<br />
+            </li>
+            <li id="list8" label="•">
+              <strong>Feature engineering based supervised
+              learning.</strong> Such approaches have been utilized
+              in top solutions [<a class="bib" data-trigger="hover"
+              data-toggle="popover" data-placement="top" href=
+              "#BibPLXBIB0005">5</a>, <a class="bib" data-trigger=
+              "hover" data-toggle="popover" data-placement="top"
+              href="#BibPLXBIB0015">15</a>, <a class="bib"
+              data-trigger="hover" data-toggle="popover"
+              data-placement="top" href="#BibPLXBIB0035">35</a>]
+              for 2013 KDD Cup challenge. It first extracts both
+              author features and paper-author paired features, and
+              then utilizes supervised learning algorithms to
+              predict the correlation score of each paper-author
+              pair. Similar to HetNetE [<a class="bib"
+              data-trigger="hover" data-toggle="popover"
+              data-placement="top" href="#BibPLXBIB0001">1</a>], we
+              extract 16 kinds of features (as reported in Table
+              <a class="tbl" href="#tab2">2</a>) based on AMiner
+              data and select Bayes Regression (BayesR), Random
+              Forest (RandF) and Neural Network (NeuN) as learning
+              algorithms. In addition, an ensemble approach
+              (MultiM) of three algorithms is introduced for
+              comparison.<br />
+            </li>
+            <li id="list9" label="•">
+              <strong>Pairwise ranking with content
+              embedding.</strong> Another possibility to consider
+              content information is to first encode each paper
+              content embedding via language modeling and then
+              apply pairwise ranking [<a class="bib" data-trigger=
+              "hover" data-toggle="popover" data-placement="top"
+              href="#BibPLXBIB0022">22</a>] (BPR, which utilizes
+              the inner product to measure paper-author
+              correlation) to learn author latent features. We
+              apply two popular models Word2V [<a class="bib"
+              data-trigger="hover" data-toggle="popover"
+              data-placement="top" href="#BibPLXBIB0018">18</a>]
+              and Par2V [<a class="bib" data-trigger="hover"
+              data-toggle="popover" data-placement="top" href=
+              "#BibPLXBIB0014">14</a>] to generate paper
+              embeddings. In addition, the joint learning model
+              (GRUBPR) of GRU [<a class="bib" data-trigger="hover"
+              data-toggle="popover" data-placement="top" href=
+              "#BibPLXBIB0002">2</a>] based content encoder and BPR
+              is also introduced for comparison. As Word2Vec
+              generates embedding of each word in content, we
+              concatenate the output with a mean pooling layer to
+              obtain general embedding of each paper. The learned
+              feature representations of paper and author are
+              further utilized to predict the authors of each
+              paper.<br />
+            </li>
+            <li id="list10" label="•">
+              <strong>Heterogeneous network embedding.</strong> We
+              also compare Camel with a recent model HetNetE in
+              [<a class="bib" data-trigger="hover" data-toggle=
+              "popover" data-placement="top" href=
+              "#BibPLXBIB0001">1</a>], which optimizes feature
+              representations of author and paper via task-guided
+              heterogeneous network embedding, and further applies
+              them to identify authors of each paper.<br />
+            </li>
+          </ul>
+          <div class="table-responsive" id="tab2">
+            <div class="table-caption">
+              <span class="table-number">Table 2:</span>
+              <span class="table-title">Selected features of
+              supervised learning baselines.</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:left;"><img src=
+                  "../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-graphic6.jpg"
+                  class="img-responsive" alt="" longdesc="" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section id="sec-18">
+          <p><em>4.1.3 Evaluation Metrics.</em> As illustrated in
+          problem definition, papers published before a given
+          timestamp <em>T</em> are treated as training data and
+          papers published in or after <em>T</em> (denoted as set
+          <em>I</em> <sub>≥ <em>T</em></sub> ) are left for
+          evaluation. We use four popular metrics, i.e., Recall@k,
+          Precision@k, F1 score and AUC, to evaluate the
+          performance of each method.</p>
+          <ul class="list-no-style">
+            <li id="list11" label="•">
+              <strong>Recall@k.</strong> It shows the ratio of true
+              authors being retrieved in the top-k return list,
+              which can be computed according to:
+              <div class="table-responsive" id="eq11">
+                <div class="display-equation">
+                  <span class="tex mytex">\begin{equation}
+                  \begin{split} &amp;Rec@k = \frac{1}{|I_{\ge
+                  T}|}\sum _{v\in I_{\ge T}}\frac{|\hat{l}_{v}
+                  \bigcap l_{v}|}{|l_{v}|} \end{split}
+                  \end{equation}</span><br />
+                  <span class="equation-number">(11)</span>
+                </div>
+              </div>where <em>l<sub>v</sub></em> and <span class=
+              "inline-equation"><span class=
+              "tex">$\hat{l}_{v}$</span></span> denote the sets of
+              true authors of paper <em>v</em> and top-k ranked
+              authors by a specific method, respectively.<br />
+            </li>
+            <li id="list12" label="•">
+              <strong>Precision@k.</strong> It reflects the
+              accuracy of top-k ranked authors by a specific method
+              and is defined as:
+              <div class="table-responsive" id="eq12">
+                <div class="display-equation">
+                  <span class="tex mytex">\begin{equation}
+                  \begin{split} &amp;Pre@k = \frac{1}{|I_{\ge
+                  T}|}\sum _{v\in I_{\ge T}}\frac{|\hat{l}_{v}
+                  \bigcap l_{v}|}{k} \end{split}
+                  \end{equation}</span><br />
+                  <span class="equation-number">(12)</span>
+                </div>
+              </div><br />
+            </li>
+            <li id="list13" label="•">
+              <strong>F1 score.</strong> It balances the trade-off
+              between precision and recall, and is defined as the
+              harmonic average of precision and recall:
+              <div class="table-responsive" id="eq13">
+                <div class="display-equation">
+                  <span class="tex mytex">\begin{equation}
+                  \begin{split} &amp;F1 = 2\cdot \frac{precision
+                  \cdot recall}{precision + recall} \end{split}
+                  \end{equation}</span><br />
+                  <span class="equation-number">(13)</span>
+                </div>
+              </div><br />
+            </li>
+            <li id="list14" label="•">
+              <strong>AUC.</strong> It measures the accuracy of
+              pairwise orders between correlated and uncorrelated
+              papers of each author, which is formulated as:
+              <div class="table-responsive" id="eq14">
+                <div class="display-equation">
+                  <span class="tex mytex">\begin{equation}
+                  \begin{split} &amp;AUC=\frac{1}{|I_{\ge T}|}\sum
+                  _{v\in I_{\ge T}}\frac{1}{|E(v)|}\sum
+                  _{(u,u^{\prime })\in E(v)}\delta
+                  (s_{vu}{\gt}s_{vu^{\prime }}) \end{split}
+                  \end{equation}</span><br />
+                  <span class="equation-number">(14)</span>
+                </div>
+              </div>where <em>E</em>(<em>v</em>) ≡ {(<em>u</em>,
+              <em>u</em>′)|<em>u</em> ∈ <em>l<sub>v</sub></em> ,
+              <em>u</em>′∉<em>l<sub>v</sub></em> }.<br />
+            </li>
+          </ul>
+          <p>For all evaluations, we set k = 10. A larger Recall@k,
+          Precision@k, F1 or AUC value means a better
+          performance.</p>
+        </section>
+        <section id="sec-19">
+          <p><em>4.1.4 Experimental Settings.</em> All information
+          utilized for model training such as triple samples in
+          Camel or the selected features in supervised learning
+          baselines, are extracted from training data. We design
+          two different training/test splits by setting <em>T</em>
+          = 2012 and 2013. Besides, there are three key settings of
+          experiments:</p>
+          <ul class="list-no-style">
+            <li id="list15" label="•">
+            <strong>Parameters.</strong>The embedding dimension
+            <em>d</em> is set to 128 and the regularization
+            parameter <em>λ</em> equals 0.001. We fix hinge loss
+            margin <em>ξ</em> = 0.1 for metric learning and window
+            size <em>w</em> = 6 for meta-path walk augmentation. In
+            addition, the trade-off factor <em>γ</em> of the joint
+            model equals 0.1.<br /></li>
+            <li id="list16" label="•"><strong>Meta-path
+            selections.</strong> We empirically investigate the
+            performance of our model by greedily selecting and
+            combining different meta-path walks and find that
+            “APA”, “APPA” and “APVPA” are the most effective
+            meta-path schemes. Notice that, “APA” denotes
+            collaboration relationship, “APPA” represents citation
+            link and “APVPA” indicates correlation in the same
+            publication venue. The set of node sequences capture
+            multiple correlations between paper and author under
+            these meta-path settings.<br /></li>
+            <li id="list17" label="•">
+              <strong>Evaluation candidates.</strong> It is time
+              consuming and memory intensive to extract and store
+              features of all paper-author pairs (which amounts to
+              over 2.7 × 10<sup>11</sup> pairs in AMiner-Full). The
+              supervised learning algorithms cannot scale up to
+              such large amount of data. Hence, we adopt the
+              setting in HetNetE [<a class="bib" data-trigger=
+              "hover" data-toggle="popover" data-placement="top"
+              href="#BibPLXBIB0001">1</a>] that randomly samples a
+              set of negative authors and combines it with the set
+              of true authors to form a candidate set of total 100
+              authors for each paper. The reported results are
+              averaged over 10 experiments of such setting. For
+              completeness, we also conduct evaluation of different
+              representation learning models on the whole authors
+              set.<br />
+            </li>
+          </ul>
+          <div class="table-responsive" id="tab3">
+            <div class="table-caption">
+              <span class="table-number">Table 3:</span>
+              <span class="table-title">Performance comparisons of
+              different methods. The last row shows the average
+              improvements (%) of Camel over different baselines.
+              HetNetE is the best baseline (indicated by star
+              notation) and Camel has the best performances
+              (highlighted in bold) in all cases.</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:left;"><img src=
+                  "../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-graphic7.jpg"
+                  class="img-responsive" alt="" longdesc="" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <figure id="fig6">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-fig6.jpg"
+            class="img-responsive" alt="Figure 5" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 5:</span>
+              <span class="figure-title">Result comparisons on the
+              whole authors set. Camel significantly outperforms
+              the others.</span>
+            </div>
+          </figure>
+        </section>
+      </section>
+      <section id="sec-20">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Performance
+            Comparison</h3>
+          </div>
+        </header>
+        <p>The performances of all methods are reported in Table
+        <a class="tbl" href="#tab3">3</a>, where the best results
+        are highlighted in bold and the best baselines are
+        indicated by star notation. The last row of table reports
+        the average improvements (%) of Camel over different
+        baselines. The main takeaways from this table are
+        summarized as follows:</p>
+        <ul class="list-no-style">
+          <li id="list18" label="•">The pairwise ranking models
+          with content embedding have better average performances
+          than the supervised learning baselines with one algorithm
+          (i.e., BayesR, RandF and NeuN), which suggests that the
+          feature representations generated by content embedding
+          are better for capturing the complicated paper-author
+          relations than the simple features extracted directly
+          from data. In addition, VecS achieves poor performance
+          since there are some missing citation information in
+          AMiner data.<br /></li>
+          <li id="list19" label="•">HetNetE achieves better results
+          than the supervised learning methods and the pairwise
+          ranking models with content embedding, showing that the
+          task-guided heterogeneous network embedding model
+          generates task-specific feature representations and
+          performs better than the other two for the author
+          identification problem.<br /></li>
+          <li id="list20" label="•">Camel performs best in all
+          experimental settings. The average improvements of Camel
+          over different baselines range from 6.3% to 158.7%,
+          demonstrating the effectiveness of our proposed
+          model.<br /></li>
+        </ul>
+        <p>To make thorough evaluation, we also conduct comparison
+        experiment of Camel and two selected baselines (GRUBPR and
+        HetNetE) on the whole author candidate set of AMiner-Top
+        dataset. The results (in terms of <em>Rec</em>@100 and
+        <em>Rec</em>@200) are shown in Figure <a class="fig" href=
+        "#fig6">5</a>. It can be seen that Camel significantly
+        outperforms the other two methods (with 39.8% and 28.0%
+        average improvements, respectively), which further shows
+        the effectiveness of Camel.</p>
+        <figure id="fig7">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-fig7.jpg"
+          class="img-responsive" alt="Figure 6" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 6:</span>
+            <span class="figure-title">The impacts of window size
+            <em>τ</em> and embedding dimension <em>d</em> on the
+            performance of Camel. Camel achieves the best result
+            when <em>τ</em> is around 6 and <em>d</em> is around
+            128.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-21">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span> Analysis
+            and Discussion</h3>
+          </div>
+        </header>
+        <p>The analytical experiments in this section are based on
+        AMiner-Top data, results in the other dataset reveal
+        similar conclusion but are omitted due to page limit.</p>
+        <section id="sec-22">
+          <p><em>4.3.1 Parameters Sensitivity.</em> The
+          hyper-parameters play important roles in Camel, as they
+          determine how the model will be trained. We conduct
+          experiments to analyze the impacts of two key parameters,
+          i.e., the window size <em>τ</em> of meta-path
+          augmentation module and the embedding (latent feature)
+          dimension <em>d</em> of author and paper. We investigate
+          a specific parameter by changing its value and fixing the
+          others. The performances of Camel (in terms of
+          <em>Rec</em>@10 and <em>Pre</em>@10) on various settings
+          of <em>τ</em> and <em>d</em> are shown in Figure
+          <a class="fig" href="#fig7">6</a>. According to this
+          figure:</p>
+          <ul class="list-no-style">
+            <li id="list21" label="•">With the increment of
+            <em>τ</em>, <em>Rec</em>@10 and <em>Pre</em>@10
+            increase at first since a larger window represents more
+            useful indirect paper-author correlations. But when
+            <em>τ</em> goes beyond a certain value, the
+            performances decrease with the further increment of
+            <em>τ</em> due to the possible involvement of
+            uncorrelated noise. The best <em>τ</em> is around
+            6.<br /></li>
+            <li id="list22" label="•">Similar to <em>τ</em>, an
+            appropriate value should be set for <em>d</em> such
+            that the best representations of author and paper are
+            learned. The optimal value of <em>d</em> is around
+            128.<br /></li>
+          </ul>
+          <p>Besides <em>d</em> and <em>τ</em>, we have also
+          investigated the impacts of other hyper-parameters such
+          as regularization parameter <em>λ</em>, and revealed the
+          similar point. Therefore the certain settings of the
+          hyper-parameters result in the best performance of
+          Camel.</p>
+          <div class="table-responsive" id="tab4">
+            <div class="table-caption">
+              <span class="table-number">Table 4:</span>
+              <span class="table-title">Performance comparisons of
+              various proposed models w.r.t different analytical
+              categories: (a) different components of the objective
+              function; (b) different choices of random walk; (c)
+              selection of meta-path scheme for random walk
+              sampling and (d) selection of the recurrent unit for
+              paper content encoder; (e) selection of paper-author
+              correlation measurement.</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:left;"><img src=
+                  "../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-graphic10.jpg"
+                  class="img-responsive" alt="" longdesc="" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-responsive" id="tab5">
+            <div class="table-caption">
+              <span class="table-number">Table 5:</span>
+              <span class="table-title">Top ranked authors for two
+              query papers and the corresponding embedding
+              visualizations.</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:left;"><img src=
+                  "../../../data/deliveryimages.acm.org/10.1145/3190000/3186152/images/www2018-161-graphic11.jpg"
+                  class="img-responsive" alt="" longdesc="" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section id="sec-23">
+          <p><em>4.3.2 Performances of Variant Proposed
+          Models.</em> Camel is a joint representation learning
+          model of content encoder based metric learning and
+          meta-path walk integrative learning. Whether each
+          learning component plays a role on the joint model? How
+          meta-path schemes impact the model's performance? Whether
+          the selection of recurrent unit or correlation
+          measurement has influence on the model's performance? To
+          answer these questions, we conduct experiments to
+          evaluate the performances of variant proposed models
+          w.r.t. different analytical categories:</p>
+          <ul class="list-no-style">
+            <li id="list23" label="•">
+              <strong>Objective Function.</strong>The joint
+              objective function <span class=
+              "inline-equation"><span class="tex">$\mathcal
+              {L}_{Joint}$</span></span> contains two main
+              components: <span class=
+              "inline-equation"><span class="tex">$\mathcal
+              {L}_{Metric}$</span></span> and <span class=
+              "inline-equation"><span class="tex">$\mathcal
+              {L}_{MWIL}^{\mathcal {P}}$</span></span> . To shows
+              the effectiveness of meta-path walk integrative
+              learning module, we conduct evaluation for the model
+              with only content encoder based metric learning,
+              i.e., <span class="inline-equation"><span class=
+              "tex">$\mathcal {L}_{Metric}$</span></span> , and
+              report its performance in Table <a class="tbl" href=
+              "#tab4">4</a> part (a). According to this result, we
+              can find that Camel significantly outperforms
+              <span class="inline-equation"><span class=
+              "tex">$\mathcal {L}_{Metric}$</span></span> , showing
+              the large benefit of incorporating <span class=
+              "inline-equation"><span class="tex">$\mathcal
+              {L}_{MWIL}^{\mathcal {P}}$</span></span> into the
+              joint model.<br />
+            </li>
+            <li id="list24" label="•">
+              <strong>Random Walk.</strong>We design a meta-path
+              walk integrative learning module to augment the
+              model. In order to show the larger benefit of
+              meta-path walk over random walk, we design the joint
+              learning model (Camel-RW) with random walk
+              integrative learning module and compare it to Camel.
+              As the result shown in Table <a class="tbl" href=
+              "#tab4">4</a> part (b), Camel has higher
+              identification accuracy than Camel-RW. Thus the
+              meta-path walk is better than the random walk for
+              capturing indirect paper-author correlations on
+              academic HetNet.<br />
+            </li>
+            <li id="list25" label="•">
+              <strong>Meta-path Selection.</strong>In meta-path
+              augmentation module, we select three kinds of
+              meta-path schemes: “APA”, “APPA” and “APVPA”. To
+              study the impacts of different meta-path schemes on
+              the model's performance, we design three joint
+              learning models, i.e., Camel-APA, Camel-APPA and
+              Camel-APVPA, which are augmented by “APA”, “APPA” and
+              “APVPA” walk integrative learning modules,
+              respectively. The performances of three models are
+              reported in Table <a class="tbl" href="#tab4">4</a>
+              part (c). We can observe that Camel-APPA achieves
+              relative better performance than the other two,
+              indicating that an author tends to have stronger
+              correlation/preference to his/her references than
+              co-author's papers or papers published in the same
+              venue. In addition, all of three models have worse
+              performance than Camel, demonstrating that the
+              combination of different meta-path schemes leads to
+              better performance.<br />
+            </li>
+            <li id="list26" label="•">
+              <strong>Recurrent Unit Selection.</strong>We select
+              the GRU as the basic recurrent unit for paper content
+              encoder of Camel. Besides GRU, there are various deep
+              architectures constructed by different recurrent
+              units for sequence modeling, such as long short term
+              memory networks (LSTM). In order to test the
+              influence of the recurrent unit selection on model's
+              performance, we conduct comparison experiment between
+              Camel and the model with LSTM (Camel-LSTM). According
+              to the results shown in Table <a class="tbl" href=
+              "#tab4">4</a> part (d), Camel-LSTM and Camel have
+              close performance. In other words, the selection of
+              GRU or LSTM has little impact on the performance. We
+              choose GRU since it has a more concise structure than
+              LSTM for reducing training time.<br />
+            </li>
+            <li id="list27" label="•">
+              <strong>Correlation Measurement.</strong>As
+              illustrated in Section 3.1, we use distance metric
+              rather than inner-product to measure the correlation
+              between paper and author. To show the rationality of
+              such a choice, we compare the performances of the
+              model with <span class="inline-equation"><span class=
+              "tex">$\mathcal {L}_{Metric}$</span></span> and the
+              baseline method GRUBPR since GRUBPR is a joint
+              learning model of GRU based content encoder and
+              pairwise ranking, which employs inner-product to
+              measure paper-author correlation. According to the
+              result shown in Table <a class="tbl" href=
+              "#tab4">4</a> part (a) and part (e), <span class=
+              "inline-equation"><span class="tex">$\mathcal
+              {L}_{Metric}$</span></span> has better performance
+              than GRUBPR in most cases, demonstrating distance
+              metric is better than inner-product in measuring
+              paper-author correlation for the author
+              identification problem.<br />
+            </li>
+          </ul>
+          <p>To summarize, according to the above discussion: (1)
+          the meta-path walk integrative learning module brings
+          large benefits to improve the proposed model; (2)
+          meta-path walk is better than random walk for capturing
+          indirect paper-author correlations on academic HetNet;
+          (3) “APPA” is the best meta-path scheme among the three,
+          while the combination of different meta-path schemes
+          leads to the best performance of model; (4) the choice of
+          different recurrent unit has little influence on model's
+          performance; and (5) the distance metric is better than
+          inner-product for measuring direct paper-author
+          correlation.</p>
+        </section>
+      </section>
+      <section id="sec-24">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.4</span> Case
+            Studies</h3>
+          </div>
+        </header>
+        <p>We present two case studies on AMiner-Top dataset to
+        show the performance differences between Camel and two
+        selected baselines, i.e., GRUBPR and HetNetE, which achieve
+        relative better performances. Table <a class="tbl" href=
+        "#tab5">5</a> lists the top 10 ranked authors for two query
+        papers published in WWW 2013 and WSDM 2013, respectively.
+        For a better comparison, we also provide the embedding
+        visualizations<a class="fn" href="#fn3" id=
+        "foot-fn3"><sup>3</sup></a> of the target papers and top
+        authors ranked by different methods. Comparing to the
+        authors set of a given paper, the number of whole author
+        set is much larger. Besides, there are many false authors
+        whose feature representations are quite similar to the true
+        authors of target paper. Thus many of the true authors may
+        not be presented in the top list. However, according to
+        Table <a class="tbl" href="#tab5">5</a>, Camel achieves 2/5
+        and 2/4 w.r.t. <em>Rec</em>@100 in two cases, and predicts
+        true authors more accurately than the other methods in top
+        10 lists, as shown by the authors (i.e., J. Leskovec and Q.
+        Mei) highlighted in red color. In addition, the embeddings
+        of top authors ranked by Camel cluster closer to the
+        embeddings of the target paper and its true authors than
+        those of HetNetE. We remove visualization result of GRUBPR
+        due to its scattered behavior. Therefore, our model
+        generates more accurate feature representations of paper
+        and author, and achieves better performance than the other
+        methods.</p>
+      </section>
+    </section>
+    <section id="sec-25">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>In the past few years, some works have devoted to
+      paper-author pair identification problem in big scholarly
+      data, such as studies in [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0019">19</a>] and various solutions in [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0005">5</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0015">15</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0035">35</a>] for 2013
+      KDD Cup author-paper identification challenge. Most of these
+      works focused on feature engineering and utilized supervised
+      learning algorithms to infer the correlation between paper
+      and author. However, feature engineering is time consuming
+      and storage intensive, and the extracted features can be
+      irrelevant, insufficient or redundant.</p>
+      <p>The representation learning models for networks have
+      attracted a lot of attention in recent years. Most of these
+      models [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0006">6</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0020">20</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0027">27</a>] preserve
+      the proximities among nodes by learning vectorized
+      representations. Some extended studies have been applied to
+      various applications in big scholarly data such as node
+      classification [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>]. Unlike task-independent attribute of
+      these methods, Chen et al. proposed HetNetE [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0001">1</a>], a task-guided
+      heterogeneous network embedding model. Comparing to the
+      existing baselines, HetNetE achieves better performance for
+      author identification problem. Despite the consideration of
+      specific task for embedding generation, HetNetE ignores paper
+      content (e.g., abstract) that contains useful semantic
+      information and searches indirect correlations among all kind
+      of nodes for augmentation.</p>
+      <p>Besides paper-author identification and network embedding,
+      the loss function of our model for formulating direct
+      paper-author correlations is based on distance metric
+      learning [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0032">32</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0033">33</a>]. In
+      addition, we introduce word embedding models [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0014">14</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0018">18</a>] and gated recurrent
+      neural network [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0010">10</a>] to generate deep semantic embeddings
+      of paper. Moreover, the design of meta-path walk integrative
+      learning module is inspired by heterogeneous network analysis
+      works [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0003">3</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0025">25</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0026">26</a>] as well as
+      the Skipgram model [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0018">18</a>].</p>
+    </section>
+    <section id="sec-26">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>In this paper, we study the author identification problem
+      in big scholarly data, and design a representation learning
+      model, i.e., Camel, to solve it. The model performs joint
+      optimization of GRU content encoder based metric learning and
+      Skipgram model based meta-path walk integrative learning. The
+      extensive experiments on the well known AMiner data
+      demonstrate that Camel outperforms a number of baselines.
+      Detail discussions are also provided to show the
+      effectiveness of different components in Camel. Some
+      potential future work includes: (1) the dynamics of author
+      embeddings should be considered for the task since authors
+      keep publishing new papers; (2) the attention-based RNN can
+      be applied to generate better semantic embeddings of
+      paper.</p>
+    </section>
+    <section id="sec-27">
+      <header>
+        <div class="title-info">
+          <h2>Acknowledgment</h2>
+        </div>
+      </header>
+      <p>This work is supported by the Army Research Laboratory
+      under Cooperative Agreement Number W911NF-09-2-0053 and the
+      National Science Foundation (NSF) grant IIS-1447795. The
+      views and conclusions contained in this document are those of
+      the authors and should not be interpreted as representing the
+      official policies, either expressed or implied, of the Army
+      Research Laboratory or the U.S. Government. The U.S.
+      Government is authorized to reproduce and distribute reprints
+      for Government purposes notwithstanding any copyright
+      notation here on. This work is partially supported by King
+      Abdullah University of Science and Technology (KAUST).</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Ting Chen and Yizhou
+        Sun. 2017. Task-Guided and Path-Augmented Heterogeneous
+        Network Embedding for Author Identification. In
+        <em><em>WSDM</em></em>. 295–304.</li>
+        <li id="BibPLXBIB0002" label="[2]">Kyunghyun Cho, Bart
+        Van&nbsp;Merriënboer, Caglar Gulcehre, Dzmitry Bahdanau,
+        Fethi Bougares, Holger Schwenk, and Yoshua Bengio. 2014.
+        Learning phrase representations using RNN encoder-decoder
+        for statistical machine translation.
+        <em><em>arXiv:1406.1078</em></em> (2014).</li>
+        <li id="BibPLXBIB0003" label="[3]">Yuxiao Dong,
+        Nitesh&nbsp;V Chawla, and Ananthram Swami. 2017.
+        metapath2vec: Scalable Representation Learning for
+        Heterogeneous Networks. In <em><em>KDD</em></em>.
+        135–144.</li>
+        <li id="BibPLXBIB0004" label="[4]">Yuxiao Dong, Reid&nbsp;A
+        Johnson, and Nitesh&nbsp;V Chawla. 2015. Will this paper
+        increase your h-index?: Scientific impact prediction. In
+        <em><em>WSDM</em></em>. 149–158.</li>
+        <li id="BibPLXBIB0005" label="[5]">Dmitry Efimov, Lucas
+        Silva, and Benjamin Solecki. 2013. Kdd cup
+        2013-author-paper identification challenge: second place
+        team. In <em><em>KDD Cup Workshop</em></em>.</li>
+        <li id="BibPLXBIB0006" label="[6]">Aditya Grover and Jure
+        Leskovec. 2016. node2vec: Scalable feature learning for
+        networks. In <em><em>KDD</em></em>. 855–864.</li>
+        <li id="BibPLXBIB0007" label="[7]">Huan Gui, Jialu Liu,
+        Fangbo Tao, Meng Jiang, Brandon Norick, and Jiawei Han.
+        2016. Large-scale embedding learning in heterogeneous event
+        data. In <em><em>ICDM</em></em>. 907–912.</li>
+        <li id="BibPLXBIB0008" label="[8]">Qi He, Jian Pei, Daniel
+        Kifer, Prasenjit Mitra, and Lee Giles. 2010. Context-aware
+        citation recommendation. In <em><em>WWW</em></em>.
+        421–430.</li>
+        <li id="BibPLXBIB0009" label="[9]">Shawndra Hill and Foster
+        Provost. 2003. The myth of the double-blind review?: author
+        identification using only citations. <em><em>Acm Sigkdd
+        Explorations Newsletter</em></em> 5, 2 (2003),
+        179–184.</li>
+        <li id="BibPLXBIB0010" label="[10]">Sepp Hochreiter and
+        Jürgen Schmidhuber. 1997. Long short-term memory.
+        <em><em>Neural computation</em></em> 9, 8 (1997),
+        1735–1780.</li>
+        <li id="BibPLXBIB0011" label="[11]">Cheng-Kang Hsieh,
+        Longqi Yang, Yin Cui, Tsung-Yi Lin, Serge Belongie, and
+        Deborah Estrin. 2017. Collaborative metric learning. In
+        <em><em>WWW</em></em>. 193–201.</li>
+        <li id="BibPLXBIB0012" label="[12]">Zhipeng Huang, Yudian
+        Zheng, Reynold Cheng, Yizhou Sun, Nikos Mamoulis, and Xiang
+        Li. 2016. Meta structure: Computing relevance in large
+        heterogeneous information networks. In
+        <em><em>KDD</em></em>. 1595–1604.</li>
+        <li id="BibPLXBIB0013" label="[13]">Diederik&nbsp;P Kingma
+        and Jimmy Ba. 2014. Adam: A method for stochastic
+        optimization. <em><em>arXiv preprint
+        arXiv:1412.6980</em></em> (2014).</li>
+        <li id="BibPLXBIB0014" label="[14]">Quoc Le and Tomas
+        Mikolov. 2014. Distributed representations of sentences and
+        documents. In <em><em>ICML</em></em>. 1188–1196.</li>
+        <li id="BibPLXBIB0015" label="[15]">Chun-Liang Li, Yu-Chuan
+        Su, Ting-Wei Lin, Cheng-Hao Tsai, Wei-Cheng Chang, Kuan-Hao
+        Huang, Tzu-Ming Kuo, Shan-Wei Lin, Young-San Lin, Yu-Chen
+        Lu, <em>et al.</em> 2015. Combination of feature
+        engineering and ranking models for paper-author
+        identification in KDD Cup 2013. <em><em>JMLR</em></em> 16,
+        1 (2015), 2921–2947.</li>
+        <li id="BibPLXBIB0016" label="[16]">Xiang Liu, Torsten
+        Suel, and Nasir Memon. 2014. A robust model for paper
+        reviewer assignment. In <em><em>RecSys</em></em>.
+        25–32.</li>
+        <li id="BibPLXBIB0017" label="[17]">Xiaozhong Liu, Yingying
+        Yu, Chun Guo, and Yizhou Sun. 2014. Meta-path-based ranking
+        with pseudo relevance feedback on heterogeneous graph for
+        citation recommendation. In <em><em>CIKM</em></em>.
+        121–130.</li>
+        <li id="BibPLXBIB0018" label="[18]">Tomas Mikolov, Ilya
+        Sutskever, Kai Chen, Greg&nbsp;S Corrado, and Jeff Dean.
+        2013. Distributed representations of words and phrases and
+        their compositionality. In <em><em>NIPS</em></em>.
+        3111–3119.</li>
+        <li id="BibPLXBIB0019" label="[19]">Mathias Payer, Ling
+        Huang, Neil&nbsp;Zhenqiang Gong, Kevin Borgolte, and Mario
+        Frank. 2015. What you submit is who you are: A multimodal
+        approach for deanonymizing scientific publications.
+        <em><em>TIFS</em></em> 10, 1 (2015), 200–212.</li>
+        <li id="BibPLXBIB0020" label="[20]">Bryan Perozzi, Rami
+        Al-Rfou, and Steven Skiena. 2014. Deepwalk: Online learning
+        of social representations. In <em><em>KDD</em></em>.
+        701–710.</li>
+        <li id="BibPLXBIB0021" label="[21]">Xiang Ren, Jialu Liu,
+        Xiao Yu, Urvashi Khandelwal, Quanquan Gu, Lidan Wang, and
+        Jiawei Han. 2014. Cluscite: Effective citation
+        recommendation by information network-based clustering. In
+        <em><em>KDD</em></em>. 821–830.</li>
+        <li id="BibPLXBIB0022" label="[22]">Steffen Rendle,
+        Christoph Freudenthaler, Zeno Gantner, and Lars
+        Schmidt-Thieme. 2009. BPR: Bayesian personalized ranking
+        from implicit feedback. In <em><em>UAI</em></em>.
+        452–461.</li>
+        <li id="BibPLXBIB0023" label="[23]">Hua-Wei Shen, Dashun
+        Wang, Chaoming Song, and Albert-László Barabási. 2014.
+        Modeling and Predicting Popularity Dynamics via Reinforced
+        Poisson Processes. In <em><em>AAAI</em></em>, Vol.&nbsp;14.
+        291–297.</li>
+        <li id="BibPLXBIB0024" label="[24]">Roberta Sinatra, Dashun
+        Wang, Pierre Deville, Chaoming Song, and Albert-László
+        Barabási. 2016. Quantifying the evolution of individual
+        scientific impact. <em><em>Science</em></em> 354, 6312
+        (2016), aaf5239.</li>
+        <li id="BibPLXBIB0025" label="[25]">Yizhou Sun, Jiawei Han,
+        Xifeng Yan, Philip&nbsp;S Yu, and Tianyi Wu. 2011. Pathsim:
+        Meta path-based top-k similarity search in heterogeneous
+        information networks. <em><em>VLDB</em></em> 4, 11 (2011),
+        992–1003.</li>
+        <li id="BibPLXBIB0026" label="[26]">Yizhou Sun, Brandon
+        Norick, Jaiwei Han, Xifeng Yan, Philip Yu, and Xiao Yu.
+        2012. PathSelClus: Integrating Meta-Path Selection with
+        User-Guided Object Clustering in Heterogeneous Information
+        Networks. In <em><em>KDD</em></em>. 1348–1356.</li>
+        <li id="BibPLXBIB0027" label="[27]">Jian Tang, Meng Qu,
+        Mingzhe Wang, Ming Zhang, Jun Yan, and Qiaozhu Mei. 2015.
+        Line: Large-scale information network embedding. In
+        <em><em>WWW</em></em>. 1067–1077.</li>
+        <li id="BibPLXBIB0028" label="[28]">Jie Tang, Jing Zhang,
+        Limin Yao, Juanzi Li, Li Zhang, and Zhong Su. 2008.
+        Arnetminer: extraction and mining of academic social
+        networks. In <em><em>KDD</em></em>. 990–998.</li>
+        <li id="BibPLXBIB0029" label="[29]">Andrew Tomkins, Min
+        Zhang, and William&nbsp;D Heavlin. 2017. Single versus
+        Double Blind Reviewing at WSDM 2017. <em><em>arXiv preprint
+        arXiv:1702.00502</em></em> (2017).</li>
+        <li id="BibPLXBIB0030" label="[30]">Susan Van&nbsp;Rooyen,
+        Fiona Godlee, Stephen Evans, Nick Black, and Richard Smith.
+        1999. Effect of open peer review on quality of reviews and
+        on reviewers’ recommendations: a randomised trial.
+        <em><em>BMJ</em></em> 318, 7175 (1999), 23–27.</li>
+        <li id="BibPLXBIB0031" label="[31]">Dashun Wang, Chaoming
+        Song, and Albert-László Barabási. 2013. Quantifying
+        long-term scientific impact. <em><em>Science</em></em> 342,
+        6154 (2013), 127–132.</li>
+        <li id="BibPLXBIB0032" label="[32]">Kilian&nbsp;Q
+        Weinberger and Lawrence&nbsp;K Saul. 2009. Distance metric
+        learning for large margin nearest neighbor classification.
+        <em><em>JMLR</em></em> 10, 2 (2009), 207–244.</li>
+        <li id="BibPLXBIB0033" label="[33]">Eric&nbsp;P Xing,
+        Michael&nbsp;I Jordan, Stuart&nbsp;J Russell, and
+        Andrew&nbsp;Y Ng. 2003. Distance metric learning with
+        application to clustering with side-information. In
+        <em><em>NIPS</em></em>. 521–528.</li>
+        <li id="BibPLXBIB0034" label="[34]">Carl Yang, Lanxiao Bai,
+        Chao Zhang, Quan Yuan, and Jiawei Han. 2017. Bridging
+        Collaborative Filtering and Semi-Supervised Learning: A
+        Neural Approach for POI Recommendation. In
+        <em><em>KDD</em></em>. 1245–1254.</li>
+        <li id="BibPLXBIB0035" label="[35]">Xing Zhao. 2013. The
+        scorecard solution to the author-paper identification
+        challenge. In <em><em>KDD Cup Workshop</em></em>. 4.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "https://aminer.org/citation">https://aminer.org/citation</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a>AI: ICML, AAAI,
+    IJCAI. DM: KDD, WSDM, ICDM. DB: SIGMOD, VLDB, ICDE. IS: WWW,
+    SIGIR, CIKM. CV: CVPR, ICCV, ECCV. CL: ACL, EMNLP, NAACL.</p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "http://projector.tensorflow.org/">http://projector.tensorflow.org/</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5639-8/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3178876.3186152">https://doi.org/10.1145/3178876.3186152</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

@@ -1,1 +1,560 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">  <head>  <title>Editorial Algorithms: Optimizing Recency, Relevance and Diversity for Automated News Curation</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>  </head>  <body id="main">  <section class="front-matter">   <section>    <header class="title-info">     <div class="journal-title">     <h1>      <span class="title">Editorial Algorithms: Optimizing Recency, Relevance and Diversity for Automated News Curation</span>      <br/>      <span class="subTitle"/>     </h1>     </div>    </header>    <div class="authorGroup">     <div class="author">     <span class="givenName">Abhijnan</span>      <span class="surName">Chakraborty</span>     Indian Institute of Technology Kharagpur, India     </div>     <div class="author">     <span class="givenName">Mohammad</span>      <span class="surName">Luqman</span>     Indian Institute of Technology Kharagpur, India     </div>     <div class="author">     <span class="givenName">Sidhartha</span>      <span class="surName">Satapathy</span>     University of Illinois, Urbana-Champaign, USA     </div>     <div class="author">     <span class="givenName">Niloy</span>      <span class="surName">Ganguly</span>     Indian Institute of Technology Kharagpur, India     </div>                     </div>    <br/>    <div class="pubInfo">     <p>DOI: <a href="https://doi.org/10.1145/3184558.3186937" target="_blank">https://doi.org/10.1145/3184558.3186937</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">     <p>     <small>With a large number of stories emerging from the newsrooms, media websites need to curate interesting news for their readers. Although traditionally news was curated solely by human editors, increasing news volume has led media outlets to adopt <em>editorial algorithms</em>. However, such algorithms are often proprietary, and smaller outlets do not have the resources to build them from scratch. In this paper, we present a novel framework &#x2018;Samar&#x2019; to automatically curate news by optimizing recency, relevance and diversity of the selected stories. Evaluations over two real-world news datasets show that Samar outperforms several state-of-the-art baselines in matching the news curation performed by human editors.</small>     </p>    </div>    <div class="classifications">     <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Abhijnan Chakraborty, Mohammad Luqman, Sidhartha Satapathy, and Niloy Ganguly. 2018. Editorial Algorithms: Optimizing Recency, Relevance and Diversity for Automated News Curation. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 2 Pages. <a href="https://doi.org/10.1145/3184558.3186937" class="link-inline force-break"        target="_blank">https://doi.org/10.1145/3184558.3186937</a></small>     </p>     </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-5">    <header>     <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>     </div>    </header>    <p>Due to the large number of news stories available online, news readers need to rely on news curation or recommendation services to find important news&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>]. Traditionally, news curation was the sole domain of expert human editors (e.g., while selecting the news stories for the printed newspaper), who used to select what stories should be consumed by the readers &#x2013; a process known as <em>journalistic gatekeeping</em>&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>]. However, the emergence of news aggregators (e.g., Google News), social media newsfeeds (e.g., in Facebook, Twitter) and personalized news recommendations have given rise to <em>editorial algorithms</em>&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0007">7</a>] which replace the human editorial gatekeeping roles.</p>    <p>Large media organizations are also introducing editorial algorithms in their newsrooms. For example, New York Times has built a slack bot &#x2018;Blossom&#x2019; which recommends stories the editors should promote on social media<a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a>. Similarly, BBC has developed tools to automate different editorial decisions<a class="fn" href="#fn2" id="foot-fn2"><sup>2</sup></a>. However, such tools are often proprietary, and smaller media outlets may not have the technical and human resources to build such tools&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0009">9</a>]. In this work, we systemically address different challenges in automatizing editorial decisions and build a framework &#x2018;Samar&#x2019; (named after the Bengali poet and editor Samar Sen (en.wikipedia.org/wiki/Samar_Sen)), which can help the editors to conceptualize innovative offerings.</p>    <p>While curating news, there are three basic metrics of interest &#x2013; recency, relevance and diversity of stories. Recency captures a story&#x0027;s age, i.e., when the story is published. In <em>personalized recommendations</em>, relevance denotes how well a story matches a particular reader&#x0027;s interest. However, editors often curate stories for a broad audience (e.g., the stories in a printed newspaper are same for everyone in a city). In such contexts, relevance refers to the importance of a story judged from the editors&#x2019; <em>notions of newsworthiness</em>&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>]. In our earlier work&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>], we showed that it is tricky to optimize both recency and relevance of recommended news when relevance is estimated through audience-driven popularity measures. Samar tries to circumvent this difficulty by inferring newsworthiness from observing the editorial decisions on past news data. However, along with newsworthiness, curated stories should avoid covering redundant topics, and instead have diverse topical coverage. Samar efficiently combines all these aspects for automated news curation.</p>    <p>To evaluate the effectivity of Samar in curating news stories, we gather extensive data from two very popular news websites &#x2013; The Guardian (<tt>theguardian.com</tt>) and NYTimes (<tt>nytimes.com</tt>). We find that Samar outperforms several state-of-the-art baselines in matching the editorial decisions at these websites. We conclude by discussing the potential application of Samar in media newsrooms.</p>   </section>   <section id="sec-6">    <header>     <div class="title-info">     <h2>      <span class="section-number">2</span> Methodology</h2>     </div>    </header>    <p>Samar selects <em>K</em> news stories from a larger set of candidate stories by first computing recency and relevance scores for the candidates, and then inculcating diversity in the final curated set.</p>    <p>&#x2022; <strong>Recency:</strong> Recency of a story <em>i</em> is measured as the difference between the curation time and the publish time of the story. <div class="table-responsive" id="Xeq1">     <div class="display-equation">      <span class="tex mytex">\begin{equation} recency_i = \frac{1}{time\; since\; i \; is \; published} \end{equation} </span>      <br/>      <span class="equation-number">(1)</span>     </div>     </div> where the time difference can be computed in seconds, minutes or hours depending on the context. We then normalize <em>recency<sub>i</sub>     </em> scores of the candidate stories by the score of the most recent candidate. <div class="table-responsive" id="eq1">     <div class="display-equation">      <span class="tex mytex">\begin{equation} normalized\_recency_i = \frac{recency_i}{max(\lbrace \forall i \; recency_i \rbrace)} \end{equation} </span>      <br/>      <span class="equation-number">(2)</span>     </div>     </div> &#x2022; <strong>Relevance:</strong> To calculate relevance of a story, we develop a supervised binary classifier (two classes denote whether a story will be curated or not), and use the predicted curation probability as the relevance score. To some extent, this score reveals the newsworthiness of the story. We use the following features: (i) story abstract, (ii) author name(s), (iii) list of topics (or keywords) describing the story, (iv) news category (e.g., politics, sports) and (v) no. of stories on same topic(s) published in last 7 days. As features (i)-(iv) are textual features, we first train four text classifiers with individual features (one Convolutional Neural Networks (CNN) based classifier for feature (i), and three Naive Bayes (NB) classifiers for features (ii)-(iv)), and then use the predicted probalibilities for curated/not-curated classes as features for a SVM classifier (with RBF kernel) at the top level<a class="fn" href="#fn3" id="foot-fn3"><sup>3</sup></a>. Thus, the SVM classifier effectively uses nine numeric features &#x2013; predicted probailities from the textual classifiers and no. of related stories (after appropriate scaling). A story&#x0027;s relevance score is then measured as the curation probability predicted by this SVM classifier (using the method proposed by Lin <em>et al.</em>&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>]).</p>    <p>The CNN architecture for the textual classifier over the abstract is similar to that used in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>], where every abstract is converted to a <em>m</em> &#x00D7; <em>n</em> matrix (<em>m</em> is the maximum abstract length, and <em>n</em> = 50 is the word vector dimension). A convolution operation is applied to every possible window of <em>h</em> words to produce a feature map. We then apply a max over time pooling operation over the feature map and take the maximum value as a feature. Multiple features are obtained by varying the value of <em>h</em>. These features form the penultimate layer and are passed to a fully connected softmax layer whose output gives the probability distribution over curated/not-curated classes.</p>    <p>After computing the recency and relevance scores for a story, we compute a linear combination of these scores as <div class="table-responsive" id="eq2">     <div class="display-equation">      <span class="tex mytex">\begin{equation} \phi _i = \lambda *normalized\_recency_i + (1-\lambda)*relevance_i \end{equation} </span>      <br/>      <span class="equation-number">(3)</span>     </div>     </div> where <em>&#x03BB;</em> is a hyper parameter, which can be inferred using maximum likelihood estimates over a given training dataset.</p>    <p>&#x2022; <strong>Diversity:</strong> Diversity can be measured by how different topics are covered by the curated news stories. Formally, Samar tries to maximize the following function <em>f</em>(<em>S</em>) over the curated set <em>S</em>. <div class="table-responsive" id="eq3">     <div class="display-equation">      <span class="tex mytex">\begin{equation} maximize \sum _i (\phi _i \cdot \sum _{t \in \tau _i}\frac{1}{ freq_t}) \cdot x_i \end{equation} </span>      <br/>      <span class="equation-number">(4)</span>     </div>     </div>    </p>    <p>subject to &#x2211;<sub>     <em>i</em>     </sub>     <em>x<sub>i</sub>     </em> &#x2264; <em>K</em>    </p>    <p>where <em>x<sub>i</sub>     </em>s are indicator variables (<em>x<sub>i</sub>     </em> = 1 denotes that <em>i</em> is among the curated stories); <em>&#x03C4;<sub>i</sub>     </em> is the list of topics covered by <em>i</em>, <em>freq<sub>t</sub>     </em> is the number of articles in <em>S</em> which cover topic <em>t</em>, and <em>K</em> is the size of <em>S</em>.</p>    <p>It can be proved that <em>f</em>(<em>S</em>) is <em>non-monotone submodular</em>, and maximizing such functions w.r.t <em>cardniality constraints</em> is NP-Hard&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>]. We implement <span class="inline-equation"><span class="tex">$\frac{1}{3}$</span>     </span>-<em>approximation</em> algorithm proposed in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>] to solve Eqn&#x00A0;<a class="eqn" href="#eq3">4</a>. Intuitively, we first build <em>S</em> by taking <em>K</em> stories with highest <em>&#x03D5;<sub>i</sub>     </em> scores. Then, we update <em>S</em> if removing a story from <em>S</em> and adding another story from outside <em>S</em> improves the overall diversity score. This process is repeated until no further change in <em>S</em> is possible.</p>   </section>   <section id="sec-7">    <header>     <div class="title-info">     <h2>      <span class="section-number">3</span> Experimental Evaluation</h2>     </div>    </header>    <p>     <strong>Datasets:</strong> To evaluate the performance of Samar in curating news stories, we collected all stories appearing on The Guardian and NYTimes, and also the stories selected by editors for the printed newspaper everyday throughout July, 2015 to June, 2016. We gathered 90,355 Guardian and 242,125 NYTimes stories; out of which, 13,580 Guardian stories and 40,419 NYTimes stories got selected for their print editions during this one year period.</p>    <div class="table-responsive" id="tab1">     <div class="table-caption">     <span class="table-number">Table 1:</span>     <span class="table-title">Accuracy (Acc), Precision (P) and Recall (R) in predicting the editorial decision of selecting stories for next day&#x0027;s newspaper.</span>     </div>     <table class="table">     <tbody>      <tr>       <td style="text-align:left;">        <strong>Dataset</strong>       </td>       <td colspan="3" style="text-align:center;">        <strong>The Guardian</strong>        <hr/>       </td>       <td colspan="3" style="text-align:center;">        <strong>NYTimes</strong>        <hr/>       </td>      </tr>      <tr>       <td style="text-align:left;">        <strong>Approach</strong>       </td>       <td style="text-align:center;">        <strong>Acc</strong>       </td>       <td style="text-align:center;">        <strong>P</strong>       </td>       <td style="text-align:center;">        <strong>R</strong>       </td>       <td style="text-align:center;">        <strong>Acc</strong>       </td>       <td style="text-align:center;">        <strong>P</strong>       </td>       <td style="text-align:center;">        <strong>R</strong>       </td>      </tr>      <tr>       <td style="text-align:left;">Most Recent</td>       <td style="text-align:center;">0.747</td>       <td style="text-align:center;">0.180</td>       <td style="text-align:center;">0.180</td>       <td style="text-align:center;">0.639</td>       <td style="text-align:center;">0.066</td>       <td style="text-align:center;">0.086</td>      </tr>      <tr>       <td style="text-align:left;">Most Diverse</td>       <td style="text-align:center;">0.688</td>       <td style="text-align:center;">0.083</td>       <td style="text-align:center;">0.106</td>       <td style="text-align:center;">0.648</td>       <td style="text-align:center;">0.086</td>       <td style="text-align:center;">0.013</td>      </tr>      <tr>       <td style="text-align:left;">Most Relevant</td>       <td style="text-align:center;">0.737</td>       <td style="text-align:center;">0.415</td>       <td style="text-align:center;">0.651</td>       <td style="text-align:center;">0.823</td>       <td style="text-align:center;">0.605</td>       <td style="text-align:center;">0.614</td>      </tr>      <tr>       <td style="text-align:left;">Most Recent+Relevant</td>       <td style="text-align:center;">0.815</td>       <td style="text-align:center;">0.528</td>       <td style="text-align:center;">0.652</td>       <td style="text-align:center;">0.866</td>       <td style="text-align:center;">0.776</td>       <td style="text-align:center;">0.787</td>      </tr>      <tr>       <td style="text-align:left;">Samar</td>       <td style="text-align:center;">        <strong>0.823</strong>       </td>       <td style="text-align:center;">        <strong>0.609</strong>       </td>       <td style="text-align:center;">        <strong>0.723</strong>       </td>       <td style="text-align:center;">        <strong>0.917</strong>       </td>       <td style="text-align:center;">        <strong>0.827</strong>       </td>       <td style="text-align:center;">        <strong>0.798</strong>       </td>      </tr>     </tbody>     </table>    </div>    <p>     <strong>Results:</strong> We compare Samar with several baselines: (1) most <em>recent</em> stories, (2) most <em>relevant</em> stories, (3) most <em>diverse</em> stories (proposed in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>]), and (4) stories with highest <em>&#x03D5;<sub>i</sub>     </em> scores (combination of recency and relevance, which is conceptually similar to the metric <em>Future Impact</em> proposed in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>]). To compare the performance of different methods, we consider the selection of stories for the daily newspaper of The Guardian and NYTimes from 1st January to 30th June, 2016. For each day, we consider all stories published in last 3 days as the candidate set, and different methods would predict which stories made it to the print edition. Training data is selected on a sliding basis, i.e., to make a prediction for the newspaper on day <em>m</em>, we consider last six month&#x0027;s data upto day <em>m</em> &#x2212; 3 as training.</p>    <p>Table&#x00A0;<a class="tbl" href="#tab1">1</a> shows the results of each of these approaches. We notice that only considering most recent, most relevant or most diverse articles result in poor precision and recall. Considering recency and relevance together achieves considerable performance gains. However, as we can observe in Table&#x00A0;<a class="tbl" href="#tab1">1</a>, Samar performs best for both datasets by capturing all three salient aspects of editorial curation - recency, relevance and diversity of the stories.</p>   </section>   <section id="sec-8">    <header>     <div class="title-info">     <h2>      <span class="section-number">4</span> Conclusion</h2>     </div>    </header>    <p>In this work, we develop a framework Samar to automate editorial decisions. As three major factors &#x2013; recency, relevance and diversity &#x2013; guide the editorial decisions in curating important stories for the readers, Samar tries to merge these factors to make an effective algorithmic news curator. However, we do not envision a future without the human editors. We believe that a tool like Samar can complement the editors to offer new innovative schemes to their audience. For example, using Samar, media outlets can generate hourly news digests, weekly/bi-weekly newspapers or even curate news from across the web in their unique editorial styles.</p>    <p>     <strong>Acknowledgments:</strong>A. Chakraborty is a recipient of Google India PhD Fellowship and Prime Minister&#x0027;s Fellowship Scheme for Doctoral Research, a public-private partnership between Science &#x0026; Engineering Research Board (SERB), Dept. of Science &#x0026; Technology, Government of India and Confederation of Indian Industry (CII).</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>     <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>     </div>    </header>    <ul class="bibUl">     <li id="BibPLXBIB0001" label="[1]">Zeinab Abbassi, Vahab&#x00A0;S Mirrokni, and Mayur Thakur. 2013. Diversity maximization under matroid constraints. In <em>      <em>ACM KDD</em>     </em>.</li>     <li id="BibPLXBIB0002" label="[2]">Abhijnan Chakraborty, Saptarshi Ghosh, Niloy Ganguly, and Krishna&#x00A0;P Gummadi. 2013. Can trending news stories create coverage bias? on the impact of high content churn in online news media. In <em>      <em>Computation+Journalism Symposium</em>     </em>.</li>     <li id="BibPLXBIB0003" label="[3]">Abhijnan Chakraborty, Saptarshi Ghosh, Niloy Ganguly, and Krishna&#x00A0;P Gummadi. 2017. Optimizing the Recency-Relevancy Trade-off in Online News Recommendations. In <em>      <em>Intl. Conf. on World Wide Web (WWW)</em>     </em>.</li>     <li id="BibPLXBIB0004" label="[4]">Uriel Feige, Vahab&#x00A0;S Mirrokni, and Jan Vondrak. 2011. Maximizing non-monotone submodular functions. <em>      <em>SIAM J. Comput.</em>     </em>40, 4 (2011).</li>     <li id="BibPLXBIB0005" label="[5]">Yoon Kim. 2014. Convolutional neural networks for sentence classification. In <em>      <em>Empirical Methods in Natural Language Processing (EMNLP)</em>     </em>.</li>     <li id="BibPLXBIB0006" label="[6]">Hsuan-Tien Lin, Chih-Jen Lin, and Ruby&#x00A0;C Weng. 2007. A note on Platt&#x0027;s probabilistic outputs for support vector machines. <em>      <em>Machine learning</em>     </em>68, 3 (2007).</li>     <li id="BibPLXBIB0007" label="[7]">Raz Schwartz, Mor Naaman, and Rannie Teodoro. 2015. Editorial Algorithms: Using Social Media to Discover and Report Local News. In <em>      <em>AAAI ICWSM</em>     </em>.</li>     <li id="BibPLXBIB0008" label="[8]">Pamela&#x00A0;J Shoemaker, Tim&#x00A0;P Vos, and Stephen&#x00A0;D Reese. 2009. Journalists as gatekeepers. <em>      <em>The handbook of journalism studies</em>     </em>73 (2009).</li>     <li id="BibPLXBIB0009" label="[9]">Mark Stencel, Bill Adair, and Prashanth Kamalakanthan. 2014. The goat must be fed: Why digital tools are missing in most newsrooms. <em>      <em>Reporters&#x2019; Lab</em>     </em> (2014).</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">     <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class="link-inline force-break"     href="http://www.niemanlab.org/2015/08/the-new-york-times-built-a-slack-bot-to-help-decide-which-stories-to-post-to-social-media">http://www.niemanlab.org/2015/08/the-new-york-times-built-a-slack-bot-to-help-decide-which-stories-to-post-to-social-media</a>   </p>   <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class="link-inline force-break"     href="http://www.bbc.co.uk/rd/projects/editorial-algorithms">http://www.bbc.co.uk/rd/projects/editorial-algorithms</a>   </p>   <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a>We experimented with different classifiers and found this combination to work best.</p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>     <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3186937">https://doi.org/10.1145/3184558.3186937</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div>  </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Editorial Algorithms: Optimizing Recency, Relevance and
+  Diversity for Automated News Curation</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Editorial Algorithms: Optimizing
+          Recency, Relevance and Diversity for Automated News
+          Curation</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Abhijnan</span> <span class=
+          "surName">Chakraborty</span> Indian Institute of
+          Technology Kharagpur, India
+        </div>
+        <div class="author">
+          <span class="givenName">Mohammad</span> <span class=
+          "surName">Luqman</span> Indian Institute of Technology
+          Kharagpur, India
+        </div>
+        <div class="author">
+          <span class="givenName">Sidhartha</span> <span class=
+          "surName">Satapathy</span> University of Illinois,
+          Urbana-Champaign, USA
+        </div>
+        <div class="author">
+          <span class="givenName">Niloy</span> <span class=
+          "surName">Ganguly</span> Indian Institute of Technology
+          Kharagpur, India
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186937"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186937</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>With a large number of stories emerging from the
+        newsrooms, media websites need to curate interesting news
+        for their readers. Although traditionally news was curated
+        solely by human editors, increasing news volume has led
+        media outlets to adopt <em>editorial algorithms</em>.
+        However, such algorithms are often proprietary, and smaller
+        outlets do not have the resources to build them from
+        scratch. In this paper, we present a novel framework
+        ‘Samar’ to automatically curate news by optimizing recency,
+        relevance and diversity of the selected stories.
+        Evaluations over two real-world news datasets show that
+        Samar outperforms several state-of-the-art baselines in
+        matching the news curation performed by human
+        editors.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Abhijnan Chakraborty, Mohammad Luqman, Sidhartha
+          Satapathy, and Niloy Ganguly. 2018. Editorial Algorithms:
+          Optimizing Recency, Relevance and Diversity for Automated
+          News Curation. In <em>WWW '18 Companion: The 2018 Web
+          Conference Companion,</em> <em>April 23–27, 2018,</em>
+          <em>Lyon, France. ACM, New York, NY, USA</em> 2 Pages.
+          <a href="https://doi.org/10.1145/3184558.3186937" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3186937</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Due to the large number of news stories available online,
+      news readers need to rely on news curation or recommendation
+      services to find important news&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0002">2</a>]. Traditionally, news
+      curation was the sole domain of expert human editors (e.g.,
+      while selecting the news stories for the printed newspaper),
+      who used to select what stories should be consumed by the
+      readers – a process known as <em>journalistic
+      gatekeeping</em>&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0008">8</a>]. However, the emergence of news
+      aggregators (e.g., Google News), social media newsfeeds
+      (e.g., in Facebook, Twitter) and personalized news
+      recommendations have given rise to <em>editorial
+      algorithms</em>&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>] which replace the human editorial
+      gatekeeping roles.</p>
+      <p>Large media organizations are also introducing editorial
+      algorithms in their newsrooms. For example, New York Times
+      has built a slack bot ‘Blossom’ which recommends stories the
+      editors should promote on social media<a class="fn" href=
+      "#fn1" id="foot-fn1"><sup>1</sup></a>. Similarly, BBC has
+      developed tools to automate different editorial
+      decisions<a class="fn" href="#fn2" id=
+      "foot-fn2"><sup>2</sup></a>. However, such tools are often
+      proprietary, and smaller media outlets may not have the
+      technical and human resources to build such
+      tools&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0009">9</a>].
+      In this work, we systemically address different challenges in
+      automatizing editorial decisions and build a framework
+      ‘Samar’ (named after the Bengali poet and editor Samar Sen
+      (en.wikipedia.org/wiki/Samar_Sen)), which can help the
+      editors to conceptualize innovative offerings.</p>
+      <p>While curating news, there are three basic metrics of
+      interest – recency, relevance and diversity of stories.
+      Recency captures a story's age, i.e., when the story is
+      published. In <em>personalized recommendations</em>,
+      relevance denotes how well a story matches a particular
+      reader's interest. However, editors often curate stories for
+      a broad audience (e.g., the stories in a printed newspaper
+      are same for everyone in a city). In such contexts, relevance
+      refers to the importance of a story judged from the editors’
+      <em>notions of newsworthiness</em>&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0008">8</a>]. In our earlier
+      work&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0003">3</a>],
+      we showed that it is tricky to optimize both recency and
+      relevance of recommended news when relevance is estimated
+      through audience-driven popularity measures. Samar tries to
+      circumvent this difficulty by inferring newsworthiness from
+      observing the editorial decisions on past news data. However,
+      along with newsworthiness, curated stories should avoid
+      covering redundant topics, and instead have diverse topical
+      coverage. Samar efficiently combines all these aspects for
+      automated news curation.</p>
+      <p>To evaluate the effectivity of Samar in curating news
+      stories, we gather extensive data from two very popular news
+      websites – The Guardian (<tt>theguardian.com</tt>) and
+      NYTimes (<tt>nytimes.com</tt>). We find that Samar
+      outperforms several state-of-the-art baselines in matching
+      the editorial decisions at these websites. We conclude by
+      discussing the potential application of Samar in media
+      newsrooms.</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span>
+          Methodology</h2>
+        </div>
+      </header>
+      <p>Samar selects <em>K</em> news stories from a larger set of
+      candidate stories by first computing recency and relevance
+      scores for the candidates, and then inculcating diversity in
+      the final curated set.</p>
+      <p>• <strong>Recency:</strong> Recency of a story <em>i</em>
+      is measured as the difference between the curation time and
+      the publish time of the story.</p>
+      <div class="table-responsive" id="Xeq1">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} recency_i =
+          \frac{1}{time\; since\; i \; is \; published}
+          \end{equation}</span><br />
+          <span class="equation-number">(1)</span>
+        </div>
+      </div>where the time difference can be computed in seconds,
+      minutes or hours depending on the context. We then normalize
+      <em>recency<sub>i</sub></em> scores of the candidate stories
+      by the score of the most recent candidate.
+      <div class="table-responsive" id="eq1">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation}
+          normalized\_recency_i = \frac{recency_i}{max(\lbrace
+          \forall i \; recency_i \rbrace)}
+          \end{equation}</span><br />
+          <span class="equation-number">(2)</span>
+        </div>
+      </div>• <strong>Relevance:</strong> To calculate relevance of
+      a story, we develop a supervised binary classifier (two
+      classes denote whether a story will be curated or not), and
+      use the predicted curation probability as the relevance
+      score. To some extent, this score reveals the newsworthiness
+      of the story. We use the following features: (i) story
+      abstract, (ii) author name(s), (iii) list of topics (or
+      keywords) describing the story, (iv) news category (e.g.,
+      politics, sports) and (v) no. of stories on same topic(s)
+      published in last 7 days. As features (i)-(iv) are textual
+      features, we first train four text classifiers with
+      individual features (one Convolutional Neural Networks (CNN)
+      based classifier for feature (i), and three Naive Bayes (NB)
+      classifiers for features (ii)-(iv)), and then use the
+      predicted probalibilities for curated/not-curated classes as
+      features for a SVM classifier (with RBF kernel) at the top
+      level<a class="fn" href="#fn3" id=
+      "foot-fn3"><sup>3</sup></a>. Thus, the SVM classifier
+      effectively uses nine numeric features – predicted
+      probailities from the textual classifiers and no. of related
+      stories (after appropriate scaling). A story's relevance
+      score is then measured as the curation probability predicted
+      by this SVM classifier (using the method proposed by Lin
+      <em>et al.</em>&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>]).
+      <p></p>
+      <p>The CNN architecture for the textual classifier over the
+      abstract is similar to that used in&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0005">5</a>], where every abstract is
+      converted to a <em>m</em> × <em>n</em> matrix (<em>m</em> is
+      the maximum abstract length, and <em>n</em> = 50 is the word
+      vector dimension). A convolution operation is applied to
+      every possible window of <em>h</em> words to produce a
+      feature map. We then apply a max over time pooling operation
+      over the feature map and take the maximum value as a feature.
+      Multiple features are obtained by varying the value of
+      <em>h</em>. These features form the penultimate layer and are
+      passed to a fully connected softmax layer whose output gives
+      the probability distribution over curated/not-curated
+      classes.</p>
+      <p>After computing the recency and relevance scores for a
+      story, we compute a linear combination of these scores as</p>
+      <div class="table-responsive" id="eq2">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} \phi _i =
+          \lambda *normalized\_recency_i + (1-\lambda)*relevance_i
+          \end{equation}</span><br />
+          <span class="equation-number">(3)</span>
+        </div>
+      </div>where <em>λ</em> is a hyper parameter, which can be
+      inferred using maximum likelihood estimates over a given
+      training dataset.
+      <p></p>
+      <p>• <strong>Diversity:</strong> Diversity can be measured by
+      how different topics are covered by the curated news stories.
+      Formally, Samar tries to maximize the following function
+      <em>f</em>(<em>S</em>) over the curated set <em>S</em>.</p>
+      <div class="table-responsive" id="eq3">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} maximize \sum _i
+          (\phi _i \cdot \sum _{t \in \tau _i}\frac{1}{ freq_t})
+          \cdot x_i \end{equation}</span><br />
+          <span class="equation-number">(4)</span>
+        </div>
+      </div>
+      <p></p>
+      <p>subject to ∑ <sub><em>i</em></sub> <em>x<sub>i</sub></em>
+      ≤ <em>K</em></p>
+      <p>where <em>x<sub>i</sub></em> s are indicator variables
+      (<em>x<sub>i</sub></em> = 1 denotes that <em>i</em> is among
+      the curated stories); <em>τ<sub>i</sub></em> is the list of
+      topics covered by <em>i</em>, <em>freq<sub>t</sub></em> is
+      the number of articles in <em>S</em> which cover topic
+      <em>t</em>, and <em>K</em> is the size of <em>S</em>.</p>
+      <p>It can be proved that <em>f</em>(<em>S</em>) is
+      <em>non-monotone submodular</em>, and maximizing such
+      functions w.r.t <em>cardniality constraints</em> is
+      NP-Hard&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>]. We implement <span class=
+      "inline-equation"><span class=
+      "tex">$\frac{1}{3}$</span></span> -<em>approximation</em>
+      algorithm proposed in&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>] to solve Eqn&nbsp;<a class="eqn"
+      href="#eq3">4</a>. Intuitively, we first build <em>S</em> by
+      taking <em>K</em> stories with highest <em>ϕ<sub>i</sub></em>
+      scores. Then, we update <em>S</em> if removing a story from
+      <em>S</em> and adding another story from outside <em>S</em>
+      improves the overall diversity score. This process is
+      repeated until no further change in <em>S</em> is
+      possible.</p>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Experimental
+          Evaluation</h2>
+        </div>
+      </header>
+      <p><strong>Datasets:</strong> To evaluate the performance of
+      Samar in curating news stories, we collected all stories
+      appearing on The Guardian and NYTimes, and also the stories
+      selected by editors for the printed newspaper everyday
+      throughout July, 2015 to June, 2016. We gathered 90,355
+      Guardian and 242,125 NYTimes stories; out of which, 13,580
+      Guardian stories and 40,419 NYTimes stories got selected for
+      their print editions during this one year period.</p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">Accuracy (Acc), Precision (P) and Recall
+          (R) in predicting the editorial decision of selecting
+          stories for next day's newspaper.</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:left;">
+              <strong>Dataset</strong></td>
+              <td colspan="3" style="text-align:center;">
+                <strong>The Guardian</strong>
+                <hr />
+              </td>
+              <td colspan="3" style="text-align:center;">
+                <strong>NYTimes</strong>
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">
+              <strong>Approach</strong></td>
+              <td style="text-align:center;">
+              <strong>Acc</strong></td>
+              <td style="text-align:center;">
+              <strong>P</strong></td>
+              <td style="text-align:center;">
+              <strong>R</strong></td>
+              <td style="text-align:center;">
+              <strong>Acc</strong></td>
+              <td style="text-align:center;">
+              <strong>P</strong></td>
+              <td style="text-align:center;">
+              <strong>R</strong></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Most Recent</td>
+              <td style="text-align:center;">0.747</td>
+              <td style="text-align:center;">0.180</td>
+              <td style="text-align:center;">0.180</td>
+              <td style="text-align:center;">0.639</td>
+              <td style="text-align:center;">0.066</td>
+              <td style="text-align:center;">0.086</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Most Diverse</td>
+              <td style="text-align:center;">0.688</td>
+              <td style="text-align:center;">0.083</td>
+              <td style="text-align:center;">0.106</td>
+              <td style="text-align:center;">0.648</td>
+              <td style="text-align:center;">0.086</td>
+              <td style="text-align:center;">0.013</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Most Relevant</td>
+              <td style="text-align:center;">0.737</td>
+              <td style="text-align:center;">0.415</td>
+              <td style="text-align:center;">0.651</td>
+              <td style="text-align:center;">0.823</td>
+              <td style="text-align:center;">0.605</td>
+              <td style="text-align:center;">0.614</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Most
+              Recent+Relevant</td>
+              <td style="text-align:center;">0.815</td>
+              <td style="text-align:center;">0.528</td>
+              <td style="text-align:center;">0.652</td>
+              <td style="text-align:center;">0.866</td>
+              <td style="text-align:center;">0.776</td>
+              <td style="text-align:center;">0.787</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Samar</td>
+              <td style="text-align:center;">
+              <strong>0.823</strong></td>
+              <td style="text-align:center;">
+              <strong>0.609</strong></td>
+              <td style="text-align:center;">
+              <strong>0.723</strong></td>
+              <td style="text-align:center;">
+              <strong>0.917</strong></td>
+              <td style="text-align:center;">
+              <strong>0.827</strong></td>
+              <td style="text-align:center;">
+              <strong>0.798</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Results:</strong> We compare Samar with several
+      baselines: (1) most <em>recent</em> stories, (2) most
+      <em>relevant</em> stories, (3) most <em>diverse</em> stories
+      (proposed in&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>]), and (4) stories with highest
+      <em>ϕ<sub>i</sub></em> scores (combination of recency and
+      relevance, which is conceptually similar to the metric
+      <em>Future Impact</em> proposed in&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0003">3</a>]). To compare the
+      performance of different methods, we consider the selection
+      of stories for the daily newspaper of The Guardian and
+      NYTimes from 1st January to 30th June, 2016. For each day, we
+      consider all stories published in last 3 days as the
+      candidate set, and different methods would predict which
+      stories made it to the print edition. Training data is
+      selected on a sliding basis, i.e., to make a prediction for
+      the newspaper on day <em>m</em>, we consider last six month's
+      data upto day <em>m</em> − 3 as training.</p>
+      <p>Table&nbsp;<a class="tbl" href="#tab1">1</a> shows the
+      results of each of these approaches. We notice that only
+      considering most recent, most relevant or most diverse
+      articles result in poor precision and recall. Considering
+      recency and relevance together achieves considerable
+      performance gains. However, as we can observe in
+      Table&nbsp;<a class="tbl" href="#tab1">1</a>, Samar performs
+      best for both datasets by capturing all three salient aspects
+      of editorial curation - recency, relevance and diversity of
+      the stories.</p>
+    </section>
+    <section id="sec-8">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>In this work, we develop a framework Samar to automate
+      editorial decisions. As three major factors – recency,
+      relevance and diversity – guide the editorial decisions in
+      curating important stories for the readers, Samar tries to
+      merge these factors to make an effective algorithmic news
+      curator. However, we do not envision a future without the
+      human editors. We believe that a tool like Samar can
+      complement the editors to offer new innovative schemes to
+      their audience. For example, using Samar, media outlets can
+      generate hourly news digests, weekly/bi-weekly newspapers or
+      even curate news from across the web in their unique
+      editorial styles.</p>
+      <p><strong>Acknowledgments:</strong>A. Chakraborty is a
+      recipient of Google India PhD Fellowship and Prime Minister's
+      Fellowship Scheme for Doctoral Research, a public-private
+      partnership between Science &amp; Engineering Research Board
+      (SERB), Dept. of Science &amp; Technology, Government of
+      India and Confederation of Indian Industry (CII).</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Zeinab Abbassi,
+        Vahab&nbsp;S Mirrokni, and Mayur Thakur. 2013. Diversity
+        maximization under matroid constraints. In <em><em>ACM
+        KDD</em></em> .</li>
+        <li id="BibPLXBIB0002" label="[2]">Abhijnan Chakraborty,
+        Saptarshi Ghosh, Niloy Ganguly, and Krishna&nbsp;P Gummadi.
+        2013. Can trending news stories create coverage bias? on
+        the impact of high content churn in online news media. In
+        <em><em>Computation+Journalism Symposium</em></em> .</li>
+        <li id="BibPLXBIB0003" label="[3]">Abhijnan Chakraborty,
+        Saptarshi Ghosh, Niloy Ganguly, and Krishna&nbsp;P Gummadi.
+        2017. Optimizing the Recency-Relevancy Trade-off in Online
+        News Recommendations. In <em><em>Intl. Conf. on World Wide
+        Web (WWW)</em></em> .</li>
+        <li id="BibPLXBIB0004" label="[4]">Uriel Feige,
+        Vahab&nbsp;S Mirrokni, and Jan Vondrak. 2011. Maximizing
+        non-monotone submodular functions. <em><em>SIAM J.
+        Comput.</em></em> 40, 4 (2011).</li>
+        <li id="BibPLXBIB0005" label="[5]">Yoon Kim. 2014.
+        Convolutional neural networks for sentence classification.
+        In <em><em>Empirical Methods in Natural Language Processing
+        (EMNLP)</em></em> .</li>
+        <li id="BibPLXBIB0006" label="[6]">Hsuan-Tien Lin, Chih-Jen
+        Lin, and Ruby&nbsp;C Weng. 2007. A note on Platt's
+        probabilistic outputs for support vector machines.
+        <em><em>Machine learning</em></em> 68, 3 (2007).</li>
+        <li id="BibPLXBIB0007" label="[7]">Raz Schwartz, Mor
+        Naaman, and Rannie Teodoro. 2015. Editorial Algorithms:
+        Using Social Media to Discover and Report Local News. In
+        <em><em>AAAI ICWSM</em></em> .</li>
+        <li id="BibPLXBIB0008" label="[8]">Pamela&nbsp;J Shoemaker,
+        Tim&nbsp;P Vos, and Stephen&nbsp;D Reese. 2009. Journalists
+        as gatekeepers. <em><em>The handbook of journalism
+        studies</em></em> 73 (2009).</li>
+        <li id="BibPLXBIB0009" label="[9]">Mark Stencel, Bill
+        Adair, and Prashanth Kamalakanthan. 2014. The goat must be
+        fed: Why digital tools are missing in most newsrooms.
+        <em><em>Reporters’ Lab</em></em> (2014).</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.niemanlab.org/2015/08/the-new-york-times-built-a-slack-bot-to-help-decide-which-stories-to-post-to-social-media">http://www.niemanlab.org/2015/08/the-new-york-times-built-a-slack-bot-to-help-decide-which-stories-to-post-to-social-media</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.bbc.co.uk/rd/projects/editorial-algorithms">http://www.bbc.co.uk/rd/projects/editorial-algorithms</a></p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a>We experimented
+    with different classifiers and found this combination to work
+    best.</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186937">https://doi.org/10.1145/3184558.3186937</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

@@ -1,1 +1,1097 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> <head>  <title>On the Use of &#x201C;Deep&#x201D; Features for Online Image Sharing</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script> </head> <body id="main">  <section class="front-matter">   <section>    <header class="title-info">    <div class="journal-title">     <h1>      <span class="title">On the Use of &#x201C;Deep&#x201D; Features for Online Image Sharing</span>      <br/>      <span class="subTitle"/>     </h1>    </div>    </header>    <div class="authorGroup">    <div class="author">     <span class="givenName">Ashwini</span>     <span class="surName">Tonge</span>     Computer Science, Kansas State University, Manhattan, Kansas 66502    </div>    <div class="author">     <span class="givenName">Cornelia</span>     <span class="surName">Caragea</span>     Computer Science, Kansas State University, Manhattan, Kansas 66502, <a href="mailto:atonge@ksu.edu, ccaragea@ksu.edu">atonge@ksu.edu, ccaragea@ksu.edu</a>    </div>        </div>    <br/>    <div class="pubInfo">    <p>DOI: <a href="https://doi.org/10.1145/3184558.3191572" target="_blank">https://doi.org/10.1145/3184558.3191572</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">    <p>     <small>Online image sharing in social networking sites such as Facebook, Flickr, and Instagram can lead to unwanted disclosure and privacy violations, when privacy settings are used inappropriately. Despite that social networking sites allow users to set their privacy preferences, this can be cumbersome for the vast majority of users. In this paper, we explore privacy prediction models for social media that can automatically identify private (or sensitive) content from images, before they are shared online, in order to help protect users&#x2019; privacy in social media. More precisely, we study &#x201C;deep&#x201D; visual features that are extracted from various layers of a pre-trained deep Convolutional Neural Network (CNN) as well as &#x201C;deep&#x201D; image tags generated from the CNN. Experimental results on a Flickr dataset of thousands of images show that the deep visual features and deep image tags can successfully identify images&#x2019; private content and substantially outperform previous models for this task.</small>    </p>    </div>    <div class="CCSconcepts">    <p> <small> <span style="font-weight:bold;">CCS Concepts:</span> &#x2022;<strong> Security and privacy </strong>&#x2192; <strong>Social network security and privacy;</strong></small> </p>    </div>    <div class="classifications">    <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>image privacy; deep visual features; privacy setting prediction</small>     </span>    </div>    <br/>    <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Ashwini Tonge and Cornelia Caragea. 2018. On the Use of &#x201C;Deep&#x201D; Features for Online Image Sharing. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 5 Pages. <a href="https://doi.org/10.1145/3184558.3191572" class="link-inline force-break"       target="_blank">https://doi.org/10.1145/3184558.3191572</a></small>     </p>    </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-2">    <header>    <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>    </div>    </header>    <p>The rapid increase in multi-media sharing through social networking sites such as Facebook, Flickr, and Instagram can cause potential threats to users&#x2019; privacy, when privacy settings are used inappropriately [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>]. Many users quickly share private images about themselves, their family and friends, but they rarely change the default privacy settings, which could jeopardize their privacy [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>]. These shared images can potentially reveal a user&#x0027;s personal and social habits. Furthermore, the smartphones facilitate the exchange of information virtually at any time with people all around the world. A study by the Pew Reserch center [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0010">10</a>] of the social networking sites users regret the posted content. Users&#x2019; privacy is recognized as a concern by social networking sites researchers as well. For example, the Director of AI Research at Facebook, LeCun [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>] urges the development of a digital assistant, to warn people about sensitive content while uploading embarrassing photos. Thus, in order to avoid privacy violations and protect users&#x2019; shared content in social media, it has become critical to develop automated privacy-aware models that can accurately detect private (or sensitive) content from images before they are shared online. <figure id="fig1">     <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191572/images/www18companion-311-fig1.jpg" class="img-responsive" alt="Figure 1"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 1:</span>      <span class="figure-title">Examples of private and public images.</span>     </div>    </figure>    </p>    <p>A naive rule-based classifier that classifies an image as private if it contains people does not work well in a real-world scenario. For example, Laxton et al. <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0007">7</a> described a &#x201C;tele-duplication attack&#x201D; that allows an adversary to create a physical key duplicate simply from an image. The rule-based model will fail to predict the image of a key as consisting of private (or sensitive) content, which needs to be protected. Figure <a class="fig" href="#fig1">1</a> shows examples of images having <em>private</em> or <em>public</em> content, from a publicly available dataset [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>]. <figure id="fig2">     <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191572/images/www18companion-311-fig2.jpg" class="img-responsive" alt="Figure 2"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 2:</span>      <span class="figure-title">Deep features: CNN is used to extract deep visual features and deep image tags for input images.</span>     </div>    </figure>    </p>    <p>Prior works explored binary prediction models of image privacy based on user tags and image content features such as SIFT (Scale Invariant Feature Transform) and RGB (Red Green Blue) [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0017">17</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>]. Authors found that SIFT features and user tags are informative for the task of classifying images as <em>private</em> or <em>public</em>. Yet, as images&#x2019; tags are at the sole discretion of users, they tend to be noisy and incomplete [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0018">18</a>]. Recently, due to the success of object recognition from images using Convolutional Neural Networks (CNNs) [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>], researchers started to investigate privacy frameworks based on CNNs [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>]. However, automatically identifying private content is inherently difficult because it requires an in-depth &#x201C;understanding&#x201D; of the visual content of the image. Additionally, the task is very subjective, depending on factors such as users&#x2019; personalities and their privacy awareness. Recently, Zhong et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0023">23</a>] discussed challenges faced by both generic and personalized models for image privacy classification. Specifically, they highlight that generic privacy patterns do not capture well an individual&#x0027;s sharing behavior, whereas personalized models generally require large amounts of user data to learn reliable models, and are time and space consuming to train and store models for each user. We recognize that progress should be made on both directions to improve hybrid approaches of generic and personalized models. Thus, in this paper, we aim at identifying a set of generic privacy patterns, i.e., &#x201C;deep&#x201D; features that have the highest discriminative power for privacy prediction.</p>    <p>    <strong>Contributions.</strong> We present an analysis of various &#x201C;deep&#x201D; feature representations for image privacy prediction (i.e., for predicting the class of an image as <em>private</em> or <em>public</em>). Unlike previous works, we explore features that can be directly obtained from a pre-trained object CNN for privacy prediction. Specifically, we use deep feature representations corresponding to the output of fully-connected layers of a CNN, pre-trained on ImageNet [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0012">12</a>], as well as the probability distribution over the object categories obtained from the last layer of the network via softmax. Since the set of user tags may be incomplete and noisy, unlike previous works, we leverage CNNs for automatically generating &#x201C;deep tags&#x201D; that correspond to the top-ranked probabilities obtained from the probability distribution over the 1,000 object categories. These tags can also provide the relevant cues for privacy-aware image retrieval [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>].</p>    <p>We evaluate the performance of the &#x201C;deep&#x201D; features (extracted from AlexNet [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>]) on a subset of the PicAlert dataset of Flickr images given by Zerr et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>], labeled as private or public. We empirically show that learning models trained on deep features for privacy prediction outperform strong baselines such as those trained on hierarchical deep features, SIFT, GIST (global image descriptors) and user tags. We also show that deep features provide improved performance for the private class as compared to baseline approaches. Moreover, the results show that the deep tags yield better performing models as compared to user tags and the combination of deep and user tags outperforms both set of tags.</p>   </section>   <section id="sec-3">    <header>    <div class="title-info">     <h2>      <span class="section-number">2</span> Related work</h2>    </div>    </header>    <p>Buschek et al. <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a> presented an approach to assigning privacy to shared images using metadata (location, time, shot details) and visual features (faces, colors, edges). Zerr et al. <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a> proposed privacy-aware image classification, and learned classifiers on Flickr photos. Authors considered user-annotated tags and visual features such as color histograms, faces, edge-direction coherence, and SIFT for the privacy classification task and found that SIFT has a high discriminative power for image privacy detection. Consistent with Zerr et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>], Squicciarini et al. <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0017">17</a> also found that SIFT and user-annotated tags work best for predicting privacy of users&#x2019; images. Given the recent success of CNNs for various image-related tasks [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>], Tran et al. <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a> investigated CNNs for privacy prediction and showed improved performance compared with visual features such as SIFT [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0009">9</a>] and GIST [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>] (this approach is one of our strong baselines). Spyromitros-Xioufis et al. <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0015">15</a> explored features extracted from CNNs to provide more accurate personalized privacy classification. Yu et al. <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a> adopted CNNs to achieve semantic image segmentation and also learned object-privacy relatedness to identify sensitive objects.</p>   </section>   <section id="sec-4">    <header>    <div class="title-info">     <h2>      <span class="section-number">3</span> Image Privacy Prediction</h2>    </div>    </header>    <p>The privacy of an image can be determined by the presence of one or more objects described by the visual content and the description associated with it in the form of tags.</p>    <p>    <strong>Problem Statement:</strong> Given an image to be uploaded online, the task is to classify it into one of the two classes: <em>private</em> or <em>public</em>, i.e., consisting of private or public content, respectively.</p>    <p>Next, we describe the features used in the classification.</p>    <p>    <strong>Feature Extraction:</strong> We extract &#x201C;deep&#x201D; features from images using AlexNet CNN [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>] pre-trained on the ILSVRC-2012 object classification subset of the ImageNet dataset [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0012">12</a>]. AlexNet implements an eight-layer feed-forward neural network in which first five layers consist of interleaved convolution and pooling layers, and top three layers consist of fully-connected (FC) layers. The convolution layers represent high-level features of images, whereas the FC layers give the non-linear combination of the features in the layers below. A probability (prob) layer obtained by applying the softmax function to the input from the previous FC layer, and finally the output layer, which outputs the probabilities of the objects in the input image. This is illustrated in Figure <a class="fig" href="#fig2">2</a>. The reason for using features derived from a pre-trained network is that the sensitive content is limited for model training and training or fine-tuning a deep network requires a large amount of privacy data.</p>    <p>    <strong>Deep Visual Features:</strong> We extracted deep visual features from the FC layers, which are referred as FC<sub>6</sub>, FC<sub>7</sub>, and FC<sub>8</sub>, and from the &#x201C;prob&#x201D; layer (the cyan block in Figure <a class="fig" href="#fig2">2</a>). The dimensions of FC<sub>6</sub>, FC<sub>7</sub>, and FC<sub>8</sub> are 4096, 4096 and 1000, respectively. The &#x201C;prob&#x201D; layer produces a probability distribution over <em>c</em> = 1000 object categories for the input image using softmax function and can be defined as: <span class="inline-equation"><span class="tex">$P({y=c}|{\bf z})=\frac{exp(z_k)}{\sum _j exp(z_j)}$</span>    </span> where, <strong>z</strong> is the output of the FC<sub>8</sub> layer.</p>    <p>    <strong>Deep Image Tags:</strong> It is interesting to mention that not all images on social networking sites have tags or the set of tags is very sparse [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0018">18</a>]. Thus, we use an automatic annotation technique to derive tags for images based on their visual content. For automatic image annotation, we predict the top <em>K</em> object categories for an input image <strong>x</strong> from the probability distribution extracted from the CNN. we obtain deep tags such as &#x201C;Maillot,&#x201D; &#x201C;Wig,&#x201D; &#x201C;Brassiere,&#x201D; &#x201C;Bra,&#x201D; &#x201C;Miniskirt&#x201D; for the picture in Figure <a class="fig" href="#fig2">2</a> (note that only top <em>K</em> = 5 deep tags are obtained). However, important tags such as &#x201C;people&#x201D; and &#x201C;women&#x201D; are not included. This is because the 1,000 object categories used for training do not contain these tags.</p>   </section>   <section id="sec-5">    <header>    <div class="title-info">     <h2>      <span class="section-number">4</span> Dataset and Evaluation Settings</h2>    </div>    </header>    <p>We trained and evaluated models based on deep features on a subset of 32,000 Flickr images sampled from the PicAlert dataset, made available by Zerr et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>]. PicAlert consists of Flickr images on various subjects, which are manually labeled as <em>private</em> or <em>public</em> by external viewers. In our experiments, the 32,000 images are split into <strong>Train</strong> and <strong>Test</strong> sets of 10,000 and 22,000 images, respectively. We consider a higher number of test images (compared to Training images) to evaluate the &#x201C;deep&#x201D; features on a large set of unseen images for limited number of training images. Each experiment was repeated five times with a different train/test split and the micro averaged results are presented across these five runs. The public and private images are in the ratio of 3:1 in both train and test. <em>     <strong>Evaluation Setting.</strong>    </em> To evaluate the deep features, we used the Support Vector Machine (SVM) classifier implemented in Weka and chose the hyper-parameters that gave the best performance on the <strong>Train</strong> set using 10-fold cross-validation (CV). We experimented with <em>C</em> = {0.001, 0.01, 1.0, &#x22C5;&#x22C5;&#x22C5;, 10.0}, kernels: Polynomial and RBF, the <em>&#x03B3;</em> parameter in RBF, and the degree <em>d</em> of a polynomial. Hyper-parameters shown in all result tables follow the format: &#x201C;R/P,C,<em>&#x03B3;</em>/<em>d</em>&#x201D; where &#x201C;R&#x201D; denotes &#x201C;RBF&#x201D; and &#x201C;P&#x201D; denotes &#x201C;Polynomial.&#x201D;</p>   </section>   <section id="sec-6">    <header>    <div class="title-info">     <h2>      <span class="section-number">5</span> Experiments and Results</h2>    </div>    </header>    <p>We present the experimental evaluation of the deep features. We compare the performance of the models trained on deep visual features with the models trained on baseline visual features for privacy prediction. Earlier user tags performed well for privacy prediction [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0017">17</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>], and hence, we examine the quality of tag features using both user annotated tags and automatically annotated (deep) tags.</p>    <section id="sec-7">    <header>     <div class="title-info">      <h3>       <span class="section-number">5.1</span> Results for Deep Visual Features</h3>     </div>    </header>    <p>     <em>      <strong>Experimental design:</strong>     </em> We wish to identify the most promising visual features from the set of deep features that have the highest discriminative ability for privacy classes. To achieve this, we first compare the deep visual features among each other. We then compare the performance of models based on deep visual features with several baselines that we described below.</p>    <div class="table-responsive" id="tab1">     <div class="table-caption">      <span class="table-number">Table 1:</span>      <span class="table-title">Deep visual features vs. Baselines</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;">Features</td>       <td style="text-align:left;">H-Param</td>       <td style="text-align:center;">Acc %</td>       <td style="text-align:center;">F1</td>       <td style="text-align:center;">Prec</td>       <td style="text-align:center;">Re</td>       </tr>       <tr>       <td colspan="6" style="text-align:center;">#1 Deep visual features<hr/>       </td>       </tr>       <tr>       <td style="text-align:left;">FC<sub>6</sub>       </td>       <td style="text-align:left;">R,1.0,0.05</td>       <td style="text-align:center;">85.49</td>       <td style="text-align:center;">0.844</td>       <td style="text-align:center;">0.847</td>       <td style="text-align:center;">0.855</td>       </tr>       <tr>       <td style="text-align:left;">FC<sub>7</sub>       </td>       <td style="text-align:left;">R,2.0,0.01</td>       <td style="text-align:center;">        <strong>85.83</strong>       </td>       <td style="text-align:center;">        <strong>0.851</strong>       </td>       <td style="text-align:center;">        <strong>0.851</strong>       </td>       <td style="text-align:center;">        <strong>0.858</strong>       </td>       </tr>       <tr>       <td style="text-align:left;">FC<sub>8</sub>       </td>       <td style="text-align:left;">R,1.0,0.05</td>       <td style="text-align:center;">85.80</td>       <td style="text-align:center;">        <strong>0.851</strong>       </td>       <td style="text-align:center;">        <strong>0.851</strong>       </td>       <td style="text-align:center;">        <strong>0.858</strong>       </td>       </tr>       <tr>       <td style="text-align:left;">Prob</td>       <td style="text-align:left;">R,5.0,1.0</td>       <td style="text-align:center;">83.18</td>       <td style="text-align:center;">0.824</td>       <td style="text-align:center;">0.822</td>       <td style="text-align:center;">0.832</td>       </tr>       <tr>       <td colspan="6" style="text-align:center;">#2 Hierarchical Deep Features [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0019">19</a>]<hr/>       </td>       </tr>       <tr>       <td style="text-align:left;">PCNH</td>       <td style="text-align:left;"> &#x2212;</td>       <td style="text-align:center;">84.21</td>       <td style="text-align:center;">0.833</td>       <td style="text-align:center;">0.832</td>       <td style="text-align:center;">0.842</td>       </tr>       <tr>       <td colspan="6" style="text-align:center;">#3 SIFT/GIST [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0017">17</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0022">22</a>]<hr/>       </td>       </tr>       <tr>       <td style="text-align:left;">SIFT</td>       <td style="text-align:left;">P,1.0,2.0</td>       <td style="text-align:center;">77.31</td>       <td style="text-align:center;">0.674</td>       <td style="text-align:center;">0.598</td>       <td style="text-align:center;">0.773</td>       </tr>       <tr>       <td style="text-align:left;">GIST</td>       <td style="text-align:left;">R,0.001,0.5</td>       <td style="text-align:center;">77.33</td>       <td style="text-align:center;">0.674</td>       <td style="text-align:center;">0.598</td>       <td style="text-align:center;">0.773</td>       </tr>       <tr>       <td style="text-align:left;">SIFT+GIST</td>       <td style="text-align:left;">R,0.05,0.5</td>       <td style="text-align:center;">72.67</td>       <td style="text-align:center;">0.704</td>       <td style="text-align:center;">0.691</td>       <td style="text-align:center;">0.727</td>       </tr>       <tr>       <td colspan="6" style="text-align:center;">#4 Rule-based models<hr/>       </td>       </tr>       <tr>       <td style="text-align:left;">Rule-1</td>       <td style="text-align:left;"> &#x2212;</td>       <td style="text-align:center;">77.35</td>       <td style="text-align:center;">0.683</td>       <td style="text-align:center;">0.694</td>       <td style="text-align:center;">0.672</td>       </tr>       <tr>       <td style="text-align:left;">Rule-2</td>       <td style="text-align:left;"> &#x2212;</td>       <td style="text-align:center;">77.93</td>       <td style="text-align:center;">0.673</td>       <td style="text-align:center;">0.704</td>       <td style="text-align:center;">0.644</td>       </tr>      </tbody>     </table>    </div>    <p>     <em>      <strong>Baselines.</strong>     </em> Tran et al. <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0019">19</a> proposed PCNH, a privacy CNN-based framework, that combines features obtained from two architectures: one that extracts convolutional features, and another that extracts object features. The Object CNN is a deep network of 11 layers obtained by appending three FC layers of size 512, 512, 24 at the end of the FC layer of AlexNet. The PCNH framework is first trained on the ImageNet dataset and then fine-tuned on a small privacy dataset. As images&#x2019; privacy greatly depends on the objects in images, we believe that the features controlling the distinct attributes of the objects obtained through the higher number of neurons (4096 neurons in FC<sub>7</sub> of AlexNet) can better approximate the privacy function compared with adding more non-linear layers (as in PCNH). The increase in the number of complex non-linear layers introduces more parameters to learn, and at the same time, with comparatively small amount of training data (PicAlert vs. ImageNet), can result in over-fitting. Moreover, training such a deep network on ImageNet and then fine-tuning on the privacy data significantly increases the processing power and time complexity. Furthermore, if new objects are added to the object dataset, the networks need to be retrained from scratch. Conversely, features derived from state-of-the-art CNN architectures can reduce the overhead of re-training and still achieve good performance for privacy prediction. Hence, we compare models trained on the &#x201C;deep&#x201D; features with the PCNH privacy framework, and consider the latter as our first baseline. Unlike Tran et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0019">19</a>] who used 800 images in their evaluation, we evaluate our models on a large set of images (22000) to validate the performance of the deep features for a large variety of image subjects. We regard classifiers trained on the best performing features between SIFT, GIST, and their combination as the second strong baseline. We also compare the performance of the deep features with two naive rule-based classifiers, which predict an image as <em>private</em> if it contains persons. Otherwise, the image is classified as <em>public</em>. For the first rule-based classifier, we detect front and profile faces by using Viola-Jones algorithm [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0020">20</a>]. For the second rule-based classifier, we consider user tags such as &#x201C;women,&#x201D; &#x201C;men,&#x201D; &#x201C;people.&#x201D;</p>    <p>For the deep visual features, we use the AlexNet pre-trained CNN implemented in CAFFE <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0004">4</a>, which is an open-source framework for deep neural networks. We resize images in both <strong>Train</strong> and <strong>Test</strong> to the CAFFE convolutional neural net compatible size of 227 &#x00D7; 227 and encode each image using the three deep feature representations corresponding to the output of the layers FC<sub>6</sub>, FC<sub>7</sub>, FC<sub>8</sub>, and &#x201C;Prob,&#x201D; which is the probability distribution obtained from FC<sub>8</sub> via softmax.</p>    <p>     <em>      <strong>Results</strong>     </em>: Table <a class="tbl" href="#tab1">1</a> shows results of the comparison (Precision, Recall, F1- Measure and Accuracy) of SVMs using each deep feature type extracted from AlexNet, FC<sub>6</sub>, FC<sub>7</sub>, FC<sub>8</sub>, and &#x201C;Prob,&#x201D; and the results of their comparison with the performance of baselines (i.e., SVMs trained using the baseline features), on <strong>Test</strong>. We can see from the table that the SVMs trained on FC<sub>7</sub> and FC<sub>8</sub> perform similarly, and the performance improves as we go from FC<sub>6</sub> to FC<sub>7</sub>. This is because higher layers of the network capture high level feature descriptions of objects present in the image. We notice that all FC<sub>6</sub>, FC<sub>7</sub>, FC<sub>8</sub> deep features are able to achieve performance higher than 85% in terms of all compared measures. Note that a naive baseline which classifies every image as &#x201C;public&#x201D; obtains an accuracy of 75%. It is worth mentioning that &#x201C;prob&#x201D; features perform worse than the features extracted from the fully-connected layers. One possible explanation could be that squashing the values at the previous layer (FC<sub>8</sub> in AlexNet) through the softmax function, which yields the &#x201C;prob&#x201D; layer, produces a non-linearity that is less useful for SVM compared to the un-transformed values. The results of FC layers over the &#x201C;prob&#x201D; layer are statistically significant for p-values < 0.05.</p>    <p>Table <a class="tbl" href="#tab1">1</a> shows also that deep visual features FC<sub>6</sub>, FC<sub>7</sub>, FC<sub>8</sub> provide better feature representations than baseline visual features for privacy prediction. Precisely, the models obtained using deep visual features extracted from AlexNet outperform models trained on baseline features, PCNH, SIFT, GIST and SIFT + GIST. For example, F1-measure improves from 0.833 obtained by PCNH features to 0.851 obtained by FC<sub>8</sub>. We achieve improvement in F1-measure as high as 15% over SIFT + GIST models, i.e., our second baselines. &#x201C;Prob&#x201D; features also perform better than SIFT + GIST. With a paired T-test, our improvements over the baseline approaches for F1-measure are statistically significant for p-values < 0.05. It is also</p>    <div class="table-responsive" id="tab2">     <div class="table-caption">      <span class="table-number">Table 2:</span>      <span class="table-title">Performance for &#x201C;Private&#x201D; class.</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;">Features</td>       <td style="text-align:center;">F1</td>       <td style="text-align:center;">Prec</td>       <td style="text-align:center;">Re</td>       </tr>       <tr>       <td colspan="4" style="text-align:center;">#1 Deep visual features<hr/>       </td>       </tr>       <tr>       <td style="text-align:left;">FC<sub>7</sub>       </td>       <td style="text-align:center;">        <strong>0.642</strong>       </td>       <td style="text-align:center;">        <strong>0.752</strong>       </td>       <td style="text-align:center;">        <strong>0.56</strong>       </td>       </tr>       <tr>       <td colspan="4" style="text-align:center;">#2 Hierarchical Deep Features [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0019">19</a>]<hr/>       </td>       </tr>       <tr>       <td style="text-align:left;">PCNH</td>       <td style="text-align:center;">0.598</td>       <td style="text-align:center;">0.708</td>       <td style="text-align:center;">0.518</td>       </tr>       <tr>       <td colspan="4" style="text-align:center;">#3 SIFT/GIST [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0017">17</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0022">22</a>]<hr/>       </td>       </tr>       <tr>       <td style="text-align:left;">SIFT+GIST</td>       <td style="text-align:center;">0.27</td>       <td style="text-align:center;">0.343</td>       <td style="text-align:center;">0.223</td>       </tr>       <tr>       <td colspan="4" style="text-align:center;">#4 Rule-based models<hr/>       </td>       </tr>       <tr>       <td style="text-align:left;">Rule-1</td>       <td style="text-align:center;">0.509</td>       <td style="text-align:center;">0.47</td>       <td style="text-align:center;">0.556</td>       </tr>       <tr>       <td style="text-align:left;">Rule-2</td>       <td style="text-align:center;">0.458</td>       <td style="text-align:center;">0.373</td>       <td style="text-align:center;">0.593</td>       </tr>      </tbody>     </table>    </div>    <p>interesting to note that rules based on facial features exhibit better performance than SIFT and GIST and suggest that features representing persons are helpful to predict private content of images. However, &#x201C;deep&#x201D; features outperform the rule-based models based on facial features by more than 10% in terms of all measures (see Table <a class="tbl" href="#tab1">1</a>, #4 Rule-based models). Simple rule-based models will not suffice for this task and advanced AI technology such as deep learning is required.</p>    <p>We also show the privacy prediction performance for &#x201C;private&#x201D; class in Table <a class="tbl" href="#tab2">2</a> to identify which features characterize the private class effectively as sharing private images on the Web with everyone is not desirable. We found that the SVM trained on AlexNet-based deep visual features obtain improved performance for the private class as compared with the SVM trained on the baseline features. Precisely, using the best-performing deep visual features FC<sub>7</sub>, F1-measure for the private class improves from 0.598 obtained by PCNH to 0.642 obtained by FC<sub>7</sub>.</p>    <div class="table-responsive" id="tab3">     <div class="table-caption">      <span class="table-number">Table 3:</span>      <span class="table-title">Privacy prediction performance using tag features.</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;">Features</td>       <td style="text-align:left;">H-Param</td>       <td style="text-align:center;">Acc %</td>       <td style="text-align:center;">F1</td>       <td style="text-align:center;">Prec</td>       <td style="text-align:center;">Re</td>       </tr>       <tr>       <td style="text-align:left;">User Tags</td>       <td style="text-align:left;">R,2.0,0.05</td>       <td style="text-align:center;">81.73</td>       <td style="text-align:center;">0.789</td>       <td style="text-align:center;">0.803</td>       <td style="text-align:center;">0.817</td>       </tr>       <tr>       <td style="text-align:left;">DT</td>       <td style="text-align:left;">R,1.0,0.1</td>       <td style="text-align:center;">83.18</td>       <td style="text-align:center;">0.819</td>       <td style="text-align:center;">0.819</td>       <td style="text-align:center;">0.832</td>       </tr>       <tr>       <td style="text-align:left;">DT+UT</td>       <td style="text-align:left;">R,1.0,0.05</td>       <td style="text-align:center;">        <strong>84.59</strong>       </td>       <td style="text-align:center;">        <strong>0.833</strong>       </td>       <td style="text-align:center;">        <strong>0.837</strong>       </td>       <td style="text-align:center;">        <strong>0.846</strong>       </td>       </tr>      </tbody>     </table>    </div>    <p>Next, we examine the quality of tag features and contrast the deep image tags with the user annotated tags.</p>    </section>    <section id="sec-8">    <header>     <div class="title-info">      <h3>       <span class="section-number">5.2</span> Results for Deep Image Tags</h3>     </div>    </header>    <p>     <em>      <strong>Experimental design:</strong>     </em> We investigate the performance of SVMs on user tags and deep image tags for privacy prediction. We also examine the combination of user tags and deep tags, which captures different aspects of an image. Examples of user tags for the image in Figure <a class="fig" href="#fig2">2</a> are: &#x201C;Birthday Party,&#x201D; &#x201C;Night Life,&#x201D; &#x201C;People,&#x201D; etc. For the deep tags, we consider <em>K</em> = 10 as other <em>K</em> values did not yield higher results (in 10-fold CV over the Train set).</p>    <p>     <em>      <strong>Results:</strong>     </em> Table <a class="tbl" href="#tab3">3</a> shows the results obtained from the experiments for tag features on the <strong>Test</strong> and compares the performance obtained using models trained on deep tags, user tags and their combination. In the table, &#x201C;UT&#x201D; represents user tags and &#x201C;DT&#x201D; represents deep tags. From the table, we notice that deep tags perform better than user tags, however, the combination of the two outperforms each one individually, the user tags and the deep tags. This can be justified by the fact that the user tags have some general tags, whereas deep tags contain some specific tags, which capture various aspects of the data. To see this, using only general tags can cause overlap in the two different privacy classes. For example, if we consider more general tags such as &#x201C;clothes&#x201D; instead of &#x201C;swimsuit,&#x201D; then the tag can appear in both classes and hence will fail to differentiate between them. Similarly, if we would consider only very specific tags, the models may overfit and will not generalize well on unseen data.</p>    </section>   </section>   <section id="sec-9">    <header>    <div class="title-info">     <h2>      <span class="section-number">6</span> Conclusion and Future Work</h2>    </div>    </header>    <p>In this paper, we explored AI technology, i.e., deep features extracted from various CNN layers, for image privacy classification. Our results show that the deep visual features corresponding to the fully-connected layers of the AlexNet CNN outperform those corresponding to the &#x201C;prob&#x201D; layer. We also examined user annotated tags and deep tags (generated from the &#x201C;prob&#x201D; layer) and found that the combination of both the tags outperforms individual sets of tags. In addition, models trained on deep features yield improvement in performance over several baselines. The result of our classification task is expected to aid other very practical applications. For example, a law enforcement agent who needs to review digital evidence on a suspected equipment to detect sensitive content in images and videos, e.g., child pornography. The learning models developed here can be used to filter or narrow down the number of images and videos having sensitive or private content before other more sophisticated approaches can be applied to the data. In future, other CNN architectures can be explored for privacy prediction. Also, user tags can be extracted from description, and comment to obtain additional information about the image.</p>   </section>   <section id="sec-10">    <header>    <div class="title-info">     <h2>      <span class="section-number">7</span> Acknowledgments</h2>    </div>    </header>    <p>This research is supported in part by the NSF award #1421970.</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>    <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>    </div>    </header>    <ul class="bibUl">    <li id="BibPLXBIB0001" label="[1]">Shane Ahern, Dean Eckles, Nathaniel&#x00A0;S. Good, Simon King, Mor Naaman, and Rahul Nair. 2007. Over-exposed?: Privacy Patterns and Considerations in Online and Mobile Photo Sharing. In <em>      <em>Proceedings of the SIGCHI Conference</em>     </em>(<em>CHI &#x2019;07</em>). ACM, New York, NY, USA, 357&#x2013;366.</li>    <li id="BibPLXBIB0002" label="[2]">Daniel Buschek, Moritz Bader, Emanuel von Zezschwitz, and Alexander De&#x00A0;Luca. 2015. Automatic Privacy Classification of Personal Photos. In <em>      <em>Human-Computer Interaction - INTERACT 2015</em>     </em>. Vol.&#x00A0;9297. 428&#x2013;435.</li>    <li id="BibPLXBIB0003" label="[3]">Clement Farabet, Camille Couprie, Laurent Najman, and Yann LeCun. 2013. Learning Hierarchical Features for Scene Labeling. <em>      <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em>     </em> (August 2013).</li>    <li id="BibPLXBIB0004" label="[4]">Yangqing Jia, Evan Shelhamer, Jeff Donahue, Sergey Karayev, Jonathan Long, Ross Girshick, Sergio Guadarrama, and Trevor Darrell. 2014. Caffe: Convolutional Architecture for Fast Feature Embedding. In <em>      <em>Proceedings of the ACM International Conference on Multimedia</em>     </em>. 675&#x2013;678.</li>    <li id="BibPLXBIB0005" label="[5]">Sergey Karayev, Aaron Hertzmann, Holger Winnemoeller, Aseem Agarwala, and Trevor Darrell. 2013. Recognizing Image Style. <em>      <em>CoRR</em>     </em>abs/1311.3715(2013).</li>    <li id="BibPLXBIB0006" label="[6]">Alex Krizhevsky, Ilya Sutskever, and Geoffrey&#x00A0;E. Hinton. 2012. ImageNet Classification with Deep Convolutional Neural Networks. In <em>      <em>Advances in Neural Information Processing Systems 25</em>     </em>, F.&#x00A0;Pereira, C.J.C. Burges, L.&#x00A0;Bottou, and K.Q. Weinberger (Eds.). Curran Associates, Inc., 1097&#x2013;1105.</li>    <li id="BibPLXBIB0007" label="[7]">Benjamin Laxton, Kai Wang, and Stefan Savage. 2008. Reconsidering Physical Key Secrecy: Teleduplication via Optical Decoding. In <em>      <em>Proceedings of the 15th ACM Conference on Computer and Communications Security</em>     </em>(<em>CCS &#x2019;08</em>). ACM, 469&#x2013;478.</li>    <li id="BibPLXBIB0008" label="[8]">Yann LeCun. 2017. Facebook Envisions AI That Keeps You From Uploading Embarrassing Pics. https://www.wired.com/2014/12/fb/all/1. (2017). [Online; accessed 12-April-2017].</li>    <li id="BibPLXBIB0009" label="[9]">David&#x00A0;G. Lowe. 2004. Distinctive Image Features from Scale-Invariant Keypoints. <em>      <em>IJCV</em>     </em>60, 2 (Nov. 2004), 91&#x2013;110.</li>    <li id="BibPLXBIB0010" label="[10]">MARY MADDEN. 2012. Privacy management on social media sites. http://www.pewinternet.org/2012/02/24/privacy-management-on-social-media-sites. (2012). <a class="link-inline force-break"      href="http://www.pewinternet.org/2012/02/24/privacy-management-on-social-media-sites/"      target="_blank">http://www.pewinternet.org/2012/02/24/privacy-management-on-social-media-sites/</a>[Online; accessed 12-November-2017].</li>    <li id="BibPLXBIB0011" label="[11]">Aude Oliva and Antonio Torralba. 2001. Modeling the Shape of the Scene: A Holistic Representation of the Spatial Envelope. <em>      <em>IJCV</em>     </em>42, 3 (May 2001), 145&#x2013;175.</li>    <li id="BibPLXBIB0012" label="[12]">Olga Russakovsky, Jia Deng, Hao Su, Jonathan Krause, Sanjeev Satheesh, Sean Ma, Zhiheng Huang, Andrej Karpathy, Aditya Khosla, Michael Bernstein, Alexander&#x00A0;C. Berg, and Li Fei-Fei. 2015. ImageNet Large Scale Visual Recognition Challenge. <em>      <em>IJCV</em>     </em> (April 2015), 1&#x2013;42.</li>    <li id="BibPLXBIB0013" label="[13]">Pierre Sermanet, David Eigen, Xiang Zhang, Michael Mathieu, Rob Fergus, and Yann LeCun. 2014. OverFeat: Integrated Recognition, Localization and Detection using Convolutional Networks. In <em>      <em>ICLR 2014</em>     </em>. CBLS.</li>    <li id="BibPLXBIB0014" label="[14]">Pierre Sermanet, Koray Kavukcuoglu, Soumith Chintala, and Yann Lecun. 2013. Pedestrian Detection with Unsupervised Multi-stage Feature Learning. In <em>      <em>Proceedings of the 2013 IEEE Conference on Computer Vision and Pattern Recognition</em>     </em>. 3626&#x2013;3633.</li>    <li id="BibPLXBIB0015" label="[15]">Eleftherios Spyromitros-Xioufis, Symeon Papadopoulos, Adrian Popescu, and Yiannis Kompatsiaris. 2016. Personalized Privacy-aware Image Classification. In <em>      <em>Proceedings of the 2016 ACM on International Conference on Multimedia Retrieval</em>     </em>(<em>ICMR &#x2019;16</em>). ACM, New York, NY, USA, 71&#x2013;78.</li>    <li id="BibPLXBIB0016" label="[16]">Anna Squicciarini, Cornelia Caragea, and Rahul Balakavi. 2017. Toward Automated Online Photo Privacy. <em>      <em>ACM Trans. Web</em>     </em>11, 1, Article 2 (April 2017).</li>    <li id="BibPLXBIB0017" label="[17]">Anna&#x00A0;C. Squicciarini, Cornelia Caragea, and Rahul Balakavi. 2014. Analyzing Images&#x2019; Privacy for the Modern Web. In <em>      <em>Proceedings of the 25th ACM Conference on Hypertext and Social Media</em>     </em>(<em>HT &#x2019;14</em>). ACM, New York, NY, USA, 136&#x2013;147.</li>    <li id="BibPLXBIB0018" label="[18]">Hari Sundaram, Lexing Xie, Munmun De&#x00A0;Choudhury, Yu-Ru Lin, and Apostol Natsev. 2012. Multimedia Semantics: Interactions Between Content and Community. <em>      <em>IEEE</em>     </em> (2012).</li>    <li id="BibPLXBIB0019" label="[19]">Lam Tran, Deguang Kong, Hongxia Jin, and Ji Liu. 2016. Privacy-CNH: A Framework to Detect Photo Privacy with Convolutional Neural Network Using Hierarchical Features. In <em>      <em>Proceedings of the Thirtieth AAAI Conference</em>     </em>. 1317&#x2013;1323.</li>    <li id="BibPLXBIB0020" label="[20]">Paul Viola and Michael Jones. 2001. Robust Real-time Object Detection. In <em>      <em>International Journal of Computer Vision</em>     </em>.</li>    <li id="BibPLXBIB0021" label="[21]">Jun Yu, Baopeng Zhang, Zhengzhong Kuang, Dan Lin, and Jianping Fan. 2017. iPrivacy: Image Privacy Protection by Identifying Sensitive Objects via Deep Multi-Task Learning. <em>      <em>IEEE Trans. Inf. Forensic Secur</em>     </em>12, 5 (2017).</li>    <li id="BibPLXBIB0022" label="[22]">Sergej Zerr, Stefan Siersdorfer, Jonathon Hare, and Elena Demidova. 2012. Privacy-aware image classification and search. In <em>      <em>Proceedings of the 35th international ACM SIGIR conference on Research and development in information retrieval</em>     </em>. ACM, NY, USA.</li>    <li id="BibPLXBIB0023" label="[23]">Haoti Zhong, Anna Squicciarini, David Miller, and Cornelia Caragea. 2017. A Group-Based Personalized Model for Image Privacy Classification and Labeling. In <em>      <em>Proceedings of the Twenty-Sixth International Joint Conference on Artificial Intelligence, IJCAI-17</em>     </em>. 3952&#x2013;3958.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">    <h2>FOOTNOTE</h2>    </div>   </header>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>    <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3191572">https://doi.org/10.1145/3184558.3191572</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div> </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>On the Use of “Deep” Features for Online Image
+  Sharing</title><!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">On the Use of “Deep” Features for
+          Online Image Sharing</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Ashwini</span> <span class=
+          "surName">Tonge</span> Computer Science, Kansas State
+          University, Manhattan, Kansas 66502
+        </div>
+        <div class="author">
+          <span class="givenName">Cornelia</span> <span class=
+          "surName">Caragea</span> Computer Science, Kansas State
+          University, Manhattan, Kansas 66502, <a href=
+          "mailto:atonge@ksu.edu,%20ccaragea@ksu.edu">atonge@ksu.edu,
+          ccaragea@ksu.edu</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191572"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191572</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Online image sharing in social networking sites
+        such as Facebook, Flickr, and Instagram can lead to
+        unwanted disclosure and privacy violations, when privacy
+        settings are used inappropriately. Despite that social
+        networking sites allow users to set their privacy
+        preferences, this can be cumbersome for the vast majority
+        of users. In this paper, we explore privacy prediction
+        models for social media that can automatically identify
+        private (or sensitive) content from images, before they are
+        shared online, in order to help protect users’ privacy in
+        social media. More precisely, we study “deep” visual
+        features that are extracted from various layers of a
+        pre-trained deep Convolutional Neural Network (CNN) as well
+        as “deep” image tags generated from the CNN. Experimental
+        results on a Flickr dataset of thousands of images show
+        that the deep visual features and deep image tags can
+        successfully identify images’ private content and
+        substantially outperform previous models for this
+        task.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Security and privacy</strong> →
+        <strong>Social network security and
+        privacy;</strong></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>image privacy; deep visual
+          features; privacy setting prediction</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Ashwini Tonge and Cornelia Caragea. 2018. On the Use of
+          “Deep” Features for Online Image Sharing. In <em>WWW '18
+          Companion: The 2018 Web Conference Companion,</em>
+          <em>April23–27, 2018,</em> <em>Lyon, France. ACM, New
+          York, NY, USA</em> 5 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3191572" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191572</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-2">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>The rapid increase in multi-media sharing through social
+      networking sites such as Facebook, Flickr, and Instagram can
+      cause potential threats to users’ privacy, when privacy
+      settings are used inappropriately [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0001">1</a>]. Many users quickly share
+      private images about themselves, their family and friends,
+      but they rarely change the default privacy settings, which
+      could jeopardize their privacy [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>]. These shared images can potentially
+      reveal a user's personal and social habits. Furthermore, the
+      smartphones facilitate the exchange of information virtually
+      at any time with people all around the world. A study by the
+      Pew Reserch center [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0010">10</a>] of the social networking sites users
+      regret the posted content. Users’ privacy is recognized as a
+      concern by social networking sites researchers as well. For
+      example, the Director of AI Research at Facebook, LeCun
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0008">8</a>] urges the
+      development of a digital assistant, to warn people about
+      sensitive content while uploading embarrassing photos. Thus,
+      in order to avoid privacy violations and protect users’
+      shared content in social media, it has become critical to
+      develop automated privacy-aware models that can accurately
+      detect private (or sensitive) content from images before they
+      are shared online.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191572/images/www18companion-311-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Examples of private and public
+          images.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>A naive rule-based classifier that classifies an image as
+      private if it contains people does not work well in a
+      real-world scenario. For example, Laxton et al. <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0007">7</a> described a
+      “tele-duplication attack” that allows an adversary to create
+      a physical key duplicate simply from an image. The rule-based
+      model will fail to predict the image of a key as consisting
+      of private (or sensitive) content, which needs to be
+      protected. Figure <a class="fig" href="#fig1">1</a> shows
+      examples of images having <em>private</em> or <em>public</em>
+      content, from a publicly available dataset [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0022">22</a>].</p>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191572/images/www18companion-311-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">Deep features: CNN is used to extract deep
+          visual features and deep image tags for input
+          images.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>Prior works explored binary prediction models of image
+      privacy based on user tags and image content features such as
+      SIFT (Scale Invariant Feature Transform) and RGB (Red Green
+      Blue) [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0017">17</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0022">22</a>]. Authors
+      found that SIFT features and user tags are informative for
+      the task of classifying images as <em>private</em> or
+      <em>public</em>. Yet, as images’ tags are at the sole
+      discretion of users, they tend to be noisy and incomplete
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0018">18</a>]. Recently,
+      due to the success of object recognition from images using
+      Convolutional Neural Networks (CNNs) [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0006">6</a>], researchers started to
+      investigate privacy frameworks based on CNNs [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0019">19</a>]. However, automatically
+      identifying private content is inherently difficult because
+      it requires an in-depth “understanding” of the visual content
+      of the image. Additionally, the task is very subjective,
+      depending on factors such as users’ personalities and their
+      privacy awareness. Recently, Zhong et al. [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0023">23</a>] discussed challenges
+      faced by both generic and personalized models for image
+      privacy classification. Specifically, they highlight that
+      generic privacy patterns do not capture well an individual's
+      sharing behavior, whereas personalized models generally
+      require large amounts of user data to learn reliable models,
+      and are time and space consuming to train and store models
+      for each user. We recognize that progress should be made on
+      both directions to improve hybrid approaches of generic and
+      personalized models. Thus, in this paper, we aim at
+      identifying a set of generic privacy patterns, i.e., “deep”
+      features that have the highest discriminative power for
+      privacy prediction.</p>
+      <p><strong>Contributions.</strong> We present an analysis of
+      various “deep” feature representations for image privacy
+      prediction (i.e., for predicting the class of an image as
+      <em>private</em> or <em>public</em>). Unlike previous works,
+      we explore features that can be directly obtained from a
+      pre-trained object CNN for privacy prediction. Specifically,
+      we use deep feature representations corresponding to the
+      output of fully-connected layers of a CNN, pre-trained on
+      ImageNet [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0012">12</a>],
+      as well as the probability distribution over the object
+      categories obtained from the last layer of the network via
+      softmax. Since the set of user tags may be incomplete and
+      noisy, unlike previous works, we leverage CNNs for
+      automatically generating “deep tags” that correspond to the
+      top-ranked probabilities obtained from the probability
+      distribution over the 1,000 object categories. These tags can
+      also provide the relevant cues for privacy-aware image
+      retrieval [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>].</p>
+      <p>We evaluate the performance of the “deep” features
+      (extracted from AlexNet [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>]) on a subset of the PicAlert dataset
+      of Flickr images given by Zerr et al. [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0022">22</a>], labeled as private or
+      public. We empirically show that learning models trained on
+      deep features for privacy prediction outperform strong
+      baselines such as those trained on hierarchical deep
+      features, SIFT, GIST (global image descriptors) and user
+      tags. We also show that deep features provide improved
+      performance for the private class as compared to baseline
+      approaches. Moreover, the results show that the deep tags
+      yield better performing models as compared to user tags and
+      the combination of deep and user tags outperforms both set of
+      tags.</p>
+    </section>
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          work</h2>
+        </div>
+      </header>
+      <p>Buschek et al. <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a> presented an approach to assigning
+      privacy to shared images using metadata (location, time, shot
+      details) and visual features (faces, colors, edges). Zerr et
+      al. <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0022">22</a> proposed
+      privacy-aware image classification, and learned classifiers
+      on Flickr photos. Authors considered user-annotated tags and
+      visual features such as color histograms, faces,
+      edge-direction coherence, and SIFT for the privacy
+      classification task and found that SIFT has a high
+      discriminative power for image privacy detection. Consistent
+      with Zerr et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>], Squicciarini et al. <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0017">17</a> also found that SIFT and
+      user-annotated tags work best for predicting privacy of
+      users’ images. Given the recent success of CNNs for various
+      image-related tasks [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>], Tran et al. <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0019">19</a> investigated CNNs for
+      privacy prediction and showed improved performance compared
+      with visual features such as SIFT [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0009">9</a>] and GIST [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0011">11</a>] (this approach is one of
+      our strong baselines). Spyromitros-Xioufis et al. <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0015">15</a> explored
+      features extracted from CNNs to provide more accurate
+      personalized privacy classification. Yu et al. <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0021">21</a> adopted CNNs to achieve
+      semantic image segmentation and also learned object-privacy
+      relatedness to identify sensitive objects.</p>
+    </section>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Image Privacy
+          Prediction</h2>
+        </div>
+      </header>
+      <p>The privacy of an image can be determined by the presence
+      of one or more objects described by the visual content and
+      the description associated with it in the form of tags.</p>
+      <p><strong>Problem Statement:</strong> Given an image to be
+      uploaded online, the task is to classify it into one of the
+      two classes: <em>private</em> or <em>public</em>, i.e.,
+      consisting of private or public content, respectively.</p>
+      <p>Next, we describe the features used in the
+      classification.</p>
+      <p><strong>Feature Extraction:</strong> We extract “deep”
+      features from images using AlexNet CNN [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0006">6</a>] pre-trained on the
+      ILSVRC-2012 object classification subset of the ImageNet
+      dataset [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0012">12</a>].
+      AlexNet implements an eight-layer feed-forward neural network
+      in which first five layers consist of interleaved convolution
+      and pooling layers, and top three layers consist of
+      fully-connected (FC) layers. The convolution layers represent
+      high-level features of images, whereas the FC layers give the
+      non-linear combination of the features in the layers below. A
+      probability (prob) layer obtained by applying the softmax
+      function to the input from the previous FC layer, and finally
+      the output layer, which outputs the probabilities of the
+      objects in the input image. This is illustrated in Figure
+      <a class="fig" href="#fig2">2</a>. The reason for using
+      features derived from a pre-trained network is that the
+      sensitive content is limited for model training and training
+      or fine-tuning a deep network requires a large amount of
+      privacy data.</p>
+      <p><strong>Deep Visual Features:</strong> We extracted deep
+      visual features from the FC layers, which are referred as
+      FC<sub>6</sub>, FC<sub>7</sub>, and FC<sub>8</sub>, and from
+      the “prob” layer (the cyan block in Figure <a class="fig"
+      href="#fig2">2</a>). The dimensions of FC<sub>6</sub>,
+      FC<sub>7</sub>, and FC<sub>8</sub> are 4096, 4096 and 1000,
+      respectively. The “prob” layer produces a probability
+      distribution over <em>c</em> = 1000 object categories for the
+      input image using softmax function and can be defined as:
+      <span class="inline-equation"><span class="tex">$P({y=c}|{\bf
+      z})=\frac{exp(z_k)}{\sum _j exp(z_j)}$</span></span> where,
+      <strong>z</strong> is the output of the FC<sub>8</sub>
+      layer.</p>
+      <p><strong>Deep Image Tags:</strong> It is interesting to
+      mention that not all images on social networking sites have
+      tags or the set of tags is very sparse [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0018">18</a>]. Thus, we use an
+      automatic annotation technique to derive tags for images
+      based on their visual content. For automatic image
+      annotation, we predict the top <em>K</em> object categories
+      for an input image <strong>x</strong> from the probability
+      distribution extracted from the CNN. we obtain deep tags such
+      as “Maillot,” “Wig,” “Brassiere,” “Bra,” “Miniskirt” for the
+      picture in Figure <a class="fig" href="#fig2">2</a> (note
+      that only top <em>K</em> = 5 deep tags are obtained).
+      However, important tags such as “people” and “women” are not
+      included. This is because the 1,000 object categories used
+      for training do not contain these tags.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Dataset and
+          Evaluation Settings</h2>
+        </div>
+      </header>
+      <p>We trained and evaluated models based on deep features on
+      a subset of 32,000 Flickr images sampled from the PicAlert
+      dataset, made available by Zerr et al. [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0022">22</a>]. PicAlert consists of
+      Flickr images on various subjects, which are manually labeled
+      as <em>private</em> or <em>public</em> by external viewers.
+      In our experiments, the 32,000 images are split into
+      <strong>Train</strong> and <strong>Test</strong> sets of
+      10,000 and 22,000 images, respectively. We consider a higher
+      number of test images (compared to Training images) to
+      evaluate the “deep” features on a large set of unseen images
+      for limited number of training images. Each experiment was
+      repeated five times with a different train/test split and the
+      micro averaged results are presented across these five runs.
+      The public and private images are in the ratio of 3:1 in both
+      train and test. <em><strong>Evaluation Setting.</strong></em>
+      To evaluate the deep features, we used the Support Vector
+      Machine (SVM) classifier implemented in Weka and chose the
+      hyper-parameters that gave the best performance on the
+      <strong>Train</strong> set using 10-fold cross-validation
+      (CV). We experimented with <em>C</em> = {0.001, 0.01, 1.0,
+      ⋅⋅⋅, 10.0}, kernels: Polynomial and RBF, the <em>γ</em>
+      parameter in RBF, and the degree <em>d</em> of a polynomial.
+      Hyper-parameters shown in all result tables follow the
+      format: “R/P,C,<em>γ</em>/<em>d</em>” where “R” denotes “RBF”
+      and “P” denotes “Polynomial.”</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Experiments and
+          Results</h2>
+        </div>
+      </header>
+      <p>We present the experimental evaluation of the deep
+      features. We compare the performance of the models trained on
+      deep visual features with the models trained on baseline
+      visual features for privacy prediction. Earlier user tags
+      performed well for privacy prediction [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0017">17</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0022">22</a>], and hence, we examine
+      the quality of tag features using both user annotated tags
+      and automatically annotated (deep) tags.</p>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span> Results for
+            Deep Visual Features</h3>
+          </div>
+        </header>
+        <p><em><strong>Experimental design:</strong></em> We wish
+        to identify the most promising visual features from the set
+        of deep features that have the highest discriminative
+        ability for privacy classes. To achieve this, we first
+        compare the deep visual features among each other. We then
+        compare the performance of models based on deep visual
+        features with several baselines that we described
+        below.</p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Deep visual features vs. Baselines</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Features</td>
+                <td style="text-align:left;">H-Param</td>
+                <td style="text-align:center;">Acc %</td>
+                <td style="text-align:center;">F1</td>
+                <td style="text-align:center;">Prec</td>
+                <td style="text-align:center;">Re</td>
+              </tr>
+              <tr>
+                <td colspan="6" style="text-align:center;">
+                  #1 Deep visual features
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">FC<sub>6</sub></td>
+                <td style="text-align:left;">R,1.0,0.05</td>
+                <td style="text-align:center;">85.49</td>
+                <td style="text-align:center;">0.844</td>
+                <td style="text-align:center;">0.847</td>
+                <td style="text-align:center;">0.855</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">FC<sub>7</sub></td>
+                <td style="text-align:left;">R,2.0,0.01</td>
+                <td style="text-align:center;">
+                <strong>85.83</strong></td>
+                <td style="text-align:center;">
+                <strong>0.851</strong></td>
+                <td style="text-align:center;">
+                <strong>0.851</strong></td>
+                <td style="text-align:center;">
+                <strong>0.858</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">FC<sub>8</sub></td>
+                <td style="text-align:left;">R,1.0,0.05</td>
+                <td style="text-align:center;">85.80</td>
+                <td style="text-align:center;">
+                <strong>0.851</strong></td>
+                <td style="text-align:center;">
+                <strong>0.851</strong></td>
+                <td style="text-align:center;">
+                <strong>0.858</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Prob</td>
+                <td style="text-align:left;">R,5.0,1.0</td>
+                <td style="text-align:center;">83.18</td>
+                <td style="text-align:center;">0.824</td>
+                <td style="text-align:center;">0.822</td>
+                <td style="text-align:center;">0.832</td>
+              </tr>
+              <tr>
+                <td colspan="6" style="text-align:center;">
+                  #2 Hierarchical Deep Features [<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0019">19</a>]
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">PCNH</td>
+                <td style="text-align:left;">−</td>
+                <td style="text-align:center;">84.21</td>
+                <td style="text-align:center;">0.833</td>
+                <td style="text-align:center;">0.832</td>
+                <td style="text-align:center;">0.842</td>
+              </tr>
+              <tr>
+                <td colspan="6" style="text-align:center;">
+                  #3 SIFT/GIST [<a class="bib" data-trigger="hover"
+                  data-toggle="popover" data-placement="top" href=
+                  "#BibPLXBIB0016">16</a>, <a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0017">17</a>, <a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0022">22</a>]
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">SIFT</td>
+                <td style="text-align:left;">P,1.0,2.0</td>
+                <td style="text-align:center;">77.31</td>
+                <td style="text-align:center;">0.674</td>
+                <td style="text-align:center;">0.598</td>
+                <td style="text-align:center;">0.773</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">GIST</td>
+                <td style="text-align:left;">R,0.001,0.5</td>
+                <td style="text-align:center;">77.33</td>
+                <td style="text-align:center;">0.674</td>
+                <td style="text-align:center;">0.598</td>
+                <td style="text-align:center;">0.773</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">SIFT+GIST</td>
+                <td style="text-align:left;">R,0.05,0.5</td>
+                <td style="text-align:center;">72.67</td>
+                <td style="text-align:center;">0.704</td>
+                <td style="text-align:center;">0.691</td>
+                <td style="text-align:center;">0.727</td>
+              </tr>
+              <tr>
+                <td colspan="6" style="text-align:center;">
+                  #4 Rule-based models
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Rule-1</td>
+                <td style="text-align:left;">−</td>
+                <td style="text-align:center;">77.35</td>
+                <td style="text-align:center;">0.683</td>
+                <td style="text-align:center;">0.694</td>
+                <td style="text-align:center;">0.672</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Rule-2</td>
+                <td style="text-align:left;">−</td>
+                <td style="text-align:center;">77.93</td>
+                <td style="text-align:center;">0.673</td>
+                <td style="text-align:center;">0.704</td>
+                <td style="text-align:center;">0.644</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p><em><strong>Baselines.</strong></em> Tran et al.
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0019">19</a> proposed
+        PCNH, a privacy CNN-based framework, that combines features
+        obtained from two architectures: one that extracts
+        convolutional features, and another that extracts object
+        features. The Object CNN is a deep network of 11 layers
+        obtained by appending three FC layers of size 512, 512, 24
+        at the end of the FC layer of AlexNet. The PCNH framework
+        is first trained on the ImageNet dataset and then
+        fine-tuned on a small privacy dataset. As images’ privacy
+        greatly depends on the objects in images, we believe that
+        the features controlling the distinct attributes of the
+        objects obtained through the higher number of neurons (4096
+        neurons in FC<sub>7</sub> of AlexNet) can better
+        approximate the privacy function compared with adding more
+        non-linear layers (as in PCNH). The increase in the number
+        of complex non-linear layers introduces more parameters to
+        learn, and at the same time, with comparatively small
+        amount of training data (PicAlert vs. ImageNet), can result
+        in over-fitting. Moreover, training such a deep network on
+        ImageNet and then fine-tuning on the privacy data
+        significantly increases the processing power and time
+        complexity. Furthermore, if new objects are added to the
+        object dataset, the networks need to be retrained from
+        scratch. Conversely, features derived from state-of-the-art
+        CNN architectures can reduce the overhead of re-training
+        and still achieve good performance for privacy prediction.
+        Hence, we compare models trained on the “deep” features
+        with the PCNH privacy framework, and consider the latter as
+        our first baseline. Unlike Tran et al. [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0019">19</a>] who used 800 images in
+        their evaluation, we evaluate our models on a large set of
+        images (22000) to validate the performance of the deep
+        features for a large variety of image subjects. We regard
+        classifiers trained on the best performing features between
+        SIFT, GIST, and their combination as the second strong
+        baseline. We also compare the performance of the deep
+        features with two naive rule-based classifiers, which
+        predict an image as <em>private</em> if it contains
+        persons. Otherwise, the image is classified as
+        <em>public</em>. For the first rule-based classifier, we
+        detect front and profile faces by using Viola-Jones
+        algorithm [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0020">20</a>]. For the second rule-based
+        classifier, we consider user tags such as “women,” “men,”
+        “people.”</p>
+        <p>For the deep visual features, we use the AlexNet
+        pre-trained CNN implemented in CAFFE <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0004">4</a>, which is an open-source
+        framework for deep neural networks. We resize images in
+        both <strong>Train</strong> and <strong>Test</strong> to
+        the CAFFE convolutional neural net compatible size of 227 ×
+        227 and encode each image using the three deep feature
+        representations corresponding to the output of the layers
+        FC<sub>6</sub>, FC<sub>7</sub>, FC<sub>8</sub>, and “Prob,”
+        which is the probability distribution obtained from
+        FC<sub>8</sub> via softmax.</p>
+        <p><em><strong>Results</strong></em> : Table <a class="tbl"
+        href="#tab1">1</a> shows results of the comparison
+        (Precision, Recall, F1- Measure and Accuracy) of SVMs using
+        each deep feature type extracted from AlexNet,
+        FC<sub>6</sub>, FC<sub>7</sub>, FC<sub>8</sub>, and “Prob,”
+        and the results of their comparison with the performance of
+        baselines (i.e., SVMs trained using the baseline features),
+        on <strong>Test</strong>. We can see from the table that
+        the SVMs trained on FC<sub>7</sub> and FC<sub>8</sub>
+        perform similarly, and the performance improves as we go
+        from FC<sub>6</sub> to FC<sub>7</sub>. This is because
+        higher layers of the network capture high level feature
+        descriptions of objects present in the image. We notice
+        that all FC<sub>6</sub>, FC<sub>7</sub>, FC<sub>8</sub>
+        deep features are able to achieve performance higher than
+        85% in terms of all compared measures. Note that a naive
+        baseline which classifies every image as “public” obtains
+        an accuracy of 75%. It is worth mentioning that “prob”
+        features perform worse than the features extracted from the
+        fully-connected layers. One possible explanation could be
+        that squashing the values at the previous layer
+        (FC<sub>8</sub> in AlexNet) through the softmax function,
+        which yields the “prob” layer, produces a non-linearity
+        that is less useful for SVM compared to the un-transformed
+        values. The results of FC layers over the “prob” layer are
+        statistically significant for p-values &lt; 0.05.</p>
+        <p>Table <a class="tbl" href="#tab1">1</a> shows also that
+        deep visual features FC<sub>6</sub>, FC<sub>7</sub>,
+        FC<sub>8</sub> provide better feature representations than
+        baseline visual features for privacy prediction. Precisely,
+        the models obtained using deep visual features extracted
+        from AlexNet outperform models trained on baseline
+        features, PCNH, SIFT, GIST and SIFT + GIST. For example,
+        F1-measure improves from 0.833 obtained by PCNH features to
+        0.851 obtained by FC<sub>8</sub>. We achieve improvement in
+        F1-measure as high as 15% over SIFT + GIST models, i.e.,
+        our second baselines. “Prob” features also perform better
+        than SIFT + GIST. With a paired T-test, our improvements
+        over the baseline approaches for F1-measure are
+        statistically significant for p-values &lt; 0.05. It is
+        also</p>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Performance for “Private” class.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Features</td>
+                <td style="text-align:center;">F1</td>
+                <td style="text-align:center;">Prec</td>
+                <td style="text-align:center;">Re</td>
+              </tr>
+              <tr>
+                <td colspan="4" style="text-align:center;">
+                  #1 Deep visual features
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">FC<sub>7</sub></td>
+                <td style="text-align:center;">
+                <strong>0.642</strong></td>
+                <td style="text-align:center;">
+                <strong>0.752</strong></td>
+                <td style="text-align:center;">
+                <strong>0.56</strong></td>
+              </tr>
+              <tr>
+                <td colspan="4" style="text-align:center;">
+                  #2 Hierarchical Deep Features [<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0019">19</a>]
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">PCNH</td>
+                <td style="text-align:center;">0.598</td>
+                <td style="text-align:center;">0.708</td>
+                <td style="text-align:center;">0.518</td>
+              </tr>
+              <tr>
+                <td colspan="4" style="text-align:center;">
+                  #3 SIFT/GIST [<a class="bib" data-trigger="hover"
+                  data-toggle="popover" data-placement="top" href=
+                  "#BibPLXBIB0016">16</a>, <a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0017">17</a>, <a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0022">22</a>]
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">SIFT+GIST</td>
+                <td style="text-align:center;">0.27</td>
+                <td style="text-align:center;">0.343</td>
+                <td style="text-align:center;">0.223</td>
+              </tr>
+              <tr>
+                <td colspan="4" style="text-align:center;">
+                  #4 Rule-based models
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Rule-1</td>
+                <td style="text-align:center;">0.509</td>
+                <td style="text-align:center;">0.47</td>
+                <td style="text-align:center;">0.556</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Rule-2</td>
+                <td style="text-align:center;">0.458</td>
+                <td style="text-align:center;">0.373</td>
+                <td style="text-align:center;">0.593</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>interesting to note that rules based on facial features
+        exhibit better performance than SIFT and GIST and suggest
+        that features representing persons are helpful to predict
+        private content of images. However, “deep” features
+        outperform the rule-based models based on facial features
+        by more than 10% in terms of all measures (see Table
+        <a class="tbl" href="#tab1">1</a>, #4 Rule-based models).
+        Simple rule-based models will not suffice for this task and
+        advanced AI technology such as deep learning is
+        required.</p>
+        <p>We also show the privacy prediction performance for
+        “private” class in Table <a class="tbl" href="#tab2">2</a>
+        to identify which features characterize the private class
+        effectively as sharing private images on the Web with
+        everyone is not desirable. We found that the SVM trained on
+        AlexNet-based deep visual features obtain improved
+        performance for the private class as compared with the SVM
+        trained on the baseline features. Precisely, using the
+        best-performing deep visual features FC<sub>7</sub>,
+        F1-measure for the private class improves from 0.598
+        obtained by PCNH to 0.642 obtained by FC<sub>7</sub>.</p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Privacy prediction performance using tag
+            features.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Features</td>
+                <td style="text-align:left;">H-Param</td>
+                <td style="text-align:center;">Acc %</td>
+                <td style="text-align:center;">F1</td>
+                <td style="text-align:center;">Prec</td>
+                <td style="text-align:center;">Re</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">User Tags</td>
+                <td style="text-align:left;">R,2.0,0.05</td>
+                <td style="text-align:center;">81.73</td>
+                <td style="text-align:center;">0.789</td>
+                <td style="text-align:center;">0.803</td>
+                <td style="text-align:center;">0.817</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">DT</td>
+                <td style="text-align:left;">R,1.0,0.1</td>
+                <td style="text-align:center;">83.18</td>
+                <td style="text-align:center;">0.819</td>
+                <td style="text-align:center;">0.819</td>
+                <td style="text-align:center;">0.832</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">DT+UT</td>
+                <td style="text-align:left;">R,1.0,0.05</td>
+                <td style="text-align:center;">
+                <strong>84.59</strong></td>
+                <td style="text-align:center;">
+                <strong>0.833</strong></td>
+                <td style="text-align:center;">
+                <strong>0.837</strong></td>
+                <td style="text-align:center;">
+                <strong>0.846</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Next, we examine the quality of tag features and
+        contrast the deep image tags with the user annotated
+        tags.</p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> Results for
+            Deep Image Tags</h3>
+          </div>
+        </header>
+        <p><em><strong>Experimental design:</strong></em> We
+        investigate the performance of SVMs on user tags and deep
+        image tags for privacy prediction. We also examine the
+        combination of user tags and deep tags, which captures
+        different aspects of an image. Examples of user tags for
+        the image in Figure <a class="fig" href="#fig2">2</a> are:
+        “Birthday Party,” “Night Life,” “People,” etc. For the deep
+        tags, we consider <em>K</em> = 10 as other <em>K</em>
+        values did not yield higher results (in 10-fold CV over the
+        Train set).</p>
+        <p><em><strong>Results:</strong></em> Table <a class="tbl"
+        href="#tab3">3</a> shows the results obtained from the
+        experiments for tag features on the <strong>Test</strong>
+        and compares the performance obtained using models trained
+        on deep tags, user tags and their combination. In the
+        table, “UT” represents user tags and “DT” represents deep
+        tags. From the table, we notice that deep tags perform
+        better than user tags, however, the combination of the two
+        outperforms each one individually, the user tags and the
+        deep tags. This can be justified by the fact that the user
+        tags have some general tags, whereas deep tags contain some
+        specific tags, which capture various aspects of the data.
+        To see this, using only general tags can cause overlap in
+        the two different privacy classes. For example, if we
+        consider more general tags such as “clothes” instead of
+        “swimsuit,” then the tag can appear in both classes and
+        hence will fail to differentiate between them. Similarly,
+        if we would consider only very specific tags, the models
+        may overfit and will not generalize well on unseen
+        data.</p>
+      </section>
+    </section>
+    <section id="sec-9">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Conclusion and
+          Future Work</h2>
+        </div>
+      </header>
+      <p>In this paper, we explored AI technology, i.e., deep
+      features extracted from various CNN layers, for image privacy
+      classification. Our results show that the deep visual
+      features corresponding to the fully-connected layers of the
+      AlexNet CNN outperform those corresponding to the “prob”
+      layer. We also examined user annotated tags and deep tags
+      (generated from the “prob” layer) and found that the
+      combination of both the tags outperforms individual sets of
+      tags. In addition, models trained on deep features yield
+      improvement in performance over several baselines. The result
+      of our classification task is expected to aid other very
+      practical applications. For example, a law enforcement agent
+      who needs to review digital evidence on a suspected equipment
+      to detect sensitive content in images and videos, e.g., child
+      pornography. The learning models developed here can be used
+      to filter or narrow down the number of images and videos
+      having sensitive or private content before other more
+      sophisticated approaches can be applied to the data. In
+      future, other CNN architectures can be explored for privacy
+      prediction. Also, user tags can be extracted from
+      description, and comment to obtain additional information
+      about the image.</p>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">7</span>
+          Acknowledgments</h2>
+        </div>
+      </header>
+      <p>This research is supported in part by the NSF award
+      #1421970.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Shane Ahern, Dean
+        Eckles, Nathaniel&nbsp;S. Good, Simon King, Mor Naaman, and
+        Rahul Nair. 2007. Over-exposed?: Privacy Patterns and
+        Considerations in Online and Mobile Photo Sharing. In
+        <em><em>Proceedings of the SIGCHI Conference</em></em>
+        (<em>CHI ’07</em>). ACM, New York, NY, USA, 357–366.</li>
+        <li id="BibPLXBIB0002" label="[2]">Daniel Buschek, Moritz
+        Bader, Emanuel von Zezschwitz, and Alexander De&nbsp;Luca.
+        2015. Automatic Privacy Classification of Personal Photos.
+        In <em><em>Human-Computer Interaction - INTERACT
+        2015</em></em> . Vol.&nbsp;9297. 428–435.</li>
+        <li id="BibPLXBIB0003" label="[3]">Clement Farabet, Camille
+        Couprie, Laurent Najman, and Yann LeCun. 2013. Learning
+        Hierarchical Features for Scene Labeling. <em><em>IEEE
+        Transactions on Pattern Analysis and Machine
+        Intelligence</em></em> (August 2013).</li>
+        <li id="BibPLXBIB0004" label="[4]">Yangqing Jia, Evan
+        Shelhamer, Jeff Donahue, Sergey Karayev, Jonathan Long,
+        Ross Girshick, Sergio Guadarrama, and Trevor Darrell. 2014.
+        Caffe: Convolutional Architecture for Fast Feature
+        Embedding. In <em><em>Proceedings of the ACM International
+        Conference on Multimedia</em></em> . 675–678.</li>
+        <li id="BibPLXBIB0005" label="[5]">Sergey Karayev, Aaron
+        Hertzmann, Holger Winnemoeller, Aseem Agarwala, and Trevor
+        Darrell. 2013. Recognizing Image Style.
+        <em><em>CoRR</em></em> abs/1311.3715(2013).</li>
+        <li id="BibPLXBIB0006" label="[6]">Alex Krizhevsky, Ilya
+        Sutskever, and Geoffrey&nbsp;E. Hinton. 2012. ImageNet
+        Classification with Deep Convolutional Neural Networks. In
+        <em><em>Advances in Neural Information Processing Systems
+        25</em></em> , F.&nbsp;Pereira, C.J.C. Burges,
+        L.&nbsp;Bottou, and K.Q. Weinberger (Eds.). Curran
+        Associates, Inc., 1097–1105.</li>
+        <li id="BibPLXBIB0007" label="[7]">Benjamin Laxton, Kai
+        Wang, and Stefan Savage. 2008. Reconsidering Physical Key
+        Secrecy: Teleduplication via Optical Decoding. In
+        <em><em>Proceedings of the 15th ACM Conference on Computer
+        and Communications Security</em></em> (<em>CCS ’08</em>).
+        ACM, 469–478.</li>
+        <li id="BibPLXBIB0008" label="[8]">Yann LeCun. 2017.
+        Facebook Envisions AI That Keeps You From Uploading
+        Embarrassing Pics. https://www.wired.com/2014/12/fb/all/1.
+        (2017). [Online; accessed 12-April-2017].</li>
+        <li id="BibPLXBIB0009" label="[9]">David&nbsp;G. Lowe.
+        2004. Distinctive Image Features from Scale-Invariant
+        Keypoints. <em><em>IJCV</em></em> 60, 2 (Nov. 2004),
+        91–110.</li>
+        <li id="BibPLXBIB0010" label="[10]">MARY MADDEN. 2012.
+        Privacy management on social media sites.
+        http://www.pewinternet.org/2012/02/24/privacy-management-on-social-media-sites.
+        (2012). <a class="link-inline force-break" href=
+        "http://www.pewinternet.org/2012/02/24/privacy-management-on-social-media-sites/"
+          target=
+          "_blank">http://www.pewinternet.org/2012/02/24/privacy-management-on-social-media-sites/</a>[Online;
+          accessed 12-November-2017].
+        </li>
+        <li id="BibPLXBIB0011" label="[11]">Aude Oliva and Antonio
+        Torralba. 2001. Modeling the Shape of the Scene: A Holistic
+        Representation of the Spatial Envelope.
+        <em><em>IJCV</em></em> 42, 3 (May 2001), 145–175.</li>
+        <li id="BibPLXBIB0012" label="[12]">Olga Russakovsky, Jia
+        Deng, Hao Su, Jonathan Krause, Sanjeev Satheesh, Sean Ma,
+        Zhiheng Huang, Andrej Karpathy, Aditya Khosla, Michael
+        Bernstein, Alexander&nbsp;C. Berg, and Li Fei-Fei. 2015.
+        ImageNet Large Scale Visual Recognition Challenge.
+        <em><em>IJCV</em></em> (April 2015), 1–42.</li>
+        <li id="BibPLXBIB0013" label="[13]">Pierre Sermanet, David
+        Eigen, Xiang Zhang, Michael Mathieu, Rob Fergus, and Yann
+        LeCun. 2014. OverFeat: Integrated Recognition, Localization
+        and Detection using Convolutional Networks. In <em><em>ICLR
+        2014</em></em> . CBLS.</li>
+        <li id="BibPLXBIB0014" label="[14]">Pierre Sermanet, Koray
+        Kavukcuoglu, Soumith Chintala, and Yann Lecun. 2013.
+        Pedestrian Detection with Unsupervised Multi-stage Feature
+        Learning. In <em><em>Proceedings of the 2013 IEEE
+        Conference on Computer Vision and Pattern
+        Recognition</em></em> . 3626–3633.</li>
+        <li id="BibPLXBIB0015" label="[15]">Eleftherios
+        Spyromitros-Xioufis, Symeon Papadopoulos, Adrian Popescu,
+        and Yiannis Kompatsiaris. 2016. Personalized Privacy-aware
+        Image Classification. In <em><em>Proceedings of the 2016
+        ACM on International Conference on Multimedia
+        Retrieval</em></em> (<em>ICMR ’16</em>). ACM, New York, NY,
+        USA, 71–78.</li>
+        <li id="BibPLXBIB0016" label="[16]">Anna Squicciarini,
+        Cornelia Caragea, and Rahul Balakavi. 2017. Toward
+        Automated Online Photo Privacy. <em><em>ACM Trans.
+        Web</em></em> 11, 1, Article 2 (April 2017).</li>
+        <li id="BibPLXBIB0017" label="[17]">Anna&nbsp;C.
+        Squicciarini, Cornelia Caragea, and Rahul Balakavi. 2014.
+        Analyzing Images’ Privacy for the Modern Web. In
+        <em><em>Proceedings of the 25th ACM Conference on Hypertext
+        and Social Media</em></em> (<em>HT ’14</em>). ACM, New
+        York, NY, USA, 136–147.</li>
+        <li id="BibPLXBIB0018" label="[18]">Hari Sundaram, Lexing
+        Xie, Munmun De&nbsp;Choudhury, Yu-Ru Lin, and Apostol
+        Natsev. 2012. Multimedia Semantics: Interactions Between
+        Content and Community. <em><em>IEEE</em></em> (2012).</li>
+        <li id="BibPLXBIB0019" label="[19]">Lam Tran, Deguang Kong,
+        Hongxia Jin, and Ji Liu. 2016. Privacy-CNH: A Framework to
+        Detect Photo Privacy with Convolutional Neural Network
+        Using Hierarchical Features. In <em><em>Proceedings of the
+        Thirtieth AAAI Conference</em></em> . 1317–1323.</li>
+        <li id="BibPLXBIB0020" label="[20]">Paul Viola and Michael
+        Jones. 2001. Robust Real-time Object Detection. In
+        <em><em>International Journal of Computer Vision</em></em>
+        .</li>
+        <li id="BibPLXBIB0021" label="[21]">Jun Yu, Baopeng Zhang,
+        Zhengzhong Kuang, Dan Lin, and Jianping Fan. 2017.
+        iPrivacy: Image Privacy Protection by Identifying Sensitive
+        Objects via Deep Multi-Task Learning. <em><em>IEEE Trans.
+        Inf. Forensic Secur</em></em> 12, 5 (2017).</li>
+        <li id="BibPLXBIB0022" label="[22]">Sergej Zerr, Stefan
+        Siersdorfer, Jonathon Hare, and Elena Demidova. 2012.
+        Privacy-aware image classification and search. In
+        <em><em>Proceedings of the 35th international ACM SIGIR
+        conference on Research and development in information
+        retrieval</em></em> . ACM, NY, USA.</li>
+        <li id="BibPLXBIB0023" label="[23]">Haoti Zhong, Anna
+        Squicciarini, David Miller, and Cornelia Caragea. 2017. A
+        Group-Based Personalized Model for Image Privacy
+        Classification and Labeling. In <em><em>Proceedings of the
+        Twenty-Sixth International Joint Conference on Artificial
+        Intelligence, IJCAI-17</em></em> . 3952–3958.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191572">https://doi.org/10.1145/3184558.3191572</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

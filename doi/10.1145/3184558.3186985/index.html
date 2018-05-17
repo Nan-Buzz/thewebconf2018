@@ -1,1 +1,820 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> <head>  <title>Etymo: A New Discovery Engine for AI Research</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script> </head> <body id="main">  <section class="front-matter">   <section>    <header class="title-info">    <div class="journal-title">     <h1>      <span class="title">Etymo: A New Discovery Engine for AI Research</span>      <br/>      <span class="subTitle"/>     </h1>    </div>    </header>    <div class="authorGroup">    <div class="author">     <span class="givenName">Weijian</span>     <span class="surName">Zhang</span>     The University of Manchester, Oxford RdManchesterM13 9PL, <a href="mailto:weijian.zhang@manchester.ac.uk">weijian.zhang@manchester.ac.uk</a>    </div>    <div class="author">     <span class="givenName">Jonathan</span>     <span class="surName">Deakin</span>     The University of Manchester, Oxford RdManchesterM13 9PL, <a href="mailto:jonathan.deakin@postgrad.manchester.ac.uk">jonathan.deakin@postgrad.manchester.ac.uk</a>    </div>    <div class="author">     <span class="givenName">Nicholas J.</span>     <span class="surName">Higham</span>     The University of Manchester, Oxford RdManchester, <a href="mailto:nick.higham@manchester.ac.uk">nick.higham@manchester.ac.uk</a>    </div>    <div class="author">     <span class="givenName">Shuaiqiang</span>     <span class="surName">Wang</span>     JD.com, Beijing, <a href="mailto:wangshuaiqiang1@jd.com">wangshuaiqiang1@jd.com</a>    </div>                    </div>    <br/>    <div class="pubInfo">    <p>DOI: <a href="https://doi.org/10.1145/3184558.3186985" target="_blank">https://doi.org/10.1145/3184558.3186985</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">    <p>     <small>We present Etymo (https://etymo.io), a discovery engine to facilitate artificial intelligence (AI) research and development. It aims to help readers navigate a large number of AI-related papers published every week by using a novel form of search that finds relevant papers and displays related papers in a graphical interface. Etymo constructs and maintains an adaptive similarity-based network of research papers as an all-purpose knowledge graph for ranking, recommendation, and visualisation. The network is constantly evolving and can learn from user feedback to adjust itself. A screencast is available at: https://youtu.be/T4FDPk_TmN0</small>    </p>    </div>    <div class="classifications">    <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>web search</small>, </span>     <span class="keyword">      <small> content analysis</small>, </span>     <span class="keyword">      <small> similarity-based network</small>, </span>     <span class="keyword">      <small> graph centrality</small>, </span>     <span class="keyword">      <small> data visualisation</small>     </span>    </div>    <br/>    <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Weijian Zhang, Jonathan Deakin, Nicholas J. Higham, and Shuaiqiang Wang. 2018. Etymo: A New Discovery Engine for AI Research. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 5 Pages. <a href="https://doi.org/10.1145/3184558.3186985" class="link-inline force-break"       target="_blank">https://doi.org/10.1145/3184558.3186985</a></small>     </p>    </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-5">    <header>    <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>    </div>    </header>    <p>The rapid growth of global scientific output creates new challenges for information retrieval. The problem is particularly acute in AI (artificial intelligence) research. ArXiv (<a class="link-inline force-break" href="https://arxiv.og">https://arxiv.og</a>), for example, gains around 500 new AI-related papers every week and the number is growing. As a result, it is difficult for researchers to keep up-to-date with the latest developments in AI research. We have built a new discovery engine for scholarly research called Etymo that addresses this challenge.</p>    <p>Citations of scientific papers are generally considered an important indicator of a paper&#x0027;s impact [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>]. Google Scholar&#x0027;s ranking algorithm is not publicly known, but research [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>] has shown that citation counts have the highest weighting in its ranking algorithm. However, recent publications have few or no citations so it is difficult to use citations to judge the importance of very recent papers; thus, recent insightful publications are difficult to rank. Our idea is to build a similarity-based network and use this information for information retrieval tasks.</p>    <p>How can we obtain links in a non-hypertext setting? Our approach is to infer links from the distributed vector representation of the full-text papers, i.e., if the cosine similarity between the vector representations is large, we link these two papers. It turns out that inferred links are similar to the citation network because papers talking about the same subject tend to cite one another. However, the analogy between hyperlinks and generated links is not perfect. In particular, auto-generated links are a noisier source of information and much more prone to spam.</p>    <p>He et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>] proposed a meta-approach called HICODE (HIdden COmmunity DEtection) for discovering the hidden community structure in a network. By removing certain edges from the network (weakening the strength of certain structures), one can uncover other structures in the network. Similarly, we can strengthen and weaken the connectivity of the network structure so as to improve our ranking algorithm and filter out unwanted papers. We do this by exploiting papers&#x2019; social media activities (such as the number of retweets on Twitter) and certain information from user feedback. The resulting graph is used for ranking, recommendation, and visualisation. Note also that inferred links can be generated faster than citations (papers may take &#x00A0;1 year to be cited, but inferred links can be generated almost instantly).</p>    <p>We use a combination of PageRank and Reverse PageRank for ranking papers, which we find gives better search results than pure PageRank or HITS [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>]. In Reverse PageRank, we compute PageRank on the graph with reversed direction, i.e., reverse the direction of each edge (<em>i</em>, <em>j</em>) to (<em>j</em>, <em>i</em>). Fogaras [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>] shows that Reversed Page Rank scores express hub quality. We have also designed and implemented a new search interface where we display search results as a combination of a list and relationship visualisation. This new interface allows readers to quickly locate relevant and related papers.</p>    <p>Our Etymo discovery engine provides a way to evaluate new research papers by exploiting the full-text of research papers. It challenges the traditional list-based search interface by combining an item list with item relationship visualisation. Etymo updates its database on a daily basis and is free to use for all (demo available at <a class="link-inline force-break" href="https://etymo.io">https://etymo.io</a>). Registered users can also write notes and receive recommendations.</p>   </section>   <section id="sec-6">    <header>    <div class="title-info">     <h2>      <span class="section-number">2</span> Related Works</h2>    </div>    </header>    <p>Recently, researchers have realised that the full text of scientific papers is an important resource for search and other applications. Indeed, Salatino et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0010">10</a>] use the semantic enhanced topic network (where nodes are topics and edges are their co-occurrences in a sample of publications) to identify the appearance of new topics. Sateli et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>] analyze full-text research articles to generate semantic user profiles. Semantic Scholar (<a class="link-inline force-break" href="https://www.semanticscholar.org">https://www.semanticscholar.org</a>) <a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a> is a search engine for scholarly research that analyzes and links key information from the full text of research papers for improving search results. Similarly, Etymo makes use of the full text of papers to generate a similarity-based network, which is then used for information retrieval tasks.</p>   </section>   <section id="sec-7">    <header>    <div class="title-info">     <h2>      <span class="section-number">3</span> Architecture Overview</h2>    </div>    </header>    <p>The dependency graph of Etymo is shown in Figure <a class="fig" href="#fig1">1</a>. Etymo has several crawlers for downloading research papers from different journal websites. For each paper in our database, we store both the PDF version of the paper and the metadata, including author name, journal name, paper abstract, and the date of publication.</p>    <p>In the Analysis stage, we convert all the PDFs to text using pdftotext <a class="fn" href="#fn2" id="foot-fn2"><sup>2</sup></a>. We then apply Doc2Vec [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0007">7</a>] and TF-IDF [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0009">9</a>, Chap 6] to represent a document <em>d</em> as numeric vectors <em>v</em>    <sub>     <em>Doc</em>2<em>Vec</em>    </sub>(<em>d</em>) and <em>v</em>    <sub>     <em>tf</em> &#x2212; <em>idf</em>    </sub>(<em>d</em>) respectively. Both algorithms represent a paper by a numeric vector such that papers with similar content are close to each other in the vector space. This content similarity information is then used for building a similarity-based network of all the papers in the database. We generate two networks using the two alorithms and find in practice a combination of the two networks can product better results than just using one of the two. We use t-SNE [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>] to find the paper locations and network centrality algorithms for the paper ranking. We also generate a lexicon from the TF-IDF&#x0027;s global term weights, which is later used in search. The main components of Etymo consist of a search engine and a feed engine. Results from both engines are displayed as a list and graph visualisation. <figure id="fig1">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186985/images/www18companion-225-fig1.svg" class="img-responsive" alt="Figure 1"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 1:</span>      <span class="figure-title">The dependency graph of Etymo. The direction of an arrow indicates the dependence of the two components connected by it. The red rectangles represent our data source; the green rectangles are the two main components of Etymo.</span>     </div>    </figure>    </p>   </section>   <section id="sec-8">    <header>    <div class="title-info">     <h2>      <span class="section-number">4</span> System Features</h2>    </div>    </header>    <p>Etymo has two important features that help it produce useful search results. First, it uses a document vector representation of the full-text papers to build a similarity-based network, where papers are nodes and similar papers are linked. This network is adaptive because of a user feedback mechanism: users&#x2019; stars, clicks and Twitter mentions are used to reinforce the &#x2018;correct&#x2019; connections and weaken the &#x2018;unimportant&#x2019; ones. The resulting network is then used for ranking and recommendation. Second, we have designed and implemented a novel search interface, with results presented both in a traditional item list and with a visualisation showing paper relationships in order to help users quickly find related papers and have a general idea of a research area.</p>    <section id="sec-9">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.1</span> Similarity-based Network</h3>     </div>    </header>    <p>To construct the similarity-based network, one first needs to represent documents using numeric vectors. We use a distributed representation of the documents called Doc2Vec [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0007">7</a>] and a bag of words model called TF-IDF. We then construct the similarity-based network using the cosine similarity measure. One potential problem with this similarity-based network approach is that it does not distinguish a high quality paper from a bad one. We argue that we can use user feedback to adjust the network structure in order to give important papers higher weights.</p>    <section id="sec-10">     <p><em>4.1.1 Adaptive Network and Ranking.</em> Each paper is a node in the network and similar papers are linked together. We compute the cosine similarity of every pair of paper vectors in the database. If the cosine similarity score of two papers&#x2019; vector representations is larger than a given threshold, we link these two papers. In other words, if <em>u</em> &#x2208; <sup>       <em>n</em>      </sup> and <em>v</em> &#x2208; <sup>       <em>n</em>      </sup> (where <em>n</em> = 1000 in practice) are the vector representation of two papers <em>p<sub>u</sub>      </em> and <em>p<sub>v</sub>      </em>, we define <div class="table-responsive">       <div class="display-equation">       <span class="tex mytex">\[ (u, v) = \frac{\sum _{i=1}^n u_i v_i}{{u} {v}}, \] </span>       <br/>       </div>      </div> where <span class="inline-equation"><span class="tex">${u} = \left(\sum _iu_i^2 \right)^{1/2}$</span>      </span>. If (<em>u</em>, <em>v</em>) = <em>w</em> > <em>&#x03B1;</em>, where <em>&#x03B1;</em> is a threshold, we link paper <em>p<sub>u</sub>      </em> and <em>p<sub>v</sub>      </em> by an edge with weight <em>w</em>.</p>     <p>Calculating the similarity scores of two papers has a time complexity <em>O</em>(<em>n</em>). Adding a new paper when there are already <em>m</em> papers in the network therefore costs <em>O</em>(<em>mn</em>), which is clearly prohibitive for large <em>m</em>. One potential solution is to calculate a new paper&#x0027;s similarity on a representative subset of the existing papers, i.e., find top <em>k</em> high quality papers, where <em>k</em> &#x226A; <em>n</em>. Since our graph centrality ranking provides a measure of paper quality, we use the top <em>k</em> high ranking papers as a representative subset. Then for a new paper, we only calculate its similarity with these <em>k</em> papers.</p>     <p>Similarity-based networks are vulnerable to spam. For example, if a paper contains a large number of important key words in AI research, it may have a high connectivity on the network hence a high score in the ranking. We use authors&#x2019; votes to adjust the structure of the network in three main ways:</p>     <ol class="list-no-style">      <li id="list1" label="(1)">We use user stars to increase the edge weights to a node, this increases the number of edges to that node. In other words, a paper with many user stars connects to more papers than a paper with few.<br/></li>      <li id="list2" label="(2)">We use user libraries to infer connectivities: increasing edge weights between the papers in a user&#x0027;s library.<br/></li>      <li id="list3" label="(3)">We weaken the connectivities of a highly ranking paper if it has poor click rates.<br/></li>     </ol>     <p>Finally, we turn the undirected similarity-based network into a directed network using the temporal information from the paper published date. As a result, a new paper on this network &#x2018;recommends&#x2019; a old paper if they have similar content or user data suggests that they are related. Intuitively we attempt to predict the citation network structure of new research papers when their citations are not available.</p>    </section>    </section>    <section id="sec-11">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.2</span> Go Beyond List: Relationship Visualisation</h3>     </div>    </header>    <p>A few recent scholar engines incorporate some form of visualisation in displaying their search results. AMiner (<a class="link-inline force-break" href="https://aminer.org/">https://aminer.org/</a>)[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0013">13</a>] shows similar authors and the ego network, which consists of a centre node (&#x201C;ego&#x201D;) and the nodes to whom the ego node is directly connected to. AceMap&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0012">12</a>] displays the citation relationships between academic papers on a map, in a similar way to Google Maps. What we do differently is that we provide a combination of the traditional list of results with a content similarity-based relationship visualisation. Figure <a class="fig" href="#fig2">2</a> shows the web interface of Etymo. <figure id="fig2">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186985/images/www18companion-225-fig2.jpg" class="img-responsive" alt="Figure 2"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 2:</span>       <span class="figure-title">The web interface of Etymo. The left part is a list of search results ordered by importance, while the right part is the corresponding visualisation of each paper in the list. Each paper is represented by a node and related papers are close to each other. The size of the node represents the importance and colour represents journal.</span>      </div>     </figure>    </p>    <p>Why do we need a new interface? The most important reason is that it saves our time in finding interesting research papers. The information we usually need is the top ten papers from the search results and the papers related to them, but there is no easy way to access all of that information at once using the traditional list interface. For example, to see related papers of the current search result in Google Scholar, a user needs to click on multiple &#x2019;related article&#x2019; links. In Etymo, a user can check the top ten rated papers on the list and locate all the related papers on the graph at the same time.</p>    </section>   </section>   <section id="sec-12">    <header>    <div class="title-info">     <h2>      <span class="section-number">5</span> Experiments</h2>    </div>    </header>    <p>Etymo has over 36000 papers in the database and we typically add 500 new papers every week. The Analysis uses an instance of Amazon Elastic Compute Cloud (Amazon EC2) m4.xlarge, which has 16 vCPUs and 64GB memory.</p>    <p>We update our database on a daily basis. During each update, we need to first find two sets of vector representations for all the newly added papers using Doc2Vec and TF-IDF. Training of both models are done on a weekly basis. We then use t-SNE to find the x,y location of all the papers, i.e., reduce these 1000 dimensional vectors to 2 dimensional vectors. The computation of t-SNE can be done in <em>O</em>(<em>N</em>log&#x2009;<em>N</em>) and requires <em>O</em>(<em>N</em>) memory [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>], which makes it possible to learn embedding of data sets with millions of objects. The number of nodes in our similarity-based network is equal to the number of papers in our database. We apply PageRank and Reverse PageRank on this network. The predominant method for computing the PageRank is the power method. At each iteration, we do a sparse matrix vector multiplication, which has complexity <em>O</em>(<em>pN</em>), where <em>p</em> is the average number of non-zero elements on every row of the matrix and <em>N</em> is the dimension of the matrix. Usually 10 iterations can produce a good approximate ranking [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>, Chap 8.2].</p>    <p>In general, we found that network-based ratings can improve search results by highlighting historically important papers. For the query &#x201C;t-sne&#x201D; (a popular machine learning algorithm for dimensionality reduction) we show the top 5 search results in the tables below. Table <a class="tbl" href="#tab1">1</a> shows the results which include the PageRank and Reverse PageRank ratings on the similarity-based network, while Table <a class="tbl" href="#tab2">2</a> does not. We noticed that the one with network-based ratings gives more weight to important papers. Note that Maaten and Hinton&#x0027;s &#x201D;Visualizing Data using t-SNE&#x201D; is the original t-SNE paper. Comparing with Google Scholar&#x0027;s search results in Table <a class="tbl" href="#tab3">3</a>, Etymo&#x0027;s top search results include more recent publications.</p>    <div class="table-responsive" id="tab1">    <div class="table-caption">     <span class="table-number">Table 1:</span>     <span class="table-title">Top 5 search results of the search query &#x201D;t-sne&#x201D;. The results include a combination of PageRank and Reverse PageRank ratings.</span>    </div>    <table class="table">     <tbody>      <tr>       <td style="text-align:center;">Authors</td>       <td style="text-align:center;">Year</td>       <td>Title</td>      </tr>      <tr>       <td style="text-align:center;">Laurens van der Maaten, Geoffrey Hinton</td>       <td style="text-align:center;">2008</td>       <td>Visualizing Data using t-SNE</td>      </tr>      <tr>       <td style="text-align:center;">Laurens van der Maaten</td>       <td style="text-align:center;">2014</td>       <td>Accelerating t-SNE using Tree-Based Algorithms</td>      </tr>      <tr>       <td style="text-align:center;">Yanshuai Cao, Luyu Wang</td>       <td style="text-align:center;">2017</td>       <td>Automatic Selection of t-SNE Perplexity</td>      </tr>      <tr>       <td style="text-align:center;">George C. Linderman, Manas Rachh, Jeremy G. Hoskins, Stefan Steinerberger, Yuval Kluger</td>       <td style="text-align:center;">2017</td>       <td>Efficient Algorithms for t-distributed Stochastic Neighborhood Embedding</td>      </tr>      <tr>       <td style="text-align:center;">Yukun Chen, Jianbo Ye, Jia Li</td>       <td style="text-align:center;">2017</td>       <td>Aggregated Wasserstein Metric and State Registration for Hidden Markov Models</td>      </tr>     </tbody>    </table>    </div>    <div class="table-responsive" id="tab2">    <div class="table-caption">     <span class="table-number">Table 2:</span>     <span class="table-title">Top 5 search results of the search query &#x201D;t-sne&#x201D;. The results do not include any network-based ratings.</span>    </div>    <table class="table">     <tbody>      <tr>       <td style="text-align:center;">Authors</td>       <td style="text-align:center;">Year</td>       <td>Title</td>      </tr>      <tr>       <td style="text-align:center;">Yanshuai Cao, Luyu Wang</td>       <td style="text-align:center;">2017</td>       <td>Automatic Selection of t-SNE Perplexity</td>      </tr>      <tr>       <td style="text-align:center;">Laurens van der Maaten</td>       <td style="text-align:center;">2014</td>       <td>Accelerating t-SNE using Tree-Based Algorithms</td>      </tr>      <tr>       <td style="text-align:center;">Maaten, Laurens van der, Hinton, Geoffrey</td>       <td style="text-align:center;">2008</td>       <td>Visualizing Data using t-SNE</td>      </tr>      <tr>       <td style="text-align:center;">Richard R. Yang, Mike Borowczak</td>       <td style="text-align:center;">2017</td>       <td>Assessing Retail Employee Risk Through Unsupervised Learning Techniques</td>      </tr>      <tr>       <td style="text-align:center;">Martin Renqiang Min, Hongyu Guo, Dinghan Shen</td>       <td style="text-align:center;">2017</td>       <td>Parametric t-Distributed Stochastic Exemplar-centered Embedding</td>      </tr>     </tbody>    </table>    </div>    <div class="table-responsive" id="tab3">    <div class="table-caption">     <span class="table-number">Table 3:</span>     <span class="table-title">Top 5 search results of the search query &#x201D;t-sne&#x201D; in Google Scholar.</span>    </div>    <table class="table">     <tbody>      <tr>       <td style="text-align:center;">Authors</td>       <td style="text-align:center;">Year</td>       <td>Title</td>      </tr>      <tr>       <td style="text-align:center;">Maaten, Laurens van der, Hinton, Geoffrey</td>       <td style="text-align:center;">2008</td>       <td>Visualizing Data using t-SNE</td>      </tr>      <tr>       <td style="text-align:center;">Laurens van der Maaten</td>       <td style="text-align:center;">2014</td>       <td>Accelerating t-SNE using Tree-Based Algorithms</td>      </tr>      <tr>       <td style="text-align:center;">AR Jamieson ML Giger, K Drukker, H Li</td>       <td style="text-align:center;">2010</td>       <td>Exploring nonlinear feature space dimension reduction and data representation in breast CADx with Laplacian eigenmaps and t-SNE</td>      </tr>      <tr>       <td style="text-align:center;">K Bunte, S Hasse, M Biehl, T Villmann</td>       <td style="text-align:center;">2012</td>       <td>Stochastic neighbor embedding (SNE) for dimension reduction and visualization using arbitrary divergences</td>      </tr>      <tr>       <td style="text-align:center;">Maaten, Laurens van der, Hinton, Geoffrey</td>       <td style="text-align:center;">2008</td>       <td>[PDF] Visualizing Data using t-SNE</td>      </tr>     </tbody>    </table>    </div>   </section>   <section id="sec-13">    <header>    <div class="title-info">     <h2>      <span class="section-number">6</span> Conclusion</h2>    </div>    </header>    <p>It is hard to quantify new things. In research, the value of a newly published work is usually unknown until citations become available. The value of this work is to provide a new approach to improve search results on new papers by exploiting the paper full text content and social media data. Our user interface combines the item list with item relationship visualisation, which saves researchers time in finding interesting research papers.</p>    <p>    <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186985/images/www18companion-225-graphic2.jpg" class="img-responsive" alt=""      longdesc=""/>     <strong>Weijian Zhang</strong> is a PhD student in Applied Maths at the University of Manchester. He was a visiting student at MIT CSAIL. His research is on network science.</p>    <p>    <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186985/images/www18companion-225-graphic3.jpg" class="img-responsive" alt=""      longdesc=""/>     <strong>Jonathan Deakin</strong> is a PhD student in Applied Maths at the University of Manchester. He studied Maths at the University of Cambridge. His research is on Computational Physics.</p>    <p>    <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186985/images/www18companion-225-graphic4.jpg" class="img-responsive" alt=""      longdesc=""/>     <strong>Prof. Nicholas J. Higham</strong> is Richardson Professor of Applied Mathematics at the University of Manchester. His research interests include numerical analysis, numerical linear algebra, and numerical algorithms and software.</p>    <p>    <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186985/images/www18companion-225-graphic5.jpg" class="img-responsive" alt=""      longdesc=""/>    <strong>Dr. Shuaiqiang Wang</strong> is a Data Scientist at JD.com. He was a former Lecturer at the University of Manchester. His research interests include recommender systems, information retrieval and data mining.</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>    <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>    </div>    </header>    <ul class="bibUl">    <li id="BibPLXBIB0001" label="[1]">J&#x00F6;ran Beel and Bela Gipp. 2009. Google Scholar&#x0027;s Ranking Algorithm: An Introductory Overview. <em>In <em>Proceedings of the 12th International Conference on Scientometrics and Informetrics (ISSI&#x2019;09)</em>     </em>, Vol.&#x00A0;1. ISSI, Rio de Janeiro (Brazil), 230&#x2013;241.</li>    <li id="BibPLXBIB0002" label="[2]">D&#x00E1;niel Fogaras. 2003. Where to start browsing the web?. <em>In <em>International Workshop on Innovative Internet Community Systems</em>     </em>. Springer, 65&#x2013;79.</li>    <li id="BibPLXBIB0003" label="[3]">Kun He, Yingru Li, Sucheta Soundarajan, and John&#x00A0;E. Hopcroft. 2017. Hidden Community Detection in Social Networks. (Feb. 2017). <a class="link-inline force-break" href="https://arxiv.org/abs/1702.07462"      target="_blank">https://arxiv.org/abs/1702.07462</a>ArXiv preprint arXiv:1702.07462.</li>    <li id="BibPLXBIB0004" label="[4]">Jorge&#x00A0;E. Hirsch. 2005. An Index to Quantify An Individual&#x0027;s Scientific Research Output. <em>      <em>Proceedings of the National Academy of Sciences of the United States of America</em>     </em>102, 46 (2005), 16569. <a class="link-inline force-break" href="https://doi.org/10.1073/pnas.0507655102"      target="_blank">https://doi.org/10.1073/pnas.0507655102</a></li>    <li id="BibPLXBIB0005" label="[5]">Jon&#x00A0;M. Kleinberg. 1999. Authoritative Sources in a Hyperlinked Environment. <em>      <em>J. Assoc. Comput. Mach.</em>     </em>46, 5 (Sept. 1999), 604&#x2013;632. <a class="link-inline force-break" href="https://doi.org/10.1145/324133.324140"      target="_blank">https://doi.org/10.1145/324133.324140</a></li>    <li id="BibPLXBIB0006" label="[6]">Amy&#x00A0;N Langville and Carl&#x00A0;D Meyer. 2011. <em>      <em>Google&#x0027;s PageRank and beyond: The science of search engine rankings</em>     </em>. Princeton University Press.</li>    <li id="BibPLXBIB0007" label="[7]">Quoc Le and Tomas Mikolov. 2014. Distributed Representations of Sentences and Documents. <em>In <em>Proceedings of the 31st International Conference on Machine Learning (ICML-14)</em>     </em>. 1188&#x2013;1196. <a class="link-inline force-break"      href="http://www.jmlr.org/proceedings/papers/v32/le14.pdf"      target="_blank">http://www.jmlr.org/proceedings/papers/v32/le14.pdf</a></li>    <li id="BibPLXBIB0008" label="[8]">Laurens van&#x00A0;der Maaten and Geoffrey Hinton. 2008. Visualizing data using t-SNE. <em>      <em>Journal of Machine Learning Research</em>     </em>9, Nov (2008), 2579&#x2013;2605.</li>    <li id="BibPLXBIB0009" label="[9]">Christopher&#x00A0;D. Manning, Prabhakar Raghavan, and Hinrich Schutze. 2008. <em>      <em>Introduction to Information Retrieval</em>     </em>. Cambridge University Press, Cambridge.</li>    <li id="BibPLXBIB0010" label="[10]">Angelo&#x00A0;Antonio Salatino and Enrico Motta. 2016. Detection of Embryonic Research Topics by Analysing Semantic Topic Networks. <em>In <em>International Workshop on Semantic, Analytics, Visualization</em>     </em>. Springer, 131&#x2013;146.</li>    <li id="BibPLXBIB0011" label="[11]">Bahar Sateli, Felicitas L&#x00F6;ffler, Birgitta K&#x00F6;nig-Ries, and Ren&#x00E9; Witte. 2017. ScholarLens: Extracting Competences from Research Publications for the Automatic Generation of Semantic User Profiles. <em>      <em>PeerJ Computer Science</em>     </em>3 (July 2017), e121. <a class="link-inline force-break" href="https://doi.org/10.7717/peerj-cs.121"      target="_blank">https://doi.org/10.7717/peerj-cs.121</a></li>    <li id="BibPLXBIB0012" label="[12]">Zhaowei Tan, Changfeng Liu, Yuning Mao, Yunqi Guo, Jiaming Shen, and Xinbing Wang. 2016. AceMap: A Novel Approach Towards Displaying Relationship Among Academic Literatures. <em>In <em>Proceedings of the 25th International Conference Companion on World Wide Web</em>     </em>(<em>WWW &#x2019;16 Companion</em>). International World Wide Web Conferences Steering Committee, Republic and Canton of Geneva, Switzerland, 437&#x2013;442. <a class="link-inline force-break" href="https://doi.org/10.1145/2872518.2890514"      target="_blank">https://doi.org/10.1145/2872518.2890514</a></li>    <li id="BibPLXBIB0013" label="[13]">Jie Tang, Jing Zhang, Limin Yao, Juanzi Li, Li Zhang, and Zhong Su. 2008. Arnetminer: extraction and mining of academic social networks. <em>In <em>Proceedings of the 14th ACM SIGKDD international conference on Knowledge discovery and data mining</em>     </em>. ACM, 990&#x2013;998.</li>    <li id="BibPLXBIB0014" label="[14]">Laurens Van Der&#x00A0;Maaten. 2014. Accelerating t-SNE using tree-based algorithms.<em>      <em>Journal of machine learning research</em>     </em>15, 1 (2014), 3221&#x2013;3245.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">    <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>https://techcrunch.com/2016/11/11/scientists-gain-a-versatile-modern-search-engine-with-the-ai-powered-semantic-scholar/</p>   <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class="link-inline force-break" href="https://en.wikipedia.org/wiki/Pdftotext">https://en.wikipedia.org/wiki/Pdftotext</a>   </p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>    <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3186985">https://doi.org/10.1145/3184558.3186985</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div> </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Etymo: A New Discovery Engine for AI Research</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Etymo: A New Discovery Engine for
+          AI Research</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Weijian</span> <span class=
+          "surName">Zhang</span> The University of Manchester,
+          Oxford RdManchesterM13 9PL, <a href=
+          "mailto:weijian.zhang@manchester.ac.uk">weijian.zhang@manchester.ac.uk</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Jonathan</span> <span class=
+          "surName">Deakin</span> The University of Manchester,
+          Oxford RdManchesterM13 9PL, <a href=
+          "mailto:jonathan.deakin@postgrad.manchester.ac.uk">jonathan.deakin@postgrad.manchester.ac.uk</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Nicholas J.</span> <span class=
+          "surName">Higham</span> The University of Manchester,
+          Oxford RdManchester, <a href=
+          "mailto:nick.higham@manchester.ac.uk">nick.higham@manchester.ac.uk</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Shuaiqiang</span> <span class=
+          "surName">Wang</span> JD.com, Beijing, <a href=
+          "mailto:wangshuaiqiang1@jd.com">wangshuaiqiang1@jd.com</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186985"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186985</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>We present Etymo (https://etymo.io), a discovery
+        engine to facilitate artificial intelligence (AI) research
+        and development. It aims to help readers navigate a large
+        number of AI-related papers published every week by using a
+        novel form of search that finds relevant papers and
+        displays related papers in a graphical interface. Etymo
+        constructs and maintains an adaptive similarity-based
+        network of research papers as an all-purpose knowledge
+        graph for ranking, recommendation, and visualisation. The
+        network is constantly evolving and can learn from user
+        feedback to adjust itself. A screencast is available at:
+        https://youtu.be/T4FDPk_TmN0</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>web search</small>,</span>
+          <span class="keyword"><small>content
+          analysis</small>,</span> <span class=
+          "keyword"><small>similarity-based network</small>,</span>
+          <span class="keyword"><small>graph
+          centrality</small>,</span> <span class=
+          "keyword"><small>data visualisation</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Weijian Zhang, Jonathan Deakin, Nicholas J. Higham, and
+          Shuaiqiang Wang. 2018. Etymo: A New Discovery Engine for
+          AI Research. In <em>WWW '18 Companion: The 2018 Web
+          Conference Companion,</em> <em>April 23–27, 2018,</em>
+          <em>Lyon, France. ACM, New York, NY, USA</em> 5 Pages.
+          <a href="https://doi.org/10.1145/3184558.3186985" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3186985</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>The rapid growth of global scientific output creates new
+      challenges for information retrieval. The problem is
+      particularly acute in AI (artificial intelligence) research.
+      ArXiv (<a class="link-inline force-break" href=
+      "https://arxiv.og">https://arxiv.og</a>), for example, gains
+      around 500 new AI-related papers every week and the number is
+      growing. As a result, it is difficult for researchers to keep
+      up-to-date with the latest developments in AI research. We
+      have built a new discovery engine for scholarly research
+      called Etymo that addresses this challenge.</p>
+      <p>Citations of scientific papers are generally considered an
+      important indicator of a paper's impact [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0004">4</a>]. Google Scholar's ranking
+      algorithm is not publicly known, but research [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0001">1</a>] has shown that citation
+      counts have the highest weighting in its ranking algorithm.
+      However, recent publications have few or no citations so it
+      is difficult to use citations to judge the importance of very
+      recent papers; thus, recent insightful publications are
+      difficult to rank. Our idea is to build a similarity-based
+      network and use this information for information retrieval
+      tasks.</p>
+      <p>How can we obtain links in a non-hypertext setting? Our
+      approach is to infer links from the distributed vector
+      representation of the full-text papers, i.e., if the cosine
+      similarity between the vector representations is large, we
+      link these two papers. It turns out that inferred links are
+      similar to the citation network because papers talking about
+      the same subject tend to cite one another. However, the
+      analogy between hyperlinks and generated links is not
+      perfect. In particular, auto-generated links are a noisier
+      source of information and much more prone to spam.</p>
+      <p>He et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>] proposed a meta-approach called
+      HICODE (HIdden COmmunity DEtection) for discovering the
+      hidden community structure in a network. By removing certain
+      edges from the network (weakening the strength of certain
+      structures), one can uncover other structures in the network.
+      Similarly, we can strengthen and weaken the connectivity of
+      the network structure so as to improve our ranking algorithm
+      and filter out unwanted papers. We do this by exploiting
+      papers’ social media activities (such as the number of
+      retweets on Twitter) and certain information from user
+      feedback. The resulting graph is used for ranking,
+      recommendation, and visualisation. Note also that inferred
+      links can be generated faster than citations (papers may take
+      &nbsp;1 year to be cited, but inferred links can be generated
+      almost instantly).</p>
+      <p>We use a combination of PageRank and Reverse PageRank for
+      ranking papers, which we find gives better search results
+      than pure PageRank or HITS [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>]. In Reverse PageRank, we compute
+      PageRank on the graph with reversed direction, i.e., reverse
+      the direction of each edge (<em>i</em>, <em>j</em>) to
+      (<em>j</em>, <em>i</em>). Fogaras [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0002">2</a>] shows that Reversed Page
+      Rank scores express hub quality. We have also designed and
+      implemented a new search interface where we display search
+      results as a combination of a list and relationship
+      visualisation. This new interface allows readers to quickly
+      locate relevant and related papers.</p>
+      <p>Our Etymo discovery engine provides a way to evaluate new
+      research papers by exploiting the full-text of research
+      papers. It challenges the traditional list-based search
+      interface by combining an item list with item relationship
+      visualisation. Etymo updates its database on a daily basis
+      and is free to use for all (demo available at <a class=
+      "link-inline force-break" href=
+      "https://etymo.io">https://etymo.io</a>). Registered users
+      can also write notes and receive recommendations.</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Works</h2>
+        </div>
+      </header>
+      <p>Recently, researchers have realised that the full text of
+      scientific papers is an important resource for search and
+      other applications. Indeed, Salatino et al. [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0010">10</a>] use the semantic enhanced
+      topic network (where nodes are topics and edges are their
+      co-occurrences in a sample of publications) to identify the
+      appearance of new topics. Sateli et al. [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0011">11</a>] analyze full-text
+      research articles to generate semantic user profiles.
+      Semantic Scholar (<a class="link-inline force-break" href=
+      "https://www.semanticscholar.org">https://www.semanticscholar.org</a>)
+      <a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a> is a
+      search engine for scholarly research that analyzes and links
+      key information from the full text of research papers for
+      improving search results. Similarly, Etymo makes use of the
+      full text of papers to generate a similarity-based network,
+      which is then used for information retrieval tasks.</p>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Architecture
+          Overview</h2>
+        </div>
+      </header>
+      <p>The dependency graph of Etymo is shown in Figure <a class=
+      "fig" href="#fig1">1</a>. Etymo has several crawlers for
+      downloading research papers from different journal websites.
+      For each paper in our database, we store both the PDF version
+      of the paper and the metadata, including author name, journal
+      name, paper abstract, and the date of publication.</p>
+      <p>In the Analysis stage, we convert all the PDFs to text
+      using pdftotext <a class="fn" href="#fn2" id=
+      "foot-fn2"><sup>2</sup></a>. We then apply Doc2Vec [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0007">7</a>] and TF-IDF
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0009">9</a>, Chap 6] to
+      represent a document <em>d</em> as numeric vectors <em>v</em>
+      <sub><em>Doc</em>2<em>Vec</em></sub> (<em>d</em>) and
+      <em>v</em> <sub><em>tf</em> − <em>idf</em></sub> (<em>d</em>)
+      respectively. Both algorithms represent a paper by a numeric
+      vector such that papers with similar content are close to
+      each other in the vector space. This content similarity
+      information is then used for building a similarity-based
+      network of all the papers in the database. We generate two
+      networks using the two alorithms and find in practice a
+      combination of the two networks can product better results
+      than just using one of the two. We use t-SNE [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0008">8</a>] to find the paper
+      locations and network centrality algorithms for the paper
+      ranking. We also generate a lexicon from the TF-IDF's global
+      term weights, which is later used in search. The main
+      components of Etymo consist of a search engine and a feed
+      engine. Results from both engines are displayed as a list and
+      graph visualisation.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186985/images/www18companion-225-fig1.svg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">The dependency graph of Etymo. The
+          direction of an arrow indicates the dependence of the two
+          components connected by it. The red rectangles represent
+          our data source; the green rectangles are the two main
+          components of Etymo.</span>
+        </div>
+      </figure>
+      <p></p>
+    </section>
+    <section id="sec-8">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> System
+          Features</h2>
+        </div>
+      </header>
+      <p>Etymo has two important features that help it produce
+      useful search results. First, it uses a document vector
+      representation of the full-text papers to build a
+      similarity-based network, where papers are nodes and similar
+      papers are linked. This network is adaptive because of a user
+      feedback mechanism: users’ stars, clicks and Twitter mentions
+      are used to reinforce the ‘correct’ connections and weaken
+      the ‘unimportant’ ones. The resulting network is then used
+      for ranking and recommendation. Second, we have designed and
+      implemented a novel search interface, with results presented
+      both in a traditional item list and with a visualisation
+      showing paper relationships in order to help users quickly
+      find related papers and have a general idea of a research
+      area.</p>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span>
+            Similarity-based Network</h3>
+          </div>
+        </header>
+        <p>To construct the similarity-based network, one first
+        needs to represent documents using numeric vectors. We use
+        a distributed representation of the documents called
+        Doc2Vec [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href="#BibPLXBIB0007">7</a>]
+        and a bag of words model called TF-IDF. We then construct
+        the similarity-based network using the cosine similarity
+        measure. One potential problem with this similarity-based
+        network approach is that it does not distinguish a high
+        quality paper from a bad one. We argue that we can use user
+        feedback to adjust the network structure in order to give
+        important papers higher weights.</p>
+        <section id="sec-10">
+          <p><em>4.1.1 Adaptive Network and Ranking.</em> Each
+          paper is a node in the network and similar papers are
+          linked together. We compute the cosine similarity of
+          every pair of paper vectors in the database. If the
+          cosine similarity score of two papers’ vector
+          representations is larger than a given threshold, we link
+          these two papers. In other words, if <em>u</em> ∈
+          <sup><em>n</em></sup> and <em>v</em> ∈
+          <sup><em>n</em></sup> (where <em>n</em> = 1000 in
+          practice) are the vector representation of two papers
+          <em>p<sub>u</sub></em> and <em>p<sub>v</sub></em> , we
+          define</p>
+          <div class="table-responsive">
+            <div class="display-equation">
+              <span class="tex mytex">\[ (u, v) = \frac{\sum
+              _{i=1}^n u_i v_i}{{u} {v}}, \]</span><br />
+            </div>
+          </div>where <span class="inline-equation"><span class=
+          "tex">${u} = \left(\sum _iu_i^2
+          \right)^{1/2}$</span></span> . If (<em>u</em>,
+          <em>v</em>) = <em>w</em> &gt; <em>α</em>, where
+          <em>α</em> is a threshold, we link paper
+          <em>p<sub>u</sub></em> and <em>p<sub>v</sub></em> by an
+          edge with weight <em>w</em>.
+          <p></p>
+          <p>Calculating the similarity scores of two papers has a
+          time complexity <em>O</em>(<em>n</em>). Adding a new
+          paper when there are already <em>m</em> papers in the
+          network therefore costs <em>O</em>(<em>mn</em>), which is
+          clearly prohibitive for large <em>m</em>. One potential
+          solution is to calculate a new paper's similarity on a
+          representative subset of the existing papers, i.e., find
+          top <em>k</em> high quality papers, where <em>k</em> ≪
+          <em>n</em>. Since our graph centrality ranking provides a
+          measure of paper quality, we use the top <em>k</em> high
+          ranking papers as a representative subset. Then for a new
+          paper, we only calculate its similarity with these
+          <em>k</em> papers.</p>
+          <p>Similarity-based networks are vulnerable to spam. For
+          example, if a paper contains a large number of important
+          key words in AI research, it may have a high connectivity
+          on the network hence a high score in the ranking. We use
+          authors’ votes to adjust the structure of the network in
+          three main ways:</p>
+          <ol class="list-no-style">
+            <li id="list1" label="(1)">We use user stars to
+            increase the edge weights to a node, this increases the
+            number of edges to that node. In other words, a paper
+            with many user stars connects to more papers than a
+            paper with few.<br /></li>
+            <li id="list2" label="(2)">We use user libraries to
+            infer connectivities: increasing edge weights between
+            the papers in a user's library.<br /></li>
+            <li id="list3" label="(3)">We weaken the connectivities
+            of a highly ranking paper if it has poor click
+            rates.<br /></li>
+          </ol>
+          <p>Finally, we turn the undirected similarity-based
+          network into a directed network using the temporal
+          information from the paper published date. As a result, a
+          new paper on this network ‘recommends’ a old paper if
+          they have similar content or user data suggests that they
+          are related. Intuitively we attempt to predict the
+          citation network structure of new research papers when
+          their citations are not available.</p>
+        </section>
+      </section>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Go Beyond
+            List: Relationship Visualisation</h3>
+          </div>
+        </header>
+        <p>A few recent scholar engines incorporate some form of
+        visualisation in displaying their search results. AMiner
+        (<a class="link-inline force-break" href=
+        "https://aminer.org/">https://aminer.org/</a>)[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0013">13</a>] shows
+        similar authors and the ego network, which consists of a
+        centre node (“ego”) and the nodes to whom the ego node is
+        directly connected to. AceMap&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0012">12</a>] displays the citation
+        relationships between academic papers on a map, in a
+        similar way to Google Maps. What we do differently is that
+        we provide a combination of the traditional list of results
+        with a content similarity-based relationship visualisation.
+        Figure <a class="fig" href="#fig2">2</a> shows the web
+        interface of Etymo.</p>
+        <figure id="fig2">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186985/images/www18companion-225-fig2.jpg"
+          class="img-responsive" alt="Figure 2" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 2:</span>
+            <span class="figure-title">The web interface of Etymo.
+            The left part is a list of search results ordered by
+            importance, while the right part is the corresponding
+            visualisation of each paper in the list. Each paper is
+            represented by a node and related papers are close to
+            each other. The size of the node represents the
+            importance and colour represents journal.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>Why do we need a new interface? The most important
+        reason is that it saves our time in finding interesting
+        research papers. The information we usually need is the top
+        ten papers from the search results and the papers related
+        to them, but there is no easy way to access all of that
+        information at once using the traditional list interface.
+        For example, to see related papers of the current search
+        result in Google Scholar, a user needs to click on multiple
+        ’related article’ links. In Etymo, a user can check the top
+        ten rated papers on the list and locate all the related
+        papers on the graph at the same time.</p>
+      </section>
+    </section>
+    <section id="sec-12">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span>
+          Experiments</h2>
+        </div>
+      </header>
+      <p>Etymo has over 36000 papers in the database and we
+      typically add 500 new papers every week. The Analysis uses an
+      instance of Amazon Elastic Compute Cloud (Amazon EC2)
+      m4.xlarge, which has 16 vCPUs and 64GB memory.</p>
+      <p>We update our database on a daily basis. During each
+      update, we need to first find two sets of vector
+      representations for all the newly added papers using Doc2Vec
+      and TF-IDF. Training of both models are done on a weekly
+      basis. We then use t-SNE to find the x,y location of all the
+      papers, i.e., reduce these 1000 dimensional vectors to 2
+      dimensional vectors. The computation of t-SNE can be done in
+      <em>O</em>(<em>N</em>log <em>N</em>) and requires
+      <em>O</em>(<em>N</em>) memory [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>], which makes it possible to learn
+      embedding of data sets with millions of objects. The number
+      of nodes in our similarity-based network is equal to the
+      number of papers in our database. We apply PageRank and
+      Reverse PageRank on this network. The predominant method for
+      computing the PageRank is the power method. At each
+      iteration, we do a sparse matrix vector multiplication, which
+      has complexity <em>O</em>(<em>pN</em>), where <em>p</em> is
+      the average number of non-zero elements on every row of the
+      matrix and <em>N</em> is the dimension of the matrix. Usually
+      10 iterations can produce a good approximate ranking
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0006">6</a>, Chap
+      8.2].</p>
+      <p>In general, we found that network-based ratings can
+      improve search results by highlighting historically important
+      papers. For the query “t-sne” (a popular machine learning
+      algorithm for dimensionality reduction) we show the top 5
+      search results in the tables below. Table <a class="tbl"
+      href="#tab1">1</a> shows the results which include the
+      PageRank and Reverse PageRank ratings on the similarity-based
+      network, while Table <a class="tbl" href="#tab2">2</a> does
+      not. We noticed that the one with network-based ratings gives
+      more weight to important papers. Note that Maaten and
+      Hinton's ”Visualizing Data using t-SNE” is the original t-SNE
+      paper. Comparing with Google Scholar's search results in
+      Table <a class="tbl" href="#tab3">3</a>, Etymo's top search
+      results include more recent publications.</p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">Top 5 search results of the search query
+          ”t-sne”. The results include a combination of PageRank
+          and Reverse PageRank ratings.</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:center;">Authors</td>
+              <td style="text-align:center;">Year</td>
+              <td>Title</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Laurens van der
+              Maaten, Geoffrey Hinton</td>
+              <td style="text-align:center;">2008</td>
+              <td>Visualizing Data using t-SNE</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Laurens van der
+              Maaten</td>
+              <td style="text-align:center;">2014</td>
+              <td>Accelerating t-SNE using Tree-Based
+              Algorithms</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Yanshuai Cao, Luyu
+              Wang</td>
+              <td style="text-align:center;">2017</td>
+              <td>Automatic Selection of t-SNE Perplexity</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">George C. Linderman,
+              Manas Rachh, Jeremy G. Hoskins, Stefan Steinerberger,
+              Yuval Kluger</td>
+              <td style="text-align:center;">2017</td>
+              <td>Efficient Algorithms for t-distributed Stochastic
+              Neighborhood Embedding</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Yukun Chen, Jianbo Ye,
+              Jia Li</td>
+              <td style="text-align:center;">2017</td>
+              <td>Aggregated Wasserstein Metric and State
+              Registration for Hidden Markov Models</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-responsive" id="tab2">
+        <div class="table-caption">
+          <span class="table-number">Table 2:</span> <span class=
+          "table-title">Top 5 search results of the search query
+          ”t-sne”. The results do not include any network-based
+          ratings.</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:center;">Authors</td>
+              <td style="text-align:center;">Year</td>
+              <td>Title</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Yanshuai Cao, Luyu
+              Wang</td>
+              <td style="text-align:center;">2017</td>
+              <td>Automatic Selection of t-SNE Perplexity</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Laurens van der
+              Maaten</td>
+              <td style="text-align:center;">2014</td>
+              <td>Accelerating t-SNE using Tree-Based
+              Algorithms</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Maaten, Laurens van
+              der, Hinton, Geoffrey</td>
+              <td style="text-align:center;">2008</td>
+              <td>Visualizing Data using t-SNE</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Richard R. Yang, Mike
+              Borowczak</td>
+              <td style="text-align:center;">2017</td>
+              <td>Assessing Retail Employee Risk Through
+              Unsupervised Learning Techniques</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Martin Renqiang Min,
+              Hongyu Guo, Dinghan Shen</td>
+              <td style="text-align:center;">2017</td>
+              <td>Parametric t-Distributed Stochastic
+              Exemplar-centered Embedding</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-responsive" id="tab3">
+        <div class="table-caption">
+          <span class="table-number">Table 3:</span> <span class=
+          "table-title">Top 5 search results of the search query
+          ”t-sne” in Google Scholar.</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:center;">Authors</td>
+              <td style="text-align:center;">Year</td>
+              <td>Title</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Maaten, Laurens van
+              der, Hinton, Geoffrey</td>
+              <td style="text-align:center;">2008</td>
+              <td>Visualizing Data using t-SNE</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Laurens van der
+              Maaten</td>
+              <td style="text-align:center;">2014</td>
+              <td>Accelerating t-SNE using Tree-Based
+              Algorithms</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">AR Jamieson ML Giger,
+              K Drukker, H Li</td>
+              <td style="text-align:center;">2010</td>
+              <td>Exploring nonlinear feature space dimension
+              reduction and data representation in breast CADx with
+              Laplacian eigenmaps and t-SNE</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">K Bunte, S Hasse, M
+              Biehl, T Villmann</td>
+              <td style="text-align:center;">2012</td>
+              <td>Stochastic neighbor embedding (SNE) for dimension
+              reduction and visualization using arbitrary
+              divergences</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Maaten, Laurens van
+              der, Hinton, Geoffrey</td>
+              <td style="text-align:center;">2008</td>
+              <td>[PDF] Visualizing Data using t-SNE</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="sec-13">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>It is hard to quantify new things. In research, the value
+      of a newly published work is usually unknown until citations
+      become available. The value of this work is to provide a new
+      approach to improve search results on new papers by
+      exploiting the paper full text content and social media data.
+      Our user interface combines the item list with item
+      relationship visualisation, which saves researchers time in
+      finding interesting research papers.</p>
+      <p><img src=
+      "../../../data/deliveryimages.acm.org/10.1145/3190000/3186985/images/www18companion-225-graphic2.jpg"
+      class="img-responsive" alt="" longdesc="" /> <strong>Weijian
+      Zhang</strong> is a PhD student in Applied Maths at the
+      University of Manchester. He was a visiting student at MIT
+      CSAIL. His research is on network science.</p>
+      <p><img src=
+      "../../../data/deliveryimages.acm.org/10.1145/3190000/3186985/images/www18companion-225-graphic3.jpg"
+      class="img-responsive" alt="" longdesc="" /> <strong>Jonathan
+      Deakin</strong> is a PhD student in Applied Maths at the
+      University of Manchester. He studied Maths at the University
+      of Cambridge. His research is on Computational Physics.</p>
+      <p><img src=
+      "../../../data/deliveryimages.acm.org/10.1145/3190000/3186985/images/www18companion-225-graphic4.jpg"
+      class="img-responsive" alt="" longdesc="" /> <strong>Prof.
+      Nicholas J. Higham</strong> is Richardson Professor of
+      Applied Mathematics at the University of Manchester. His
+      research interests include numerical analysis, numerical
+      linear algebra, and numerical algorithms and software.</p>
+      <p><img src=
+      "../../../data/deliveryimages.acm.org/10.1145/3190000/3186985/images/www18companion-225-graphic5.jpg"
+      class="img-responsive" alt="" longdesc="" /> <strong>Dr.
+      Shuaiqiang Wang</strong> is a Data Scientist at JD.com. He
+      was a former Lecturer at the University of Manchester. His
+      research interests include recommender systems, information
+      retrieval and data mining.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Jöran Beel and Bela
+        Gipp. 2009. Google Scholar's Ranking Algorithm: An
+        Introductory Overview. <em>In <em>Proceedings of the 12th
+        International Conference on Scientometrics and Informetrics
+        (ISSI’09)</em></em> , Vol.&nbsp;1. ISSI, Rio de Janeiro
+        (Brazil), 230–241.</li>
+        <li id="BibPLXBIB0002" label="[2]">Dániel Fogaras. 2003.
+        Where to start browsing the web?. <em>In <em>International
+        Workshop on Innovative Internet Community Systems</em></em>
+        . Springer, 65–79.</li>
+        <li id="BibPLXBIB0003" label="[3]">Kun He, Yingru Li,
+        Sucheta Soundarajan, and John&nbsp;E. Hopcroft. 2017.
+        Hidden Community Detection in Social Networks. (Feb. 2017).
+        <a class="link-inline force-break" href=
+        "https://arxiv.org/abs/1702.07462" target=
+        "_blank">https://arxiv.org/abs/1702.07462</a>ArXiv preprint
+        arXiv:1702.07462.
+        </li>
+        <li id="BibPLXBIB0004" label="[4]">Jorge&nbsp;E. Hirsch.
+        2005. An Index to Quantify An Individual's Scientific
+        Research Output. <em><em>Proceedings of the National
+        Academy of Sciences of the United States of
+        America</em></em> 102, 46 (2005), 16569. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1073/pnas.0507655102" target="_blank">
+          https://doi.org/10.1073/pnas.0507655102</a>
+        </li>
+        <li id="BibPLXBIB0005" label="[5]">Jon&nbsp;M. Kleinberg.
+        1999. Authoritative Sources in a Hyperlinked Environment.
+        <em><em>J. Assoc. Comput. Mach.</em></em> 46, 5 (Sept.
+        1999), 604–632. <a class="link-inline force-break" href=
+        "https://doi.org/10.1145/324133.324140" target=
+        "_blank">https://doi.org/10.1145/324133.324140</a>
+        </li>
+        <li id="BibPLXBIB0006" label="[6]">Amy&nbsp;N Langville and
+        Carl&nbsp;D Meyer. 2011. <em><em>Google's PageRank and
+        beyond: The science of search engine rankings</em></em> .
+        Princeton University Press.</li>
+        <li id="BibPLXBIB0007" label="[7]">Quoc Le and Tomas
+        Mikolov. 2014. Distributed Representations of Sentences and
+        Documents. <em>In <em>Proceedings of the 31st International
+        Conference on Machine Learning (ICML-14)</em></em> .
+        1188–1196. <a class="link-inline force-break" href=
+        "http://www.jmlr.org/proceedings/papers/v32/le14.pdf"
+        target=
+        "_blank">http://www.jmlr.org/proceedings/papers/v32/le14.pdf</a>
+        </li>
+        <li id="BibPLXBIB0008" label="[8]">Laurens van&nbsp;der
+        Maaten and Geoffrey Hinton. 2008. Visualizing data using
+        t-SNE. <em><em>Journal of Machine Learning
+        Research</em></em> 9, Nov (2008), 2579–2605.</li>
+        <li id="BibPLXBIB0009" label="[9]">Christopher&nbsp;D.
+        Manning, Prabhakar Raghavan, and Hinrich Schutze. 2008.
+        <em><em>Introduction to Information Retrieval</em></em> .
+        Cambridge University Press, Cambridge.</li>
+        <li id="BibPLXBIB0010" label="[10]">Angelo&nbsp;Antonio
+        Salatino and Enrico Motta. 2016. Detection of Embryonic
+        Research Topics by Analysing Semantic Topic Networks.
+        <em>In <em>International Workshop on Semantic, Analytics,
+        Visualization</em></em> . Springer, 131–146.</li>
+        <li id="BibPLXBIB0011" label="[11]">Bahar Sateli, Felicitas
+        Löffler, Birgitta König-Ries, and René Witte. 2017.
+        ScholarLens: Extracting Competences from Research
+        Publications for the Automatic Generation of Semantic User
+        Profiles. <em><em>PeerJ Computer Science</em></em> 3 (July
+        2017), e121. <a class="link-inline force-break" href=
+        "https://doi.org/10.7717/peerj-cs.121" target=
+        "_blank">https://doi.org/10.7717/peerj-cs.121</a>
+        </li>
+        <li id="BibPLXBIB0012" label="[12]">Zhaowei Tan, Changfeng
+        Liu, Yuning Mao, Yunqi Guo, Jiaming Shen, and Xinbing Wang.
+        2016. AceMap: A Novel Approach Towards Displaying
+        Relationship Among Academic Literatures. <em>In
+        <em>Proceedings of the 25th International Conference
+        Companion on World Wide Web</em></em> (<em>WWW ’16
+        Companion</em>). International World Wide Web Conferences
+        Steering Committee, Republic and Canton of Geneva,
+        Switzerland, 437–442. <a class="link-inline force-break"
+        href="https://doi.org/10.1145/2872518.2890514" target=
+        "_blank">https://doi.org/10.1145/2872518.2890514</a>
+        </li>
+        <li id="BibPLXBIB0013" label="[13]">Jie Tang, Jing Zhang,
+        Limin Yao, Juanzi Li, Li Zhang, and Zhong Su. 2008.
+        Arnetminer: extraction and mining of academic social
+        networks. <em>In <em>Proceedings of the 14th ACM SIGKDD
+        international conference on Knowledge discovery and data
+        mining</em></em> . ACM, 990–998.</li>
+        <li id="BibPLXBIB0014" label="[14]">Laurens Van
+        Der&nbsp;Maaten. 2014. Accelerating t-SNE using tree-based
+        algorithms. <em><em>Journal of machine learning
+        research</em></em> 15, 1 (2014), 3221–3245.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href=
+    "#foot-fn1"><sup>1</sup></a>https://techcrunch.com/2016/11/11/scientists-gain-a-versatile-modern-search-engine-with-the-ai-powered-semantic-scholar/</p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "https://en.wikipedia.org/wiki/Pdftotext">https://en.wikipedia.org/wiki/Pdftotext</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186985">https://doi.org/10.1145/3184558.3186985</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

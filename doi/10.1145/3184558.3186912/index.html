@@ -1,1 +1,496 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">  <head>  <title>Which Algorithm Performs Best: Algorithm Selection for Community Detection</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>  </head>  <body id="main">  <section class="front-matter">   <section>    <header class="title-info">     <div class="journal-title">     <h1>      <span class="title">Which Algorithm Performs Best: Algorithm Selection for Community Detection</span>      <br/>      <span class="subTitle"/>     </h1>     </div>    </header>    <div class="authorGroup">     <div class="author">     <span class="givenName">Gaoyang</span>      <span class="surName">Guo</span>     School of Software, Tsinghua University, Beijing 100084, China, <a href="mailto:ggy16@mails.tsinghua.edu.cn">ggy16@mails.tsinghua.edu.cn</a>     </div>     <div class="author">     <span class="givenName">Chaokun</span>      <span class="surName">Wang</span>     School of Software, Tsinghua University, Beijing 100084, China, <a href="mailto:chaokun@tsinghua.edu.cn">chaokun@tsinghua.edu.cn</a>     </div>     <div class="author">     <span class="givenName">Xiang</span>      <span class="surName">Ying</span>     School of Software, Tsinghua University, Beijing 100084, China, <a href="mailto:yingx14@mails.tsinghua.edu.cn">yingx14@mails.tsinghua.edu.cn</a>     </div>                 </div>    <br/>    <div class="pubInfo">     <p>DOI: <a href="https://doi.org/10.1145/3184558.3186912" target="_blank">https://doi.org/10.1145/3184558.3186912</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">     <p>     <small>A myriad of community detection methods have been designed to discover communities based on specific network features in different disciplines, such as sociology, physics, and computer science. Consequentially, we have to face the problem of Algorithm Selection for Community Detection (<strong>ASCD</strong>): Given a specific network, which algorithm should we select to reveal its latent community structures? In this study, we propose a model called <strong>CYDES</strong> to address the <strong>ASCD</strong> problem. <strong>CYDES</strong> consists of two parts, namely feature matrix generation and algorithm classification. We combine three effective feature extraction methods with the idea of BOW model to construct a fixed-size feature matrix. After a nonlinear transformation to the feature matrix, a softmax regression model is utilized to generate a classification label representing the best community detection algorithm we select. Extensive experimental results demonstrate that <strong>CYDES</strong> has high algorithm selection quality for community detection in networks.</small>     </p>    </div>    <div class="CCSconcepts">     <p> <small> <span style="font-weight:bold;">CCS Concepts:</span> &#x2022;<strong> Information systems </strong>&#x2192; <em>Social recommendation;</em> <em>Content analysis and feature selection;</em> &#x2022;<strong> Networks </strong>&#x2192; <em>Social media networks;</em></small> </p>    </div>    <div class="classifications">     <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Gaoyang Guo, Chaokun Wang, and Xiang Ying. 2018. Which Algorithm Performs Best: Algorithm Selection for Community Detection. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 2 Pages. <a href="https://doi.org/10.1145/3184558.3186912" class="link-inline force-break"        target="_blank">https://doi.org/10.1145/3184558.3186912</a></small>     </p>     </div>    </div>   </section>  </section>  <section class="body">   <p>algorithm selection, community detection, classification</p>   <section id="sec-4">    <header>     <div class="title-info">     <h2>      <span class="section-number">1</span> Motivation</h2>     </div>    </header>    <p>This paper addresses the problem of Algorithm Selection for Community Detection (<strong>ASCD</strong>), which is illustrated in Figure <a class="fig" href="#fig1">1</a>. To the best of our knowledge, this is the first time that the problem is proposed.</p>    <p>We use an undirected graph <em>G</em> = (<em>V</em>, <em>E</em>) to denote a network, where <em>V</em> is the node set and <em>E</em> is the edge set. Let <em>A</em> = {<em>a</em>     <sup>1</sup>, <em>a</em>     <sup>2</sup>, &#x2026;, <em>a<sup>k</sup>     </em>} denote the community detection algorithm set consisting of <em>k</em> different algorithms. Given a network <em>G</em>, the <strong>ASCD</strong> problem is to select an algorithm <em>a</em> &#x2208; <em>A</em> which has the best performance for <em>G</em>. Formally, the problem aims at learning a function <em>T</em> mapping a network <em>G</em> into the best algorithm <em>a</em> &#x2208; <em>A</em> for <em>G</em>, i.e., <em>a</em> = <em>T</em>(<em>G</em>). We use the popular metric NMI (Normalized Mutual Information) to measure the performance of algorithms for a network <em>G</em> in this paper. The algorithm with the highest NMI value is the best algorithm. <figure id="fig1">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186912/images/www18companion-152-fig1.jpg" class="img-responsive" alt="Figure 1"       longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 1:</span>      <span class="figure-title">An illustration of the ASCD problem. A community detection toolbox, such as CoDeT [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"        href="#BibPLXBIB0006">6</a>], includes CNM, Spectral, and other algorithms. Given a network, the aim of the ASCD problem is to select a community detection algorithm from the toolbox which performs best on the network.</span>     </div>     </figure>    </p>   </section>   <section id="sec-5">    <header>     <div class="title-info">     <h2>      <span class="section-number">2</span> Proposed Methods</h2>     </div>    </header>    <p>The <strong>CYDES</strong> model consists of two parts. Given a network <em>G</em>, 1) it generates a feature matrix <strong>D</strong> for <em>G</em>, and then 2) it performs a nonlinear transformation on <strong>D</strong> and predicts the best community detection algorithm <em>a</em> &#x2208; <em>A</em> with a softmax regression model.</p>    <section id="sec-6">     <header>     <div class="title-info">      <h3>       <span class="section-number">2.1</span> Feature matrix generation</h3>     </div>     </header>     <p>We propose three effective feature extraction methods, which are based on 2-hop neighbor structure, normalized neighbor structure and 2<sup>      <em>nd</em>     </sup> order random walk [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0001">1</a>], respectively.</p>     <p>     <strong>2-hop neighbor structure.</strong> For each node <em>v</em> &#x2208; <em>V</em>, we construct a local feature vector <strong>b<sub>2 &#x2212; hop</sub>     </strong> based on its 2-hop neighbor structure. We use BFS (Breadth First Search) strategy to extract the subgraph <em>G</em>&#x2032; within 2 hops starting from <em>v</em>. <strong>b<sub>2 &#x2212; hop</sub>     </strong> for <em>v</em> consists of three parts: 1) the size of <em>G</em>&#x2032;, 2) the density of <em>G</em>&#x2032;, 3) the maximum <em>p</em> degree values in <em>G</em>&#x2032;, where <em>p</em> is a constant. The three parts of values are concatenated to construct <strong>b<sub>2 &#x2212; hop</sub>     </strong>. Let <span class="inline-equation"><span class="tex">$\mathbf {\mathbf {B_{2-hop}}}$</span>     </span> denote the set of all |<em>V</em>| local feature vectors based on 2-hop neighbor structure in <em>G</em>.</p>     <p>     <strong>Normalized neighbor structure.</strong> For each node <em>v</em> &#x2208; <em>V</em>, we construct a fixed-length local feature vector <strong>b<sub>norm</sub>     </strong> based on its normalized neighbor structure. We also utilize the BFS strategy to get the subgraph <em>G</em>&#x2032; within 2 hops starting from <em>v</em>. We perform graph normalization [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0002">2</a>] on <em>G</em>&#x2032;, which is an injective graph labeling procedure. According to the labeling results, the top <em>q</em> nodes are chosen to form a new subgraph <em>G</em>&#x2032;&#x2032;, where <em>q</em> is a constant. <strong>b<sub>norm</sub>     </strong> for <em>v</em> is constructed simply by expanding <em>G</em>&#x2032;&#x2032; into one dimension. The advantage of this method is that the graph normalization ensures a unified way to get the information of different neighbor structures. Let <span class="inline-equation"><span class="tex">$\mathbf {\mathbf {B_{norm}}}$</span>     </span> denote the set of all |<em>V</em>| local feature vectors based on the normalized neighbor structure in <em>G</em>.</p>     <p>     <strong>The <strong>2<sup>nd</sup>      </strong> order random walk.</strong> For each node <em>v</em> &#x2208; <em>V</em>, we construct a fixed-length local feature vector <strong>b<sub>rw</sub>     </strong> based on the 2<sup>      <em>nd</em>     </sup> order random walk. We simulate a 2<sup>      <em>nd</em>     </sup> order random walk of length <em>l</em> starting from <em>v</em>. Let <em>N</em> and <em>M</em> denote all nodes and edges in the random walk, respectively. <strong>b<sub>rw</sub>     </strong> for <em>v</em> consists of three parts: 1) all degree values of nodes in <em>N</em>, 2) the length of the longest path in the random walk, 3) all values of triangle number containing each edge <em>e</em> &#x2208; <em>M</em>. All above three parts of values are concatenated to construct <strong>b<sub>rw</sub>     </strong>. Let <span class="inline-equation"><span class="tex">$\mathbf {\mathbf {B_{rw}}}$</span>     </span> denote the set of all |<em>V</em>| local feature vectors based on the 2<sup>      <em>nd</em>     </sup> order random walk in <em>G</em>.</p>     <p>     <strong>Generate network feature matrices based on BOW model.</strong> Given a network <em>G</em>, three different local feature vector sets for <em>G</em>, i.e., <span class="inline-equation"><span class="tex">$\mathbf {\mathbf {B_{2-hop}}}$</span>     </span>, <span class="inline-equation"><span class="tex">$\mathbf {\mathbf {B_{norm}}}$</span>     </span>, and <span class="inline-equation"><span class="tex">$\mathbf {\mathbf {B_{rw}}}$</span>     </span>, are extracted by three methods above. We utilize the idea of BOW (Bag of Words) model to transform these three sets of local feature vectors into three <em>c</em>-dimensional vectors. Let <span class="inline-equation"><span class="tex">$\mathbf {B_m = \lbrace b_m^1, b_m^2, ..., b_m^{|V|}\rbrace }$</span>     </span> denote one of three sets of local feature vectors, where <em>m</em> &#x2208; {2 &#x2212; <em>hop</em>, <em>norm</em>, <em>rw</em>} represents the category. Our goal is to transform <strong>B<sub>m</sub>     </strong> into a <em>c</em>-dimensional feature vector <strong>d<sub>m</sub>     </strong>. First, the <em>K</em>-means method is used to cluster all local feature vectors with category <em>m</em> from all training networks into <em>c</em> classes. Then, for the <em>i</em>th dimension of <strong>d<sub>m</sub>     </strong>, we count the number of local feature vectors <strong>b<sub>m</sub>     </strong> belonging to the <em>i</em>th class according to the clustering results and assign this value to it. Last, <strong>d<sub>m</sub>     </strong> denotes a <em>c</em>-dimensional feature vector of category <em>m</em> for <em>G</em>. Now, <span class="inline-equation"><span class="tex">$\mathbf {\mathbf {B_{2-hop}}}$</span>     </span>, <span class="inline-equation"><span class="tex">$\mathbf {\mathbf {B_{norm}}}$</span>     </span>, and <span class="inline-equation"><span class="tex">$\mathbf {\mathbf {B_{rw}}}$</span>     </span> are transformed into <strong>d<sub>2 &#x2212; hop</sub>     </strong>, <strong>d<sub>norm</sub>     </strong>, and <strong>d<sub>rw</sub>     </strong>, which are used to construct the network feature matrix <strong>D</strong> for <em>G</em>, i.e., <strong>D = (d<sub>2 &#x2212; hop</sub>, d<sub>norm</sub>, d<sub>rw</sub>)</strong>.</p>    </section>    <section id="sec-7">     <header>     <div class="title-info">      <h3>       <span class="section-number">2.2</span> Algorithm classification</h3>     </div>     </header>     <p>Given a network <em>G</em> and its network feature matrix <strong>D</strong>, we firstly perform a nonlinear transformation on <strong>D</strong>: <strong>z = <em>&#x03C3;</em>(D<sup>T</sup>w)</strong>, where <strong>w</strong> is a <em>c</em>-dimensional weight vector, and <em>&#x03C3;</em>(<em>x</em>) = 1/(1 + <em>e</em>     <sup>&#x2212; <em>&#x03B1;x</em>     </sup>) is the adaptive sigmoid function. Since the community detection algorithm set <em>A</em> consists of <em>k</em> algorithms [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0005">5</a>], we can treat the <strong>ASCD</strong> problem as a <em>k</em>-classification problem. Then, we train a softmax regression model by minimizing the loss function <em>L</em> as</p>     <div class="table-responsive" id="eq1">     <div class="display-equation">      <span class="tex mytex">\begin{equation} \text{min } L = -\ln \frac{e^{\mathbf {(S^Tz)}_{y}}}{\sum _{i=1}^{k}e^{\mathbf {(S^Tz)}_i}} + \lambda \mathbf {||w||_2^2} + \gamma \mathbf {||S||_2^2}\end{equation} </span>      <br/>      <span class="equation-number">(mid1)</span>     </div>     </div>     <p>\eqno1 <div class="table-responsive">      <div class="display-equation">       <span class="tex mytex">\[ where \] </span>       <br/>      </div>     </div>      <em>denotesthetargetclassificationlabelrepresentingthebestalgorithm</em>, S<em>denotesaweightmatrixwithsize</em>(3*k), (STz)i<em>denotesthe</em>i<em>thdimensionof</em>STz, <em>and</em>     <em>denotetwotunableregularizationparameters</em>.<em>Finally</em>, <em>theoutputlabelofthesoftmaxregressionmodeljustrepresentsthebestalgorithmweselectfor</em>G.</p>    </section>   </section>   <section id="sec-8">    <header>     <div class="title-info">     <h2>      <span class="section-number">3</span> Experiments</h2>     </div>    </header>    <p>Since the public real network data sets are relatively limited to obtain, we use the widely used tool LFR to generate 500 synthetic networks, whose numbers of the nodes (|<em>V</em>|) is evenly distributed from 300 to 2,500 and average degrees are uniformly distributed over [4, 40]. We select ten community detection algorithms including most kinds of methods in recent years: CNM, SCP, Radicchi, M-DMF, Spectral, M-DSGE, LPA, gCluskeleton, HANP and Attractor. We conduct all ten community detection algorithms on the synthetic networks and compute their NMI values. The algorithm with the highest NMI value just represents the best one and is regarded as the target classification label. We select 350 networks randomly for training and use remaining 150 networks for testing. <figure id="fig2">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186912/images/www18companion-152-fig2.jpg" class="img-responsive" alt="Figure 2"       longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 2:</span>      <span class="figure-title">Comparison ofthe performance</span>     </div>     </figure>    </p>    <p>Figure 2 illustrates Top-1, Top-3 and average SRC (Spearman Rank Correlation) [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>] values of all the baselines and <strong>CYDES</strong> on the testing networks. We separately combine <strong>d<sub>2 &#x2212; hop</sub>     </strong>, <strong>d<sub>norm</sub>     </strong> and <strong>d<sub>rw</sub>     </strong> with the SVM classification model to act as three baselines, which are denoted by &#x201D;2-hop+SVM&#x201D;, &#x201D;norm+SVM&#x201D;, and &#x201D;rw+SVM&#x201D;, respectively. We also use two SVM classification models based on node2vec [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>] and WL-Kernel method [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>] as the other two baselines, which are represented as &#x201D;node2vec+SVM&#x201D; and &#x201D;WL-Kernel+SVM&#x201D;, respectively. We can see that <strong>CYDES</strong> has the best performance, which indicates that <strong>CYDES</strong> is effective for the <strong>ASCD</strong> problem. Furthermore, we analyze the sensitivity of feature dimension <em>c</em> and node number |<em>V</em>| as shown in Figure <a class="fig" href="#fig2">3</a>. |<em>V</em>| is divided into five intervals, which are denoted by five different colors of bars, respectively. The line shows the average performance on all testing networks. The results show that <strong>CYDES</strong> achieves the best top-1 accuracy when <em>c</em> is 300 and it is more effective for networks with |<em>V</em>| between 800 and 1,800.</p>   </section>   <section id="sec-9">    <header>     <div class="title-info">     <h2>      <span class="section-number">4</span> Conclusion</h2>     </div>    </header>    <p>The problem of <strong>ASCD</strong> is presented in this study. A model called <strong>CYDES</strong> is proposed to deal with the problem. <strong>CYDES</strong> includes two parts, feature matrix generation and algorithm classification. The experimental results show <strong>CYDES</strong> is effective for the <strong>ASCD</strong> problem. In the future, more representative features of networks will be considered with the help of deep learning methods.</p>   </section>   <section id="sec-10">    <header>     <div class="title-info">     <h2>      <span class="section-number">5</span> Acknowledgments</h2>     </div>    </header>    <p>This work is supported in part by the National Key Research and Development Program of China (No.&#x00A0;2017YFC0820402), the Intelligent Manufacturing Comprehensive Standardization and New Pattern Application Project of Ministry of Industry and Information Technology (Experimental validation of key technical standards for trusted services in industrial Internet), and the China National Arts Fund (No.&#x00A0;20164129). Chaokun Wang is the corresponding author.</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>     <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>     </div>    </header>    <ul class="bibUl">     <li id="BibPLXBIB0001" label="[1]">Aditya Grover and Jure Leskovec. 2016. node2vec: Scalable feature learning for networks. In <em>      <em>SIGKDD</em>     </em>. ACM, 855&#x2013;864.</li>     <li id="BibPLXBIB0002" label="[2]">Mathias Niepert, Mohamed Ahmed, and Konstantin Kutzkov. 2016. Learning convolutional neural networks for graphs. In <em>      <em>ICML</em>     </em>. 2014&#x2013;2023.</li>     <li id="BibPLXBIB0003" label="[3]">Nino Shervashidze, Pascal Schweitzer, Erik Jan&#x00A0;van Leeuwen, Kurt Mehlhorn, and Karsten&#x00A0;M Borgwardt. 2011. Weisfeiler-lehman graph kernels. <em>      <em>Journal of Machine Learning Research</em>     </em>12, Sep (2011), 2539&#x2013;2561.</li>     <li id="BibPLXBIB0004" label="[4]">Charles Spearman. 1904. The proof and measurement of association between two things. <em>      <em>The American journal of psychology</em>     </em>15, 1 (1904), 72&#x2013;101.</li>     <li id="BibPLXBIB0005" label="[5]">Meng Wang, Chaokun Wang, Jeffrey&#x00A0;Xu Yu, and Jun Zhang. 2015. Community Detection in Social Networks: An In-depth Benchmarking Study with a Procedure-Oriented Framework. <em>      <em>Proceedings of the VLDB Endowment</em>     </em>8, 10 (2015), 998&#x2013;1009.</li>     <li id="BibPLXBIB0006" label="[6]">Yifei Yue, Chaokun Wang, Xiang Ying, and Jun Qian. 2017. CoDeT: An Easy-to-Use Community Detection Tool. <em>      <em>International Journal of Data Mining and Bioinformatics</em>     </em>19, 1(2017), 52&#x2013;74.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">     <h2>FOOTNOTE</h2>    </div>   </header>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>     <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3186912">https://doi.org/10.1145/3184558.3186912</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div>  </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Which Algorithm Performs Best: Algorithm Selection for
+  Community Detection</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Which Algorithm Performs Best:
+          Algorithm Selection for Community Detection</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Gaoyang</span> <span class=
+          "surName">Guo</span> School of Software, Tsinghua
+          University, Beijing 100084, China, <a href=
+          "mailto:ggy16@mails.tsinghua.edu.cn">ggy16@mails.tsinghua.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Chaokun</span> <span class=
+          "surName">Wang</span> School of Software, Tsinghua
+          University, Beijing 100084, China, <a href=
+          "mailto:chaokun@tsinghua.edu.cn">chaokun@tsinghua.edu.cn</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Xiang</span> <span class=
+          "surName">Ying</span> School of Software, Tsinghua
+          University, Beijing 100084, China, <a href=
+          "mailto:yingx14@mails.tsinghua.edu.cn">yingx14@mails.tsinghua.edu.cn</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186912"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186912</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>A myriad of community detection methods have been
+        designed to discover communities based on specific network
+        features in different disciplines, such as sociology,
+        physics, and computer science. Consequentially, we have to
+        face the problem of Algorithm Selection for Community
+        Detection (<strong>ASCD</strong>): Given a specific
+        network, which algorithm should we select to reveal its
+        latent community structures? In this study, we propose a
+        model called <strong>CYDES</strong> to address the
+        <strong>ASCD</strong> problem. <strong>CYDES</strong>
+        consists of two parts, namely feature matrix generation and
+        algorithm classification. We combine three effective
+        feature extraction methods with the idea of BOW model to
+        construct a fixed-size feature matrix. After a nonlinear
+        transformation to the feature matrix, a softmax regression
+        model is utilized to generate a classification label
+        representing the best community detection algorithm we
+        select. Extensive experimental results demonstrate that
+        <strong>CYDES</strong> has high algorithm selection quality
+        for community detection in networks.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Information systems</strong> →
+        <em>Social recommendation;</em> <em>Content analysis and
+        feature selection;</em> • <strong>Networks</strong> →
+        <em>Social media networks;</em></small></p>
+      </div>
+      <div class="classifications">
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Gaoyang Guo, Chaokun Wang, and Xiang Ying. 2018. Which
+          Algorithm Performs Best: Algorithm Selection for
+          Community Detection. In <em>WWW '18 Companion: The 2018
+          Web Conference Companion,</em> <em>April 23–27,
+          2018,</em> <em>Lyon, France. ACM, New York, NY, USA</em>
+          2 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3186912" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3186912</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <p>algorithm selection, community detection, classification</p>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span> Motivation</h2>
+        </div>
+      </header>
+      <p>This paper addresses the problem of Algorithm Selection
+      for Community Detection (<strong>ASCD</strong>), which is
+      illustrated in Figure <a class="fig" href="#fig1">1</a>. To
+      the best of our knowledge, this is the first time that the
+      problem is proposed.</p>
+      <p>We use an undirected graph <em>G</em> = (<em>V</em>,
+      <em>E</em>) to denote a network, where <em>V</em> is the node
+      set and <em>E</em> is the edge set. Let <em>A</em> =
+      {<em>a</em> <sup>1</sup>, <em>a</em> <sup>2</sup>, …,
+      <em>a<sup>k</sup></em> } denote the community detection
+      algorithm set consisting of <em>k</em> different algorithms.
+      Given a network <em>G</em>, the <strong>ASCD</strong> problem
+      is to select an algorithm <em>a</em> ∈ <em>A</em> which has
+      the best performance for <em>G</em>. Formally, the problem
+      aims at learning a function <em>T</em> mapping a network
+      <em>G</em> into the best algorithm <em>a</em> ∈ <em>A</em>
+      for <em>G</em>, i.e., <em>a</em> = <em>T</em>(<em>G</em>). We
+      use the popular metric NMI (Normalized Mutual Information) to
+      measure the performance of algorithms for a network
+      <em>G</em> in this paper. The algorithm with the highest NMI
+      value is the best algorithm.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186912/images/www18companion-152-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">An illustration of the ASCD problem. A
+          community detection toolbox, such as CoDeT [<a class=
+          "bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0006">6</a>],
+          includes CNM, Spectral, and other algorithms. Given a
+          network, the aim of the ASCD problem is to select a
+          community detection algorithm from the toolbox which
+          performs best on the network.</span>
+        </div>
+      </figure>
+      <p></p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Proposed
+          Methods</h2>
+        </div>
+      </header>
+      <p>The <strong>CYDES</strong> model consists of two parts.
+      Given a network <em>G</em>, 1) it generates a feature matrix
+      <strong>D</strong> for <em>G</em>, and then 2) it performs a
+      nonlinear transformation on <strong>D</strong> and predicts
+      the best community detection algorithm <em>a</em> ∈
+      <em>A</em> with a softmax regression model.</p>
+      <section id="sec-6">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Feature
+            matrix generation</h3>
+          </div>
+        </header>
+        <p>We propose three effective feature extraction methods,
+        which are based on 2-hop neighbor structure, normalized
+        neighbor structure and 2 <sup><em>nd</em></sup> order
+        random walk [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0001">1</a>], respectively.</p>
+        <p><strong>2-hop neighbor structure.</strong> For each node
+        <em>v</em> ∈ <em>V</em>, we construct a local feature
+        vector <strong>b<sub>2 − hop</sub></strong> based on its
+        2-hop neighbor structure. We use BFS (Breadth First Search)
+        strategy to extract the subgraph <em>G</em>′ within 2 hops
+        starting from <em>v</em>. <strong>b<sub>2 −
+        hop</sub></strong> for <em>v</em> consists of three parts:
+        1) the size of <em>G</em>′, 2) the density of <em>G</em>′,
+        3) the maximum <em>p</em> degree values in <em>G</em>′,
+        where <em>p</em> is a constant. The three parts of values
+        are concatenated to construct <strong>b<sub>2 −
+        hop</sub></strong> . Let <span class=
+        "inline-equation"><span class="tex">$\mathbf {\mathbf
+        {B_{2-hop}}}$</span></span> denote the set of all
+        |<em>V</em>| local feature vectors based on 2-hop neighbor
+        structure in <em>G</em>.</p>
+        <p><strong>Normalized neighbor structure.</strong> For each
+        node <em>v</em> ∈ <em>V</em>, we construct a fixed-length
+        local feature vector <strong>b<sub>norm</sub></strong>
+        based on its normalized neighbor structure. We also utilize
+        the BFS strategy to get the subgraph <em>G</em>′ within 2
+        hops starting from <em>v</em>. We perform graph
+        normalization [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0002">2</a>] on <em>G</em>′, which is an
+        injective graph labeling procedure. According to the
+        labeling results, the top <em>q</em> nodes are chosen to
+        form a new subgraph <em>G</em>′′, where <em>q</em> is a
+        constant. <strong>b<sub>norm</sub></strong> for <em>v</em>
+        is constructed simply by expanding <em>G</em>′′ into one
+        dimension. The advantage of this method is that the graph
+        normalization ensures a unified way to get the information
+        of different neighbor structures. Let <span class=
+        "inline-equation"><span class="tex">$\mathbf {\mathbf
+        {B_{norm}}}$</span></span> denote the set of all
+        |<em>V</em>| local feature vectors based on the normalized
+        neighbor structure in <em>G</em>.</p>
+        <p><strong>The <strong>2<sup>nd</sup></strong> order random
+        walk.</strong> For each node <em>v</em> ∈ <em>V</em>, we
+        construct a fixed-length local feature vector
+        <strong>b<sub>rw</sub></strong> based on the 2
+        <sup><em>nd</em></sup> order random walk. We simulate a 2
+        <sup><em>nd</em></sup> order random walk of length
+        <em>l</em> starting from <em>v</em>. Let <em>N</em> and
+        <em>M</em> denote all nodes and edges in the random walk,
+        respectively. <strong>b<sub>rw</sub></strong> for
+        <em>v</em> consists of three parts: 1) all degree values of
+        nodes in <em>N</em>, 2) the length of the longest path in
+        the random walk, 3) all values of triangle number
+        containing each edge <em>e</em> ∈ <em>M</em>. All above
+        three parts of values are concatenated to construct
+        <strong>b<sub>rw</sub></strong> . Let <span class=
+        "inline-equation"><span class="tex">$\mathbf {\mathbf
+        {B_{rw}}}$</span></span> denote the set of all |<em>V</em>|
+        local feature vectors based on the 2 <sup><em>nd</em></sup>
+        order random walk in <em>G</em>.</p>
+        <p><strong>Generate network feature matrices based on BOW
+        model.</strong> Given a network <em>G</em>, three different
+        local feature vector sets for <em>G</em>, i.e.,
+        <span class="inline-equation"><span class="tex">$\mathbf
+        {\mathbf {B_{2-hop}}}$</span></span> , <span class=
+        "inline-equation"><span class="tex">$\mathbf {\mathbf
+        {B_{norm}}}$</span></span> , and <span class=
+        "inline-equation"><span class="tex">$\mathbf {\mathbf
+        {B_{rw}}}$</span></span> , are extracted by three methods
+        above. We utilize the idea of BOW (Bag of Words) model to
+        transform these three sets of local feature vectors into
+        three <em>c</em>-dimensional vectors. Let <span class=
+        "inline-equation"><span class="tex">$\mathbf {B_m = \lbrace
+        b_m^1, b_m^2, ..., b_m^{|V|}\rbrace }$</span></span> denote
+        one of three sets of local feature vectors, where
+        <em>m</em> ∈ {2 − <em>hop</em>, <em>norm</em>, <em>rw</em>}
+        represents the category. Our goal is to transform
+        <strong>B<sub>m</sub></strong> into a
+        <em>c</em>-dimensional feature vector
+        <strong>d<sub>m</sub></strong> . First, the
+        <em>K</em>-means method is used to cluster all local
+        feature vectors with category <em>m</em> from all training
+        networks into <em>c</em> classes. Then, for the
+        <em>i</em>th dimension of <strong>d<sub>m</sub></strong> ,
+        we count the number of local feature vectors
+        <strong>b<sub>m</sub></strong> belonging to the
+        <em>i</em>th class according to the clustering results and
+        assign this value to it. Last,
+        <strong>d<sub>m</sub></strong> denotes a
+        <em>c</em>-dimensional feature vector of category
+        <em>m</em> for <em>G</em>. Now, <span class=
+        "inline-equation"><span class="tex">$\mathbf {\mathbf
+        {B_{2-hop}}}$</span></span> , <span class=
+        "inline-equation"><span class="tex">$\mathbf {\mathbf
+        {B_{norm}}}$</span></span> , and <span class=
+        "inline-equation"><span class="tex">$\mathbf {\mathbf
+        {B_{rw}}}$</span></span> are transformed into
+        <strong>d<sub>2 − hop</sub></strong> ,
+        <strong>d<sub>norm</sub></strong> , and
+        <strong>d<sub>rw</sub></strong> , which are used to
+        construct the network feature matrix <strong>D</strong> for
+        <em>G</em>, i.e., <strong>D = (d<sub>2 − hop</sub>,
+        d<sub>norm</sub>, d<sub>rw</sub>)</strong>.</p>
+      </section>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> Algorithm
+            classification</h3>
+          </div>
+        </header>
+        <p>Given a network <em>G</em> and its network feature
+        matrix <strong>D</strong>, we firstly perform a nonlinear
+        transformation on <strong>D</strong>: <strong>z =
+        <em>σ</em>(D<sup>T</sup>w)</strong>, where
+        <strong>w</strong> is a <em>c</em>-dimensional weight
+        vector, and <em>σ</em>(<em>x</em>) = 1/(1 + <em>e</em>
+        <sup>− <em>αx</em></sup> ) is the adaptive sigmoid
+        function. Since the community detection algorithm set
+        <em>A</em> consists of <em>k</em> algorithms [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0005">5</a>], we can
+        treat the <strong>ASCD</strong> problem as a
+        <em>k</em>-classification problem. Then, we train a softmax
+        regression model by minimizing the loss function <em>L</em>
+        as</p>
+        <div class="table-responsive" id="eq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \text{min } L
+            = -\ln \frac{e^{\mathbf {(S^Tz)}_{y}}}{\sum
+            _{i=1}^{k}e^{\mathbf {(S^Tz)}_i}} + \lambda \mathbf
+            {||w||_2^2} + \gamma \mathbf
+            {||S||_2^2}\end{equation}</span><br />
+            <span class="equation-number">(mid1)</span>
+          </div>
+        </div>
+        <p>\eqno1</p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\[ where \]</span><br />
+          </div>
+        </div><em>denotesthetargetclassificationlabelrepresentingthebestalgorithm</em>,
+        S<em>denotesaweightmatrixwithsize</em>(3*k),
+        (STz)i<em>denotesthe</em>i<em>thdimensionof</em>STz,
+        <em>and</em>
+        <em>denotetwotunableregularizationparameters</em>.<em>Finally</em>,
+        <em>theoutputlabelofthesoftmaxregressionmodeljustrepresentsthebestalgorithmweselectfor</em>G.
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-8">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span>
+          Experiments</h2>
+        </div>
+      </header>
+      <p>Since the public real network data sets are relatively
+      limited to obtain, we use the widely used tool LFR to
+      generate 500 synthetic networks, whose numbers of the nodes
+      (|<em>V</em>|) is evenly distributed from 300 to 2,500 and
+      average degrees are uniformly distributed over [4, 40]. We
+      select ten community detection algorithms including most
+      kinds of methods in recent years: CNM, SCP, Radicchi, M-DMF,
+      Spectral, M-DSGE, LPA, gCluskeleton, HANP and Attractor. We
+      conduct all ten community detection algorithms on the
+      synthetic networks and compute their NMI values. The
+      algorithm with the highest NMI value just represents the best
+      one and is regarded as the target classification label. We
+      select 350 networks randomly for training and use remaining
+      150 networks for testing.</p>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186912/images/www18companion-152-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">Comparison ofthe performance</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>Figure 2 illustrates Top-1, Top-3 and average SRC
+      (Spearman Rank Correlation) [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>] values of all the baselines and
+      <strong>CYDES</strong> on the testing networks. We separately
+      combine <strong>d<sub>2 − hop</sub></strong> ,
+      <strong>d<sub>norm</sub></strong> and
+      <strong>d<sub>rw</sub></strong> with the SVM classification
+      model to act as three baselines, which are denoted by
+      ”2-hop+SVM”, ”norm+SVM”, and ”rw+SVM”, respectively. We also
+      use two SVM classification models based on node2vec
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0001">1</a>] and
+      WL-Kernel method [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>] as the other two baselines, which are
+      represented as ”node2vec+SVM” and ”WL-Kernel+SVM”,
+      respectively. We can see that <strong>CYDES</strong> has the
+      best performance, which indicates that <strong>CYDES</strong>
+      is effective for the <strong>ASCD</strong> problem.
+      Furthermore, we analyze the sensitivity of feature dimension
+      <em>c</em> and node number |<em>V</em>| as shown in Figure
+      <a class="fig" href="#fig2">3</a>. |<em>V</em>| is divided
+      into five intervals, which are denoted by five different
+      colors of bars, respectively. The line shows the average
+      performance on all testing networks. The results show that
+      <strong>CYDES</strong> achieves the best top-1 accuracy when
+      <em>c</em> is 300 and it is more effective for networks with
+      |<em>V</em>| between 800 and 1,800.</p>
+    </section>
+    <section id="sec-9">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>The problem of <strong>ASCD</strong> is presented in this
+      study. A model called <strong>CYDES</strong> is proposed to
+      deal with the problem. <strong>CYDES</strong> includes two
+      parts, feature matrix generation and algorithm
+      classification. The experimental results show
+      <strong>CYDES</strong> is effective for the
+      <strong>ASCD</strong> problem. In the future, more
+      representative features of networks will be considered with
+      the help of deep learning methods.</p>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span>
+          Acknowledgments</h2>
+        </div>
+      </header>
+      <p>This work is supported in part by the National Key
+      Research and Development Program of China
+      (No.&nbsp;2017YFC0820402), the Intelligent Manufacturing
+      Comprehensive Standardization and New Pattern Application
+      Project of Ministry of Industry and Information Technology
+      (Experimental validation of key technical standards for
+      trusted services in industrial Internet), and the China
+      National Arts Fund (No.&nbsp;20164129). Chaokun Wang is the
+      corresponding author.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Aditya Grover and Jure
+        Leskovec. 2016. node2vec: Scalable feature learning for
+        networks. In <em><em>SIGKDD</em></em> . ACM, 855–864.</li>
+        <li id="BibPLXBIB0002" label="[2]">Mathias Niepert, Mohamed
+        Ahmed, and Konstantin Kutzkov. 2016. Learning convolutional
+        neural networks for graphs. In <em><em>ICML</em></em> .
+        2014–2023.</li>
+        <li id="BibPLXBIB0003" label="[3]">Nino Shervashidze,
+        Pascal Schweitzer, Erik Jan&nbsp;van Leeuwen, Kurt
+        Mehlhorn, and Karsten&nbsp;M Borgwardt. 2011.
+        Weisfeiler-lehman graph kernels. <em><em>Journal of Machine
+        Learning Research</em></em> 12, Sep (2011), 2539–2561.</li>
+        <li id="BibPLXBIB0004" label="[4]">Charles Spearman. 1904.
+        The proof and measurement of association between two
+        things. <em><em>The American journal of
+        psychology</em></em> 15, 1 (1904), 72–101.</li>
+        <li id="BibPLXBIB0005" label="[5]">Meng Wang, Chaokun Wang,
+        Jeffrey&nbsp;Xu Yu, and Jun Zhang. 2015. Community
+        Detection in Social Networks: An In-depth Benchmarking
+        Study with a Procedure-Oriented Framework.
+        <em><em>Proceedings of the VLDB Endowment</em></em> 8, 10
+        (2015), 998–1009.</li>
+        <li id="BibPLXBIB0006" label="[6]">Yifei Yue, Chaokun Wang,
+        Xiang Ying, and Jun Qian. 2017. CoDeT: An Easy-to-Use
+        Community Detection Tool. <em><em>International Journal of
+        Data Mining and Bioinformatics</em></em> 19, 1(2017),
+        52–74.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186912">https://doi.org/10.1145/3184558.3186912</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

@@ -1,1 +1,1161 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">  <head>  <title>Combining Neural, Statistical and External Features for Fake News Stance Identification</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>  </head>  <body id="main">  <section class="front-matter">   <section>    <header class="title-info">     <div class="journal-title">     <h1>      <span class="title">Combining Neural, Statistical and External Features for Fake News Stance Identification</span>      <br/>      <span class="subTitle"/>     </h1>     </div>    </header>    <div class="authorGroup">     <div class="author"><span class="givenName">Gaurav</span>      <span class="surName">Bhatt</span>,     IIT-Roorkee, India, <a href="mailto:gauravbhatt.cs.iitr@gmail.com">gauravbhatt.cs.iitr@gmail.com</a>     </div>     <div class="author">     <span class="givenName">Aman</span>      <span class="surName">Sharma</span>,     IIT-Roorkee, India, <a href="mailto:amanvcks@gmail.com">amanvcks@gmail.com</a>     </div>     <div class="author">     <span class="givenName">Shivam</span>      <span class="surName">Sharma</span>,     LMNIIT, Jaipur, India, <a href="mailto:15ucc035@lnmiit.ac.in">15ucc035@lnmiit.ac.in</a>     </div>     <div class="author">     <span class="givenName">Ankush</span>      <span class="surName">Nagpal</span>,     IIT-Roorkee, India, <a href="mailto:ankushnagpal.cs@gmail.com">ankushnagpal.cs@gmail.com</a>     </div>     <div class="author">     <span class="givenName">Balasubramanian</span>      <span class="surName">Raman</span>,     IIT-Roorkee, India, <a href="mailto:balarfma@iitr.ac.in">balarfma@iitr.ac.in</a>     </div>     <div class="author">     <span class="givenName">Ankush</span>      <span class="surName">Mittal</span>,     Graphic Era University, India, <a href="mailto:dr.ankushmittal@gmail.com">dr.ankushmittal@gmail.com</a>     </div>                             </div>    <br/>    <div class="pubInfo">     <p>DOI: <a href="https://doi.org/10.1145/3184558.3191577" target="_blank">https://doi.org/10.1145/3184558.3191577</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">     <p>     <small>Identifying the veracity of a news article is an interesting problem while automating this process can be a challenging task. Detection of a news article as fake is still an open question as it is contingent on many factors which the current state-of-the-art models fail to incorporate. In this paper, we explore a subtask to fake news identification, and that is stance detection. Given a news article, the task is to determine the relevance of the body and its claim. We present a novel idea that combines the neural, statistical and external features to provide an efficient solution to this problem. We compute the neural embedding from the deep recurrent model, statistical features from the weighted n-gram bag-of-words model and hand crafted external features with the help of feature engineering heuristics. Finally, using deep neural layer all the features are combined, thereby classifying the headline-body news pair as agree, disagree, discuss, or unrelated. Through extensive experiments, we find that the proposed model outperforms all the state-of-the-art techniques including the submissions to the fake news challenge.</small>     </p>    </div>    <div class="CCSconcepts">     <p> <small> <span style="font-weight:bold;">CCS Concepts:</span> &#x2022;<strong> Computer systems organization </strong>&#x2192; <strong>Embedded systems;</strong> <em>Redundancy;</em> Robotics; &#x2022;<strong> Networks </strong>&#x2192; Network reliability;</small> </p>    </div>    <div class="classifications">     <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>External features; Statistical Features; Stance Detection; Fake news; Deep learning</small>     </span>     </div>     <br/>     <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Gaurav Bhatt, Aman Sharma, Shivam Sharma, Ankush Nagpal, Balasubramanian Raman, and Ankush Mittal. 2018. Combining Neural, Statistical and External Features for Fake News Stance Identification. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em>, Article 4, 5 Pages. <a href="https://doi.org/10.1145/3184558.3191577" class="link-inline force-break"        target="_blank">https://doi.org/10.1145/3184558.3191577</a></small>     </p>     </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-7">    <header>     <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>     </div>    </header>    <p>Fake news being a potential threat towards journalism and public discourse has created a buzz across the internet. With the recent advent of social media platforms such as Facebook and Twitter, it has become easier to propagate any information to the masses within minutes. While the propagation of information is proportional to growth of social media, there has been an aggravation in the authenticity of these news articles. For an instance, in the US presidential election of 2016, the fake news has been cited as the foremost contributing factor that affected the outcome [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0018">18</a>]. A possible reason for the failure of current security systems is the open domain nature of the problem of fake news. The recently organized Fake News Challenge (FNC-1) [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0009">9</a>] is an initiative in this direction. The aim of this challenge is to build an automatic system that has the capability to identify whether a news article is fake or not. More specifically, given a news article the task is to evaluate the relatedness of the news body towards its headline.</p>    <p>The idea behind building a countermeasure for fake news is to use machine learning and natural language processing (NLP) tools that can compute semantic and contextual similarity between the headline and the body, and classify the pairs into one of four categories. Deep learning models such as recurrent neural networks (RNN) and its variants [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0017">17</a>] and convolution neural networks (CNN) [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>] have been efficacious in solving many NLP problems that share similarities to fake news which includes but not limited to - computing semantic similarity between sentences [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0015">15</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>], community based question answering [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0024">24</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0025">25</a>], etc. A deep architecture encodes the given sequence of words into fixed length vector representation which can be used to score the relevance of two textual entities, in our case, relevance of each headline-body pair. Similarly, these days it is a common practice to use embeddings from a pre-trained model such as skip-thought [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0015">15</a>] and compute other text-based features such as bag-of-words [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0020">20</a>] and lexical and semantic features [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0027">27</a>]. Key advantages of feature engineering heuristics is that they do not need large amount of data for training and are computationally quick to compute. In this paper, we combine external features introduced in the baseline with some more heuristics that have been shown to be successful in other NLP tasks, and demonstrate their effectiveness over state-of-the-art techniques.</p>    <p>Finally, the main contributions of the paper can be summarized as</p>    <ol class="list-no-style">     <li id="list1" label="(1)">We combine statistical, neural and feature engineering heuristics which achieves state-of-the-art performance on the task of fake news stance identification.<br/></li>     <li id="list2" label="(2)">The performance of the proposed model is evaluated on fake news challenge dataset. We also analyze the applicability of several state-of-the-art deep models on FNC-1 dataset.<br/></li>    </ol>   </section>   <section id="sec-8">    <header>     <div class="title-info">     <h2>      <span class="section-number">2</span> Related Work</h2>     </div>    </header>    <p>From an NLP perspective, researchers have studied numerous aspects of credibility of online information. For example, [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>] applied the time-sensitive supervised approach by relying on the tweet content to address the credibility of a tweet in different situations. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>] used LSTM in a similar problem of early rumor detection. Other work on rumor detection includes [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0010">10</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0028">28</a>]. In an another work, [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>] aimed at detecting the stance of tweets and determining the veracity of the given rumor with convolution neural networks. A submission [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>] to the SemEval 2016 Twitter Stance Detection task focuses on creating a bag-of-words auto encoder, and training it over the tokenized tweets.</p>    <p>In their work, [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>] experimented on four basic models on which the final result was evaluated: Bag Of Words (BOW), basic LSTM, LSTM with attention and conditional encoding LSTM with attention (CEA LSTM). Similarly, The work by [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0020">20</a>], focuses on generating lexical and similarity features using (TF-IDF) representations of BOW. Another team, [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0027">27</a>], combined multiple models in an ensemble providing 50/50 weighted average between deep convolution neural network and a gradient-boosted decision trees. In a similar attempt, a team [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>] concatenated various features vectors and passed it through an MLP model.</p>   </section>   <section id="sec-9">    <header>     <div class="title-info">     <h2>      <span class="section-number">3</span> Deep Learning Architectures</h2>     </div>    </header>    <p>To predict the stance for a given sample in FNC-1<a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a> dataset, a multi-channel deep neural network can be used to encode a given headline-body pair, which can be classified into one of the four stances. This is achieved by using a multi channel convolution neural network with <em>softmax</em> layer at the output. Similarly, instead of using the convolution and pooling layers, LSTM and GRU can be used to encode the headline-body pairs. The LSTMs and GRUs encode the given sequence of words into fixed length vector representation which can be used to score the relevance of headline-body pair.</p>    <p>We experiment with some of the deep architectures that have been shown to be effective for non-factoid based question answering [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0023">23</a>].</p>    <div class="table-responsive" id="tab1">     <div class="table-caption">     <span class="table-number">Table 1:</span>     <span class="table-title">Values of hyper-parameters. The first half of the table shows the parameters used in architectures for extracting individual features. The second half shows the parameter setting of the feature combination layer that is shown in Figure 2.</span>     </div>     <table class="table">      <thead>      <tr>       <th style="text-align:center;">        Hyperparameter       </th>       <th style="text-align:center;">        Skip-thought       </th>       <th style="text-align:center;">        External Features       </th>       <th style="text-align:center;">        TF-IDF Vectors       </th>      </tr> 					</thead> 					<tbody>      <tr>       <td style="text-align:center;">MLP layers</td>       <td style="text-align:center;">2</td>       <td style="text-align:center;">1</td>       <td style="text-align:center;">2</td>      </tr>      <tr>       <td style="text-align:center;">MLP neurons</td>       <td style="text-align:center;">500 ; 100</td>       <td style="text-align:center;">50</td>       <td style="text-align:center;">500 ; 50</td>      </tr>      <tr>       <td style="text-align:center;">Dropout</td>       <td style="text-align:center;">0.2 ; -</td>       <td style="text-align:center;">-</td>       <td style="text-align:center;">0.4 ; -</td>      </tr>      <tr>       <td style="text-align:center;">Activation</td>       <td style="text-align:center;">sigmoid ; sigmoid</td>       <td style="text-align:center;">relu</td>       <td style="text-align:center;">relu ; relu</td>      </tr>      <tr>       <td style="text-align:center;">Regularization</td>       <td style="text-align:center;">L2 - 0.00000001 ; -</td>       <td style="text-align:center;">-</td>       <td style="text-align:center;">L2 - 0.00005 ; -</td>      </tr>      <tr>       <td style="text-align:center;">MLP Layers</td>       <td colspan="3" style="text-align:center;">1<hr/>       </td>      </tr>      <tr>       <td style="text-align:center;">MLP neurons</td>       <td colspan="3" style="text-align:center;">4<hr/>       </td>      </tr>      <tr>       <td style="text-align:center;">Activation</td>       <td colspan="3" style="text-align:center;">Softmax<hr/>       </td>      </tr>      <tr>       <td style="text-align:center;">Optimizer</td>       <td colspan="3" style="text-align:center;">Adam<hr/>       </td>      </tr>      <tr>       <td style="text-align:center;">Learning rate</td>       <td colspan="3" style="text-align:center;">0.001<hr/>       </td>      </tr>      <tr>       <td style="text-align:center;">Batch size</td>       <td colspan="3" style="text-align:center;">100<hr/>       </td>      </tr>      <tr>       <td style="text-align:center;">Loss</td>       <td colspan="3" style="text-align:center;">Cross-entropy<hr/>       </td>      </tr>     </tbody>     </table>    </div>   </section>   <section id="sec-10">    <header>     <div class="title-info">     <h2>      <span class="section-number">4</span> Proposed Idea</h2>     </div>    </header>    <p>The <em>unrelated</em> headline-body pairs in the FNC-1 dataset are created by randomly assigning a news body to the given headline. This type of data augmentation has been successfully used in NLP problems such as non-factoid question answering where it results in reasonable performance by the deep learning models [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0024">24</a>]. However, in the case of FNC-1 challenge, the <em>agree</em>, <em>disagree</em>, and <em>discuss</em> headline-body pairs are relatively smaller in quantity than the <em>unrelated</em> stance. This bias leads to a uneven distribution of dataset across the four classes, with the <em>unrelated</em> category being the least interesting. Interestingness of a headline-body pair is evaluated in terms of information it contains.</p>    <p>The uneven distribution of FNC-1 dataset thwarts the performance of deep learning architectures introduced in Section 3. Deep learning models are dependent on a huge training corpus (few million headline-body pairs) in order to identify such nuances in patterns. The FNC-1 dataset, though the largest publicly available dataset on stance detection, does not satiate this criteria. For this reason, we introduce a much simpler strategy that consists of heavy use of feature engineering.</p>    <section id="sec-11">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.1</span> Neural Embeddings</h3>     </div>     </header>     <p>We use skip-thought vectors which encodes sentences to vector embedding of length 4800 (shown in Figure <a class="fig" href="#fig1">1</a>). We follow the work of [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0015">15</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0022">22</a>] and compute two features from the skip-thought embeddings. These features have been shown to be effective in evaluating contextual similarity between sentences. The task of stance detection is analogous to the computation of contextual similarity between two sentences - headline and its body. We speculate that the features introduced by [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0015">15</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0022">22</a>] should be effective for stance detection as well. Given the skip-thought encoding of news and headline as <em>u<sup>news</sup>     </em> and <em>v<sup>head</sup>     </em>, we compute two features <div class="table-responsive" id="eq1">      <div class="display-equation">       <span class="tex mytex">\begin{align} feat_1 &#x0026;= u^{news} . v^{head} \end{align} </span>       <br/>       <span class="equation-number">(1)</span>      </div>     </div>     <div class="table-responsive" id="eq2">      <div class="display-equation">       <span class="tex mytex">\begin{align} feat_2 &#x0026;= |u^{news} - v^{head}| \end{align} </span>       <br/>       <span class="equation-number">(2)</span>      </div>     </div>     </p>     <p>where <em>feat</em>     <sub>1</sub> is the component-wise product and <em>feat</em>     <sub>2</sub> is the absolute difference between the skip-thought encoding of news and headlines. Both of these features results in a 4800 dimensional vector each.</p> <figure id="fig1">     <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191577/images/www18companion-316-fig1.jpg" class="img-responsive" alt="Figure 1"       longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 1:</span>      <span class="figure-title">Combining the neural, statistical and external features using deep MLP.</span>     </div>     </figure>    </section>    <section id="sec-12">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.2</span> Statistical Features</h3>     </div>     </header>     <p>We capture the statistical information from the text to vectors with the help of BOW, TF-IDF and n-grams models. We follow the work of [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0020">20</a>] and [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0008">8</a>], and produce the following vectors for each headline-body pair</p>     <ol class="list-no-style">     <li id="list3" label="(1)">1-gram TF vector of the headline.<br/></li>     <li id="list4" label="(2)">1-gram TF vector of the body.<br/></li>     </ol>     <p>This gives us a vector of 5000 dimension each. We concatenate both of the TF vectors and pass it to a MLP layer (as shown in Figure 2).</p>    </section>    <section id="sec-13">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.3</span> External Features</h3>     </div>     </header>     <p>The external features include feature engineering heuristics such as number of similar words in the headline and body, cosine similarity between vector encodings of headline-body pairs, number of n-grams matched between the pairs, etc. We leveraged ideas for computing the external features from the baseline and add some extra features, which includes</p>     <ol class="list-no-style">     <li id="list5" label="(1)">Number of characters n-grams match between the headline-body pair, where <em>n</em> = 2, &#x22C5;&#x22C5;&#x22C5;, 16.<br/></li>     <li id="list6" label="(2)">Number of words n-grams match between the headline-body pair, where <em>n</em> = 2, &#x22C5;&#x22C5;&#x22C5;, 6.<br/></li>     <li id="list7" label="(3)">Weighted TF-IDF score between headline and its body using the approach mentioned in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0026">26</a>].<br/></li>     <li id="list8" label="(4)">Sentiment difference between the headline-body pair, also termed as polarity and is computed using lexicon based approach.<br/></li>     </ol>     <p>All the external features adds up to a 50-dimensional feature vector and is passed to a MLP layer similar to neural and statistical features.</p>    </section>   </section>   <section id="sec-14">    <header>     <div class="title-info">     <h2>      <span class="section-number">5</span> Experimentations</h2>     </div>    </header>    <section id="sec-15">     <header>     <div class="title-info">      <h3>       <span class="section-number">5.1</span> Dataset Description</h3>     </div>     </header>     <p>We use the dataset provided in the FNC-1 challenge which is derived from the Emergent Dataset [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0012">12</a>], provided by the fake news challenge administrators. The former consist of 49972 tuple with each tuple consisting of a headline-body pair followed by a corresponding class label <em>stance</em> of either <em>agree</em>, <em>disagree</em>, <em>unrelated</em> or <em>discuss</em>. Word counts roughly ranges between 8 to 40 for headlines and 600 to 7000 for article body. The distribution of FNC-1 dataset is as follows: 73.13 % <em>unrelated</em> pairs, 17.82 % <em>discuss</em>, 7.36 % <em>agree</em>, and 1.68 % <em>disagree</em> pairs.</p>     <p>The final results are evaluated over a test dataset provided by fake news organization consisting of 25413 samples.</p>    </section>    <section id="sec-16">     <header>     <div class="title-info">      <h3>       <span class="section-number">5.2</span> Baselines methods</h3>     </div>     </header>     <p>Organizers of FNC-1 have provided a baseline model that consists of a gradient-boosting classifier over n-gram subsequences between the headline and the body along with several external features such as word overlap, occurrence of sentiment using a lexicon of highly-polarized words (like <em>fraud</em> and <em>hoax</em>). Following the work of [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0019">19</a>], we introduce three new baselines for the FNC-1 dataset: word2vec+external features baseline, skip-thought baseline, and TF-IDF baseline. All these baselines focuses on performance of neural, statistical, and external features, when used individually.</p>    </section>    <section id="sec-17">     <header>     <div class="title-info">      <h3>       <span class="section-number">5.3</span> Evaluation metrics</h3>     </div>     </header>     <p>The FNC-1 dataset shows a heavy bias towards unrelated heakdline-body pairs. Recognizing this data bias and the simpler nature of the <em>related</em>/<em>unrelated</em> classification problems, the organizers of FNC-1 introduced the following weighted accuracy score as their final evaluation metric. <div class="table-responsive" id="eq3">      <div class="display-equation">       <span class="tex mytex">\begin{eqnarray} Score_{FNC} &#x0026;= 0.25*Accuracy_{Unrelated} + 0.75* \nonumber \\ &#x0026; Accuracy_{Agree, Disagree, Discuss} \end{eqnarray} </span>       <br/>       <span class="equation-number">(3)</span>      </div>     </div>     </p>     <p>We use the <em>Score<sub>FNC</sub>     </em> as the main evaluation criteria while comparing the proposed model with other related techniques.</p>    </section>    <section id="sec-18">     <header>     <div class="title-info">      <h3>       <span class="section-number">5.4</span> Results</h3>     </div>     </header>     <p>The results on FNC-1 test dataset are shown in Table <a class="tbl" href="#tab2">2</a>. The FNC-1 baseline achieves a score of 75.2 which is better than the performance of all deep architectures introduced in Section 3. The FNC-1 baseline is comprised of training gradient tree classifier on the hand crafted features (described in Section 5.2). Provided the simplicity of this baseline, it is indeed remarkable to achieve such a high score. The FNC-1 baselines achieves <span class="inline-equation"><span class="tex">$approx\ 7\%$</span>     </span> higher class-wise accuracy on <em>unrelated</em> stance as compared to skip-thought baseline, whereas the latter receiving a higher <em>Score<sub>FNC</sub>     </em>. Skip-thought baselines achieves a higher accuracy on <em>agree</em> and <em>discuss</em> than the <em>unrelated</em> stance.</p>     <div class="table-responsive" id="tab2">     <div class="table-caption">      <span class="table-number">Table 2:</span>      <span class="table-title">Performance of different models on FNC-1 Test Dataset. The first half of the table shows the baselines, followed by the top-4 submissions, and different architectures used in our work. Column 2-5 shows the class-wise accuracy in % while the last column shows the overall accuracy.</span>     </div>     <table class="table">      <thead>       <tr>        <th style="text-align:center;">Method</th>        <th style="text-align:center;">        <em>Score<sub>FNC</sub>        </em>        </th>        <th style="text-align:center;">Agree</th>        <th style="text-align:center;">Disagree</th>        <th style="text-align:center;">Discuss</th>        <th style="text-align:center;">Unrelated</th>        <th>Overall</th>       </tr> 						</thead> 						<tbody>       <tr>        <td style="text-align:center;">FNC-1 baseline</td>        <td style="text-align:center;">75.20</td>        <td style="text-align:center;">9.09</td>        <td style="text-align:center;">1.00</td>        <td style="text-align:center;">79.65</td>        <td style="text-align:center;">97.97</td>        <td>85.44</td>       </tr>       <tr>        <td style="text-align:center;">Word2vec + External Features</td>        <td style="text-align:center;">75.78</td>        <td style="text-align:center;">50.70</td>        <td style="text-align:center;">        <strong>9.61</strong>        </td>        <td style="text-align:center;">53.38</td>        <td style="text-align:center;">96.05</td>        <td>82.79</td>       </tr>       <tr>        <td style="text-align:center;">Skip-thought baseline</td>        <td style="text-align:center;">76.18</td>        <td style="text-align:center;">31.8</td>        <td style="text-align:center;">0.00</td>        <td style="text-align:center;">81.20</td>        <td style="text-align:center;">91.18</td>        <td>82.48</td>       </tr>       <tr>        <td style="text-align:center;">TF-IDF baseline</td>        <td style="text-align:center;">81.72</td>        <td style="text-align:center;">44.04</td>        <td style="text-align:center;">6.60</td>        <td style="text-align:center;">81.38</td>        <td style="text-align:center;">97.90</td>        <td>88.46</td>       </tr>       <tr>        <td style="text-align:center;">SOLAT in the SWEN [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0027">27</a>]</td>        <td style="text-align:center;">82.05</td>        <td style="text-align:center;">58.50</td>        <td style="text-align:center;">1.86</td>        <td style="text-align:center;">76.18</td>        <td style="text-align:center;">98.70</td>        <td>89.08</td>       </tr>       <tr>        <td style="text-align:center;">Athene [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0001">1</a>]</td>        <td style="text-align:center;">81.97</td>        <td style="text-align:center;">44.72</td>        <td style="text-align:center;">9.47</td>        <td style="text-align:center;">80.89</td>        <td style="text-align:center;">        <strong>99.25</strong>        </td>        <td>        <strong>89.50</strong>        </td>       </tr>       <tr>        <td style="text-align:center;">UCL Machine Reading [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0020">20</a>]</td>        <td style="text-align:center;">81.72</td>        <td style="text-align:center;">44.04</td>        <td style="text-align:center;">6.60</td>        <td style="text-align:center;">81.38</td>        <td style="text-align:center;">97.90</td>        <td>88.46</td>       </tr>       <tr>        <td style="text-align:center;">Chips Ahoy! [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0021">21</a>]</td>        <td style="text-align:center;">80.12</td>        <td style="text-align:center;">55.96</td>        <td style="text-align:center;">0.28</td>        <td style="text-align:center;">70.29</td>        <td style="text-align:center;">98.98</td>        <td>88.01</td>       </tr>       <tr>        <td style="text-align:center;">CNN</td>        <td style="text-align:center;">60.91</td>        <td style="text-align:center;">35.89</td>        <td style="text-align:center;">2.10</td>        <td style="text-align:center;">46.77</td>        <td style="text-align:center;">88.47</td>        <td>74.84</td>       </tr>       <tr>        <td style="text-align:center;">biLSTM</td>        <td style="text-align:center;">63.11</td>        <td style="text-align:center;">38.04</td>        <td style="text-align:center;">4.59</td>        <td style="text-align:center;">58.13</td>        <td style="text-align:center;">78.27</td>        <td>69.88</td>       </tr>       <tr>        <td style="text-align:center;">biLSTM + Attention</td>        <td style="text-align:center;">63.17</td>        <td style="text-align:center;">58.74</td>        <td style="text-align:center;">0.03</td>        <td style="text-align:center;">63.48</td>        <td style="text-align:center;">77.49</td>        <td>73.27</td>       </tr>       <tr>        <td style="text-align:center;">CNN + biLSTM</td>        <td style="text-align:center;">64.95</td>        <td style="text-align:center;">        <strong>74.09</strong>        </td>        <td style="text-align:center;">2.46</td>        <td style="text-align:center;">57.85</td>        <td style="text-align:center;">74.87</td>        <td>72.89</td>       </tr>       <tr>        <td style="text-align:center;">Proposed</td>        <td style="text-align:center;">        <strong>83.08</strong>        </td>        <td style="text-align:center;">43.82</td>        <td style="text-align:center;">6.31</td>        <td style="text-align:center;">        <strong>85.68</strong>        </td>        <td style="text-align:center;">98.04</td>        <td>89.29</td>       </tr>      </tbody>     </table>     </div>     <p>Since the interestingness of <em>agree</em> and <em>discuss</em> is higher than the <em>unrealted</em> stance, therefore, skip-thought achieves a higher <em>Score<sub>FNC</sub>     </em>. This also explains the reason for the introduction of new scoring criterion by the FNC organizers (see Section 5.3). Finally, the <em>Score<sub>FNC</sub>     </em> by skip-thought, external features, and TF-IDF baselines are higher than the FNC-1 baseline. Therefore, our speculation to combine these three baselines models, is guaranteed to achieve a higher score on <em>Score<sub>FNC</sub>     </em> evaluation metric. Moreover, all the baselines achieves very low or zero score on the <em>disagree</em> stance. Therefore, apart from the <em>Score<sub>FNC</sub>     </em>, the class-wise performance is worth considering as a performance criterion.</p>     <p>The performance of top-4 teams that participated in FNC-1 are shown in the middle part of Table <a class="tbl" href="#tab2">2</a>, with <em>SOLAT</em>&#x2009;     <em>in</em>&#x2009;     <em>the</em>&#x2009;     <em>SWEN</em> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0027">27</a>] winning the challenge achieving a score of 82.05. All the teams achieved higher score and class-wise accuracy on all stances except for the <em>disagree</em> stance. This should be a concern, since the importance of <em>disagree</em> is equivalent to the <em>agree</em> and <em>discuss</em> stance. We observed that the news pairs in the <em>disagree</em> category are not only very few, but also consists of divergent news articles. This is one of the reason for poor performance of most of the deep models, including the top teams, on identifying <em>diagree</em> stance.</p>     <p>From Table <a class="tbl" href="#tab2">2</a>, it is evident that the overall accuracy achieved by the proposed model is slightly lower than [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0001">1</a>], although the proposed model outperformed all the other techniques by a clear margin (in terms of <em>Score<sub>FNC</sub>     </em>). The possible reason for this deviation is that the [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0001">1</a>] gives more focus to the classification of <em>unrelated</em> stances rather than the rest, which is the reason for highest overall accuracy. Since <em>unrelated</em> stances are of least interest to us, this results in lower <em>Score<sub>FNC</sub>     </em>.</p>     <p>Finally, a confusion matrix is given in Table <a class="tbl" href="#tab3">3</a> that provides in-detail analysis of the performance of our approach.</p>     <div class="table-responsive" id="tab3">     <div class="table-caption">      <span class="table-number">Table 3:</span>      <span class="table-title">Confusion matrix for proposed model on test data.</span>     </div>     <table class="table">      <thead>       <tr>        <th style="text-align:center;"/>        <th style="text-align:center;">Agree</th>        <th style="text-align:center;">Disagree</th>        <th style="text-align:center;">Discuss</th>        <th style="text-align:center;">Unrelated</th>        <th>Overall</th>       </tr> 						</thead> 						<tbody>       <tr>        <td style="text-align:center;">Agree</td>        <td style="text-align:center;">834</td>        <td style="text-align:center;">15</td>        <td style="text-align:center;">945</td>        <td style="text-align:center;">109</td>        <td>43.82</td>       </tr>       <tr>        <td style="text-align:center;">Disagree</td>        <td style="text-align:center;">208</td>        <td style="text-align:center;">44</td>        <td style="text-align:center;">328</td>        <td style="text-align:center;">117</td>        <td>6.31</td>       </tr>       <tr>        <td style="text-align:center;">Discuss</td>        <td style="text-align:center;">401</td>        <td style="text-align:center;">23</td>        <td style="text-align:center;">3825</td>        <td style="text-align:center;">215</td>        <td>85.68</td>       </tr>       <tr>        <td style="text-align:center;">Unrelated</td>        <td style="text-align:center;">22</td>        <td style="text-align:center;">12</td>        <td style="text-align:center;">325</td>        <td style="text-align:center;">17990</td>        <td>98.04</td>       </tr>      </tbody>     </table>     </div>    </section>   </section>   <section id="sec-19">    <header>     <div class="title-info">     <h2>      <span class="section-number">6</span> Conclusion</h2>     </div>    </header>    <p>In this paper, we explored the benefit of incorporating neural, statistical and external features to deep neural networks on the task of fake news stance detection. The presented idea leverages features extracted using skip-thought embeddings, n-gram TF-vectors and several introduced hand crafted features.</p>    <p>We found that the uneven distribution of FNC-1 dataset undermines the performance of most deep learning architectures. The fewer training samples adds further to this aggravation. Furthermore, the introduced scoring function doesn&#x0027;t help in a fair evaluation. Creating a dataset for a complex NLP problems such as fake news identification is indeed a cumbersome task, and we appreciate the work by the FNC organizers, yet, a more detailed and elaborate dataset along with well defined scoring criterion should make this challenge more suitable to evaluate.</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>     <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>     </div>    </header>    <ul class="bibUl">     <li id="BibPLXBIB0001" label="[1]">Benjamin&#x00A0;Schiller Andreas&#x00A0;Hanselowski, Avinesh&#x00A0;PVS and Felix Caspelherr. 2017. Athenefnc. <a class="link-inline force-break" href="https://github.com/hanselowski/athene_system">https://github.com/hanselowski/athene_system</a>. (2017).</li>     <li id="BibPLXBIB0002" label="[2]">Isabelle Augenstein, Tim Rockt&#x00E4;schel, Andreas Vlachos, and Kalina Bontcheva. 2016. Stance detection with bidirectional conditional encoding. <em>      <em>arXiv preprint arXiv:1606.05464</em>     </em>(2016).</li>     <li id="BibPLXBIB0003" label="[3]">Isabelle Augenstein, Andreas Vlachos, and Kalina Bontcheva. 2016. USFD at SemEval-2016 Task 6: Any-Target Stance Detection on Twitter with Autoencoders.. In <em>      <em>SemEval@ NAACL-HLT</em>     </em>. 389&#x2013;393.</li>     <li id="BibPLXBIB0004" label="[4]">Carlos Castillo, Marcelo Mendoza, and Barbara Poblete. 2013. Predicting information credibility in time-sensitive social media. <em>      <em>Internet Research</em>     </em>23, 5 (2013), 560&#x2013;588.</li>     <li id="BibPLXBIB0005" label="[5]">Tong Chen, Lin Wu, Xue Li, Jun Zhang, Hongzhi Yin, and Yang Wang. 2017. Call Attention to Rumors: Deep Attention Based Recurrent Neural Networks for Early Rumor Detection. <em>      <em>arXiv preprint arXiv:1704.05973</em>     </em>(2017).</li>     <li id="BibPLXBIB0006" label="[6]">Yi-Chin Chen, Zhao-Yand Liu, and Hung-Yu Kao. 2017. IKM at SemEval-2017 Task 8: Convolutional Neural Networks for Stance Detection and Rumor Verification. <em>      <em>Proceedings of SemEval</em>     </em>. ACL(2017).</li>     <li id="BibPLXBIB0007" label="[7]">Junyoung Chung, Caglar Gulcehre, KyungHyun Cho, and Yoshua Bengio. 2014. Empirical evaluation of gated recurrent neural networks on sequence modeling. <em>      <em>arXiv preprint arXiv:1412.3555</em>     </em>(2014).</li>     <li id="BibPLXBIB0008" label="[8]">Richard Davis and Chris Proctor. 2017. Fake News, Real Consequences: Recruiting Neural Networks for the Fight Against Fake News. <a class="link-inline force-break" href="https://web.stanford.edu/class/cs224n/reports/2761239">https://web.stanford.edu/class/cs224n/reports/2761239</a>. (2017).</li>     <li id="BibPLXBIB0009" label="[9]">Delip&#x00A0;Rao Dean&#x00A0;Pomerleau. 2017. Fake News Challenge. <a class="link-inline force-break" href="http://www.fakenewschallenge.org/">http://www.fakenewschallenge.org/</a>. (2017).</li>     <li id="BibPLXBIB0010" label="[10]">Leon Derczynski, Kalina Bontcheva, Maria Liakata, Rob Procter, Geraldine Wong&#x00A0;Sak Hoi, and Arkaitz Zubiaga. 2017. SemEval-2017 Task 8: RumourEval: Determining rumour veracity and support for rumours. <em>      <em>arXiv preprint arXiv:1704.05972</em>     </em>(2017).</li>     <li id="BibPLXBIB0011" label="[11]">Minwei Feng, Bing Xiang, Michael&#x00A0;R Glass, Lidan Wang, and Bowen Zhou. 2015. Applying deep learning to answer selection: A study and an open task. In <em>      <em>Automatic Speech Recognition and Understanding (ASRU), 2015 IEEE Workshop on</em>     </em>. IEEE, 813&#x2013;820.</li>     <li id="BibPLXBIB0012" label="[12]">William Ferreira and Andreas Vlachos. 2016. Emergent: a novel data-set for stance classification. In <em>      <em>Proceedings of the 2016 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies</em>     </em>. ACL</li>     <li id="BibPLXBIB0013" label="[13]">Alex Graves and J&#x00FC;rgen Schmidhuber. 2005. Framewise phoneme classification with bidirectional LSTM and other neural network architectures. <em>      <em>Neural Networks</em>     </em>18, 5 (2005), 602&#x2013;610.</li>     <li id="BibPLXBIB0014" label="[14]">Hua He, Kevin Gimpel, and Jimmy&#x00A0;J Lin. 2015. Multi-Perspective Sentence Similarity Modeling with Convolutional Neural Networks.. In <em>      <em>EMNLP</em>     </em>. 1576&#x2013;1586.</li>     <li id="BibPLXBIB0015" label="[15]">Ryan Kiros, Yukun Zhu, Ruslan&#x00A0;R Salakhutdinov, Richard Zemel, Raquel Urtasun, Antonio Torralba, and Sanja Fidler. 2015. Skip-thought vectors. In <em>      <em>Advances in neural information processing systems</em>     </em>. 3294&#x2013;3302.</li>     <li id="BibPLXBIB0016" label="[16]">Todor Mihaylov and Preslav Nakov. 2016. SemanticZ at SemEval-2016 Task 3: Ranking Relevant Answers in Community Question Answering Using Semantic Similarity Based on Fine-tuned Word Embeddings.. In <em>      <em>SemEval@ NAACL-HLT</em>     </em>. 879&#x2013;886.</li>     <li id="BibPLXBIB0017" label="[17]">Paul Neculoiu, Maarten Versteegh, Mihai Rotaru, and Textkernel&#x00A0;BV Amsterdam. 2016. Learning Text Similarity with Siamese Recurrent Networks. <em>      <em>ACL 2016</em>     </em> (2016), 148.</li>     <li id="BibPLXBIB0018" label="[18]">NYTimes. 2016. As fake news spreads lies, more readers shrug at the truth. <a class="link-inline force-break" href="https://www.nytimes.com/ 2016/12/06/us/fake-news-partisan-republican-democrat.html">https://www.nytimes.com/ 2016/12/06/us/fake-news-partisan-republican-democrat.html</a>.(2016).</li>     <li id="BibPLXBIB0019" label="[19]">Stephen Pfohl, Oskar Triebe, and Ferdinand Legros. 2017. Stance Detection for the Fake News Challenge with Attention and Conditional Encoding. (2017).</li>     <li id="BibPLXBIB0020" label="[20]">Benjamin Riedel, Isabelle Augenstein, Georgios&#x00A0;P Spithourakis, and Sebastian Riedel. 2017. A simple but tough-to-beat baseline for the Fake News Challenge stance detection task. <em>      <em>arXiv preprint arXiv:1707.03264</em>     </em>(2017).</li>     <li id="BibPLXBIB0021" label="[21]">Jingbo Shang. 2017. Chips ahoy! at Fake News Challenge. <a class="link-inline force-break" href="https://github.com/shangjingbo1226/fnc-1">https://github.com/shangjingbo1226/fnc-1</a>. (2017).</li>     <li id="BibPLXBIB0022" label="[22]">Kai&#x00A0;Sheng Tai, Richard Socher, and Christopher&#x00A0;D Manning. 2015. Improved semantic representations from tree-structured long short-term memory networks. <em>      <em>arXiv preprint arXiv:1503.00075</em>     </em>(2015).</li>     <li id="BibPLXBIB0023" label="[23]">Ming Tan, Cicero&#x00A0;dos Santos, Bing Xiang, and Bowen Zhou. 2015. Lstm-based deep learning models for non-factoid answer selection. <em>      <em>arXiv preprint arXiv:1511.04108</em>     </em>(2015).</li>     <li id="BibPLXBIB0024" label="[24]">Liu Yang, Qingyao Ai, Damiano Spina, Ruey-Cheng Chen, Liang Pang, W&#x00A0;Bruce Croft, Jiafeng Guo, and Falk Scholer. 2016. Beyond factoid QA: Effective methods for non-factoid answer sentence retrieval. In <em>      <em>European Conference on Information Retrieval</em>     </em>. Springer, 115&#x2013;128.</li>     <li id="BibPLXBIB0025" label="[25]">Yi Yang, Wen-tau Yih, and Christopher Meek. 2015. WikiQA: A Challenge Dataset for Open-Domain Question Answering.. In <em>      <em>EMNLP</em>     </em>. 2013&#x2013;2018.</li>     <li id="BibPLXBIB0026" label="[26]">Lei Yu, Karl&#x00A0;Moritz Hermann, Phil Blunsom, and Stephen Pulman. 2014. Deep learning for answer sentence selection. <em>      <em>arXiv preprint arXiv:1412.1632</em>     </em>(2014).</li>     <li id="BibPLXBIB0027" label="[27]">Sean&#x00A0;Baird Yuxi&#x00A0;Pan, Doug&#x00A0;Sibley. 2017. Talos. <a class="link-inline force-break" href="http://blog.talosintelligence.com/2017/06/">http://blog.talosintelligence.com/2017/06/</a>. (2017).</li>     <li id="BibPLXBIB0028" label="[28]">Arkaitz Zubiaga, Elena Kochkina, Maria Liakata, Rob Procter, Michal Lukasik, Kalina Bontcheva, Trevor Cohn, and Isabelle Augenstein. 2018. Discourse-aware rumour stance classification in social media using sequential classifiers. <em>      <em>Information Processing &#x0026; Management</em>     </em>54, 2 (2018), 273&#x2013;290.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">     <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class="link-inline force-break" href="http://www.fakenewschallenge.org/">http://www.fakenewschallenge.org/</a>   </p>   <p><a class="link-inline force-break"     href="https://competitions.codalab.org/competitions/16843#results">https://competitions.codalab.org/competitions/16843#results</a>   </p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>     <em>WWW '18 Companion, April 23&#x2013;27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 1997; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License.<br/> ACM ISBN 978-1-4503-5640-4/18/04. <br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3191577">https://doi.org/10.1145/3184558.3191577</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div>  </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Combining Neural, Statistical and External Features for
+  Fake News Stance Identification</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Combining Neural, Statistical and
+          External Features for Fake News Stance
+          Identification</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Gaurav</span> <span class=
+          "surName">Bhatt</span>, IIT-Roorkee, India, <a href=
+          "mailto:gauravbhatt.cs.iitr@gmail.com">gauravbhatt.cs.iitr@gmail.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Aman</span> <span class=
+          "surName">Sharma</span>, IIT-Roorkee, India, <a href=
+          "mailto:amanvcks@gmail.com">amanvcks@gmail.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Shivam</span> <span class=
+          "surName">Sharma</span>, LMNIIT, Jaipur, India, <a href=
+          "mailto:15ucc035@lnmiit.ac.in">15ucc035@lnmiit.ac.in</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Ankush</span> <span class=
+          "surName">Nagpal</span>, IIT-Roorkee, India, <a href=
+          "mailto:ankushnagpal.cs@gmail.com">ankushnagpal.cs@gmail.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Balasubramanian</span>
+          <span class="surName">Raman</span>, IIT-Roorkee, India,
+          <a href=
+          "mailto:balarfma@iitr.ac.in">balarfma@iitr.ac.in</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Ankush</span> <span class=
+          "surName">Mittal</span>, Graphic Era University, India,
+          <a href=
+          "mailto:dr.ankushmittal@gmail.com">dr.ankushmittal@gmail.com</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191577"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191577</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Identifying the veracity of a news article is an
+        interesting problem while automating this process can be a
+        challenging task. Detection of a news article as fake is
+        still an open question as it is contingent on many factors
+        which the current state-of-the-art models fail to
+        incorporate. In this paper, we explore a subtask to fake
+        news identification, and that is stance detection. Given a
+        news article, the task is to determine the relevance of the
+        body and its claim. We present a novel idea that combines
+        the neural, statistical and external features to provide an
+        efficient solution to this problem. We compute the neural
+        embedding from the deep recurrent model, statistical
+        features from the weighted n-gram bag-of-words model and
+        hand crafted external features with the help of feature
+        engineering heuristics. Finally, using deep neural layer
+        all the features are combined, thereby classifying the
+        headline-body news pair as agree, disagree, discuss, or
+        unrelated. Through extensive experiments, we find that the
+        proposed model outperforms all the state-of-the-art
+        techniques including the submissions to the fake news
+        challenge.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Computer systems
+        organization</strong> → <strong>Embedded systems;</strong>
+        <em>Redundancy;</em> Robotics; • <strong>Networks</strong>
+        → Network reliability;</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>External features;
+          Statistical Features; Stance Detection; Fake news; Deep
+          learning</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Gaurav Bhatt, Aman Sharma, Shivam Sharma, Ankush Nagpal,
+          Balasubramanian Raman, and Ankush Mittal. 2018. Combining
+          Neural, Statistical and External Features for Fake News
+          Stance Identification. In <em>WWW '18 Companion: The 2018
+          Web Conference Companion,</em> <em>April 2018,</em>
+          <em>Lyon, France. ACM, New York, NY, USA</em>, Article 4,
+          5 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3191577" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191577</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Fake news being a potential threat towards journalism and
+      public discourse has created a buzz across the internet. With
+      the recent advent of social media platforms such as Facebook
+      and Twitter, it has become easier to propagate any
+      information to the masses within minutes. While the
+      propagation of information is proportional to growth of
+      social media, there has been an aggravation in the
+      authenticity of these news articles. For an instance, in the
+      US presidential election of 2016, the fake news has been
+      cited as the foremost contributing factor that affected the
+      outcome [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0018">18</a>].
+      A possible reason for the failure of current security systems
+      is the open domain nature of the problem of fake news. The
+      recently organized Fake News Challenge (FNC-1) [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0009">9</a>] is an
+      initiative in this direction. The aim of this challenge is to
+      build an automatic system that has the capability to identify
+      whether a news article is fake or not. More specifically,
+      given a news article the task is to evaluate the relatedness
+      of the news body towards its headline.</p>
+      <p>The idea behind building a countermeasure for fake news is
+      to use machine learning and natural language processing (NLP)
+      tools that can compute semantic and contextual similarity
+      between the headline and the body, and classify the pairs
+      into one of four categories. Deep learning models such as
+      recurrent neural networks (RNN) and its variants [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0007">7</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0013">13</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0017">17</a>] and
+      convolution neural networks (CNN) [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0014">14</a>] have been efficacious in
+      solving many NLP problems that share similarities to fake
+      news which includes but not limited to - computing semantic
+      similarity between sentences [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>], community based question answering
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0024">24</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0025">25</a>], etc. A
+      deep architecture encodes the given sequence of words into
+      fixed length vector representation which can be used to score
+      the relevance of two textual entities, in our case, relevance
+      of each headline-body pair. Similarly, these days it is a
+      common practice to use embeddings from a pre-trained model
+      such as skip-thought [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>] and compute other text-based
+      features such as bag-of-words [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0020">20</a>] and lexical and semantic features
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0027">27</a>]. Key
+      advantages of feature engineering heuristics is that they do
+      not need large amount of data for training and are
+      computationally quick to compute. In this paper, we combine
+      external features introduced in the baseline with some more
+      heuristics that have been shown to be successful in other NLP
+      tasks, and demonstrate their effectiveness over
+      state-of-the-art techniques.</p>
+      <p>Finally, the main contributions of the paper can be
+      summarized as</p>
+      <ol class="list-no-style">
+        <li id="list1" label="(1)">We combine statistical, neural
+        and feature engineering heuristics which achieves
+        state-of-the-art performance on the task of fake news
+        stance identification.<br /></li>
+        <li id="list2" label="(2)">The performance of the proposed
+        model is evaluated on fake news challenge dataset. We also
+        analyze the applicability of several state-of-the-art deep
+        models on FNC-1 dataset.<br /></li>
+      </ol>
+    </section>
+    <section id="sec-8">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>From an NLP perspective, researchers have studied numerous
+      aspects of credibility of online information. For example,
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0004">4</a>] applied the
+      time-sensitive supervised approach by relying on the tweet
+      content to address the credibility of a tweet in different
+      situations. [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0005">5</a>]
+      used LSTM in a similar problem of early rumor detection.
+      Other work on rumor detection includes [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0002">2</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0010">10</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0028">28</a>]. In an another work,
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0006">6</a>] aimed at
+      detecting the stance of tweets and determining the veracity
+      of the given rumor with convolution neural networks. A
+      submission [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0003">3</a>]
+      to the SemEval 2016 Twitter Stance Detection task focuses on
+      creating a bag-of-words auto encoder, and training it over
+      the tokenized tweets.</p>
+      <p>In their work, [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0019">19</a>] experimented on four basic models on
+      which the final result was evaluated: Bag Of Words (BOW),
+      basic LSTM, LSTM with attention and conditional encoding LSTM
+      with attention (CEA LSTM). Similarly, The work by [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0020">20</a>], focuses
+      on generating lexical and similarity features using (TF-IDF)
+      representations of BOW. Another team, [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0027">27</a>], combined multiple models
+      in an ensemble providing 50/50 weighted average between deep
+      convolution neural network and a gradient-boosted decision
+      trees. In a similar attempt, a team [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0001">1</a>] concatenated various
+      features vectors and passed it through an MLP model.</p>
+    </section>
+    <section id="sec-9">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Deep Learning
+          Architectures</h2>
+        </div>
+      </header>
+      <p>To predict the stance for a given sample in FNC-1<a class=
+      "fn" href="#fn1" id="foot-fn1"><sup>1</sup></a> dataset, a
+      multi-channel deep neural network can be used to encode a
+      given headline-body pair, which can be classified into one of
+      the four stances. This is achieved by using a multi channel
+      convolution neural network with <em>softmax</em> layer at the
+      output. Similarly, instead of using the convolution and
+      pooling layers, LSTM and GRU can be used to encode the
+      headline-body pairs. The LSTMs and GRUs encode the given
+      sequence of words into fixed length vector representation
+      which can be used to score the relevance of headline-body
+      pair.</p>
+      <p>We experiment with some of the deep architectures that
+      have been shown to be effective for non-factoid based
+      question answering [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0023">23</a>].</p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">Values of hyper-parameters. The first half
+          of the table shows the parameters used in architectures
+          for extracting individual features. The second half shows
+          the parameter setting of the feature combination layer
+          that is shown in Figure 2.</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:center;">Hyperparameter</th>
+              <th style="text-align:center;">Skip-thought</th>
+              <th style="text-align:center;">External Features</th>
+              <th style="text-align:center;">TF-IDF Vectors</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:center;">MLP layers</td>
+              <td style="text-align:center;">2</td>
+              <td style="text-align:center;">1</td>
+              <td style="text-align:center;">2</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">MLP neurons</td>
+              <td style="text-align:center;">500 ; 100</td>
+              <td style="text-align:center;">50</td>
+              <td style="text-align:center;">500 ; 50</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Dropout</td>
+              <td style="text-align:center;">0.2 ; -</td>
+              <td style="text-align:center;">-</td>
+              <td style="text-align:center;">0.4 ; -</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Activation</td>
+              <td style="text-align:center;">sigmoid ; sigmoid</td>
+              <td style="text-align:center;">relu</td>
+              <td style="text-align:center;">relu ; relu</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Regularization</td>
+              <td style="text-align:center;">L2 - 0.00000001 ;
+              -</td>
+              <td style="text-align:center;">-</td>
+              <td style="text-align:center;">L2 - 0.00005 ; -</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">MLP Layers</td>
+              <td colspan="3" style="text-align:center;">
+                1
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">MLP neurons</td>
+              <td colspan="3" style="text-align:center;">
+                4
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Activation</td>
+              <td colspan="3" style="text-align:center;">
+                Softmax
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Optimizer</td>
+              <td colspan="3" style="text-align:center;">
+                Adam
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Learning rate</td>
+              <td colspan="3" style="text-align:center;">
+                0.001
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Batch size</td>
+              <td colspan="3" style="text-align:center;">
+                100
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Loss</td>
+              <td colspan="3" style="text-align:center;">
+                Cross-entropy
+                <hr />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Proposed
+          Idea</h2>
+        </div>
+      </header>
+      <p>The <em>unrelated</em> headline-body pairs in the FNC-1
+      dataset are created by randomly assigning a news body to the
+      given headline. This type of data augmentation has been
+      successfully used in NLP problems such as non-factoid
+      question answering where it results in reasonable performance
+      by the deep learning models [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0024">24</a>]. However, in the case of FNC-1
+      challenge, the <em>agree</em>, <em>disagree</em>, and
+      <em>discuss</em> headline-body pairs are relatively smaller
+      in quantity than the <em>unrelated</em> stance. This bias
+      leads to a uneven distribution of dataset across the four
+      classes, with the <em>unrelated</em> category being the least
+      interesting. Interestingness of a headline-body pair is
+      evaluated in terms of information it contains.</p>
+      <p>The uneven distribution of FNC-1 dataset thwarts the
+      performance of deep learning architectures introduced in
+      Section 3. Deep learning models are dependent on a huge
+      training corpus (few million headline-body pairs) in order to
+      identify such nuances in patterns. The FNC-1 dataset, though
+      the largest publicly available dataset on stance detection,
+      does not satiate this criteria. For this reason, we introduce
+      a much simpler strategy that consists of heavy use of feature
+      engineering.</p>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Neural
+            Embeddings</h3>
+          </div>
+        </header>
+        <p>We use skip-thought vectors which encodes sentences to
+        vector embedding of length 4800 (shown in Figure <a class=
+        "fig" href="#fig1">1</a>). We follow the work of [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0015">15</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0022">22</a>] and
+        compute two features from the skip-thought embeddings.
+        These features have been shown to be effective in
+        evaluating contextual similarity between sentences. The
+        task of stance detection is analogous to the computation of
+        contextual similarity between two sentences - headline and
+        its body. We speculate that the features introduced by
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0015">15</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0022">22</a>] should
+        be effective for stance detection as well. Given the
+        skip-thought encoding of news and headline as
+        <em>u<sup>news</sup></em> and <em>v<sup>head</sup></em> ,
+        we compute two features</p>
+        <div class="table-responsive" id="eq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{align} feat_1 &amp;=
+            u^{news} . v^{head} \end{align}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>
+        <div class="table-responsive" id="eq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{align} feat_2 &amp;=
+            |u^{news} - v^{head}| \end{align}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>where <em>feat</em> <sub>1</sub> is the component-wise
+        product and <em>feat</em> <sub>2</sub> is the absolute
+        difference between the skip-thought encoding of news and
+        headlines. Both of these features results in a 4800
+        dimensional vector each.</p>
+        <figure id="fig1">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191577/images/www18companion-316-fig1.jpg"
+          class="img-responsive" alt="Figure 1" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 1:</span>
+            <span class="figure-title">Combining the neural,
+            statistical and external features using deep
+            MLP.</span>
+          </div>
+        </figure>
+      </section>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Statistical
+            Features</h3>
+          </div>
+        </header>
+        <p>We capture the statistical information from the text to
+        vectors with the help of BOW, TF-IDF and n-grams models. We
+        follow the work of [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0020">20</a>] and [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0008">8</a>], and produce the following vectors
+        for each headline-body pair</p>
+        <ol class="list-no-style">
+          <li id="list3" label="(1)">1-gram TF vector of the
+          headline.<br /></li>
+          <li id="list4" label="(2)">1-gram TF vector of the
+          body.<br /></li>
+        </ol>
+        <p>This gives us a vector of 5000 dimension each. We
+        concatenate both of the TF vectors and pass it to a MLP
+        layer (as shown in Figure 2).</p>
+      </section>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span> External
+            Features</h3>
+          </div>
+        </header>
+        <p>The external features include feature engineering
+        heuristics such as number of similar words in the headline
+        and body, cosine similarity between vector encodings of
+        headline-body pairs, number of n-grams matched between the
+        pairs, etc. We leveraged ideas for computing the external
+        features from the baseline and add some extra features,
+        which includes</p>
+        <ol class="list-no-style">
+          <li id="list5" label="(1)">Number of characters n-grams
+          match between the headline-body pair, where <em>n</em> =
+          2, ⋅⋅⋅, 16.<br /></li>
+          <li id="list6" label="(2)">Number of words n-grams match
+          between the headline-body pair, where <em>n</em> = 2,
+          ⋅⋅⋅, 6.<br /></li>
+          <li id="list7" label="(3)">Weighted TF-IDF score between
+          headline and its body using the approach mentioned in
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0026">26</a>].<br />
+          </li>
+          <li id="list8" label="(4)">Sentiment difference between
+          the headline-body pair, also termed as polarity and is
+          computed using lexicon based approach.<br /></li>
+        </ol>
+        <p>All the external features adds up to a 50-dimensional
+        feature vector and is passed to a MLP layer similar to
+        neural and statistical features.</p>
+      </section>
+    </section>
+    <section id="sec-14">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span>
+          Experimentations</h2>
+        </div>
+      </header>
+      <section id="sec-15">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span> Dataset
+            Description</h3>
+          </div>
+        </header>
+        <p>We use the dataset provided in the FNC-1 challenge which
+        is derived from the Emergent Dataset [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0012">12</a>], provided by the fake
+        news challenge administrators. The former consist of 49972
+        tuple with each tuple consisting of a headline-body pair
+        followed by a corresponding class label <em>stance</em> of
+        either <em>agree</em>, <em>disagree</em>,
+        <em>unrelated</em> or <em>discuss</em>. Word counts roughly
+        ranges between 8 to 40 for headlines and 600 to 7000 for
+        article body. The distribution of FNC-1 dataset is as
+        follows: 73.13 % <em>unrelated</em> pairs, 17.82 %
+        <em>discuss</em>, 7.36 % <em>agree</em>, and 1.68 %
+        <em>disagree</em> pairs.</p>
+        <p>The final results are evaluated over a test dataset
+        provided by fake news organization consisting of 25413
+        samples.</p>
+      </section>
+      <section id="sec-16">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> Baselines
+            methods</h3>
+          </div>
+        </header>
+        <p>Organizers of FNC-1 have provided a baseline model that
+        consists of a gradient-boosting classifier over n-gram
+        subsequences between the headline and the body along with
+        several external features such as word overlap, occurrence
+        of sentiment using a lexicon of highly-polarized words
+        (like <em>fraud</em> and <em>hoax</em>). Following the work
+        of [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0019">19</a>], we introduce three new baselines
+        for the FNC-1 dataset: word2vec+external features baseline,
+        skip-thought baseline, and TF-IDF baseline. All these
+        baselines focuses on performance of neural, statistical,
+        and external features, when used individually.</p>
+      </section>
+      <section id="sec-17">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.3</span> Evaluation
+            metrics</h3>
+          </div>
+        </header>
+        <p>The FNC-1 dataset shows a heavy bias towards unrelated
+        heakdline-body pairs. Recognizing this data bias and the
+        simpler nature of the <em>related</em>/<em>unrelated</em>
+        classification problems, the organizers of FNC-1 introduced
+        the following weighted accuracy score as their final
+        evaluation metric.</p>
+        <div class="table-responsive" id="eq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{eqnarray} Score_{FNC}
+            &amp;= 0.25*Accuracy_{Unrelated} + 0.75* \nonumber \\
+            &amp; Accuracy_{Agree, Disagree, Discuss}
+            \end{eqnarray}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>We use the <em>Score<sub>FNC</sub></em> as the main
+        evaluation criteria while comparing the proposed model with
+        other related techniques.</p>
+      </section>
+      <section id="sec-18">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.4</span>
+            Results</h3>
+          </div>
+        </header>
+        <p>The results on FNC-1 test dataset are shown in Table
+        <a class="tbl" href="#tab2">2</a>. The FNC-1 baseline
+        achieves a score of 75.2 which is better than the
+        performance of all deep architectures introduced in Section
+        3. The FNC-1 baseline is comprised of training gradient
+        tree classifier on the hand crafted features (described in
+        Section 5.2). Provided the simplicity of this baseline, it
+        is indeed remarkable to achieve such a high score. The
+        FNC-1 baselines achieves <span class=
+        "inline-equation"><span class="tex">$approx\
+        7\%$</span></span> higher class-wise accuracy on
+        <em>unrelated</em> stance as compared to skip-thought
+        baseline, whereas the latter receiving a higher
+        <em>Score<sub>FNC</sub></em> . Skip-thought baselines
+        achieves a higher accuracy on <em>agree</em> and
+        <em>discuss</em> than the <em>unrelated</em> stance.</p>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Performance of different models on FNC-1
+            Test Dataset. The first half of the table shows the
+            baselines, followed by the top-4 submissions, and
+            different architectures used in our work. Column 2-5
+            shows the class-wise accuracy in % while the last
+            column shows the overall accuracy.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Method</th>
+                <th style="text-align:center;">
+                <em>Score<sub>FNC</sub></em></th>
+                <th style="text-align:center;">Agree</th>
+                <th style="text-align:center;">Disagree</th>
+                <th style="text-align:center;">Discuss</th>
+                <th style="text-align:center;">Unrelated</th>
+                <th>Overall</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">FNC-1 baseline</td>
+                <td style="text-align:center;">75.20</td>
+                <td style="text-align:center;">9.09</td>
+                <td style="text-align:center;">1.00</td>
+                <td style="text-align:center;">79.65</td>
+                <td style="text-align:center;">97.97</td>
+                <td>85.44</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Word2vec + External
+                Features</td>
+                <td style="text-align:center;">75.78</td>
+                <td style="text-align:center;">50.70</td>
+                <td style="text-align:center;">
+                <strong>9.61</strong></td>
+                <td style="text-align:center;">53.38</td>
+                <td style="text-align:center;">96.05</td>
+                <td>82.79</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Skip-thought
+                baseline</td>
+                <td style="text-align:center;">76.18</td>
+                <td style="text-align:center;">31.8</td>
+                <td style="text-align:center;">0.00</td>
+                <td style="text-align:center;">81.20</td>
+                <td style="text-align:center;">91.18</td>
+                <td>82.48</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">TF-IDF baseline</td>
+                <td style="text-align:center;">81.72</td>
+                <td style="text-align:center;">44.04</td>
+                <td style="text-align:center;">6.60</td>
+                <td style="text-align:center;">81.38</td>
+                <td style="text-align:center;">97.90</td>
+                <td>88.46</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">
+                  SOLAT in the SWEN [<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0027">27</a>]
+                </td>
+                <td style="text-align:center;">82.05</td>
+                <td style="text-align:center;">58.50</td>
+                <td style="text-align:center;">1.86</td>
+                <td style="text-align:center;">76.18</td>
+                <td style="text-align:center;">98.70</td>
+                <td>89.08</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">
+                  Athene [<a class="bib" data-trigger="hover"
+                  data-toggle="popover" data-placement="top" href=
+                  "#BibPLXBIB0001">1</a>]
+                </td>
+                <td style="text-align:center;">81.97</td>
+                <td style="text-align:center;">44.72</td>
+                <td style="text-align:center;">9.47</td>
+                <td style="text-align:center;">80.89</td>
+                <td style="text-align:center;">
+                <strong>99.25</strong></td>
+                <td><strong>89.50</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">
+                  UCL Machine Reading [<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0020">20</a>]
+                </td>
+                <td style="text-align:center;">81.72</td>
+                <td style="text-align:center;">44.04</td>
+                <td style="text-align:center;">6.60</td>
+                <td style="text-align:center;">81.38</td>
+                <td style="text-align:center;">97.90</td>
+                <td>88.46</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">
+                  Chips Ahoy! [<a class="bib" data-trigger="hover"
+                  data-toggle="popover" data-placement="top" href=
+                  "#BibPLXBIB0021">21</a>]
+                </td>
+                <td style="text-align:center;">80.12</td>
+                <td style="text-align:center;">55.96</td>
+                <td style="text-align:center;">0.28</td>
+                <td style="text-align:center;">70.29</td>
+                <td style="text-align:center;">98.98</td>
+                <td>88.01</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">CNN</td>
+                <td style="text-align:center;">60.91</td>
+                <td style="text-align:center;">35.89</td>
+                <td style="text-align:center;">2.10</td>
+                <td style="text-align:center;">46.77</td>
+                <td style="text-align:center;">88.47</td>
+                <td>74.84</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">biLSTM</td>
+                <td style="text-align:center;">63.11</td>
+                <td style="text-align:center;">38.04</td>
+                <td style="text-align:center;">4.59</td>
+                <td style="text-align:center;">58.13</td>
+                <td style="text-align:center;">78.27</td>
+                <td>69.88</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">biLSTM +
+                Attention</td>
+                <td style="text-align:center;">63.17</td>
+                <td style="text-align:center;">58.74</td>
+                <td style="text-align:center;">0.03</td>
+                <td style="text-align:center;">63.48</td>
+                <td style="text-align:center;">77.49</td>
+                <td>73.27</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">CNN + biLSTM</td>
+                <td style="text-align:center;">64.95</td>
+                <td style="text-align:center;">
+                <strong>74.09</strong></td>
+                <td style="text-align:center;">2.46</td>
+                <td style="text-align:center;">57.85</td>
+                <td style="text-align:center;">74.87</td>
+                <td>72.89</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Proposed</td>
+                <td style="text-align:center;">
+                <strong>83.08</strong></td>
+                <td style="text-align:center;">43.82</td>
+                <td style="text-align:center;">6.31</td>
+                <td style="text-align:center;">
+                <strong>85.68</strong></td>
+                <td style="text-align:center;">98.04</td>
+                <td>89.29</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Since the interestingness of <em>agree</em> and
+        <em>discuss</em> is higher than the <em>unrealted</em>
+        stance, therefore, skip-thought achieves a higher
+        <em>Score<sub>FNC</sub></em> . This also explains the
+        reason for the introduction of new scoring criterion by the
+        FNC organizers (see Section 5.3). Finally, the
+        <em>Score<sub>FNC</sub></em> by skip-thought, external
+        features, and TF-IDF baselines are higher than the FNC-1
+        baseline. Therefore, our speculation to combine these three
+        baselines models, is guaranteed to achieve a higher score
+        on <em>Score<sub>FNC</sub></em> evaluation metric.
+        Moreover, all the baselines achieves very low or zero score
+        on the <em>disagree</em> stance. Therefore, apart from the
+        <em>Score<sub>FNC</sub></em> , the class-wise performance
+        is worth considering as a performance criterion.</p>
+        <p>The performance of top-4 teams that participated in
+        FNC-1 are shown in the middle part of Table <a class="tbl"
+        href="#tab2">2</a>, with <em>SOLAT</em>  <em>in</em> 
+        <em>the</em>  <em>SWEN</em> [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0027">27</a>] winning the challenge achieving a
+        score of 82.05. All the teams achieved higher score and
+        class-wise accuracy on all stances except for the
+        <em>disagree</em> stance. This should be a concern, since
+        the importance of <em>disagree</em> is equivalent to the
+        <em>agree</em> and <em>discuss</em> stance. We observed
+        that the news pairs in the <em>disagree</em> category are
+        not only very few, but also consists of divergent news
+        articles. This is one of the reason for poor performance of
+        most of the deep models, including the top teams, on
+        identifying <em>diagree</em> stance.</p>
+        <p>From Table <a class="tbl" href="#tab2">2</a>, it is
+        evident that the overall accuracy achieved by the proposed
+        model is slightly lower than [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0001">1</a>], although the proposed model
+        outperformed all the other techniques by a clear margin (in
+        terms of <em>Score<sub>FNC</sub></em> ). The possible
+        reason for this deviation is that the [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0001">1</a>] gives more focus to the
+        classification of <em>unrelated</em> stances rather than
+        the rest, which is the reason for highest overall accuracy.
+        Since <em>unrelated</em> stances are of least interest to
+        us, this results in lower <em>Score<sub>FNC</sub></em>
+        .</p>
+        <p>Finally, a confusion matrix is given in Table <a class=
+        "tbl" href="#tab3">3</a> that provides in-detail analysis
+        of the performance of our approach.</p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Confusion matrix for proposed model on
+            test data.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;"></th>
+                <th style="text-align:center;">Agree</th>
+                <th style="text-align:center;">Disagree</th>
+                <th style="text-align:center;">Discuss</th>
+                <th style="text-align:center;">Unrelated</th>
+                <th>Overall</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">Agree</td>
+                <td style="text-align:center;">834</td>
+                <td style="text-align:center;">15</td>
+                <td style="text-align:center;">945</td>
+                <td style="text-align:center;">109</td>
+                <td>43.82</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Disagree</td>
+                <td style="text-align:center;">208</td>
+                <td style="text-align:center;">44</td>
+                <td style="text-align:center;">328</td>
+                <td style="text-align:center;">117</td>
+                <td>6.31</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Discuss</td>
+                <td style="text-align:center;">401</td>
+                <td style="text-align:center;">23</td>
+                <td style="text-align:center;">3825</td>
+                <td style="text-align:center;">215</td>
+                <td>85.68</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Unrelated</td>
+                <td style="text-align:center;">22</td>
+                <td style="text-align:center;">12</td>
+                <td style="text-align:center;">325</td>
+                <td style="text-align:center;">17990</td>
+                <td>98.04</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+    <section id="sec-19">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>In this paper, we explored the benefit of incorporating
+      neural, statistical and external features to deep neural
+      networks on the task of fake news stance detection. The
+      presented idea leverages features extracted using
+      skip-thought embeddings, n-gram TF-vectors and several
+      introduced hand crafted features.</p>
+      <p>We found that the uneven distribution of FNC-1 dataset
+      undermines the performance of most deep learning
+      architectures. The fewer training samples adds further to
+      this aggravation. Furthermore, the introduced scoring
+      function doesn't help in a fair evaluation. Creating a
+      dataset for a complex NLP problems such as fake news
+      identification is indeed a cumbersome task, and we appreciate
+      the work by the FNC organizers, yet, a more detailed and
+      elaborate dataset along with well defined scoring criterion
+      should make this challenge more suitable to evaluate.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Benjamin&nbsp;Schiller
+        Andreas&nbsp;Hanselowski, Avinesh&nbsp;PVS and Felix
+        Caspelherr. 2017. Athenefnc. <a class=
+        "link-inline force-break" href=
+        "https://github.com/hanselowski/athene_system">https://github.com/hanselowski/athene_system</a>.
+        (2017).
+        </li>
+        <li id="BibPLXBIB0002" label="[2]">Isabelle Augenstein, Tim
+        Rocktäschel, Andreas Vlachos, and Kalina Bontcheva. 2016.
+        Stance detection with bidirectional conditional encoding.
+        <em><em>arXiv preprint arXiv:1606.05464</em></em>
+        (2016).</li>
+        <li id="BibPLXBIB0003" label="[3]">Isabelle Augenstein,
+        Andreas Vlachos, and Kalina Bontcheva. 2016. USFD at
+        SemEval-2016 Task 6: Any-Target Stance Detection on Twitter
+        with Autoencoders.. In <em><em>SemEval@ NAACL-HLT</em></em>
+        . 389–393.</li>
+        <li id="BibPLXBIB0004" label="[4]">Carlos Castillo, Marcelo
+        Mendoza, and Barbara Poblete. 2013. Predicting information
+        credibility in time-sensitive social media.
+        <em><em>Internet Research</em></em> 23, 5 (2013),
+        560–588.</li>
+        <li id="BibPLXBIB0005" label="[5]">Tong Chen, Lin Wu, Xue
+        Li, Jun Zhang, Hongzhi Yin, and Yang Wang. 2017. Call
+        Attention to Rumors: Deep Attention Based Recurrent Neural
+        Networks for Early Rumor Detection. <em><em>arXiv preprint
+        arXiv:1704.05973</em></em> (2017).</li>
+        <li id="BibPLXBIB0006" label="[6]">Yi-Chin Chen, Zhao-Yand
+        Liu, and Hung-Yu Kao. 2017. IKM at SemEval-2017 Task 8:
+        Convolutional Neural Networks for Stance Detection and
+        Rumor Verification. <em><em>Proceedings of
+        SemEval</em></em> . ACL(2017).</li>
+        <li id="BibPLXBIB0007" label="[7]">Junyoung Chung, Caglar
+        Gulcehre, KyungHyun Cho, and Yoshua Bengio. 2014. Empirical
+        evaluation of gated recurrent neural networks on sequence
+        modeling. <em><em>arXiv preprint arXiv:1412.3555</em></em>
+        (2014).</li>
+        <li id="BibPLXBIB0008" label="[8]">Richard Davis and Chris
+        Proctor. 2017. Fake News, Real Consequences: Recruiting
+        Neural Networks for the Fight Against Fake News.
+          <a class="link-inline force-break" href=
+          "https://web.stanford.edu/class/cs224n/reports/2761239">https://web.stanford.edu/class/cs224n/reports/2761239</a>.
+          (2017).
+        </li>
+        <li id="BibPLXBIB0009" label="[9]">Delip&nbsp;Rao
+        Dean&nbsp;Pomerleau. 2017. Fake News Challenge. <a class=
+        "link-inline force-break" href=
+        "http://www.fakenewschallenge.org/">http://www.fakenewschallenge.org/</a>.
+        (2017).
+        </li>
+        <li id="BibPLXBIB0010" label="[10]">Leon Derczynski, Kalina
+        Bontcheva, Maria Liakata, Rob Procter, Geraldine
+        Wong&nbsp;Sak Hoi, and Arkaitz Zubiaga. 2017. SemEval-2017
+        Task 8: RumourEval: Determining rumour veracity and support
+        for rumours. <em><em>arXiv preprint
+        arXiv:1704.05972</em></em> (2017).</li>
+        <li id="BibPLXBIB0011" label="[11]">Minwei Feng, Bing
+        Xiang, Michael&nbsp;R Glass, Lidan Wang, and Bowen Zhou.
+        2015. Applying deep learning to answer selection: A study
+        and an open task. In <em><em>Automatic Speech Recognition
+        and Understanding (ASRU), 2015 IEEE Workshop on</em></em> .
+        IEEE, 813–820.</li>
+        <li id="BibPLXBIB0012" label="[12]">William Ferreira and
+        Andreas Vlachos. 2016. Emergent: a novel data-set for
+        stance classification. In <em><em>Proceedings of the 2016
+        Conference of the North American Chapter of the Association
+        for Computational Linguistics: Human Language
+        Technologies</em></em> . ACL</li>
+        <li id="BibPLXBIB0013" label="[13]">Alex Graves and Jürgen
+        Schmidhuber. 2005. Framewise phoneme classification with
+        bidirectional LSTM and other neural network architectures.
+        <em><em>Neural Networks</em></em> 18, 5 (2005),
+        602–610.</li>
+        <li id="BibPLXBIB0014" label="[14]">Hua He, Kevin Gimpel,
+        and Jimmy&nbsp;J Lin. 2015. Multi-Perspective Sentence
+        Similarity Modeling with Convolutional Neural Networks.. In
+        <em><em>EMNLP</em></em> . 1576–1586.</li>
+        <li id="BibPLXBIB0015" label="[15]">Ryan Kiros, Yukun Zhu,
+        Ruslan&nbsp;R Salakhutdinov, Richard Zemel, Raquel Urtasun,
+        Antonio Torralba, and Sanja Fidler. 2015. Skip-thought
+        vectors. In <em><em>Advances in neural information
+        processing systems</em></em> . 3294–3302.</li>
+        <li id="BibPLXBIB0016" label="[16]">Todor Mihaylov and
+        Preslav Nakov. 2016. SemanticZ at SemEval-2016 Task 3:
+        Ranking Relevant Answers in Community Question Answering
+        Using Semantic Similarity Based on Fine-tuned Word
+        Embeddings.. In <em><em>SemEval@ NAACL-HLT</em></em> .
+        879–886.</li>
+        <li id="BibPLXBIB0017" label="[17]">Paul Neculoiu, Maarten
+        Versteegh, Mihai Rotaru, and Textkernel&nbsp;BV Amsterdam.
+        2016. Learning Text Similarity with Siamese Recurrent
+        Networks. <em><em>ACL 2016</em></em> (2016), 148.</li>
+        <li id="BibPLXBIB0018" label="[18]">NYTimes. 2016. As fake
+        news spreads lies, more readers shrug at the truth.
+        <a class="link-inline force-break" href=
+        "https://www.nytimes.com/%202016/12/06/us/fake-news-partisan-republican-democrat.html">
+          https://www.nytimes.com/
+          2016/12/06/us/fake-news-partisan-republican-democrat.html</a>.(2016).
+        </li>
+        <li id="BibPLXBIB0019" label="[19]">Stephen Pfohl, Oskar
+        Triebe, and Ferdinand Legros. 2017. Stance Detection for
+        the Fake News Challenge with Attention and Conditional
+        Encoding. (2017).</li>
+        <li id="BibPLXBIB0020" label="[20]">Benjamin Riedel,
+        Isabelle Augenstein, Georgios&nbsp;P Spithourakis, and
+        Sebastian Riedel. 2017. A simple but tough-to-beat baseline
+        for the Fake News Challenge stance detection task.
+        <em><em>arXiv preprint arXiv:1707.03264</em></em>
+        (2017).</li>
+        <li id="BibPLXBIB0021" label="[21]">Jingbo Shang. 2017.
+        Chips ahoy! at Fake News Challenge. <a class=
+        "link-inline force-break" href=
+        "https://github.com/shangjingbo1226/fnc-1">https://github.com/shangjingbo1226/fnc-1</a>.
+        (2017).
+        </li>
+        <li id="BibPLXBIB0022" label="[22]">Kai&nbsp;Sheng Tai,
+        Richard Socher, and Christopher&nbsp;D Manning. 2015.
+        Improved semantic representations from tree-structured long
+        short-term memory networks. <em><em>arXiv preprint
+        arXiv:1503.00075</em></em> (2015).</li>
+        <li id="BibPLXBIB0023" label="[23]">Ming Tan,
+        Cicero&nbsp;dos Santos, Bing Xiang, and Bowen Zhou. 2015.
+        Lstm-based deep learning models for non-factoid answer
+        selection. <em><em>arXiv preprint
+        arXiv:1511.04108</em></em> (2015).</li>
+        <li id="BibPLXBIB0024" label="[24]">Liu Yang, Qingyao Ai,
+        Damiano Spina, Ruey-Cheng Chen, Liang Pang, W&nbsp;Bruce
+        Croft, Jiafeng Guo, and Falk Scholer. 2016. Beyond factoid
+        QA: Effective methods for non-factoid answer sentence
+        retrieval. In <em><em>European Conference on Information
+        Retrieval</em></em> . Springer, 115–128.</li>
+        <li id="BibPLXBIB0025" label="[25]">Yi Yang, Wen-tau Yih,
+        and Christopher Meek. 2015. WikiQA: A Challenge Dataset for
+        Open-Domain Question Answering.. In <em><em>EMNLP</em></em>
+        . 2013–2018.</li>
+        <li id="BibPLXBIB0026" label="[26]">Lei Yu,
+        Karl&nbsp;Moritz Hermann, Phil Blunsom, and Stephen Pulman.
+        2014. Deep learning for answer sentence selection.
+        <em><em>arXiv preprint arXiv:1412.1632</em></em>
+        (2014).</li>
+        <li id="BibPLXBIB0027" label="[27]">Sean&nbsp;Baird
+        Yuxi&nbsp;Pan, Doug&nbsp;Sibley. 2017. Talos. <a class=
+        "link-inline force-break" href=
+        "http://blog.talosintelligence.com/2017/06/">http://blog.talosintelligence.com/2017/06/</a>.
+        (2017).
+        </li>
+        <li id="BibPLXBIB0028" label="[28]">Arkaitz Zubiaga, Elena
+        Kochkina, Maria Liakata, Rob Procter, Michal Lukasik,
+        Kalina Bontcheva, Trevor Cohn, and Isabelle Augenstein.
+        2018. Discourse-aware rumour stance classification in
+        social media using sequential classifiers.
+        <em><em>Information Processing &amp; Management</em></em>
+        54, 2 (2018), 273–290.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.fakenewschallenge.org/">http://www.fakenewschallenge.org/</a></p>
+    <p><a class="link-inline force-break" href=
+    "https://competitions.codalab.org/competitions/16843#results">https://competitions.codalab.org/competitions/16843#results</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18 Companion, April 23–27, 2018, Lyon,
+      France</em></p>
+      <p>© 1997; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License.<br />
+      ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191577">https://doi.org/10.1145/3184558.3191577</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

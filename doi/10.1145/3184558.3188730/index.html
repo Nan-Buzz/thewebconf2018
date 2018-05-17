@@ -1,1 +1,1563 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">  <head>  <title>Online Misinformation: Challenges and Future Directions</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>  </head>  <body id="main">  <section class="front-matter">   <section>    <header class="title-info">     <div class="journal-title">     <h1>      <span class="title">Online Misinformation: Challenges and Future Directions</span>      <br/>      <span class="subTitle"/>     </h1>     </div>    </header>    <div class="authorGroup">     <div class="author">     <span class="givenName">Miriam</span>      <span class="surName">Fernandez</span>     Knowledge Media Institute, Open University, Milton Keynes, UKMK7 6AA, <a href="mailto:miriam.fernandez@open.ac.uk">miriam.fernandez@open.ac.uk</a>     </div>     <div class="author">     <span class="givenName">Harith</span>      <span class="surName">Alani</span>     Knowledge Media Institute, Open University, Milton Keynes, UKMK7 6AA, <a href="mailto:h.alani@open.ac.uk">h.alani@open.ac.uk</a>     </div>            </div>    <br/>    <div class="pubInfo">     <p>DOI: <a href="https://doi.org/10.1145/3184558.3188730" target="_blank">https://doi.org/10.1145/3184558.3188730</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">     <p>     <small>Misinformation has become a common part of our digital media environments and it is compromising the ability of our societies to form informed opinions. It generates misperceptions, which have affected the decision making processes in many domains, including economy, health, environment, and elections, among others. Misinformation and its generation, propagation, impact, and management is being studied through a variety of lenses (computer science, social science, journalism, psychology, etc.) since it widely affects multiple aspects of society. In this paper we analyse the phenomenon of misinformation from a technological point of view. We study the current socio-technical advancements towards addressing the problem, identify some of the key limitations of current technologies, and propose some ideas to target such limitations. The goal of this position paper is to reflect on the current state of the art and to stimulate discussions on the future design and development of algorithms, methodologies, and applications.</small>     </p>    </div>    <div class="classifications">     <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>Misinformation; Technology Development</small>     </span>     </div>     <br/>     <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Miriam Fernandez and Harith Alani. 2018. Online Misinformation: Challenges and Future Directions. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 8 Pages. <a href="https://doi.org/10.1145/3184558.3188730" class="link-inline force-break"        target="_blank">https://doi.org/10.1145/3184558.3188730</a></small>     </p>     </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-3">    <header>     <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>     </div>    </header>    <p>Misinformation generates misperceptions, which have affected many domains, including economy [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>], health [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0024">24</a>], climate change [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0043">43</a>], foreign policy [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0036">36</a>], etc. It has become a common part of our digital media environments [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0026">26</a>], and it is compromising the ability of our societies to form informed opinions [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0035">35</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>]. In 2016, <strong>post-truth</strong> was chosen by the Oxford Dictionary as the word of the year, after achieving a 2000% increase &#x201C;in the context of the EU referendum in the United Kingdom and the presidential election in the United States&#x201D;.</p>    <p>Today, around half the world&#x0027;s population have access to the Internet, where they can create, propagate, and consume information instantly and globally. Although misinformation is a common problem in all media, it is exacerbated in digital social media due to the speed and ease in which posts are spread, and the difficulty of providing countervailing corrective information.<a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a> The social web enables people to spread information rapidly without confirmation of truth, and to paraphrase this information to fit their intentions and preset beliefs [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0046">46</a>]. An example is this public message on Facebook that went viral in Dec 2015: <em>This is Dearborn Michigan after the radical Islamic attack in California! These are Isis flags and Isis supporters folks but the media has not reported because of political correctness</em>, the demonstration, however, was anti-Isis.<a class="fn" href="#fn2" id="foot-fn2"><sup>2</sup></a> Recent news data analysis also showed that fake news spread far more virally than real news.<a class="fn" href="#fn3" id="foot-fn3"><sup>3</sup></a>    </p>    <p>Several social media platforms have recently gone under heavy criticism for becoming a ripe environment for the spread of misinformation, including fake news, mistruths, and hoaxes. It is being accused of clouding people&#x0027;s opinions and judgement with widely shared misinformation during major events, such the US presidential elections, and the UK&#x0027;s Brexit referendum.<a class="fn" href="#fn4" id="foot-fn4"><sup>4</sup></a> In reaction, Facebook and Google announced plans for combating the spread of fake news on their platforms.<a class="fn" href="#fn5" id="foot-fn5"><sup>5</sup></a> However, while some of these plans are materialising, they are deemed to offer partial solutions to an increasingly complex socio-technical problem. People and current technologies are yet to adapt to the age of misinformation, where incorrect or misleading information is intentionally or unintentionally spread [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>].</p>    <p>In this paper we provide a state of the art review on the existing socio-technological solutions to combat misinformation; its detection, propagation, validation and management. We analyse the key strengths and limitations of the identified technological advancements and propose some future research directions as result of the identified limitations. The goal of this position paper is to reflect on the current state of the art and to stimulate discussions on the future design and development of algorithms, methodologies, and applications that can help to successfully address the online misinformation problem.</p>    <p>The rest of the paper is structured as follows: Section <a class="sec" href="#sec-4">2</a> identifies four main focuses of current technological developments including: (i) the automatic detection of online misinformation (Section <a class="sec" href="#sec-5">3</a>), (ii) the investigation of misinformation propagation patterns and their prediction (Section <a class="sec" href="#sec-6">4</a>), (iii) the validation and fact-checking of misinformation (Section <a class="sec" href="#sec-7">5</a>) and (iv) the study of the different intervention strategies used to combat misinformation (Section <a class="sec" href="#sec-8">6</a>). Section <a class="sec" href="#sec-9">7</a> summarises the limitations of the studied works and discusses our ideas for future research directions. Discussion and Conclusions are provided in Section <a class="sec" href="#sec-16">8</a> and Section <a class="sec" href="#sec-17">9</a> respectively.</p>   </section>   <section id="sec-4">    <header>     <div class="title-info">     <h2>      <span class="section-number">2</span> Dimensions of Combating Online Misinformation</h2>     </div>    </header>    <p>Aiming to provide a clear picture of the current state of the art approaches to combat online misinformation, we did an extensive review of existing relevant technologies and characterised them according to the following four dimensions:</p>    <ul class="list-no-style">     <li id="list1" label="&#x2022;"><strong>Misinformation content detection</strong>: Are misinformation content and sources automatically identified? Are streams of information automatically monitored? Is relevant corrective information identified as well?<br/></li>     <li id="list2" label="&#x2022;"><strong>Misinformation dynamics</strong>: Are patterns of misinformation flow identified and predicted? Is demographic and behavioural information considered to understand and predict misinformation dynamics?<br/></li>     <li id="list3" label="&#x2022;"><strong>Content Validation</strong>: Is misinformation validated and fact-checked? Are the users involved in the content validation process?<br/></li>     <li id="list4" label="&#x2022;"><strong>Misinformation management</strong>: Are citizens&#x2019; perceptions and behaviour with regards to processing and sharing misinformation studied and monitored? Are intervention strategies put in place to handle the effects of misinformation?<br/></li>    </ul>    <p>Figure <a class="fig" href="#fig1">1</a> presents a general reflective comparison of eleven of the most popular platforms developed to aid in the battle against misinformation. This comparison reflects our view of how much attention and focus each platform gives to the four dimensions above. To generate this figure two independent assessors have assigned a score (from 0 to 10) to each the four dimensions for each tool. The image reflects the average of the two assessors for each dimension. <figure id="fig1">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3188730/images/www18companion-238-fig1.jpg" class="img-responsive" alt="Figure 1"       longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 1:</span>      <span class="figure-title">Comparison of relevant platforms according to the four identified dimensions</span>     </div>     </figure>    </p>   </section>   <section id="sec-5">    <header>     <div class="title-info">     <h2>      <span class="section-number">3</span> Misinformation Detection</h2>     </div>    </header>    <p>Large amounts of misinformation have been observed to spread online in viral fashion. Examples include rumours [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0026">26</a>], false news [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0010">10</a>], hoaxes [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0038">38</a>], and even elaborate conspiracy theories [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>]. Several approaches and tools have emerged in recent years to automatically or semi-automatically identify misinformation based on the characteristics of the <strong>content</strong> (text as well as multimedia images/videos), or the source of the misinformation and the <strong>network</strong> of that source. <strong>Contextual</strong> information, including a compiled list of <strong>misleading sites</strong> and <strong>microblog-specific features</strong>, such as hashtags or mentions in Twitter, are often used to complement the above.</p>    <p>Works of Castillo and Colleagues [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0012">12</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0031">31</a>] studied information credibility on Twitter mainly based on content features, and created supervised machine learning classifiers to detect this credibility. Their studies concluded that credible tweets tend to include more URLs, and are longer than non-credible tweets. Additionally, question and exclamation marks tend to concentrate on non-credible tweets, frequently using first and third-person pronouns. These studies derived on the creation of the <strong>TweetCred</strong> system,<a class="fn" href="#fn6" id="foot-fn6"><sup>6</sup></a> a real-time, web-based system (available as browser extension) to assess credibility of content on Twitter. The system provides a score of credibility for each tweet, based on the previously generated classifiers and it validates this score by asking user feedback. Similar tools developed as browsing extensions include <strong>Fake News Alert</strong><a class="fn" href="#fn7" id="foot-fn7"><sup>7</sup></a> and <strong>B.S. Detector</strong>,<a class="fn" href="#fn8" id="foot-fn8"><sup>8</sup></a> which rely on manually compiled lists of misleading websites, such as the one generated by Zimdars [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0070">70</a>] and <strong>Dispute Finder</strong> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0020">20</a>], which is based on a database of known disputed claims generated by crawling websites that already maintain a list of disputed claims. Qazvinian and colleagues [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0054">54</a>] also studied content features for misinformation detection. They concluded that lexical and Part of Speech (POS) patterns are key for correctly identifying rumours. Hashtags can result in high precision, but lead to low recall.</p>    <p>In addition to the analysis of content, other works and systems, focus on the use of network analysis techniques to detect misinformation [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0056">56</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0058">58</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0031">31</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0026">26</a>]. The studies show that different diffusion patterns exist that characterise misinformation vs. legitimate memes, with misinformation patterns propagating in a more viral way [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0026">26</a>] and often being generated by bots and not humans [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0056">56</a>]. On the other hand credible news tend to originate at a single or a few users in the network, have many re-posts and propagate through authors who have previously written a large number of messages and register more friends [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0031">31</a>].</p>    <p>Tools to detect and display the diffusion of misinformation include <strong>Truthy</strong> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0056">56</a>], <strong>RumorLens</strong> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0057">57</a>] and <strong>Twitter trails</strong> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0045">45</a>]. These tools are based on a semi-automatic approach where users can explore the propagation of a rumour with an interactive dashboard. However, they do not monitor the social media stream automatically to detect misinformation, but require the user to input a specific rumour to investigate. Aiming to address this issue Shao [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0059">59</a>] and colleagues developed <strong>Hoaxy</strong> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0059">59</a>], a platform that automatically monitors the social stream, detects, and analyses online misinformation. Following this trend <strong>Facebook</strong> has recently released new tools to help combat the spread of fabricated news stories. As opposed to Hoaxy, Facebook tools not only use a combination of content and network analysis but also include user feedback to accurately identify fake news. This system is under continuous development and testing.<a class="fn" href="#fn9" id="foot-fn9"><sup>9</sup></a> However, current efforts to combat misinformation have been criticized because they fall short on preventing misuse of the platform.<a class="fn" href="#fn10" id="foot-fn10"><sup>10</sup></a>     <strong>Google&#x0027;s</strong> proposal to tackle misinformation also includes asking users for feedback<a class="fn" href="#fn11" id="foot-fn11"><sup>11</sup></a> by providing a link at the bottom of the snippet box.</p>    <p>As it can be observed, some of the limitations of current systems for misinformation detection include: (a) providing alerts without any rationale or explanation of their decisions, and (b) generally disengaging users by regarding them as passive consumers rather than active co-creators and detectors of misinformation. Another element to consider is that, automatic systems for misinformation detection based on known features can potentially be fooled, and carefully crafted misinformation may go undetected.</p>   </section>   <section id="sec-6">    <header>     <div class="title-info">     <h2>      <span class="section-number">4</span> Misinformation Dynamics</h2>     </div>    </header>    <p>Online social networks are characterised by <strong>homophily</strong> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0044">44</a>], <strong>polarisation</strong> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0017">17</a>], <strong>algorithmic ranking/personalisation</strong> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0052">52</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0029">29</a>] [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>], and <strong>social bubbles</strong> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0048">48</a>]. These characteristics create information environments with low content diversity and strong social reinforcement, which has an effect on the information users are exposed to and on how information propagates. All of these factors, coupled with the fast news life cycle [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>], influence the dynamics of social news sharing, and particularly the ways misinformation initiates and propagates.</p>    <p>Ratkiewicz [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0056">56</a>] analysed the spread of misinformation in the context of political campaigns and showed how, in its initial phase, the propagation of misinformation exhibits pathological diffusion graphs. These graphs can take many forms, including high numbers of unique injection points with few or no connected components or strong star-like topologies. However, once the community has accepted the misinformation, its propagation cascade will quickly become indistinguishable, hence early identification of misinformation is critical. This works also highlights the relevance of <strong>bots</strong> initiating the process of misinformation spread. Boshmaf [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>] and Freitas[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0025">25</a>] reported that simple automated mechanisms that produce contents and boost followers yield successful infiltration strategies of misinformation. However, nobody knows exactly how many social bots populate social media, or what share of content, and particularly misinformation, can be attributed to bots [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>]. A similar dangerous phenomenon is <strong>crowdturfing</strong>, where crowdworkers are hired to support and propagate arguments or claims, simulating grassroots social movements. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0066">66</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0039">39</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0040">40</a>].</p>    <p>Del Vicario [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0018">18</a>] studied misinformation propagation and reported that users mostly tend to select and share content based on homogeneity (<strong>echo chambers</strong>), causing reinforcement and fostering confirmation bias, segregation, and polarisation [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>], an effect exacerbated by the platforms; personalisation and ranking algorithms [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0052">52</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0029">29</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>]. This is also confirmed by [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0061">61</a>], who concluded that rumor spreaders form strong partisan structures. Del Vicario also shows that different types of misinformation propagate differently. While misinformation around scientific news reach a higher level of diffusion faster, it also decays faster. On the other hand, conspiracy theories are assimilated more slowly but are propagated over longer time periods. Friggeri [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0026">26</a>] studied the propagation of rumors within Facebook and concluded that: (i) misinformation cascades run deeper than non-misinformation cascades within the network, (ii) even when denied, the rumour cascade continues to propagate, as there are many more non-denied re-shares than denied ones and, (iii) a rumour can lie dormant for weeks or months, and then it can become popular again. More recent work by [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0072">72</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0059">59</a>] has also found that misinformation spreads faster and more widely across the network, with fact-checking content typically lagging that of misinformation by 10-20 hours. These works also suggest that misinformation-mongering is dominated by few very active accounts that bear the brunt of the promotion and spreading of misinformation, whereas the propagation of fact checking is a more distributed, grass-roots activity.</p>    <p>Understanding users [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0065">65</a>] and their motivations [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>] are also key aspects to understand misinformation dynamics. Wagner and colleagues [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0065">65</a>] studied the susceptibility of users to interact with bots and spammers. This study, conducted over Twitter, concludes that susceptible users tend to communicate with many different users, use more social words and show more affection than non-susceptible users. Similarly, [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0069">69</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>] showed that, personality aspects influence misinformation dynamics. Extroverts and individuals with high cooperativeness and high reward dependence are founded more prone to share misinformation, but no significant differences were found in terms of gender. The key motivations behind misinformation spreading include information seeking and socialising. Psychology also shows that individuals with higher anxiety levels are more likely to spread misinformation [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0034">34</a>].</p>    <p>The effect of finite memory and attention on the spread of missinformation has been studied by Tambuscio [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0062">62</a>] and Qiu [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0055">55</a>]. These studies conclude that in social media environments, where users are influenced by high information load and finite attention, low quality information is likely to go viral.</p>    <p>While all these studies provide important insights on how misinformation propagates, they do not analyse in depth the topology and the typology of the social network that is consuming and sharing misinformation. Similarly, deeper studies are needed to understand how, not only demographics (age, gender, geographical location), but also user behaviour influences the spread of misinformation.</p>   </section>   <section id="sec-7">    <header>     <div class="title-info">     <h2>      <span class="section-number">5</span> Content Validation</h2>     </div>    </header>    <p>Information validation practices are key to identify misinformation.<a class="fn" href="#fn12" id="foot-fn12"><sup>12</sup></a> More than 110 independent <strong>fact-checking groups</strong> and organisations emerged online around the world over the past decade, and half of them were established in European countries [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0030">30</a>], (e.g., Full Fact in the UK, Snopes and Root Claim in the US, FactCheckNI in Northern Ireland, and Pagella Politica in Italy, to name just a few). These groups and organisations aim to provide a frontline service in dealing with false information online following guidelines, such as the ones captured by The Verification Handbook.<a class="fn" href="#fn13" id="foot-fn13"><sup>13</sup></a>    </p>    <p>However, fact checking is a time-consuming verification practice that makes it near impossible to compete with the speed of social media. <strong>Computational fact-checker</strong> initiatives have also emerged in the last few years with the aim of enhancing our ability to evaluate the veracity of dubious information. Among these works Ciampaglia [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0015">15</a>] exploited implicit information from the topology of the Wikipedia Graph. Their results show that network analytics methods, in conjunction with large-scale knowledge repositories, are effective towards automatic fact-checking methods. Baoxu [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0060">60</a>] follows a similar approach, but proposes a path mining approach over large-knowledge graphs (DBpedia<a class="fn" href="#fn14" id="foot-fn14"><sup>14</sup></a> and SemMedDB<a class="fn" href="#fn15" id="foot-fn15"><sup>15</sup></a>) to leverage a collection of factual statements for automatic fact-checking. Besides the analysis of textual sources, works like the one of Boididou and colleagues [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0007">7</a>] focus on the automatic verification of unreliable media content by building classifiers from multiple user and content features.</p>    <p>An additional problem of fact-checking initiatives is that they are often disconnected from where the crowds read, debate, and share misinformation with little or no awareness of any invalidation offered by the fact checkers. To address these issues several initiatives have emerged that aim to bring the results of fact-checking initiatives closer to the public. Examples are <strong>TruthTeller</strong>,<a class="fn" href="#fn16" id="foot-fn16"><sup>16</sup></a> developed by the Washington Post, which transcribes political videos and checks them against a database that draws on PolitiFact<a class="fn" href="#fn17" id="foot-fn17"><sup>17</sup></a> and FactCheck.org.<a class="fn" href="#fn18" id="foot-fn18"><sup>18</sup></a> The program tells viewers which statements are true or false. <strong>Truth Googles</strong><a class="fn" href="#fn19" id="foot-fn19"><sup>19</sup></a> implements a similar approach in a brower plug-in, also based on these databases. <strong>Hoaxy</strong> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0059">59</a>] integrates the efforts of fact-checking with a continuous monitoring of the social stream, making the social media information and the fact-checking information simultaneously available for the user. <strong>FactWatcher</strong> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0033">33</a>] complements previous approaches by considering different types of facts, including situational facts, one-of-the-few facts, and prominent streaks. As opposed to previous tools that are oriented to the general public, FactWatcher<a class="fn" href="#fn20" id="foot-fn20"><sup>20</sup></a> is focused on supporting journalist with the creation of news stories. In the same fashion, ClaimBuster<a class="fn" href="#fn21" id="foot-fn21"><sup>21</sup></a> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0032">32</a>] provides computational tools to assist professionals in understanding and verifying claims. Particularly, it assigns scores to factual claims indicating whether they should be checked, providing a priority ranking to help fact-checkers.</p>    <p>     <strong>Crowdsourcing</strong> initiatives have also been considered to validate and verify information [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0071">71</a>]. One of the most recent initiatives by Facebook integrates crowdsourcing with fact-checkers (Poynter and Politifact, among others) to fight fake news. Users can mark stories as fake and see warnings that indicate the story has been disputed by third-party fact-checkers. Systems like <strong>TweetCred</strong><a class="fn" href="#fn22" id="foot-fn22"><sup>22</sup></a> and <strong>Trudhy</strong><a class="fn" href="#fn23" id="foot-fn23"><sup>23</sup></a> use crowdworkers to annotate data and train machine learning algorithms that can learn from human annotations when assessing the credibility of tweets.</p>    <p>Although the work of fact checkers and crowdsourcing initiatives is really valuable in correcting misinformation, they are faced by a number of complex challenges, which limits their ability to change existing misperceptions. Not only they are unable to keep with the high volume of misinformation generated online, or are disconnected from where users read, debate and share misinformation, but simply publishing corrective information by fact checkers is often regarded as insufficient for changing misinformed beliefs and opinions [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>]. Whether a claim is accepted by an individual is strongly influenced by the individual&#x0027;s believe system, since it is common to look for information that confirm our believes (confirmation bias) and don&#x0027;t scrutinize contrary ideas to avoid or lessen cognitive dissonance (motivated reasoning) [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0037">37</a>] [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0069">69</a>]. Moreover, Penny Cook and colleagues also highlighted in a recent study the problem of the &#x201C;Illusory Truth Effect&#x201D; when it comes fake news and corrective information [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0053">53</a>]. Their study shows how repetition can increase the perceived accuracy of plausible but false statements. Garret and colleagues also show how, compared to post-exposure corrections, real-time corrections may cause users to be more resistant to factual information [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0028">28</a>]. It is therefore important to consider not only which corrective information should be provided, but when, how and to whom should it be provided.</p>   </section>   <section id="sec-8">    <header>     <div class="title-info">     <h2>      <span class="section-number">6</span> Misinformation Management</h2>     </div>    </header>    <p>Combating misinformation is a complex task, and there is consensus in psychology literature that simply presenting people with corrective information is likely to fail in changing their salient beliefs and opinions, or may, even, reinforce them [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0023">23</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0049">49</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0050">50</a>] [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0028">28</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0053">53</a>]. People often struggle to change their beliefs even after finding out that the information they already accepted is incorrect [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0016">16</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0063">63</a>]. Nevertheless, some strategies have been found to be effective in correcting misperceptions [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0042">42</a>], such as providing an explanation rather than a simple refute [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0051">51</a>], exposing to related but disconfirming stories [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>], and revealing the demographic similarity of the opposing group [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0027">27</a>]. Recent work by Cambridge University is also considering the use of &#x201C;fake news vaccine&#x201D; to immunise users against the problem by &#x201C;pre-emptively exposing&#x201D; readers to a small &#x201C;dose&#x201D; of the misinformation [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0064">64</a>]. An online game<a class="fn" href="#fn24" id="foot-fn24"><sup>24</sup></a> has been released as part of this research to let players experience what is like to create and spread misinformation so that they are more likely to identify it. An alternative approach for dealing with pervasive misinformation is to seek more direct behavioral interventions that encourage people to make certain decisions over others [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0041">41</a>].</p>    <p>Works that have attempted to stop the spread of misinformation in social networks generally use three main strategies: (i) combating it with <strong>facts</strong> [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0009">9</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0047">47</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0068">68</a>], (ii) <strong>malicious account detection</strong> in early stage [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0067">67</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0040">40</a>] and (iii) the use of <strong>ranking and selection strategies</strong> based on corrective information.</p>    <p>Among the works that have attempted to combat the spread of misinformation with <strong>facts</strong> Budak et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0009">9</a>] introduced the notion of competing campaigns to counteract the effect of misinformation. With this purpose, they designed the Multi-Campaign Independence Cascade Model (MCICM) and studied multiple methods to choose the optimal subset of users as seeds to propagate the &#x201C;good&#x201D; campaign. Similar efforts include the works of [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0047">47</a>] and [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0068">68</a>]. The first work aims to find the &#x201C;Node Protectors&#x201D;, i.e., the smallest set of highly influential nodes whose &#x201C;decontamination&#x201D; with good information helps to contain the viral spread of misinformation. The second work aims to identify the most important disseminators of misinformation to &#x201C;inject correct information&#x201D; in the diffusion. These models of information propagation present however several limitations. First they are based on the assumption that once a user is &#x201C;contaminated&#x201D; with &#x201C;good&#x201D; information she will propagate this information among her network. However, persuading users to adopt certain beliefs, and propagate them is not trivial [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0042">42</a>]. Secondly, these works assume that the models of diffusion of &#x201C;good&#x201D; and &#x201C;bad&#x201D; information are coincident, when in reality; they may actually not spread at the same rate. Indeed, several recent works have found that misinformation spreads wider and faster [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0072">72</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0059">59</a>]. This type of misinformation management approach has also being recently used by Twitter. The company notified more than 1.4 million people about the fact that they interacted during the US elections with accounts generated by the Russian government-linked organisation Internet Research Agency. While Twitter mentions that a survey will be send to a small group of people to gain feedback, little is known so far about the effects of this initiative.<a class="fn" href="#fn25" id="foot-fn25"><sup>25</sup></a>    </p>    <p>Regarding the methods focused on the <strong>early detection of malicious accounts</strong> we can highlight works that aim to identify spammers [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0067">67</a>], bots [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>], crowdturfing [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0066">66</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0039">39</a>] and malicious accounts in general [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>][<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0040">40</a>]. These techniques generally focus on the analysis of various user, temporal, geographical and linguistic features in order to successfully identify these accounts. However, it is unclear what intervention strategies to use in order to stop the spread of misinformation once these accounts have been identified. Twitter, for example, is currently suspending accounts associated with duplicative or suspicious activity.<a class="fn" href="#fn26" id="foot-fn26"><sup>26</sup></a>    </p>    <p>A third type of misinformation management approach, currently used by organisations like Google and Facebook, is the collection of feedback from users regarding misinformation content, and the use of this feedback as a factor to enhance <strong>information selection and ranking</strong> mechanisms. By doing so, these platforms aim to avoid and/or limit displaying and recommending content that has been previously tagged as &#x2019;missinformation&#x2019; by other users.</p>   </section>   <section id="sec-9">    <header>     <div class="title-info">     <h2>      <span class="section-number">7</span> Research Directions</h2>     </div>    </header>    <p>In this section we summarise the main limitations we identified, according to the four dimensions we studied, and propose some ideas to target such limitations.</p>    <ul class="list-no-style">     <li id="list5" label="&#x2022;"><strong>Misinformation Identification:</strong> Current misinformation identification approaches tend to focus on (a) alerting users without <strong>rationale</strong> or explanation of their decisions, and (b) <strong>disengaging users</strong> by regarding them as <strong>passive consumers</strong> rather than active co-creators and detectors of misinformation.<br/></li>     <li id="list6" label="&#x2022;"><strong>Misinformation Dynamics:</strong> Most current studies on misinformation dynamics (a) do not analyse the influence of the <strong>topology</strong> and the <strong>typology</strong> of the social network on the consumption and sharing of misinformation, and (b) do not take into account how <strong>the misinformation-handling behaviour of users</strong> influences the spread of misinformation.<br/></li>     <li id="list7" label="&#x2022;"><strong>Content Validation:</strong> Current fact checkers and crowdsourcing initiatives for content validation (a) are not able to cope with the <strong>high volume</strong> of misinformation generated online, and (b) are often <strong>disconnected</strong> from where the users tend to read, debate and share misinformation.<br/></li>     <li id="list8" label="&#x2022;"><strong>Misinformation Management:</strong> Common misinformation management strategies (a) do not go beyond the generation of <strong>facts</strong> and the early detection of malicious accounts, and (b) tend to focus on the <strong>technical</strong> and not on the <strong>human aspects</strong> of the problem (i.e., the motivations and behaviours of the users when generating and spreading misinformation).<br/></li>    </ul>    <p>As we can observe from the above summary, the limitations of current technologies are numerous and diverse, which highlight various directions for further discussions and research. Tackling the new societal challenge of misinformation requires closely involving the users and strengthening their resilience to misinformation. Future technology should therefore help promoting: (1) <strong>Empowerment</strong>, by raising individual and collective awareness of current misinformation content and sources, (2) <strong>Engagement</strong>, by fostering networking and cross-communication between users, (3) <strong>Education</strong>, by informing users of advanced misinformation analysis results and predictions, and (4) <strong>Encouragement</strong> of all users to play a role in detecting, in/validating, and combating misinformation.<a class="fn" href="#fn27" id="foot-fn27"><sup>27</sup></a> More specifically, further advancements are required in the following dimensions.</p>    <section id="sec-10">         <section id="sec-11">     <p><em>7.0.1 User Involvement.</em> While digital literacy and media literacy initiatives have emerged in the last few years to help users identify misinformation, <a class="fn" href="#fn28" id="foot-fn28"><sup>28</sup></a> most of the technologies we surveyed do not appear to closely involve the users to battle misinformation, hence considering users as passive consumers rather than active co-creators and detectors of misinformation. Only a few systems, such as TweetCred, involves users, but mainly to validate the results of their misinformation detection algorithms. Our hypothesis is that, to advance the state of the art, we need to closely involve users in the process of misinformation detection and management.</p>     <p>Many insights have been provided from social science research with regards to what works and what does not, to correct or to limit the spread of misinformation. However, translating such insights and successful approaches into delivery tools would require the participation of all stakeholders, including end users, social scientists, computer scientists, educators, etc., in the co-design of their functions, user interfaces, and delivery methods. This would increase the acceptance of such tools, and thus their impact of combating misinformation.</p>     </section>     <section id="sec-12">     <p><em>7.0.2 Misinformation Dynamics.</em> With regards to the exploration of misinformation dynamics, we believe that the topology and typology of the network could play an important role in how misinformation spreads. Works should therefore study similarities and differences of misinformation spread, across different platforms, and how platform-specific and network-specific features influence the dynamics of misinformation.</p>     <p>Understanding these dynamics, and the user, topological, and typological factors that influence them, can be used to develop models that predict how, where, and by whom certain misinformation are likely to spread.</p>     </section>     <section id="sec-13">     <p><em>7.0.3 User Behaviour.</em> User-behaviour may be a key factor in how misinformation is spread. Investigating the behavioural patterns that are commonly associated with the propagation of misinformation could help to better predict and control the cascade of misinformation.</p>     <p>With technology, we would be able to study the impact of various misinformation interventions and correction techniques at large scale, to better understand their impact on user behaviour towards misinformation. Many such studies have already been reported in social science literature. However, executing them on very large numbers of users (e.g., hundreds of thousands), and monitoring their results over longer periods of time (e.g., several weeks, months, and years) would required a high degree of automation. Such large-scale and longer-term experiments could yield new or more representative insights that are very difficult to obtain manually.</p>     </section>     <section id="sec-14">     <p><em>7.0.4 Content Validation.</em> Validating content is a complex part of the misinformation control cycle. Corroborating and refuting facts is not a trivial task, particularly considering the volume and the velocity at which online information is often generated. We can however aim to embed fact checkers into the environments where users tend to read, debate, and share misinformation. For example, this can be achieved by developing browser and social-media platform plug-ins that are able to assess existing discussions and shared articles, and highlight related factual or corrective information that is available from any of the known fact-check sites.</p>     <p>In spite of recent research and technological developments, and the rise of fact-checking sites, there is still a clear lack of tools to support users who would like to validate any piece of information. Such validation could, for example, include searching various fact-checking sites for related articles, and assessing the legitimacy of the information source (e.g., whether it is from a known fakenews site). Many lay-users might be unaware of such validation actions and possibilities, or lack the basic skill to perform them effectively.</p>     </section>     <section id="sec-15">     <p><em>7.0.5 Misinformation Management.</em> Regarding the generation of effective misinformation management strategies, we believe that understanding how citizens behave towards misinformation, what opinions they form about it, and how these opinions evolve over time, are key to successfully manage the impact of misinformation.</p>     <p>Technology can be used to test the effectiveness of various misinformation management policies and techniques, as well as to deploy them at scale.</p>     </section>    </section>   </section>   <section id="sec-16">    <header>     <div class="title-info">     <h2>      <span class="section-number">8</span> Discussion</h2>     </div>    </header>    <p>In this work we have provided an overview of the current technology developments towards battling the problem of online misinformation. Due to the relevance of this problem, new works are constantly emerging from a variety of disciplines (social science, computer science, communication, political science, etc.). We are therefore aware that a high number of works are not captured in this paper. However, we hope that the current compilation provides a simple and clear overview of the multiple dimensions of the problem, the existing technological solutions, and their limitations.</p>    <p>We have also proposed multiple research directions as result of the conducted analysis. All of these directions are based on a strong user-focus. It is our view that the solution to the new societal challenge of misinformation is not for social media platforms to become the arbiters of truth, which raises various ethical and philosophical dilemmas, but to closely involve the users as part of the solution.</p>    <p>As mention earlier, misinformation is a complex problem involving human, societal and technological factors. We can therefore not look at the problem with a unique lens. Multidisciplinary research is needed to design and develop methodologies, practices, policies and technologies able to effectively combat misinformation.</p>   </section>   <section id="sec-17">    <header>     <div class="title-info">     <h2>      <span class="section-number">9</span> Conclusions</h2>     </div>    </header>    <p>In this position paper we have investigated the existing technological developments towards combating the problem of online misinformation. We have analysed these works following four key dimensions: (i) misinformation detection, (ii) misinformation dynamics, (iii) content validation and, (iv) misinformation management. We have investigated the limitations of these works and identified the lack of user involvement and consideration as a key limitation in all four dimensions. We have subsequently proposed various research directions focused on involving users as participants and co-creators of misinformation technology. We hope that this paper stimulates discussions across disciplines on how to enhance the current landscape of technology development to effectively target the problem of online misinformation.</p>    <p>     <strong>Acknowledgments.</strong> Research funded by Co-Inform, H2020 program of the European Union, grant agreement 770302.</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>     <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>     </div>    </header>    <ul class="bibUl">     <li id="BibPLXBIB0001" label="[1]">Michelle&#x00A0;A Amazeen. 2013. A Critical Assessment of Fact-checking in 2012. (2013).</li>     <li id="BibPLXBIB0002" label="[2]">Sotirios Antoniadis, Iouliana Litou, and Vana Kalogeraki. 2015. A model for identifying misinformation in online social networks. In <em>      <em>OTM Confederated International Conferences &#x201C;On the Move to Meaningful Internet Systems&#x201D;</em>     </em>. Springer, 473&#x2013;482.</li>     <li id="BibPLXBIB0003" label="[3]">Eytan Bakshy, Solomon Messing, and Lada&#x00A0;A Adamic. 2015. Exposure to ideologically diverse news and opinion on Facebook. <em>      <em>Science</em>     </em>348, 6239 (2015), 1130&#x2013;1132.</li>     <li id="BibPLXBIB0004" label="[4]">Larry&#x00A0;M Bartels. 2002. Beyond the running tally: Partisan bias in political perceptions. <em>      <em>Political Behavior</em>     </em>24, 2 (2002), 117&#x2013;150.</li>     <li id="BibPLXBIB0005" label="[5]">Alessandro Bessi, Fabio Petroni, Michela Del&#x00A0;Vicario, Fabiana Zollo, Aris Anagnostopoulos, Antonio Scala, Guido Caldarelli, and Walter Quattrociocchi. 2015. Viral misinformation: The role of homophily and polarization. In <em>      <em>Proceedings of the 24th International Conference on World Wide Web</em>     </em>. ACM, 355&#x2013;356.</li>     <li id="BibPLXBIB0006" label="[6]">Leticia Bode and Emily&#x00A0;K Vraga. 2015. In related news, that was wrong: The correction of misinformation through related stories functionality in social media. <em>      <em>Journal of Communication</em>     </em>65, 4 (2015), 619&#x2013;638.</li>     <li id="BibPLXBIB0007" label="[7]">Christina Boididou, Symeon Papadopoulos, Yiannis Kompatsiaris, Steve Schifferes, and Nic Newman. 2014. Challenges of computational verification in social multimedia. In <em>      <em>Proceedings of the 23rd International Conference on World Wide Web</em>     </em>. ACM, 743&#x2013;748.</li>     <li id="BibPLXBIB0008" label="[8]">Yazan Boshmaf, Ildar Muslukhov, Konstantin Beznosov, and Matei Ripeanu. 2011. The socialbot network: when bots socialize for fame and money. In <em>      <em>Proceedings of the 27th annual computer security applications conference</em>     </em>. ACM, 93&#x2013;102.</li>     <li id="BibPLXBIB0009" label="[9]">Ceren Budak, Divyakant Agrawal, and Amr El&#x00A0;Abbadi. 2011. Limiting the spread of misinformation in social networks. In <em>      <em>Proceedings of the 20th international conference on World wide web</em>     </em>. ACM, 665&#x2013;674.</li>     <li id="BibPLXBIB0010" label="[10]">Carlos Carvalho, Nicholas Klagge, and Emanuel Moench. 2011. The persistent effects of a false news shock. <em>      <em>Journal of Empirical Finance</em>     </em>18, 4 (2011), 597&#x2013;615.</li>     <li id="BibPLXBIB0011" label="[11]">Carlos Castillo, Marcelo Mendoza, and Barbara Poblete. 2011. Information credibility on twitter. In <em>      <em>Proceedings of the 20th international conference on World wide web</em>     </em>. ACM, 675&#x2013;684.</li>     <li id="BibPLXBIB0012" label="[12]">Carlos Castillo, Marcelo Mendoza, and Barbara Poblete. 2013. Predicting information credibility in time-sensitive social media. <em>      <em>Internet Research</em>     </em>23, 5 (2013), 560&#x2013;588.</li>     <li id="BibPLXBIB0013" label="[13]">Xinran Chen and Sei-Ching&#x00A0;Joanna Sin. 2013. &#x2018;Misinformation? What of it?&#x2019; Motivations and individual differences in misinformation sharing on social media. <em>      <em>Proceedings of the Association for Information Science and Technology</em>     </em>50, 1 (2013), 1&#x2013;4.</li>     <li id="BibPLXBIB0014" label="[14]">Giovanni&#x00A0;Luca Ciampaglia, Alessandro Flammini, and Filippo Menczer. 2015. The production of information in the attention economy. <em>      <em>Scientific reports</em>     </em>5(2015).</li>     <li id="BibPLXBIB0015" label="[15]">Giovanni&#x00A0;Luca Ciampaglia, Prashant Shiralkar, Luis&#x00A0;M Rocha, Johan Bollen, Filippo Menczer, and Alessandro Flammini. 2015. Computational fact checking from knowledge networks. <em>      <em>PloS one</em>     </em>10, 6 (2015), e0128193.</li>     <li id="BibPLXBIB0016" label="[16]">Michael&#x00A0;D Cobb, Brendan Nyhan, and Jason Reifler. 2013. Beliefs don&#x0027;t always persevere: How political figures are punished when positive information about them is discredited. <em>      <em>Political Psychology</em>     </em>34, 3 (2013), 307&#x2013;326.</li>     <li id="BibPLXBIB0017" label="[17]">Michael Conover, Jacob Ratkiewicz, Matthew&#x00A0;R Francisco, Bruno Gon&#x00E7;alves, Filippo Menczer, and Alessandro Flammini. 2011. Political polarization on twitter.<em>      <em>ICWSM</em>     </em>133(2011), 89&#x2013;96.</li>     <li id="BibPLXBIB0018" label="[18]">Michela Del&#x00A0;Vicario, Alessandro Bessi, Fabiana Zollo, Fabio Petroni, Antonio Scala, Guido Caldarelli, H&#x00A0;Eugene Stanley, and Walter Quattrociocchi. 2016. The spreading of misinformation online. <em>      <em>Proceedings of the National Academy of Sciences</em>     </em>113, 3 (2016), 554&#x2013;559.</li>     <li id="BibPLXBIB0019" label="[19]">Manuel Egele, Gianluca Stringhini, Christopher Kruegel, and Giovanni Vigna. 2013. Compa: Detecting compromised accounts on social networks.. In <em>      <em>NDSS</em>     </em>.</li>     <li id="BibPLXBIB0020" label="[20]">Rob Ennals, Beth Trushkowsky, and John&#x00A0;Mark Agosta. 2010. Highlighting disputed claims on the web. In <em>      <em>Proceedings of the 19th international conference on World wide web</em>     </em>. ACM, 341&#x2013;350.</li>     <li id="BibPLXBIB0021" label="[21]">Emilio Ferrara, Onur Varol, Clayton Davis, Filippo Menczer, and Alessandro Flammini. 2016. The rise of social bots. <em>      <em>Commun. ACM</em>     </em>59, 7 (2016), 96&#x2013;104.</li>     <li id="BibPLXBIB0022" label="[22]">Andrew&#x00A0;J Flanagin and Miriam&#x00A0;J Metzger. 2000. Perceptions of Internet information credibility. <em>      <em>Journalism &#x0026; Mass Communication Quarterly</em>     </em>77, 3 (2000), 515&#x2013;540.</li>     <li id="BibPLXBIB0023" label="[23]">DJ Flynn, Brendan Nyhan, and Jason Reifler. 2017. The nature and origins of misperceptions: Understanding false and unsupported beliefs about politics. <em>      <em>Political Psychology</em>     </em>38, S1 (2017), 127&#x2013;150.</li>     <li id="BibPLXBIB0024" label="[24]">Gary&#x00A0;L Freed, Sarah&#x00A0;J Clark, Amy&#x00A0;T Butchart, Dianne&#x00A0;C Singer, and Matthew&#x00A0;M Davis. 2010. Parental vaccine safety concerns in 2009. <em>      <em>Pediatrics</em>     </em>125, 4 (2010), 654&#x2013;659.</li>     <li id="BibPLXBIB0025" label="[25]">Carlos Freitas, Fabricio Benevenuto, Saptarshi Ghosh, and Adriano Veloso. 2015. Reverse engineering socialbot infiltration strategies in twitter. In <em>      <em>Proceedings of the 2015 IEEE/ACM International Conference on Advances in Social Networks Analysis and Mining 2015</em>     </em>. ACM, 25&#x2013;32.</li>     <li id="BibPLXBIB0026" label="[26]">Adrien Friggeri, Lada&#x00A0;A Adamic, Dean Eckles, and Justin Cheng. 2014. Rumor Cascades.. In <em>      <em>Proceedings of the 2014 International Conference on Web and Social Media. ICWSM 2014</em>     </em>.</li>     <li id="BibPLXBIB0027" label="[27]">R&#x00A0;Kelly Garrett, Erik&#x00A0;C Nisbet, and Emily&#x00A0;K Lynch. 2013. Undermining the corrective effects of media-based political fact checking? The role of contextual cues and na&#x00EF;ve theory. <em>      <em>Journal of Communication</em>     </em>63, 4 (2013), 617&#x2013;637.</li>     <li id="BibPLXBIB0028" label="[28]">R&#x00A0;Kelly Garrett and Brian&#x00A0;E Weeks. 2013. The promise and peril of real-time corrections to political misperceptions. In <em>      <em>Proceedings of the 2013 conference on Computer supported cooperative work</em>     </em>. ACM, 1047&#x2013;1058.</li>     <li id="BibPLXBIB0029" label="[29]">Tarleton Gillespie. 2014. The relevance of algorithms. <em>      <em>Media technologies: Essays on communication, materiality, and society</em>     </em>167 (2014).</li>     <li id="BibPLXBIB0030" label="[30]">LUCAS Graves and FEDERICA Cherubini. 2016. The rise of fact-checking sites in Europe. (2016).</li>     <li id="BibPLXBIB0031" label="[31]">Aditi Gupta, Ponnurangam Kumaraguru, Carlos Castillo, and Patrick Meier. 2014. Tweetcred: A real-time Web-based system for assessing credibility of content on Twitter. In <em>      <em>Proc. 6th International Conference on Social Informatics (SocInfo). Barcelona, Spain</em>     </em>.</li>     <li id="BibPLXBIB0032" label="[32]">Naeemul Hassan, Fatma Arslan, Chengkai Li, and Mark Tremayne. 2017. Toward automated fact-checking: Detecting check-worthy factual claims by ClaimBuster. In <em>      <em>Proceedings of the 23rd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</em>     </em>. ACM, 1803&#x2013;1812.</li>     <li id="BibPLXBIB0033" label="[33]">Naeemul Hassan, Afroza Sultana, You Wu, Gensheng Zhang, Chengkai Li, Jun Yang, and Cong Yu. 2014. Data in, fact out: automated monitoring of facts by FactWatcher. <em>      <em>Proceedings of the VLDB Endowment</em>     </em>7, 13 (2014), 1557&#x2013;1560.</li>     <li id="BibPLXBIB0034" label="[34]">Marianne&#x00A0;E Jaeger, Susan Anthony, and Ralph&#x00A0;L Rosnow. 1980. Who hears what from whom and with what effect: A study of rumor. <em>      <em>Personality and Social Psychology Bulletin</em>     </em>6, 3 (1980), 473&#x2013;478.</li>     <li id="BibPLXBIB0035" label="[35]">Anna Kata. 2010. A postmodern Pandora&#x0027;s box: anti-vaccination misinformation on the Internet. <em>      <em>Vaccine</em>     </em>28, 7 (2010), 1709&#x2013;1716.</li>     <li id="BibPLXBIB0036" label="[36]">Steven Kull, Clay Ramsay, and Evan Lewis. 2003. Misperceptions, the media, and the Iraq war. <em>      <em>Political Science Quarterly</em>     </em>118, 4 (2003), 569&#x2013;598.</li>     <li id="BibPLXBIB0037" label="[37]">Ziva Kunda. 1990. The case for motivated reasoning.<em>      <em>Psychological bulletin</em>     </em>108, 3 (1990), 480.</li>     <li id="BibPLXBIB0038" label="[38]">Tom Lauricella, Christopher&#x00A0;S. Stewart, and Shira Ovide. 2013. Twitter hoax sparks swift stock swoon. <em>      <em>The Wall Street Journal</em>     </em>23 (2013).</li>     <li id="BibPLXBIB0039" label="[39]">Kyumin Lee, Prithivi Tamilarasan, and James Caverlee. 2013. Crowdturfers, Campaigns, and Social Media: Tracking and Revealing Crowdsourced Manipulation of Social Media.. In <em>      <em>ICWSM</em>     </em>.</li>     <li id="BibPLXBIB0040" label="[40]">Sangho Lee and Jong Kim. 2014. Early filtering of ephemeral malicious accounts on Twitter. <em>      <em>Computer Communications</em>     </em>54 (2014), 48&#x2013;57.</li>     <li id="BibPLXBIB0041" label="[41]">Thomas&#x00A0;C Leonard. 2008. Richard H. Thaler, Cass R. Sunstein, Nudge: Improving decisions about health, wealth, and happiness. <em>      <em>Constitutional Political Economy</em>     </em>19, 4 (2008), 356&#x2013;360.</li>     <li id="BibPLXBIB0042" label="[42]">Stephan Lewandowsky, Ullrich&#x00A0;KH Ecker, Colleen&#x00A0;M Seifert, Norbert Schwarz, and John Cook. 2012. Misinformation and its correction: Continued influence and successful debiasing. <em>      <em>Psychological Science in the Public Interest</em>     </em>13, 3 (2012), 106&#x2013;131.</li>     <li id="BibPLXBIB0043" label="[43]">Aaron&#x00A0;M McCright and Riley&#x00A0;E Dunlap. 2011. The politicization of climate change and polarization in the American public&#x0027;s views of global warming, 2001&#x2013;2010. <em>      <em>The Sociological Quarterly</em>     </em>52, 2 (2011), 155&#x2013;194.</li>     <li id="BibPLXBIB0044" label="[44]">Miller McPherson, Lynn Smith-Lovin, and James&#x00A0;M Cook. 2001. Birds of a feather: Homophily in social networks. <em>      <em>Annual review of sociology</em>     </em>27, 1 (2001), 415&#x2013;444.</li>     <li id="BibPLXBIB0045" label="[45]">Panagiotis&#x00A0;Takas Metaxas, Samantha Finn, and Eni Mustafaraj. 2015. Using twittertrails. com to investigate rumor propagation. In <em>      <em>Proceedings of the 18th ACM Conference Companion on Computer Supported Cooperative Work &#x0026; Social Computing</em>     </em>. ACM, 69&#x2013;72.</li>     <li id="BibPLXBIB0046" label="[46]">Dung&#x00A0;T Nguyen, Nam&#x00A0;P Nguyen, and My&#x00A0;T Thai. 2012. Sources of misinformation in online social networks: Who to suspect?. In <em>      <em>Military Communications Conference, 2012-MILCOM 2012</em>     </em>. IEEE, 1&#x2013;6.</li>     <li id="BibPLXBIB0047" label="[47]">Nam&#x00A0;P Nguyen, Guanhua Yan, My&#x00A0;T Thai, and Stephan Eidenbenz. 2012. Containment of misinformation spread in online social networks. In <em>      <em>Proceedings of the 4th Annual ACM Web Science Conference</em>     </em>. ACM, 213&#x2013;222.</li>     <li id="BibPLXBIB0048" label="[48]">Dimitar Nikolov, Diego&#x00A0;FM Oliveira, Alessandro Flammini, and Filippo Menczer. 2015. Measuring online social bubbles. <em>      <em>PeerJ Computer Science</em>     </em>1(2015), e38.</li>     <li id="BibPLXBIB0049" label="[49]">Brendan Nyhan. 2010. Why the &#x201C;Death Panel&#x201D; Myth Wouldn&#x0027;t Die: Misinformation in the Health Care Reform Debate. In <em>      <em>The Forum</em>     </em>, Vol.&#x00A0;8.</li>     <li id="BibPLXBIB0050" label="[50]">Brendan Nyhan and Jason Reifler. 2013. Which Corrections Work? Research results and practice recommendations. <em>      <em>New America Foundation Media Policy Initiative Research Paper</em>     </em> (2013).</li>     <li id="BibPLXBIB0051" label="[51]">Brendan Nyhan and Jason Reifler. 2015. Displacing misinformation about events: An experimental test of causal corrections. <em>      <em>Journal of Experimental Political Science</em>     </em>2, 1 (2015), 81&#x2013;93.</li>     <li id="BibPLXBIB0052" label="[52]">Eli Pariser. 2011. <em>      <em>The filter bubble: What the Internet is hiding from you</em>     </em>. Penguin UK.</li>     <li id="BibPLXBIB0053" label="[53]">Gordon Pennycook, T Cannon, and D Rand. 2017. Implausibility and Illusory Truth: Prior Exposure Increases Perceived Accuracy of Fake News but Has No Effect on Entirely Implausible Statements. <em>      <em>Unpublished Paper Manuscript, December</em>     </em>11 (2017), 2017.</li>     <li id="BibPLXBIB0054" label="[54]">Vahed Qazvinian, Emily Rosengren, Dragomir&#x00A0;R Radev, and Qiaozhu Mei. 2011. Rumor has it: Identifying misinformation in microblogs. In <em>      <em>Proceedings of the Conference on Empirical Methods in Natural Language Processing</em>     </em>. Association for Computational Linguistics, 1589&#x2013;1599.</li>     <li id="BibPLXBIB0055" label="[55]">Xiaoyan Qiu, Diego&#x00A0;FM Oliveira, Alireza&#x00A0;Sahami Shirazi, Alessandro Flammini, and Filippo Menczer. 2017. Limited individual attention and online virality of low-quality information. <em>      <em>Nature Human Behaviour</em>     </em>1, 7 (2017), 0132.</li>     <li id="BibPLXBIB0056" label="[56]">Jacob Ratkiewicz, Michael Conover, Mark Meiss, Bruno Gon&#x00E7;alves, Snehal Patil, Alessandro Flammini, and Filippo Menczer. 2011. Truthy: mapping the spread of astroturf in microblog streams. In <em>      <em>Proceedings of the 20th international conference companion on World wide web</em>     </em>. ACM, 249&#x2013;252.</li>     <li id="BibPLXBIB0057" label="[57]">Paul Resnick, Samuel Carton, Souneil Park, Yuncheng Shen, and Nicole Zeffer. 2014. Rumorlens: A system for analyzing the impact of rumors and corrections in social media. In <em>      <em>Proc. Computational Journalism Conference</em>     </em>.</li>     <li id="BibPLXBIB0058" label="[58]">Eunsoo Seo, Prasant Mohapatra, and Tarek Abdelzaher. 2012. Identifying rumors and their sources in social networks. <em>      <em>SPIE defense, security, and sensing</em>     </em>(2012), 83891I&#x2013;83891I.</li>     <li id="BibPLXBIB0059" label="[59]">Chengcheng Shao, Giovanni&#x00A0;Luca Ciampaglia, Alessandro Flammini, and Filippo Menczer. 2016. Hoaxy: A platform for tracking online misinformation. In <em>      <em>Proceedings of the 25th International Conference Companion on World Wide Web</em>     </em>. International World Wide Web Conferences Steering Committee, 745&#x2013;750.</li>     <li id="BibPLXBIB0060" label="[60]">Baoxu Shi and Tim Weninger. 2015. Fact checking in large knowledge graphs: A discriminative predict path mining approach. <em>      <em>arXiv preprint arXiv:1510.05911</em>     </em>(2015).</li>     <li id="BibPLXBIB0061" label="[61]">Jieun Shin, Lian Jian, Kevin Driscoll, and Fran&#x00E7;ois Bar. 2017. Political rumoring on Twitter during the 2012 US presidential election: Rumor diffusion and correction. <em>      <em>new media &#x0026; society</em>     </em>19, 8 (2017), 1214&#x2013;1235.</li>     <li id="BibPLXBIB0062" label="[62]">Marcella Tambuscio, Diego&#x00A0;FM Oliveira, Giovanni&#x00A0;Luca Ciampaglia, and Giancarlo Ruffo. 2016. Network segregation in a model of misinformation and fact checking. <em>      <em>arXiv preprint arXiv:1610.04170</em>     </em>(2016).</li>     <li id="BibPLXBIB0063" label="[63]">Emily Thorson. 2016. Belief echoes: The persistent effects of corrected misinformation. <em>      <em>Political Communication</em>     </em>33, 3 (2016), 460&#x2013;480.</li>     <li id="BibPLXBIB0064" label="[64]">Sander van&#x00A0;der Linden, Anthony Leiserowitz, Seth Rosenthal, and Edward Maibach. 2017. Inoculating the public against misinformation about climate change. <em>      <em>Global Challenges</em>     </em>1, 2 (2017).</li>     <li id="BibPLXBIB0065" label="[65]">Claudia Wagner, Silvia Mitter, Christian K&#x00F6;rner, and Markus Strohmaier. 2012. When social bots attack: Modeling susceptibility of users in online social networks. <em>      <em>Making Sense of Microposts (# MSM2012)</em>     </em>2, 4 (2012), 1951&#x2013;1959.</li>     <li id="BibPLXBIB0066" label="[66]">Gang Wang, Christo Wilson, Xiaohan Zhao, Yibo Zhu, Manish Mohanlal, Haitao Zheng, and Ben&#x00A0;Y Zhao. 2012. Serf and turf: crowdturfing for fun and profit. In <em>      <em>Proceedings of the 21st international conference on World Wide Web</em>     </em>. ACM, 679&#x2013;688.</li>     <li id="BibPLXBIB0067" label="[67]">Steve Webb, James Caverlee, and Calton Pu. 2008. Social Honeypots: Making Friends With A Spammer Near You.. In <em>      <em>CEAS</em>     </em>.</li>     <li id="BibPLXBIB0068" label="[68]">Huiyuan Zhang, Huiling Zhang, Xiang Li, and My&#x00A0;T Thai. 2015. Limiting the spread of misinformation while effectively raising awareness in social networks. In <em>      <em>International Conference on Computational Social Networks</em>     </em>. Springer, 35&#x2013;47.</li>     <li id="BibPLXBIB0069" label="[69]">Bi Zhu, Chuansheng Chen, Elizabeth&#x00A0;F Loftus, Chongde Lin, Qinghua He, Chunhui Chen, He Li, Robert&#x00A0;K Moyzis, Jared Lessard, and Qi Dong. 2010. Individual differences in false memory from misinformation: Personality characteristics and their interactions with cognitive abilities. <em>      <em>Personality and Individual Differences</em>     </em>48, 8 (2010), 889&#x2013;894.</li>     <li id="BibPLXBIB0070" label="[70]">Melissa Zimdars. 2016. False, misleading, clickbait-y, and satirical news sources. https://docs.google.com/document/d/10eA5-mCZLSS4MQY5QGb5ewC3VAL6pLkT53V_81ZyitM/preview. (2016).</li>     <li id="BibPLXBIB0071" label="[71]">Arkaitz Zubiaga, Maria Liakata, Rob Procter, Kalina Bontcheva, and Peter Tolmie. 2015. Crowdsourcing the annotation of rumourous conversations in social media. In <em>      <em>Proceedings of the 24th International Conference on World Wide Web</em>     </em>. ACM, 347&#x2013;353.</li>     <li id="BibPLXBIB0072" label="[72]">Arkaitz Zubiaga, Maria Liakata, Rob Procter, Geraldine Wong&#x00A0;Sak Hoi, and Peter Tolmie. 2016. Analysing how people orient to and spread rumours in social media by looking at conversational threads. <em>      <em>PloS one</em>     </em>11, 3 (2016), e0150989.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">     <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class="link-inline force-break"     href="https://www.theguardian.com/media/greenslade/2016/nov/23/heres-the-truth-fake-news-is-not-social-medias-fault">https://www.theguardian.com/media/greenslade/2016/nov/23/heres-the-truth-fake-news-is-not-social-medias-fault</a>   </p>   <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class="link-inline force-break"     href="http://www.factcheck.org/2015/12/dearborns-anti-isis-rally/">http://www.factcheck.org/2015/12/dearborns-anti-isis-rally/</a>   </p>   <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class="link-inline force-break"     href="https://hapgood.us/2016/11/13/fake-news-does-better-on-facebook-than-real-news/">https://hapgood.us/2016/11/13/fake-news-does-better-on-facebook-than-real-news/</a>   </p>   <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a><a class="link-inline force-break"     href="https://www.ipsos-mori.com/researchpublications/researcharchive/3742/the-perils-of-perception-and-the-eu.aspx">https://www.ipsos-mori.com/researchpublications/researcharchive/3742/the-perils-of-perception-and-the-eu.aspx</a>   </p>   <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a><a class="link-inline force-break"     href="https://www.facebook.com/zuck/posts/10103269806149061">https://www.facebook.com/zuck/posts/10103269806149061</a> ; <a class="link-inline force-break"     href="https://www.facebook.com/zuck/posts/10104445245963251?pnref=story">https://www.facebook.com/zuck/posts/10104445245963251?pnref=story</a>   </p>   <p id="fn6"><a href="#foot-fn6"><sup>6</sup></a><a class="link-inline force-break"     href="https://chrome.google.com/webstore/detail/tweetcred/fbokljinlogeihdnkikeeneiankdgikg?hl=en">https://chrome.google.com/webstore/detail/tweetcred/fbokljinlogeihdnkikeeneiankdgikg?hl=en</a>   </p>   <p id="fn7"><a href="#foot-fn7"><sup>7</sup></a><a class="link-inline force-break"     href="https://chrome.google.com/webstore/detail/fake-news-alert/aickfmgnhocegpdbfnpfnedpeionfkbh?hl=en">https://chrome.google.com/webstore/detail/fake-news-alert/aickfmgnhocegpdbfnpfnedpeionfkbh?hl=en</a>   </p>   <p id="fn8"><a href="#foot-fn8"><sup>8</sup></a><a class="link-inline force-break" href="http://bsdetector.tech/">http://bsdetector.tech/</a>   </p>   <p id="fn9"><a href="#foot-fn9"><sup>9</sup></a><a class="link-inline force-break"     href="https://www.theverge.com/2017/12/21/16804912/facebook-disputed-flags%2Dmisinformation-newsfeed-fake-news">https://www.theverge.com/2017/12/21/16804912/facebook-disputed-flags%2Dmisinformation-newsfeed-fake-news</a>   </p>   <p id="fn10"><a href="#foot-fn10"><sup>10</sup></a><a class="link-inline force-break"     href="https://www.engadget.com/2018/01/19/facebooks-fake-war-on-fake-news/">https://www.engadget.com/2018/01/19/facebooks-fake-war-on-fake-news/</a>   </p>   <p id="fn11"><a href="#foot-fn11"><sup>11</sup></a><a class="link-inline force-break"     href="https://www.engadget.com/2018/01/31/google-tackles-fake-news-in-snippets/">https://www.engadget.com/2018/01/31/google-tackles-fake-news-in-snippets/</a>   </p>   <p id="fn12"><a href="#foot-fn12"><sup>12</sup></a><a class="link-inline force-break"     href="http://www.poynter.org/2016/366-links-to-understand-fact-checking-in-2016/440618/">http://www.poynter.org/2016/366-links-to-understand-fact-checking-in-2016/440618/</a>   </p>   <p id="fn13"><a href="#foot-fn13"><sup>13</sup></a><a class="link-inline force-break" href="http://verificationhandbook.com">http://verificationhandbook.com</a>   </p>   <p id="fn14"><a href="#foot-fn14"><sup>14</sup></a><a class="link-inline force-break" href="http://wiki.dbpedia.org/">http://wiki.dbpedia.org/</a>   </p>   <p id="fn15"><a href="#foot-fn15"><sup>15</sup></a><a class="link-inline force-break" href="https://skr3.nlm.nih.gov/SemMedDB">https://skr3.nlm.nih.gov/SemMedDB</a>   </p>   <p id="fn16"><a href="#foot-fn16"><sup>16</sup></a><a class="link-inline force-break"     href="http://www.washingtonpost.com/news/ask-the-post/wp/2013/09/25/announcing-truth-teller-beta-a-better-way-to-watch-political-speech/?utm_term=.b78b7c187228">www.washingtonpost.com/news/ask-the-post/wp/2013/09/25/announcing-truth-teller-beta-a-better-way-to-watch-political-speech/?utm_term=.b78b7c187228</a>   </p>   <p id="fn17"><a href="#foot-fn17"><sup>17</sup></a><a class="link-inline force-break" href="http://www.politifact.com/">http://www.politifact.com/</a>   </p>   <p id="fn18"><a href="#foot-fn18"><sup>18</sup></a><a class="link-inline force-break" href="http://www.factcheck.org/">http://www.factcheck.org/</a>   </p>   <p id="fn19"><a href="#foot-fn19"><sup>19</sup></a><a class="link-inline force-break"     href="https://www.media.mit.edu/projects/truth-goggles/overview/">https://www.media.mit.edu/projects/truth-goggles/overview/</a>   </p>   <p id="fn20"><a href="#foot-fn20"><sup>20</sup></a><a class="link-inline force-break" href="http://idir.uta.edu/factwatcher/nba.php">http://idir.uta.edu/factwatcher/nba.php</a>   </p>   <p id="fn21"><a href="#foot-fn21"><sup>21</sup></a><a class="link-inline force-break" href="http://idir-server2.uta.edu/claimbuster/">http://idir-server2.uta.edu/claimbuster/</a>   </p>   <p id="fn22"><a href="#foot-fn22"><sup>22</sup></a><a class="link-inline force-break" href="http://twitdigest.iiitd.edu.in/TweetCred">http://twitdigest.iiitd.edu.in/TweetCred</a>   </p>   <p id="fn23"><a href="#foot-fn23"><sup>23</sup></a><a class="link-inline force-break" href="http://truthy.indiana.edu/">http://truthy.indiana.edu/</a>   </p>   <p id="fn24"><a href="#foot-fn24"><sup>24</sup></a><a class="link-inline force-break" href="https://www.getbadnews.com">https://www.getbadnews.com</a>   </p>   <p id="fn25"><a href="#foot-fn25"><sup>25</sup></a><a class="link-inline force-break"     href="https://blog.twitter.com/official/en_us/topics/company/2018/2016-election-update.html">https://blog.twitter.com/official/en_us/topics/company/2018/2016-election-update.html</a>   </p>   <p id="fn26"><a href="#foot-fn26"><sup>26</sup></a><a class="link-inline force-break"     href="https://blog.twitter.com/official/en_us/topics/company/2017/Our-Approach-Bots-Misinformation.html">https://blog.twitter.com/official/en_us/topics/company/2017/Our-Approach-Bots-Misinformation.html</a>   </p>   <p id="fn27"><a href="#foot-fn27"><sup>27</sup></a><a class="link-inline force-break"     href="https://www.demos.co.uk/files/Resilient_Nation_-_web-1.pdf">https://www.demos.co.uk/files/Resilient_Nation_-_web-1.pdf</a>   </p>   <p id="fn28"><a href="#foot-fn28"><sup>28</sup></a><a class="link-inline force-break" href="https://webliteracy.pressbooks.com/">https://webliteracy.pressbooks.com/</a> ; <a class="link-inline force-break" href="https://fakenews.publicdatalab.org/">https://fakenews.publicdatalab.org/</a> ; <a class="link-inline force-break" href="https://thetrustproject.org/">https://thetrustproject.org/</a>   </p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>     <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3188730">https://doi.org/10.1145/3184558.3188730</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div>  </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Online Misinformation: Challenges and Future
+  Directions</title><!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Online Misinformation: Challenges
+          and Future Directions</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Miriam</span> <span class=
+          "surName">Fernandez</span> Knowledge Media Institute,
+          Open University, Milton Keynes, UKMK7 6AA, <a href=
+          "mailto:miriam.fernandez@open.ac.uk">miriam.fernandez@open.ac.uk</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Harith</span> <span class=
+          "surName">Alani</span> Knowledge Media Institute, Open
+          University, Milton Keynes, UKMK7 6AA, <a href=
+          "mailto:h.alani@open.ac.uk">h.alani@open.ac.uk</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3188730"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3188730</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Misinformation has become a common part of our
+        digital media environments and it is compromising the
+        ability of our societies to form informed opinions. It
+        generates misperceptions, which have affected the decision
+        making processes in many domains, including economy,
+        health, environment, and elections, among others.
+        Misinformation and its generation, propagation, impact, and
+        management is being studied through a variety of lenses
+        (computer science, social science, journalism, psychology,
+        etc.) since it widely affects multiple aspects of society.
+        In this paper we analyse the phenomenon of misinformation
+        from a technological point of view. We study the current
+        socio-technical advancements towards addressing the
+        problem, identify some of the key limitations of current
+        technologies, and propose some ideas to target such
+        limitations. The goal of this position paper is to reflect
+        on the current state of the art and to stimulate
+        discussions on the future design and development of
+        algorithms, methodologies, and applications.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Misinformation; Technology
+          Development</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Miriam Fernandez and Harith Alani. 2018. Online
+          Misinformation: Challenges and Future Directions. In
+          <em>WWW '18 Companion: The 2018 Web Conference
+          Companion,</em> <em>April 23–27, 2018,</em> <em>Lyon,
+          France. ACM, New York, NY, USA</em> 8 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3188730" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3188730</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Misinformation generates misperceptions, which have
+      affected many domains, including economy [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0004">4</a>], health [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0024">24</a>], climate change
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0043">43</a>], foreign
+      policy [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0036">36</a>],
+      etc. It has become a common part of our digital media
+      environments [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0026">26</a>], and it is compromising the ability
+      of our societies to form informed opinions [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0022">22</a>][<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0035">35</a>][<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0011">11</a>]. In 2016,
+      <strong>post-truth</strong> was chosen by the Oxford
+      Dictionary as the word of the year, after achieving a 2000%
+      increase “in the context of the EU referendum in the United
+      Kingdom and the presidential election in the United
+      States”.</p>
+      <p>Today, around half the world's population have access to
+      the Internet, where they can create, propagate, and consume
+      information instantly and globally. Although misinformation
+      is a common problem in all media, it is exacerbated in
+      digital social media due to the speed and ease in which posts
+      are spread, and the difficulty of providing countervailing
+      corrective information.<a class="fn" href="#fn1" id=
+      "foot-fn1"><sup>1</sup></a> The social web enables people to
+      spread information rapidly without confirmation of truth, and
+      to paraphrase this information to fit their intentions and
+      preset beliefs [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0046">46</a>]. An example is this public message
+      on Facebook that went viral in Dec 2015: <em>This is Dearborn
+      Michigan after the radical Islamic attack in California!
+      These are Isis flags and Isis supporters folks but the media
+      has not reported because of political correctness</em>, the
+      demonstration, however, was anti-Isis.<a class="fn" href=
+      "#fn2" id="foot-fn2"><sup>2</sup></a> Recent news data
+      analysis also showed that fake news spread far more virally
+      than real news.<a class="fn" href="#fn3" id=
+      "foot-fn3"><sup>3</sup></a></p>
+      <p>Several social media platforms have recently gone under
+      heavy criticism for becoming a ripe environment for the
+      spread of misinformation, including fake news, mistruths, and
+      hoaxes. It is being accused of clouding people's opinions and
+      judgement with widely shared misinformation during major
+      events, such the US presidential elections, and the UK's
+      Brexit referendum.<a class="fn" href="#fn4" id=
+      "foot-fn4"><sup>4</sup></a> In reaction, Facebook and Google
+      announced plans for combating the spread of fake news on
+      their platforms.<a class="fn" href="#fn5" id=
+      "foot-fn5"><sup>5</sup></a> However, while some of these
+      plans are materialising, they are deemed to offer partial
+      solutions to an increasingly complex socio-technical problem.
+      People and current technologies are yet to adapt to the age
+      of misinformation, where incorrect or misleading information
+      is intentionally or unintentionally spread [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0002">2</a>].</p>
+      <p>In this paper we provide a state of the art review on the
+      existing socio-technological solutions to combat
+      misinformation; its detection, propagation, validation and
+      management. We analyse the key strengths and limitations of
+      the identified technological advancements and propose some
+      future research directions as result of the identified
+      limitations. The goal of this position paper is to reflect on
+      the current state of the art and to stimulate discussions on
+      the future design and development of algorithms,
+      methodologies, and applications that can help to successfully
+      address the online misinformation problem.</p>
+      <p>The rest of the paper is structured as follows: Section
+      <a class="sec" href="#sec-4">2</a> identifies four main
+      focuses of current technological developments including: (i)
+      the automatic detection of online misinformation (Section
+      <a class="sec" href="#sec-5">3</a>), (ii) the investigation
+      of misinformation propagation patterns and their prediction
+      (Section <a class="sec" href="#sec-6">4</a>), (iii) the
+      validation and fact-checking of misinformation (Section
+      <a class="sec" href="#sec-7">5</a>) and (iv) the study of the
+      different intervention strategies used to combat
+      misinformation (Section <a class="sec" href="#sec-8">6</a>).
+      Section <a class="sec" href="#sec-9">7</a> summarises the
+      limitations of the studied works and discusses our ideas for
+      future research directions. Discussion and Conclusions are
+      provided in Section <a class="sec" href="#sec-16">8</a> and
+      Section <a class="sec" href="#sec-17">9</a> respectively.</p>
+    </section>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Dimensions of
+          Combating Online Misinformation</h2>
+        </div>
+      </header>
+      <p>Aiming to provide a clear picture of the current state of
+      the art approaches to combat online misinformation, we did an
+      extensive review of existing relevant technologies and
+      characterised them according to the following four
+      dimensions:</p>
+      <ul class="list-no-style">
+        <li id="list1" label="•"><strong>Misinformation content
+        detection</strong>: Are misinformation content and sources
+        automatically identified? Are streams of information
+        automatically monitored? Is relevant corrective information
+        identified as well?<br /></li>
+        <li id="list2" label="•"><strong>Misinformation
+        dynamics</strong>: Are patterns of misinformation flow
+        identified and predicted? Is demographic and behavioural
+        information considered to understand and predict
+        misinformation dynamics?<br /></li>
+        <li id="list3" label="•"><strong>Content
+        Validation</strong>: Is misinformation validated and
+        fact-checked? Are the users involved in the content
+        validation process?<br /></li>
+        <li id="list4" label="•"><strong>Misinformation
+        management</strong>: Are citizens’ perceptions and
+        behaviour with regards to processing and sharing
+        misinformation studied and monitored? Are intervention
+        strategies put in place to handle the effects of
+        misinformation?<br /></li>
+      </ul>
+      <p>Figure <a class="fig" href="#fig1">1</a> presents a
+      general reflective comparison of eleven of the most popular
+      platforms developed to aid in the battle against
+      misinformation. This comparison reflects our view of how much
+      attention and focus each platform gives to the four
+      dimensions above. To generate this figure two independent
+      assessors have assigned a score (from 0 to 10) to each the
+      four dimensions for each tool. The image reflects the average
+      of the two assessors for each dimension.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3188730/images/www18companion-238-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Comparison of relevant platforms according
+          to the four identified dimensions</span>
+        </div>
+      </figure>
+      <p></p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Misinformation
+          Detection</h2>
+        </div>
+      </header>
+      <p>Large amounts of misinformation have been observed to
+      spread online in viral fashion. Examples include rumours
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0026">26</a>], false
+      news [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0010">10</a>],
+      hoaxes [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0038">38</a>],
+      and even elaborate conspiracy theories [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0005">5</a>]. Several approaches and
+      tools have emerged in recent years to automatically or
+      semi-automatically identify misinformation based on the
+      characteristics of the <strong>content</strong> (text as well
+      as multimedia images/videos), or the source of the
+      misinformation and the <strong>network</strong> of that
+      source. <strong>Contextual</strong> information, including a
+      compiled list of <strong>misleading sites</strong> and
+      <strong>microblog-specific features</strong>, such as
+      hashtags or mentions in Twitter, are often used to complement
+      the above.</p>
+      <p>Works of Castillo and Colleagues [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0011">11</a>][<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0012">12</a>][<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0031">31</a>] studied information
+      credibility on Twitter mainly based on content features, and
+      created supervised machine learning classifiers to detect
+      this credibility. Their studies concluded that credible
+      tweets tend to include more URLs, and are longer than
+      non-credible tweets. Additionally, question and exclamation
+      marks tend to concentrate on non-credible tweets, frequently
+      using first and third-person pronouns. These studies derived
+      on the creation of the <strong>TweetCred</strong>
+      system,<a class="fn" href="#fn6" id=
+      "foot-fn6"><sup>6</sup></a> a real-time, web-based system
+      (available as browser extension) to assess credibility of
+      content on Twitter. The system provides a score of
+      credibility for each tweet, based on the previously generated
+      classifiers and it validates this score by asking user
+      feedback. Similar tools developed as browsing extensions
+      include <strong>Fake News Alert</strong><a class="fn" href=
+      "#fn7" id="foot-fn7"><sup>7</sup></a> and <strong>B.S.
+      Detector</strong>,<a class="fn" href="#fn8" id=
+      "foot-fn8"><sup>8</sup></a> which rely on manually compiled
+      lists of misleading websites, such as the one generated by
+      Zimdars [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0070">70</a>]
+      and <strong>Dispute Finder</strong> [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0020">20</a>], which is based on a
+      database of known disputed claims generated by crawling
+      websites that already maintain a list of disputed claims.
+      Qazvinian and colleagues [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0054">54</a>] also studied content features for
+      misinformation detection. They concluded that lexical and
+      Part of Speech (POS) patterns are key for correctly
+      identifying rumours. Hashtags can result in high precision,
+      but lead to low recall.</p>
+      <p>In addition to the analysis of content, other works and
+      systems, focus on the use of network analysis techniques to
+      detect misinformation [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0056">56</a>][<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0058">58</a>][<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0031">31</a>][<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0026">26</a>]. The studies show that different
+      diffusion patterns exist that characterise misinformation vs.
+      legitimate memes, with misinformation patterns propagating in
+      a more viral way [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0026">26</a>] and often being generated by bots
+      and not humans [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0056">56</a>]. On the other hand credible news
+      tend to originate at a single or a few users in the network,
+      have many re-posts and propagate through authors who have
+      previously written a large number of messages and register
+      more friends [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0031">31</a>].</p>
+      <p>Tools to detect and display the diffusion of
+      misinformation include <strong>Truthy</strong> [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0056">56</a>],
+      <strong>RumorLens</strong> [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0057">57</a>] and <strong>Twitter trails</strong>
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0045">45</a>]. These
+      tools are based on a semi-automatic approach where users can
+      explore the propagation of a rumour with an interactive
+      dashboard. However, they do not monitor the social media
+      stream automatically to detect misinformation, but require
+      the user to input a specific rumour to investigate. Aiming to
+      address this issue Shao [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0059">59</a>] and colleagues developed
+      <strong>Hoaxy</strong> [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0059">59</a>], a platform that automatically
+      monitors the social stream, detects, and analyses online
+      misinformation. Following this trend
+      <strong>Facebook</strong> has recently released new tools to
+      help combat the spread of fabricated news stories. As opposed
+      to Hoaxy, Facebook tools not only use a combination of
+      content and network analysis but also include user feedback
+      to accurately identify fake news. This system is under
+      continuous development and testing.<a class="fn" href="#fn9"
+      id="foot-fn9"><sup>9</sup></a> However, current efforts to
+      combat misinformation have been criticized because they fall
+      short on preventing misuse of the platform.<a class="fn"
+      href="#fn10" id="foot-fn10"><sup>10</sup></a>
+      <strong>Google's</strong> proposal to tackle misinformation
+      also includes asking users for feedback<a class="fn" href=
+      "#fn11" id="foot-fn11"><sup>11</sup></a> by providing a link
+      at the bottom of the snippet box.</p>
+      <p>As it can be observed, some of the limitations of current
+      systems for misinformation detection include: (a) providing
+      alerts without any rationale or explanation of their
+      decisions, and (b) generally disengaging users by regarding
+      them as passive consumers rather than active co-creators and
+      detectors of misinformation. Another element to consider is
+      that, automatic systems for misinformation detection based on
+      known features can potentially be fooled, and carefully
+      crafted misinformation may go undetected.</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Misinformation
+          Dynamics</h2>
+        </div>
+      </header>
+      <p>Online social networks are characterised by
+      <strong>homophily</strong> [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0044">44</a>], <strong>polarisation</strong>
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0017">17</a>],
+      <strong>algorithmic ranking/personalisation</strong>
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0052">52</a>][<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0029">29</a>] [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0003">3</a>], and
+      <strong>social bubbles</strong> [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0048">48</a>]. These characteristics create
+      information environments with low content diversity and
+      strong social reinforcement, which has an effect on the
+      information users are exposed to and on how information
+      propagates. All of these factors, coupled with the fast news
+      life cycle [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0014">14</a>],
+      influence the dynamics of social news sharing, and
+      particularly the ways misinformation initiates and
+      propagates.</p>
+      <p>Ratkiewicz [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0056">56</a>] analysed the spread of
+      misinformation in the context of political campaigns and
+      showed how, in its initial phase, the propagation of
+      misinformation exhibits pathological diffusion graphs. These
+      graphs can take many forms, including high numbers of unique
+      injection points with few or no connected components or
+      strong star-like topologies. However, once the community has
+      accepted the misinformation, its propagation cascade will
+      quickly become indistinguishable, hence early identification
+      of misinformation is critical. This works also highlights the
+      relevance of <strong>bots</strong> initiating the process of
+      misinformation spread. Boshmaf [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0008">8</a>] and Freitas[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0025">25</a>] reported that simple
+      automated mechanisms that produce contents and boost
+      followers yield successful infiltration strategies of
+      misinformation. However, nobody knows exactly how many social
+      bots populate social media, or what share of content, and
+      particularly misinformation, can be attributed to bots
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0021">21</a>]. A similar
+      dangerous phenomenon is <strong>crowdturfing</strong>, where
+      crowdworkers are hired to support and propagate arguments or
+      claims, simulating grassroots social movements. [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0066">66</a>][<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0039">39</a>][<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0040">40</a>].</p>
+      <p>Del Vicario [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0018">18</a>] studied misinformation propagation
+      and reported that users mostly tend to select and share
+      content based on homogeneity (<strong>echo
+      chambers</strong>), causing reinforcement and fostering
+      confirmation bias, segregation, and polarisation [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0005">5</a>], an effect
+      exacerbated by the platforms; personalisation and ranking
+      algorithms [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href=
+      "#BibPLXBIB0052">52</a>][<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0029">29</a>][<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>]. This is also confirmed by [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0061">61</a>], who
+      concluded that rumor spreaders form strong partisan
+      structures. Del Vicario also shows that different types of
+      misinformation propagate differently. While misinformation
+      around scientific news reach a higher level of diffusion
+      faster, it also decays faster. On the other hand, conspiracy
+      theories are assimilated more slowly but are propagated over
+      longer time periods. Friggeri [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0026">26</a>] studied the propagation of rumors
+      within Facebook and concluded that: (i) misinformation
+      cascades run deeper than non-misinformation cascades within
+      the network, (ii) even when denied, the rumour cascade
+      continues to propagate, as there are many more non-denied
+      re-shares than denied ones and, (iii) a rumour can lie
+      dormant for weeks or months, and then it can become popular
+      again. More recent work by [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0072">72</a>][<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0059">59</a>] has also found that misinformation
+      spreads faster and more widely across the network, with
+      fact-checking content typically lagging that of
+      misinformation by 10-20 hours. These works also suggest that
+      misinformation-mongering is dominated by few very active
+      accounts that bear the brunt of the promotion and spreading
+      of misinformation, whereas the propagation of fact checking
+      is a more distributed, grass-roots activity.</p>
+      <p>Understanding users [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0065">65</a>] and their motivations [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0013">13</a>] are also
+      key aspects to understand misinformation dynamics. Wagner and
+      colleagues [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0065">65</a>]
+      studied the susceptibility of users to interact with bots and
+      spammers. This study, conducted over Twitter, concludes that
+      susceptible users tend to communicate with many different
+      users, use more social words and show more affection than
+      non-susceptible users. Similarly, [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0069">69</a>][<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0013">13</a>] showed that, personality
+      aspects influence misinformation dynamics. Extroverts and
+      individuals with high cooperativeness and high reward
+      dependence are founded more prone to share misinformation,
+      but no significant differences were found in terms of gender.
+      The key motivations behind misinformation spreading include
+      information seeking and socialising. Psychology also shows
+      that individuals with higher anxiety levels are more likely
+      to spread misinformation [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0034">34</a>].</p>
+      <p>The effect of finite memory and attention on the spread of
+      missinformation has been studied by Tambuscio [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0062">62</a>] and Qiu [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0055">55</a>]. These studies conclude
+      that in social media environments, where users are influenced
+      by high information load and finite attention, low quality
+      information is likely to go viral.</p>
+      <p>While all these studies provide important insights on how
+      misinformation propagates, they do not analyse in depth the
+      topology and the typology of the social network that is
+      consuming and sharing misinformation. Similarly, deeper
+      studies are needed to understand how, not only demographics
+      (age, gender, geographical location), but also user behaviour
+      influences the spread of misinformation.</p>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Content
+          Validation</h2>
+        </div>
+      </header>
+      <p>Information validation practices are key to identify
+      misinformation.<a class="fn" href="#fn12" id=
+      "foot-fn12"><sup>12</sup></a> More than 110 independent
+      <strong>fact-checking groups</strong> and organisations
+      emerged online around the world over the past decade, and
+      half of them were established in European countries
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0030">30</a>], (e.g.,
+      Full Fact in the UK, Snopes and Root Claim in the US,
+      FactCheckNI in Northern Ireland, and Pagella Politica in
+      Italy, to name just a few). These groups and organisations
+      aim to provide a frontline service in dealing with false
+      information online following guidelines, such as the ones
+      captured by The Verification Handbook.<a class="fn" href=
+      "#fn13" id="foot-fn13"><sup>13</sup></a></p>
+      <p>However, fact checking is a time-consuming verification
+      practice that makes it near impossible to compete with the
+      speed of social media. <strong>Computational
+      fact-checker</strong> initiatives have also emerged in the
+      last few years with the aim of enhancing our ability to
+      evaluate the veracity of dubious information. Among these
+      works Ciampaglia [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>] exploited implicit information from
+      the topology of the Wikipedia Graph. Their results show that
+      network analytics methods, in conjunction with large-scale
+      knowledge repositories, are effective towards automatic
+      fact-checking methods. Baoxu [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0060">60</a>] follows a similar approach, but
+      proposes a path mining approach over large-knowledge graphs
+      (DBpedia<a class="fn" href="#fn14" id=
+      "foot-fn14"><sup>14</sup></a> and SemMedDB<a class="fn" href=
+      "#fn15" id="foot-fn15"><sup>15</sup></a>) to leverage a
+      collection of factual statements for automatic fact-checking.
+      Besides the analysis of textual sources, works like the one
+      of Boididou and colleagues [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>] focus on the automatic verification
+      of unreliable media content by building classifiers from
+      multiple user and content features.</p>
+      <p>An additional problem of fact-checking initiatives is that
+      they are often disconnected from where the crowds read,
+      debate, and share misinformation with little or no awareness
+      of any invalidation offered by the fact checkers. To address
+      these issues several initiatives have emerged that aim to
+      bring the results of fact-checking initiatives closer to the
+      public. Examples are <strong>TruthTeller</strong>,<a class=
+      "fn" href="#fn16" id="foot-fn16"><sup>16</sup></a> developed
+      by the Washington Post, which transcribes political videos
+      and checks them against a database that draws on
+      PolitiFact<a class="fn" href="#fn17" id=
+      "foot-fn17"><sup>17</sup></a> and FactCheck.org.<a class="fn"
+      href="#fn18" id="foot-fn18"><sup>18</sup></a> The program
+      tells viewers which statements are true or false.
+      <strong>Truth Googles</strong><a class="fn" href="#fn19" id=
+      "foot-fn19"><sup>19</sup></a> implements a similar approach
+      in a brower plug-in, also based on these databases.
+      <strong>Hoaxy</strong> [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0059">59</a>] integrates the efforts of
+      fact-checking with a continuous monitoring of the social
+      stream, making the social media information and the
+      fact-checking information simultaneously available for the
+      user. <strong>FactWatcher</strong> [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0033">33</a>] complements previous
+      approaches by considering different types of facts, including
+      situational facts, one-of-the-few facts, and prominent
+      streaks. As opposed to previous tools that are oriented to
+      the general public, FactWatcher<a class="fn" href="#fn20" id=
+      "foot-fn20"><sup>20</sup></a> is focused on supporting
+      journalist with the creation of news stories. In the same
+      fashion, ClaimBuster<a class="fn" href="#fn21" id=
+      "foot-fn21"><sup>21</sup></a> [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0032">32</a>] provides computational tools to
+      assist professionals in understanding and verifying claims.
+      Particularly, it assigns scores to factual claims indicating
+      whether they should be checked, providing a priority ranking
+      to help fact-checkers.</p>
+      <p><strong>Crowdsourcing</strong> initiatives have also been
+      considered to validate and verify information [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0071">71</a>]. One of the most recent
+      initiatives by Facebook integrates crowdsourcing with
+      fact-checkers (Poynter and Politifact, among others) to fight
+      fake news. Users can mark stories as fake and see warnings
+      that indicate the story has been disputed by third-party
+      fact-checkers. Systems like
+      <strong>TweetCred</strong><a class="fn" href="#fn22" id=
+      "foot-fn22"><sup>22</sup></a> and
+      <strong>Trudhy</strong><a class="fn" href="#fn23" id=
+      "foot-fn23"><sup>23</sup></a> use crowdworkers to annotate
+      data and train machine learning algorithms that can learn
+      from human annotations when assessing the credibility of
+      tweets.</p>
+      <p>Although the work of fact checkers and crowdsourcing
+      initiatives is really valuable in correcting misinformation,
+      they are faced by a number of complex challenges, which
+      limits their ability to change existing misperceptions. Not
+      only they are unable to keep with the high volume of
+      misinformation generated online, or are disconnected from
+      where users read, debate and share misinformation, but simply
+      publishing corrective information by fact checkers is often
+      regarded as insufficient for changing misinformed beliefs and
+      opinions [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0001">1</a>].
+      Whether a claim is accepted by an individual is strongly
+      influenced by the individual's believe system, since it is
+      common to look for information that confirm our believes
+      (confirmation bias) and don't scrutinize contrary ideas to
+      avoid or lessen cognitive dissonance (motivated reasoning)
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0037">37</a>] [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0069">69</a>]. Moreover,
+      Penny Cook and colleagues also highlighted in a recent study
+      the problem of the “Illusory Truth Effect” when it comes fake
+      news and corrective information [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0053">53</a>]. Their study shows how repetition
+      can increase the perceived accuracy of plausible but false
+      statements. Garret and colleagues also show how, compared to
+      post-exposure corrections, real-time corrections may cause
+      users to be more resistant to factual information [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0028">28</a>]. It is
+      therefore important to consider not only which corrective
+      information should be provided, but when, how and to whom
+      should it be provided.</p>
+    </section>
+    <section id="sec-8">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Misinformation
+          Management</h2>
+        </div>
+      </header>
+      <p>Combating misinformation is a complex task, and there is
+      consensus in psychology literature that simply presenting
+      people with corrective information is likely to fail in
+      changing their salient beliefs and opinions, or may, even,
+      reinforce them [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0023">23</a>][<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0049">49</a>][<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0050">50</a>] [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0028">28</a>][<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0053">53</a>]. People often struggle to change
+      their beliefs even after finding out that the information
+      they already accepted is incorrect [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0016">16</a>][<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0063">63</a>]. Nevertheless, some
+      strategies have been found to be effective in correcting
+      misperceptions [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0042">42</a>], such as providing an explanation
+      rather than a simple refute [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0051">51</a>], exposing to related but
+      disconfirming stories [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>], and revealing the demographic
+      similarity of the opposing group [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0027">27</a>]. Recent work by Cambridge
+      University is also considering the use of “fake news vaccine”
+      to immunise users against the problem by “pre-emptively
+      exposing” readers to a small “dose” of the misinformation
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0064">64</a>]. An online
+      game<a class="fn" href="#fn24" id=
+      "foot-fn24"><sup>24</sup></a> has been released as part of
+      this research to let players experience what is like to
+      create and spread misinformation so that they are more likely
+      to identify it. An alternative approach for dealing with
+      pervasive misinformation is to seek more direct behavioral
+      interventions that encourage people to make certain decisions
+      over others [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href=
+      "#BibPLXBIB0041">41</a>].</p>
+      <p>Works that have attempted to stop the spread of
+      misinformation in social networks generally use three main
+      strategies: (i) combating it with <strong>facts</strong>
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0009">9</a>][<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0047">47</a>][<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0068">68</a>], (ii)
+      <strong>malicious account detection</strong> in early stage
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0067">67</a>][<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0019">19</a>][<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0040">40</a>] and (iii)
+      the use of <strong>ranking and selection strategies</strong>
+      based on corrective information.</p>
+      <p>Among the works that have attempted to combat the spread
+      of misinformation with <strong>facts</strong> Budak et al.
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0009">9</a>] introduced
+      the notion of competing campaigns to counteract the effect of
+      misinformation. With this purpose, they designed the
+      Multi-Campaign Independence Cascade Model (MCICM) and studied
+      multiple methods to choose the optimal subset of users as
+      seeds to propagate the “good” campaign. Similar efforts
+      include the works of [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0047">47</a>] and [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0068">68</a>]. The first work aims to find the
+      “Node Protectors”, i.e., the smallest set of highly
+      influential nodes whose “decontamination” with good
+      information helps to contain the viral spread of
+      misinformation. The second work aims to identify the most
+      important disseminators of misinformation to “inject correct
+      information” in the diffusion. These models of information
+      propagation present however several limitations. First they
+      are based on the assumption that once a user is
+      “contaminated” with “good” information she will propagate
+      this information among her network. However, persuading users
+      to adopt certain beliefs, and propagate them is not trivial
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0042">42</a>]. Secondly,
+      these works assume that the models of diffusion of “good” and
+      “bad” information are coincident, when in reality; they may
+      actually not spread at the same rate. Indeed, several recent
+      works have found that misinformation spreads wider and faster
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0072">72</a>][<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0059">59</a>]. This type
+      of misinformation management approach has also being recently
+      used by Twitter. The company notified more than 1.4 million
+      people about the fact that they interacted during the US
+      elections with accounts generated by the Russian
+      government-linked organisation Internet Research Agency.
+      While Twitter mentions that a survey will be send to a small
+      group of people to gain feedback, little is known so far
+      about the effects of this initiative.<a class="fn" href=
+      "#fn25" id="foot-fn25"><sup>25</sup></a></p>
+      <p>Regarding the methods focused on the <strong>early
+      detection of malicious accounts</strong> we can highlight
+      works that aim to identify spammers [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0067">67</a>], bots [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0021">21</a>], crowdturfing [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0066">66</a>][<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0039">39</a>] and
+      malicious accounts in general [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0019">19</a>][<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0040">40</a>]. These techniques generally focus on
+      the analysis of various user, temporal, geographical and
+      linguistic features in order to successfully identify these
+      accounts. However, it is unclear what intervention strategies
+      to use in order to stop the spread of misinformation once
+      these accounts have been identified. Twitter, for example, is
+      currently suspending accounts associated with duplicative or
+      suspicious activity.<a class="fn" href="#fn26" id=
+      "foot-fn26"><sup>26</sup></a></p>
+      <p>A third type of misinformation management approach,
+      currently used by organisations like Google and Facebook, is
+      the collection of feedback from users regarding
+      misinformation content, and the use of this feedback as a
+      factor to enhance <strong>information selection and
+      ranking</strong> mechanisms. By doing so, these platforms aim
+      to avoid and/or limit displaying and recommending content
+      that has been previously tagged as ’missinformation’ by other
+      users.</p>
+    </section>
+    <section id="sec-9">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">7</span> Research
+          Directions</h2>
+        </div>
+      </header>
+      <p>In this section we summarise the main limitations we
+      identified, according to the four dimensions we studied, and
+      propose some ideas to target such limitations.</p>
+      <ul class="list-no-style">
+        <li id="list5" label="•"><strong>Misinformation
+        Identification:</strong> Current misinformation
+        identification approaches tend to focus on (a) alerting
+        users without <strong>rationale</strong> or explanation of
+        their decisions, and (b) <strong>disengaging users</strong>
+        by regarding them as <strong>passive consumers</strong>
+        rather than active co-creators and detectors of
+        misinformation.<br /></li>
+        <li id="list6" label="•"><strong>Misinformation
+        Dynamics:</strong> Most current studies on misinformation
+        dynamics (a) do not analyse the influence of the
+        <strong>topology</strong> and the <strong>typology</strong>
+        of the social network on the consumption and sharing of
+        misinformation, and (b) do not take into account how
+        <strong>the misinformation-handling behaviour of
+        users</strong> influences the spread of
+        misinformation.<br /></li>
+        <li id="list7" label="•"><strong>Content
+        Validation:</strong> Current fact checkers and
+        crowdsourcing initiatives for content validation (a) are
+        not able to cope with the <strong>high volume</strong> of
+        misinformation generated online, and (b) are often
+        <strong>disconnected</strong> from where the users tend to
+        read, debate and share misinformation.<br /></li>
+        <li id="list8" label="•"><strong>Misinformation
+        Management:</strong> Common misinformation management
+        strategies (a) do not go beyond the generation of
+        <strong>facts</strong> and the early detection of malicious
+        accounts, and (b) tend to focus on the
+        <strong>technical</strong> and not on the <strong>human
+        aspects</strong> of the problem (i.e., the motivations and
+        behaviours of the users when generating and spreading
+        misinformation).<br /></li>
+      </ul>
+      <p>As we can observe from the above summary, the limitations
+      of current technologies are numerous and diverse, which
+      highlight various directions for further discussions and
+      research. Tackling the new societal challenge of
+      misinformation requires closely involving the users and
+      strengthening their resilience to misinformation. Future
+      technology should therefore help promoting: (1)
+      <strong>Empowerment</strong>, by raising individual and
+      collective awareness of current misinformation content and
+      sources, (2) <strong>Engagement</strong>, by fostering
+      networking and cross-communication between users, (3)
+      <strong>Education</strong>, by informing users of advanced
+      misinformation analysis results and predictions, and (4)
+      <strong>Encouragement</strong> of all users to play a role in
+      detecting, in/validating, and combating
+      misinformation.<a class="fn" href="#fn27" id=
+      "foot-fn27"><sup>27</sup></a> More specifically, further
+      advancements are required in the following dimensions.</p>
+      <section id="sec-10">
+        <section id="sec-11">
+          <p><em>7.0.1 User Involvement.</em> While digital
+          literacy and media literacy initiatives have emerged in
+          the last few years to help users identify misinformation,
+          <a class="fn" href="#fn28" id=
+          "foot-fn28"><sup>28</sup></a> most of the technologies we
+          surveyed do not appear to closely involve the users to
+          battle misinformation, hence considering users as passive
+          consumers rather than active co-creators and detectors of
+          misinformation. Only a few systems, such as TweetCred,
+          involves users, but mainly to validate the results of
+          their misinformation detection algorithms. Our hypothesis
+          is that, to advance the state of the art, we need to
+          closely involve users in the process of misinformation
+          detection and management.</p>
+          <p>Many insights have been provided from social science
+          research with regards to what works and what does not, to
+          correct or to limit the spread of misinformation.
+          However, translating such insights and successful
+          approaches into delivery tools would require the
+          participation of all stakeholders, including end users,
+          social scientists, computer scientists, educators, etc.,
+          in the co-design of their functions, user interfaces, and
+          delivery methods. This would increase the acceptance of
+          such tools, and thus their impact of combating
+          misinformation.</p>
+        </section>
+        <section id="sec-12">
+          <p><em>7.0.2 Misinformation Dynamics.</em> With regards
+          to the exploration of misinformation dynamics, we believe
+          that the topology and typology of the network could play
+          an important role in how misinformation spreads. Works
+          should therefore study similarities and differences of
+          misinformation spread, across different platforms, and
+          how platform-specific and network-specific features
+          influence the dynamics of misinformation.</p>
+          <p>Understanding these dynamics, and the user,
+          topological, and typological factors that influence them,
+          can be used to develop models that predict how, where,
+          and by whom certain misinformation are likely to
+          spread.</p>
+        </section>
+        <section id="sec-13">
+          <p><em>7.0.3 User Behaviour.</em> User-behaviour may be a
+          key factor in how misinformation is spread. Investigating
+          the behavioural patterns that are commonly associated
+          with the propagation of misinformation could help to
+          better predict and control the cascade of
+          misinformation.</p>
+          <p>With technology, we would be able to study the impact
+          of various misinformation interventions and correction
+          techniques at large scale, to better understand their
+          impact on user behaviour towards misinformation. Many
+          such studies have already been reported in social science
+          literature. However, executing them on very large numbers
+          of users (e.g., hundreds of thousands), and monitoring
+          their results over longer periods of time (e.g., several
+          weeks, months, and years) would required a high degree of
+          automation. Such large-scale and longer-term experiments
+          could yield new or more representative insights that are
+          very difficult to obtain manually.</p>
+        </section>
+        <section id="sec-14">
+          <p><em>7.0.4 Content Validation.</em> Validating content
+          is a complex part of the misinformation control cycle.
+          Corroborating and refuting facts is not a trivial task,
+          particularly considering the volume and the velocity at
+          which online information is often generated. We can
+          however aim to embed fact checkers into the environments
+          where users tend to read, debate, and share
+          misinformation. For example, this can be achieved by
+          developing browser and social-media platform plug-ins
+          that are able to assess existing discussions and shared
+          articles, and highlight related factual or corrective
+          information that is available from any of the known
+          fact-check sites.</p>
+          <p>In spite of recent research and technological
+          developments, and the rise of fact-checking sites, there
+          is still a clear lack of tools to support users who would
+          like to validate any piece of information. Such
+          validation could, for example, include searching various
+          fact-checking sites for related articles, and assessing
+          the legitimacy of the information source (e.g., whether
+          it is from a known fakenews site). Many lay-users might
+          be unaware of such validation actions and possibilities,
+          or lack the basic skill to perform them effectively.</p>
+        </section>
+        <section id="sec-15">
+          <p><em>7.0.5 Misinformation Management.</em> Regarding
+          the generation of effective misinformation management
+          strategies, we believe that understanding how citizens
+          behave towards misinformation, what opinions they form
+          about it, and how these opinions evolve over time, are
+          key to successfully manage the impact of
+          misinformation.</p>
+          <p>Technology can be used to test the effectiveness of
+          various misinformation management policies and
+          techniques, as well as to deploy them at scale.</p>
+        </section>
+      </section>
+    </section>
+    <section id="sec-16">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">8</span> Discussion</h2>
+        </div>
+      </header>
+      <p>In this work we have provided an overview of the current
+      technology developments towards battling the problem of
+      online misinformation. Due to the relevance of this problem,
+      new works are constantly emerging from a variety of
+      disciplines (social science, computer science, communication,
+      political science, etc.). We are therefore aware that a high
+      number of works are not captured in this paper. However, we
+      hope that the current compilation provides a simple and clear
+      overview of the multiple dimensions of the problem, the
+      existing technological solutions, and their limitations.</p>
+      <p>We have also proposed multiple research directions as
+      result of the conducted analysis. All of these directions are
+      based on a strong user-focus. It is our view that the
+      solution to the new societal challenge of misinformation is
+      not for social media platforms to become the arbiters of
+      truth, which raises various ethical and philosophical
+      dilemmas, but to closely involve the users as part of the
+      solution.</p>
+      <p>As mention earlier, misinformation is a complex problem
+      involving human, societal and technological factors. We can
+      therefore not look at the problem with a unique lens.
+      Multidisciplinary research is needed to design and develop
+      methodologies, practices, policies and technologies able to
+      effectively combat misinformation.</p>
+    </section>
+    <section id="sec-17">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">9</span>
+          Conclusions</h2>
+        </div>
+      </header>
+      <p>In this position paper we have investigated the existing
+      technological developments towards combating the problem of
+      online misinformation. We have analysed these works following
+      four key dimensions: (i) misinformation detection, (ii)
+      misinformation dynamics, (iii) content validation and, (iv)
+      misinformation management. We have investigated the
+      limitations of these works and identified the lack of user
+      involvement and consideration as a key limitation in all four
+      dimensions. We have subsequently proposed various research
+      directions focused on involving users as participants and
+      co-creators of misinformation technology. We hope that this
+      paper stimulates discussions across disciplines on how to
+      enhance the current landscape of technology development to
+      effectively target the problem of online misinformation.</p>
+      <p><strong>Acknowledgments.</strong> Research funded by
+      Co-Inform, H2020 program of the European Union, grant
+      agreement 770302.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Michelle&nbsp;A Amazeen.
+        2013. A Critical Assessment of Fact-checking in 2012.
+        (2013).</li>
+        <li id="BibPLXBIB0002" label="[2]">Sotirios Antoniadis,
+        Iouliana Litou, and Vana Kalogeraki. 2015. A model for
+        identifying misinformation in online social networks. In
+        <em><em>OTM Confederated International Conferences “On the
+        Move to Meaningful Internet Systems”</em></em> . Springer,
+        473–482.</li>
+        <li id="BibPLXBIB0003" label="[3]">Eytan Bakshy, Solomon
+        Messing, and Lada&nbsp;A Adamic. 2015. Exposure to
+        ideologically diverse news and opinion on Facebook.
+        <em><em>Science</em></em> 348, 6239 (2015), 1130–1132.</li>
+        <li id="BibPLXBIB0004" label="[4]">Larry&nbsp;M Bartels.
+        2002. Beyond the running tally: Partisan bias in political
+        perceptions. <em><em>Political Behavior</em></em> 24, 2
+        (2002), 117–150.</li>
+        <li id="BibPLXBIB0005" label="[5]">Alessandro Bessi, Fabio
+        Petroni, Michela Del&nbsp;Vicario, Fabiana Zollo, Aris
+        Anagnostopoulos, Antonio Scala, Guido Caldarelli, and
+        Walter Quattrociocchi. 2015. Viral misinformation: The role
+        of homophily and polarization. In <em><em>Proceedings of
+        the 24th International Conference on World Wide
+        Web</em></em> . ACM, 355–356.</li>
+        <li id="BibPLXBIB0006" label="[6]">Leticia Bode and
+        Emily&nbsp;K Vraga. 2015. In related news, that was wrong:
+        The correction of misinformation through related stories
+        functionality in social media. <em><em>Journal of
+        Communication</em></em> 65, 4 (2015), 619–638.</li>
+        <li id="BibPLXBIB0007" label="[7]">Christina Boididou,
+        Symeon Papadopoulos, Yiannis Kompatsiaris, Steve
+        Schifferes, and Nic Newman. 2014. Challenges of
+        computational verification in social multimedia. In
+        <em><em>Proceedings of the 23rd International Conference on
+        World Wide Web</em></em> . ACM, 743–748.</li>
+        <li id="BibPLXBIB0008" label="[8]">Yazan Boshmaf, Ildar
+        Muslukhov, Konstantin Beznosov, and Matei Ripeanu. 2011.
+        The socialbot network: when bots socialize for fame and
+        money. In <em><em>Proceedings of the 27th annual computer
+        security applications conference</em></em> . ACM,
+        93–102.</li>
+        <li id="BibPLXBIB0009" label="[9]">Ceren Budak, Divyakant
+        Agrawal, and Amr El&nbsp;Abbadi. 2011. Limiting the spread
+        of misinformation in social networks. In
+        <em><em>Proceedings of the 20th international conference on
+        World wide web</em></em> . ACM, 665–674.</li>
+        <li id="BibPLXBIB0010" label="[10]">Carlos Carvalho,
+        Nicholas Klagge, and Emanuel Moench. 2011. The persistent
+        effects of a false news shock. <em><em>Journal of Empirical
+        Finance</em></em> 18, 4 (2011), 597–615.</li>
+        <li id="BibPLXBIB0011" label="[11]">Carlos Castillo,
+        Marcelo Mendoza, and Barbara Poblete. 2011. Information
+        credibility on twitter. In <em><em>Proceedings of the 20th
+        international conference on World wide web</em></em> . ACM,
+        675–684.</li>
+        <li id="BibPLXBIB0012" label="[12]">Carlos Castillo,
+        Marcelo Mendoza, and Barbara Poblete. 2013. Predicting
+        information credibility in time-sensitive social media.
+        <em><em>Internet Research</em></em> 23, 5 (2013),
+        560–588.</li>
+        <li id="BibPLXBIB0013" label="[13]">Xinran Chen and
+        Sei-Ching&nbsp;Joanna Sin. 2013. ‘Misinformation? What of
+        it?’ Motivations and individual differences in
+        misinformation sharing on social media. <em><em>Proceedings
+        of the Association for Information Science and
+        Technology</em></em> 50, 1 (2013), 1–4.</li>
+        <li id="BibPLXBIB0014" label="[14]">Giovanni&nbsp;Luca
+        Ciampaglia, Alessandro Flammini, and Filippo Menczer. 2015.
+        The production of information in the attention economy.
+        <em><em>Scientific reports</em></em> 5(2015).</li>
+        <li id="BibPLXBIB0015" label="[15]">Giovanni&nbsp;Luca
+        Ciampaglia, Prashant Shiralkar, Luis&nbsp;M Rocha, Johan
+        Bollen, Filippo Menczer, and Alessandro Flammini. 2015.
+        Computational fact checking from knowledge networks.
+        <em><em>PloS one</em></em> 10, 6 (2015), e0128193.</li>
+        <li id="BibPLXBIB0016" label="[16]">Michael&nbsp;D Cobb,
+        Brendan Nyhan, and Jason Reifler. 2013. Beliefs don't
+        always persevere: How political figures are punished when
+        positive information about them is discredited.
+        <em><em>Political Psychology</em></em> 34, 3 (2013),
+        307–326.</li>
+        <li id="BibPLXBIB0017" label="[17]">Michael Conover, Jacob
+        Ratkiewicz, Matthew&nbsp;R Francisco, Bruno Gonçalves,
+        Filippo Menczer, and Alessandro Flammini. 2011. Political
+        polarization on twitter. <em><em>ICWSM</em></em> 133(2011),
+        89–96.</li>
+        <li id="BibPLXBIB0018" label="[18]">Michela
+        Del&nbsp;Vicario, Alessandro Bessi, Fabiana Zollo, Fabio
+        Petroni, Antonio Scala, Guido Caldarelli, H&nbsp;Eugene
+        Stanley, and Walter Quattrociocchi. 2016. The spreading of
+        misinformation online. <em><em>Proceedings of the National
+        Academy of Sciences</em></em> 113, 3 (2016), 554–559.</li>
+        <li id="BibPLXBIB0019" label="[19]">Manuel Egele, Gianluca
+        Stringhini, Christopher Kruegel, and Giovanni Vigna. 2013.
+        Compa: Detecting compromised accounts on social networks..
+        In <em><em>NDSS</em></em> .</li>
+        <li id="BibPLXBIB0020" label="[20]">Rob Ennals, Beth
+        Trushkowsky, and John&nbsp;Mark Agosta. 2010. Highlighting
+        disputed claims on the web. In <em><em>Proceedings of the
+        19th international conference on World wide web</em></em> .
+        ACM, 341–350.</li>
+        <li id="BibPLXBIB0021" label="[21]">Emilio Ferrara, Onur
+        Varol, Clayton Davis, Filippo Menczer, and Alessandro
+        Flammini. 2016. The rise of social bots. <em><em>Commun.
+        ACM</em></em> 59, 7 (2016), 96–104.</li>
+        <li id="BibPLXBIB0022" label="[22]">Andrew&nbsp;J Flanagin
+        and Miriam&nbsp;J Metzger. 2000. Perceptions of Internet
+        information credibility. <em><em>Journalism &amp; Mass
+        Communication Quarterly</em></em> 77, 3 (2000),
+        515–540.</li>
+        <li id="BibPLXBIB0023" label="[23]">DJ Flynn, Brendan
+        Nyhan, and Jason Reifler. 2017. The nature and origins of
+        misperceptions: Understanding false and unsupported beliefs
+        about politics. <em><em>Political Psychology</em></em> 38,
+        S1 (2017), 127–150.</li>
+        <li id="BibPLXBIB0024" label="[24]">Gary&nbsp;L Freed,
+        Sarah&nbsp;J Clark, Amy&nbsp;T Butchart, Dianne&nbsp;C
+        Singer, and Matthew&nbsp;M Davis. 2010. Parental vaccine
+        safety concerns in 2009. <em><em>Pediatrics</em></em> 125,
+        4 (2010), 654–659.</li>
+        <li id="BibPLXBIB0025" label="[25]">Carlos Freitas,
+        Fabricio Benevenuto, Saptarshi Ghosh, and Adriano Veloso.
+        2015. Reverse engineering socialbot infiltration strategies
+        in twitter. In <em><em>Proceedings of the 2015 IEEE/ACM
+        International Conference on Advances in Social Networks
+        Analysis and Mining 2015</em></em> . ACM, 25–32.</li>
+        <li id="BibPLXBIB0026" label="[26]">Adrien Friggeri,
+        Lada&nbsp;A Adamic, Dean Eckles, and Justin Cheng. 2014.
+        Rumor Cascades.. In <em><em>Proceedings of the 2014
+        International Conference on Web and Social Media. ICWSM
+        2014</em></em> .</li>
+        <li id="BibPLXBIB0027" label="[27]">R&nbsp;Kelly Garrett,
+        Erik&nbsp;C Nisbet, and Emily&nbsp;K Lynch. 2013.
+        Undermining the corrective effects of media-based political
+        fact checking? The role of contextual cues and naïve
+        theory. <em><em>Journal of Communication</em></em> 63, 4
+        (2013), 617–637.</li>
+        <li id="BibPLXBIB0028" label="[28]">R&nbsp;Kelly Garrett
+        and Brian&nbsp;E Weeks. 2013. The promise and peril of
+        real-time corrections to political misperceptions. In
+        <em><em>Proceedings of the 2013 conference on Computer
+        supported cooperative work</em></em> . ACM, 1047–1058.</li>
+        <li id="BibPLXBIB0029" label="[29]">Tarleton Gillespie.
+        2014. The relevance of algorithms. <em><em>Media
+        technologies: Essays on communication, materiality, and
+        society</em></em> 167 (2014).</li>
+        <li id="BibPLXBIB0030" label="[30]">LUCAS Graves and
+        FEDERICA Cherubini. 2016. The rise of fact-checking sites
+        in Europe. (2016).</li>
+        <li id="BibPLXBIB0031" label="[31]">Aditi Gupta,
+        Ponnurangam Kumaraguru, Carlos Castillo, and Patrick Meier.
+        2014. Tweetcred: A real-time Web-based system for assessing
+        credibility of content on Twitter. In <em><em>Proc. 6th
+        International Conference on Social Informatics (SocInfo).
+        Barcelona, Spain</em></em> .</li>
+        <li id="BibPLXBIB0032" label="[32]">Naeemul Hassan, Fatma
+        Arslan, Chengkai Li, and Mark Tremayne. 2017. Toward
+        automated fact-checking: Detecting check-worthy factual
+        claims by ClaimBuster. In <em><em>Proceedings of the 23rd
+        ACM SIGKDD International Conference on Knowledge Discovery
+        and Data Mining</em></em> . ACM, 1803–1812.</li>
+        <li id="BibPLXBIB0033" label="[33]">Naeemul Hassan, Afroza
+        Sultana, You Wu, Gensheng Zhang, Chengkai Li, Jun Yang, and
+        Cong Yu. 2014. Data in, fact out: automated monitoring of
+        facts by FactWatcher. <em><em>Proceedings of the VLDB
+        Endowment</em></em> 7, 13 (2014), 1557–1560.</li>
+        <li id="BibPLXBIB0034" label="[34]">Marianne&nbsp;E Jaeger,
+        Susan Anthony, and Ralph&nbsp;L Rosnow. 1980. Who hears
+        what from whom and with what effect: A study of rumor.
+        <em><em>Personality and Social Psychology
+        Bulletin</em></em> 6, 3 (1980), 473–478.</li>
+        <li id="BibPLXBIB0035" label="[35]">Anna Kata. 2010. A
+        postmodern Pandora's box: anti-vaccination misinformation
+        on the Internet. <em><em>Vaccine</em></em> 28, 7 (2010),
+        1709–1716.</li>
+        <li id="BibPLXBIB0036" label="[36]">Steven Kull, Clay
+        Ramsay, and Evan Lewis. 2003. Misperceptions, the media,
+        and the Iraq war. <em><em>Political Science
+        Quarterly</em></em> 118, 4 (2003), 569–598.</li>
+        <li id="BibPLXBIB0037" label="[37]">Ziva Kunda. 1990. The
+        case for motivated reasoning. <em><em>Psychological
+        bulletin</em></em> 108, 3 (1990), 480.</li>
+        <li id="BibPLXBIB0038" label="[38]">Tom Lauricella,
+        Christopher&nbsp;S. Stewart, and Shira Ovide. 2013. Twitter
+        hoax sparks swift stock swoon. <em><em>The Wall Street
+        Journal</em></em> 23 (2013).</li>
+        <li id="BibPLXBIB0039" label="[39]">Kyumin Lee, Prithivi
+        Tamilarasan, and James Caverlee. 2013. Crowdturfers,
+        Campaigns, and Social Media: Tracking and Revealing
+        Crowdsourced Manipulation of Social Media.. In
+        <em><em>ICWSM</em></em> .</li>
+        <li id="BibPLXBIB0040" label="[40]">Sangho Lee and Jong
+        Kim. 2014. Early filtering of ephemeral malicious accounts
+        on Twitter. <em><em>Computer Communications</em></em> 54
+        (2014), 48–57.</li>
+        <li id="BibPLXBIB0041" label="[41]">Thomas&nbsp;C Leonard.
+        2008. Richard H. Thaler, Cass R. Sunstein, Nudge: Improving
+        decisions about health, wealth, and happiness.
+        <em><em>Constitutional Political Economy</em></em> 19, 4
+        (2008), 356–360.</li>
+        <li id="BibPLXBIB0042" label="[42]">Stephan Lewandowsky,
+        Ullrich&nbsp;KH Ecker, Colleen&nbsp;M Seifert, Norbert
+        Schwarz, and John Cook. 2012. Misinformation and its
+        correction: Continued influence and successful debiasing.
+        <em><em>Psychological Science in the Public
+        Interest</em></em> 13, 3 (2012), 106–131.</li>
+        <li id="BibPLXBIB0043" label="[43]">Aaron&nbsp;M McCright
+        and Riley&nbsp;E Dunlap. 2011. The politicization of
+        climate change and polarization in the American public's
+        views of global warming, 2001–2010. <em><em>The
+        Sociological Quarterly</em></em> 52, 2 (2011),
+        155–194.</li>
+        <li id="BibPLXBIB0044" label="[44]">Miller McPherson, Lynn
+        Smith-Lovin, and James&nbsp;M Cook. 2001. Birds of a
+        feather: Homophily in social networks. <em><em>Annual
+        review of sociology</em></em> 27, 1 (2001), 415–444.</li>
+        <li id="BibPLXBIB0045" label="[45]">Panagiotis&nbsp;Takas
+        Metaxas, Samantha Finn, and Eni Mustafaraj. 2015. Using
+        twittertrails. com to investigate rumor propagation. In
+        <em><em>Proceedings of the 18th ACM Conference Companion on
+        Computer Supported Cooperative Work &amp; Social
+        Computing</em></em> . ACM, 69–72.</li>
+        <li id="BibPLXBIB0046" label="[46]">Dung&nbsp;T Nguyen,
+        Nam&nbsp;P Nguyen, and My&nbsp;T Thai. 2012. Sources of
+        misinformation in online social networks: Who to suspect?.
+        In <em><em>Military Communications Conference, 2012-MILCOM
+        2012</em></em> . IEEE, 1–6.</li>
+        <li id="BibPLXBIB0047" label="[47]">Nam&nbsp;P Nguyen,
+        Guanhua Yan, My&nbsp;T Thai, and Stephan Eidenbenz. 2012.
+        Containment of misinformation spread in online social
+        networks. In <em><em>Proceedings of the 4th Annual ACM Web
+        Science Conference</em></em> . ACM, 213–222.</li>
+        <li id="BibPLXBIB0048" label="[48]">Dimitar Nikolov,
+        Diego&nbsp;FM Oliveira, Alessandro Flammini, and Filippo
+        Menczer. 2015. Measuring online social bubbles.
+        <em><em>PeerJ Computer Science</em></em> 1(2015), e38.</li>
+        <li id="BibPLXBIB0049" label="[49]">Brendan Nyhan. 2010.
+        Why the “Death Panel” Myth Wouldn't Die: Misinformation in
+        the Health Care Reform Debate. In <em><em>The
+        Forum</em></em> , Vol.&nbsp;8.</li>
+        <li id="BibPLXBIB0050" label="[50]">Brendan Nyhan and Jason
+        Reifler. 2013. Which Corrections Work? Research results and
+        practice recommendations. <em><em>New America Foundation
+        Media Policy Initiative Research Paper</em></em>
+        (2013).</li>
+        <li id="BibPLXBIB0051" label="[51]">Brendan Nyhan and Jason
+        Reifler. 2015. Displacing misinformation about events: An
+        experimental test of causal corrections. <em><em>Journal of
+        Experimental Political Science</em></em> 2, 1 (2015),
+        81–93.</li>
+        <li id="BibPLXBIB0052" label="[52]">Eli Pariser. 2011.
+        <em><em>The filter bubble: What the Internet is hiding from
+        you</em></em> . Penguin UK.</li>
+        <li id="BibPLXBIB0053" label="[53]">Gordon Pennycook, T
+        Cannon, and D Rand. 2017. Implausibility and Illusory
+        Truth: Prior Exposure Increases Perceived Accuracy of Fake
+        News but Has No Effect on Entirely Implausible Statements.
+        <em><em>Unpublished Paper Manuscript, December</em></em> 11
+        (2017), 2017.</li>
+        <li id="BibPLXBIB0054" label="[54]">Vahed Qazvinian, Emily
+        Rosengren, Dragomir&nbsp;R Radev, and Qiaozhu Mei. 2011.
+        Rumor has it: Identifying misinformation in microblogs. In
+        <em><em>Proceedings of the Conference on Empirical Methods
+        in Natural Language Processing</em></em> . Association for
+        Computational Linguistics, 1589–1599.</li>
+        <li id="BibPLXBIB0055" label="[55]">Xiaoyan Qiu,
+        Diego&nbsp;FM Oliveira, Alireza&nbsp;Sahami Shirazi,
+        Alessandro Flammini, and Filippo Menczer. 2017. Limited
+        individual attention and online virality of low-quality
+        information. <em><em>Nature Human Behaviour</em></em> 1, 7
+        (2017), 0132.</li>
+        <li id="BibPLXBIB0056" label="[56]">Jacob Ratkiewicz,
+        Michael Conover, Mark Meiss, Bruno Gonçalves, Snehal Patil,
+        Alessandro Flammini, and Filippo Menczer. 2011. Truthy:
+        mapping the spread of astroturf in microblog streams. In
+        <em><em>Proceedings of the 20th international conference
+        companion on World wide web</em></em> . ACM, 249–252.</li>
+        <li id="BibPLXBIB0057" label="[57]">Paul Resnick, Samuel
+        Carton, Souneil Park, Yuncheng Shen, and Nicole Zeffer.
+        2014. Rumorlens: A system for analyzing the impact of
+        rumors and corrections in social media. In <em><em>Proc.
+        Computational Journalism Conference</em></em> .</li>
+        <li id="BibPLXBIB0058" label="[58]">Eunsoo Seo, Prasant
+        Mohapatra, and Tarek Abdelzaher. 2012. Identifying rumors
+        and their sources in social networks. <em><em>SPIE defense,
+        security, and sensing</em></em> (2012), 83891I–83891I.</li>
+        <li id="BibPLXBIB0059" label="[59]">Chengcheng Shao,
+        Giovanni&nbsp;Luca Ciampaglia, Alessandro Flammini, and
+        Filippo Menczer. 2016. Hoaxy: A platform for tracking
+        online misinformation. In <em><em>Proceedings of the 25th
+        International Conference Companion on World Wide
+        Web</em></em> . International World Wide Web Conferences
+        Steering Committee, 745–750.</li>
+        <li id="BibPLXBIB0060" label="[60]">Baoxu Shi and Tim
+        Weninger. 2015. Fact checking in large knowledge graphs: A
+        discriminative predict path mining approach. <em><em>arXiv
+        preprint arXiv:1510.05911</em></em> (2015).</li>
+        <li id="BibPLXBIB0061" label="[61]">Jieun Shin, Lian Jian,
+        Kevin Driscoll, and François Bar. 2017. Political rumoring
+        on Twitter during the 2012 US presidential election: Rumor
+        diffusion and correction. <em><em>new media &amp;
+        society</em></em> 19, 8 (2017), 1214–1235.</li>
+        <li id="BibPLXBIB0062" label="[62]">Marcella Tambuscio,
+        Diego&nbsp;FM Oliveira, Giovanni&nbsp;Luca Ciampaglia, and
+        Giancarlo Ruffo. 2016. Network segregation in a model of
+        misinformation and fact checking. <em><em>arXiv preprint
+        arXiv:1610.04170</em></em> (2016).</li>
+        <li id="BibPLXBIB0063" label="[63]">Emily Thorson. 2016.
+        Belief echoes: The persistent effects of corrected
+        misinformation. <em><em>Political Communication</em></em>
+        33, 3 (2016), 460–480.</li>
+        <li id="BibPLXBIB0064" label="[64]">Sander van&nbsp;der
+        Linden, Anthony Leiserowitz, Seth Rosenthal, and Edward
+        Maibach. 2017. Inoculating the public against
+        misinformation about climate change. <em><em>Global
+        Challenges</em></em> 1, 2 (2017).</li>
+        <li id="BibPLXBIB0065" label="[65]">Claudia Wagner, Silvia
+        Mitter, Christian Körner, and Markus Strohmaier. 2012. When
+        social bots attack: Modeling susceptibility of users in
+        online social networks. <em><em>Making Sense of Microposts
+        (# MSM2012)</em></em> 2, 4 (2012), 1951–1959.</li>
+        <li id="BibPLXBIB0066" label="[66]">Gang Wang, Christo
+        Wilson, Xiaohan Zhao, Yibo Zhu, Manish Mohanlal, Haitao
+        Zheng, and Ben&nbsp;Y Zhao. 2012. Serf and turf:
+        crowdturfing for fun and profit. In <em><em>Proceedings of
+        the 21st international conference on World Wide
+        Web</em></em> . ACM, 679–688.</li>
+        <li id="BibPLXBIB0067" label="[67]">Steve Webb, James
+        Caverlee, and Calton Pu. 2008. Social Honeypots: Making
+        Friends With A Spammer Near You.. In <em><em>CEAS</em></em>
+        .</li>
+        <li id="BibPLXBIB0068" label="[68]">Huiyuan Zhang, Huiling
+        Zhang, Xiang Li, and My&nbsp;T Thai. 2015. Limiting the
+        spread of misinformation while effectively raising
+        awareness in social networks. In <em><em>International
+        Conference on Computational Social Networks</em></em> .
+        Springer, 35–47.</li>
+        <li id="BibPLXBIB0069" label="[69]">Bi Zhu, Chuansheng
+        Chen, Elizabeth&nbsp;F Loftus, Chongde Lin, Qinghua He,
+        Chunhui Chen, He Li, Robert&nbsp;K Moyzis, Jared Lessard,
+        and Qi Dong. 2010. Individual differences in false memory
+        from misinformation: Personality characteristics and their
+        interactions with cognitive abilities. <em><em>Personality
+        and Individual Differences</em></em> 48, 8 (2010),
+        889–894.</li>
+        <li id="BibPLXBIB0070" label="[70]">Melissa Zimdars. 2016.
+        False, misleading, clickbait-y, and satirical news sources.
+        https://docs.google.com/document/d/10eA5-mCZLSS4MQY5QGb5ewC3VAL6pLkT53V_81ZyitM/preview.
+        (2016).</li>
+        <li id="BibPLXBIB0071" label="[71]">Arkaitz Zubiaga, Maria
+        Liakata, Rob Procter, Kalina Bontcheva, and Peter Tolmie.
+        2015. Crowdsourcing the annotation of rumourous
+        conversations in social media. In <em><em>Proceedings of
+        the 24th International Conference on World Wide
+        Web</em></em> . ACM, 347–353.</li>
+        <li id="BibPLXBIB0072" label="[72]">Arkaitz Zubiaga, Maria
+        Liakata, Rob Procter, Geraldine Wong&nbsp;Sak Hoi, and
+        Peter Tolmie. 2016. Analysing how people orient to and
+        spread rumours in social media by looking at conversational
+        threads. <em><em>PloS one</em></em> 11, 3 (2016),
+        e0150989.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.theguardian.com/media/greenslade/2016/nov/23/heres-the-truth-fake-news-is-not-social-medias-fault">https://www.theguardian.com/media/greenslade/2016/nov/23/heres-the-truth-fake-news-is-not-social-medias-fault</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.factcheck.org/2015/12/dearborns-anti-isis-rally/">http://www.factcheck.org/2015/12/dearborns-anti-isis-rally/</a></p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "https://hapgood.us/2016/11/13/fake-news-does-better-on-facebook-than-real-news/">https://hapgood.us/2016/11/13/fake-news-does-better-on-facebook-than-real-news/</a></p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.ipsos-mori.com/researchpublications/researcharchive/3742/the-perils-of-perception-and-the-eu.aspx">https://www.ipsos-mori.com/researchpublications/researcharchive/3742/the-perils-of-perception-and-the-eu.aspx</a></p>
+    <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.facebook.com/zuck/posts/10103269806149061">https://www.facebook.com/zuck/posts/10103269806149061</a>
+    ; <a class="link-inline force-break" href=
+    "https://www.facebook.com/zuck/posts/10104445245963251?pnref=story">
+    https://www.facebook.com/zuck/posts/10104445245963251?pnref=story</a></p>
+    <p id="fn6"><a href="#foot-fn6"><sup>6</sup></a><a class=
+    "link-inline force-break" href=
+    "https://chrome.google.com/webstore/detail/tweetcred/fbokljinlogeihdnkikeeneiankdgikg?hl=en">https://chrome.google.com/webstore/detail/tweetcred/fbokljinlogeihdnkikeeneiankdgikg?hl=en</a></p>
+    <p id="fn7"><a href="#foot-fn7"><sup>7</sup></a><a class=
+    "link-inline force-break" href=
+    "https://chrome.google.com/webstore/detail/fake-news-alert/aickfmgnhocegpdbfnpfnedpeionfkbh?hl=en">https://chrome.google.com/webstore/detail/fake-news-alert/aickfmgnhocegpdbfnpfnedpeionfkbh?hl=en</a></p>
+    <p id="fn8"><a href="#foot-fn8"><sup>8</sup></a><a class=
+    "link-inline force-break" href=
+    "http://bsdetector.tech/">http://bsdetector.tech/</a></p>
+    <p id="fn9"><a href="#foot-fn9"><sup>9</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.theverge.com/2017/12/21/16804912/facebook-disputed-flags%2Dmisinformation-newsfeed-fake-news">https://www.theverge.com/2017/12/21/16804912/facebook-disputed-flags%2Dmisinformation-newsfeed-fake-news</a></p>
+    <p id="fn10"><a href="#foot-fn10"><sup>10</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.engadget.com/2018/01/19/facebooks-fake-war-on-fake-news/">https://www.engadget.com/2018/01/19/facebooks-fake-war-on-fake-news/</a></p>
+    <p id="fn11"><a href="#foot-fn11"><sup>11</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.engadget.com/2018/01/31/google-tackles-fake-news-in-snippets/">https://www.engadget.com/2018/01/31/google-tackles-fake-news-in-snippets/</a></p>
+    <p id="fn12"><a href="#foot-fn12"><sup>12</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.poynter.org/2016/366-links-to-understand-fact-checking-in-2016/440618/">http://www.poynter.org/2016/366-links-to-understand-fact-checking-in-2016/440618/</a></p>
+    <p id="fn13"><a href="#foot-fn13"><sup>13</sup></a><a class=
+    "link-inline force-break" href=
+    "http://verificationhandbook.com">http://verificationhandbook.com</a></p>
+    <p id="fn14"><a href="#foot-fn14"><sup>14</sup></a><a class=
+    "link-inline force-break" href=
+    "http://wiki.dbpedia.org/">http://wiki.dbpedia.org/</a></p>
+    <p id="fn15"><a href="#foot-fn15"><sup>15</sup></a><a class=
+    "link-inline force-break" href=
+    "https://skr3.nlm.nih.gov/SemMedDB">https://skr3.nlm.nih.gov/SemMedDB</a></p>
+    <p id="fn16"><a href="#foot-fn16"><sup>16</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.washingtonpost.com/news/ask-the-post/wp/2013/09/25/announcing-truth-teller-beta-a-better-way-to-watch-political-speech/?utm_term=.b78b7c187228">www.washingtonpost.com/news/ask-the-post/wp/2013/09/25/announcing-truth-teller-beta-a-better-way-to-watch-political-speech/?utm_term=.b78b7c187228</a></p>
+    <p id="fn17"><a href="#foot-fn17"><sup>17</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.politifact.com/">http://www.politifact.com/</a></p>
+    <p id="fn18"><a href="#foot-fn18"><sup>18</sup></a><a class=
+    "link-inline force-break" href=
+    "http://www.factcheck.org/">http://www.factcheck.org/</a></p>
+    <p id="fn19"><a href="#foot-fn19"><sup>19</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.media.mit.edu/projects/truth-goggles/overview/">https://www.media.mit.edu/projects/truth-goggles/overview/</a></p>
+    <p id="fn20"><a href="#foot-fn20"><sup>20</sup></a><a class=
+    "link-inline force-break" href=
+    "http://idir.uta.edu/factwatcher/nba.php">http://idir.uta.edu/factwatcher/nba.php</a></p>
+    <p id="fn21"><a href="#foot-fn21"><sup>21</sup></a><a class=
+    "link-inline force-break" href=
+    "http://idir-server2.uta.edu/claimbuster/">http://idir-server2.uta.edu/claimbuster/</a></p>
+    <p id="fn22"><a href="#foot-fn22"><sup>22</sup></a><a class=
+    "link-inline force-break" href=
+    "http://twitdigest.iiitd.edu.in/TweetCred">http://twitdigest.iiitd.edu.in/TweetCred</a></p>
+    <p id="fn23"><a href="#foot-fn23"><sup>23</sup></a><a class=
+    "link-inline force-break" href=
+    "http://truthy.indiana.edu/">http://truthy.indiana.edu/</a></p>
+    <p id="fn24"><a href="#foot-fn24"><sup>24</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.getbadnews.com">https://www.getbadnews.com</a></p>
+    <p id="fn25"><a href="#foot-fn25"><sup>25</sup></a><a class=
+    "link-inline force-break" href=
+    "https://blog.twitter.com/official/en_us/topics/company/2018/2016-election-update.html">https://blog.twitter.com/official/en_us/topics/company/2018/2016-election-update.html</a></p>
+    <p id="fn26"><a href="#foot-fn26"><sup>26</sup></a><a class=
+    "link-inline force-break" href=
+    "https://blog.twitter.com/official/en_us/topics/company/2017/Our-Approach-Bots-Misinformation.html">https://blog.twitter.com/official/en_us/topics/company/2017/Our-Approach-Bots-Misinformation.html</a></p>
+    <p id="fn27"><a href="#foot-fn27"><sup>27</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.demos.co.uk/files/Resilient_Nation_-_web-1.pdf">https://www.demos.co.uk/files/Resilient_Nation_-_web-1.pdf</a></p>
+    <p id="fn28"><a href="#foot-fn28"><sup>28</sup></a><a class=
+    "link-inline force-break" href=
+    "https://webliteracy.pressbooks.com/">https://webliteracy.pressbooks.com/</a>
+    ; <a class="link-inline force-break" href=
+    "https://fakenews.publicdatalab.org/">https://fakenews.publicdatalab.org/</a>
+    ; <a class="link-inline force-break" href=
+    "https://thetrustproject.org/">https://thetrustproject.org/</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3188730">https://doi.org/10.1145/3184558.3188730</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

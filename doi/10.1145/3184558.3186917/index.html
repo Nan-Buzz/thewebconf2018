@@ -1,1 +1,567 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">  <head>  <title>Identifying Time Intervals for Knowledge Graph Facts</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>  </head>  <body id="main">  <section class="front-matter">   <section>    <header class="title-info">     <div class="journal-title">     <h1>      <span class="title">Identifying Time Intervals for Knowledge Graph Facts</span>      <br/>      <span class="subTitle"/>     </h1>     </div>    </header>    <div class="authorGroup">     <div class="author">     <span class="givenName">Dhruv</span>      <span class="surName">Gupta</span>,     Max Planck Institute for Informatics, Germany, Saarbr&#x00FC;cken Graduate School of CS, Germany, <a href="mailto:dhgupta@mpi-inf.mpg.de">dhgupta@mpi-inf.mpg.de</a>     </div>     <div class="author">     <span class="givenName">Klaus</span>      <span class="surName">Berberich</span>,     Max Planck Institute for Informatics, Germany, htw saar, Germany, <a href="mailto:kberberi@mpi-inf.mpg.de">kberberi@mpi-inf.mpg.de</a>     </div>            </div>    <br/>    <div class="pubInfo">     <p>DOI: <a href="https://doi.org/10.1145/3184558.3186917" target="_blank">https://doi.org/10.1145/3184558.3186917</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">     <p>     <small>Knowledge graphs capture very little temporal information associated with facts. In this work, we address the problem of identifying time intervals of knowledge graph facts from large document collections annotated with temporal expressions. Prior approaches in this direction have leveraged limited metadata associated with documents in large collections (e.g., publication dates) or have limited techniques to model the uncertainty and dynamics of temporal expressions. Our approach to identify time intervals for time-sensitive facts in knowledge graphs leverages a time model that incorporates uncertainty and models them at different levels of granularity (i.e., day, month, and year). Evaluation on a temporal fact benchmark using two large news archives amounting to more than eleven million documents show the quality of our results.</small>     </p>    </div>    <div class="classifications">     <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Dhruv Gupta and Klaus Berberich. 2018. Identifying Time Intervals for Knowledge Graph Facts. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 2 Pages. <a href="https://doi.org/10.1145/3184558.3186917" class="link-inline force-break"        target="_blank">https://doi.org/10.1145/3184558.3186917</a></small>     </p>     </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-3">    <header>     <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>     </div>    </header>    <p>Journalists often face the challenging task of substantiating an investigative story with temporal facts in order to convey the validity of certain arguments. The tool of choice for many such scenarios are commercial search engines. The journalist often collects many documents using keyword queries, manually accesses and inspects documents for temporal facts and then compiles a spreadsheet of the observed dates. However, this manual process becomes impossible if the temporal evidence is spread over thousands of document and if multiple facts need to be verified.</p>    <p>In this work, we leverage temporal expressions in document contents to identify time intervals for temporal facts in knowledge graphs. A temporal fact is a sentence that connects an entity (person, organization, or location) via a temporal predicate to a temporal expression. Computational analysis of temporal expressions is challenging as they can be present at different granularities from precise timestamps to coarse level mentions of decades, e.g., <tt>the 60s</tt>. Furthermore, temporal expressions can be implicit and relative to dates mentioned elsewhere in the text, e.g., <tt>last sunday</tt>.</p>    <p>In short, our approach overcomes the above challenges as follows. First, we extract temporal facts using information extraction templates that rely on word sequences and temporal expressions. Second, we model the temporal expressions identified for the facts in a time model that understands uncertainty and incorporates temporal granularity. Third and finally, we aggregate the temporal evidence found and rank the time intervals that are of interest to the knowledge graph fact.</p>   </section>   <section id="sec-4">    <header>     <div class="title-info">     <h2>      <span class="section-number">2</span> Approach</h2>     </div>    </header>    <p>We next define concrete definitions and steps of our approach.</p>    <p>     <strong>Temporal Facts</strong>. A temporal fact spotted in a document collection consists of natural language representation of a knowledge graph fact with a co-occurring temporal expression. Formally, <div class="table-responsive" id="eq1">     <div class="display-equation">      <span class="tex mytex">\begin{equation} {\sf {(\small F)act}} \equiv \langle {\sf {(\small S)ubject}}, {\sf{(\small P)redicate}}, {\sf {(\small O)bject}} \rangle [ {\sf {\small TIME}}]. \end{equation} </span>      <br/>      <span class="equation-number">(1)</span>     </div>     </div>    </p>    <p>A natural language representation of a knowledge graph fact <span class="inline-equation"><span class="tex">$\langle {\sf {\small S}}, {\sf {\small P}}, {\sf {\small O}}\rangle$</span>     </span> is obtained by looking at all possible surface forms of all three arguments of a fact from paraphrase and surface form dictionaries. Thus, to detect a knowledge graph fact we have to detect the equivalent natural language representation: <div class="table-responsive" id="Xeq1">     <div class="display-equation">      <span class="tex mytex">\begin{equation} {\sf {(\small F)}}\equiv \langle [{s}_1 \ldots {s}_{m}], [{p}_1 \ldots {p}_{n}], [{o}_1 \dots {o}_{l}]\rangle .\end{equation} </span>      <br/>      <span class="equation-number">(2)</span>     </div>     </div> </p>    <p><strong>Query Processing</strong>. For each surface form or paraphrase of the predicate in the natural language representation of the fact (Equation&#x00A0;<a class="sec" href="#sec-4">2</a>) we utilize an inverted index over phrases that detects the positional span of each mention of the named entity or predicate. By intersecting the document identifiers of the mentions we obtain a set of candidate documents that contain the surface forms of the arguments of the knowledge graph fact. We restrict ourselves to those documents in which the positional spans of the surface forms and predicate paraphrases occur within a sentence of the document. We further distill this candidate set of sentences by considering only those sentences that contain a temporal expression that co-occurs with the other arguments of the fact. Thus, with this final candidate set of sentences <span class="inline-equation"><span class="tex">$\mathcal {S}$</span>     </span> we have identified all sentences in which the fact is materialized in natural language and an evidence in the form of a temporal expression is present.</p>    <p>     <strong>Time Model</strong>. As mentioned earlier, temporal expressions are challenging to analyze as they are present at different granularities and are inherently uncertain in nature. For instance, the temporal expression <tt>the 60s</tt> is highly uncertain as to which time interval it refers to: is it referring to [1962, 1965] or [1963, 1967]? However, if we can model every possible time interval referred by such temporal expressions then we can rely on more precise evidence in form of fine granular temporal expressions (e.g., <tt>1963 to 1965</tt>) that can help us ascertain the time interval the fact may refer to. In order to model this uncertainty we rely on the uncertainty-aware time model proposed by Berberich et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>]. Each temporal expression <em>T</em> is modeled by a four-tuple that contains bounds to: when the time interval could have begun [<em>b</em>     <sub>&#x2113;</sub>, <em>b<sub>u</sub>     </em>] and when the time interval could have ended [<em>e</em>     <sub>&#x2113;</sub>, <em>e<sub>u</sub>     </em>]. Thus, the temporal expression <em>T</em> is represented by the following four-tuple: <div class="table-responsive" id="eq2">     <div class="display-equation">      <span class="tex mytex">\begin{equation} {T} = \langle {b}_\ell , {b}_{u}, {e}_\ell , {e}_u\rangle . \end{equation} </span>      <br/>      <span class="equation-number">(3)</span>     </div>     </div> Temporal expressions found co-occurring with the natural language representation of knowledge graph facts are then compared in this time model to aggregate and identify the time interval of relevance for the fact.</p>    <p>     <strong>Identifying Time Intervals</strong>. Our hypothesis is that the time scope of a knowledge graph fact <small>F</small> can be found by aggregating all the temporal expressions <em>T</em>, found to co-occur with its mention (Equation&#x00A0;<a class="sec" href="#sec-4">2</a>) in text, in the uncertainty-aware time model (Equation&#x00A0;<a class="eqn" href="#eq2">3</a>). Following our earlier work&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>], we define the probability of a time interval being relevant to a given fact <small>F</small> as follows: <div class="table-responsive" id="eq3">     <div class="display-equation">      <span class="tex mytex">\begin{equation} P([b,e] \mid {\sf {\small F}}) = \frac{1}{|\mathcal {S}|} \cdot \sum _{s \in \mathcal {S}} P([b,e]\mid s_{\textrm {time}}), \end{equation} </span>      <br/>      <span class="equation-number">(4)</span>     </div>     </div> where, <span class="inline-equation"><span class="tex">$s \in \mathcal {S}$</span>     </span> denotes a sentence containing the fact <small>F</small> and <em>s</em>     <sub>time</sub> denotes the temporal expressions associated with the sentence <em>s</em>. The likelihood of a time interval being relevant to the fact <small>F</small> given the sentence <em>s</em> is aggregated as (following&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>]): <div class="table-responsive" id="eq4">     <div class="display-equation">      <span class="tex mytex">\begin{equation} P([b,e]\mid s_{\textrm {time}}) = \frac{1}{\mid s_{\textrm {time}}\mid } \sum _{T \in s_{\textrm {time}}}\frac{\mathbb {1}([b,e] \in T)}{\mid T\mid }. \end{equation} </span>      <br/>      <span class="equation-number">(5)</span>     </div>     </div>    </p>   </section>   <section id="sec-5">    <header>     <div class="title-info">     <h2>      <span class="section-number">3</span> Evaluation</h2>     </div>    </header>    <p>We next describe the evaluation setup for the experiments and a discussion of the obtained results.</p>    <p>     <strong>Document Collections and Annotations</strong>. We utilized two news document collections that comprise of more than eleven million documents. Sentence splitting and temporal expressions for all the documents in these collections were obtained by using the SUTime component of the Core NLP toolkit&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>]. Each time annotation is normalized to a time interval in the following format: [(b)egin = yyyy-MM &#x2212; dd, (e)nd = yyyy-MM &#x2212; dd]. Furthermore, we translate these annotations into the uncertainty-aware time model as follows: [<em>b</em>, <em>e</em>] &#x2261; &#x27E8;<em>b</em>, <em>e</em>, <em>b</em>, <em>e</em>&#x27E9;. Annotation and collection statistics are given in Table&#x00A0;<a class="tbl" href="#tab1">1</a>.</p>    <div class="table-responsive" id="tab1">     <div class="table-caption">     <span class="table-number">Table 1:</span>     <span class="table-title">Document collection statistics.</span>     </div>     <table class="table">     <thead>      <tr>       <th style="text-align:center;"><small>COLLECTION</small>       </th>       <th style="text-align:center;">        <em>n</em><sub>documents</sub>       </th>       <th style="text-align:center;">        <em>n</em><sub>sentences</sub>       </th>       <th style="text-align:center;">        <em>n</em><sub>temporal&#x2009;expressions</sub>       </th>      </tr>      </thead>     <tbody>      <tr>       <td style="text-align:center;">        <small>NEW YORK TIMES</small>       </td>       <td style="text-align:center;">1,855,623</td>       <td style="text-align:center;">54,024,146</td>       <td style="text-align:center;">15,411,681</td>      </tr>      <tr>       <td style="text-align:center;">        <small>GIGAWORD</small>       </td>       <td style="text-align:center;">9,870,655</td>       <td style="text-align:center;">181,386,746</td>       <td style="text-align:center;">72,247,124</td>      </tr>     </tbody>     </table>    </div>    <p>     <strong>Knowledge Graph Facts</strong>. We utilize the temporal fact benchmark by Gerber et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>] for experimental evaluation. Since our approach is completely unsupervised in nature we considered all the positive examples in train and test splits in the benchmark. Furthermore, for reasons of efficiency and recall we disregard the paraphrases of the predicates and only consider spotting the surface forms of the subject and object within a sentence of a document. For the baseline we considered the time interval correct when the begin and end year of the temporal expression matched to that of the ground truth begin and end years. For our proposed method, we considered the time interval determined correct if the overlap between generated time interval and the ground truth time interval, which is at the year granularity, was over 75% with respect to the generated time interval.</p>    <p>     <strong>Systems and Baselines.</strong> As a baseline, we consider a method that simply ranks the time annotations, when coarsened to year granularity, by its frequency. For each temporal fact in the benchmark, if the number of sentences matched exceeds a threshold we sample a small subset of sentences to execute our method and the baseline. Note that each sentence can contain more than one temporal expression. We set the threshold of the maximum number of evidences considered as 25.</p>    <p>     <strong>Metrics</strong>. We evaluate to observe at what rank we can identify the correct time interval for a given fact. This is measured by the mean reciprocal rank (MRR). Furthermore, we evaluate if we can identify the correct ground truth time interval at rank 1, 5, and 10. That is, we measure precision at rank 1 (<em>P</em>@1), rank 5 (<em>P</em>@5), and rank 10 (<em>P</em>@10). We report averages over these metrics for the temporal facts in the benchmark.</p>    <p>     <strong>Results.</strong> The results for the two document collections are given in Table&#x00A0;<a class="tbl" href="#tab2">2</a>. For the New York Times document collection we were able to evaluate 526 temporal facts in the benchmark, while for the Gigaword collection we were able to evaluate 740 temporal facts out of 1500 facts in the benchmark. The remaining facts could not be evaluated by our method since we could not spot sentences containing the entity surface forms for them in the document collections. From Table&#x00A0;<a class="tbl" href="#tab2">2</a> we see that our method identifies the correct time interval for the facts at around rank 3. Considering precision at one, our method outperforms the baseline for both collections. The results thus show that our method identifies the correct time intervals for facts by leveraging uncertainty and modeling complex temporal expressions at different granularity.</p>    <div class="table-responsive" id="tab2">     <div class="table-caption">     <span class="table-number">Table 2:</span>     <span class="table-title">Results obtained for different collections.</span>     </div>     <table class="table">     <thead>      <tr>       <th style="text-align:center;"/>       <th style="text-align:center;"/>       <th colspan="4" style="text-align:center;">        <small>NEW YORK TIMES</small>       </th>      </tr>     </thead>     <tbody>      <tr>       <td style="text-align:center;">        <small>SYSTEM</small>       </td>       <td style="text-align:center;"/>       <td style="text-align:center;">        <strong>P@1</strong>       </td>       <td style="text-align:center;">        <strong>P@5</strong>       </td>       <td style="text-align:center;">        <strong>P@10</strong>       </td>       <td>        <strong>MRR</strong>       </td>      </tr>      <tr >       <td style="text-align:center;">        <small>BASELINE</small>       </td>       <td style="text-align:center;"/>       <td style="text-align:center;">0.21</td>       <td style="text-align:center;">0.12</td>       <td style="text-align:center;">0.12</td>       <td>0.25</td>      </tr>      <tr>       <td style="text-align:center;">        <small>PROPOSED METHOD</small>       </td>       <td style="text-align:center;"/>       <td style="text-align:center;">        <strong>0.26</strong>       </td>       <td style="text-align:center;">0.12</td>       <td style="text-align:center;">0.12</td>       <td>        <strong>0.30</strong>       </td>      </tr>     </tbody>     <thead>      <tr>       <th style="text-align:center;"/>       <th style="text-align:center;"/>       <th colspan="4" style="text-align:center;">        <small>GIGAWORD</small>       </th>      </tr>     </thead>     <tbody>      <tr>       <td style="text-align:center;">        <small>SYSTEM</small>       </td>       <td style="text-align:center;"/>       <td style="text-align:center;">        <strong>P@1</strong>       </td>       <td style="text-align:center;">        <strong>P@5</strong>       </td>       <td style="text-align:center;">        <strong>P@10</strong>       </td>       <td>        <strong>MRR</strong>       </td>      </tr>      <tr>       <td style="text-align:center;">        <small>BASELINE</small>       </td>       <td style="text-align:center;"/>       <td style="text-align:center;">0.24</td>       <td style="text-align:center;">0.13</td>       <td style="text-align:center;">0.12</td>       <td>0.29</td>      </tr>      <tr>       <td style="text-align:center;">        <small>PROPOSED METHOD</small>       </td>       <td style="text-align:center;"/>       <td style="text-align:center;">        <strong>0.34</strong>       </td>       <td style="text-align:center;">        <strong>0.16</strong>       </td>       <td style="text-align:center;">        <strong>0.15</strong>       </td>       <td>        <strong>0.39</strong>       </td>      </tr>     </tbody>     </table>    </div>   </section>   <section id="sec-6">    <header>     <div class="title-info">     <h2>      <span class="section-number">4</span> Related Work</h2>     </div>    </header>    <p>Temporal information associated with knowledge graph facts is of high importance. A notable attempt in this direction was by Talukdar et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>]. Their method to identify the temporal scope of a knowledge graph fact counted frequency of publication dates associated with the documents containing its mention. For validating the temporal scopes of facts Gerber et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>] rely only on year granularity temporal expression tokens. Thus, they disregard the rich temporal information that is conveyed by implicit and relative temporal expressions. More recently, Kuzey et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>] aimed at leveraging the temporal information associated with facts in the <small>YAGO</small> knowledge graph and temporal expressions associated with the mention of the fact in document collection for tagging &#x201C;temponymns&#x201D;. However, all these approaches utilize a rather na&#x00EF;ve notion of time i.e., simple frequency of timestamps. Without modeling the inherent uncertainty and dynamics associated with the temporal expressions, these prior approaches can not identify concrete time intervals associated with knowledge graph facts.</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>     <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>     </div>    </header>    <ul class="bibUl">     <li id="BibPLXBIB0001" label="[1]">K. Berberich et al.. A Language Modeling Approach for Temporal Information Needs. In <em>      <em>ECIR 2010</em>     </em>.</li>     <li id="BibPLXBIB0002" label="[2]">D. Gerber et al.. DeFacto-Temporal and Multilingual Deep Fact Validation. <em>      <em>Web Semantics</em>     </em>35, P2 (Dec. 2015).</li>     <li id="BibPLXBIB0003" label="[3]">D. Gupta and K. Berberich. . Identifying Time Intervals of Interest to Queries. In <em>      <em>CIKM 2014</em>     </em>.</li>     <li id="BibPLXBIB0004" label="[4]">E. Kuzey et al.. As Time Goes By: Comprehensive Tagging of Textual Phrases with Temporal Scopes. In <em>      <em>WWW 2016</em>     </em>.</li>     <li id="BibPLXBIB0005" label="[5]">C.&#x00A0;D. Manning et al.. The Stanford CoreNLP Natural Language Processing Toolkit. In <em>      <em>ACL 2014</em>     </em>.</li>     <li id="BibPLXBIB0006" label="[6]">P.&#x00A0;P. Talukdar et al.. Coupled temporal scoping of relational facts. In <em>      <em>WSDM 2012</em>     </em>.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">     <h2>FOOTNOTE</h2>    </div>   </header>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>     <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3186917">https://doi.org/10.1145/3184558.3186917</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div>  </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Identifying Time Intervals for Knowledge Graph
+  Facts</title><!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Identifying Time Intervals for
+          Knowledge Graph Facts</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Dhruv</span> <span class=
+          "surName">Gupta</span>, Max Planck Institute for
+          Informatics, Germany, Saarbrücken Graduate School of CS,
+          Germany, <a href=
+          "mailto:dhgupta@mpi-inf.mpg.de">dhgupta@mpi-inf.mpg.de</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Klaus</span> <span class=
+          "surName">Berberich</span>, Max Planck Institute for
+          Informatics, Germany, htw saar, Germany, <a href=
+          "mailto:kberberi@mpi-inf.mpg.de">kberberi@mpi-inf.mpg.de</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186917"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186917</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Knowledge graphs capture very little temporal
+        information associated with facts. In this work, we address
+        the problem of identifying time intervals of knowledge
+        graph facts from large document collections annotated with
+        temporal expressions. Prior approaches in this direction
+        have leveraged limited metadata associated with documents
+        in large collections (e.g., publication dates) or have
+        limited techniques to model the uncertainty and dynamics of
+        temporal expressions. Our approach to identify time
+        intervals for time-sensitive facts in knowledge graphs
+        leverages a time model that incorporates uncertainty and
+        models them at different levels of granularity (i.e., day,
+        month, and year). Evaluation on a temporal fact benchmark
+        using two large news archives amounting to more than eleven
+        million documents show the quality of our
+        results.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Dhruv Gupta and Klaus Berberich. 2018. Identifying Time
+          Intervals for Knowledge Graph Facts. In <em>WWW '18
+          Companion: The 2018 Web Conference Companion,</em>
+          <em>April 23–27, 2018,</em> <em>Lyon, France. ACM, New
+          York, NY, USA</em> 2 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3186917" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3186917</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Journalists often face the challenging task of
+      substantiating an investigative story with temporal facts in
+      order to convey the validity of certain arguments. The tool
+      of choice for many such scenarios are commercial search
+      engines. The journalist often collects many documents using
+      keyword queries, manually accesses and inspects documents for
+      temporal facts and then compiles a spreadsheet of the
+      observed dates. However, this manual process becomes
+      impossible if the temporal evidence is spread over thousands
+      of document and if multiple facts need to be verified.</p>
+      <p>In this work, we leverage temporal expressions in document
+      contents to identify time intervals for temporal facts in
+      knowledge graphs. A temporal fact is a sentence that connects
+      an entity (person, organization, or location) via a temporal
+      predicate to a temporal expression. Computational analysis of
+      temporal expressions is challenging as they can be present at
+      different granularities from precise timestamps to coarse
+      level mentions of decades, e.g., <tt>the 60s</tt>.
+      Furthermore, temporal expressions can be implicit and
+      relative to dates mentioned elsewhere in the text, e.g.,
+      <tt>last sunday</tt>.</p>
+      <p>In short, our approach overcomes the above challenges as
+      follows. First, we extract temporal facts using information
+      extraction templates that rely on word sequences and temporal
+      expressions. Second, we model the temporal expressions
+      identified for the facts in a time model that understands
+      uncertainty and incorporates temporal granularity. Third and
+      finally, we aggregate the temporal evidence found and rank
+      the time intervals that are of interest to the knowledge
+      graph fact.</p>
+    </section>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Approach</h2>
+        </div>
+      </header>
+      <p>We next define concrete definitions and steps of our
+      approach.</p>
+      <p><strong>Temporal Facts</strong>. A temporal fact spotted
+      in a document collection consists of natural language
+      representation of a knowledge graph fact with a co-occurring
+      temporal expression. Formally,</p>
+      <div class="table-responsive" id="eq1">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} {\sf {(\small
+          F)act}} \equiv \langle {\sf {(\small S)ubject}},
+          {\sf{(\small P)redicate}}, {\sf {(\small O)bject}}
+          \rangle [ {\sf {\small TIME}}].
+          \end{equation}</span><br />
+          <span class="equation-number">(1)</span>
+        </div>
+      </div>
+      <p></p>
+      <p>A natural language representation of a knowledge graph
+      fact <span class="inline-equation"><span class="tex">$\langle
+      {\sf {\small S}}, {\sf {\small P}}, {\sf {\small
+      O}}\rangle$</span></span> is obtained by looking at all
+      possible surface forms of all three arguments of a fact from
+      paraphrase and surface form dictionaries. Thus, to detect a
+      knowledge graph fact we have to detect the equivalent natural
+      language representation:</p>
+      <div class="table-responsive" id="Xeq1">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} {\sf {(\small
+          F)}}\equiv \langle [{s}_1 \ldots {s}_{m}], [{p}_1 \ldots
+          {p}_{n}], [{o}_1 \dots {o}_{l}]\rangle
+          .\end{equation}</span><br />
+          <span class="equation-number">(2)</span>
+        </div>
+      </div>
+      <p></p>
+      <p><strong>Query Processing</strong>. For each surface form
+      or paraphrase of the predicate in the natural language
+      representation of the fact (Equation&nbsp;<a class="sec"
+      href="#sec-4">2</a>) we utilize an inverted index over
+      phrases that detects the positional span of each mention of
+      the named entity or predicate. By intersecting the document
+      identifiers of the mentions we obtain a set of candidate
+      documents that contain the surface forms of the arguments of
+      the knowledge graph fact. We restrict ourselves to those
+      documents in which the positional spans of the surface forms
+      and predicate paraphrases occur within a sentence of the
+      document. We further distill this candidate set of sentences
+      by considering only those sentences that contain a temporal
+      expression that co-occurs with the other arguments of the
+      fact. Thus, with this final candidate set of sentences
+      <span class="inline-equation"><span class="tex">$\mathcal
+      {S}$</span></span> we have identified all sentences in which
+      the fact is materialized in natural language and an evidence
+      in the form of a temporal expression is present.</p>
+      <p><strong>Time Model</strong>. As mentioned earlier,
+      temporal expressions are challenging to analyze as they are
+      present at different granularities and are inherently
+      uncertain in nature. For instance, the temporal expression
+      <tt>the 60s</tt> is highly uncertain as to which time
+      interval it refers to: is it referring to [1962, 1965] or
+      [1963, 1967]? However, if we can model every possible time
+      interval referred by such temporal expressions then we can
+      rely on more precise evidence in form of fine granular
+      temporal expressions (e.g., <tt>1963 to 1965</tt>) that can
+      help us ascertain the time interval the fact may refer to. In
+      order to model this uncertainty we rely on the
+      uncertainty-aware time model proposed by Berberich et
+      al.&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0001">1</a>].
+      Each temporal expression <em>T</em> is modeled by a
+      four-tuple that contains bounds to: when the time interval
+      could have begun [<em>b</em> <sub>ℓ</sub>,
+      <em>b<sub>u</sub></em> ] and when the time interval could
+      have ended [<em>e</em> <sub>ℓ</sub>, <em>e<sub>u</sub></em>
+      ]. Thus, the temporal expression <em>T</em> is represented by
+      the following four-tuple:</p>
+      <div class="table-responsive" id="eq2">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} {T} = \langle
+          {b}_\ell , {b}_{u}, {e}_\ell , {e}_u\rangle .
+          \end{equation}</span><br />
+          <span class="equation-number">(3)</span>
+        </div>
+      </div>Temporal expressions found co-occurring with the
+      natural language representation of knowledge graph facts are
+      then compared in this time model to aggregate and identify
+      the time interval of relevance for the fact.
+      <p></p>
+      <p><strong>Identifying Time Intervals</strong>. Our
+      hypothesis is that the time scope of a knowledge graph fact
+      <small>F</small> can be found by aggregating all the temporal
+      expressions <em>T</em>, found to co-occur with its mention
+      (Equation&nbsp;<a class="sec" href="#sec-4">2</a>) in text,
+      in the uncertainty-aware time model (Equation&nbsp;<a class=
+      "eqn" href="#eq2">3</a>). Following our earlier
+      work&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0003">3</a>],
+      we define the probability of a time interval being relevant
+      to a given fact <small>F</small> as follows:</p>
+      <div class="table-responsive" id="eq3">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} P([b,e] \mid
+          {\sf {\small F}}) = \frac{1}{|\mathcal {S}|} \cdot \sum
+          _{s \in \mathcal {S}} P([b,e]\mid s_{\textrm {time}}),
+          \end{equation}</span><br />
+          <span class="equation-number">(4)</span>
+        </div>
+      </div>where, <span class="inline-equation"><span class=
+      "tex">$s \in \mathcal {S}$</span></span> denotes a sentence
+      containing the fact <small>F</small> and <em>s</em>
+      <sub>time</sub> denotes the temporal expressions associated
+      with the sentence <em>s</em>. The likelihood of a time
+      interval being relevant to the fact <small>F</small> given
+      the sentence <em>s</em> is aggregated as
+      (following&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>]):
+      <div class="table-responsive" id="eq4">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} P([b,e]\mid
+          s_{\textrm {time}}) = \frac{1}{\mid s_{\textrm
+          {time}}\mid } \sum _{T \in s_{\textrm
+          {time}}}\frac{\mathbb {1}([b,e] \in T)}{\mid T\mid }.
+          \end{equation}</span><br />
+          <span class="equation-number">(5)</span>
+        </div>
+      </div>
+      <p></p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Evaluation</h2>
+        </div>
+      </header>
+      <p>We next describe the evaluation setup for the experiments
+      and a discussion of the obtained results.</p>
+      <p><strong>Document Collections and Annotations</strong>. We
+      utilized two news document collections that comprise of more
+      than eleven million documents. Sentence splitting and
+      temporal expressions for all the documents in these
+      collections were obtained by using the SUTime component of
+      the Core NLP toolkit&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>]. Each time annotation is normalized
+      to a time interval in the following format: [(b)egin =
+      yyyy-MM − dd, (e)nd = yyyy-MM − dd]. Furthermore, we
+      translate these annotations into the uncertainty-aware time
+      model as follows: [<em>b</em>, <em>e</em>] ≡ ⟨<em>b</em>,
+      <em>e</em>, <em>b</em>, <em>e</em>⟩. Annotation and
+      collection statistics are given in Table&nbsp;<a class="tbl"
+      href="#tab1">1</a>.</p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">Document collection statistics.</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:center;">
+              <small>COLLECTION</small></th>
+              <th style="text-align:center;">
+              <em>n</em><sub>documents</sub></th>
+              <th style="text-align:center;">
+              <em>n</em><sub>sentences</sub></th>
+              <th style="text-align:center;">
+              <em>n</em><sub>temporal expressions</sub></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:center;"><small>NEW YORK
+              TIMES</small></td>
+              <td style="text-align:center;">1,855,623</td>
+              <td style="text-align:center;">54,024,146</td>
+              <td style="text-align:center;">15,411,681</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">
+              <small>GIGAWORD</small></td>
+              <td style="text-align:center;">9,870,655</td>
+              <td style="text-align:center;">181,386,746</td>
+              <td style="text-align:center;">72,247,124</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Knowledge Graph Facts</strong>. We utilize the
+      temporal fact benchmark by Gerber et al.&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0002">2</a>] for experimental
+      evaluation. Since our approach is completely unsupervised in
+      nature we considered all the positive examples in train and
+      test splits in the benchmark. Furthermore, for reasons of
+      efficiency and recall we disregard the paraphrases of the
+      predicates and only consider spotting the surface forms of
+      the subject and object within a sentence of a document. For
+      the baseline we considered the time interval correct when the
+      begin and end year of the temporal expression matched to that
+      of the ground truth begin and end years. For our proposed
+      method, we considered the time interval determined correct if
+      the overlap between generated time interval and the ground
+      truth time interval, which is at the year granularity, was
+      over 75% with respect to the generated time interval.</p>
+      <p><strong>Systems and Baselines.</strong> As a baseline, we
+      consider a method that simply ranks the time annotations,
+      when coarsened to year granularity, by its frequency. For
+      each temporal fact in the benchmark, if the number of
+      sentences matched exceeds a threshold we sample a small
+      subset of sentences to execute our method and the baseline.
+      Note that each sentence can contain more than one temporal
+      expression. We set the threshold of the maximum number of
+      evidences considered as 25.</p>
+      <p><strong>Metrics</strong>. We evaluate to observe at what
+      rank we can identify the correct time interval for a given
+      fact. This is measured by the mean reciprocal rank (MRR).
+      Furthermore, we evaluate if we can identify the correct
+      ground truth time interval at rank 1, 5, and 10. That is, we
+      measure precision at rank 1 (<em>P</em>@1), rank 5
+      (<em>P</em>@5), and rank 10 (<em>P</em>@10). We report
+      averages over these metrics for the temporal facts in the
+      benchmark.</p>
+      <p><strong>Results.</strong> The results for the two document
+      collections are given in Table&nbsp;<a class="tbl" href=
+      "#tab2">2</a>. For the New York Times document collection we
+      were able to evaluate 526 temporal facts in the benchmark,
+      while for the Gigaword collection we were able to evaluate
+      740 temporal facts out of 1500 facts in the benchmark. The
+      remaining facts could not be evaluated by our method since we
+      could not spot sentences containing the entity surface forms
+      for them in the document collections. From
+      Table&nbsp;<a class="tbl" href="#tab2">2</a> we see that our
+      method identifies the correct time interval for the facts at
+      around rank 3. Considering precision at one, our method
+      outperforms the baseline for both collections. The results
+      thus show that our method identifies the correct time
+      intervals for facts by leveraging uncertainty and modeling
+      complex temporal expressions at different granularity.</p>
+      <div class="table-responsive" id="tab2">
+        <div class="table-caption">
+          <span class="table-number">Table 2:</span> <span class=
+          "table-title">Results obtained for different
+          collections.</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:center;"></th>
+              <th style="text-align:center;"></th>
+              <th colspan="4" style="text-align:center;"><small>NEW
+              YORK TIMES</small></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:center;">
+              <small>SYSTEM</small></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">
+              <strong>P@1</strong></td>
+              <td style="text-align:center;">
+              <strong>P@5</strong></td>
+              <td style="text-align:center;">
+              <strong>P@10</strong></td>
+              <td><strong>MRR</strong></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">
+              <small>BASELINE</small></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">0.21</td>
+              <td style="text-align:center;">0.12</td>
+              <td style="text-align:center;">0.12</td>
+              <td>0.25</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><small>PROPOSED
+              METHOD</small></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">
+              <strong>0.26</strong></td>
+              <td style="text-align:center;">0.12</td>
+              <td style="text-align:center;">0.12</td>
+              <td><strong>0.30</strong></td>
+            </tr>
+          </tbody>
+          <thead>
+            <tr>
+              <th style="text-align:center;"></th>
+              <th style="text-align:center;"></th>
+              <th colspan="4" style="text-align:center;">
+              <small>GIGAWORD</small></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:center;">
+              <small>SYSTEM</small></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">
+              <strong>P@1</strong></td>
+              <td style="text-align:center;">
+              <strong>P@5</strong></td>
+              <td style="text-align:center;">
+              <strong>P@10</strong></td>
+              <td><strong>MRR</strong></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">
+              <small>BASELINE</small></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">0.24</td>
+              <td style="text-align:center;">0.13</td>
+              <td style="text-align:center;">0.12</td>
+              <td>0.29</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"><small>PROPOSED
+              METHOD</small></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">
+              <strong>0.34</strong></td>
+              <td style="text-align:center;">
+              <strong>0.16</strong></td>
+              <td style="text-align:center;">
+              <strong>0.15</strong></td>
+              <td><strong>0.39</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>Temporal information associated with knowledge graph facts
+      is of high importance. A notable attempt in this direction
+      was by Talukdar et al.&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>]. Their method to identify the
+      temporal scope of a knowledge graph fact counted frequency of
+      publication dates associated with the documents containing
+      its mention. For validating the temporal scopes of facts
+      Gerber et al.&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>] rely only on year granularity
+      temporal expression tokens. Thus, they disregard the rich
+      temporal information that is conveyed by implicit and
+      relative temporal expressions. More recently, Kuzey et
+      al.&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0004">4</a>]
+      aimed at leveraging the temporal information associated with
+      facts in the <small>YAGO</small> knowledge graph and temporal
+      expressions associated with the mention of the fact in
+      document collection for tagging “temponymns”. However, all
+      these approaches utilize a rather naïve notion of time i.e.,
+      simple frequency of timestamps. Without modeling the inherent
+      uncertainty and dynamics associated with the temporal
+      expressions, these prior approaches can not identify concrete
+      time intervals associated with knowledge graph facts.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">K. Berberich et al.. A
+        Language Modeling Approach for Temporal Information Needs.
+        In <em><em>ECIR 2010</em></em> .</li>
+        <li id="BibPLXBIB0002" label="[2]">D. Gerber et al..
+        DeFacto-Temporal and Multilingual Deep Fact Validation.
+        <em><em>Web Semantics</em></em> 35, P2 (Dec. 2015).</li>
+        <li id="BibPLXBIB0003" label="[3]">D. Gupta and K.
+        Berberich. . Identifying Time Intervals of Interest to
+        Queries. In <em><em>CIKM 2014</em></em> .</li>
+        <li id="BibPLXBIB0004" label="[4]">E. Kuzey et al.. As Time
+        Goes By: Comprehensive Tagging of Textual Phrases with
+        Temporal Scopes. In <em><em>WWW 2016</em></em> .</li>
+        <li id="BibPLXBIB0005" label="[5]">C.&nbsp;D. Manning et
+        al.. The Stanford CoreNLP Natural Language Processing
+        Toolkit. In <em><em>ACL 2014</em></em> .</li>
+        <li id="BibPLXBIB0006" label="[6]">P.&nbsp;P. Talukdar et
+        al.. Coupled temporal scoping of relational facts. In
+        <em><em>WSDM 2012</em></em> .</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186917">https://doi.org/10.1145/3184558.3186917</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

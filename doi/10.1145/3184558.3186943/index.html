@@ -1,1 +1,387 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">  <head>  <title>Visualizing the Flow of Discourse with a Concept Ontology</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>  </head>  <body id="main">  <section class="front-matter">   <section>    <header class="title-info">     <div class="journal-title">     <h1>      <span class="title">Visualizing the Flow of Discourse with a Concept Ontology</span>      <br/>      <span class="subTitle"/>     </h1>     </div>    </header>    <div class="authorGroup">     <div class="author">     <span class="givenName">Baoxu</span>      <span class="surName">Shi</span>     University of Notre Dame, <a href="mailto:bshi@nd.edu">bshi@nd.edu</a>     </div>     <div class="author">     <span class="givenName">Tim</span>      <span class="surName">Weninger</span>     University of Notre Dame, <a href="mailto:tweninge@nd.edu">tweninge@nd.edu</a>     </div>            </div>    <br/>    <div class="pubInfo">     <p>DOI: <a href="https://doi.org/10.1145/3184558.3186943" target="_blank">https://doi.org/10.1145/3184558.3186943</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">     <p>     <small>Understanding and visualizing human discourse has long being a challenging task. Although recent work on argument mining have shown success in classifying the role of various sentences, the task of recognizing concepts and understanding the ways in which they are discussed remains challenging. Given an email thread or a transcript of a group discussion, our task is to extract the relevant concepts and understand how they are referenced and re-referenced throughout the discussion. In the present work, we present a preliminary approach for extracting and visualizing group discourse by adapting Wikipedia&#x0027;s category hierarchy to be an external concept ontology. From a user study, we found that our method achieved better results than 4 strong alternative approaches, and we illustrate our visualization method based on the extracted discourse flows.</small>     </p>    </div>    <div class="classifications">     <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Baoxu Shi and Tim Weninger. 2018. Visualizing the Flow of Discourse with a Concept Ontology. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 2 Pages. <a href="https://doi.org/10.1145/3184558.3186943" class="link-inline force-break"        target="_blank">https://doi.org/10.1145/3184558.3186943</a></small>     </p>     </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-3">    <header>     <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>     </div>    </header>    <p>Language has long been one of the most efficient forms of communication between people. Technology that can parse and extract information from these conversations currently exists and operates with reasonable accuracy; however, there is a gap in our ability to understand and visualize these conversational statements. Current and previous work in the analysis of news articles and social posts have demonstrated the ability to extract and quantify written ideas&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>]; however, these tools operate over large text corpora, so they are not able to discover concept flows of individual conversations (or documents). Related work in natural language processing aims to extract named entities or important concepts and entities from sentences. Although Named Entity Recognition may be able to extract high-quality entities, which could be viewed as concepts, they are usually limited to a few entity types.</p>    <p>The goal of the present work is different. Here we transform a group conversation into a network over concepts in order to visualize the concept flows so that we might better understand the latent communication patterns and group dynamics. Our key insight is to treat human group conversations as trails over a graph of concepts. With this perspective, an individual&#x0027;s ideas as expressed through language can be mapped to explicit entities or concepts, and, therefore, a single argument can be treated as a path over the graph of concepts.</p>    <p>We overcome the limitations mentioned above by distilling a high-quality concept ontology from Wikipedia and using its entity surface forms to detect concepts in human discourse. We then find concept flows by computing sentence similarities using a joint text and concept similarity. The code and data are available at <a class="link-inline force-break"     href="https://github.com/bxshi/DiscourseVisualization">https://github.com/bxshi/DiscourseVisualization</a>. </p>   </section>   <section id="sec-4">    <header>     <div class="title-info">     <h2>      <span class="section-number">2</span> Discourse Graphification</h2>     </div>    </header>    <figure id="fig1">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186943/images/www18companion-183-fig1.jpg" class="img-responsive" alt="Figure 1"      longdesc=""/>     <div class="figure-caption">     <span class="figure-number">Figure 1:</span>     <span class="figure-title">Illustration of a snippet of the concept graph. Bold texts are extracted concepts recognized as important in the Intelligence<sup>2</sup> debate referenced in Fig. 2.</span>     </div>    </figure>    <p>Here we assume each Wikipedia article represents a unique concept and further treat the categories that an article belongs to as more general concepts. This solution assumes that the Wikipedia category hierarchy is a clean ontology. This is not the case. So the first step is to perform some pre-processing to transform the Wikipedia category hierarchy into an ontology.</p>    <p>We use the October 2017 English dump of all Wikipedia articles and categories. We begin by removing all maintenance, tracking, chronological and list-like pages. This results in a graph rooted at category Main Topic Classifications with 976,163 category nodes, 1,901,706 fine-to-coarse concept edges, and 11,967,618 unique leaf-concepts corresponding to Wikipedia articles. Each article belongs to 4.75 categories on average. A snippet of this ontology is illustrated in Fig.&#x00A0;<a class="fig" href="#fig1">1</a>.</p>    <p>The next step is to extract concepts from group conversation transcripts and link the sentences to form concept flows over the ontology. To extract concepts from the discourse, we match the surface forms of concepts <strong>E</strong>     <sub>     <em>i</em>     </sub> from the <span class="inline-equation"><span class="tex">$i^{\mathsf {th}}$</span>     </span> sentence <strong>S</strong>     <sub>     <em>i</em>     </sub> within in transcript <strong>D</strong> against the Wikipedia article titles (leaves in the Wikipedia concept ontology). Because each concept-leaf is associated with one or more parent and ancestor concepts, we say that each sentence is associated with a concept tree as an induced subgraph <strong>C</strong>     <sub>     <em>i</em>     </sub> from the concept ontology. <figure id="fig2">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186943/images/www18companion-183-fig2.jpg" class="img-responsive" alt="Figure 2"       longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 2:</span>      <span class="figure-title">A partial example of the Intelligence<sup>2</sup> debate <em>Blame Big Pharma for Out-of-Control Health Care Costs</em>. Sentences are color-coded by speaker. Bold texts are extracted concepts shown in Fig. 1. At bottom is a flow diagram over concepts mentioned during the debate.</span>     </div>     </figure>    </p>    <p>Next we need to link concepts across sentences in the discourse. This requires some notion of concept similarity. There are many ways to do this. We initially tried to adapt the Jaccard coefficient, but this did not work well because it fails to consider the concept granularity and instead treats all concepts, regardless their position in the ontology, equally. To properly weight the concepts, we apply TF-IDF weighting to the extracted concepts by treating them as &#x201C;words&#x201D; and the sentences as &#x201C;documents&#x201D;. We further define the concept feature vector <em>V<sub>i</sub>     </em> of the <span class="inline-equation"><span class="tex">$i^{\mathsf {th}}$</span>     </span> sentence as <div class="table-responsive" id="Xeq1">     <div class="display-equation">      <span class="tex mytex">\begin{equation} {\displaystyle \mathbf {V}_i = \left\lbrace \mathbb {I}(c_k \in \mathbf {C}_i)\times \left(1 + \log \frac{N}{\sum _{j=1}^{N}\mathbb {I}(c_k \in \mathbf {C}_j)}\right)\bigg \vert k \in \lbrace 1\ldots m\rbrace \right\rbrace , } \end{equation} </span>      <br/>      <span class="equation-number">(1)</span>     </div>     </div> in which <em>m</em> and <em>N</em> are the number of concepts and sentences respectively. We can get the word feature vector <strong>U</strong>     <sub>     <em>i</em>     </sub> using the same method. We now define the sentence similarity as the combination of the word and concept cosine similarities: <div class="table-responsive" id="eq1">     <div class="display-equation">      <span class="tex mytex">\begin{equation} \mathsf {sim}(\mathbf {S}_i, \mathbf {S}_j) = \theta (\mathbf {V}_i, \mathbf {V}_j) + \theta (\mathbf {U}_i, \mathbf {U}_j). \end{equation} </span>      <br/>      <span class="equation-number">(2)</span>     </div>     </div>    </p>    <p>Using Eq.&#x00A0;<a class="eqn" href="#eq1">2</a> we can now construct concept flows by linking similar sentences and highlighting important concepts in the sentences. For each sentence <strong>S</strong>     <sub>     <em>i</em>     </sub> &#x2208; <strong>D</strong>, we find the most similar sentence <strong>S</strong>     <sub>     <em>j</em>     </sub> in which <em>i</em> < <em>j</em> and illustrate the concept relationships using a concept network as shown in Fig.&#x00A0;<a class="fig" href="#fig2">2</a>.</p>   </section>   <section id="sec-5">    <header>     <div class="title-info">     <h2>      <span class="section-number">3</span> Experiments</h2>     </div>    </header>    <p>We performed a user study to evaluate how well this model captures sentence-level semantic similarities. We compared our model with the results of TopicFlow (LDA)&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>], word overlap, averaged sentence embeddings from GloVe, and a text-only version of our model using only <em>&#x03B8;</em>(<strong>U</strong>     <sub>     <em>i</em>     </sub>, <strong>U</strong>     <sub>     <em>j</em>     </sub>) from Eq.&#x00A0;<a class="eqn" href="#eq1">2</a>. Our dataset consisted of four debates from intelligence<sup>2</sup> covering Politics, Health, Science and Economics. We randomly selected 20 sentences from each debate and used the methods mentioned above to find the most similar sentence for each selected sentence. Then for each sentence pair, we asked 10 human annotators to rank the similarity on a 0 to 4 Likert Scale. The results are in Fig.&#x00A0;<a class="fig" href="#fig3">3</a> with 95% confidence intervals. <figure id="fig3">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186943/images/www18companion-183-fig3.svg" class="img-responsive" alt="Figure 3"       longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 3:</span>      <span class="figure-title">Annotated sentence semantic similarity scores.</span>     </div>     </figure>    </p>    <p>The proposed method (Concept in Fig.&#x00A0;<a class="fig" href="#fig3">3</a>) finds more coherent sentence pairs compared to others. We believe this is because it can better distinguish concept-level similarity. For example, TF-IDF returns <em>So what is wrong with that argument?</em> as the most similar sentence to <em>So, what is wrong with the FDA...</em>, which ignores FDA, whereas our model returns <em>Look, the FDA is the biggest barrier here.</em> instead. LDA performs poorly because the corpus size is limited. Another finding is that averaged word embeddings perform the same as word overlap.</p>   </section>   <section id="sec-6">    <header>     <div class="title-info">     <h2>      <span class="section-number">4</span> Conclusions</h2>     </div>    </header>    <p>We describe a Wikipedia-based concept ontology and a method to find semantically similar sentences. We further present a preliminary visualization using the proposed method to discover concept flows in debates. As for future work, we will employ entity disambiguation into this model to improve the entity detection accuracy, create an interactive visualization tool, and investigate how to model concept shifts in discourse.</p>   </section>   <section id="sec-7">    <header>     <div class="title-info">     <h2>      <span class="section-number">5</span> Acknowledgement</h2>     </div>    </header>    <p>This work is sponsored by the Army Research Office under contract W911NF-17-1-0448.</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>     <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>     </div>    </header>    <ul class="bibUl">     <li id="BibPLXBIB0001" label="[1]">Mauro Dragoni, C&#x00E9;lia Da&#x00A0;Costa Pereira, Andrea&#x00A0;GB Tettamanzi, and Serena Villata. 2016. Smack: An argumentation framework for opinion mining. In <em>      <em>IJCAI</em>     </em>. IJCAI/AAAI Press, 4242&#x2013;4243.</li>     <li id="BibPLXBIB0002" label="[2]">Vinodh Krishnan and Jacob Eisenstein. 2016. Nonparametric Bayesian Storyline Detection from Microtexts. In <em>      <em>EMNLP Workshop</em>     </em>.</li>     <li id="BibPLXBIB0003" label="[3]">Sana Malik, Alison Smith, Timothy Hawes, Panagis Papadatos, Jianyu Li, Cody Dunne, and Ben Shneiderman. 2013. TopicFlow: visualizing topic alignment of twitter data over time. In <em>      <em>ASONAM</em>     </em>. ACM, 720&#x2013;726.</li>     <li id="BibPLXBIB0004" label="[4]">Dafna Shahaf, Carlos Guestrin, and Eric Horvitz. 2012. Trains of thought: Generating information maps. In <em>      <em>WWW</em>     </em>. ACM, 899&#x2013;908.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">     <h2>FOOTNOTE</h2>    </div>   </header>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>     <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3186943">https://doi.org/10.1145/3184558.3186943</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div>  </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Visualizing the Flow of Discourse with a Concept
+  Ontology</title><!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Visualizing the Flow of Discourse
+          with a Concept Ontology</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Baoxu</span> <span class=
+          "surName">Shi</span> University of Notre Dame, <a href=
+          "mailto:bshi@nd.edu">bshi@nd.edu</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Tim</span> <span class=
+          "surName">Weninger</span> University of Notre Dame,
+          <a href="mailto:tweninge@nd.edu">tweninge@nd.edu</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186943"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186943</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Understanding and visualizing human discourse has
+        long being a challenging task. Although recent work on
+        argument mining have shown success in classifying the role
+        of various sentences, the task of recognizing concepts and
+        understanding the ways in which they are discussed remains
+        challenging. Given an email thread or a transcript of a
+        group discussion, our task is to extract the relevant
+        concepts and understand how they are referenced and
+        re-referenced throughout the discussion. In the present
+        work, we present a preliminary approach for extracting and
+        visualizing group discourse by adapting Wikipedia's
+        category hierarchy to be an external concept ontology. From
+        a user study, we found that our method achieved better
+        results than 4 strong alternative approaches, and we
+        illustrate our visualization method based on the extracted
+        discourse flows.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Baoxu Shi and Tim Weninger. 2018. Visualizing the Flow of
+          Discourse with a Concept Ontology. In <em>WWW '18
+          Companion: The 2018 Web Conference Companion,</em>
+          <em>April 23–27, 2018,</em> <em>Lyon, France. ACM, New
+          York, NY, USA</em> 2 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3186943" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3186943</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Language has long been one of the most efficient forms of
+      communication between people. Technology that can parse and
+      extract information from these conversations currently exists
+      and operates with reasonable accuracy; however, there is a
+      gap in our ability to understand and visualize these
+      conversational statements. Current and previous work in the
+      analysis of news articles and social posts have demonstrated
+      the ability to extract and quantify written
+      ideas&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0001">1</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0002">2</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0004">4</a>]; however,
+      these tools operate over large text corpora, so they are not
+      able to discover concept flows of individual conversations
+      (or documents). Related work in natural language processing
+      aims to extract named entities or important concepts and
+      entities from sentences. Although Named Entity Recognition
+      may be able to extract high-quality entities, which could be
+      viewed as concepts, they are usually limited to a few entity
+      types.</p>
+      <p>The goal of the present work is different. Here we
+      transform a group conversation into a network over concepts
+      in order to visualize the concept flows so that we might
+      better understand the latent communication patterns and group
+      dynamics. Our key insight is to treat human group
+      conversations as trails over a graph of concepts. With this
+      perspective, an individual's ideas as expressed through
+      language can be mapped to explicit entities or concepts, and,
+      therefore, a single argument can be treated as a path over
+      the graph of concepts.</p>
+      <p>We overcome the limitations mentioned above by distilling
+      a high-quality concept ontology from Wikipedia and using its
+      entity surface forms to detect concepts in human discourse.
+      We then find concept flows by computing sentence similarities
+      using a joint text and concept similarity. The code and data
+      are available at <a class="link-inline force-break" href=
+      "https://github.com/bxshi/DiscourseVisualization">https://github.com/bxshi/DiscourseVisualization</a>.</p>
+    </section>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Discourse
+          Graphification</h2>
+        </div>
+      </header>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186943/images/www18companion-183-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Illustration of a snippet of the concept
+          graph. Bold texts are extracted concepts recognized as
+          important in the Intelligence<sup>2</sup> debate
+          referenced in Fig. 2.</span>
+        </div>
+      </figure>
+      <p>Here we assume each Wikipedia article represents a unique
+      concept and further treat the categories that an article
+      belongs to as more general concepts. This solution assumes
+      that the Wikipedia category hierarchy is a clean ontology.
+      This is not the case. So the first step is to perform some
+      pre-processing to transform the Wikipedia category hierarchy
+      into an ontology.</p>
+      <p>We use the October 2017 English dump of all Wikipedia
+      articles and categories. We begin by removing all
+      maintenance, tracking, chronological and list-like pages.
+      This results in a graph rooted at category Main Topic
+      Classifications with 976,163 category nodes, 1,901,706
+      fine-to-coarse concept edges, and 11,967,618 unique
+      leaf-concepts corresponding to Wikipedia articles. Each
+      article belongs to 4.75 categories on average. A snippet of
+      this ontology is illustrated in Fig.&nbsp;<a class="fig"
+      href="#fig1">1</a>.</p>
+      <p>The next step is to extract concepts from group
+      conversation transcripts and link the sentences to form
+      concept flows over the ontology. To extract concepts from the
+      discourse, we match the surface forms of concepts
+      <strong>E</strong> <sub><em>i</em></sub> from the
+      <span class="inline-equation"><span class="tex">$i^{\mathsf
+      {th}}$</span></span> sentence <strong>S</strong>
+      <sub><em>i</em></sub> within in transcript <strong>D</strong>
+      against the Wikipedia article titles (leaves in the Wikipedia
+      concept ontology). Because each concept-leaf is associated
+      with one or more parent and ancestor concepts, we say that
+      each sentence is associated with a concept tree as an induced
+      subgraph <strong>C</strong> <sub><em>i</em></sub> from the
+      concept ontology.</p>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186943/images/www18companion-183-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">A partial example of the
+          Intelligence<sup>2</sup> debate <em>Blame Big Pharma for
+          Out-of-Control Health Care Costs</em>. Sentences are
+          color-coded by speaker. Bold texts are extracted concepts
+          shown in Fig. 1. At bottom is a flow diagram over
+          concepts mentioned during the debate.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>Next we need to link concepts across sentences in the
+      discourse. This requires some notion of concept similarity.
+      There are many ways to do this. We initially tried to adapt
+      the Jaccard coefficient, but this did not work well because
+      it fails to consider the concept granularity and instead
+      treats all concepts, regardless their position in the
+      ontology, equally. To properly weight the concepts, we apply
+      TF-IDF weighting to the extracted concepts by treating them
+      as “words” and the sentences as “documents”. We further
+      define the concept feature vector <em>V<sub>i</sub></em> of
+      the <span class="inline-equation"><span class=
+      "tex">$i^{\mathsf {th}}$</span></span> sentence as</p>
+      <div class="table-responsive" id="Xeq1">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} {\displaystyle
+          \mathbf {V}_i = \left\lbrace \mathbb {I}(c_k \in \mathbf
+          {C}_i)\times \left(1 + \log \frac{N}{\sum
+          _{j=1}^{N}\mathbb {I}(c_k \in \mathbf {C}_j)}\right)\bigg
+          \vert k \in \lbrace 1\ldots m\rbrace \right\rbrace , }
+          \end{equation}</span><br />
+          <span class="equation-number">(1)</span>
+        </div>
+      </div>in which <em>m</em> and <em>N</em> are the number of
+      concepts and sentences respectively. We can get the word
+      feature vector <strong>U</strong> <sub><em>i</em></sub> using
+      the same method. We now define the sentence similarity as the
+      combination of the word and concept cosine similarities:
+      <div class="table-responsive" id="eq1">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} \mathsf
+          {sim}(\mathbf {S}_i, \mathbf {S}_j) = \theta (\mathbf
+          {V}_i, \mathbf {V}_j) + \theta (\mathbf {U}_i, \mathbf
+          {U}_j). \end{equation}</span><br />
+          <span class="equation-number">(2)</span>
+        </div>
+      </div>
+      <p></p>
+      <p>Using Eq.&nbsp;<a class="eqn" href="#eq1">2</a> we can now
+      construct concept flows by linking similar sentences and
+      highlighting important concepts in the sentences. For each
+      sentence <strong>S</strong> <sub><em>i</em></sub> ∈
+      <strong>D</strong>, we find the most similar sentence
+      <strong>S</strong> <sub><em>j</em></sub> in which <em>i</em>
+      &lt; <em>j</em> and illustrate the concept relationships
+      using a concept network as shown in Fig.&nbsp;<a class="fig"
+      href="#fig2">2</a>.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span>
+          Experiments</h2>
+        </div>
+      </header>
+      <p>We performed a user study to evaluate how well this model
+      captures sentence-level semantic similarities. We compared
+      our model with the results of TopicFlow (LDA)&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0003">3</a>], word
+      overlap, averaged sentence embeddings from GloVe, and a
+      text-only version of our model using only
+      <em>θ</em>(<strong>U</strong> <sub><em>i</em></sub> ,
+      <strong>U</strong> <sub><em>j</em></sub> ) from
+      Eq.&nbsp;<a class="eqn" href="#eq1">2</a>. Our dataset
+      consisted of four debates from intelligence<sup>2</sup>
+      covering Politics, Health, Science and Economics. We randomly
+      selected 20 sentences from each debate and used the methods
+      mentioned above to find the most similar sentence for each
+      selected sentence. Then for each sentence pair, we asked 10
+      human annotators to rank the similarity on a 0 to 4 Likert
+      Scale. The results are in Fig.&nbsp;<a class="fig" href=
+      "#fig3">3</a> with 95% confidence intervals.</p>
+      <figure id="fig3">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186943/images/www18companion-183-fig3.svg"
+        class="img-responsive" alt="Figure 3" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 3:</span> <span class=
+          "figure-title">Annotated sentence semantic similarity
+          scores.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>The proposed method (Concept in Fig.&nbsp;<a class="fig"
+      href="#fig3">3</a>) finds more coherent sentence pairs
+      compared to others. We believe this is because it can better
+      distinguish concept-level similarity. For example, TF-IDF
+      returns <em>So what is wrong with that argument?</em> as the
+      most similar sentence to <em>So, what is wrong with the
+      FDA...</em>, which ignores FDA, whereas our model returns
+      <em>Look, the FDA is the biggest barrier here.</em> instead.
+      LDA performs poorly because the corpus size is limited.
+      Another finding is that averaged word embeddings perform the
+      same as word overlap.</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span>
+          Conclusions</h2>
+        </div>
+      </header>
+      <p>We describe a Wikipedia-based concept ontology and a
+      method to find semantically similar sentences. We further
+      present a preliminary visualization using the proposed method
+      to discover concept flows in debates. As for future work, we
+      will employ entity disambiguation into this model to improve
+      the entity detection accuracy, create an interactive
+      visualization tool, and investigate how to model concept
+      shifts in discourse.</p>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span>
+          Acknowledgement</h2>
+        </div>
+      </header>
+      <p>This work is sponsored by the Army Research Office under
+      contract W911NF-17-1-0448.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Mauro Dragoni, Célia
+        Da&nbsp;Costa Pereira, Andrea&nbsp;GB Tettamanzi, and
+        Serena Villata. 2016. Smack: An argumentation framework for
+        opinion mining. In <em><em>IJCAI</em></em> . IJCAI/AAAI
+        Press, 4242–4243.</li>
+        <li id="BibPLXBIB0002" label="[2]">Vinodh Krishnan and
+        Jacob Eisenstein. 2016. Nonparametric Bayesian Storyline
+        Detection from Microtexts. In <em><em>EMNLP
+        Workshop</em></em> .</li>
+        <li id="BibPLXBIB0003" label="[3]">Sana Malik, Alison
+        Smith, Timothy Hawes, Panagis Papadatos, Jianyu Li, Cody
+        Dunne, and Ben Shneiderman. 2013. TopicFlow: visualizing
+        topic alignment of twitter data over time. In
+        <em><em>ASONAM</em></em> . ACM, 720–726.</li>
+        <li id="BibPLXBIB0004" label="[4]">Dafna Shahaf, Carlos
+        Guestrin, and Eric Horvitz. 2012. Trains of thought:
+        Generating information maps. In <em><em>WWW</em></em> .
+        ACM, 899–908.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186943">https://doi.org/10.1145/3184558.3186943</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

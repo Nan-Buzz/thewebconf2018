@@ -1,1 +1,1643 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> <head>  <title>Fine-grained Video Attractiveness Prediction Using Multimodal Deep Learning on a Large Real-world Dataset</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script> </head> <body id="main">  <section class="front-matter">   <section>    <header class="title-info">    <div class="journal-title">     <h1>      <span class="title">Fine-grained Video Attractiveness Prediction Using Multimodal Deep Learning on a Large Real-world Dataset</span>      <br/>      <span class="subTitle"/>     </h1>    </div>    </header>    <div class="authorGroup">    <div class="author">     <span class="givenName">Xinpeng</span>     <span class="surName">Chen</span>     Wuhan University<a class="fn" href="#fn1" id="foot-fn1"><sup>&#x204E;</sup></a>,</div>    <div class="author">     <span class="givenName">Jingyuan</span>     <span class="surName">Chen</span>     National University of Singapore    </div>    <div class="author">     <span class="givenName">Lin</span>     <span class="surName">Ma</span>     Tencent AI Lab, <a href="mailto:forest.linma@gmail.com">forest.linma@gmail.com</a>    </div>    <div class="author">     <span class="givenName">Jian</span>     <span class="surName">Yao</span>     Wuhan University    </div>    <div class="author">     <span class="givenName">Wei</span>     <span class="surName">Liu</span>     Tencent AI Lab, <a href="mailto:wliu@ee.columbia.edu">wliu@ee.columbia.edu</a>    </div>    <div class="author">     <span class="givenName">Jiebo</span>     <span class="surName">Luo</span>     University of Rochester    </div>    <div class="author">     <span class="givenName">Tong</span>     <span class="surName">Zhang</span>     Tencent AI Lab    </div>                                </div>    <br/>    <div class="pubInfo">    <p>DOI: <a href="https://doi.org/10.1145/3184558.3186584" target="_blank">https://doi.org/10.1145/3184558.3186584</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">    <p>     <small>Nowadays, billions of videos are online ready to be viewed and shared. Among an enormous volume of videos, some popular ones are widely viewed by online users while the majority attract little attention. Furthermore, within each video, different segments may attract significantly different numbers of views. This phenomenon leads to a challenging yet important problem, namely fine-grained video attractiveness prediction, which only relies on video contents to forecast video attractiveness at fine-grained levels, specifically video segments of several second length in this paper. However, one major obstacle for such a challenging problem is that no suitable benchmark dataset currently exists. To this end, we construct the first fine-grained video attractiveness dataset (FVAD), which is collected from one of the most popular video websites in the world. In total, the constructed FVAD consists of 1,019 drama episodes with 780.6 hours covering different categories and a wide variety of video contents. Apart from the large amount of videos, hundreds of millions of user behaviors during watching videos are also included, such as &#x201C;view counts&#x201D;, &#x201C;fast-forward&#x201D;, &#x201C;fast-rewind&#x2019;, and so on, where &#x201C;view counts&#x201D; reflects the video attractiveness while other engagements capture the interactions between the viewers and videos. First, we demonstrate that video attractiveness and different engagements present different relationships. Second, FVAD provides us an opportunity to study the fine-grained video attractiveness prediction problem. We design different sequential models to perform video attractiveness prediction by relying solely on video contents. The sequential models exploit the multimodal relationships between visual and audio components of the video contents at different levels. Experimental results demonstrate the effectiveness of our proposed sequential models with different visual and audio representations, the necessity of incorporating the two modalities, and the complementary behaviors of the sequential prediction models at different levels.</small>    </p>    </div>    <div class="CCSconcepts">    <p> <small> <span style="font-weight:bold;">CCS Concepts:</span> &#x2022;<strong> Computing methodologies </strong>&#x2192; <em>Scene understanding;</em></small> </p>    </div>    <div class="classifications">    <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>Video Attractiveness</small>, </span>     <span class="keyword">      <small> Fine-grained</small>, </span>     <span class="keyword">      <small> Multimodal Fusion</small>, </span>     <span class="keyword">      <small> Long Short-Term Memory&#x00A0;(LSTM)</small>     </span>    </div>    <br/>    <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Xinpeng Chen, Jingyuan Chen, Lin Ma, Jian Yao, Wei Liu, Jiebo Luo, and Tong Zhang. 2018. Fine-grained Video Attractiveness Prediction Using Multimodal Deep Learning on a Large Real-world Dataset. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 8 Pages. <a href="https://doi.org/10.1145/3184558.3186584" class="link-inline force-break"       target="_blank">https://doi.org/10.1145/3184558.3186584</a></small>     </p>    </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-8">    <header>    <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>    </div>    </header>    <p>Today, digital videos are booming on the Internet. It is stated that traffic from online videos will constitute over 80% of all consumer Internet traffic by 2020<a class="fn" href="#fn2" id="foot-fn2"><sup>1</sup></a>. Meanwhile, due to the advance of mobile devices, millions of new videos are streaming into the Web everyday. Interestingly, among an enormous volume of videos, only a small number of them are attractive to draw a great number of viewers, while the majority receive little attention. Even within the same video, different segments present different attractiveness to the audiences with a large variance. A video or segment is considered attractive if it gains a high view count based on the statistics gathered on a large number of users. The larger the view count is, the more attractive the corresponding video or segment is. The view count directly reflects general viewers&#x2019; preferences, which are thus regarded as the sole indicator of the video attractiveness within the scope of this paper. Considering one episode from a hot TV series, as an example in Fig&#x00A0;<a class="fig" href="#fig1">1</a>&#x00A0;(a), the orange line indicates the view counts (attractiveness) for the short video segments, which are crawled from one of the most popular video websites. As can be seen, video attractiveness varies greatly over different video segments, where the maximum view count is more than twice of the minimum value.</p>    <p>Predicting the attractiveness of video segments in advance can benefit many applications, such as online marketing&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>] and video recommendation&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>]. Regarding online marketing, accurate early attractiveness prediction of video segments can facilitate optimal planning of advertising campaigns and thus maximize the revenues. For video recommender systems, the proposed method provides an opportunity to recommend video segments based on their attractiveness scores. <figure id="fig1">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186584/images/www18companion-138-fig1.jpg" class="img-responsive" alt="Figure 1"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 1:</span>      <span class="figure-title">Definition of fine-grained video attractiveness prediction. The view counts (video attractiveness) for fine-grained video segments are shown, where the orange line denotes the ground-truth view counts based on hundreds of millions of active users. It can be observed that video attractiveness varies significantly over time. The main reason is that the contents of different video segments are of great diversity, with different visual information (<em>e.g.</em>, peaceful scenery vs. fierce battle) and different audio information (<em>e.g.</em>, soft background music vs. meaningful conversations). Such visual and audio contents together greatly influence the video attractiveness. Note that the purple line predicted based on both the visual and audio data using our proposed model in Sec.&#x00A0;<a class="sec" href="#sec-17">4</a> can well track the trends of the ground-truth video attractiveness.</span>     </div>    </figure>    </p>    <p>However, predicting the video attractiveness is a very challenging task. First, the attractiveness of a video can be influenced by many external factors, such as the time that the video is posted online, the advertisement intensity in the video, and so on. For the same category of videos, the more timely a video is delivered, the more views it will receive. Second, video attractiveness is also content-sensitive as shown in Fig.&#x00A0;<a class="fig" href="#fig1">1</a>. Therefore, in order to make reliable predictions of video attractiveness, both visual and audio contents need to be analyzed. Several existing works&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0026">26</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0027">27</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0038">38</a>] have explored video interestingness or popularity. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0038">38</a>] aimed at comparing the interestingness of two videos, while [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0026">26</a>] relied on the historical information given by early popularity measurements. One problem is that the existing models only work on the video-level attractiveness prediction, while the fine-grained segment-level attractiveness prediction remains an open question without any attention. Another challenging problem is the lacking of large-scale real-world data. Recently released video datasets mostly focus on video content understanding, such as classification and captioning, specifically Sports-1M&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0015">15</a>], YouTube-8M&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>], ActivityNet&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0009">9</a>], UCF-101&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0030">30</a>], FCVID&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>], and TGIF&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>]. These datasets do not incorporate any labels related to video attractiveness. In order to build reliable video attractiveness prediction systems, accurately labeled datasets are required. However, the existing video datasets for interestingness prediction&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0028">28</a>] are annotated by crowdsourcing. Such annotations only reflect the subjective opinions of a small number of viewers. Thus it cannot indicate the true attractiveness of the video sequence or segment.</p>    <p>In order to tackle the fine-grained video attractiveness prediction problem, we construct the <strong>F</strong>ine-grained <strong>V</strong>ideo <strong>A</strong>ttractiveness <strong>D</strong>ataset (FVAD), a new large-scale video benchmark for video attractiveness prediction. We collect the popular videos from one of the most popular video websites, which possesses thousands of millions of registered users. To date, FVAD contains 1,019 video episodes of 780.6 hours long in total, covering different categories and a wide variety of video contents. Moreover, the user engagements associated with each video are also included. Besides the view counts (attractiveness), there are other 9 types of engagement indicators associated with a video sequence to record the interactions between the viewers and videos, as illustrated in Fig.&#x00A0;<a class="fig" href="#fig3">3</a>. We summarize our contributions as follows:</p>    <ul class="list-no-style">    <li id="list1" label="&#x2022;">We build the largest real-world dataset FVAD for dealing with the task of fine-grained video attractiveness prediction. The video sequences and their associated &#x201C;labels&#x201D; in the form of view count, as well as the viewers&#x2019; engagements with videos are provided. The relationships between video attractiveness and engagements are examined and studied.<br/></li>    <li id="list2" label="&#x2022;">Several sequential models for exploiting the relationships between visual and audio components for fine-grained video attractiveness prediction are proposed. Experimental results demonstrate the effectiveness of our proposed models and the necessity of jointly considering both the visual and audio modalities.<br/></li>    </ul>    <figure id="fig2">    <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186584/images/www18companion-138-fig2.jpg" class="img-responsive" alt="Figure 2"      longdesc=""/>    <div class="figure-caption">     <span class="figure-number">Figure 2:</span>     <span class="figure-title">The statistics of 42 kinds of dramas in our constructed FVAD. The blue bars indicate the number of videos per TV series, while the orange ones indicate the video attractiveness (view counts) in the <strong>Log</strong>      <sub>10</sub> domain.</span>    </div>    </figure>   </section>   <section id="sec-9">    <header>    <div class="title-info">     <h2>      <span class="section-number">2</span> Related Work</h2>    </div>    </header>    <section id="sec-10">    <header>     <div class="title-info">      <h3>       <span class="section-number">2.1</span> Video Datasets</h3>     </div>    </header>    <p>Video datasets have played a critical role in advancing computer vision algorithms for video understanding. Several well labeled small-scale datasets, such as XM2VTS&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0023">23</a>], KTH&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0018">18</a>], Hollywood-2&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0022">22</a>], Weizmann&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0002">2</a>], UCF101&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0030">30</a>], THUMOS&#x2019;15&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0012">12</a>], HMDB&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0017">17</a>], and ActivityNet&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0009">9</a>], provide benchmarks for face recognition&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0021">21</a>], human action recognition&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0011">11</a>] and activity understanding. There are also other video datasets focusing on visual content recognition, video captioning, and so on, such as FCVID&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0014">14</a>] and TGIF&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0019">19</a>]. In order to make a full exploitation on the video content understanding, super large video datasets have been recently constructed. Sports-1M&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0015">15</a>] is a dataset for sports video classification with 1 million videos. YFCC&#x2019;14&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0035">35</a>] is a large multimedia dataset including about 0.8 million videos. The recent YouTube-8M&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0001">1</a>] is so far the largest dataset for multi-label video classification, consisting of about 8 million videos. However, it is prohibitively expensive and time consuming to obtain a massive amount of well-labeled data. Therefore, these datasets inevitably introduce label noise when the labels are produced automatically. The most important thing is that all these datasets focus on understanding video contents, without touching on the video attractiveness task. MediaEval&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0028">28</a>] is the only known public dataset, which is closely related to our work. It is used for predicting the interesting frames in movie trailers. However, MediaEval is a small dataset that only consists of 52 trailers for training and 26 trailers for testing. In addition, the interesting frames in MediaEval are labeled by a small number of subjects, which is not consistent with the real-life situation of massive diverse audiences.</p>    </section>    <section id="sec-11">    <header>     <div class="title-info">      <h3>       <span class="section-number">2.2</span> Video Attractiveness Prediction</h3>     </div>    </header>    <p>A thread of work for predicting video interestingness or popularity is related to our proposed video attractiveness prediction. In&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0020">20</a>], where Flickr images are used to measure the interestingness of video frames. Flickr images were assumed to be mostly interesting compared with many video frames since the former are generally well-composed and selected for sharing. A video frame is considered interesting if it matches (using image local features) with a large number of Flickr images. In&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0038">38</a>], after extracting and combining the static and temporal features using kernel tricks, a relative score is predicted to determine which video is more interesting than the other using ranking SVM given a pair of videos. In&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0013">13</a>], two datasets are collected based on interestingness ranking from Flickr and YouTube, and the interestingness of a video is predicted in the same way as&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0038">38</a>]. In&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0026">26</a>], the historical information given by early popularity measurements is used for video popularity prediction. A Hawkes intensity process is proposed to explain the complex popularity history of each video according to its type of content, network of diffusion, and sensitive to promotion&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0027">27</a>]. Different from [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0020">20</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0038">38</a>], video contents are not explicitly used for video popularity prediction&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0026">26</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0027">27</a>].</p>    <p>Our work is fundamentally different from the previous works. First, large-scale real-world user behaviors on one of the most popular video websites, are crawled to construct the proposed FVAD. Second,we aim to predict the fine-grained actual video attractiveness (view counts), compared with the video-level interestingness&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0020">20</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0038">38</a>] and popularity&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0026">26</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0027">27</a>]. Third, we develop different sequential multimodal models to jointly learn the relationships between visual and audio components for the video attractiveness prediction. To the best of our knowledge, there is no existing work to handle and study the fine-grained video attractiveness prediction problem. <figure id="fig3">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186584/images/www18companion-138-fig3.jpg" class="img-responsive" alt="Figure 3"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 3:</span>       <span class="figure-title">The other 9 types of viewers&#x2019; engagements with the video sequences while watching. The view counts are also presented together with each engagement. It can be observed that the view counts present different correlations to these 9 types of viewers&#x2019; engagements. From top-left to bottom-right: 1) Exit: the number of viewers exiting the show, 2) Start of Fast-Forward (FF): the number of viewers beginning FF, 3) End of Fast-Forward: the number of viewers stopping FF, 4) Start of Fast-Rewind (FR): the number of viewers beginning FR, 5) End of Fast-Rewind: the number of viewers stopping FR, 6) Bullet Screens: the number of bullet screens sent by viewers, 7) Bullet Screen Likes: the number of bullet screen likes of the viewers, 8) Fast-Forward Skips: the number of skip times during FF, and 9) Fast-Rewind Skips: the number of skip times during FR.</span>      </div>     </figure>    </p>    </section>   </section>   <section id="sec-12">    <header>    <div class="title-info">     <h2>      <span class="section-number">3</span> FVAD Construction</h2>    </div>    </header>    <p>This section elaborates on the FVAD dataset construction, covering the video collecting strategy, the video attractiveness and engagements, and the analysis of their relationships.</p>    <section id="sec-13">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.1</span> Video Collection</h3>     </div>    </header>    <p>To construct a representative dataset which contains video segments with diverse attractiveness degrees, video contents should cover different categories and present a broad range of diversities. We manually select a set of popular TV serials from the website. For different episodes and fragments within each episode, as the story develops, it is obvious that the attractiveness degree goes upward and downward. As shown in Fig. <a class="fig" href="#fig1">1</a>, the video contents, including the visual and audio components, significantly affect the video attractiveness presenting diverse view counts. For our FVAD dataset, we collected 1,019 episodes with a total duration of 780.6 hours long. The number of episodes with respect to each TV series is illustrated by the blue bars in Fig.&#x00A0;<a class="fig" href="#fig2">2</a>. The average duration of all the episodes in FVAD is 45 minutes. Moreover, all the episodes were downloaded in high quality with the resolution of 640 &#x00D7; 480.</p>    </section>    <section id="sec-14">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.2</span> Video Attractiveness</h3>     </div>    </header>    <figure id="fig4">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186584/images/www18companion-138-fig4.jpg" class="img-responsive" alt="Figure 4"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 4:</span>      <span class="figure-title">A simple example of bullet screens. Different users may express real-time opinions directly upon their interested frames.</span>     </div>    </figure>    <p>In this paper, we focus on the fine-grained video attractiveness. Therefore, we need to collect the attractiveness indicators of the fine-grained video fragments. As aforementioned, the attractiveness degree for each video fragment is quantified by the total number of views. As shown in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0031">31</a>], visual media tends to receive views over some period of time. To normalize this effect, we divide the number of views by the duration from the upload date of the given episode to the collection date, which is 30th November, 2017. The orange bar in Fig. <a class="fig" href="#fig2">2</a> illustrates the total video attractiveness of the TV series by summing all the view counts from all the episodes in each season. In order to make a better visualization, the attractiveness value is displayed in the <strong>Log</strong>     <sub>10</sub> domain. It can be observed that the video attractiveness varies significantly among different TV series. Even for the same TV series, different seasons present different attractiveness.</p>    </section>    <section id="sec-15">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.3</span> Video Engagements</h3>     </div>    </header>    <p>In addition to video views, we also collected 9 user engagement-related indicators regarding each video fragment, namely Exit, Start of Fast-Forward, End of Fast-Forward, Start of Fast-Rewind, End of Fast-Rewind, Fast-Forward Skips, Fast-Rewind Skips, Bullet Screens, and Bullet Screen Likes. The first 7 engagements are the natural user behaviors during the watching process, while the last two engagements, namely the Bullet Screens and Bullet Screen likes, involve deep interactions between viewers and videos.</p>    <p>Bullet Screens, also named as time-synchronized comments and first introduced in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0037">37</a>], allow users to express opinions directly on the frames of interest in a real-time manner. Intuitively, the user behaviors of commenting on a frame can be regarded as implicit feedback reflecting the frame-level preference, while the image features of the reviewed frame and the textual features in the posted comments can further help model the fine-grained preference from different perspectives. Fig.&#x00A0;<a class="fig" href="#fig4">4</a> shows a simple example of bullet screen. As can be seen, different users may express real-time opinions directly upon their interested frames. The number after each bullet screen in Fig.&#x00A0;<a class="fig" href="#fig4">4</a> indicates the total number of likes received by the corresponding bullet screen from the audience. The comment words from Bullet Screens can more accurately express the viewers&#x2019; preferences and opinions. However, for this paper, we only collect the numbers of the Bullet Screens as well as their associated number of likes.</p>    <p>Fig.&#x00A0;<a class="fig" href="#fig3">3</a> illustrates the 9 different engagement indicators as well as the video attractiveness of one episode. It is noticed that the distributions of these different engagements are different. Each of them measures one aspect of users&#x2019; engagement behaviors. These engagement characters intuitively correlate with the video attractiveness indicator (view counts). For example, high Fast-Forward Skips values always correspond to low attractiveness, while high Start of Fast-Rewind values correspond to high attractiveness.</p>    </section>    <section id="sec-16">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.4</span> Relationships between Video Attractiveness and Engagements</h3>     </div>    </header>    <p>To evaluate the above correlations quantitatively, three kinds of coefficients, including Pearson correlation coefficient&#x00A0;(PCC), cosine similarity&#x00A0;(CS), and Spearman rank-order correlation coefficient&#x00A0;(SRCC), are used to measure the strength and direction of the association between each engagement indicator and attractiveness. The correlations are provided in Table&#x00A0;<a class="tbl" href="#tab1">1</a>. It is demonstrated that different engagement indicators present different correlations with the attractiveness, where some present positive correlations while others present negative correlations. It is not surprising that the Start of Fast-Forward and Fast-Forward Skips present the largest positive and negative correlations, respectively. However, the indicator Bullet Screens shows negative correlations with video views. One possible reason is that the actual commented frame should be the one corresponding to the time when the user began to type the bullet screen, rather than the frame when the bullet screen was posted out. Therefore, the main reason is that the data about bullet screens is not well aligned. Another possible reason is that most bullet screens are complaints about the stories, therefore being not able to represent the attractiveness of the video. It is noted that both Bullet Screen Likes and Fast-Rewind Skips show less correlations with video views. One possible reason is that the value of each indicator is relatively small, which thereby cannot reflect statistical regularities.</p>    <div class="table-responsive" id="tab1">     <div class="table-caption">      <span class="table-number">Table 1:</span>      <span class="table-title">The correlations between video attractiveness and different engagement indicators, in terms of Pearson correlation coefficient&#x00A0;(PCC), cosine similarity&#x00A0;(CS), and spearman&#x0027;s rank correlation coefficient&#x00A0;(SRCC).</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;">Indicator Name</td>       <td style="text-align:center;">PCC</td>       <td style="text-align:center;">CS</td>       <td style="text-align:center;">SRCC</td>       </tr>       <tr>       <td style="text-align:left;">Exit</td>       <td style="text-align:center;">-0.149</td>       <td style="text-align:center;">-0.148</td>       <td style="text-align:center;">-0.210</td>       </tr>       <tr>       <td style="text-align:left;">Start of Fast-Forward</td>       <td style="text-align:center;">-0.117</td>       <td style="text-align:center;">-0.117</td>       <td style="text-align:center;">-0.200</td>       </tr>       <tr>       <td style="text-align:left;">End of Fast-Forward</td>       <td style="text-align:center;">-0.537</td>       <td style="text-align:center;">-0.536</td>       <td style="text-align:center;">-0.522</td>       </tr>       <tr>       <td style="text-align:left;">Start of Fast-Rewind</td>       <td style="text-align:center;">0.327</td>       <td style="text-align:center;">0.327</td>       <td style="text-align:center;">0.368</td>       </tr>       <tr>       <td style="text-align:left;">End of Fast-Rewind</td>       <td style="text-align:center;">0.227</td>       <td style="text-align:center;">0.227</td>       <td style="text-align:center;">0.256</td>       </tr>       <tr>       <td style="text-align:left;">Bullet Screens</td>       <td style="text-align:center;">-0.139</td>       <td style="text-align:center;">-0.139</td>       <td style="text-align:center;">-0.191</td>       </tr>       <tr>       <td style="text-align:left;">Bullet Screen Likes</td>       <td style="text-align:center;">0.027</td>       <td style="text-align:center;">0.027</td>       <td style="text-align:center;">-0.020</td>       </tr>       <tr>       <td style="text-align:left;">Fast-Forward Skips</td>       <td style="text-align:center;">-0.351</td>       <td style="text-align:center;">-0.350</td>       <td style="text-align:center;">-0.315</td>       </tr>       <tr>       <td style="text-align:left;">Fast-Rewind Skips</td>       <td style="text-align:center;">0.022</td>       <td style="text-align:center;">0.022</td>       <td style="text-align:center;">0.013</td>       </tr>      </tbody>     </table>    </div>    </section>   </section>   <section id="sec-17">    <header>    <div class="title-info">     <h2>      <span class="section-number">4</span> Video Attractiveness Prediction Using Deep Learning on Large Datasets</h2>    </div>    </header>    <p>Video attractiveness prediction is a very challenging task, which may involve many external factors. For example, social influence is an important external factor, which makes a great impact on the number of views. In the Western world, the drama series such as <em>The Big Bang Theory</em> have a huge number of fans, which are of high attractiveness. However, for Chinese viewers, <em>The Big Bang Theory</em> are less attractiveness than some reality shows, such as <em>The Singer</em>. In the constructed FVAD, since user profile data is not available, we cannot track users&#x2019; culture backgrounds or consider other social-related factors. Another important external factor is the director and starring list of the corresponding TV series. Specifically, a strong cast always boosts the base attractiveness of the whole series. For example, some dramas such as <em>Empresses in the Palace</em> with many famous stars attract billions of views.</p>    <p>Besides different external factors, video contents play the most important role in the task of video attractiveness prediction. In this paper, we aim at discovering the relationships between video contents and video attractiveness. Even further, we would like to make the prediction on the video attractiveness based solely on the video contents. Therefore, we need to first eliminate the effects of external factors. We use one simple method, namely the standardization, on the attractiveness as well as the other 9 engagement indicators. With such normalization, we can obtain the video relative attractiveness, which is regarded to be determined by the video contents only, specifically the visual and audio components. In the following, we will employ the normalized video attractiveness to perform the video attractiveness prediction. <figure id="fig5">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186584/images/www18companion-138-fig5.jpg" class="img-responsive" alt="Figure 5"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 5:</span>      <span class="figure-title">An overview of our video attractiveness prediction framework. Context gating is first applied to the visual and audio representations to enrich their corresponding representations. Based on the gated representations, different multimodal fusion strategies performed at different levels are used to exploit the relationships between visual and audio components. Finally, LSTM acts as the prediction layer to make the attractiveness prediction.</span>     </div>    </figure>    </p>    <section id="sec-18">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.1</span> Video Representation</h3>     </div>    </header>    <p>To comprehensively understand video contents, we extract both visual and audio representations.</p>    <p>     <strong>Visual representation.</strong> Recently developed convolutional neural networks (CNNs), such as VGG&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0029">29</a>], Inception-X&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0010">10</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0032">32</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0033">33</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0034">34</a>] and ResNet&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0008">8</a>], are usually utilized to generate global representations of images. Relying on these CNNs, we decode each video with FFmpeg, select 1 frame per second, feed each visual frame into a CNN model, and fetch the hidden states before the classification layer as the visual feature. Specifically, to exploit the capacity of different kinds of CNN models, we experiment a variety of CNNs, namely VGG-16, VGG-19, ResNet-152, Inception-X, and the recently developed model NasNet&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0039">39</a>].</p>    <p>     <strong>Audio representation.</strong> For the acoustic modality, mel-frequency cepstral coefficient&#x00A0;(MFCC)&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0005">5</a>] is widely used in many audio-related tasks&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0036">36</a>]. In this paper, MFCC feature is also used for audio representation. Specifically, for a given audio file, the length of the sampling window is set to 25 milliseconds and meanwhile the step between successive windows is set to 10 milliseconds. In this way, there will be 100 MFCC features per second. To reduce the feature dimension, we take the average of the MFCC feature every second. Since there are two channels in the audio file, we first extract the MFCC features for each channel and then concatenate them together. As a result, the dimension of the MFCC feature for a given audio signal is <em>T</em> &#x00D7; 26, where <em>T</em> is the length of a audio signal. In addition to MFCC feature, we also use NSynth&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0006">6</a>] to encode the audio signals. NSynth is a recently developed WaveNet-style&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0025">25</a>] auto-encoder model. Concretely, we take audio fragment every 5 seconds as input into NSynth and get the output of the encoder as the audio representation.</p>    </section>    <section id="sec-19">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.2</span> Proposed Multimodal Deep Learning Models</h3>     </div>    </header>    <p>Our proposed multimodal deep learning model for video attractiveness prediction consists of three layers, namely the context gating layer, the multimodal fusion layer, and the sequential prediction layer.</p>    <p>     <strong>Context gating layer.</strong> In order to further enrich the representative properties of the visual and audio features, context gating is used, which is shown to be beneficial to video representation learning&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0024">24</a>]. Context gating is formulated as: <div class="table-responsive">      <div class="display-equation">       <span class="tex mytex">\[ \hat{X} = \sigma (WX + b) \odot X, \] </span>       <br/>      </div>     </div> where <em>X</em> is the input feature vector, which can either be visual or audio representation. <em>&#x03C3;</em> is the element-wise sigmoid activation function. &#x2299; denotes the element-wise multiplication. <span class="inline-equation"><span class="tex">$\hat{X}$</span>     </span> is the gated representation. It can be observed that context gating acts like a sentinel, which can adaptively decide which part of the input feature is useful. Moreover, with multiplication, the original representation <em>X</em> and the transformed representation <em>&#x03C3;</em>(<em>Wx</em> + <em>b</em>) are nonlinearly fused together, thus enhancing and enriching their representative abilities.</p>    <p>     <strong>Multimodal fusion layer.</strong> Video contents consist of both visual and audio information, which are complementary to each other for the video representation learning&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0001">1</a>]. Therefore, in this paper, we propose several multimodal fusion models to exploit the relationships between the gated visual and audio features to yield the final video representation. As illustrated in Fig.&#x00A0;<a class="fig" href="#fig5">5</a>, three different multimodal fusion layers performed at different levels are proposed to yield the video representation for the final attractiveness prediction.</p>    <div class="table-responsive" id="tab2">     <div class="table-caption">      <span class="table-number">Table 2:</span>      <span class="table-title">Performance comparisons of our proposed multimodal deep learning models with different visual and audio representations, as well as their combinations. The best performance (except LSTM-EGG) for each metric entry is highlighted in boldface.</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;">Model Name</td>       <td style="text-align:center;">SRCC&#x00A0;(<em>&#x03C1;</em>)</td>       <td style="text-align:center;">MAE</td>       <td style="text-align:center;">RMSE</td>       <td style="text-align:center;">RMSLE</td>       </tr>       <tr>       <td style="text-align:left;">LSTM-EGG</td>       <td style="text-align:center;">0.795</td>       <td style="text-align:center;">0.381</td>       <td style="text-align:center;">0.499</td>       <td style="text-align:center;">0.039</td>       </tr>       <tr>       <td style="text-align:left;">LSTM-AUD-MFCC&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0005">5</a>]</td>       <td style="text-align:center;">0.210</td>       <td style="text-align:center;">0.600</td>       <td style="text-align:center;">0.775</td>       <td style="text-align:center;">0.076</td>       </tr>       <tr>       <td style="text-align:left;">LSTM-AUD-NSynth&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0025">25</a>]</td>       <td style="text-align:center;">0.213</td>       <td style="text-align:center;">0.606</td>       <td style="text-align:center;">0.802</td>       <td style="text-align:center;">0.082</td>       </tr>       <tr>       <td style="text-align:left;">LSTM-VIS-VGG-16&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0029">29</a>]</td>       <td style="text-align:center;">0.323</td>       <td style="text-align:center;">0.572</td>       <td style="text-align:center;">0.726</td>       <td style="text-align:center;">0.069</td>       </tr>       <tr>       <td style="text-align:left;">LSTM-VIS-VGG-19&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0029">29</a>]</td>       <td style="text-align:center;">0.322</td>       <td style="text-align:center;">0.569</td>       <td style="text-align:center;">0.725</td>       <td style="text-align:center;">0.067</td>       </tr>       <tr>       <td style="text-align:left;">LSTM-VIS-ResNet-152&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0008">8</a>]</td>       <td style="text-align:center;">0.241</td>       <td style="text-align:center;">0.602</td>       <td style="text-align:center;">0.773</td>       <td style="text-align:center;">0.075</td>       </tr>       <tr>       <td style="text-align:left;">LSTM-VIS-NasNet-large&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0039">39</a>]</td>       <td style="text-align:center;">0.359</td>       <td style="text-align:center;">0.570</td>       <td style="text-align:center;">0.724</td>       <td style="text-align:center;">0.069</td>       </tr>       <tr>       <td style="text-align:left;">LSTM-VIS-Inception-V1&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0033">33</a>]</td>       <td style="text-align:center;">0.336</td>       <td style="text-align:center;">0.570</td>       <td style="text-align:center;">0.719</td>       <td style="text-align:center;">0.066</td>       </tr>       <tr>       <td style="text-align:left;">LSTM-VIS-Inception-V2&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0010">10</a>]</td>       <td style="text-align:center;">0.337</td>       <td style="text-align:center;">0.569</td>       <td style="text-align:center;">0.724</td>       <td style="text-align:center;">0.067</td>       </tr>       <tr>       <td style="text-align:left;">LSTM-VIS-Inception-V3&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0034">34</a>]</td>       <td style="text-align:center;">0.335</td>       <td style="text-align:center;">0.571</td>       <td style="text-align:center;">0.725</td>       <td style="text-align:center;">0.068</td>       </tr>       <tr>       <td style="text-align:left;">LSTM-VIS-Inception-V4&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"         href="#BibPLXBIB0032">32</a>]</td>       <td style="text-align:center;">0.365</td>       <td style="text-align:center;">0.567</td>       <td style="text-align:center;">0.713</td>       <td style="text-align:center;">0.067</td>       </tr>       <tr>       <td style="text-align:left;">Low-level fusion&#x00A0;(Inception-V4+MFCC)</td>       <td style="text-align:center;">0.313</td>       <td style="text-align:center;">0.580</td>       <td style="text-align:center;">0.740</td>       <td style="text-align:center;">0.070</td>       </tr>       <tr>       <td style="text-align:left;">Low-level fusion&#x00A0;(Inception-V4+NSynth)</td>       <td style="text-align:center;">0.243</td>       <td style="text-align:center;">0.601</td>       <td style="text-align:center;">0.793</td>       <td style="text-align:center;">0.079</td>       </tr>       <tr>       <td style="text-align:left;">Middle-level fusion&#x00A0;(Inception-V4+MFCC)</td>       <td style="text-align:center;">0.330</td>       <td style="text-align:center;">0.575</td>       <td style="text-align:center;">0.731</td>       <td style="text-align:center;">0.069</td>       </tr>       <tr>       <td style="text-align:left;">Middle-level fusion&#x00A0;(Inception-V4+NSynth)</td>       <td style="text-align:center;">0.318</td>       <td style="text-align:center;">0.573</td>       <td style="text-align:center;">0.733</td>       <td style="text-align:center;">0.070</td>       </tr>       <tr>       <td style="text-align:left;">High-level fusion&#x00A0;(Inception-V4+MFCC)</td>       <td style="text-align:center;">0.387</td>       <td style="text-align:center;">0.562</td>       <td style="text-align:center;">0.708</td>       <td style="text-align:center;">0.066</td>       </tr>       <tr>       <td style="text-align:left;">High-level fusion&#x00A0;(Inception-V4+NSynth)</td>       <td style="text-align:center;">0.371</td>       <td style="text-align:center;">0.551</td>       <td style="text-align:center;">0.698</td>       <td style="text-align:center;">0.063</td>       </tr>       <tr>       <td style="text-align:left;">Ensemble of high, middle and low level fusion&#x00A0;(Inception-V4+MFCC)</td>       <td style="text-align:center;">        <strong>0.401</strong>       </td>       <td style="text-align:center;">0.554</td>       <td style="text-align:center;">0.699</td>       <td style="text-align:center;">0.065</td>       </tr>       <tr>       <td style="text-align:left;">Ensemble of high, middle and low level fusion&#x00A0;(Inception-V4+NSynth)</td>       <td style="text-align:center;">0.393</td>       <td style="text-align:center;">        <strong>0.544</strong>       </td>       <td style="text-align:center;">        <strong>0.690</strong>       </td>       <td style="text-align:center;">        <strong>0.062</strong>       </td>       </tr>      </tbody>     </table>    </div>    <p>     <em>Low-level fusion</em>. Fig.&#x00A0;<a class="fig" href="#fig5">5</a>&#x00A0;(a) illustrates the low-level fusion layer. Specifically, we directly concatenate the visual and audio features after the aforementioned context gating layer and project them into a common space with a single embedding layer. As such, the low-level fusion strategy allows the visual and audio features to be fused at low levels. However, the contributions of visual and audio modalities are not equal. Normally, visual components will present more semantic information than audio. Simply concatenating them together may make the audio information be concealed by the visual part.</p>    <p>     <em>Middle-level fusion</em>. To tackle the information concealment problem, we propose a middle-level fusion layer to learn the comprehensive representations from the two modalities. The architecture is shown in Fig.&#x00A0;<a class="fig" href="#fig5">5</a>&#x00A0;(b). Specifically, we transform the gated visual and audio features with non-linear operations into three independent embeddings: the visual embedding, the audio embedding, and the joint embedding. The joint embedding captures the common semantic meanings between visual and audio modalities, while the visual and audio embeddings capture the corresponding independent semantic meanings.</p>    <p>     <em>High-level fusion</em>. Furthermore, to fully exploit the temporal relations among the representations at every time step, we propose a more effective fusion method which is termed as the high-level fusion layer. As illustrated in Fig.&#x00A0;<a class="fig" href="#fig5">5</a>&#x00A0;(c), we take two individual long short-term memory (LSTM) networks to encode the features of visual and audio data into the higher-order representations, which are further fused together as the video representation for the attractiveness prediction. With two different yet dependent LSTMs employed to learn the complicated behaviors within each individual modality, the semantic meanings carried by visual and audio components are extensively discovered, which is expected to benefit the final video attractiveness prediction.</p>    <p>     <strong>Sequential prediction layer.</strong> After we obtain the multimodal embedding with both visual and audio components considered, we use a sequential prediction network to estimate the video attractiveness. More specifically, we take the output of the multimodal fusion layer <em>x<sub>t</sub>     </em> at <em>t</em>-th time step as input of another LSTM for prediction. We formulate the prediction process as follows: <div class="table-responsive" id="eq1">      <div class="display-equation">       <span class="tex mytex">\begin{align} h_t = \textrm {LSTM}(x_t, h_{t-1}). \end{align} </span>       <br/>       <span class="equation-number">(1)</span>      </div>     </div> The LSTM transition process is formulated as follows: <div class="table-responsive" id="eq2">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \begin{split} {\left(\begin{array}{*10c}i_t \\ f_t \\ o_t \\ g_t \end{array}\right)} &#x0026;= {\left(\begin{array}{*10c}\sigma \\ \sigma \\ \sigma \\ \tanh \end{array}\right)} \mathbf {T} {\left(\begin{array}{*10c}x_t \\ h_{t-1} \end{array}\right)},\\ c_t &#x0026;= f_t \odot c_{t-1} + i_t \odot g_t, \\ h_t &#x0026;= o_t \odot \tanh (c_t), \\ y^{\prime } &#x0026;= W_{o}(h_t), \end{split} \end{equation} </span>       <br/>       <span class="equation-number">(2)</span>      </div>     </div> where <em>i<sub>t</sub>     </em>, <em>f<sub>t</sub>     </em>, <em>o<sub>t</sub>     </em>, <em>c<sub>t</sub>     </em>, <em>h<sub>t</sub>     </em>, and <em>&#x03C3;</em> are input gate, forget gate, output gate, memory cell, hidden state, and sigmoid function, respectively. <strong>T</strong> is a linear transformation matrix. &#x2299; represents an element-wise product operator. The hidden state <em>h<sub>t</sub>     </em> is used to predict a value <em>y</em>&#x2032; as video attractiveness at fine-grained levels through a linear transformation layer <em>W<sub>o</sub>     </em>.</p>    </section>    <section id="sec-20">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.3</span> Training</h3>     </div>    </header>    <p>Mean squared error&#x00A0;(MSE) is a widely used as the objective function in sequence prediction tasks, which can be formulated as follows: <div class="table-responsive" id="Xeq1">      <div class="display-equation">       <span class="tex mytex">\begin{equation} \mathcal {L}_{\text{MSE}} = \sum _{i=1}^{T}{(y_{i}^{\prime } - y_{i})^2}. \end{equation} </span>       <br/>       <span class="equation-number">(3)</span>      </div>     </div>     <span class="inline-equation"><span class="tex">$y_{i}^{\prime }$</span>     </span> is the attractiveness value predicted by our model. <em>y<sub>i</sub>     </em> is the ground truth attractiveness (view counts). <em>T</em> is the fragment length of the video clip. Then we can use gradient descent methods to train the whole model in an end-to-end fashion.</p>    </section>   </section>   <section id="sec-21">    <header>    <div class="title-info">     <h2>      <span class="section-number">5</span> Experiments</h2>    </div>    </header>    <p>In this section, we first introduce the experiment settings, including the data processing, evaluation metrics, baselines, as well as our implementation details. Afterward, we will illustrate and discuss the experimental results.</p>    <section id="sec-22">    <header>     <div class="title-info">      <h3>       <span class="section-number">5.1</span> Experimental Settings</h3>     </div>    </header>    <p>     <strong>Data processing.</strong> To keep the diversity of training samples, for episodes in each category<a class="fn" href="#fn3" id="foot-fn3"><sup>2</sup></a>, we use 70% for training, 20% for testing and 10% for validation. Recall that the average duration of videos in FVAD is 45 minutes, which is difficult for LSTM to model such long video sequence due to the capacity limitations of LSTM. Therefore, we divide each video in the training set into a series of non-overlapping video clips with the length of 5 minutes. However, during the testing phase of our model, we take the video as a whole into the prediction model without any partitioning.</p>    <p>     <strong>Evaluation metrics.</strong> To evaluate the performance of fine-grained video attractiveness prediction, we adopted mean absolute error (MAE), root mean square error&#x00A0;(RMSE) and root mean squared logarithmic error&#x00A0;(RMSLE). Besides, as in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0016">16</a>], we adopt Spearman rank-order correlation coefficient&#x00A0;(SRCC) to evaluate the correlation between the video attractiveness predicted by our model and the true values. According to the definitions, larger SRCC value and smaller MAE, RMSE, and RMSLE values indicate more accurate predictions, demonstrating a better performance.</p>    <p>     <strong>Baselines.</strong> The framework of our baseline models is similar to the model illustrated in Fig.&#x00A0;<a class="fig" href="#fig5">5</a>&#x00A0;(a). The only difference is that the baseline model only takes one kind of feature as input. More specifically, given any types of representation <em>X</em>, we first transform <em>X</em> into an embedding vector with dimension size of 512. Then the embedding vector is input into the sequence prediction layer to estimate the video attractiveness. In our experiments, <em>LSTM-EGG</em> represents the model which predicts the attractiveness with 9 engagement indicators. <em>LSTM-AUD-*</em> and <em>LSTM-VIS-*</em> are the baseline models which only take the audio and the visual representations as input, respectively.</p>    <p>     <strong>Implementation details.</strong> In this paper, the hidden unit size of LSTM are all set to 512. We train the model with the adam optimizer by a fixed learning rate 5 &#x00D7; 10<sup>&#x2212; 4</sup>. The batch size is set as 16. And the training procedure is terminated with early stopping strategy when value of (3 &#x00D7; SRCC &#x2212; MAE &#x2212; RMSE &#x2212; RMSLE) reaches the maximum value on the validation set.</p>    </section>    <section id="sec-23">    <header>     <div class="title-info">      <h3>       <span class="section-number">5.2</span> Results and Discussions</h3>     </div>    </header>    <p>The experimental results are illustrated in Table&#x00A0;<a class="tbl" href="#tab2">2</a>. Different video and audio representations, as well as their variant combinations, are used to perform the visual attractiveness prediction.</p>    <p>Recall that in Section 3 we verified that there indeed exists correlations between video attractiveness and other user engagement indicators. To investigate the combined effect of all engagement indicators, we show the performance of LSTM-EGG. We observed that LSTM-EGG obtains the best result which indicates that users&#x2019; engagement behaviors as a whole shows a strong correlation with video attractiveness (view counts). This also validates that the features developed from engagement domain are much discriminative, even though they are of low-dimension. However, such features are not available for practical applications. That is also the main reason why we resort to the content features, specifically the visual and audio contents, for video attractiveness prediction.</p>    <p>Through the comparison among LSTM-AUD-*, LSTM-VIS-* and different fusion methods, it is observed that visual features are more useful than audio features for video attractiveness prediction. Moreover, by incorporating more modalities, better performances can be obtained. This implies the complementary relationships rather than mutual conflicting relationships between the visual and audio modalities. To further examine the discriminative properties of the audio and visual features, we conduct experiments over different kinds of features using the proposed model. The general trend is that the more powerful the visual or audio features, the better performance it obtained. Specifically, the visual features in the form of NasNet and Inception-X are more powerful than those of VGG.</p>    <p>It is obvious that high-level fusion performs much better than low-level fusion methods. Regarding the low-level fusion, features extracted from various sources may not fall into the same common space. Simply concatenating all features actually brings in a certain amount of noise and ambiguity. Besides, low-level fusion may lead to the curse of dimensionality since the final feature vector would be of very high dimension. High-level fusion methods introduce two separate LSTMs to well capture the semantic meanings of the visual and audio content, respectively, which thus make a more comprehensive understanding of video contents. Additionally, the ensemble results among all levels of fusion achieve the best performance, which demonstrating that ensembling different level fusion models can comprehensively exploit the video content for attractiveness prediction.</p>    </section>   </section>   <section id="sec-24">    <header>    <div class="title-info">     <h2>      <span class="section-number">6</span> Conclusions</h2>    </div>    </header>    <p>In this paper, we built to date the largest benchmark dataset, dubbed FVAD, for tackling the emerging fine-grained video attractiveness prediction problem. The dataset was collected from a real-world video website. Based on FVAD, we first investigated the correlations between video attractiveness and nine user engagement behaviors. In addition, we extracted a rich set of attractiveness oriented features to characterize the videos from both visual and audio perspectives. Moreover, three multimodal deep learning models were proposed to predict the fine-grained fragment-level attractiveness relying solely on the video contents. Different levels of multimodal fusion strategies were explored to model the interactions between visual and audio modalities. Experimental results demonstrate the effectiveness of the proposed models and the necessity of incorporating both the visual and audio modalities.</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>    <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>    </div>    </header>    <ul class="bibUl">    <li id="BibPLXBIB0001" label="[1]">Sami Abu-El-Haija, Nisarg Kothari, Joonseok Lee, Apostol&#x00A0;(Paul) Natsev, George Toderici, Balakrishnan Varadarajan, and Sudheendra Vijayanarasimhan. 2016. YouTube-8M: A Large-Scale Video Classification Benchmark. In <em>      <em>arXiv:1609.08675</em>     </em>.</li>    <li id="BibPLXBIB0002" label="[2]">Moshe Blank, Lena Gorelick, Eli Shechtman, Michal Irani, and Ronen Basri. 2005. Actions as Space-Time Shapes. In <em>      <em>ICCV</em>     </em>.</li>    <li id="BibPLXBIB0003" label="[3]">Jingyuan Chen, Xuemeng Song, Liqiang Nie, Xiang Wang, Hanwang Zhang, and Tat-Seng Chua. 2016. Micro Tells Macro: Predicting the Popularity of Micro-Videos via a Transductive Model. In <em>      <em>ACM Multimedia</em>     </em>.</li>    <li id="BibPLXBIB0004" label="[4]">Jingyuan Chen, Hanwang Zhang, Xiangnan He, Liqiang Nie, Wei Liu, and Tat-Seng Chua. 2017. Attentive Collaborative Filtering: Multimedia Recommendation with Item and Component-Level Attention. In <em>      <em>SIGIR</em>     </em>.</li>    <li id="BibPLXBIB0005" label="[5]">Steven Davis and Paul Mermelstein. 1980. Comparison of parametric representations for monosyllabic word recognition in continuously spoken sentences. <em>      <em>IEEE transactions on acoustics, speech, and signal processing</em>     </em> (1980).</li>    <li id="BibPLXBIB0006" label="[6]">Jesse Engel, Cinjon Resnick, Adam Roberts, Sander Dieleman, Douglas Eck, Karen Simonyan, and Mohammad Norouzi. 2017. Neural Audio Synthesis of Musical Notes with WaveNet Autoencoders. <em>      <em>arXiv preprint arXiv:1704.01279</em>     </em>(2017).</li>    <li id="BibPLXBIB0007" label="[7]">John&#x00A0;N. Gowdy and Zekeriya Tufekci. 2000. Mel-scaled discrete wavelet coefficients for speech recognition. In <em>      <em>ICASSP</em>     </em>.</li>    <li id="BibPLXBIB0008" label="[8]">Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. 2015. Deep Residual Learning for Image Recognition. In <em>      <em>CVPR</em>     </em>.</li>    <li id="BibPLXBIB0009" label="[9]">Fabian&#x00A0;Caba Heilbron, Victor Escorcia, Bernard Ghanem, and Juan&#x00A0;Carlos Niebles. 2015. ActivityNet: A Large-Scale Video Benchmark for Human Activity Understanding. In <em>      <em>CVPR</em>     </em>.</li>    <li id="BibPLXBIB0010" label="[10]">Sergey Ioffe and Christian Szegedy. 2015. Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift. In <em>      <em>ICML</em>     </em>.</li>    <li id="BibPLXBIB0011" label="[11]">Yugang Jiang, Qi Dai, Xiangyang Xue, Wei Liu, and Chong-Wah Ngo. 2012. Trajectory-based modeling of human actions with motion reference points. In <em>      <em>ECCV</em>     </em>.</li>    <li id="BibPLXBIB0012" label="[12]">Yugang Jiang, Jingen Liu, Amir&#x00A0;Roshan Zamir, Ivan Laptev, Massimo Piccardi, Mubarak Shah, and Rahul Sukthankar. 2013. THUMOS Challenge: Action Recognition with a Large Number of Classes. http://crcv.ucf.edu/ICCV13-Action-Workshop/. (2013).</li>    <li id="BibPLXBIB0013" label="[13]">Yugang Jiang, Yanran Wang, Rui Feng, Xiangyang Xue, Yingbin Zheng, and Hanfang Yang. 2013. Understanding and Predicting Interestingness of Videos. In <em>      <em>AAAI</em>     </em>.</li>    <li id="BibPLXBIB0014" label="[14]">Yugang Jiang, Zuxuan Wu, Jun Wang, Xiangyang Xue, and Shih-Fu Chang. 2015. Exploiting Feature and Class Relationships in Video Categorization with Regularized Deep Neural Networks. <em>      <em>arXiv preprint arXiv:1502.07209</em>     </em>(2015).</li>    <li id="BibPLXBIB0015" label="[15]">Andrej Karpathy, George Toderici, Sanketh Shetty, Thomas Leung, Rahul Sukthankar, and Li Fei-Fei. 2014. Large-scale Video Classification with Convolutional Neural Networks. In <em>      <em>CVPR</em>     </em>.</li>    <li id="BibPLXBIB0016" label="[16]">Aditya Khosla, Atish Das&#x00A0;Sarma, and Raffay Hamid. 2014. What makes an image popular?. In <em>      <em>WWW</em>     </em>.</li>    <li id="BibPLXBIB0017" label="[17]">H. Kuehne, H. Jhuang, E. Garrote, T. Poggio, and T. Serre. 2011. HMDB: a large video database for human motion recognition. In <em>      <em>ICCV</em>     </em>.</li>    <li id="BibPLXBIB0018" label="[18]">Laptev and Ivan. 2005. On space-time interest points. <em>      <em>International journal of computer vision</em>     </em>64, 2-3 (2005), 107&#x2013;123.</li>    <li id="BibPLXBIB0019" label="[19]">Yuncheng Li, Yale Song, Liangliang Cao, Joel Tetreault, Larry Goldberg, Alejandro Jaimes, and Jiebo Luo. 2016. TGIF: A new dataset and benchmark on animated GIF description. In <em>      <em>CVPR</em>     </em>.</li>    <li id="BibPLXBIB0020" label="[20]">Feng Liu, Yuzhen Niu, and Michael Gleicher. 2009. Using Web Photos for Measuring Video Frame Interestingness. In <em>      <em>IJCAI</em>     </em>.</li>    <li id="BibPLXBIB0021" label="[21]">Wei Liu, Zhifeng Li, and Xiaoou Tang. 2006. Spatio-temporal embedding for statistical face recognition from video. In <em>      <em>ECCV</em>     </em>.</li>    <li id="BibPLXBIB0022" label="[22]">Marcin Marsza&#x0142;ek, Ivan Laptev, and Cordelia Schmid. 2009. Actions in Context. In <em>      <em>CVPR</em>     </em>.</li>    <li id="BibPLXBIB0023" label="[23]">K Messer, J Matas, J Kittler, J Luettin, and G Maitre. 1999. XM2VTSDB: The Extended M2VTS Database. In <em>      <em>Second International Conference on Audio and Video-based Biometric Person Authentication</em>     </em>.</li>    <li id="BibPLXBIB0024" label="[24]">Antoine Miech, Ivan Laptev, and Josef Sivic. 2017. Learnable pooling with Context Gating for video classification. <em>      <em>arXiv preprint arXiv:1706.06905</em>     </em>(2017).</li>    <li id="BibPLXBIB0025" label="[25]">Aaron van&#x00A0;den Oord, Sander Dieleman, Heiga Zen, Karen Simonyan, Oriol Vinyals, Alex Graves, Nal Kalchbrenner, Andrew Senior, and Koray Kavukcuoglu. 2016. Wavenet: A generative model for raw audio. <em>      <em>arXiv preprint arXiv:1609.03499</em>     </em>(2016).</li>    <li id="BibPLXBIB0026" label="[26]">Henrique Pinto, Jussara&#x00A0;M. Almeida, and Marcos&#x00A0;A. Gon&#x00E7;alves. 2013. Using Early View Patterns to Predict the Popularity of Youtube Videos. In <em>      <em>WSDM</em>     </em>.</li>    <li id="BibPLXBIB0027" label="[27]">Marian-Andrei Rizoiu, Lexing Xie, Scott Sanner, Manuel Cebrian, Honglin Yu, and Pascal Van&#x00A0;Hentenryck. 2017. Expecting to Be HIP: Hawkes Intensity Processes for Social Media Popularity. In <em>      <em>WWW</em>     </em>.</li>    <li id="BibPLXBIB0028" label="[28]">Yuesong Shen, Claire-H&#x00E9;l&#x00E8;ne Demarty, and Ngoc Q.&#x00A0;K. Duong. 2016. Technicolor@MediaEval 2016 Predicting Media Interestingness Task. In <em>      <em>MediaEval</em>     </em>.</li>    <li id="BibPLXBIB0029" label="[29]">Karen Simonyan and Andrew Zisserman. 2014. Very Deep Convolutional Networks for Large-Scale Image Recognition. <em>      <em>arXiv preprint arXiv:1409.1556</em>     </em>(2014).</li>    <li id="BibPLXBIB0030" label="[30]">Khurram Soomro, Amir&#x00A0;Roshan Zamir, and Mubarak Shah. 2012. UCF101: A Dataset of 101 Human Actions Classes From Videos in The Wild. In <em>      <em>arXiv:1212.0402</em>     </em>.</li>    <li id="BibPLXBIB0031" label="[31]">G&#x00E1;bor Szab&#x00F3; and Bernardo&#x00A0;A. Huberman. 2010. Predicting the popularity of online content. <em>      <em>Commun. ACM</em>     </em>53, 8 (2010), 80&#x2013;88.</li>    <li id="BibPLXBIB0032" label="[32]">Christian Szegedy, Sergey Ioffe, Vincent Vanhoucke, and Alex&#x00A0;A. Alemi. 2016. Inception-v4, Inception-ResNet and the Impact of Residual Connections on Learning. In <em>      <em>ICLR Workshop</em>     </em>.</li>    <li id="BibPLXBIB0033" label="[33]">Christian Szegedy, Wei Liu, Yangqing Jia, Pierre Sermanet, Scott Reed, Dragomir Anguelov, Dumitru Erhan, Vincent Vanhoucke, and Andrew Rabinovich. 2015. Going Deeper with Convolutions. In <em>      <em>CVPR</em>     </em>.</li>    <li id="BibPLXBIB0034" label="[34]">Christian Szegedy, Vincent Vanhoucke, Sergey Ioffe, Jonathon Shlens, and Zbigniew Wojna. 2016. Rethinking the Inception Architecture for Computer Vision. In <em>      <em>CVPR</em>     </em>.</li>    <li id="BibPLXBIB0035" label="[35]">Bart Thomee, David&#x00A0;A. Shamma, Gerald Friedland, Benjamin Elizalde, Karl Ni, Douglas Poland, Damian Borth, and Li-Jia Li. 2016. YFCC100M: The New Data in Multimedia Research. <em>      <em>Commun. ACM</em>     </em>59, 2 (Jan. 2016), 64&#x2013;73.</li>    <li id="BibPLXBIB0036" label="[36]">George Tzanetakis and Perry Cook. 2002. Musical genre classification of audio signals. <em>      <em>IEEE Transactions on speech and audio processing</em>     </em>10, 5(2002), 293&#x2013;302.</li>    <li id="BibPLXBIB0037" label="[37]">Bin Wu, Erheng Zhong, Ben Tan, Andrew Horner, and Qiang Yang. 2014. Crowdsourced time-sync video tagging using temporal and personalized topic modeling. In <em>      <em>SIGKDD</em>     </em>.</li>    <li id="BibPLXBIB0038" label="[38]">Sejong Yoon and Vladimir Pavlovic. 2014. Sentiment Flow for Video Interestingness Prediction. In <em>      <em>Proceedings of the 1st ACM International Workshop on Human Centered Event Understanding from Multimedia</em>     </em>(<em>HuEvent &#x2019;14</em>).</li>    <li id="BibPLXBIB0039" label="[39]">Barret Zoph, Vijay Vasudevan, Jonathon Shlens, and Quoc&#x00A0;V. Le. 2017. Learning transferable architectures for scalable image recognition. <em>      <em>arXiv preprint arXiv:1707.07012</em>     </em>(2017).</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">    <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>&#x204E;</sup></a>Work done while Xinpeng Chen and Jingyuan Chen were Research Interns with Tencent AI Lab.</p>   <p id="fn2"><a href="#foot-fn2"><sup>1</sup></a><a class="link-inline force-break" href="https://goo.gl/DrrKcn">https://goo.gl/DrrKcn</a>. </p>   <p id="fn3"><a href="#foot-fn3"><sup>2</sup></a>A season of TV series can be seen as a category in this scenario.</p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>    <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3186584">https://doi.org/10.1145/3184558.3186584</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div> </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Fine-grained Video Attractiveness Prediction Using
+  Multimodal Deep Learning on a Large Real-world Dataset</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Fine-grained Video Attractiveness
+          Prediction Using Multimodal Deep Learning on a Large
+          Real-world Dataset</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Xinpeng</span> <span class=
+          "surName">Chen</span> Wuhan University<a class="fn" href=
+          "#fn1" id="foot-fn1"><sup>⁎</sup></a>,
+        </div>
+        <div class="author">
+          <span class="givenName">Jingyuan</span> <span class=
+          "surName">Chen</span> National University of Singapore
+        </div>
+        <div class="author">
+          <span class="givenName">Lin</span> <span class=
+          "surName">Ma</span> Tencent AI Lab, <a href=
+          "mailto:forest.linma@gmail.com">forest.linma@gmail.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Jian</span> <span class=
+          "surName">Yao</span> Wuhan University
+        </div>
+        <div class="author">
+          <span class="givenName">Wei</span> <span class=
+          "surName">Liu</span> Tencent AI Lab, <a href=
+          "mailto:wliu@ee.columbia.edu">wliu@ee.columbia.edu</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Jiebo</span> <span class=
+          "surName">Luo</span> University of Rochester
+        </div>
+        <div class="author">
+          <span class="givenName">Tong</span> <span class=
+          "surName">Zhang</span> Tencent AI Lab
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186584"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186584</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Nowadays, billions of videos are online ready to
+        be viewed and shared. Among an enormous volume of videos,
+        some popular ones are widely viewed by online users while
+        the majority attract little attention. Furthermore, within
+        each video, different segments may attract significantly
+        different numbers of views. This phenomenon leads to a
+        challenging yet important problem, namely fine-grained
+        video attractiveness prediction, which only relies on video
+        contents to forecast video attractiveness at fine-grained
+        levels, specifically video segments of several second
+        length in this paper. However, one major obstacle for such
+        a challenging problem is that no suitable benchmark dataset
+        currently exists. To this end, we construct the first
+        fine-grained video attractiveness dataset (FVAD), which is
+        collected from one of the most popular video websites in
+        the world. In total, the constructed FVAD consists of 1,019
+        drama episodes with 780.6 hours covering different
+        categories and a wide variety of video contents. Apart from
+        the large amount of videos, hundreds of millions of user
+        behaviors during watching videos are also included, such as
+        “view counts”, “fast-forward”, “fast-rewind’, and so on,
+        where “view counts” reflects the video attractiveness while
+        other engagements capture the interactions between the
+        viewers and videos. First, we demonstrate that video
+        attractiveness and different engagements present different
+        relationships. Second, FVAD provides us an opportunity to
+        study the fine-grained video attractiveness prediction
+        problem. We design different sequential models to perform
+        video attractiveness prediction by relying solely on video
+        contents. The sequential models exploit the multimodal
+        relationships between visual and audio components of the
+        video contents at different levels. Experimental results
+        demonstrate the effectiveness of our proposed sequential
+        models with different visual and audio representations, the
+        necessity of incorporating the two modalities, and the
+        complementary behaviors of the sequential prediction models
+        at different levels.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Computing methodologies</strong>
+        → <em>Scene understanding;</em></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Video
+          Attractiveness</small>,</span> <span class=
+          "keyword"><small>Fine-grained</small>,</span>
+          <span class="keyword"><small>Multimodal
+          Fusion</small>,</span> <span class="keyword"><small>Long
+          Short-Term Memory&nbsp;(LSTM)</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Xinpeng Chen, Jingyuan Chen, Lin Ma, Jian Yao, Wei Liu,
+          Jiebo Luo, and Tong Zhang. 2018. Fine-grained Video
+          Attractiveness Prediction Using Multimodal Deep Learning
+          on a Large Real-world Dataset. In <em>WWW '18 Companion:
+          The 2018 Web Conference Companion,</em> <em>April 23–27,
+          2018,</em> <em>Lyon, France. ACM, New York, NY, USA</em>
+          8 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3186584" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3186584</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-8">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Today, digital videos are booming on the Internet. It is
+      stated that traffic from online videos will constitute over
+      80% of all consumer Internet traffic by 2020<a class="fn"
+      href="#fn2" id="foot-fn2"><sup>1</sup></a>. Meanwhile, due to
+      the advance of mobile devices, millions of new videos are
+      streaming into the Web everyday. Interestingly, among an
+      enormous volume of videos, only a small number of them are
+      attractive to draw a great number of viewers, while the
+      majority receive little attention. Even within the same
+      video, different segments present different attractiveness to
+      the audiences with a large variance. A video or segment is
+      considered attractive if it gains a high view count based on
+      the statistics gathered on a large number of users. The
+      larger the view count is, the more attractive the
+      corresponding video or segment is. The view count directly
+      reflects general viewers’ preferences, which are thus
+      regarded as the sole indicator of the video attractiveness
+      within the scope of this paper. Considering one episode from
+      a hot TV series, as an example in Fig&nbsp;<a class="fig"
+      href="#fig1">1</a>&nbsp;(a), the orange line indicates the
+      view counts (attractiveness) for the short video segments,
+      which are crawled from one of the most popular video
+      websites. As can be seen, video attractiveness varies greatly
+      over different video segments, where the maximum view count
+      is more than twice of the minimum value.</p>
+      <p>Predicting the attractiveness of video segments in advance
+      can benefit many applications, such as online
+      marketing&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>] and video
+      recommendation&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>]. Regarding online marketing, accurate
+      early attractiveness prediction of video segments can
+      facilitate optimal planning of advertising campaigns and thus
+      maximize the revenues. For video recommender systems, the
+      proposed method provides an opportunity to recommend video
+      segments based on their attractiveness scores.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186584/images/www18companion-138-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Definition of fine-grained video
+          attractiveness prediction. The view counts (video
+          attractiveness) for fine-grained video segments are
+          shown, where the orange line denotes the ground-truth
+          view counts based on hundreds of millions of active
+          users. It can be observed that video attractiveness
+          varies significantly over time. The main reason is that
+          the contents of different video segments are of great
+          diversity, with different visual information
+          (<em>e.g.</em>, peaceful scenery vs. fierce battle) and
+          different audio information (<em>e.g.</em>, soft
+          background music vs. meaningful conversations). Such
+          visual and audio contents together greatly influence the
+          video attractiveness. Note that the purple line predicted
+          based on both the visual and audio data using our
+          proposed model in Sec.&nbsp;<a class="sec" href=
+          "#sec-17">4</a> can well track the trends of the
+          ground-truth video attractiveness.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>However, predicting the video attractiveness is a very
+      challenging task. First, the attractiveness of a video can be
+      influenced by many external factors, such as the time that
+      the video is posted online, the advertisement intensity in
+      the video, and so on. For the same category of videos, the
+      more timely a video is delivered, the more views it will
+      receive. Second, video attractiveness is also
+      content-sensitive as shown in Fig.&nbsp;<a class="fig" href=
+      "#fig1">1</a>. Therefore, in order to make reliable
+      predictions of video attractiveness, both visual and audio
+      contents need to be analyzed. Several existing
+      works&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0013">13</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0026">26</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0027">27</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0038">38</a>] have
+      explored video interestingness or popularity. [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0013">13</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0038">38</a>] aimed at comparing the
+      interestingness of two videos, while [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0026">26</a>] relied on the historical
+      information given by early popularity measurements. One
+      problem is that the existing models only work on the
+      video-level attractiveness prediction, while the fine-grained
+      segment-level attractiveness prediction remains an open
+      question without any attention. Another challenging problem
+      is the lacking of large-scale real-world data. Recently
+      released video datasets mostly focus on video content
+      understanding, such as classification and captioning,
+      specifically Sports-1M&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>], YouTube-8M&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0001">1</a>],
+      ActivityNet&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>], UCF-101&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0030">30</a>], FCVID&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0014">14</a>], and
+      TGIF&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0019">19</a>].
+      These datasets do not incorporate any labels related to video
+      attractiveness. In order to build reliable video
+      attractiveness prediction systems, accurately labeled
+      datasets are required. However, the existing video datasets
+      for interestingness prediction&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0013">13</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0028">28</a>] are annotated by
+      crowdsourcing. Such annotations only reflect the subjective
+      opinions of a small number of viewers. Thus it cannot
+      indicate the true attractiveness of the video sequence or
+      segment.</p>
+      <p>In order to tackle the fine-grained video attractiveness
+      prediction problem, we construct the
+      <strong>F</strong>ine-grained <strong>V</strong>ideo
+      <strong>A</strong>ttractiveness <strong>D</strong>ataset
+      (FVAD), a new large-scale video benchmark for video
+      attractiveness prediction. We collect the popular videos from
+      one of the most popular video websites, which possesses
+      thousands of millions of registered users. To date, FVAD
+      contains 1,019 video episodes of 780.6 hours long in total,
+      covering different categories and a wide variety of video
+      contents. Moreover, the user engagements associated with each
+      video are also included. Besides the view counts
+      (attractiveness), there are other 9 types of engagement
+      indicators associated with a video sequence to record the
+      interactions between the viewers and videos, as illustrated
+      in Fig.&nbsp;<a class="fig" href="#fig3">3</a>. We summarize
+      our contributions as follows:</p>
+      <ul class="list-no-style">
+        <li id="list1" label="•">We build the largest real-world
+        dataset FVAD for dealing with the task of fine-grained
+        video attractiveness prediction. The video sequences and
+        their associated “labels” in the form of view count, as
+        well as the viewers’ engagements with videos are provided.
+        The relationships between video attractiveness and
+        engagements are examined and studied.<br /></li>
+        <li id="list2" label="•">Several sequential models for
+        exploiting the relationships between visual and audio
+        components for fine-grained video attractiveness prediction
+        are proposed. Experimental results demonstrate the
+        effectiveness of our proposed models and the necessity of
+        jointly considering both the visual and audio
+        modalities.<br /></li>
+      </ul>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186584/images/www18companion-138-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">The statistics of 42 kinds of dramas in
+          our constructed FVAD. The blue bars indicate the number
+          of videos per TV series, while the orange ones indicate
+          the video attractiveness (view counts) in the
+          <strong>Log</strong> <sub>10</sub> domain.</span>
+        </div>
+      </figure>
+    </section>
+    <section id="sec-9">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Video
+            Datasets</h3>
+          </div>
+        </header>
+        <p>Video datasets have played a critical role in advancing
+        computer vision algorithms for video understanding. Several
+        well labeled small-scale datasets, such as
+        XM2VTS&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0023">23</a>], KTH&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0018">18</a>],
+        Hollywood-2&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0022">22</a>], Weizmann&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0002">2</a>], UCF101&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0030">30</a>],
+        THUMOS’15&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0012">12</a>], HMDB&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0017">17</a>], and
+        ActivityNet&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0009">9</a>], provide benchmarks for face
+        recognition&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0021">21</a>], human action
+        recognition&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0011">11</a>] and activity understanding. There
+        are also other video datasets focusing on visual content
+        recognition, video captioning, and so on, such as
+        FCVID&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0014">14</a>] and TGIF&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0019">19</a>]. In order to make a
+        full exploitation on the video content understanding, super
+        large video datasets have been recently constructed.
+        Sports-1M&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0015">15</a>] is a dataset for sports video
+        classification with 1 million videos.
+        YFCC’14&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0035">35</a>] is a large multimedia dataset
+        including about 0.8 million videos. The recent
+        YouTube-8M&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0001">1</a>] is so far the largest dataset for
+        multi-label video classification, consisting of about 8
+        million videos. However, it is prohibitively expensive and
+        time consuming to obtain a massive amount of well-labeled
+        data. Therefore, these datasets inevitably introduce label
+        noise when the labels are produced automatically. The most
+        important thing is that all these datasets focus on
+        understanding video contents, without touching on the video
+        attractiveness task. MediaEval&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0028">28</a>] is the only known
+        public dataset, which is closely related to our work. It is
+        used for predicting the interesting frames in movie
+        trailers. However, MediaEval is a small dataset that only
+        consists of 52 trailers for training and 26 trailers for
+        testing. In addition, the interesting frames in MediaEval
+        are labeled by a small number of subjects, which is not
+        consistent with the real-life situation of massive diverse
+        audiences.</p>
+      </section>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> Video
+            Attractiveness Prediction</h3>
+          </div>
+        </header>
+        <p>A thread of work for predicting video interestingness or
+        popularity is related to our proposed video attractiveness
+        prediction. In&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0020">20</a>], where Flickr images are used to
+        measure the interestingness of video frames. Flickr images
+        were assumed to be mostly interesting compared with many
+        video frames since the former are generally well-composed
+        and selected for sharing. A video frame is considered
+        interesting if it matches (using image local features) with
+        a large number of Flickr images. In&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0038">38</a>], after extracting and
+        combining the static and temporal features using kernel
+        tricks, a relative score is predicted to determine which
+        video is more interesting than the other using ranking SVM
+        given a pair of videos. In&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0013">13</a>], two datasets are
+        collected based on interestingness ranking from Flickr and
+        YouTube, and the interestingness of a video is predicted in
+        the same way as&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0038">38</a>]. In&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0026">26</a>], the historical
+        information given by early popularity measurements is used
+        for video popularity prediction. A Hawkes intensity process
+        is proposed to explain the complex popularity history of
+        each video according to its type of content, network of
+        diffusion, and sensitive to promotion&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0027">27</a>]. Different from
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0013">13</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0020">20</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0038">38</a>], video
+        contents are not explicitly used for video popularity
+        prediction&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0026">26</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0027">27</a>].</p>
+        <p>Our work is fundamentally different from the previous
+        works. First, large-scale real-world user behaviors on one
+        of the most popular video websites, are crawled to
+        construct the proposed FVAD. Second,we aim to predict the
+        fine-grained actual video attractiveness (view counts),
+        compared with the video-level
+        interestingness&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0013">13</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0020">20</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0038">38</a>] and popularity&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0026">26</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0027">27</a>]. Third,
+        we develop different sequential multimodal models to
+        jointly learn the relationships between visual and audio
+        components for the video attractiveness prediction. To the
+        best of our knowledge, there is no existing work to handle
+        and study the fine-grained video attractiveness prediction
+        problem.</p>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186584/images/www18companion-138-fig3.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">The other 9 types of
+            viewers’ engagements with the video sequences while
+            watching. The view counts are also presented together
+            with each engagement. It can be observed that the view
+            counts present different correlations to these 9 types
+            of viewers’ engagements. From top-left to bottom-right:
+            1) Exit: the number of viewers exiting the show, 2)
+            Start of Fast-Forward (FF): the number of viewers
+            beginning FF, 3) End of Fast-Forward: the number of
+            viewers stopping FF, 4) Start of Fast-Rewind (FR): the
+            number of viewers beginning FR, 5) End of Fast-Rewind:
+            the number of viewers stopping FR, 6) Bullet Screens:
+            the number of bullet screens sent by viewers, 7) Bullet
+            Screen Likes: the number of bullet screen likes of the
+            viewers, 8) Fast-Forward Skips: the number of skip
+            times during FF, and 9) Fast-Rewind Skips: the number
+            of skip times during FR.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-12">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> FVAD
+          Construction</h2>
+        </div>
+      </header>
+      <p>This section elaborates on the FVAD dataset construction,
+      covering the video collecting strategy, the video
+      attractiveness and engagements, and the analysis of their
+      relationships.</p>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Video
+            Collection</h3>
+          </div>
+        </header>
+        <p>To construct a representative dataset which contains
+        video segments with diverse attractiveness degrees, video
+        contents should cover different categories and present a
+        broad range of diversities. We manually select a set of
+        popular TV serials from the website. For different episodes
+        and fragments within each episode, as the story develops,
+        it is obvious that the attractiveness degree goes upward
+        and downward. As shown in Fig. <a class="fig" href=
+        "#fig1">1</a>, the video contents, including the visual and
+        audio components, significantly affect the video
+        attractiveness presenting diverse view counts. For our FVAD
+        dataset, we collected 1,019 episodes with a total duration
+        of 780.6 hours long. The number of episodes with respect to
+        each TV series is illustrated by the blue bars in
+        Fig.&nbsp;<a class="fig" href="#fig2">2</a>. The average
+        duration of all the episodes in FVAD is 45 minutes.
+        Moreover, all the episodes were downloaded in high quality
+        with the resolution of 640 × 480.</p>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Video
+            Attractiveness</h3>
+          </div>
+        </header>
+        <figure id="fig4">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186584/images/www18companion-138-fig4.jpg"
+          class="img-responsive" alt="Figure 4" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 4:</span>
+            <span class="figure-title">A simple example of bullet
+            screens. Different users may express real-time opinions
+            directly upon their interested frames.</span>
+          </div>
+        </figure>
+        <p>In this paper, we focus on the fine-grained video
+        attractiveness. Therefore, we need to collect the
+        attractiveness indicators of the fine-grained video
+        fragments. As aforementioned, the attractiveness degree for
+        each video fragment is quantified by the total number of
+        views. As shown in&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0031">31</a>], visual media tends to receive
+        views over some period of time. To normalize this effect,
+        we divide the number of views by the duration from the
+        upload date of the given episode to the collection date,
+        which is 30th November, 2017. The orange bar in Fig.
+        <a class="fig" href="#fig2">2</a> illustrates the total
+        video attractiveness of the TV series by summing all the
+        view counts from all the episodes in each season. In order
+        to make a better visualization, the attractiveness value is
+        displayed in the <strong>Log</strong> <sub>10</sub> domain.
+        It can be observed that the video attractiveness varies
+        significantly among different TV series. Even for the same
+        TV series, different seasons present different
+        attractiveness.</p>
+      </section>
+      <section id="sec-15">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span> Video
+            Engagements</h3>
+          </div>
+        </header>
+        <p>In addition to video views, we also collected 9 user
+        engagement-related indicators regarding each video
+        fragment, namely Exit, Start of Fast-Forward, End of
+        Fast-Forward, Start of Fast-Rewind, End of Fast-Rewind,
+        Fast-Forward Skips, Fast-Rewind Skips, Bullet Screens, and
+        Bullet Screen Likes. The first 7 engagements are the
+        natural user behaviors during the watching process, while
+        the last two engagements, namely the Bullet Screens and
+        Bullet Screen likes, involve deep interactions between
+        viewers and videos.</p>
+        <p>Bullet Screens, also named as time-synchronized comments
+        and first introduced in&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0037">37</a>], allow users to express opinions
+        directly on the frames of interest in a real-time manner.
+        Intuitively, the user behaviors of commenting on a frame
+        can be regarded as implicit feedback reflecting the
+        frame-level preference, while the image features of the
+        reviewed frame and the textual features in the posted
+        comments can further help model the fine-grained preference
+        from different perspectives. Fig.&nbsp;<a class="fig" href=
+        "#fig4">4</a> shows a simple example of bullet screen. As
+        can be seen, different users may express real-time opinions
+        directly upon their interested frames. The number after
+        each bullet screen in Fig.&nbsp;<a class="fig" href=
+        "#fig4">4</a> indicates the total number of likes received
+        by the corresponding bullet screen from the audience. The
+        comment words from Bullet Screens can more accurately
+        express the viewers’ preferences and opinions. However, for
+        this paper, we only collect the numbers of the Bullet
+        Screens as well as their associated number of likes.</p>
+        <p>Fig.&nbsp;<a class="fig" href="#fig3">3</a> illustrates
+        the 9 different engagement indicators as well as the video
+        attractiveness of one episode. It is noticed that the
+        distributions of these different engagements are different.
+        Each of them measures one aspect of users’ engagement
+        behaviors. These engagement characters intuitively
+        correlate with the video attractiveness indicator (view
+        counts). For example, high Fast-Forward Skips values always
+        correspond to low attractiveness, while high Start of
+        Fast-Rewind values correspond to high attractiveness.</p>
+      </section>
+      <section id="sec-16">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.4</span>
+            Relationships between Video Attractiveness and
+            Engagements</h3>
+          </div>
+        </header>
+        <p>To evaluate the above correlations quantitatively, three
+        kinds of coefficients, including Pearson correlation
+        coefficient&nbsp;(PCC), cosine similarity&nbsp;(CS), and
+        Spearman rank-order correlation coefficient&nbsp;(SRCC),
+        are used to measure the strength and direction of the
+        association between each engagement indicator and
+        attractiveness. The correlations are provided in
+        Table&nbsp;<a class="tbl" href="#tab1">1</a>. It is
+        demonstrated that different engagement indicators present
+        different correlations with the attractiveness, where some
+        present positive correlations while others present negative
+        correlations. It is not surprising that the Start of
+        Fast-Forward and Fast-Forward Skips present the largest
+        positive and negative correlations, respectively. However,
+        the indicator Bullet Screens shows negative correlations
+        with video views. One possible reason is that the actual
+        commented frame should be the one corresponding to the time
+        when the user began to type the bullet screen, rather than
+        the frame when the bullet screen was posted out. Therefore,
+        the main reason is that the data about bullet screens is
+        not well aligned. Another possible reason is that most
+        bullet screens are complaints about the stories, therefore
+        being not able to represent the attractiveness of the
+        video. It is noted that both Bullet Screen Likes and
+        Fast-Rewind Skips show less correlations with video views.
+        One possible reason is that the value of each indicator is
+        relatively small, which thereby cannot reflect statistical
+        regularities.</p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">The correlations between video
+            attractiveness and different engagement indicators, in
+            terms of Pearson correlation coefficient&nbsp;(PCC),
+            cosine similarity&nbsp;(CS), and spearman's rank
+            correlation coefficient&nbsp;(SRCC).</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Indicator Name</td>
+                <td style="text-align:center;">PCC</td>
+                <td style="text-align:center;">CS</td>
+                <td style="text-align:center;">SRCC</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Exit</td>
+                <td style="text-align:center;">-0.149</td>
+                <td style="text-align:center;">-0.148</td>
+                <td style="text-align:center;">-0.210</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Start of
+                Fast-Forward</td>
+                <td style="text-align:center;">-0.117</td>
+                <td style="text-align:center;">-0.117</td>
+                <td style="text-align:center;">-0.200</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">End of
+                Fast-Forward</td>
+                <td style="text-align:center;">-0.537</td>
+                <td style="text-align:center;">-0.536</td>
+                <td style="text-align:center;">-0.522</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Start of
+                Fast-Rewind</td>
+                <td style="text-align:center;">0.327</td>
+                <td style="text-align:center;">0.327</td>
+                <td style="text-align:center;">0.368</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">End of
+                Fast-Rewind</td>
+                <td style="text-align:center;">0.227</td>
+                <td style="text-align:center;">0.227</td>
+                <td style="text-align:center;">0.256</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Bullet Screens</td>
+                <td style="text-align:center;">-0.139</td>
+                <td style="text-align:center;">-0.139</td>
+                <td style="text-align:center;">-0.191</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Bullet Screen
+                Likes</td>
+                <td style="text-align:center;">0.027</td>
+                <td style="text-align:center;">0.027</td>
+                <td style="text-align:center;">-0.020</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Fast-Forward
+                Skips</td>
+                <td style="text-align:center;">-0.351</td>
+                <td style="text-align:center;">-0.350</td>
+                <td style="text-align:center;">-0.315</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Fast-Rewind Skips</td>
+                <td style="text-align:center;">0.022</td>
+                <td style="text-align:center;">0.022</td>
+                <td style="text-align:center;">0.013</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+    <section id="sec-17">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Video
+          Attractiveness Prediction Using Deep Learning on Large
+          Datasets</h2>
+        </div>
+      </header>
+      <p>Video attractiveness prediction is a very challenging
+      task, which may involve many external factors. For example,
+      social influence is an important external factor, which makes
+      a great impact on the number of views. In the Western world,
+      the drama series such as <em>The Big Bang Theory</em> have a
+      huge number of fans, which are of high attractiveness.
+      However, for Chinese viewers, <em>The Big Bang Theory</em>
+      are less attractiveness than some reality shows, such as
+      <em>The Singer</em>. In the constructed FVAD, since user
+      profile data is not available, we cannot track users’ culture
+      backgrounds or consider other social-related factors. Another
+      important external factor is the director and starring list
+      of the corresponding TV series. Specifically, a strong cast
+      always boosts the base attractiveness of the whole series.
+      For example, some dramas such as <em>Empresses in the
+      Palace</em> with many famous stars attract billions of
+      views.</p>
+      <p>Besides different external factors, video contents play
+      the most important role in the task of video attractiveness
+      prediction. In this paper, we aim at discovering the
+      relationships between video contents and video
+      attractiveness. Even further, we would like to make the
+      prediction on the video attractiveness based solely on the
+      video contents. Therefore, we need to first eliminate the
+      effects of external factors. We use one simple method, namely
+      the standardization, on the attractiveness as well as the
+      other 9 engagement indicators. With such normalization, we
+      can obtain the video relative attractiveness, which is
+      regarded to be determined by the video contents only,
+      specifically the visual and audio components. In the
+      following, we will employ the normalized video attractiveness
+      to perform the video attractiveness prediction.</p>
+      <figure id="fig5">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186584/images/www18companion-138-fig5.jpg"
+        class="img-responsive" alt="Figure 5" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 5:</span> <span class=
+          "figure-title">An overview of our video attractiveness
+          prediction framework. Context gating is first applied to
+          the visual and audio representations to enrich their
+          corresponding representations. Based on the gated
+          representations, different multimodal fusion strategies
+          performed at different levels are used to exploit the
+          relationships between visual and audio components.
+          Finally, LSTM acts as the prediction layer to make the
+          attractiveness prediction.</span>
+        </div>
+      </figure>
+      <p></p>
+      <section id="sec-18">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Video
+            Representation</h3>
+          </div>
+        </header>
+        <p>To comprehensively understand video contents, we extract
+        both visual and audio representations.</p>
+        <p><strong>Visual representation.</strong> Recently
+        developed convolutional neural networks (CNNs), such as
+        VGG&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0029">29</a>], Inception-X&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0010">10</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0032">32</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0033">33</a>, <a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0034">34</a>] and
+        ResNet&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0008">8</a>], are usually utilized to generate
+        global representations of images. Relying on these CNNs, we
+        decode each video with FFmpeg, select 1 frame per second,
+        feed each visual frame into a CNN model, and fetch the
+        hidden states before the classification layer as the visual
+        feature. Specifically, to exploit the capacity of different
+        kinds of CNN models, we experiment a variety of CNNs,
+        namely VGG-16, VGG-19, ResNet-152, Inception-X, and the
+        recently developed model NasNet&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0039">39</a>].</p>
+        <p><strong>Audio representation.</strong> For the acoustic
+        modality, mel-frequency cepstral
+        coefficient&nbsp;(MFCC)&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0005">5</a>] is widely used in many
+        audio-related tasks&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0036">36</a>]. In this paper, MFCC feature is
+        also used for audio representation. Specifically, for a
+        given audio file, the length of the sampling window is set
+        to 25 milliseconds and meanwhile the step between
+        successive windows is set to 10 milliseconds. In this way,
+        there will be 100 MFCC features per second. To reduce the
+        feature dimension, we take the average of the MFCC feature
+        every second. Since there are two channels in the audio
+        file, we first extract the MFCC features for each channel
+        and then concatenate them together. As a result, the
+        dimension of the MFCC feature for a given audio signal is
+        <em>T</em> × 26, where <em>T</em> is the length of a audio
+        signal. In addition to MFCC feature, we also use
+        NSynth&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0006">6</a>] to encode the audio signals. NSynth
+        is a recently developed WaveNet-style&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0025">25</a>] auto-encoder model.
+        Concretely, we take audio fragment every 5 seconds as input
+        into NSynth and get the output of the encoder as the audio
+        representation.</p>
+      </section>
+      <section id="sec-19">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Proposed
+            Multimodal Deep Learning Models</h3>
+          </div>
+        </header>
+        <p>Our proposed multimodal deep learning model for video
+        attractiveness prediction consists of three layers, namely
+        the context gating layer, the multimodal fusion layer, and
+        the sequential prediction layer.</p>
+        <p><strong>Context gating layer.</strong> In order to
+        further enrich the representative properties of the visual
+        and audio features, context gating is used, which is shown
+        to be beneficial to video representation
+        learning&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0024">24</a>]. Context gating is formulated
+        as:</p>
+        <div class="table-responsive">
+          <div class="display-equation">
+            <span class="tex mytex">\[ \hat{X} = \sigma (WX + b)
+            \odot X, \]</span><br />
+          </div>
+        </div>where <em>X</em> is the input feature vector, which
+        can either be visual or audio representation. <em>σ</em> is
+        the element-wise sigmoid activation function. ⊙ denotes the
+        element-wise multiplication. <span class=
+        "inline-equation"><span class="tex">$\hat{X}$</span></span>
+        is the gated representation. It can be observed that
+        context gating acts like a sentinel, which can adaptively
+        decide which part of the input feature is useful. Moreover,
+        with multiplication, the original representation <em>X</em>
+        and the transformed representation <em>σ</em>(<em>Wx</em> +
+        <em>b</em>) are nonlinearly fused together, thus enhancing
+        and enriching their representative abilities.
+        <p></p>
+        <p><strong>Multimodal fusion layer.</strong> Video contents
+        consist of both visual and audio information, which are
+        complementary to each other for the video representation
+        learning&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0001">1</a>]. Therefore, in this paper, we
+        propose several multimodal fusion models to exploit the
+        relationships between the gated visual and audio features
+        to yield the final video representation. As illustrated in
+        Fig.&nbsp;<a class="fig" href="#fig5">5</a>, three
+        different multimodal fusion layers performed at different
+        levels are proposed to yield the video representation for
+        the final attractiveness prediction.</p>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Performance comparisons of our proposed
+            multimodal deep learning models with different visual
+            and audio representations, as well as their
+            combinations. The best performance (except LSTM-EGG)
+            for each metric entry is highlighted in
+            boldface.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Model Name</td>
+                <td style="text-align:center;">
+                SRCC&nbsp;(<em>ρ</em>)</td>
+                <td style="text-align:center;">MAE</td>
+                <td style="text-align:center;">RMSE</td>
+                <td style="text-align:center;">RMSLE</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">LSTM-EGG</td>
+                <td style="text-align:center;">0.795</td>
+                <td style="text-align:center;">0.381</td>
+                <td style="text-align:center;">0.499</td>
+                <td style="text-align:center;">0.039</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                  LSTM-AUD-MFCC&nbsp;[<a class="bib" data-trigger=
+                  "hover" data-toggle="popover" data-placement=
+                  "top" href="#BibPLXBIB0005">5</a>]
+                </td>
+                <td style="text-align:center;">0.210</td>
+                <td style="text-align:center;">0.600</td>
+                <td style="text-align:center;">0.775</td>
+                <td style="text-align:center;">0.076</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                  LSTM-AUD-NSynth&nbsp;[<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href="#BibPLXBIB0006">6</a>,
+                  <a class="bib" data-trigger="hover" data-toggle=
+                  "popover" data-placement="top" href=
+                  "#BibPLXBIB0025">25</a>]
+                </td>
+                <td style="text-align:center;">0.213</td>
+                <td style="text-align:center;">0.606</td>
+                <td style="text-align:center;">0.802</td>
+                <td style="text-align:center;">0.082</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                  LSTM-VIS-VGG-16&nbsp;[<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0029">29</a>]
+                </td>
+                <td style="text-align:center;">0.323</td>
+                <td style="text-align:center;">0.572</td>
+                <td style="text-align:center;">0.726</td>
+                <td style="text-align:center;">0.069</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                  LSTM-VIS-VGG-19&nbsp;[<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0029">29</a>]
+                </td>
+                <td style="text-align:center;">0.322</td>
+                <td style="text-align:center;">0.569</td>
+                <td style="text-align:center;">0.725</td>
+                <td style="text-align:center;">0.067</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                  LSTM-VIS-ResNet-152&nbsp;[<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href="#BibPLXBIB0008">8</a>]
+                </td>
+                <td style="text-align:center;">0.241</td>
+                <td style="text-align:center;">0.602</td>
+                <td style="text-align:center;">0.773</td>
+                <td style="text-align:center;">0.075</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                  LSTM-VIS-NasNet-large&nbsp;[<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0039">39</a>]
+                </td>
+                <td style="text-align:center;">0.359</td>
+                <td style="text-align:center;">0.570</td>
+                <td style="text-align:center;">0.724</td>
+                <td style="text-align:center;">0.069</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                  LSTM-VIS-Inception-V1&nbsp;[<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0033">33</a>]
+                </td>
+                <td style="text-align:center;">0.336</td>
+                <td style="text-align:center;">0.570</td>
+                <td style="text-align:center;">0.719</td>
+                <td style="text-align:center;">0.066</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                  LSTM-VIS-Inception-V2&nbsp;[<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0010">10</a>]
+                </td>
+                <td style="text-align:center;">0.337</td>
+                <td style="text-align:center;">0.569</td>
+                <td style="text-align:center;">0.724</td>
+                <td style="text-align:center;">0.067</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                  LSTM-VIS-Inception-V3&nbsp;[<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0034">34</a>]
+                </td>
+                <td style="text-align:center;">0.335</td>
+                <td style="text-align:center;">0.571</td>
+                <td style="text-align:center;">0.725</td>
+                <td style="text-align:center;">0.068</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                  LSTM-VIS-Inception-V4&nbsp;[<a class="bib"
+                  data-trigger="hover" data-toggle="popover"
+                  data-placement="top" href=
+                  "#BibPLXBIB0032">32</a>]
+                </td>
+                <td style="text-align:center;">0.365</td>
+                <td style="text-align:center;">0.567</td>
+                <td style="text-align:center;">0.713</td>
+                <td style="text-align:center;">0.067</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Low-level
+                fusion&nbsp;(Inception-V4+MFCC)</td>
+                <td style="text-align:center;">0.313</td>
+                <td style="text-align:center;">0.580</td>
+                <td style="text-align:center;">0.740</td>
+                <td style="text-align:center;">0.070</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Low-level
+                fusion&nbsp;(Inception-V4+NSynth)</td>
+                <td style="text-align:center;">0.243</td>
+                <td style="text-align:center;">0.601</td>
+                <td style="text-align:center;">0.793</td>
+                <td style="text-align:center;">0.079</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Middle-level
+                fusion&nbsp;(Inception-V4+MFCC)</td>
+                <td style="text-align:center;">0.330</td>
+                <td style="text-align:center;">0.575</td>
+                <td style="text-align:center;">0.731</td>
+                <td style="text-align:center;">0.069</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Middle-level
+                fusion&nbsp;(Inception-V4+NSynth)</td>
+                <td style="text-align:center;">0.318</td>
+                <td style="text-align:center;">0.573</td>
+                <td style="text-align:center;">0.733</td>
+                <td style="text-align:center;">0.070</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">High-level
+                fusion&nbsp;(Inception-V4+MFCC)</td>
+                <td style="text-align:center;">0.387</td>
+                <td style="text-align:center;">0.562</td>
+                <td style="text-align:center;">0.708</td>
+                <td style="text-align:center;">0.066</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">High-level
+                fusion&nbsp;(Inception-V4+NSynth)</td>
+                <td style="text-align:center;">0.371</td>
+                <td style="text-align:center;">0.551</td>
+                <td style="text-align:center;">0.698</td>
+                <td style="text-align:center;">0.063</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Ensemble of high,
+                middle and low level
+                fusion&nbsp;(Inception-V4+MFCC)</td>
+                <td style="text-align:center;">
+                <strong>0.401</strong></td>
+                <td style="text-align:center;">0.554</td>
+                <td style="text-align:center;">0.699</td>
+                <td style="text-align:center;">0.065</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Ensemble of high,
+                middle and low level
+                fusion&nbsp;(Inception-V4+NSynth)</td>
+                <td style="text-align:center;">0.393</td>
+                <td style="text-align:center;">
+                <strong>0.544</strong></td>
+                <td style="text-align:center;">
+                <strong>0.690</strong></td>
+                <td style="text-align:center;">
+                <strong>0.062</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p><em>Low-level fusion</em>. Fig.&nbsp;<a class="fig"
+        href="#fig5">5</a>&nbsp;(a) illustrates the low-level
+        fusion layer. Specifically, we directly concatenate the
+        visual and audio features after the aforementioned context
+        gating layer and project them into a common space with a
+        single embedding layer. As such, the low-level fusion
+        strategy allows the visual and audio features to be fused
+        at low levels. However, the contributions of visual and
+        audio modalities are not equal. Normally, visual components
+        will present more semantic information than audio. Simply
+        concatenating them together may make the audio information
+        be concealed by the visual part.</p>
+        <p><em>Middle-level fusion</em>. To tackle the information
+        concealment problem, we propose a middle-level fusion layer
+        to learn the comprehensive representations from the two
+        modalities. The architecture is shown in
+        Fig.&nbsp;<a class="fig" href="#fig5">5</a>&nbsp;(b).
+        Specifically, we transform the gated visual and audio
+        features with non-linear operations into three independent
+        embeddings: the visual embedding, the audio embedding, and
+        the joint embedding. The joint embedding captures the
+        common semantic meanings between visual and audio
+        modalities, while the visual and audio embeddings capture
+        the corresponding independent semantic meanings.</p>
+        <p><em>High-level fusion</em>. Furthermore, to fully
+        exploit the temporal relations among the representations at
+        every time step, we propose a more effective fusion method
+        which is termed as the high-level fusion layer. As
+        illustrated in Fig.&nbsp;<a class="fig" href=
+        "#fig5">5</a>&nbsp;(c), we take two individual long
+        short-term memory (LSTM) networks to encode the features of
+        visual and audio data into the higher-order
+        representations, which are further fused together as the
+        video representation for the attractiveness prediction.
+        With two different yet dependent LSTMs employed to learn
+        the complicated behaviors within each individual modality,
+        the semantic meanings carried by visual and audio
+        components are extensively discovered, which is expected to
+        benefit the final video attractiveness prediction.</p>
+        <p><strong>Sequential prediction layer.</strong> After we
+        obtain the multimodal embedding with both visual and audio
+        components considered, we use a sequential prediction
+        network to estimate the video attractiveness. More
+        specifically, we take the output of the multimodal fusion
+        layer <em>x<sub>t</sub></em> at <em>t</em>-th time step as
+        input of another LSTM for prediction. We formulate the
+        prediction process as follows:</p>
+        <div class="table-responsive" id="eq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{align} h_t = \textrm
+            {LSTM}(x_t, h_{t-1}). \end{align}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>The LSTM transition process is formulated as follows:
+        <div class="table-responsive" id="eq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \begin{split}
+            {\left(\begin{array}{*10c}i_t \\ f_t \\ o_t \\ g_t
+            \end{array}\right)} &amp;=
+            {\left(\begin{array}{*10c}\sigma \\ \sigma \\ \sigma \\
+            \tanh \end{array}\right)} \mathbf {T}
+            {\left(\begin{array}{*10c}x_t \\ h_{t-1}
+            \end{array}\right)},\\ c_t &amp;= f_t \odot c_{t-1} +
+            i_t \odot g_t, \\ h_t &amp;= o_t \odot \tanh (c_t), \\
+            y^{\prime } &amp;= W_{o}(h_t), \end{split}
+            \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>where <em>i<sub>t</sub></em> , <em>f<sub>t</sub></em>
+        , <em>o<sub>t</sub></em> , <em>c<sub>t</sub></em> ,
+        <em>h<sub>t</sub></em> , and <em>σ</em> are input gate,
+        forget gate, output gate, memory cell, hidden state, and
+        sigmoid function, respectively. <strong>T</strong> is a
+        linear transformation matrix. ⊙ represents an element-wise
+        product operator. The hidden state <em>h<sub>t</sub></em>
+        is used to predict a value <em>y</em>′ as video
+        attractiveness at fine-grained levels through a linear
+        transformation layer <em>W<sub>o</sub></em> .
+        <p></p>
+      </section>
+      <section id="sec-20">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span>
+            Training</h3>
+          </div>
+        </header>
+        <p>Mean squared error&nbsp;(MSE) is a widely used as the
+        objective function in sequence prediction tasks, which can
+        be formulated as follows:</p>
+        <div class="table-responsive" id="Xeq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} \mathcal
+            {L}_{\text{MSE}} = \sum _{i=1}^{T}{(y_{i}^{\prime } -
+            y_{i})^2}. \end{equation}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div><span class="inline-equation"><span class=
+        "tex">$y_{i}^{\prime }$</span></span> is the attractiveness
+        value predicted by our model. <em>y<sub>i</sub></em> is the
+        ground truth attractiveness (view counts). <em>T</em> is
+        the fragment length of the video clip. Then we can use
+        gradient descent methods to train the whole model in an
+        end-to-end fashion.
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-21">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span>
+          Experiments</h2>
+        </div>
+      </header>
+      <p>In this section, we first introduce the experiment
+      settings, including the data processing, evaluation metrics,
+      baselines, as well as our implementation details. Afterward,
+      we will illustrate and discuss the experimental results.</p>
+      <section id="sec-22">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span>
+            Experimental Settings</h3>
+          </div>
+        </header>
+        <p><strong>Data processing.</strong> To keep the diversity
+        of training samples, for episodes in each category<a class=
+        "fn" href="#fn3" id="foot-fn3"><sup>2</sup></a>, we use 70%
+        for training, 20% for testing and 10% for validation.
+        Recall that the average duration of videos in FVAD is 45
+        minutes, which is difficult for LSTM to model such long
+        video sequence due to the capacity limitations of LSTM.
+        Therefore, we divide each video in the training set into a
+        series of non-overlapping video clips with the length of 5
+        minutes. However, during the testing phase of our model, we
+        take the video as a whole into the prediction model without
+        any partitioning.</p>
+        <p><strong>Evaluation metrics.</strong> To evaluate the
+        performance of fine-grained video attractiveness
+        prediction, we adopted mean absolute error (MAE), root mean
+        square error&nbsp;(RMSE) and root mean squared logarithmic
+        error&nbsp;(RMSLE). Besides, as in&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0016">16</a>], we adopt Spearman
+        rank-order correlation coefficient&nbsp;(SRCC) to evaluate
+        the correlation between the video attractiveness predicted
+        by our model and the true values. According to the
+        definitions, larger SRCC value and smaller MAE, RMSE, and
+        RMSLE values indicate more accurate predictions,
+        demonstrating a better performance.</p>
+        <p><strong>Baselines.</strong> The framework of our
+        baseline models is similar to the model illustrated in
+        Fig.&nbsp;<a class="fig" href="#fig5">5</a>&nbsp;(a). The
+        only difference is that the baseline model only takes one
+        kind of feature as input. More specifically, given any
+        types of representation <em>X</em>, we first transform
+        <em>X</em> into an embedding vector with dimension size of
+        512. Then the embedding vector is input into the sequence
+        prediction layer to estimate the video attractiveness. In
+        our experiments, <em>LSTM-EGG</em> represents the model
+        which predicts the attractiveness with 9 engagement
+        indicators. <em>LSTM-AUD-*</em> and <em>LSTM-VIS-*</em> are
+        the baseline models which only take the audio and the
+        visual representations as input, respectively.</p>
+        <p><strong>Implementation details.</strong> In this paper,
+        the hidden unit size of LSTM are all set to 512. We train
+        the model with the adam optimizer by a fixed learning rate
+        5 × 10<sup>− 4</sup>. The batch size is set as 16. And the
+        training procedure is terminated with early stopping
+        strategy when value of (3 × SRCC − MAE − RMSE − RMSLE)
+        reaches the maximum value on the validation set.</p>
+      </section>
+      <section id="sec-23">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> Results and
+            Discussions</h3>
+          </div>
+        </header>
+        <p>The experimental results are illustrated in
+        Table&nbsp;<a class="tbl" href="#tab2">2</a>. Different
+        video and audio representations, as well as their variant
+        combinations, are used to perform the visual attractiveness
+        prediction.</p>
+        <p>Recall that in Section 3 we verified that there indeed
+        exists correlations between video attractiveness and other
+        user engagement indicators. To investigate the combined
+        effect of all engagement indicators, we show the
+        performance of LSTM-EGG. We observed that LSTM-EGG obtains
+        the best result which indicates that users’ engagement
+        behaviors as a whole shows a strong correlation with video
+        attractiveness (view counts). This also validates that the
+        features developed from engagement domain are much
+        discriminative, even though they are of low-dimension.
+        However, such features are not available for practical
+        applications. That is also the main reason why we resort to
+        the content features, specifically the visual and audio
+        contents, for video attractiveness prediction.</p>
+        <p>Through the comparison among LSTM-AUD-*, LSTM-VIS-* and
+        different fusion methods, it is observed that visual
+        features are more useful than audio features for video
+        attractiveness prediction. Moreover, by incorporating more
+        modalities, better performances can be obtained. This
+        implies the complementary relationships rather than mutual
+        conflicting relationships between the visual and audio
+        modalities. To further examine the discriminative
+        properties of the audio and visual features, we conduct
+        experiments over different kinds of features using the
+        proposed model. The general trend is that the more powerful
+        the visual or audio features, the better performance it
+        obtained. Specifically, the visual features in the form of
+        NasNet and Inception-X are more powerful than those of
+        VGG.</p>
+        <p>It is obvious that high-level fusion performs much
+        better than low-level fusion methods. Regarding the
+        low-level fusion, features extracted from various sources
+        may not fall into the same common space. Simply
+        concatenating all features actually brings in a certain
+        amount of noise and ambiguity. Besides, low-level fusion
+        may lead to the curse of dimensionality since the final
+        feature vector would be of very high dimension. High-level
+        fusion methods introduce two separate LSTMs to well capture
+        the semantic meanings of the visual and audio content,
+        respectively, which thus make a more comprehensive
+        understanding of video contents. Additionally, the ensemble
+        results among all levels of fusion achieve the best
+        performance, which demonstrating that ensembling different
+        level fusion models can comprehensively exploit the video
+        content for attractiveness prediction.</p>
+      </section>
+    </section>
+    <section id="sec-24">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span>
+          Conclusions</h2>
+        </div>
+      </header>
+      <p>In this paper, we built to date the largest benchmark
+      dataset, dubbed FVAD, for tackling the emerging fine-grained
+      video attractiveness prediction problem. The dataset was
+      collected from a real-world video website. Based on FVAD, we
+      first investigated the correlations between video
+      attractiveness and nine user engagement behaviors. In
+      addition, we extracted a rich set of attractiveness oriented
+      features to characterize the videos from both visual and
+      audio perspectives. Moreover, three multimodal deep learning
+      models were proposed to predict the fine-grained
+      fragment-level attractiveness relying solely on the video
+      contents. Different levels of multimodal fusion strategies
+      were explored to model the interactions between visual and
+      audio modalities. Experimental results demonstrate the
+      effectiveness of the proposed models and the necessity of
+      incorporating both the visual and audio modalities.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Sami Abu-El-Haija,
+        Nisarg Kothari, Joonseok Lee, Apostol&nbsp;(Paul) Natsev,
+        George Toderici, Balakrishnan Varadarajan, and Sudheendra
+        Vijayanarasimhan. 2016. YouTube-8M: A Large-Scale Video
+        Classification Benchmark. In
+        <em><em>arXiv:1609.08675</em></em> .</li>
+        <li id="BibPLXBIB0002" label="[2]">Moshe Blank, Lena
+        Gorelick, Eli Shechtman, Michal Irani, and Ronen Basri.
+        2005. Actions as Space-Time Shapes. In
+        <em><em>ICCV</em></em> .</li>
+        <li id="BibPLXBIB0003" label="[3]">Jingyuan Chen, Xuemeng
+        Song, Liqiang Nie, Xiang Wang, Hanwang Zhang, and Tat-Seng
+        Chua. 2016. Micro Tells Macro: Predicting the Popularity of
+        Micro-Videos via a Transductive Model. In <em><em>ACM
+        Multimedia</em></em> .</li>
+        <li id="BibPLXBIB0004" label="[4]">Jingyuan Chen, Hanwang
+        Zhang, Xiangnan He, Liqiang Nie, Wei Liu, and Tat-Seng
+        Chua. 2017. Attentive Collaborative Filtering: Multimedia
+        Recommendation with Item and Component-Level Attention. In
+        <em><em>SIGIR</em></em> .</li>
+        <li id="BibPLXBIB0005" label="[5]">Steven Davis and Paul
+        Mermelstein. 1980. Comparison of parametric representations
+        for monosyllabic word recognition in continuously spoken
+        sentences. <em><em>IEEE transactions on acoustics, speech,
+        and signal processing</em></em> (1980).</li>
+        <li id="BibPLXBIB0006" label="[6]">Jesse Engel, Cinjon
+        Resnick, Adam Roberts, Sander Dieleman, Douglas Eck, Karen
+        Simonyan, and Mohammad Norouzi. 2017. Neural Audio
+        Synthesis of Musical Notes with WaveNet Autoencoders.
+        <em><em>arXiv preprint arXiv:1704.01279</em></em>
+        (2017).</li>
+        <li id="BibPLXBIB0007" label="[7]">John&nbsp;N. Gowdy and
+        Zekeriya Tufekci. 2000. Mel-scaled discrete wavelet
+        coefficients for speech recognition. In
+        <em><em>ICASSP</em></em> .</li>
+        <li id="BibPLXBIB0008" label="[8]">Kaiming He, Xiangyu
+        Zhang, Shaoqing Ren, and Jian Sun. 2015. Deep Residual
+        Learning for Image Recognition. In <em><em>CVPR</em></em>
+        .</li>
+        <li id="BibPLXBIB0009" label="[9]">Fabian&nbsp;Caba
+        Heilbron, Victor Escorcia, Bernard Ghanem, and
+        Juan&nbsp;Carlos Niebles. 2015. ActivityNet: A Large-Scale
+        Video Benchmark for Human Activity Understanding. In
+        <em><em>CVPR</em></em> .</li>
+        <li id="BibPLXBIB0010" label="[10]">Sergey Ioffe and
+        Christian Szegedy. 2015. Batch Normalization: Accelerating
+        Deep Network Training by Reducing Internal Covariate Shift.
+        In <em><em>ICML</em></em> .</li>
+        <li id="BibPLXBIB0011" label="[11]">Yugang Jiang, Qi Dai,
+        Xiangyang Xue, Wei Liu, and Chong-Wah Ngo. 2012.
+        Trajectory-based modeling of human actions with motion
+        reference points. In <em><em>ECCV</em></em> .</li>
+        <li id="BibPLXBIB0012" label="[12]">Yugang Jiang, Jingen
+        Liu, Amir&nbsp;Roshan Zamir, Ivan Laptev, Massimo Piccardi,
+        Mubarak Shah, and Rahul Sukthankar. 2013. THUMOS Challenge:
+        Action Recognition with a Large Number of Classes.
+        http://crcv.ucf.edu/ICCV13-Action-Workshop/. (2013).</li>
+        <li id="BibPLXBIB0013" label="[13]">Yugang Jiang, Yanran
+        Wang, Rui Feng, Xiangyang Xue, Yingbin Zheng, and Hanfang
+        Yang. 2013. Understanding and Predicting Interestingness of
+        Videos. In <em><em>AAAI</em></em> .</li>
+        <li id="BibPLXBIB0014" label="[14]">Yugang Jiang, Zuxuan
+        Wu, Jun Wang, Xiangyang Xue, and Shih-Fu Chang. 2015.
+        Exploiting Feature and Class Relationships in Video
+        Categorization with Regularized Deep Neural Networks.
+        <em><em>arXiv preprint arXiv:1502.07209</em></em>
+        (2015).</li>
+        <li id="BibPLXBIB0015" label="[15]">Andrej Karpathy, George
+        Toderici, Sanketh Shetty, Thomas Leung, Rahul Sukthankar,
+        and Li Fei-Fei. 2014. Large-scale Video Classification with
+        Convolutional Neural Networks. In <em><em>CVPR</em></em>
+        .</li>
+        <li id="BibPLXBIB0016" label="[16]">Aditya Khosla, Atish
+        Das&nbsp;Sarma, and Raffay Hamid. 2014. What makes an image
+        popular?. In <em><em>WWW</em></em> .</li>
+        <li id="BibPLXBIB0017" label="[17]">H. Kuehne, H. Jhuang,
+        E. Garrote, T. Poggio, and T. Serre. 2011. HMDB: a large
+        video database for human motion recognition. In
+        <em><em>ICCV</em></em> .</li>
+        <li id="BibPLXBIB0018" label="[18]">Laptev and Ivan. 2005.
+        On space-time interest points. <em><em>International
+        journal of computer vision</em></em> 64, 2-3 (2005),
+        107–123.</li>
+        <li id="BibPLXBIB0019" label="[19]">Yuncheng Li, Yale Song,
+        Liangliang Cao, Joel Tetreault, Larry Goldberg, Alejandro
+        Jaimes, and Jiebo Luo. 2016. TGIF: A new dataset and
+        benchmark on animated GIF description. In
+        <em><em>CVPR</em></em> .</li>
+        <li id="BibPLXBIB0020" label="[20]">Feng Liu, Yuzhen Niu,
+        and Michael Gleicher. 2009. Using Web Photos for Measuring
+        Video Frame Interestingness. In <em><em>IJCAI</em></em>
+        .</li>
+        <li id="BibPLXBIB0021" label="[21]">Wei Liu, Zhifeng Li,
+        and Xiaoou Tang. 2006. Spatio-temporal embedding for
+        statistical face recognition from video. In
+        <em><em>ECCV</em></em> .</li>
+        <li id="BibPLXBIB0022" label="[22]">Marcin Marszałek, Ivan
+        Laptev, and Cordelia Schmid. 2009. Actions in Context. In
+        <em><em>CVPR</em></em> .</li>
+        <li id="BibPLXBIB0023" label="[23]">K Messer, J Matas, J
+        Kittler, J Luettin, and G Maitre. 1999. XM2VTSDB: The
+        Extended M2VTS Database. In <em><em>Second International
+        Conference on Audio and Video-based Biometric Person
+        Authentication</em></em> .</li>
+        <li id="BibPLXBIB0024" label="[24]">Antoine Miech, Ivan
+        Laptev, and Josef Sivic. 2017. Learnable pooling with
+        Context Gating for video classification. <em><em>arXiv
+        preprint arXiv:1706.06905</em></em> (2017).</li>
+        <li id="BibPLXBIB0025" label="[25]">Aaron van&nbsp;den
+        Oord, Sander Dieleman, Heiga Zen, Karen Simonyan, Oriol
+        Vinyals, Alex Graves, Nal Kalchbrenner, Andrew Senior, and
+        Koray Kavukcuoglu. 2016. Wavenet: A generative model for
+        raw audio. <em><em>arXiv preprint
+        arXiv:1609.03499</em></em> (2016).</li>
+        <li id="BibPLXBIB0026" label="[26]">Henrique Pinto,
+        Jussara&nbsp;M. Almeida, and Marcos&nbsp;A. Gonçalves.
+        2013. Using Early View Patterns to Predict the Popularity
+        of Youtube Videos. In <em><em>WSDM</em></em> .</li>
+        <li id="BibPLXBIB0027" label="[27]">Marian-Andrei Rizoiu,
+        Lexing Xie, Scott Sanner, Manuel Cebrian, Honglin Yu, and
+        Pascal Van&nbsp;Hentenryck. 2017. Expecting to Be HIP:
+        Hawkes Intensity Processes for Social Media Popularity. In
+        <em><em>WWW</em></em> .</li>
+        <li id="BibPLXBIB0028" label="[28]">Yuesong Shen,
+        Claire-Hélène Demarty, and Ngoc Q.&nbsp;K. Duong. 2016.
+        Technicolor@MediaEval 2016 Predicting Media Interestingness
+        Task. In <em><em>MediaEval</em></em> .</li>
+        <li id="BibPLXBIB0029" label="[29]">Karen Simonyan and
+        Andrew Zisserman. 2014. Very Deep Convolutional Networks
+        for Large-Scale Image Recognition. <em><em>arXiv preprint
+        arXiv:1409.1556</em></em> (2014).</li>
+        <li id="BibPLXBIB0030" label="[30]">Khurram Soomro,
+        Amir&nbsp;Roshan Zamir, and Mubarak Shah. 2012. UCF101: A
+        Dataset of 101 Human Actions Classes From Videos in The
+        Wild. In <em><em>arXiv:1212.0402</em></em> .</li>
+        <li id="BibPLXBIB0031" label="[31]">Gábor Szabó and
+        Bernardo&nbsp;A. Huberman. 2010. Predicting the popularity
+        of online content. <em><em>Commun. ACM</em></em> 53, 8
+        (2010), 80–88.</li>
+        <li id="BibPLXBIB0032" label="[32]">Christian Szegedy,
+        Sergey Ioffe, Vincent Vanhoucke, and Alex&nbsp;A. Alemi.
+        2016. Inception-v4, Inception-ResNet and the Impact of
+        Residual Connections on Learning. In <em><em>ICLR
+        Workshop</em></em> .</li>
+        <li id="BibPLXBIB0033" label="[33]">Christian Szegedy, Wei
+        Liu, Yangqing Jia, Pierre Sermanet, Scott Reed, Dragomir
+        Anguelov, Dumitru Erhan, Vincent Vanhoucke, and Andrew
+        Rabinovich. 2015. Going Deeper with Convolutions. In
+        <em><em>CVPR</em></em> .</li>
+        <li id="BibPLXBIB0034" label="[34]">Christian Szegedy,
+        Vincent Vanhoucke, Sergey Ioffe, Jonathon Shlens, and
+        Zbigniew Wojna. 2016. Rethinking the Inception Architecture
+        for Computer Vision. In <em><em>CVPR</em></em> .</li>
+        <li id="BibPLXBIB0035" label="[35]">Bart Thomee,
+        David&nbsp;A. Shamma, Gerald Friedland, Benjamin Elizalde,
+        Karl Ni, Douglas Poland, Damian Borth, and Li-Jia Li. 2016.
+        YFCC100M: The New Data in Multimedia Research.
+        <em><em>Commun. ACM</em></em> 59, 2 (Jan. 2016),
+        64–73.</li>
+        <li id="BibPLXBIB0036" label="[36]">George Tzanetakis and
+        Perry Cook. 2002. Musical genre classification of audio
+        signals. <em><em>IEEE Transactions on speech and audio
+        processing</em></em> 10, 5(2002), 293–302.</li>
+        <li id="BibPLXBIB0037" label="[37]">Bin Wu, Erheng Zhong,
+        Ben Tan, Andrew Horner, and Qiang Yang. 2014. Crowdsourced
+        time-sync video tagging using temporal and personalized
+        topic modeling. In <em><em>SIGKDD</em></em> .</li>
+        <li id="BibPLXBIB0038" label="[38]">Sejong Yoon and
+        Vladimir Pavlovic. 2014. Sentiment Flow for Video
+        Interestingness Prediction. In <em><em>Proceedings of the
+        1st ACM International Workshop on Human Centered Event
+        Understanding from Multimedia</em></em> (<em>HuEvent
+        ’14</em>).</li>
+        <li id="BibPLXBIB0039" label="[39]">Barret Zoph, Vijay
+        Vasudevan, Jonathon Shlens, and Quoc&nbsp;V. Le. 2017.
+        Learning transferable architectures for scalable image
+        recognition. <em><em>arXiv preprint
+        arXiv:1707.07012</em></em> (2017).</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>⁎</sup></a>Work done while
+    Xinpeng Chen and Jingyuan Chen were Research Interns with
+    Tencent AI Lab.</p>
+    <p id="fn2"><a href="#foot-fn2"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "https://goo.gl/DrrKcn">https://goo.gl/DrrKcn</a>.</p>
+    <p id="fn3"><a href="#foot-fn3"><sup>2</sup></a>A season of TV
+    series can be seen as a category in this scenario.</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186584">https://doi.org/10.1145/3184558.3186584</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

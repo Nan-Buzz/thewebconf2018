@@ -1,1 +1,1754 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">  <head>  <title>Human-Guided Flood Mapping: From Experts to the Crowd</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>  </head>  <body id="main">  <section class="front-matter">   <section>    <header class="title-info">     <div class="journal-title">     <h1>      <span class="title">Human-Guided Flood Mapping: From Experts to the Crowd</span>      <br/>      <span class="subTitle"/>     </h1>     </div>    </header>    <div class="authorGroup">     <div class="author">     <span class="givenName">Jiongqian</span>      <span class="surName">Liang</span>,     The Ohio State University, <a href="mailto:liang.420@osu.edu">liang.420@osu.edu</a>     </div>     <div class="author">     <span class="givenName">Peter</span>      <span class="surName">Jacobs</span>,     The Ohio State University, <a href="mailto:jacobs.269@osu.edu">jacobs.269@osu.edu</a>     </div>     <div class="author">     <span class="givenName">Srinivasan</span>      <span class="surName">Parthasarathy</span>,     The Ohio State University, <a href="mailto:srini@cse.ohio-state.edu">srini@cse.ohio-state.edu</a>     </div>                 </div>    <br/>    <div class="pubInfo">     <p>DOI: <a href="https://doi.org/10.1145/3184558.3186339" target="_blank">https://doi.org/10.1145/3184558.3186339</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">     <p>     <small>Hurricane-induced flooding can lead to substantial loss of life and huge damage to infrastructure. Mapping flood extent from satellite or aerial imagery is essential for prioritizing relief efforts and for assessing future flood risk. Identification of water extent in such images can be challenging considering the heterogeneity in water body size and shape, cloud cover, and natural variations in land cover. In this effort, we introduce a novel cognitive framework based on a semi-supervised learning algorithm, called HUman-Guided Flood Mapping (<tt>HUG-FM</tt>), specifically designed to tackle the flood mapping problem. Our framework first divides the satellite or aerial image into patches leveraging a graph-based clustering approach. A domain expert is then asked to provide labels for a few patches (as opposed to pixels which are harder to discern). Subsequently, we learn a classifier based on the provided labels to map flood extent. We test the efficacy and efficiency of our framework on imagery from several recent flood-induced emergencies and results show that our algorithm can robustly and correctly detect water areas compared to the state-of-the-art. We then evaluate whether expert guidance can be replaced by the wisdom of a crowd (e.g., crisis volunteers). We design an online crowdsourcing platform based on <tt>HUG-FM</tt> and propose a novel ensemble method to leverage crowdsourcing efforts. We conduct an experiment with over 50 participants and show that crowdsourced <tt>HUG-FM</tt> (<tt>CHUG-FM</tt>) can approach or even exceed the performance of a single expert providing guidance (<tt>HUG-FM</tt>).</small>     </p>    </div>    <div class="classifications">     <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>Flood mapping; Human-guided; Semi-supervised; Crowdsourcing</small>     </span>     </div>     <br/>     <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Jiongqian Liang, Peter Jacobs, and Srinivasan Parthasarathy. 2018. Human-Guided Flood Mapping: From Experts to the Crowd. In <em>The 2018 Conference Companion,</em>       <em>April 23&#x2013;27, 2018,       Lyons, France</em>. ACM, New York, NY, USA, 8 Pages. <a href="https://doi.org/10.1145/3184558.3186339" class="link-inline force-break"        target="_blank">https://doi.org/10.1145/3184558.3186339</a></small>     </p>     </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-4">    <header>     <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>     </div>    </header>    <p>Each year, many areas on earth are impacted by severe flooding, causing serious loss of life and economy&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>]. Flood extent mapping can be utilized to guide first responders to where they are most needed. This information can also be used to monitor and predict future flood risk in these areas.</p>    <p>To map flood extent, satellite images can be extremely useful due to their low cost and consistent, repetitive data acquisition capability over large spatial areas&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0027">27</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0029">29</a>]. Depending on availability these can also be supplemented with aerial flyover imagery. Compared to sparse <em>in situ</em> physical sensing data (e.g., river gauge data and weather station records), satellite images offer a synoptic view of the landscape and provide a comprehensive geospatial perspective on flood events. The challenge here is to correctly identify flooded areas given confounding factors ranging from cloud cover to refractive materials within urban areas.</p>    <p>This problem can be modeled as an image segmentation task&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0023">23</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0028">28</a>], where one wants to delineate flooded areas within a region. A challenge for such methods is the need to identify many diversely shaped segments (e.g. sinuous rivers) while accommodating various types of land-cover forms (e.g. swamps). In addition, current techniques generally do not scale well to high-resolution satellite images. Finally, the difference between flooded regions and other regions can be so subtle that human guidance is often required to accurately map floods.</p>    <p>To address these difficulties, we propose a framework based on ideas from <em>cognitive computing</em>. <em>Cognitive computing</em> refers to &#x201C;systems that learn at scale, reason with purpose and interact with humans naturally&#x201D; &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0015">15</a>]. City, regional and national emergency systems are increasingly relying on such &#x201C;smart&#x201D; systems to simulate human thought process to solve real-world problems with humans and computers interacting with one another and providing necessary decision support to supplement traditional decision making.</p>    <p>Our proposed cognitive framework, called HUman Guided Flood Mapping (<tt>HUG-FM</tt>), integrates ideas from graph clustering and semi-supervised learning with human guidance, to accurately realize post-disaster flood maps from aerial or satellite imagery. Graph clustering approaches are used to divide images into patches (easier to label than individual pixels) and guidance from expert user is utilized to provide initial labels for a few patches (water or land). The method for flood mapping involves segmentation of satellite images of a given area <em>both</em> before and after a flood occurs. This is followed by a comparison of these pre-disaster and post-disaster segmentations to identify flooded vs. non-flooded areas. We run <tt>HUG-FM</tt> on satellite images of Chennai, India during the 2015 flood, Houston, Texas after the 2016 flood, and Lumberton, North Carolina during Hurricane Matthew in 2017. Experimental results show that our method can effectively identify flooded areas when compared to state-of-the-art approaches from both the remote sensing and computer vision communities. Our method is also more efficient, enabling real-time incremental learning and providing useful information to help prioritize post-disaster repair and relief activities.</p>    <p>We additionally extend our efforts to develop a crowdsourced variant of <tt>HUG-FM</tt> (called <tt>CHUG-FM</tt>), where we replace domain-expert guidance with the wisdom of the crowd (e.g., crisis volunteers). To test the crowdsourcing platform (<tt>CHUG-FM</tt>), we recruited over 50 volunteers to conduct interactive flood mapping on three different satellite images. We develop and deploy a novel ensemble learning method to integrate the crowdsourcing efforts and find it improves the performance of flood mapping when compared to <tt>HUG-FM</tt> (operating with a domain expert).</p>   </section>   <section id="sec-5">    <header>     <div class="title-info">     <h2>      <span class="section-number">2</span> Related Work</h2>     </div>    </header>    <section id="sec-6">     <header>     <div class="title-info">      <h3>       <span class="section-number">2.1</span> Image Segmentation</h3>     </div>     </header>     <p>Image segmentation is a long-standing problem in computer vision&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0023">23</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0028">28</a>]. Classic methods for image segmentation include thresholding-based techniques wherein a pixel intensity threshold <em>T</em> forces all pixels with intensity above <em>T</em> to be one color, while all pixels with intensity below <em>T</em> become another color&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0001">1</a>]. Picking the value of <em>T</em> is the main challenge in such methods and several automated approaches have been developed for this purpose&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0023">23</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0030">30</a>]. A popular method in the remote sensing community for picking <em>T</em>, is known as Otsu thresholding&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0023">23</a>], involves finding the pixel intensity that creates the greatest separation and least overlap between the modes in the pixel intensity histogram. A weakness of these thresholding methods for remote sensing and flood mapping is that they are susceptible to noise and often generate too many tiny spots (flooded segments).</p>     <p>Other methods of image segmentation include the region merging technique proposed by Baatz et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0002">2</a>], which greedily groups similar pixels in an hierarchical fashion. More recently, graph-based methods have been introduced for image segmentation. They formulate the image as a graph, and adopt either spectral or clustering methods to conduct segmentation. Shi et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0028">28</a>] create a graph with weighted edges and use the normalized cut criterion to segment the image. Browet et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0006">6</a>] also formulate the image as a graph; they use modularity as a criterion to find a segmentation for the image. However, these methods can be computationally expensive and typically are not scalable on large satellite images.</p>     <p>Researchers have also investigated semi-supervised learning approaches for image segmentation&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0016">16</a>]. One influential semi-supervised method for mapping floods is the Watershed algorithm, developed by Beucher and Meyer&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0004">4</a>]. It requires the user to mark different pixels in the image and utilizes a region growing technique to merge pixels starting from the provided markers. While the method is interactive and incremental in nature, the Watershed algorithm requires at least one marker for each segment, which can be inefficient in the scenario of flood mapping in an urban setting.</p>    </section>    <section id="sec-7">     <header>     <div class="title-info">      <h3>       <span class="section-number">2.2</span> Semi-supervised Methods</h3>     </div>     </header>     <p>Semi-supervised classification uses unlabeled data in addition to some amount of labeled data to learn a classifier. This type of learning has become widely used in recent years&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0017">17</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0022">22</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0033">33</a>]. A common approach within this category is graph-based semi-supervised learning&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0005">5</a>]. This genre of methods leverages the graph structure, which is either obtained from additional data sources or derived from the original data. In general, these methods use graph structure as a regularizer to the loss function by assuming that nearby nodes in the graph should have similar labels. These methods are not suitable for our problem as they usually require much more labeled data for training and do not scale to high resolution data.</p>    </section>    <section id="sec-8">     <header>     <div class="title-info">      <h3>       <span class="section-number">2.3</span> Flood Mapping</h3>     </div>     </header>     <p>Flood mapping on satellite images has been the focus of much prior work in the remote sensing community. Many of these works rely on variations of the idea of thresholding and work in a purely unsupervised fashion&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0012">12</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0021">21</a>]. For example, Giustarini et al. lever a probabilistic flood mapping procedure (based on Gaussian mixture models) to segment flooded regions from dry regions&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0012">12</a>].</p>     <p>There exist a few flood mapping approaches that leverage human supervision&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0019">19</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0031">31</a>]. Martinez et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0019">19</a>] collect labels from aerial images and ground observations while adopting a supervised method on SAR images to map the flood temporal dynamics. Semi-supervised learning&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0031">31</a>] methods adopt the idea of region-growing following different ways to model the change of pixel intensity in the image. These methods usually require a large number of labels to achieve desirable performance and do not naturally support interactive and crowdsourced flood mapping.</p>    </section>    <section id="sec-9">     <header>     <div class="title-info">      <h3>       <span class="section-number">2.4</span> Crowdsourcing in Emergency Response</h3>     </div>     </header>     <p>Crowdsourcing has also been shown to be valuable for emergency response during times of disaster&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0020">20</a>]. A recent example is the searching for Malaysian Flight 370. Authorities released satellite images and the public helped in efforts to locate the missing aircraft&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0020">20</a>]. In addition, some researchers have investigated the important role that crowdsourcing can play during flood disasters. Degrossi et al. studied the usage of social media for collecting useful information such as water height and geo-location information to conduct flood risk management&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0009">9</a>]. While existing work does study how crowd-based information can be applied to collect information for a few locations during a flood disaster, we are not aware of other efforts that lever crowdsourcing to generate a holistic flood map for a disaster area.</p>    </section>   </section>   <section id="sec-10">    <header>     <div class="title-info">     <h2>      <span class="section-number">3</span> Human-guided Flood Mapping</h2>     </div>    </header>    <p>The design goals for our flood mapping system can be stated as:</p>    <ol class="list-no-style">     <li id="list1" label="(1)"><strong>Quality:</strong> Generate accurate flood mappings with only limited supervision.<br/></li>     <li id="list2" label="(2)"><strong>Efficiency:</strong> Conduct efficient and scalable flood mapping for large satellite images. Efficiency is necessary to facilitate interactive learning; it is also vital if the method is to be used to help guide emergency first responders in a flood disaster.<br/></li>     <li id="list3" label="(3)"><strong>Interactivity and Ease-of-Use:</strong> Effectively incorporate expert guidance from domain experts or from the crowd.<br/></li>    </ol>    <p>With these desiderata in mind, we now describe our framework for flood mapping in detail below.</p>    <section id="sec-11">     <header>     <div class="title-info">      <h3>       <span class="section-number">3.1</span> Preprocessing</h3>     </div>     </header>     <p>To label areas of a satellite image as either land or water, we need to decide on a primary unit for labeling. A straightforward technique is to treat each pixel as a unit and conduct pixel-based labeling. The drawback of this method is that we lose information derived from geographic correlations between pixels (a neighboring pixel of a water area is more likely to be water and vice versa). A pixel-based approach is not only sensitive to noise effects (common in such imagery) and but also prone to labeling error <a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a>. Another alternative is to conduct uniform grouping, which divides the image into many parts of uniform size. However, without using the pixel intensity information from the image, this grouping can go across land-water boundaries leading to cognitive dissonance when labeling patches. To avoid such problems, we adopt an efficient graph-based approach for patch generation, which can both effectively detect regions of different sizes and largely avoid generating regions across land-water boundaries.</p>     <section id="sec-12">     <p><em>3.1.1 Graph Construction.</em> Graph-based segmentation has been widely studied in the literature&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0010">10</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0028">28</a>]. In this paper, we convert a given image into an undirected graph following the approach proposed by Cour et al.&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0008">8</a>]. Each pixel of the image is treated as one node and each pixel has edges to nearby pixels within a distance <em>d<sub>max</sub>      </em>, where <em>d<sub>max</sub>      </em> is a pre-defined parameter. The weight of the edge between pixel <em>i</em> and pixel <em>j</em> is defined as follows: <div class="table-responsive" id="eq1">       <div class="display-equation">        <span class="tex mytex">\begin{equation} w_{ij}= {\left\lbrace \begin{array}{@{}l@{\quad }l@{}}e^{-\frac{d\left(i,j\right)}{\sigma _{x}^2} -\frac{|F\left(i\right)-F\left(j\right)|^2}{\sigma _{y}^2}} &#x0026; \text{if } d\left(i,j\right){\lt} d_{max} \\ 0 &#x0026; \text{otherwise.} \end{array}\right.} \end{equation} </span>        <br/>        <span class="equation-number">(1)</span>       </div>      </div> where <em>d</em>(<em>i</em>, <em>j</em>) is the Euclidean distance between pixels <em>i</em> and <em>j</em> and <em>F</em>(<em>i</em>) is a feature vector evaluated at pixel <em>i</em>. Depending on the data source, the feature vector can be the grayscale value or the RGB values of the pixel. <em>&#x03C3;<sub>x</sub>      </em>, <em>&#x03C3;<sub>y</sub>      </em> and <em>d<sub>max</sub>      </em> are parameters that need to be determined ahead of time<a class="fn" href="#fn2" id="foot-fn2"><sup>2</sup></a>.</p>     <p>Note that the number of nodes in the constructed graph <em>n</em> is equal to the number of pixels in the image, and the number of edges is <em>m</em> = <em>&#x03B1;</em>*<em>n</em>, where <em>&#x03B1;</em> is a small constant factor depending on the setting of <em>d<sub>max</sub>      </em>.</p>     </section>     <section id="sec-13">     <p><em>3.1.2 Graph Clustering to Generate Patches.</em> After we construct the graph from the image, we cluster the graph to generate patches. Since a satellite image usually contains hundreds of millions of pixels, we need a highly scalable graph clustering algorithm. In this work, we leverage Multi-level Regularized Markov Clustering (MLR-MCL)&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0024">24</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0025">25</a>], a scalable graph clustering software<a class="fn" href="#fn3" id="foot-fn3"><sup>3</sup></a>.</p>     <p>Since the goal of graph clustering is to generate basic units for labeling, we tend to produce a large number of clusters. Empirically, we find the method works well when the average size of a cluster (patch) is a few hundred pixels. Once we obtain the graph clustering results, pixels in the same cluster are considered to be a <em>patch</em>.</p>     <p>There are many advantages to producing patches using this approach. First of all, unlike uniform grouping, this approach is better at avoiding cognitively discordant scenarios where clusters traverse natural image boundaries (e.g. water and land in the same patch). Secondly, controlling the number of patches generated is straightforward using MLR-MCL (we do not have to pre-specify number of patches/clusters). Finally, MLR-MCL has time complexity linear to the number of edges and is very efficient when run on the constructed graph, where the number of edges is proportional to the number of nodes.</p>     </section>    </section>    <section id="sec-14">     <header>     <div class="title-info">      <h3>       <span class="section-number">3.2</span> Cognitive Expert-guided Labeling</h3>     </div>     </header>     <p>After generating patches, the next step is to ask the human expert to identify and label a few patches. The expert user will place a few markers in the image to label a few patches that they identify as land or water. We rely on the expert to select patches to label &#x2013; ideally focusing on hard-to-label patches (e.g. sinuous river beds, flooding in urban zones, or swamp regions). We will discuss strategies to automate this process in Section&#x00A0;<a class="sec" href="#sec-17">4</a>. To utilize this human-provided supervision, a binary classifier is then learned and subsequently applied to the rest of the unlabeled patches, discussed next.</p>     <section id="sec-15">     <p><em>3.2.1 Learning the Binary Classifier.</em> In this paper, we use <em>k</em>-NN as the classifier because there are only a few interpretable features and we want model training and prediction to be efficient. In particular, we define the distance function between two patches <em>i</em> and <em>j</em> as follows: <div class="table-responsive" id="eq2">       <div class="display-equation">        <span class="tex mytex">\begin{equation} D\left(i,j\right)=\left\Vert \bar{F}\left(i\right)-\bar{F}\left(j\right) \right\Vert _2*\log {\left(dist\left(i,j\right)\right)} \end{equation} </span>        <br/>        <span class="equation-number">(2)</span>       </div>      </div> Eq.&#x00A0;<a class="eqn" href="#eq2">2</a> contains two components. The first component compares the features of the two patches while the second component calculates the Euclidean distance between the two patches. To compute the first component, we average the feature vectors of the two patches respectively and compute the L2-norm of their difference. For the second component, we calculate the geographic centroid of both patches and compute the Euclidean distance between the centroids. To decrease the effect of geographic distance, we take the logarithm of the Euclidean distance<a class="fn" href="#fn4" id="foot-fn4"><sup>4</sup></a>.</p>     <p>To classify an unlabeled patch, we find the <em>k</em> most similar labeled patches based on the distance function in Eq.&#x00A0;<a class="eqn" href="#eq2">2</a>. The classification of the patch is then decided by a vote conducted using the labels of these <em>k</em> most similar labeled patches. We point out that <tt>HUG-FM</tt> inherently supports <strong>incremental learning</strong>. If the classification result is not desirable and needs further adjustment, the user will be able to improve the result by adding new markers as supervision. The result will then be updated based on the newly added information. In practice, we find that an expert usually only needs to provide 2 to 6 markers to generate high quality results.</p>     </section>    </section>    <section id="sec-16">     <header>     <div class="title-info">      <h3>       <span class="section-number">3.3</span> Flood Mapping</h3>     </div>     </header>     <p>After obtaining segmentations of an urban area before and after a flood, flood mapping can be performed through a correspondence of segmentations across time. We use the satellite image collected before the flood as the reference and compare satellite images during and after the flood with this reference. Areas that are not classified as water before the natural disaster but are classified as water after the disaster are considered flooded areas.</p>    </section>   </section>   <section id="sec-17">    <header>     <div class="title-info">     <h2>      <span class="section-number">4</span> The Crowdsourced <strong>HUG-FM</strong> (<strong>CHUG-FM</strong>)</h2>     </div>    </header>    <p>When a disaster strikes, reaction time during and immediately thereafter is of paramount importance. Given both the potential scale of the problem and the number of images one needs to annotate, it may overwhelm available experts. To generate more consistent results in a scalable fashion by leveraging crisis volunteers, we introduce a crowdsourced variant of <tt>HUG-FM</tt> known as <tt>CHUG-FM</tt>. Key elements of <tt>CHUG-FM</tt> include the basic <tt>HUG-FM</tt> platform and a novel ensembling strategy. The ensembling strategy relies on inference over intermediate results provided by non-expert users.</p>    <section id="sec-18">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.1</span> Supervision Collection</h3>     </div>     </header>     <section id="sec-19">     <p><em>4.1.1 Crowdsourcing Interface.</em> In the crowdsourcing platform, a non-expert user is introduced to a satellite image of an area, such as Houston or Chennai. The user is prompted to label fifteen randomly selected pixels in the image. The interface for pixel labeling is displayed in Figure&#x00A0;<a class="fig" href="#fig1">1</a><a class="fn" href="#fn5" id="foot-fn5"><sup>5</sup></a>. As shown in the figure, the user is prompted to label the yellow circle in the image; in this case the point is clearly water. After collecting labels for fifteen markers, the application runs <tt>HUG-FM</tt> and displays the result to the user, where the user can rate the result (screenshot shown in Figure&#x00A0;<a class="fig" href="#fig1">1</a>b). <figure id="fig1">       <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186339/images/www18companion-101-fig1.jpg" class="img-responsive" alt="Figure 1"        longdesc=""/>       <div class="figure-caption">        <span class="figure-number">Figure 1:</span>        <span class="figure-title">        <tt>CHUG-FM</tt> screenshots: a) user labeling interface. The blue square highlights the region around the marker to be labeled. A zoomed-in view of the marker is displayed on the right. The user has three label options: water, land, or unknown. b) the result (segmentation) based on the provided labels is shown to the user and the user can rate the result.</span>       </div>      </figure>     </p>     </section>     <section id="sec-20">     <p><em>4.1.2 Stratified Generation of Markers.</em> A key difference between <tt>HUG-FM</tt> and <tt>CHUG-FM</tt> is that in the former we rely on the human expert to select patches from the image for labeling (see Section&#x00A0;<a class="sec" href="#sec-14">3.2</a>), while in the latter we do not. For the crowdsourced variant, we need to identify key patches that members of the crowd will label since these individuals (i.e non-experts) might not be good at selecting patches (e.g. they may select only land patches or just select patches from a very small region). Pre-selection also offers an efficiency advantage since users do not need to spend time selecting patches. In designing the patch selection procedure for <tt>CHUG-FM</tt>, we have two priorities in mind. First, both water and land patches should be sampled, regardless of any skew that may exist (e.g. very little water in the image). Second, patches that span the entire image should be sampled (e.g. patches should not only come from on specific area of the image). To ensure these priorities are met, we stratify patches into three groups: likely-water, likely-land, and uncertain. We then sample patches from the three groups separately by adapting the idea of proportional-allocation stratified sampling&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0007">7</a>]. Specifically, we convert the image into a gray-scale image and fit a Gaussian Mixture Model (GMM) with two components to the pixel intensity of each patch. We compute the means of the two Gaussian components <em>&#x03BC;</em>      <sub>1</sub> and <em>&#x03BC;</em>      <sub>2</sub> (<em>&#x03BC;</em>      <sub>1</sub> < <em>&#x03BC;</em>      <sub>2</sub>). We then categorize the patches based on their intensity values. If the average pixel intensity of a patch <em>x</em> &#x2264; <em>&#x03BC;</em>      <sub>1</sub>, then the patch is regarded as likely-water. If <em>x</em> > <em>&#x03BC;</em>      <sub>2</sub>, then it is regarded as likely-land. Otherwise, the patch is categorized as uncertain. We sample 40% of the patches from the likely-land group and likely-water group respectively while drawing the remaining 20% from the uncertain group. If a patch is selected, a marker is placed in its center (and context is provided to ensure cognitive correspondence). Note that sampling uncertain pixels allows us to satisfy our second priority in sampling, which is to cover the entire image in sampling.</p>     <p>We inject two validation markers into the samples for the purpose of eliminating ineffective workers. These two markers are manually selected from the satellite image and are trivial for a human to label as water or land. In total, we generate 2 validation markers and 13 regular markers for each flood mapping task.</p>     </section>    </section>    <section id="sec-21">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.2</span> Ensemble Learning</h3>     </div>     </header>     <p>As the intermediate flood mapping results generated by different users can vary greatly in their quality, we use an ensemble learning method known as a voting classifier to aggregate intermediate results into a final result&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0026">26</a>]. We remove the participants who do not correctly label all the validation markers. To determine the aggregated label of a patch, we compute the distribution of its labels across all the participants. If the proportion of results labeling it as land exceeds some threshold <em>&#x03B8;</em>, then the patch is labeled as land; otherwise it is labeled as water. We next discuss the two-fold cross-validation procedure used for selecting <em>&#x03B8;</em>.</p>     <p>We denote the number of participants as <em>n</em>, each of which provides <em>m</em> markers. At the end of the crowdsourcing experiment, we have <em>n</em> individual <tt>HUG-FM</tt> results and <em>n</em>*<em>m</em> patches with provided labels. We randomly select 0.5*<em>n</em> users and use their <tt>HUG-FM</tt> results as the training dataset while treating the 0.5*<em>n</em>*<em>m</em> labeled points from the rest of the users as the validation dataset. We conduct the aggregation on the training dataset, where we vary the threshold <em>&#x03B8;</em> from 0.0 to 1.0 by 0.01 increments. We then infer the labels of patches in the validation dataset and adopt the user-provided labels as ground-truth for evaluation. We pick the <em>&#x03B8;</em> that leads to the best performance in the validation dataset<a class="fn" href="#fn6" id="foot-fn6"><sup>6</sup></a>. While the selection of <em>&#x03B8;</em> is governed by the trade-off between precision and recall, we found in experiments that the best performance is generally achieved when <em>&#x03B8;</em> is between 0.1 and 0.3.</p>    </section>   </section>   <section id="sec-22">    <header>     <div class="title-info">     <h2>      <span class="section-number">5</span> Experiments on <strong>HUG-FM</strong>     </h2>     </div>    </header>    <p>In this section, we examine the performance of our framework, <tt>HUG-FM</tt>, on real-world satellite images to evaluate its performance.</p>    <section id="sec-23">     <header>     <div class="title-info">      <h3>       <span class="section-number">5.1</span> Experiment Setup</h3>     </div>     </header>     <p>We compare our algorithm with some state-of-the-art algorithms for image segmentation and semi-supervised learning:</p>     <ol class="list-no-style">     <li id="list4" label="(1)">Otsu thresholding&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0023">23</a>], the most common thresholding-based method.<br/></li>     <li id="list5" label="(2)">The Watershed algorithm&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0004">4</a>], a semi-supervised region-growing method.<br/></li>     <li id="list6" label="(3)">The Normalized cut (N-cut) algorithm&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0028">28</a>]. It formulates the image as a graph and uses the normalized cut criterion to segment the image.<br/></li>     <li id="list7" label="(4)">Graph-based image segmentation with post-processing. While it also generates patches before segmentation, the subsequent step is unsupervised. It involves continued merging of nearby patches based on the similarity of pairs of patches until the designated number of patches is left.<br/></li>     <li id="list8" label="(5)">Support Vector Machine (SVM). This method learns a classifier using the provided markers as training data.<br/></li>     <li id="list9" label="(6)">NORM-THR[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0018">18</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0021">21</a>]: is a modern split-based automatic thresholding method for water delineation.<br/></li>     <li id="list10" label="(7)">Planetoid&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0032">32</a>]. This is the state-of-the-art semi-supervised learning algorithm on attributed graphs based on deep neural networks. To apply this method, we construct a graph with node attributes in the same way as <tt>HUG-FM</tt>.<br/></li>     </ol>     <p>We implement <tt>HUG-FM</tt> and the graph-based method with post-processing using <tt>Python</tt>. We use the OpenCV API for implementing the Watershed algorithm and Otsu&#x0027;s thresholding. For the N-cut algorithm and Planetoid, we employ the source code from the authors. We use SVM-light for the SVM method<a class="fn" href="#fn7" id="foot-fn7"><sup>7</sup></a>.</p>    </section>    <section id="sec-24">     <header>     <div class="title-info">      <h3>       <span class="section-number">5.2</span> Qualitative Experiment on Chennai Dataset</h3>     </div>     </header>     <section id="sec-25">            <p><em>5.2.1 Water Delineation on Individual Images.</em> For qualitative evaluation, we use satellite images of Chennai, India during the 2015 South Indian Floods<a class="fn" href="#fn8" id="foot-fn8"><sup>8</sup></a>. In total we run <tt>HUG-FM</tt> on six satellite images during the flood, focused on the greater Chennai metropolitan area, one for every twelve days. The images come from Sentinel-1, which orbits this region every twelve days. Considering the fact that some baselines (e.g. the N-cuts algorithm and the Watershed algorithm) are very computationally expensive and cannot finish on large satellite images in 24 hours, we downscale the satellite images and run our method and baselines on them for comparison. As an example, we run all the algorithms on the satellite image of Chennai on 11/24/2015, which is re-sized from 4,500 &#x00D7; 2,500 to 800 &#x00D7; 444. Basic information about the datasets and parameter settings for our algorithm are displayed in Table&#x00A0;<a class="tbl" href="#tab1">1</a>.</p>     <div class="table-responsive" id="tab1">      <div class="table-caption">       <span class="table-number">Table 1:</span>       <span class="table-title">Datasets and parameter settings.</span>      </div>      <table class="table">       <thead>        <tr>        <th style="text-align:center;">Image Date</th>        <th style="text-align:center;">Size of Image</th>        <th style="text-align:center;">         <span class="inline-equation"><span class="tex">$\sigma _x^2$</span>         </span>        </th>        <th style="text-align:center;">         <span class="inline-equation"><span class="tex">$\sigma _y^2$</span>         </span>        </th>        <th style="text-align:center;">         <em>d<sub>max</sub>         </em>        </th>        <th># patches</th>        </tr> 						 </thead> 						 <tbody>        <tr>        <td style="text-align:center;">11/24/2015</td>        <td style="text-align:center;">800 &#x00D7; 444</td>        <td style="text-align:center;">3</td>        <td style="text-align:center;">16</td>        <td style="text-align:center;">2</td>        <td>12946</td>        </tr>        <tr>        <td style="text-align:center;">10/19/2015</td>        <td style="text-align:center;">4500 &#x00D7; 2500</td>        <td style="text-align:center;">2</td>        <td style="text-align:center;">16</td>        <td style="text-align:center;">2</td>        <td>69674</td>        </tr>        <tr>        <td style="text-align:center;">10/31/2015</td>        <td style="text-align:center;">4500 &#x00D7; 2500</td>        <td style="text-align:center;">2</td>        <td style="text-align:center;">16</td>        <td style="text-align:center;">2</td>        <td>69674</td>        </tr>        <tr>        <td style="text-align:center;">11/12/2015</td>        <td style="text-align:center;">4500 &#x00D7; 2500</td>        <td style="text-align:center;">2</td>        <td style="text-align:center;">16</td>        <td style="text-align:center;">2</td>        <td>69674</td>        </tr>        <tr>        <td style="text-align:center;">11/24/2015</td>        <td style="text-align:center;">4500 &#x00D7; 2500</td>        <td style="text-align:center;">2</td>        <td style="text-align:center;">16</td>        <td style="text-align:center;">2</td>        <td>69674</td>        </tr>        <tr>        <td style="text-align:center;">12/06/2015</td>        <td style="text-align:center;">4500 &#x00D7; 2500</td>        <td style="text-align:center;">2</td>        <td style="text-align:center;">16</td>        <td style="text-align:center;">2</td>        <td>69674</td>        </tr>        <tr>        <td style="text-align:center;">12/18/2015</td>        <td style="text-align:center;">4500 &#x00D7; 2500</td>        <td style="text-align:center;">2</td>        <td style="text-align:center;">16</td>        <td style="text-align:center;">2</td>        <td>69674</td>        </tr>       </tbody>      </table>     </div>     <p>We compare the performance of our algorithm with the baselines on the downscaled image shown in Figure&#x00A0;<a class="fig" href="#fig2">2</a>a (Chennai area on 11/24/2015). The water-land segmentation results are shown in Figure&#x00A0;<a class="fig" href="#fig2">2</a> b-f while the execution time is listed in Table&#x00A0;<a class="tbl" href="#tab2">2</a>. The results of NORM-THR, Planetoid and SVM on the Chennai dataset, are omitted here due to lack of space (they perform slightly worse than <tt>HUG-FM</tt>), but a detailed comparison with these approaches will follow in the next section. We highlight the following observations on the Chennai dataset as shown in Figure&#x00A0;<a class="fig" href="#fig2">2</a>:     <figure id="fig2">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186339/images/www18companion-101-fig2.jpg" class="img-responsive" alt="Figure 2"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 2:</span>       <span class="figure-title">Segmentation results of different approaches on satellite image of Chennai on 11/24/2015 (down-scaled).</span>      </div>     </figure> 				 </p>     <div class="table-responsive" id="tab2">      <div class="table-caption">       <span class="table-number">Table 2:</span>       <span class="table-title">Running time comparisons for different methods. # markers is the number of markers the human provides for the algorithm.</span>      </div>      <table class="table">       <thead>        <tr>        <th style="text-align:center;">Method</th>        <th style="text-align:center;"># Markers</th>        <th style="text-align:center;">Time (s)</th>        </tr> 						 </thead> 						 <tbody>        <tr>        <td style="text-align:center;">         <tt>HUG-FM</tt>        </td>        <td style="text-align:center;">2</td>        <td style="text-align:center;">0.057</td>        </tr>        <tr>        <td style="text-align:center;">Otsu&#x0027;s Thresholding</td>        <td style="text-align:center;">0</td>        <td style="text-align:center;">0.077</td>        </tr>        <tr>        <td style="text-align:center;">Watershed Algorithm</td>        <td style="text-align:center;">11</td>        <td style="text-align:center;">0.225</td>        </tr>        <tr>        <td style="text-align:center;">N-cuts Algorithm</td>        <td style="text-align:center;">0</td>        <td style="text-align:center;">538.615</td>        </tr>        <tr>        <td style="text-align:center;">Graph method w. post-process</td>        <td style="text-align:center;">0</td>        <td style="text-align:center;">558.220</td>        </tr>       </tbody>      </table>     </div>     <ol class="list-no-style">      <li id="list11" label="(1)">Our method performs the best among all the approaches. Our method can clearly identify most of the water areas and even long thin rivers; most other methods fail to do so. Particularly, our method is good at identifying regions of arbitrary shape while not limiting the size of each segment. We notice that Otsu thresholding in Figure&#x00A0;<a class="fig" href="#fig2">2</a>c also has similar advantages, but it is very sensitive to noise and tends to generate many tiny partitions (two times as many segments as our method on the image). This is because its segmentation results only depend on the intensity of each pixel and one pixel can be an individual partition if its pixel intensity is far different from its neighboring pixels. Its shortcomings will become more evident shortly when we discuss our quantitative evaluation.<br/></li>      <li id="list12" label="(2)">Compared to the Watershed algorithm, our method produces better results while requiring far less human effort (Figure&#x00A0;<a class="fig" href="#fig2">2</a>b vs. Figure&#x00A0;<a class="fig" href="#fig2">2</a>d). The Watershed algorithm seems to correctly capture some boundaries but can not segment out small water areas, including the long thin rivers. For the result shown in Figure&#x00A0;<a class="fig" href="#fig2">2</a>d, the expert user places nine markers in different water areas and two markers in land areas (see Figure&#x00A0;<a class="fig" href="#fig3">3</a>b). But the segmentation result is still not desirable. On the other hand, using our method, the user only needs to place one marker in water and one in land respectively (see Figure&#x00A0;<a class="fig" href="#fig3">3</a>a) and the result is much better than the Watershed algorithm. One of the reasons for this difference is that the Watershed Algorithm is a region-growing method and the segments grow from the markers in a local fashion; therefore it requires more manually placed labels to achieve desirable performance.<br/></li>      <li id="list13" label="(3)">The N-cuts algorithm tends to generate over-balanced segments and cannot extract segments of long thin shape (shown in Figure&#x00A0;<a class="fig" href="#fig2">2</a>e). Though it performs well in detecting most of the boundaries, it breaks large areas into pieces that should be in one partition. This can be seen from the split of some large lakes. As a whole, the result is much worse than our algorithm.<br/></li>      <li id="list14" label="(4)">Graph-based segmentation with post-processing works well in detecting some large regions (see Figure&#x00A0;<a class="fig" href="#fig2">2</a>f). However, similar to the N-cut algorithm, it cannot detect small water regions, especially long thin rivers.<br/></li>      <li id="list15" label="(5)">As displayed in Table&#x00A0;<a class="tbl" href="#tab2">2</a>, our method is the most efficient method in classifying the image immediately after providing labels. The N-cut algorithm is very slow because it involves expensive computation of the eigenvectors for the Laplacian matrix. The Graph-based segmentation with post-processing method is computationally expensive at the stage of hierarchical merging. Our method is even faster than the simple Otsu&#x0027;s thresholding algorithm since we label the image patch by patch, as opposed to pixel by pixel. We point out that our algorithm requires about 30 seconds for preprocessing to generate patches. However, the preprocessing time is less of a concern here as we only need to conduct it once. The labeling time is a more important factor and <tt>HUG-FM</tt> greatly reduces this amount of time, enabling usage in different scenarios (e.g. online interactive learning and crowdsourcing).<br/></li>     </ol>     <figure id="fig3">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186339/images/www18companion-101-fig3.jpg" class="img-responsive" alt="Figure 3"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 3:</span>       <span class="figure-title">Labels that the user provided for the algorithm. Blue points label the areas as water while green points label them as land.</span>      </div>     </figure>     </section>     <section id="sec-26">     <p><em>5.2.2 Dynamic Analysis for Flood Mapping.</em> While we mainly focus on water delineation in the satellite images above, we now discuss how we adopt the developed water delineation method to detect flooded areas. To this end, we conduct water delineation on all the full-size satellite images of Chennai that are described in Table&#x00A0;<a class="tbl" href="#tab1">1</a>. We then refer to the historical satellite images collected before the flood and conduct dynamic analysis.</p>     <p>Specifically, we use the segmentation results from 10/31/2015 as the baseline and compare this water delineation to the ones from later dates. Figure&#x00A0;<a class="fig" href="#fig4">4</a> presents the dynamic changes of water areas<a class="fn" href="#fn9" id="foot-fn9"><sup>9</sup></a>. Red color indicates the areas that change from land to water while yellow color indicates the opposite change. From Figure&#x00A0;<a class="fig" href="#fig4">4</a>, we can clearly observe that 11/24 and 12/06 have the largest number of water areas; water areas seem to decrease following 12/06. Red areas are likely regions affected by the flood. The flood maps are quite consistent with the fact that the South Indian floods lasted from 11/08/2015 to 12/14/2015.     <figure id="fig4">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186339/images/www18companion-101-fig4.jpg" class="img-responsive" alt="Figure 4"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 4:</span>       <span class="figure-title">Water area changes from 11/12/2015 to 12/18/2015 using 10/31/2015 as the baseline. One image for every 12 days. Red color indicates areas that were land on 10/30/2015 but were water on the given date, while yellow color indicates areas that were water on 10/30/2015 but were land on the given date. Blue and green represent areas that were originally water or land on 10/30/2015 and remain so on the given date.</span>      </div>     </figure> 				 </p>     </section>    </section>    <section id="sec-27">     <header>     <div class="title-info">      <h3>       <span class="section-number">5.3</span> Quantitative Evaluation</h3>     </div>     </header>     <p>In this section, we quantitatively evaluate <tt>HUG-FM</tt> on a real-world dataset with ground-truth. For this purpose we rely on a higher-resolution synthetic aperture radar satellite image of Houston collected immediately following a 2016 flood; this dataset has been manually annotated by a domain expert (this annotation is the ground truth). The size of the image is 1, 550 &#x00D7; 2, 533. Similar to the Chennai datasets, there are two raw attributes (HH and HV) from radar and one attribute representing geographic elevation for each pixel. HH and HV measure the polarity of waves reflected by a material and are helpful in distinguishing water from land.</p>     <p>We run <tt>HUG-FM</tt> on this dataset with two representative markers provided by an expert user for water and land area. As baselines, we compare our method with some of the best methods in the previous section<a class="fn" href="#fn10" id="foot-fn10"><sup>10</sup></a>. We employ the Watershed algorithm with six carefully selected markers. For SVM and Planetoid, we provide 50 labeled patches for both water and land as they require more labeled data to generate reasonable results (label data is sampled from the ground-truth). We leverage the ground-truth provided by the domain expert and evaluate different methods using accuracy and <em>F</em>     <sub>1</sub> score. Table&#x00A0;<a class="tbl" href="#tab3">3</a> shows the performance of these methods. It can be seen that <tt>HUG-FM</tt> substantially outperforms other methods with the highest values on both evaluation metrics. Both Otsu&#x0027;s algorithm and the Watershed algorithm have very low precision and therefore low <em>F</em>     <sub>1</sub> score, while NORM-THR has more balanced performance. Among all the baselines, NORM-THR, SVM and Planetoid are the strongest. We point out that even though SVM and Planetoid use much more labeled data (100 training examples as opposed to 2 in <tt>HUG-FM</tt>), our method still outperforms them.</p>     <div class="table-responsive" id="tab3">     <div class="table-caption">      <span class="table-number">Table 3:</span>      <span class="table-title">Quantitative evaluation on Houston dataset.</span>     </div>     <table class="table">      <thead>       <tr>        <th style="text-align:center;">Method</th>        <th style="text-align:center;">Accuracy</th>        <th style="text-align:center;">F1 Score</th>       </tr> 						</thead> 						<tbody>       <tr>        <td style="text-align:center;">        <tt>HUG-FM</tt>        </td>        <td style="text-align:right;">        <strong>0.9552</strong>        </td>        <td style="text-align:right;">        <strong>0.8681</strong>        </td>       </tr>       <tr>        <td style="text-align:center;">SVM</td>        <td style="text-align:right;">0.9451</td>        <td style="text-align:right;">0.8382</td>       </tr>       <tr>        <td style="text-align:center;">Planetoid</td>        <td style="text-align:right;">0.9445</td>        <td style="text-align:right;">0.8414</td>       </tr>       <tr>        <td style="text-align:center;">Watershed algorithm</td>        <td style="text-align:right;">0.8904</td>        <td style="text-align:right;">0.6796</td>       </tr>       <tr>        <td style="text-align:center;">Otsu&#x0027;s thresholding</td>        <td style="text-align:right;">0.8977</td>        <td style="text-align:right;">0.7394</td>       </tr>       <tr>        <td style="text-align:center;">NORM-THR</td>        <td style="text-align:right;">0.8673</td>        <td style="text-align:right;">0.8371</td>       </tr>      </tbody>     </table>     </div>     <p>We also visualize the results of these methods in Figure&#x00A0;<a class="fig" href="#fig5">5</a>. Our method nicely captures most of the water areas of various shapes. Otsu&#x0027;s algorithm, on the other hand, tends to mistakenly classify many regions as water and the result looks very messy. The Watershed algorithm generates an overly smooth result and cannot accurately capture small regions of water. The SVM and Planetoid results look visually similar to <tt>HUG-FM</tt> (as does NORM-THR, whose image is not shown due to limit of space). However, all three incorrectly classify many land regions as water.     <figure id="fig5">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186339/images/www18companion-101-fig5.jpg" class="img-responsive" alt="Figure 5"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 5:</span>       <span class="figure-title">Flood mapping results on Houston dataset (truncated).</span>      </div>     </figure> 				 </p>    </section>    <section id="sec-28">     <header>     <div class="title-info">      <h3>       <span class="section-number">5.4</span> Crowdsourcing Experiment Setup</h3>     </div>     </header>     <p>To evaluate our crowdsourced cognitive framework, <tt>CHUG-FM</tt>, we recruited a broad mix of college-educated participants (53) in our user study (OSU-IRB # 2015B0249) which follows standard Nielsen Norman Group guidelines. Participants were given time to acclimatize themselves with the interface and further had the opportunity to work with some test images that were distinct from any of the satellite images used in the experiment. Each participant was provided three different satellite images to work with and a 15-minute time limit. The first image is the Houston image during the 2016 Flood as discussed in the previous section. The other two images are for the city of Lumberton in North Carolina before and after Hurricane Matthew respectively (both dimensions are 2031 &#x00D7; 2500). Before the experiment step-by-step instructions are shown to the participants on the front page of the website. At the end of each task, the participants are asked to rate the results of <tt>HUG-FM</tt> and provide feedback for our crowdsourcing platform.</p>    </section>    <section id="sec-29">     <header>     <div class="title-info">      <h3>       <span class="section-number">5.5</span> CrowdSourced Results Analysis</h3>     </div>     </header>         <section id="sec-30">        <p><em>5.5.1 Ensemble Learning Results.</em> Once the participants finish the experiment, we conduct ensemble learning following the procedures aforementioned. We remove 5 ineffective participants from the database as they fail to correctly label both the validation markers. We start by discussing the results on the Houston data which includes ground-truth labels for all the pixels. The optimal threshold <em>&#x03B8;</em> for this dataset, tuned through two-fold cross-validation, is 0.21. We use this threshold to perform aggregation on all the <tt>HUG-FM</tt> results from these participants. We compare the aggregated results with the ones from each individual and the domain expert in Table&#x00A0;<a class="tbl" href="#tab4">4</a>. We can observe that <tt>CHUG-FM</tt> performs significantly better than each individual <tt>HUG-FM</tt> (row 2 vs. row 3 in Table&#x00A0;<a class="tbl" href="#tab4">4</a>). Even compared with <tt>HUG-FM</tt> conducted by a domain expert with carefully selected markers, <tt>CHUG-FM</tt> still brings us 0.0385 improvement in terms of <em>F</em>      <sub>1</sub> score. This reveals the power of crowdsourcing in conducting flood mapping. Though each individual does not perform very well in mapping the flood, we can obtain high-quality results by aggregation as long as errors do not correlate across users.</p>     <div class="table-responsive" id="tab4">     <div class="table-caption">      <span class="table-number">Table 4:</span>      <span class="table-title">Results of <tt>CHUG-FM</tt> compared with others on Houston.</span>     </div>     <table class="table">      <thead>       <tr>        <th style="text-align:center;">Method</th>        <th style="text-align:center;">Accuracy</th>        <th style="text-align:center;">F1 Score</th>       </tr> 						</thead> 						<tbody>       <tr>        <td style="text-align:center;">        <tt>HUG-FM</tt> (by the expert)</td>        <td style="text-align:left;">0.9552</td>        <td style="text-align:left;">0.8681</td>       </tr>       <tr>        <td style="text-align:center;">Avg. <tt>HUG-FM</tt> (by the crowd)</td>        <td style="text-align:left;">0.9380 (&#x00B1; 0.061)</td>        <td style="text-align:left;">0.8290 (&#x00B1; 0.094)</td>       </tr>       <tr>        <td style="text-align:center;">        <tt>CHUG-FM</tt>        </td>        <td style="text-align:left;">        <strong>0.9655</strong>        </td>        <td style="text-align:left;">        <strong>0.8840</strong>        </td>       </tr>      </tbody>     </table>     </div>     <p>We also analyze how the performance of <tt>CHUG-FM</tt> changes by varying the number of participants. We vary the number of participants from 5 to 40. For each particular number of participants <em>c</em>, we sample <em>c</em> from the total 48 valid participants and run the same aggregation as above, using 0.21 as the <em>&#x03B8;</em>. We repeat the same process 60 times and compute the average performance and the corresponding standard deviations for each <em>c</em>. We show the results in the box plots in Figure&#x00A0;<a class="fig" href="#fig6">6</a>. We can observe from Figure&#x00A0;<a class="fig" href="#fig6">6</a> that as the number of participants increases, the performance of <tt>CHUG-FM</tt> improves. Expectedly, the variance of the performance is lower when there are more participants.     <figure id="fig6">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186339/images/www18companion-101-fig6.jpg" class="img-responsive" alt="Figure 6"       longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 6:</span>      <span class="figure-title">Box plots showing the differential performance of <tt>CHUG-FM</tt> while varying number of participants. The <em>x</em>-axis is the number of the participants and <em>y</em>-axis represents the evaluation measurements of accuracy and <em>F</em>       <sub>1</sub> respectively.</span>     </div>     </figure> 			 </p>     <p>We also visualize the results to conduct qualitative evaluation for all three images, including the two satellite images from before and after Hurricane Matthew which do not contain ground-truth label (images omitted due to limit of space). We observe that <tt>CHUG-FM</tt> can capture the water areas more accurately than <tt>HUG-FM</tt>. It generates a more smooth result and is less prone to noise.</p>     </section>     <section id="sec-31">     <p><em>5.5.2 User Experience Analysis.</em> We conduct a comprehensive analysis on the user experience for the crowdsourcing platform. We summarize the results in Table&#x00A0;<a class="tbl" href="#tab5">5</a>. We can see that it only took 6.08 minutes on average (with maximum of 11.33 minutes and minimum of 3 minutes) to finish the three flood mapping tasks. According to the feedback, the participants appreciate the usability and cognitive correspondence of our crowdsourcing platform. More than 75% of participants gave the highest possible score on rating the easiness of using the website and the clearness of the instructions. 14 participants submitted detailed comments by using the textbox on the website and 5 of them mentioned our crowdsourcing platform is &#x201C;easy&#x201D;/&#x201C;straightforward&#x201D; to use. Here are a few representative positive comments from the participants:</p>     <div class="table-responsive" id="tab5">      <div class="table-caption">       <span class="table-number">Table 5:</span>       <span class="table-title">Summary of users&#x2019; feedback on the crowdsourcing experiment. The rating scale is from 1 to 5 with 5 being the highest.</span>      </div>      <table class="table">       <thead>        <tr>        <th style="text-align:center;">Measurements</th>        <th style="text-align:center;">Median</th>        <th style="text-align:center;">Average</th>        <th style="text-align:center;">S.D.</th>        </tr> 						 </thead> 						 <tbody>        <tr>        <td style="text-align:center;">Time Spent (minutes)</td>        <td style="text-align:right;">5.78</td>        <td style="text-align:right;">6.08</td>        <td style="text-align:right;">1.85</td>        </tr>        <tr>        <td style="text-align:center;">Rating Easiness of using the website</td>        <td style="text-align:right;">5.00</td>        <td style="text-align:right;">4.68</td>        <td style="text-align:right;">0.52</td>        </tr>        <tr>        <td style="text-align:center;">Rating Clearness of the instructions</td>        <td style="text-align:right;">5.00</td>        <td style="text-align:right;">4.73</td>        <td style="text-align:right;">0.50</td>        </tr>       </tbody>      </table>     </div>     <ol class="list-no-style">      <li id="list16" label="(1)">User 1: &#x201C;Very interesting exercise. Very easy to use and follow...&#x201D;<br/></li>      <li id="list17" label="(2)">User 2: &#x201C;Pretty neat idea...&#x201D;<br/></li>      <li id="list18" label="(3)">User 3: &#x201C;I think it was cool that ... I really enjoyed this.&#x201D;<br/></li>     </ol>     <p>Some participants indicated that some markers lies between water and land and are difficult to label. This is expected as we intentionally generate a few markers in uncertain patches to ensure we cover the space of the entire image in sampling. In the future, we plan to improve the user interface so that it can be easier for participants to label these markers (e.g. supporting interactive zoom-in view).</p>     </section>    </section>   </section>   <section id="sec-32">    <header>     <div class="title-info">     <h2>      <span class="section-number">6</span> Conclusion</h2>     </div>    </header>    <p>In this paper, we describe a novel cognitive framework to the flood mapping problem by effectively coupling human guidance with machine learned models. Our results with guidance from experts show that our algorithm can correctly segment out water and land areas with less error compared to state-of-the-art approaches. To enable usage during disaster, we develop a novel crowdsourcing platform and ensemble algorithm to utilize the wisdom of the crowd (crisis volunteers). Our crowdsourcing experiment, with over fifty participants working on three different tasks, consistently shows that the crowdsourced variant performs well &#x2013; producing noise-tolerate flood maps comparable to those produced by domain experts.</p>    <p>     <strong>Acknowledgments</strong>: This work is supported by National Science Foundation under grants EAR-1520870 and DMS-1418265. Computational support was provided by Ohio Supercomputer Center under grant PAS0166. All content represents the opinion of the authors, which is not necessarily shared or endorsed by their sponsors. We thank Jiayong Liang and Desheng Liu for useful discussions.</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>     <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>     </div>    </header>    <ul class="bibUl">     <li id="BibPLXBIB0001" label="[1]">S.&#x00A0;S. Al-Amri, N.&#x00A0;V. Kalyankar, et&#x00A0;al. Image segmentation by using threshold techniques. <em>Journal of Computing</em>, 2010.</li>     <li id="BibPLXBIB0002" label="[2]">M.&#x00A0;Baatz and A.&#x00A0;Sch&#x00E4;pe. Multiresolution segmentation: an optimization approach for high quality multi-scale image segmentation. <em>Angewandte Geographische Informationsverarbeitung XII</em>, 58:12&#x2013;23, 2000.</li>     <li id="BibPLXBIB0003" label="[3]">M.&#x00A0;Belkin, P.&#x00A0;Niyogi, and V.&#x00A0;Sindhwani. Manifold regularization: A geometric framework for learning from labeled and unlabeled examples. <em>JMLR&#x2019;06</em>.</li>     <li id="BibPLXBIB0004" label="[4]">S.&#x00A0;Beucher and F.&#x00A0;Meyer. The morphological approach to segmentation: the watershed transformation. <em>Mathematical Morphology in Image Processing</em>, 1992.</li>     <li id="BibPLXBIB0005" label="[5]">A.&#x00A0;Blum and S.&#x00A0;Chawla. Learning from labeled and unlabeled data using graph mincuts. 2001.</li>     <li id="BibPLXBIB0006" label="[6]">A.&#x00A0;Browet and <em>et al.</em>Community detection for hierarchical image segmentation. In <em>International Workshop on Combinatorial Image Analysis</em>, 2011.</li>     <li id="BibPLXBIB0007" label="[7]">W.&#x00A0;G. Cochran. <em>Sampling techniques</em>. John Wiley &#x0026; Sons, 2007.</li>     <li id="BibPLXBIB0008" label="[8]">T.&#x00A0;Cour, F.&#x00A0;Benezit, and J.&#x00A0;Shi. Spectral segmentation with multiscale graph decomposition. In <em>CVPR</em>, volume&#x00A0;2, pages 1124&#x2013;1131. IEEE, 2005.</li>     <li id="BibPLXBIB0009" label="[9]">L.&#x00A0;C. Degrossi et&#x00A0;al. Flood citizen observatory: a crowdsourcing-based approach for flood risk management in brazil. In <em>SEKE</em>, 2014.</li>     <li id="BibPLXBIB0010" label="[10]">P.&#x00A0;F. Felzenszwalb and D.&#x00A0;P. Huttenlocher. Efficient graph-based image segmentation. <em>International Journal of Computer Vision</em>, 59(2):167&#x2013;181, 2004.</li>     <li id="BibPLXBIB0011" label="[11]">H.&#x00A0;Gao, G.&#x00A0;Barbier, and R.&#x00A0;Goolsby. Harnessing the crowdsourcing power of social media for disaster relief. <em>IEEE Intelligent Systems</em>, 26(3):10&#x2013;14, 2011.</li>     <li id="BibPLXBIB0012" label="[12]">L.&#x00A0;Giustarini et&#x00A0;al. Probabilistic flood mapping using synthetic aperture radar data. <em>TGRS</em>, 2016.</li>     <li id="BibPLXBIB0013" label="[13]">M.&#x00A0;F. Goodchild and J.&#x00A0;A. Glennon. Crowdsourcing geographic information for disaster response: a research frontier. <em>IJDE</em>, 2010.</li>     <li id="BibPLXBIB0014" label="[14]">S.&#x00A0;Hallegatte, C.&#x00A0;Green, R.&#x00A0;J. Nicholls, and J.&#x00A0;Corfee-Morlot. Future flood losses in major coastal cities. <em>Nature climate change</em>, 2013.</li>     <li id="BibPLXBIB0015" label="[15]">J.&#x00A0;Kelly. Computing, cognition and the future of knowing. In <em>Whitepaper</em>. IBM Research, 2015.</li>     <li id="BibPLXBIB0016" label="[16]">G.&#x00A0;A. Lazarova. Semi-supervised image segmentation. In <em>Artificial Intelligence: Methodology, Systems, and Applications</em>, pages 59&#x2013;68. Springer, 2014.</li>     <li id="BibPLXBIB0017" label="[17]">J.&#x00A0;Liang, P.&#x00A0;Jacobs, J.&#x00A0;Sun, and S.&#x00A0;Parthasarathy. Seano: semi-supervised embedding in attributed networks with outliers. <em>arXiv preprint arXiv:1703.08100</em>, 2017.</li>     <li id="BibPLXBIB0018" label="[18]">J.&#x00A0;Liang and D.&#x00A0;Liu. Image fusion for flood detection based on surface change probability (iffd): an example of modis and landsat. <em>American Association of Geographers, AAG Annual Meeting</em>, 2017.</li>     <li id="BibPLXBIB0019" label="[19]">J.-M. Martinez and T.&#x00A0;Le&#x00A0;Toan. Mapping of flood dynamics and spatial distribution of vegetation in the amazon floodplain using multitemporal sar data. <em>Remote sensing of Environment</em>, 2007.</li>     <li id="BibPLXBIB0020" label="[20]">M.&#x00A0;Martinez, D.&#x00A0;Williams, and D.&#x00A0;Simon. Crowdsourcing volunteers comb satellite photos for malaysia airlines jet. <em>Cable News Network</em>, 12, 2014.</li>     <li id="BibPLXBIB0021" label="[21]">S.&#x00A0;Martinis, A.&#x00A0;Twele, and S.&#x00A0;Voigt. Towards operational near real-time flood detection using a split-based automatic thresholding procedure on high resolution terrasar-x data. <em>Natural Hazards and Earth System Sciences</em>, 9(2):303&#x2013;314, 2009.</li>     <li id="BibPLXBIB0022" label="[22]">K.&#x00A0;Nigam and <em>et al.</em>Text classification from labeled and unlabeled documents using em. <em>Machine learning</em>, 39(2-3):103&#x2013;134, 2000.</li>     <li id="BibPLXBIB0023" label="[23]">N.&#x00A0;Otsu. A threshold selection method from gray-level histograms. <em>IEEE Transactions on Systems, Man, and Cybernetics</em>, 9(1):62&#x2013;66, Jan 1979.</li>     <li id="BibPLXBIB0024" label="[24]">Y.&#x00A0;Ruan, D.&#x00A0;Fuhry, J.&#x00A0;Liang, Y.&#x00A0;Wang, and S.&#x00A0;Parthasarathy. Community discovery: Simple and scalable approaches. In <em>User Community Discovery</em>. 2015.</li>     <li id="BibPLXBIB0025" label="[25]">V.&#x00A0;Satuluri and S.&#x00A0;Parthasarathy. Scalable graph clustering using stochastic flows: applications to community discovery. In <em>SIGKDD</em>. ACM, 2009.</li>     <li id="BibPLXBIB0026" label="[26]">R.&#x00A0;E. Schapire et&#x00A0;al. Boosting the margin: A new explanation for the effectiveness of voting methods. <em>The annals of statistics</em>, 26(5):1651&#x2013;1686, 1998.</li>     <li id="BibPLXBIB0027" label="[27]">S.&#x00A0;B. Serpico et&#x00A0;al. Information extraction from remote sensing images for flood monitoring and damage evaluation. <em>Proceedings of the IEEE</em>, 2012.</li>     <li id="BibPLXBIB0028" label="[28]">J.&#x00A0;Shi and J.&#x00A0;Malik. Normalized cuts and image segmentation. <em>PAMI</em>, 2000.</li>     <li id="BibPLXBIB0029" label="[29]">S.&#x00A0;P. Simonovic and P.&#x00A0;Eng. Role of remote sensing in disaster management. 2002.</li>     <li id="BibPLXBIB0030" label="[30]">D.-M. Tsai. A fast thresholding selection procedure for multimodal and unimodal histograms. <em>Pattern Recognition Letters</em>, 16(6):653&#x2013;666, 1995.</li>     <li id="BibPLXBIB0031" label="[31]">A.&#x00A0;Twele and <em>et al.</em>Sentinel-1-based flood mapping: a fully automated processing chain. <em>International Journal of Remote Sensing</em>, 2016.</li>     <li id="BibPLXBIB0032" label="[32]">Z.&#x00A0;Yang, W.&#x00A0;W. Cohen, and R.&#x00A0;Salakhutdinov. Revisiting semi-supervised learning with graph embeddings. <em>ICML</em>, 2016.</li>     <li id="BibPLXBIB0033" label="[33]">D.&#x00A0;Yarowsky. Unsupervised word sense disambiguation rivaling supervised methods. In <em>ACL&#x2019;95</em>.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">     <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>We have empirically verified both these limitations of pixel-based methods on a range of real world flood scenarios, but due to paucity of space cannot include these results in Section&#x00A0;<a class="sec" href="#sec-22">5</a>.</p>   <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a>They can be decided through empirical cross-validation.</p>   <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class="link-inline force-break"     href="https://sites.google.com/site/stochasticflowclustering/">https://sites.google.com/site/stochasticflowclustering/</a>   </p>   <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a>Logarithm works the best among the alternative functions tested which include: square-root, linear, and quadratic functional variants.</p>   <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a>We have elected to keep the interface simple (accommodating both mobile devices and desktops) although our preliminary user study was conducted on desktops.</p>   <p id="fn6"><a href="#foot-fn6"><sup>6</sup></a>Here we use F1-score to measure the overall performance.</p>   <p id="fn7"><a href="#foot-fn7"><sup>7</sup></a><a class="link-inline force-break" href="http://svmlight.joachims.org/">http://svmlight.joachims.org/</a>   </p>   <p id="fn8"><a href="#foot-fn8"><sup>8</sup></a><a class="link-inline force-break"     href="https://en.wikipedia.org/wiki/2015_South_Indian_floods">https://en.wikipedia.org/wiki/2015_South_Indian_floods</a>   </p>   <p id="fn9"><a href="#foot-fn9"><sup>9</sup></a>Dynamic images can be seen at <a class="link-inline force-break" href="http://jiongqianliang.com/HUGFM/">http://jiongqianliang.com/HUGFM/</a>   </p>   <p id="fn10"><a href="#foot-fn10"><sup>10</sup></a>The N-cut algorithm and the graph-based method with post-processing algorithm cannot finish running in 24 hours and hence are not reported here.</p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>     <em>WWW '18 Companion, April 23&#x2013;27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. <br/>ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3186339">https://doi.org/10.1145/3184558.3186339</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div>  </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Human-Guided Flood Mapping: From Experts to the
+  Crowd</title><!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Human-Guided Flood Mapping: From
+          Experts to the Crowd</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Jiongqian</span> <span class=
+          "surName">Liang</span>, The Ohio State University,
+          <a href="mailto:liang.420@osu.edu">liang.420@osu.edu</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Peter</span> <span class=
+          "surName">Jacobs</span>, The Ohio State University,
+          <a href=
+          "mailto:jacobs.269@osu.edu">jacobs.269@osu.edu</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Srinivasan</span> <span class=
+          "surName">Parthasarathy</span>, The Ohio State
+          University, <a href=
+          "mailto:srini@cse.ohio-state.edu">srini@cse.ohio-state.edu</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186339"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186339</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Hurricane-induced flooding can lead to
+        substantial loss of life and huge damage to infrastructure.
+        Mapping flood extent from satellite or aerial imagery is
+        essential for prioritizing relief efforts and for assessing
+        future flood risk. Identification of water extent in such
+        images can be challenging considering the heterogeneity in
+        water body size and shape, cloud cover, and natural
+        variations in land cover. In this effort, we introduce a
+        novel cognitive framework based on a semi-supervised
+        learning algorithm, called HUman-Guided Flood Mapping
+        (<tt>HUG-FM</tt>), specifically designed to tackle the
+        flood mapping problem. Our framework first divides the
+        satellite or aerial image into patches leveraging a
+        graph-based clustering approach. A domain expert is then
+        asked to provide labels for a few patches (as opposed to
+        pixels which are harder to discern). Subsequently, we learn
+        a classifier based on the provided labels to map flood
+        extent. We test the efficacy and efficiency of our
+        framework on imagery from several recent flood-induced
+        emergencies and results show that our algorithm can
+        robustly and correctly detect water areas compared to the
+        state-of-the-art. We then evaluate whether expert guidance
+        can be replaced by the wisdom of a crowd (e.g., crisis
+        volunteers). We design an online crowdsourcing platform
+        based on <tt>HUG-FM</tt> and propose a novel ensemble
+        method to leverage crowdsourcing efforts. We conduct an
+        experiment with over 50 participants and show that
+        crowdsourced <tt>HUG-FM</tt> (<tt>CHUG-FM</tt>) can
+        approach or even exceed the performance of a single expert
+        providing guidance (<tt>HUG-FM</tt>).</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Flood mapping; Human-guided;
+          Semi-supervised; Crowdsourcing</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Jiongqian Liang, Peter Jacobs, and Srinivasan
+          Parthasarathy. 2018. Human-Guided Flood Mapping: From
+          Experts to the Crowd. In <em>The 2018 Conference
+          Companion,</em> <em>April 23–27, 2018, Lyons,
+          France</em>. ACM, New York, NY, USA, 8 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3186339" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3186339</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Each year, many areas on earth are impacted by severe
+      flooding, causing serious loss of life and
+      economy&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>]. Flood extent mapping can be
+      utilized to guide first responders to where they are most
+      needed. This information can also be used to monitor and
+      predict future flood risk in these areas.</p>
+      <p>To map flood extent, satellite images can be extremely
+      useful due to their low cost and consistent, repetitive data
+      acquisition capability over large spatial
+      areas&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0027">27</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0029">29</a>]. Depending
+      on availability these can also be supplemented with aerial
+      flyover imagery. Compared to sparse <em>in situ</em> physical
+      sensing data (e.g., river gauge data and weather station
+      records), satellite images offer a synoptic view of the
+      landscape and provide a comprehensive geospatial perspective
+      on flood events. The challenge here is to correctly identify
+      flooded areas given confounding factors ranging from cloud
+      cover to refractive materials within urban areas.</p>
+      <p>This problem can be modeled as an image segmentation
+      task&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0004">4</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0006">6</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0023">23</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0028">28</a>], where one
+      wants to delineate flooded areas within a region. A challenge
+      for such methods is the need to identify many diversely
+      shaped segments (e.g. sinuous rivers) while accommodating
+      various types of land-cover forms (e.g. swamps). In addition,
+      current techniques generally do not scale well to
+      high-resolution satellite images. Finally, the difference
+      between flooded regions and other regions can be so subtle
+      that human guidance is often required to accurately map
+      floods.</p>
+      <p>To address these difficulties, we propose a framework
+      based on ideas from <em>cognitive computing</em>.
+      <em>Cognitive computing</em> refers to “systems that learn at
+      scale, reason with purpose and interact with humans
+      naturally” &nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>]. City, regional and national
+      emergency systems are increasingly relying on such “smart”
+      systems to simulate human thought process to solve real-world
+      problems with humans and computers interacting with one
+      another and providing necessary decision support to
+      supplement traditional decision making.</p>
+      <p>Our proposed cognitive framework, called HUman Guided
+      Flood Mapping (<tt>HUG-FM</tt>), integrates ideas from graph
+      clustering and semi-supervised learning with human guidance,
+      to accurately realize post-disaster flood maps from aerial or
+      satellite imagery. Graph clustering approaches are used to
+      divide images into patches (easier to label than individual
+      pixels) and guidance from expert user is utilized to provide
+      initial labels for a few patches (water or land). The method
+      for flood mapping involves segmentation of satellite images
+      of a given area <em>both</em> before and after a flood
+      occurs. This is followed by a comparison of these
+      pre-disaster and post-disaster segmentations to identify
+      flooded vs. non-flooded areas. We run <tt>HUG-FM</tt> on
+      satellite images of Chennai, India during the 2015 flood,
+      Houston, Texas after the 2016 flood, and Lumberton, North
+      Carolina during Hurricane Matthew in 2017. Experimental
+      results show that our method can effectively identify flooded
+      areas when compared to state-of-the-art approaches from both
+      the remote sensing and computer vision communities. Our
+      method is also more efficient, enabling real-time incremental
+      learning and providing useful information to help prioritize
+      post-disaster repair and relief activities.</p>
+      <p>We additionally extend our efforts to develop a
+      crowdsourced variant of <tt>HUG-FM</tt> (called
+      <tt>CHUG-FM</tt>), where we replace domain-expert guidance
+      with the wisdom of the crowd (e.g., crisis volunteers). To
+      test the crowdsourcing platform (<tt>CHUG-FM</tt>), we
+      recruited over 50 volunteers to conduct interactive flood
+      mapping on three different satellite images. We develop and
+      deploy a novel ensemble learning method to integrate the
+      crowdsourcing efforts and find it improves the performance of
+      flood mapping when compared to <tt>HUG-FM</tt> (operating
+      with a domain expert).</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <section id="sec-6">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span> Image
+            Segmentation</h3>
+          </div>
+        </header>
+        <p>Image segmentation is a long-standing problem in
+        computer vision&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0023">23</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0028">28</a>]. Classic methods for image
+        segmentation include thresholding-based techniques wherein
+        a pixel intensity threshold <em>T</em> forces all pixels
+        with intensity above <em>T</em> to be one color, while all
+        pixels with intensity below <em>T</em> become another
+        color&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0001">1</a>]. Picking the value of <em>T</em> is
+        the main challenge in such methods and several automated
+        approaches have been developed for this
+        purpose&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0023">23</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0030">30</a>]. A popular method in the remote
+        sensing community for picking <em>T</em>, is known as Otsu
+        thresholding&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0023">23</a>], involves finding the pixel
+        intensity that creates the greatest separation and least
+        overlap between the modes in the pixel intensity histogram.
+        A weakness of these thresholding methods for remote sensing
+        and flood mapping is that they are susceptible to noise and
+        often generate too many tiny spots (flooded segments).</p>
+        <p>Other methods of image segmentation include the region
+        merging technique proposed by Baatz et al.&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0002">2</a>], which
+        greedily groups similar pixels in an hierarchical fashion.
+        More recently, graph-based methods have been introduced for
+        image segmentation. They formulate the image as a graph,
+        and adopt either spectral or clustering methods to conduct
+        segmentation. Shi et al.&nbsp;[<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0028">28</a>] create a graph with weighted edges
+        and use the normalized cut criterion to segment the image.
+        Browet et al.&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0006">6</a>] also formulate the image as a
+        graph; they use modularity as a criterion to find a
+        segmentation for the image. However, these methods can be
+        computationally expensive and typically are not scalable on
+        large satellite images.</p>
+        <p>Researchers have also investigated semi-supervised
+        learning approaches for image segmentation&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0004">4</a>, <a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0016">16</a>]. One
+        influential semi-supervised method for mapping floods is
+        the Watershed algorithm, developed by Beucher and
+        Meyer&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0004">4</a>]. It requires the user to mark
+        different pixels in the image and utilizes a region growing
+        technique to merge pixels starting from the provided
+        markers. While the method is interactive and incremental in
+        nature, the Watershed algorithm requires at least one
+        marker for each segment, which can be inefficient in the
+        scenario of flood mapping in an urban setting.</p>
+      </section>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span>
+            Semi-supervised Methods</h3>
+          </div>
+        </header>
+        <p>Semi-supervised classification uses unlabeled data in
+        addition to some amount of labeled data to learn a
+        classifier. This type of learning has become widely used in
+        recent years&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0017">17</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0022">22</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0033">33</a>]. A common approach within this
+        category is graph-based semi-supervised
+        learning&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0005">5</a>]. This genre of methods leverages
+        the graph structure, which is either obtained from
+        additional data sources or derived from the original data.
+        In general, these methods use graph structure as a
+        regularizer to the loss function by assuming that nearby
+        nodes in the graph should have similar labels. These
+        methods are not suitable for our problem as they usually
+        require much more labeled data for training and do not
+        scale to high resolution data.</p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.3</span> Flood
+            Mapping</h3>
+          </div>
+        </header>
+        <p>Flood mapping on satellite images has been the focus of
+        much prior work in the remote sensing community. Many of
+        these works rely on variations of the idea of thresholding
+        and work in a purely unsupervised fashion&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0012">12</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0021">21</a>]. For
+        example, Giustarini et al. lever a probabilistic flood
+        mapping procedure (based on Gaussian mixture models) to
+        segment flooded regions from dry regions&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0012">12</a>].</p>
+        <p>There exist a few flood mapping approaches that leverage
+        human supervision&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0019">19</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0031">31</a>]. Martinez et al.&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0019">19</a>] collect
+        labels from aerial images and ground observations while
+        adopting a supervised method on SAR images to map the flood
+        temporal dynamics. Semi-supervised learning&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0031">31</a>] methods
+        adopt the idea of region-growing following different ways
+        to model the change of pixel intensity in the image. These
+        methods usually require a large number of labels to achieve
+        desirable performance and do not naturally support
+        interactive and crowdsourced flood mapping.</p>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.4</span>
+            Crowdsourcing in Emergency Response</h3>
+          </div>
+        </header>
+        <p>Crowdsourcing has also been shown to be valuable for
+        emergency response during times of disaster&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0011">11</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0013">13</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0020">20</a>]. A
+        recent example is the searching for Malaysian Flight 370.
+        Authorities released satellite images and the public helped
+        in efforts to locate the missing aircraft&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0020">20</a>]. In
+        addition, some researchers have investigated the important
+        role that crowdsourcing can play during flood disasters.
+        Degrossi et al. studied the usage of social media for
+        collecting useful information such as water height and
+        geo-location information to conduct flood risk
+        management&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0009">9</a>]. While existing work does study how
+        crowd-based information can be applied to collect
+        information for a few locations during a flood disaster, we
+        are not aware of other efforts that lever crowdsourcing to
+        generate a holistic flood map for a disaster area.</p>
+      </section>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Human-guided
+          Flood Mapping</h2>
+        </div>
+      </header>
+      <p>The design goals for our flood mapping system can be
+      stated as:</p>
+      <ol class="list-no-style">
+        <li id="list1" label="(1)"><strong>Quality:</strong>
+        Generate accurate flood mappings with only limited
+        supervision.<br /></li>
+        <li id="list2" label="(2)"><strong>Efficiency:</strong>
+        Conduct efficient and scalable flood mapping for large
+        satellite images. Efficiency is necessary to facilitate
+        interactive learning; it is also vital if the method is to
+        be used to help guide emergency first responders in a flood
+        disaster.<br /></li>
+        <li id="list3" label="(3)"><strong>Interactivity and
+        Ease-of-Use:</strong> Effectively incorporate expert
+        guidance from domain experts or from the crowd.<br /></li>
+      </ol>
+      <p>With these desiderata in mind, we now describe our
+      framework for flood mapping in detail below.</p>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span>
+            Preprocessing</h3>
+          </div>
+        </header>
+        <p>To label areas of a satellite image as either land or
+        water, we need to decide on a primary unit for labeling. A
+        straightforward technique is to treat each pixel as a unit
+        and conduct pixel-based labeling. The drawback of this
+        method is that we lose information derived from geographic
+        correlations between pixels (a neighboring pixel of a water
+        area is more likely to be water and vice versa). A
+        pixel-based approach is not only sensitive to noise effects
+        (common in such imagery) and but also prone to labeling
+        error <a class="fn" href="#fn1" id=
+        "foot-fn1"><sup>1</sup></a>. Another alternative is to
+        conduct uniform grouping, which divides the image into many
+        parts of uniform size. However, without using the pixel
+        intensity information from the image, this grouping can go
+        across land-water boundaries leading to cognitive
+        dissonance when labeling patches. To avoid such problems,
+        we adopt an efficient graph-based approach for patch
+        generation, which can both effectively detect regions of
+        different sizes and largely avoid generating regions across
+        land-water boundaries.</p>
+        <section id="sec-12">
+          <p><em>3.1.1 Graph Construction.</em> Graph-based
+          segmentation has been widely studied in the
+          literature&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0006">6</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0010">10</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0028">28</a>]. In this paper, we convert a
+          given image into an undirected graph following the
+          approach proposed by Cour et al.&nbsp;[<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0008">8</a>]. Each
+          pixel of the image is treated as one node and each pixel
+          has edges to nearby pixels within a distance
+          <em>d<sub>max</sub></em> , where <em>d<sub>max</sub></em>
+          is a pre-defined parameter. The weight of the edge
+          between pixel <em>i</em> and pixel <em>j</em> is defined
+          as follows:</p>
+          <div class="table-responsive" id="eq1">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} w_{ij}=
+              {\left\lbrace \begin{array}{@{}l@{\quad
+              }l@{}}e^{-\frac{d\left(i,j\right)}{\sigma _{x}^2}
+              -\frac{|F\left(i\right)-F\left(j\right)|^2}{\sigma
+              _{y}^2}} &amp; \text{if } d\left(i,j\right){\lt}
+              d_{max} \\ 0 &amp; \text{otherwise.}
+              \end{array}\right.} \end{equation}</span><br />
+              <span class="equation-number">(1)</span>
+            </div>
+          </div>where <em>d</em>(<em>i</em>, <em>j</em>) is the
+          Euclidean distance between pixels <em>i</em> and
+          <em>j</em> and <em>F</em>(<em>i</em>) is a feature vector
+          evaluated at pixel <em>i</em>. Depending on the data
+          source, the feature vector can be the grayscale value or
+          the RGB values of the pixel. <em>σ<sub>x</sub></em> ,
+          <em>σ<sub>y</sub></em> and <em>d<sub>max</sub></em> are
+          parameters that need to be determined ahead of
+          time<a class="fn" href="#fn2" id=
+          "foot-fn2"><sup>2</sup></a>.
+          <p></p>
+          <p>Note that the number of nodes in the constructed graph
+          <em>n</em> is equal to the number of pixels in the image,
+          and the number of edges is <em>m</em> =
+          <em>α</em>*<em>n</em>, where <em>α</em> is a small
+          constant factor depending on the setting of
+          <em>d<sub>max</sub></em> .</p>
+        </section>
+        <section id="sec-13">
+          <p><em>3.1.2 Graph Clustering to Generate Patches.</em>
+          After we construct the graph from the image, we cluster
+          the graph to generate patches. Since a satellite image
+          usually contains hundreds of millions of pixels, we need
+          a highly scalable graph clustering algorithm. In this
+          work, we leverage Multi-level Regularized Markov
+          Clustering (MLR-MCL)&nbsp;[<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0024">24</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0025">25</a>], a scalable graph clustering
+          software<a class="fn" href="#fn3" id=
+          "foot-fn3"><sup>3</sup></a>.</p>
+          <p>Since the goal of graph clustering is to generate
+          basic units for labeling, we tend to produce a large
+          number of clusters. Empirically, we find the method works
+          well when the average size of a cluster (patch) is a few
+          hundred pixels. Once we obtain the graph clustering
+          results, pixels in the same cluster are considered to be
+          a <em>patch</em>.</p>
+          <p>There are many advantages to producing patches using
+          this approach. First of all, unlike uniform grouping,
+          this approach is better at avoiding cognitively
+          discordant scenarios where clusters traverse natural
+          image boundaries (e.g. water and land in the same patch).
+          Secondly, controlling the number of patches generated is
+          straightforward using MLR-MCL (we do not have to
+          pre-specify number of patches/clusters). Finally, MLR-MCL
+          has time complexity linear to the number of edges and is
+          very efficient when run on the constructed graph, where
+          the number of edges is proportional to the number of
+          nodes.</p>
+        </section>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Cognitive
+            Expert-guided Labeling</h3>
+          </div>
+        </header>
+        <p>After generating patches, the next step is to ask the
+        human expert to identify and label a few patches. The
+        expert user will place a few markers in the image to label
+        a few patches that they identify as land or water. We rely
+        on the expert to select patches to label – ideally focusing
+        on hard-to-label patches (e.g. sinuous river beds, flooding
+        in urban zones, or swamp regions). We will discuss
+        strategies to automate this process in
+        Section&nbsp;<a class="sec" href="#sec-17">4</a>. To
+        utilize this human-provided supervision, a binary
+        classifier is then learned and subsequently applied to the
+        rest of the unlabeled patches, discussed next.</p>
+        <section id="sec-15">
+          <p><em>3.2.1 Learning the Binary Classifier.</em> In this
+          paper, we use <em>k</em>-NN as the classifier because
+          there are only a few interpretable features and we want
+          model training and prediction to be efficient. In
+          particular, we define the distance function between two
+          patches <em>i</em> and <em>j</em> as follows:</p>
+          <div class="table-responsive" id="eq2">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}
+              D\left(i,j\right)=\left\Vert
+              \bar{F}\left(i\right)-\bar{F}\left(j\right)
+              \right\Vert _2*\log
+              {\left(dist\left(i,j\right)\right)}
+              \end{equation}</span><br />
+              <span class="equation-number">(2)</span>
+            </div>
+          </div>Eq.&nbsp;<a class="eqn" href="#eq2">2</a> contains
+          two components. The first component compares the features
+          of the two patches while the second component calculates
+          the Euclidean distance between the two patches. To
+          compute the first component, we average the feature
+          vectors of the two patches respectively and compute the
+          L2-norm of their difference. For the second component, we
+          calculate the geographic centroid of both patches and
+          compute the Euclidean distance between the centroids. To
+          decrease the effect of geographic distance, we take the
+          logarithm of the Euclidean distance<a class="fn" href=
+          "#fn4" id="foot-fn4"><sup>4</sup></a>.
+          <p></p>
+          <p>To classify an unlabeled patch, we find the <em>k</em>
+          most similar labeled patches based on the distance
+          function in Eq.&nbsp;<a class="eqn" href="#eq2">2</a>.
+          The classification of the patch is then decided by a vote
+          conducted using the labels of these <em>k</em> most
+          similar labeled patches. We point out that
+          <tt>HUG-FM</tt> inherently supports <strong>incremental
+          learning</strong>. If the classification result is not
+          desirable and needs further adjustment, the user will be
+          able to improve the result by adding new markers as
+          supervision. The result will then be updated based on the
+          newly added information. In practice, we find that an
+          expert usually only needs to provide 2 to 6 markers to
+          generate high quality results.</p>
+        </section>
+      </section>
+      <section id="sec-16">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span> Flood
+            Mapping</h3>
+          </div>
+        </header>
+        <p>After obtaining segmentations of an urban area before
+        and after a flood, flood mapping can be performed through a
+        correspondence of segmentations across time. We use the
+        satellite image collected before the flood as the reference
+        and compare satellite images during and after the flood
+        with this reference. Areas that are not classified as water
+        before the natural disaster but are classified as water
+        after the disaster are considered flooded areas.</p>
+      </section>
+    </section>
+    <section id="sec-17">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> The
+          Crowdsourced <strong>HUG-FM</strong>
+          (<strong>CHUG-FM</strong>)</h2>
+        </div>
+      </header>
+      <p>When a disaster strikes, reaction time during and
+      immediately thereafter is of paramount importance. Given both
+      the potential scale of the problem and the number of images
+      one needs to annotate, it may overwhelm available experts. To
+      generate more consistent results in a scalable fashion by
+      leveraging crisis volunteers, we introduce a crowdsourced
+      variant of <tt>HUG-FM</tt> known as <tt>CHUG-FM</tt>. Key
+      elements of <tt>CHUG-FM</tt> include the basic
+      <tt>HUG-FM</tt> platform and a novel ensembling strategy. The
+      ensembling strategy relies on inference over intermediate
+      results provided by non-expert users.</p>
+      <section id="sec-18">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Supervision
+            Collection</h3>
+          </div>
+        </header>
+        <section id="sec-19">
+          <p><em>4.1.1 Crowdsourcing Interface.</em> In the
+          crowdsourcing platform, a non-expert user is introduced
+          to a satellite image of an area, such as Houston or
+          Chennai. The user is prompted to label fifteen randomly
+          selected pixels in the image. The interface for pixel
+          labeling is displayed in Figure&nbsp;<a class="fig" href=
+          "#fig1">1</a><a class="fn" href="#fn5" id=
+          "foot-fn5"><sup>5</sup></a>. As shown in the figure, the
+          user is prompted to label the yellow circle in the image;
+          in this case the point is clearly water. After collecting
+          labels for fifteen markers, the application runs
+          <tt>HUG-FM</tt> and displays the result to the user,
+          where the user can rate the result (screenshot shown in
+          Figure&nbsp;<a class="fig" href="#fig1">1</a>b).</p>
+          <figure id="fig1">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186339/images/www18companion-101-fig1.jpg"
+            class="img-responsive" alt="Figure 1" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 1:</span>
+              <span class="figure-title"><tt>CHUG-FM</tt>
+              screenshots: a) user labeling interface. The blue
+              square highlights the region around the marker to be
+              labeled. A zoomed-in view of the marker is displayed
+              on the right. The user has three label options:
+              water, land, or unknown. b) the result (segmentation)
+              based on the provided labels is shown to the user and
+              the user can rate the result.</span>
+            </div>
+          </figure>
+          <p></p>
+        </section>
+        <section id="sec-20">
+          <p><em>4.1.2 Stratified Generation of Markers.</em> A key
+          difference between <tt>HUG-FM</tt> and <tt>CHUG-FM</tt>
+          is that in the former we rely on the human expert to
+          select patches from the image for labeling (see
+          Section&nbsp;<a class="sec" href="#sec-14">3.2</a>),
+          while in the latter we do not. For the crowdsourced
+          variant, we need to identify key patches that members of
+          the crowd will label since these individuals (i.e
+          non-experts) might not be good at selecting patches (e.g.
+          they may select only land patches or just select patches
+          from a very small region). Pre-selection also offers an
+          efficiency advantage since users do not need to spend
+          time selecting patches. In designing the patch selection
+          procedure for <tt>CHUG-FM</tt>, we have two priorities in
+          mind. First, both water and land patches should be
+          sampled, regardless of any skew that may exist (e.g. very
+          little water in the image). Second, patches that span the
+          entire image should be sampled (e.g. patches should not
+          only come from on specific area of the image). To ensure
+          these priorities are met, we stratify patches into three
+          groups: likely-water, likely-land, and uncertain. We then
+          sample patches from the three groups separately by
+          adapting the idea of proportional-allocation stratified
+          sampling&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0007">7</a>]. Specifically, we convert the
+          image into a gray-scale image and fit a Gaussian Mixture
+          Model (GMM) with two components to the pixel intensity of
+          each patch. We compute the means of the two Gaussian
+          components <em>μ</em> <sub>1</sub> and <em>μ</em>
+          <sub>2</sub> (<em>μ</em> <sub>1</sub> &lt; <em>μ</em>
+          <sub>2</sub>). We then categorize the patches based on
+          their intensity values. If the average pixel intensity of
+          a patch <em>x</em> ≤ <em>μ</em> <sub>1</sub>, then the
+          patch is regarded as likely-water. If <em>x</em> &gt;
+          <em>μ</em> <sub>2</sub>, then it is regarded as
+          likely-land. Otherwise, the patch is categorized as
+          uncertain. We sample 40% of the patches from the
+          likely-land group and likely-water group respectively
+          while drawing the remaining 20% from the uncertain group.
+          If a patch is selected, a marker is placed in its center
+          (and context is provided to ensure cognitive
+          correspondence). Note that sampling uncertain pixels
+          allows us to satisfy our second priority in sampling,
+          which is to cover the entire image in sampling.</p>
+          <p>We inject two validation markers into the samples for
+          the purpose of eliminating ineffective workers. These two
+          markers are manually selected from the satellite image
+          and are trivial for a human to label as water or land. In
+          total, we generate 2 validation markers and 13 regular
+          markers for each flood mapping task.</p>
+        </section>
+      </section>
+      <section id="sec-21">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Ensemble
+            Learning</h3>
+          </div>
+        </header>
+        <p>As the intermediate flood mapping results generated by
+        different users can vary greatly in their quality, we use
+        an ensemble learning method known as a voting classifier to
+        aggregate intermediate results into a final
+        result&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0026">26</a>]. We remove the participants who do
+        not correctly label all the validation markers. To
+        determine the aggregated label of a patch, we compute the
+        distribution of its labels across all the participants. If
+        the proportion of results labeling it as land exceeds some
+        threshold <em>θ</em>, then the patch is labeled as land;
+        otherwise it is labeled as water. We next discuss the
+        two-fold cross-validation procedure used for selecting
+        <em>θ</em>.</p>
+        <p>We denote the number of participants as <em>n</em>, each
+        of which provides <em>m</em> markers. At the end of the
+        crowdsourcing experiment, we have <em>n</em> individual
+        <tt>HUG-FM</tt> results and <em>n</em>*<em>m</em> patches
+        with provided labels. We randomly select 0.5*<em>n</em>
+        users and use their <tt>HUG-FM</tt> results as the training
+        dataset while treating the 0.5*<em>n</em>*<em>m</em>
+        labeled points from the rest of the users as the validation
+        dataset. We conduct the aggregation on the training
+        dataset, where we vary the threshold <em>θ</em> from 0.0 to
+        1.0 by 0.01 increments. We then infer the labels of patches
+        in the validation dataset and adopt the user-provided
+        labels as ground-truth for evaluation. We pick the
+        <em>θ</em> that leads to the best performance in the
+        validation dataset<a class="fn" href="#fn6" id=
+        "foot-fn6"><sup>6</sup></a>. While the selection of
+        <em>θ</em> is governed by the trade-off between precision
+        and recall, we found in experiments that the best
+        performance is generally achieved when <em>θ</em> is
+        between 0.1 and 0.3.</p>
+      </section>
+    </section>
+    <section id="sec-22">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Experiments on
+          <strong>HUG-FM</strong></h2>
+        </div>
+      </header>
+      <p>In this section, we examine the performance of our
+      framework, <tt>HUG-FM</tt>, on real-world satellite images to
+      evaluate its performance.</p>
+      <section id="sec-23">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span> Experiment
+            Setup</h3>
+          </div>
+        </header>
+        <p>We compare our algorithm with some state-of-the-art
+        algorithms for image segmentation and semi-supervised
+        learning:</p>
+        <ol class="list-no-style">
+          <li id="list4" label="(1)">Otsu
+          thresholding&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0023">23</a>], the most common
+          thresholding-based method.<br />
+          </li>
+          <li id="list5" label="(2)">The Watershed
+          algorithm&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0004">4</a>], a semi-supervised region-growing
+          method.<br />
+          </li>
+          <li id="list6" label="(3)">The Normalized cut (N-cut)
+          algorithm&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0028">28</a>]. It formulates the image as a
+          graph and uses the normalized cut criterion to segment
+          the image.<br />
+          </li>
+          <li id="list7" label="(4)">Graph-based image segmentation
+          with post-processing. While it also generates patches
+          before segmentation, the subsequent step is unsupervised.
+          It involves continued merging of nearby patches based on
+          the similarity of pairs of patches until the designated
+          number of patches is left.<br /></li>
+          <li id="list8" label="(5)">Support Vector Machine (SVM).
+          This method learns a classifier using the provided
+          markers as training data.<br /></li>
+          <li id="list9" label="(6)">NORM-THR[<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+            data-placement="top" href="#BibPLXBIB0018">18</a>,
+            <a class="bib" data-trigger="hover" data-toggle=
+            "popover" data-placement="top" href=
+            "#BibPLXBIB0021">21</a>]: is a modern split-based
+            automatic thresholding method for water
+            delineation.<br />
+          </li>
+          <li id="list10" label="(7)">Planetoid&nbsp;[<a class=
+          "bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0032">32</a>]. This
+          is the state-of-the-art semi-supervised learning
+          algorithm on attributed graphs based on deep neural
+          networks. To apply this method, we construct a graph with
+          node attributes in the same way as <tt>HUG-FM</tt>.<br />
+          </li>
+        </ol>
+        <p>We implement <tt>HUG-FM</tt> and the graph-based method
+        with post-processing using <tt>Python</tt>. We use the
+        OpenCV API for implementing the Watershed algorithm and
+        Otsu's thresholding. For the N-cut algorithm and Planetoid,
+        we employ the source code from the authors. We use
+        SVM-light for the SVM method<a class="fn" href="#fn7" id=
+        "foot-fn7"><sup>7</sup></a>.</p>
+      </section>
+      <section id="sec-24">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> Qualitative
+            Experiment on Chennai Dataset</h3>
+          </div>
+        </header>
+        <section id="sec-25">
+          <p><em>5.2.1 Water Delineation on Individual Images.</em>
+          For qualitative evaluation, we use satellite images of
+          Chennai, India during the 2015 South Indian
+          Floods<a class="fn" href="#fn8" id=
+          "foot-fn8"><sup>8</sup></a>. In total we run
+          <tt>HUG-FM</tt> on six satellite images during the flood,
+          focused on the greater Chennai metropolitan area, one for
+          every twelve days. The images come from Sentinel-1, which
+          orbits this region every twelve days. Considering the
+          fact that some baselines (e.g. the N-cuts algorithm and
+          the Watershed algorithm) are very computationally
+          expensive and cannot finish on large satellite images in
+          24 hours, we downscale the satellite images and run our
+          method and baselines on them for comparison. As an
+          example, we run all the algorithms on the satellite image
+          of Chennai on 11/24/2015, which is re-sized from 4,500 ×
+          2,500 to 800 × 444. Basic information about the datasets
+          and parameter settings for our algorithm are displayed in
+          Table&nbsp;<a class="tbl" href="#tab1">1</a>.</p>
+          <div class="table-responsive" id="tab1">
+            <div class="table-caption">
+              <span class="table-number">Table 1:</span>
+              <span class="table-title">Datasets and parameter
+              settings.</span>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="text-align:center;">Image Date</th>
+                  <th style="text-align:center;">Size of Image</th>
+                  <th style="text-align:center;"><span class=
+                  "inline-equation"><span class="tex">$\sigma
+                  _x^2$</span></span></th>
+                  <th style="text-align:center;"><span class=
+                  "inline-equation"><span class="tex">$\sigma
+                  _y^2$</span></span></th>
+                  <th style="text-align:center;">
+                  <em>d<sub>max</sub></em></th>
+                  <th># patches</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:center;">11/24/2015</td>
+                  <td style="text-align:center;">800 × 444</td>
+                  <td style="text-align:center;">3</td>
+                  <td style="text-align:center;">16</td>
+                  <td style="text-align:center;">2</td>
+                  <td>12946</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">10/19/2015</td>
+                  <td style="text-align:center;">4500 × 2500</td>
+                  <td style="text-align:center;">2</td>
+                  <td style="text-align:center;">16</td>
+                  <td style="text-align:center;">2</td>
+                  <td>69674</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">10/31/2015</td>
+                  <td style="text-align:center;">4500 × 2500</td>
+                  <td style="text-align:center;">2</td>
+                  <td style="text-align:center;">16</td>
+                  <td style="text-align:center;">2</td>
+                  <td>69674</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">11/12/2015</td>
+                  <td style="text-align:center;">4500 × 2500</td>
+                  <td style="text-align:center;">2</td>
+                  <td style="text-align:center;">16</td>
+                  <td style="text-align:center;">2</td>
+                  <td>69674</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">11/24/2015</td>
+                  <td style="text-align:center;">4500 × 2500</td>
+                  <td style="text-align:center;">2</td>
+                  <td style="text-align:center;">16</td>
+                  <td style="text-align:center;">2</td>
+                  <td>69674</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">12/06/2015</td>
+                  <td style="text-align:center;">4500 × 2500</td>
+                  <td style="text-align:center;">2</td>
+                  <td style="text-align:center;">16</td>
+                  <td style="text-align:center;">2</td>
+                  <td>69674</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">12/18/2015</td>
+                  <td style="text-align:center;">4500 × 2500</td>
+                  <td style="text-align:center;">2</td>
+                  <td style="text-align:center;">16</td>
+                  <td style="text-align:center;">2</td>
+                  <td>69674</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>We compare the performance of our algorithm with the
+          baselines on the downscaled image shown in
+          Figure&nbsp;<a class="fig" href="#fig2">2</a>a (Chennai
+          area on 11/24/2015). The water-land segmentation results
+          are shown in Figure&nbsp;<a class="fig" href=
+          "#fig2">2</a> b-f while the execution time is listed in
+          Table&nbsp;<a class="tbl" href="#tab2">2</a>. The results
+          of NORM-THR, Planetoid and SVM on the Chennai dataset,
+          are omitted here due to lack of space (they perform
+          slightly worse than <tt>HUG-FM</tt>), but a detailed
+          comparison with these approaches will follow in the next
+          section. We highlight the following observations on the
+          Chennai dataset as shown in Figure&nbsp;<a class="fig"
+          href="#fig2">2</a>:</p>
+          <figure id="fig2">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186339/images/www18companion-101-fig2.jpg"
+            class="img-responsive" alt="Figure 2" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 2:</span>
+              <span class="figure-title">Segmentation results of
+              different approaches on satellite image of Chennai on
+              11/24/2015 (down-scaled).</span>
+            </div>
+          </figure>
+          <p></p>
+          <div class="table-responsive" id="tab2">
+            <div class="table-caption">
+              <span class="table-number">Table 2:</span>
+              <span class="table-title">Running time comparisons
+              for different methods. # markers is the number of
+              markers the human provides for the algorithm.</span>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="text-align:center;">Method</th>
+                  <th style="text-align:center;"># Markers</th>
+                  <th style="text-align:center;">Time (s)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:center;">
+                  <tt>HUG-FM</tt></td>
+                  <td style="text-align:center;">2</td>
+                  <td style="text-align:center;">0.057</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">Otsu's
+                  Thresholding</td>
+                  <td style="text-align:center;">0</td>
+                  <td style="text-align:center;">0.077</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">Watershed
+                  Algorithm</td>
+                  <td style="text-align:center;">11</td>
+                  <td style="text-align:center;">0.225</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">N-cuts
+                  Algorithm</td>
+                  <td style="text-align:center;">0</td>
+                  <td style="text-align:center;">538.615</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">Graph method w.
+                  post-process</td>
+                  <td style="text-align:center;">0</td>
+                  <td style="text-align:center;">558.220</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ol class="list-no-style">
+            <li id="list11" label="(1)">Our method performs the
+            best among all the approaches. Our method can clearly
+            identify most of the water areas and even long thin
+            rivers; most other methods fail to do so. Particularly,
+            our method is good at identifying regions of arbitrary
+            shape while not limiting the size of each segment. We
+            notice that Otsu thresholding in
+              Figure&nbsp;<a class="fig" href="#fig2">2</a>c also
+              has similar advantages, but it is very sensitive to
+              noise and tends to generate many tiny partitions (two
+              times as many segments as our method on the image).
+              This is because its segmentation results only depend
+              on the intensity of each pixel and one pixel can be
+              an individual partition if its pixel intensity is far
+              different from its neighboring pixels. Its
+              shortcomings will become more evident shortly when we
+              discuss our quantitative evaluation.<br />
+            </li>
+            <li id="list12" label="(2)">Compared to the Watershed
+            algorithm, our method produces better results while
+            requiring far less human effort
+              (Figure&nbsp;<a class="fig" href="#fig2">2</a>b vs.
+              Figure&nbsp;<a class="fig" href="#fig2">2</a>d). The
+              Watershed algorithm seems to correctly capture some
+              boundaries but can not segment out small water areas,
+              including the long thin rivers. For the result shown
+              in Figure&nbsp;<a class="fig" href="#fig2">2</a>d,
+              the expert user places nine markers in different
+              water areas and two markers in land areas (see
+              Figure&nbsp;<a class="fig" href="#fig3">3</a>b). But
+              the segmentation result is still not desirable. On
+              the other hand, using our method, the user only needs
+              to place one marker in water and one in land
+              respectively (see Figure&nbsp;<a class="fig" href=
+              "#fig3">3</a>a) and the result is much better than
+              the Watershed algorithm. One of the reasons for this
+              difference is that the Watershed Algorithm is a
+              region-growing method and the segments grow from the
+              markers in a local fashion; therefore it requires
+              more manually placed labels to achieve desirable
+              performance.<br />
+            </li>
+            <li id="list13" label="(3)">The N-cuts algorithm tends
+            to generate over-balanced segments and cannot extract
+            segments of long thin shape (shown in
+            Figure&nbsp;<a class="fig" href="#fig2">2</a>e). Though
+            it performs well in detecting most of the boundaries,
+            it breaks large areas into pieces that should be in one
+            partition. This can be seen from the split of some
+            large lakes. As a whole, the result is much worse than
+            our algorithm.<br />
+            </li>
+            <li id="list14" label="(4)">Graph-based segmentation
+            with post-processing works well in detecting some large
+            regions (see Figure&nbsp;<a class="fig" href=
+            "#fig2">2</a>f). However, similar to the N-cut
+            algorithm, it cannot detect small water regions,
+            especially long thin rivers.<br />
+            </li>
+            <li id="list15" label="(5)">As displayed in
+            Table&nbsp;<a class="tbl" href="#tab2">2</a>, our
+            method is the most efficient method in classifying the
+            image immediately after providing labels. The N-cut
+            algorithm is very slow because it involves expensive
+            computation of the eigenvectors for the Laplacian
+            matrix. The Graph-based segmentation with
+            post-processing method is computationally expensive at
+            the stage of hierarchical merging. Our method is even
+            faster than the simple Otsu's thresholding algorithm
+            since we label the image patch by patch, as opposed to
+            pixel by pixel. We point out that our algorithm
+            requires about 30 seconds for preprocessing to generate
+            patches. However, the preprocessing time is less of a
+            concern here as we only need to conduct it once. The
+            labeling time is a more important factor and
+            <tt>HUG-FM</tt> greatly reduces this amount of time,
+            enabling usage in different scenarios (e.g. online
+            interactive learning and crowdsourcing).<br />
+            </li>
+          </ol>
+          <figure id="fig3">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186339/images/www18companion-101-fig3.jpg"
+            class="img-responsive" alt="Figure 3" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 3:</span>
+              <span class="figure-title">Labels that the user
+              provided for the algorithm. Blue points label the
+              areas as water while green points label them as
+              land.</span>
+            </div>
+          </figure>
+        </section>
+        <section id="sec-26">
+          <p><em>5.2.2 Dynamic Analysis for Flood Mapping.</em>
+          While we mainly focus on water delineation in the
+          satellite images above, we now discuss how we adopt the
+          developed water delineation method to detect flooded
+          areas. To this end, we conduct water delineation on all
+          the full-size satellite images of Chennai that are
+          described in Table&nbsp;<a class="tbl" href=
+          "#tab1">1</a>. We then refer to the historical satellite
+          images collected before the flood and conduct dynamic
+          analysis.</p>
+          <p>Specifically, we use the segmentation results from
+          10/31/2015 as the baseline and compare this water
+          delineation to the ones from later dates.
+          Figure&nbsp;<a class="fig" href="#fig4">4</a> presents
+          the dynamic changes of water areas<a class="fn" href=
+          "#fn9" id="foot-fn9"><sup>9</sup></a>. Red color
+          indicates the areas that change from land to water while
+          yellow color indicates the opposite change. From
+          Figure&nbsp;<a class="fig" href="#fig4">4</a>, we can
+          clearly observe that 11/24 and 12/06 have the largest
+          number of water areas; water areas seem to decrease
+          following 12/06. Red areas are likely regions affected by
+          the flood. The flood maps are quite consistent with the
+          fact that the South Indian floods lasted from 11/08/2015
+          to 12/14/2015.</p>
+          <figure id="fig4">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186339/images/www18companion-101-fig4.jpg"
+            class="img-responsive" alt="Figure 4" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 4:</span>
+              <span class="figure-title">Water area changes from
+              11/12/2015 to 12/18/2015 using 10/31/2015 as the
+              baseline. One image for every 12 days. Red color
+              indicates areas that were land on 10/30/2015 but were
+              water on the given date, while yellow color indicates
+              areas that were water on 10/30/2015 but were land on
+              the given date. Blue and green represent areas that
+              were originally water or land on 10/30/2015 and
+              remain so on the given date.</span>
+            </div>
+          </figure>
+          <p></p>
+        </section>
+      </section>
+      <section id="sec-27">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.3</span>
+            Quantitative Evaluation</h3>
+          </div>
+        </header>
+        <p>In this section, we quantitatively evaluate
+        <tt>HUG-FM</tt> on a real-world dataset with ground-truth.
+        For this purpose we rely on a higher-resolution synthetic
+        aperture radar satellite image of Houston collected
+        immediately following a 2016 flood; this dataset has been
+        manually annotated by a domain expert (this annotation is
+        the ground truth). The size of the image is 1, 550 × 2,
+        533. Similar to the Chennai datasets, there are two raw
+        attributes (HH and HV) from radar and one attribute
+        representing geographic elevation for each pixel. HH and HV
+        measure the polarity of waves reflected by a material and
+        are helpful in distinguishing water from land.</p>
+        <p>We run <tt>HUG-FM</tt> on this dataset with two
+        representative markers provided by an expert user for water
+        and land area. As baselines, we compare our method with
+        some of the best methods in the previous section<a class=
+        "fn" href="#fn10" id="foot-fn10"><sup>10</sup></a>. We
+        employ the Watershed algorithm with six carefully selected
+        markers. For SVM and Planetoid, we provide 50 labeled
+        patches for both water and land as they require more
+        labeled data to generate reasonable results (label data is
+        sampled from the ground-truth). We leverage the
+        ground-truth provided by the domain expert and evaluate
+        different methods using accuracy and <em>F</em>
+        <sub>1</sub> score. Table&nbsp;<a class="tbl" href=
+        "#tab3">3</a> shows the performance of these methods. It
+        can be seen that <tt>HUG-FM</tt> substantially outperforms
+        other methods with the highest values on both evaluation
+        metrics. Both Otsu's algorithm and the Watershed algorithm
+        have very low precision and therefore low <em>F</em>
+        <sub>1</sub> score, while NORM-THR has more balanced
+        performance. Among all the baselines, NORM-THR, SVM and
+        Planetoid are the strongest. We point out that even though
+        SVM and Planetoid use much more labeled data (100 training
+        examples as opposed to 2 in <tt>HUG-FM</tt>), our method
+        still outperforms them.</p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Quantitative evaluation on Houston
+            dataset.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Method</th>
+                <th style="text-align:center;">Accuracy</th>
+                <th style="text-align:center;">F1 Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;"><tt>HUG-FM</tt></td>
+                <td style="text-align:right;">
+                <strong>0.9552</strong></td>
+                <td style="text-align:right;">
+                <strong>0.8681</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">SVM</td>
+                <td style="text-align:right;">0.9451</td>
+                <td style="text-align:right;">0.8382</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Planetoid</td>
+                <td style="text-align:right;">0.9445</td>
+                <td style="text-align:right;">0.8414</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Watershed
+                algorithm</td>
+                <td style="text-align:right;">0.8904</td>
+                <td style="text-align:right;">0.6796</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">Otsu's
+                thresholding</td>
+                <td style="text-align:right;">0.8977</td>
+                <td style="text-align:right;">0.7394</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">NORM-THR</td>
+                <td style="text-align:right;">0.8673</td>
+                <td style="text-align:right;">0.8371</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>We also visualize the results of these methods in
+        Figure&nbsp;<a class="fig" href="#fig5">5</a>. Our method
+        nicely captures most of the water areas of various shapes.
+        Otsu's algorithm, on the other hand, tends to mistakenly
+        classify many regions as water and the result looks very
+        messy. The Watershed algorithm generates an overly smooth
+        result and cannot accurately capture small regions of
+        water. The SVM and Planetoid results look visually similar
+        to <tt>HUG-FM</tt> (as does NORM-THR, whose image is not
+        shown due to limit of space). However, all three
+        incorrectly classify many land regions as water.</p>
+        <figure id="fig5">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186339/images/www18companion-101-fig5.jpg"
+          class="img-responsive" alt="Figure 5" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 5:</span>
+            <span class="figure-title">Flood mapping results on
+            Houston dataset (truncated).</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-28">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.4</span>
+            Crowdsourcing Experiment Setup</h3>
+          </div>
+        </header>
+        <p>To evaluate our crowdsourced cognitive framework,
+        <tt>CHUG-FM</tt>, we recruited a broad mix of
+        college-educated participants (53) in our user study
+        (OSU-IRB # 2015B0249) which follows standard Nielsen Norman
+        Group guidelines. Participants were given time to
+        acclimatize themselves with the interface and further had
+        the opportunity to work with some test images that were
+        distinct from any of the satellite images used in the
+        experiment. Each participant was provided three different
+        satellite images to work with and a 15-minute time limit.
+        The first image is the Houston image during the 2016 Flood
+        as discussed in the previous section. The other two images
+        are for the city of Lumberton in North Carolina before and
+        after Hurricane Matthew respectively (both dimensions are
+        2031 × 2500). Before the experiment step-by-step
+        instructions are shown to the participants on the front
+        page of the website. At the end of each task, the
+        participants are asked to rate the results of
+        <tt>HUG-FM</tt> and provide feedback for our crowdsourcing
+        platform.</p>
+      </section>
+      <section id="sec-29">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.5</span>
+            CrowdSourced Results Analysis</h3>
+          </div>
+        </header>
+        <section id="sec-30">
+          <p><em>5.5.1 Ensemble Learning Results.</em> Once the
+          participants finish the experiment, we conduct ensemble
+          learning following the procedures aforementioned. We
+          remove 5 ineffective participants from the database as
+          they fail to correctly label both the validation markers.
+          We start by discussing the results on the Houston data
+          which includes ground-truth labels for all the pixels.
+          The optimal threshold <em>θ</em> for this dataset, tuned
+          through two-fold cross-validation, is 0.21. We use this
+          threshold to perform aggregation on all the
+          <tt>HUG-FM</tt> results from these participants. We
+          compare the aggregated results with the ones from each
+          individual and the domain expert in Table&nbsp;<a class=
+          "tbl" href="#tab4">4</a>. We can observe that
+          <tt>CHUG-FM</tt> performs significantly better than each
+          individual <tt>HUG-FM</tt> (row 2 vs. row 3 in
+          Table&nbsp;<a class="tbl" href="#tab4">4</a>). Even
+          compared with <tt>HUG-FM</tt> conducted by a domain
+          expert with carefully selected markers, <tt>CHUG-FM</tt>
+          still brings us 0.0385 improvement in terms of <em>F</em>
+          <sub>1</sub> score. This reveals the power of
+          crowdsourcing in conducting flood mapping. Though each
+          individual does not perform very well in mapping the
+          flood, we can obtain high-quality results by aggregation
+          as long as errors do not correlate across users.</p>
+          <div class="table-responsive" id="tab4">
+            <div class="table-caption">
+              <span class="table-number">Table 4:</span>
+              <span class="table-title">Results of <tt>CHUG-FM</tt>
+              compared with others on Houston.</span>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="text-align:center;">Method</th>
+                  <th style="text-align:center;">Accuracy</th>
+                  <th style="text-align:center;">F1 Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:center;"><tt>HUG-FM</tt>
+                  (by the expert)</td>
+                  <td style="text-align:left;">0.9552</td>
+                  <td style="text-align:left;">0.8681</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">Avg.
+                  <tt>HUG-FM</tt> (by the crowd)</td>
+                  <td style="text-align:left;">0.9380 (±
+                  0.061)</td>
+                  <td style="text-align:left;">0.8290 (±
+                  0.094)</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">
+                  <tt>CHUG-FM</tt></td>
+                  <td style="text-align:left;">
+                  <strong>0.9655</strong></td>
+                  <td style="text-align:left;">
+                  <strong>0.8840</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>We also analyze how the performance of
+          <tt>CHUG-FM</tt> changes by varying the number of
+          participants. We vary the number of participants from 5
+          to 40. For each particular number of participants
+          <em>c</em>, we sample <em>c</em> from the total 48 valid
+          participants and run the same aggregation as above, using
+          0.21 as the <em>θ</em>. We repeat the same process 60
+          times and compute the average performance and the
+          corresponding standard deviations for each <em>c</em>. We
+          show the results in the box plots in
+          Figure&nbsp;<a class="fig" href="#fig6">6</a>. We can
+          observe from Figure&nbsp;<a class="fig" href=
+          "#fig6">6</a> that as the number of participants
+          increases, the performance of <tt>CHUG-FM</tt> improves.
+          Expectedly, the variance of the performance is lower when
+          there are more participants.</p>
+          <figure id="fig6">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3190000/3186339/images/www18companion-101-fig6.jpg"
+            class="img-responsive" alt="Figure 6" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 6:</span>
+              <span class="figure-title">Box plots showing the
+              differential performance of <tt>CHUG-FM</tt> while
+              varying number of participants. The <em>x</em>-axis
+              is the number of the participants and <em>y</em>-axis
+              represents the evaluation measurements of accuracy
+              and <em>F</em> <sub>1</sub> respectively.</span>
+            </div>
+          </figure>
+          <p></p>
+          <p>We also visualize the results to conduct qualitative
+          evaluation for all three images, including the two
+          satellite images from before and after Hurricane Matthew
+          which do not contain ground-truth label (images omitted
+          due to limit of space). We observe that <tt>CHUG-FM</tt>
+          can capture the water areas more accurately than
+          <tt>HUG-FM</tt>. It generates a more smooth result and is
+          less prone to noise.</p>
+        </section>
+        <section id="sec-31">
+          <p><em>5.5.2 User Experience Analysis.</em> We conduct a
+          comprehensive analysis on the user experience for the
+          crowdsourcing platform. We summarize the results in
+          Table&nbsp;<a class="tbl" href="#tab5">5</a>. We can see
+          that it only took 6.08 minutes on average (with maximum
+          of 11.33 minutes and minimum of 3 minutes) to finish the
+          three flood mapping tasks. According to the feedback, the
+          participants appreciate the usability and cognitive
+          correspondence of our crowdsourcing platform. More than
+          75% of participants gave the highest possible score on
+          rating the easiness of using the website and the
+          clearness of the instructions. 14 participants submitted
+          detailed comments by using the textbox on the website and
+          5 of them mentioned our crowdsourcing platform is
+          “easy”/“straightforward” to use. Here are a few
+          representative positive comments from the
+          participants:</p>
+          <div class="table-responsive" id="tab5">
+            <div class="table-caption">
+              <span class="table-number">Table 5:</span>
+              <span class="table-title">Summary of users’ feedback
+              on the crowdsourcing experiment. The rating scale is
+              from 1 to 5 with 5 being the highest.</span>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="text-align:center;">Measurements</th>
+                  <th style="text-align:center;">Median</th>
+                  <th style="text-align:center;">Average</th>
+                  <th style="text-align:center;">S.D.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:center;">Time Spent
+                  (minutes)</td>
+                  <td style="text-align:right;">5.78</td>
+                  <td style="text-align:right;">6.08</td>
+                  <td style="text-align:right;">1.85</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">Rating Easiness of
+                  using the website</td>
+                  <td style="text-align:right;">5.00</td>
+                  <td style="text-align:right;">4.68</td>
+                  <td style="text-align:right;">0.52</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">Rating Clearness
+                  of the instructions</td>
+                  <td style="text-align:right;">5.00</td>
+                  <td style="text-align:right;">4.73</td>
+                  <td style="text-align:right;">0.50</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ol class="list-no-style">
+            <li id="list16" label="(1)">User 1: “Very interesting
+            exercise. Very easy to use and follow...”<br /></li>
+            <li id="list17" label="(2)">User 2: “Pretty neat
+            idea...”<br /></li>
+            <li id="list18" label="(3)">User 3: “I think it was
+            cool that ... I really enjoyed this.”<br /></li>
+          </ol>
+          <p>Some participants indicated that some markers lies
+          between water and land and are difficult to label. This
+          is expected as we intentionally generate a few markers in
+          uncertain patches to ensure we cover the space of the
+          entire image in sampling. In the future, we plan to
+          improve the user interface so that it can be easier for
+          participants to label these markers (e.g. supporting
+          interactive zoom-in view).</p>
+        </section>
+      </section>
+    </section>
+    <section id="sec-32">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>In this paper, we describe a novel cognitive framework to
+      the flood mapping problem by effectively coupling human
+      guidance with machine learned models. Our results with
+      guidance from experts show that our algorithm can correctly
+      segment out water and land areas with less error compared to
+      state-of-the-art approaches. To enable usage during disaster,
+      we develop a novel crowdsourcing platform and ensemble
+      algorithm to utilize the wisdom of the crowd (crisis
+      volunteers). Our crowdsourcing experiment, with over fifty
+      participants working on three different tasks, consistently
+      shows that the crowdsourced variant performs well – producing
+      noise-tolerate flood maps comparable to those produced by
+      domain experts.</p>
+      <p><strong>Acknowledgments</strong>: This work is supported
+      by National Science Foundation under grants EAR-1520870 and
+      DMS-1418265. Computational support was provided by Ohio
+      Supercomputer Center under grant PAS0166. All content
+      represents the opinion of the authors, which is not
+      necessarily shared or endorsed by their sponsors. We thank
+      Jiayong Liang and Desheng Liu for useful discussions.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">S.&nbsp;S. Al-Amri,
+        N.&nbsp;V. Kalyankar, et&nbsp;al. Image segmentation by
+        using threshold techniques. <em>Journal of Computing</em>,
+        2010.</li>
+        <li id="BibPLXBIB0002" label="[2]">M.&nbsp;Baatz and
+        A.&nbsp;Schäpe. Multiresolution segmentation: an
+        optimization approach for high quality multi-scale image
+        segmentation. <em>Angewandte Geographische
+        Informationsverarbeitung XII</em>, 58:12–23, 2000.</li>
+        <li id="BibPLXBIB0003" label="[3]">M.&nbsp;Belkin,
+        P.&nbsp;Niyogi, and V.&nbsp;Sindhwani. Manifold
+        regularization: A geometric framework for learning from
+        labeled and unlabeled examples. <em>JMLR’06</em>.</li>
+        <li id="BibPLXBIB0004" label="[4]">S.&nbsp;Beucher and
+        F.&nbsp;Meyer. The morphological approach to segmentation:
+        the watershed transformation. <em>Mathematical Morphology
+        in Image Processing</em>, 1992.</li>
+        <li id="BibPLXBIB0005" label="[5]">A.&nbsp;Blum and
+        S.&nbsp;Chawla. Learning from labeled and unlabeled data
+        using graph mincuts. 2001.</li>
+        <li id="BibPLXBIB0006" label="[6]">A.&nbsp;Browet and
+        <em>et al.</em>Community detection for hierarchical image
+        segmentation. In <em>International Workshop on
+        Combinatorial Image Analysis</em>, 2011.</li>
+        <li id="BibPLXBIB0007" label="[7]">W.&nbsp;G. Cochran.
+        <em>Sampling techniques</em>. John Wiley &amp; Sons,
+        2007.</li>
+        <li id="BibPLXBIB0008" label="[8]">T.&nbsp;Cour,
+        F.&nbsp;Benezit, and J.&nbsp;Shi. Spectral segmentation
+        with multiscale graph decomposition. In <em>CVPR</em>,
+        volume&nbsp;2, pages 1124–1131. IEEE, 2005.</li>
+        <li id="BibPLXBIB0009" label="[9]">L.&nbsp;C. Degrossi
+        et&nbsp;al. Flood citizen observatory: a
+        crowdsourcing-based approach for flood risk management in
+        brazil. In <em>SEKE</em>, 2014.</li>
+        <li id="BibPLXBIB0010" label="[10]">P.&nbsp;F. Felzenszwalb
+        and D.&nbsp;P. Huttenlocher. Efficient graph-based image
+        segmentation. <em>International Journal of Computer
+        Vision</em>, 59(2):167–181, 2004.</li>
+        <li id="BibPLXBIB0011" label="[11]">H.&nbsp;Gao,
+        G.&nbsp;Barbier, and R.&nbsp;Goolsby. Harnessing the
+        crowdsourcing power of social media for disaster relief.
+        <em>IEEE Intelligent Systems</em>, 26(3):10–14, 2011.</li>
+        <li id="BibPLXBIB0012" label="[12]">L.&nbsp;Giustarini
+        et&nbsp;al. Probabilistic flood mapping using synthetic
+        aperture radar data. <em>TGRS</em>, 2016.</li>
+        <li id="BibPLXBIB0013" label="[13]">M.&nbsp;F. Goodchild
+        and J.&nbsp;A. Glennon. Crowdsourcing geographic
+        information for disaster response: a research frontier.
+        <em>IJDE</em>, 2010.</li>
+        <li id="BibPLXBIB0014" label="[14]">S.&nbsp;Hallegatte,
+        C.&nbsp;Green, R.&nbsp;J. Nicholls, and
+        J.&nbsp;Corfee-Morlot. Future flood losses in major coastal
+        cities. <em>Nature climate change</em>, 2013.</li>
+        <li id="BibPLXBIB0015" label="[15]">J.&nbsp;Kelly.
+        Computing, cognition and the future of knowing. In
+        <em>Whitepaper</em>. IBM Research, 2015.</li>
+        <li id="BibPLXBIB0016" label="[16]">G.&nbsp;A. Lazarova.
+        Semi-supervised image segmentation. In <em>Artificial
+        Intelligence: Methodology, Systems, and Applications</em>,
+        pages 59–68. Springer, 2014.</li>
+        <li id="BibPLXBIB0017" label="[17]">J.&nbsp;Liang,
+        P.&nbsp;Jacobs, J.&nbsp;Sun, and S.&nbsp;Parthasarathy.
+        Seano: semi-supervised embedding in attributed networks
+        with outliers. <em>arXiv preprint arXiv:1703.08100</em>,
+        2017.</li>
+        <li id="BibPLXBIB0018" label="[18]">J.&nbsp;Liang and
+        D.&nbsp;Liu. Image fusion for flood detection based on
+        surface change probability (iffd): an example of modis and
+        landsat. <em>American Association of Geographers, AAG
+        Annual Meeting</em>, 2017.</li>
+        <li id="BibPLXBIB0019" label="[19]">J.-M. Martinez and
+        T.&nbsp;Le&nbsp;Toan. Mapping of flood dynamics and spatial
+        distribution of vegetation in the amazon floodplain using
+        multitemporal sar data. <em>Remote sensing of
+        Environment</em>, 2007.</li>
+        <li id="BibPLXBIB0020" label="[20]">M.&nbsp;Martinez,
+        D.&nbsp;Williams, and D.&nbsp;Simon. Crowdsourcing
+        volunteers comb satellite photos for malaysia airlines jet.
+        <em>Cable News Network</em>, 12, 2014.</li>
+        <li id="BibPLXBIB0021" label="[21]">S.&nbsp;Martinis,
+        A.&nbsp;Twele, and S.&nbsp;Voigt. Towards operational near
+        real-time flood detection using a split-based automatic
+        thresholding procedure on high resolution terrasar-x data.
+        <em>Natural Hazards and Earth System Sciences</em>,
+        9(2):303–314, 2009.</li>
+        <li id="BibPLXBIB0022" label="[22]">K.&nbsp;Nigam and
+        <em>et al.</em>Text classification from labeled and
+        unlabeled documents using em. <em>Machine learning</em>,
+        39(2-3):103–134, 2000.</li>
+        <li id="BibPLXBIB0023" label="[23]">N.&nbsp;Otsu. A
+        threshold selection method from gray-level histograms.
+        <em>IEEE Transactions on Systems, Man, and
+        Cybernetics</em>, 9(1):62–66, Jan 1979.</li>
+        <li id="BibPLXBIB0024" label="[24]">Y.&nbsp;Ruan,
+        D.&nbsp;Fuhry, J.&nbsp;Liang, Y.&nbsp;Wang, and
+        S.&nbsp;Parthasarathy. Community discovery: Simple and
+        scalable approaches. In <em>User Community Discovery</em>.
+        2015.</li>
+        <li id="BibPLXBIB0025" label="[25]">V.&nbsp;Satuluri and
+        S.&nbsp;Parthasarathy. Scalable graph clustering using
+        stochastic flows: applications to community discovery. In
+        <em>SIGKDD</em>. ACM, 2009.</li>
+        <li id="BibPLXBIB0026" label="[26]">R.&nbsp;E. Schapire
+        et&nbsp;al. Boosting the margin: A new explanation for the
+        effectiveness of voting methods. <em>The annals of
+        statistics</em>, 26(5):1651–1686, 1998.</li>
+        <li id="BibPLXBIB0027" label="[27]">S.&nbsp;B. Serpico
+        et&nbsp;al. Information extraction from remote sensing
+        images for flood monitoring and damage evaluation.
+        <em>Proceedings of the IEEE</em>, 2012.</li>
+        <li id="BibPLXBIB0028" label="[28]">J.&nbsp;Shi and
+        J.&nbsp;Malik. Normalized cuts and image segmentation.
+        <em>PAMI</em>, 2000.</li>
+        <li id="BibPLXBIB0029" label="[29]">S.&nbsp;P. Simonovic
+        and P.&nbsp;Eng. Role of remote sensing in disaster
+        management. 2002.</li>
+        <li id="BibPLXBIB0030" label="[30]">D.-M. Tsai. A fast
+        thresholding selection procedure for multimodal and
+        unimodal histograms. <em>Pattern Recognition Letters</em>,
+        16(6):653–666, 1995.</li>
+        <li id="BibPLXBIB0031" label="[31]">A.&nbsp;Twele and
+        <em>et al.</em>Sentinel-1-based flood mapping: a fully
+        automated processing chain. <em>International Journal of
+        Remote Sensing</em>, 2016.</li>
+        <li id="BibPLXBIB0032" label="[32]">Z.&nbsp;Yang,
+        W.&nbsp;W. Cohen, and R.&nbsp;Salakhutdinov. Revisiting
+        semi-supervised learning with graph embeddings.
+        <em>ICML</em>, 2016.</li>
+        <li id="BibPLXBIB0033" label="[33]">D.&nbsp;Yarowsky.
+        Unsupervised word sense disambiguation rivaling supervised
+        methods. In <em>ACL’95</em>.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>We have
+    empirically verified both these limitations of pixel-based
+    methods on a range of real world flood scenarios, but due to
+    paucity of space cannot include these results in
+    Section&nbsp;<a class="sec" href="#sec-22">5</a>.</p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a>They can be
+    decided through empirical cross-validation.</p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "https://sites.google.com/site/stochasticflowclustering/">https://sites.google.com/site/stochasticflowclustering/</a></p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a>Logarithm works
+    the best among the alternative functions tested which include:
+    square-root, linear, and quadratic functional variants.</p>
+    <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a>We have elected
+    to keep the interface simple (accommodating both mobile devices
+    and desktops) although our preliminary user study was conducted
+    on desktops.</p>
+    <p id="fn6"><a href="#foot-fn6"><sup>6</sup></a>Here we use
+    F1-score to measure the overall performance.</p>
+    <p id="fn7"><a href="#foot-fn7"><sup>7</sup></a><a class=
+    "link-inline force-break" href=
+    "http://svmlight.joachims.org/">http://svmlight.joachims.org/</a></p>
+    <p id="fn8"><a href="#foot-fn8"><sup>8</sup></a><a class=
+    "link-inline force-break" href=
+    "https://en.wikipedia.org/wiki/2015_South_Indian_floods">https://en.wikipedia.org/wiki/2015_South_Indian_floods</a></p>
+    <p id="fn9"><a href="#foot-fn9"><sup>9</sup></a>Dynamic images
+    can be seen at <a class="link-inline force-break" href=
+    "http://jiongqianliang.com/HUGFM/">http://jiongqianliang.com/HUGFM/</a></p>
+    <p id="fn10"><a href="#foot-fn10"><sup>10</sup></a>The N-cut
+    algorithm and the graph-based method with post-processing
+    algorithm cannot finish running in 24 hours and hence are not
+    reported here.</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18 Companion, April 23–27, 2018, Lyon,
+      France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License.<br />
+      ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186339">https://doi.org/10.1145/3184558.3186339</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

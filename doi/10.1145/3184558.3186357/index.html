@@ -1,1 +1,787 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">  <head>  <title>Disease Tracking in GCC Region Using Arabic Language Tweets</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>  </head>  <body id="main">  <section class="front-matter">   <section>    <header class="title-info">     <div class="journal-title">     <h1>      <span class="title">Disease Tracking in GCC Region Using Arabic Language Tweets</span>      <br/>      <span class="subTitle"/>     </h1>     </div>    </header>    <div class="authorGroup">     <div class="author"><a href="https://orcid.org/0000-0003-0308-4361" ref="author"><span class="givenName">Muhammad Usman</span>      <span class="surName">Ilyas</span></a>     Faculty of Computing and Information Technology, University of Jeddah, P.O. Box 80327Jeddah, Mecca Province 21589Saudi Arabia, <a href="mailto:milyas@uj.edu.sa">milyas@uj.edu.sa</a>     </div>     <div class="author">     <span class="givenName">Jalal Suliman</span>      <span class="surName">Alowibdi</span>     Faculty of Computing and Information Technology, University of Jeddah, P.O. Box 80327Jeddah, Mecca Province 21589Saudi Arabia, <a href="mailto:jalowibdi@uj.edu.sa">jalowibdi@uj.edu.sa</a>     </div>            </div>    <br/>    <div class="pubInfo">     <p>DOI: <a href="https://doi.org/10.1145/3184558.3186357" target="_blank">https://doi.org/10.1145/3184558.3186357</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">     <p>     <small>Several prior studies have demonstrated the possibility of tracking the outbreak and spread of diseases using public tweets and other social media platforms. However, almost all such prior studies were restricted to geographically filtered English language tweets only. This study is the first to attempt a similar approach for Arabic language tweets originating from the Gulf Cooperation Council (GCC) countries. We obtained a list of commonly occurring diseases in the region from the Saudi Ministry of Health. We used both the English disease names as well as their Arabic translations to filter the stream of tweets. We acquired old tweets for a period spanning 29 months. All tweets were geographically filtered for the Middle East and the list of disease names in both English and Arabic languages. We observed that only a small fraction of tweets were in English, demonstrating that prior approaches to disease tracking relying on English language features are less effective for this region. We also demonstrate how Arabic language tweets can be used rather effectively to track the spread of some infectious diseases in the region. We verified our approach by demonstrating that a high degree of correlation between the occurrence of MERS-Coronavirus cases and Arabic language tweets on the disease. We also show that infectious diseases generating fewer tweets and non-infectious diseases do not exhibit the same high correlation. We also verify the usefulness of tracking cases using Twitter mentions by comparing against a ground truth data set of MERS-CoV cases obtained from the Saudi Ministry of Health.</small>     </p>    </div>    <div class="CCSconcepts">     <p> <small> <span style="font-weight:bold;">CCS Concepts:</span> &#x2022;<strong> Information systems </strong>&#x2192; <strong>Decision support systems;</strong> <strong>Data analytics;</strong> <strong>Online analytical processing;</strong> <strong>Web mining;</strong></small> </p>    </div>    <div class="classifications">     <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>Arabic; disease tracking; epidemiology; gulf region; Twitter</small>     </span>     </div>     <br/>     <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Muhammad Usman Ilyas and Jalal Suliman Alowibdi. 2018. Disease Tracking in GCC Region Using Arabic Language Tweets. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 5 Pages. <a href="https://doi.org/10.1145/3184558.3186357" class="link-inline force-break"        target="_blank">https://doi.org/10.1145/3184558.3186357</a></small>     </p>     </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-3">    <header>     <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>     </div>    </header>    <section id="sec-4">     <header>     <div class="title-info">      <h3>       <span class="section-number">1.1</span> Motivation</h3>     </div>     </header>     <p>Tracking the outbreak of diseases is an essential function of state health departments. Departments collect data from hospitals and compile it to produce a comprehensive picture. The typical time between the emergence of a cluster of patients, to its identification and any public announcements is approximately two weeks. In recent years there have been several attempts to leverage the near-realtime availability of web data sources to reduce this lead time. Most of these studies and experiments were conducted on English language content, with others in French [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0004">4</a>], Spanish [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0018">18</a>] and Chinese [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0016">16</a>]. Many of these prior studies were also limited to specific countries or geographic regions. In this study we apply the concept to the Arabian peninsula, which is home to the Gulf Cooperation Countries (GCC, which include Saudi Arabia, Kuwait, Bahrain, Qatar, the UAE and Oman) and Yemen. Moreover, most social media use in the region occurs in the local language, Arabic, with only a fraction in English.</p>    </section>    <section id="sec-5">     <header>     <div class="title-info">      <h3>       <span class="section-number">1.2</span> Problem Statement</h3>     </div>     </header>     <p>The research question we try to answer in this study is the following: <em>Are techniques for disease tracking from English language web-data equally applicable to Arabic language social media posts from the GCC / Arabian peninsula region?</em>     </p>    </section>    <section id="sec-6">     <header>     <div class="title-info">      <h3>       <span class="section-number">1.3</span> State-of-the-Art</h3>     </div>     </header>     <p>The approaches used in the prior state-of-the-art span three approaches: (1) Collect data from hospitals and health facilities, compile it and detect any disease outbreaks [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0015">15</a>]. Since this approach relies on first-hand data this is considered the most reliable and error free approach. However, it comes at the cost of a high lead time of approximately two weeks between the beginning of an outbreak and its detection. (2) Periodically crawl public web data sources, RSS feeds and search engine trend information for reports on disease outbreaks [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0014">14</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0018">18</a>]. These approaches are not as reliable as the first approach and are therefore used to compliment slower but more reliable methods based on first hand data. (3) The third type of approach scavenges posts on various social media platforms to detect disease outbreaks [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0017">17</a>]. Given the unverified nature of social media posts, these approaches are perhaps least trustworthy. However, they operate on near real-time data which means they have the lowest lag-time.</p>     <p>Moreover, web-based approaches, whether they operate on RSS feeds or social media posts, are language and region dependent.</p>    </section>    <section id="sec-7">     <header>     <div class="title-info">      <h3>       <span class="section-number">1.4</span> Proposed Approach</h3>     </div>     </header>     <p>In this study we collected a data set of Arabic language tweets containing at least one of a number of disease names and that are geo-filtered for the Arabian peninsula. The data sets, one for each disease, span a period of two years and five months. We produce the histogram of the volume of tweets mentioning each disease and observe which diseases appear more frequently on Twitter and see how it relates to the official data.</p>    </section>    <section id="sec-8">     <header>     <div class="title-info">      <h3>       <span class="section-number">1.5</span> Key Contributions</h3>     </div>     </header>     <p>The contributions of this study are two-fold:</p>     <ol class="list-no-style">     <li id="list1" label="(1)">Determines which diseases from the list of commonly occurring diseases in the Arabian peninsula are represented in the public Twitter feed of the region.<br/></li>     <li id="list2" label="(2)">Determine whether spikes in the mentions of diseases in Arabic-language tweets from the region correspond to spikes in the number of cases reported.<br/></li>     </ol>    </section>   </section>   <section id="sec-9">    <header>     <div class="title-info">     <h2>      <span class="section-number">2</span> Related Work</h2>     </div>    </header>    <p>Brownstein et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>] were among the early users of web-sourced data for the early detection of disease outbreaks. They developed HealthMap a website that crawls and retrieves news articles from public news aggregators every 15 minutes.</p>    <p>Another widely used approach leverages the fact that a large proportion of people in the developed world often turn to the Internet to search for advice on symptoms and treatments [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0018">18</a>]. Access to search engine query trends are an additional source of near real-time data that can be leveraged. Every search engine query has a timestamp and is tied to a user&#x0027;s IP address, which can be mapped back to the user&#x0027;s location with a significant degree of accuracy. This means search trends can be broken down to a fine temporal and spatial resolution. Microsoft&#x0027;s Bing Keyword Research [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0012">12</a>] and Google&#x0027;s Google Trends [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>] are two examples of widely used search engines that have made their search query information available to the public. Pelat et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>] used this approach to track diseases from Google Trends. Valdivia and Monge-Corella [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0018">18</a>] also used Google Trends to validate this approach for Spain and using Spanish language search terms. While the high degree of location and temporal accuracy may make this approach seem ideal it has a serious drawback - it is just as easy for a malicious user to tamper with these trends by deliberately inflating search queries for targeted terms. Butler [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>] reported on a flu season in which Google trends drastically overestimated the spread of flu.</p>    <p>Search query based approaches also require can only be relied on in societies that enjoy a high rate of Internet connectivity. In poorer, less well-connected societies like Pakistan disease mapping is done by replacing the dependence on search trends with survey teams and footwork, as documented by Rojahn [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0015">15</a>]. Obviously, this approach adds a significant cost that is not incurred in search trend based approaches.</p>    <p>Corley et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>] used <a class="link-inline force-break" href="http://spinn3r.com">spinn3r.com</a>, a now defunct blog indexing service, to search blogs for mentions of influenza. They were able to show high correlation between mentions of influenza on <a class="link-inline force-break" href="http://spinn3r.com">spinn3r.com</a> indexed blogs and CDC surveillance data. The study was limited to English language content only was limited to a relatively short period of only 20 weeks.</p>    <p>Culotta [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>] took the same approach and applied it to Twitter. However, it too was limited to English language content about influenza cases in the US over just 10 weeks.</p>    <p>Chunara et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>] compared the delays between cholera case reports in the aftermath of the Haiti earthquake of 2010. They considered data spanning a period of 100 days from the Haitian Ministry of Health, HealthMap and Twitter. The study was limited to English and French language Twitter feeds.</p>    <p>Subsequent surveys of early detection of diseases such as Schmidt [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0017">17</a>] and Bernardo et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>] have shown that almost prior studies relied on non-Arabic language data and none have been tested and applied to the Arabian peninsula.</p>   </section>   <section id="sec-10">    <header>     <div class="title-info">     <h2>      <span class="section-number">3</span> Tweets Data Set</h2>     </div>    </header>    <p>To obtain a list of commonly occurring diseases in the region, we turned to the Ministry of Health of the Kingdom of Saudi Arabia as our reference source [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0009">9</a>]. The list is quite extensive and was mapped to the 40 Arabic language keywords shown on the horizontal axis of Figure <a class="fig" href="#fig1">1</a>. The tweets were geo-filtered for the Arabian peninsula and span a period of two years and five months, from Jan 01, 2015 to 31 May, 2017. The data set comprises of 180,503 tweets in total collected using the facilities of the Web Observatory of the King Abdulaziz University in Jeddah, Saudi Arabia. Figure <a class="fig" href="#fig1">1</a> shows a histogram of search terms and the corresponding number of unique tweets that were captured as part of the data set. Also overlaid with the histogram is the cumulative histogram curve. The cumulative histogram curve shows that only the nine most frequently occurring keywords account for 95% of all tweets in the data set. Tweets relating to the Middle East Respiratory Syndrome-Corona Virus (MERS-CoV) are the most common and alone make up for approximately 35% of all tweets in the data set. <figure id="fig1">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186357/images/www18companion-119-fig1.jpg" class="img-responsive" alt="Figure 1"       longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 1:</span>      <span class="figure-title">Histogram and cumulative histogram curve of number of unique tweets mentioning each disease.</span>     </div>     </figure>     <figure id="fig2">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186357/images/www18companion-119-fig2.jpg" class="img-responsive" alt="Figure 2"       longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 2:</span>      <span class="figure-title">Time-series plots of tweets and Google searches of various diseases from Jan 01, 2015 to May 31, 2017 in the GCC region.</span>     </div>     </figure>    </p>    <p>The English translations of the nine most commonly occurring disease keywords accounting for approximately 95% of the data according to the histogram in Figure <a class="fig" href="#fig1">1</a> are: <figure id="fig3">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186357/images/www18companion-119-fig3.jpg" class="img-responsive" alt="Figure 3"       longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 3:</span>      <span class="figure-title">Time-series plots of tweets and Google searches of various diseases from Jan 01, 2015 to May 31, 2017 in the GCC region.</span>     </div>     </figure>    </p>    <ol class="list-no-style">     <li id="list3" label="(1)">MERS-Coronavirus<br/></li>     <li id="list4" label="(2)">Diabetes<br/></li>     <li id="list5" label="(3)">Alzheimer<br/></li>     <li id="list6" label="(4)">Breast cancer<br/></li>     <li id="list7" label="(5)">Cancer<br/></li>     <li id="list8" label="(6)">Sleeve gastrectomy + gastrectomy<br/></li>     <li id="list9" label="(7)">Blood pressure + hypertension<br/></li>     <li id="list10" label="(8)">Cholera<br/></li>     <li id="list11" label="(9)">Swine flu<br/></li>    </ol>    <p>However, even within this group only the first six contain more than 10% (or 18,000 tweets) of the complete data set.</p>   </section>   <section id="sec-11">    <header>     <div class="title-info">     <h2>      <span class="section-number">4</span> Data Analysis</h2>     </div>    </header>    <section id="sec-12">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.1</span> Tweets and Google Searches</h3>     </div>     </header>     <p>We plotted the time-series of tweets for each disease alongside the volume of searches obtained from Google trend in Figure <a class="fig" href="#fig2">2</a> and Figure <a class="fig" href="#fig3">3</a><a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a>. Please, note that the number of tweets plotted against each week on the time-axis include the original tweets, their retweet count and their favorite count<a class="fn" href="#fn2" id="foot-fn2"><sup>2</sup></a>. Visual inspection shows remarkable similarity between the time-series of Twitter and Google searches for MERS-CoV. This degree of similarity is also quantified by the correlation coefficients listed in Table <a class="tbl" href="#tab1">1</a>. The high degree of similarity between the time-series for MERS-CoV is borne out by its correlation coefficient of 0.999855. As the entries in Table <a class="tbl" href="#tab1">1</a> show, there is a general downward trend in those values, <em>i.e.</em> correlation coefficient goes down with decrease in data set size. With the exception of MERS-Cov and Cholera, none of the diseases at the top of the list are infectious or exhibit any seasonality. This is reflected by the noisy nature of their time-series and their correspondingly low correlation coefficients.</p>     <p>An exception to this rule is breast cancer, which shows two coinciding peaks in both tweet and Google search time-series. These are explained by the fact that October is breast cancer awareness month [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0010">10</a>], which are the times when peaks occur in both signals.</p>     <p>Cholera and swine flu, the only other infectious diseases besides MERS-CoV, have relatively low correlation coefficients of 0.316445 and 0.201707, respectively. This is explained by the fact that the data sets for cholera and swine flu are both very small. As a matter of fact, there is a steep drop-off in the size of disease data sets after breast cancer, the fourth on the list.</p>    </section>    <section id="sec-13">     <header>     <div class="title-info">      <h3>       <span class="section-number">4.2</span> Tweets and Case Reports</h3>     </div>     </header>     <p>We continue the analysis of mentions of diseases in Arabic language tweets only for MERS-CoV. Of the other eight diseases hardly any garners as much traffic on Twitter as MERS-CoV. Furthermore, most of them are chronic in nature, rather than seasonal of infectious.</p>     <p>In this section we analyzed the time-series of Arabic tweets mentioning MERS-CoV by comparing it with the epicurve<a class="fn" href="#fn3" id="foot-fn3"><sup>3</sup></a> of MERS-CoV obtained from the Saudi Ministry of Health [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0011">11</a>]. The epicurve data can be considered ground truth for the number of cases. Figure <a class="fig" href="#fig4">4</a> is a plot of the MERS-CoV epicurve and its tweets time-series. Both curves exhibit strong similarities with overlapping peaks. The correlation coefficient of both curves is 0.74, which can be interpreted as modest-to-high correlation The high correlation with the Google search time-series and the moderate-to-high correlation with the epicurve go to show that the time-series of Arabic language tweets is effective at tracking the size of outbreaks of MERS-CoV cases in the GCC region.</p>     <div class="table-responsive" id="tab1">     <div class="table-caption">      <span class="table-number">Table 1:</span>      <span class="table-title">Correlation coefficients of tweets with Google searches time-series.</span>     </div>     <table class="table">      <tbody>       <tr>        <td style="text-align:center;">Rank</td>        <td style="text-align:left;">Disease name</td>        <td style="text-align:center;">Correlation</td>       </tr>       <tr>        <td style="text-align:center;">1.</td>        <td style="text-align:left;">MERS-Coronavirus</td>        <td style="text-align:center;">0.999855</td>       </tr>       <tr>        <td style="text-align:center;">2.</td>        <td style="text-align:left;">Diabetes</td>        <td style="text-align:center;">0.420736</td>       </tr>       <tr>        <td style="text-align:center;">3.</td>        <td style="text-align:left;">Alzheimer</td>        <td style="text-align:center;">0.044911</td>       </tr>       <tr>        <td style="text-align:center;">4.</td>        <td style="text-align:left;">Breast cancer</td>        <td style="text-align:center;">0.678157</td>       </tr>       <tr>        <td style="text-align:center;">5.</td>        <td style="text-align:left;">Cancer</td>        <td style="text-align:center;">0.057949</td>       </tr>       <tr>        <td style="text-align:center;">6.</td>        <td style="text-align:left;">Sleeve gastrectomy</td>        <td style="text-align:center;">0.160969</td>       </tr>       <tr>        <td style="text-align:center;">7.</td>        <td style="text-align:left;">Blood pressure / hypertension</td>        <td style="text-align:center;">-0.059175</td>       </tr>       <tr>        <td style="text-align:center;">8.</td>        <td style="text-align:left;">Cholera</td>        <td style="text-align:center;">0.316445</td>       </tr>       <tr>        <td style="text-align:center;">9.</td>        <td style="text-align:left;">Swine flu</td>        <td style="text-align:center;">0.201707</td>       </tr>      </tbody>     </table>     </div>     <figure id="fig4">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186357/images/www18companion-119-fig4.jpg" class="img-responsive" alt="Figure 4"       longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 4:</span>      <span class="figure-title">Total tweets and epicurve of MERS-CoV cases.</span>     </div>     </figure>    </section>   </section>   <section id="sec-14">    <header>     <div class="title-info">     <h2>      <span class="section-number">5</span> Conclusion</h2>     </div>    </header>    <p>In this study we considered the possibility of monitoring the volume of tweets as a means to detecting outbreaks of diseases in the GCC region. Since the overwhelming majority of Twitter traffic in the GCC region is in Arabic, we used Arabic language keywords. We performed this study for all diseases prevalent in the region, infectious or otherwise, and in the first stage used data from Google trends as ground truth data.</p>    <p>We obtained a list of diseases common to the GCC region from the Saudi Ministry of Health. Our analysis shows that only a small subset of those diseases are talkd about on Twitter. The tweets for the top nine diseases account for 95% of the data set we collected over a 29 month period. Of those nine diseases only three (MERS-CoV, cholera, swine flu) are infectious diseases, but only MERS-CoV appears to regularly generate sufficient traffic to be useful for analysis. We also observed that seasonal public awareness campaigns for non-infectious diseases like breast cancer can also exhibit moderate, albeit artificial, correlation.</p>    <p>In order to further establish the correctness of our conclusion regarding MERS-CoV we also obtained the epicurve for it from the Saudi Ministry of Health. Analysis showed that the time-series of the number of tweets about MERS-CoV exhibits a modest-to-high correlation with the epicurve.</p>    <p>We conclude that, at present Twitter traffic volume, in the GCC region MERS-CoV is the only infectious disease for which Twitter traffic may be used for the early detection of outbreaks.</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>     <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>     </div>    </header>    <ul class="bibUl">     <li id="BibPLXBIB0001" label="[1]">Theresa&#x00A0;Marie Bernardo, Andrijana Rajic, Ian Young, Katie Robiadek, Mai&#x00A0;T Pham, and Julie&#x00A0;A Funk. 2013. Scoping review on search queries and social media for disease surveillance: a chronology of innovation. <em>      <em>Journal of medical Internet research</em>     </em>15, 7 (2013), e147.</li>     <li id="BibPLXBIB0002" label="[2]">John&#x00A0;S Brownstein, Clark&#x00A0;C Freifeld, and Lawrence&#x00A0;C Madoff. 2009. Digital disease detection&#x2014;harnessing the Web for public health surveillance. <em>      <em>New England Journal of Medicine</em>     </em>360, 21 (2009), 2153&#x2013;2157.</li>     <li id="BibPLXBIB0003" label="[3]">Declan Butler. 2013. When Google got flu wrong. <em>      <em>Nature</em>     </em>494, 7436 (2013), 155.</li>     <li id="BibPLXBIB0004" label="[4]">Rumi Chunara, Jason&#x00A0;R Andrews, and John&#x00A0;S Brownstein. 2012. Social and news media enable estimation of epidemiological patterns early in the 2010 Haitian cholera outbreak. <em>      <em>The American journal of tropical medicine and hygiene</em>     </em>86, 1 (2012), 39&#x2013;45.</li>     <li id="BibPLXBIB0005" label="[5]">Courtney&#x00A0;D Corley, Diane&#x00A0;J Cook, Armin&#x00A0;R Mikler, and Karan&#x00A0;P Singh. 2010. Using Web and social media for influenza surveillance. In <em>      <em>Advances in Computational Biology</em>     </em>. Springer, 559&#x2013;564.</li>     <li id="BibPLXBIB0006" label="[6]">Aron Culotta. 2010. Towards detecting influenza epidemics by analyzing Twitter messages. In <em>      <em>Proceedings of the first workshop on social media analytics</em>     </em>. ACM, 115&#x2013;122.</li>     <li id="BibPLXBIB0007" label="[7]">Center for Disease&#x00A0;Control. last accessed: January 15, 2018. FastStats - Infectious Disease. <em>      <em>https://www.cdc.gov/nchs/fastats/infectious-disease.htm</em>     </em>(last accessed: January 15, 2018).</li>     <li id="BibPLXBIB0008" label="[8]">Google. last accessed 18 June 2017. Google Trends. <em>      <em>https://trends.google.com/trends/</em>     </em>(last accessed 18 June 2017).</li>     <li id="BibPLXBIB0009" label="[9]">Ministry of&#x00A0;Health Kingdom&#x00A0;of Saudi&#x00A0;Arabia. last accessed June 10, 2017. Diseases - Diseases List. <em>      <em>http://www.moh.gov.sa/en/HealthAwareness/EducationalContent/Diseases/Pages/</em>     </em> (last accessed June 10, 2017).</li>     <li id="BibPLXBIB0010" label="[10]">Ministry of&#x00A0;Health Kingdom&#x00A0;of Saudi&#x00A0;Arabia. last accessed June 10, 2017. Health Days 2016 - Breast Cancer Awareness Month. <em>      <em>http://www.moh.gov.sa/en/HealthAwareness/healthDay/2016/Pages/HealthDay-2016-10-01-31.aspx</em>     </em>(last accessed June 10, 2017).</li>     <li id="BibPLXBIB0011" label="[11]">Ministry of&#x00A0;Health Kingdom&#x00A0;of Saudi&#x00A0;Arabia. last accessed November 14, 2017. Statistics - Statistics. <em>      <em>https://www.moh.gov.sa/en/ccc/pressreleases/pages/default.aspx?PageIndex=1</em>     </em>(last accessed November 14, 2017).</li>     <li id="BibPLXBIB0012" label="[12]">Microsoft. last accessed 18 June 2017. Bing - Keyword Research. <em>      <em>https://www.bing.com/toolbox/keywords</em>     </em>(last accessed 18 June 2017).</li>     <li id="BibPLXBIB0013" label="[13]">World&#x00A0;Health Organization. 2018. WHO | Global Health Observatory (GHO) Data. <em>      <em>http://www.who.int/gho/en/</em>     </em>(2018).</li>     <li id="BibPLXBIB0014" label="[14]">Camille Pelat, Clement Turbelin, Avner Bar-Hen, Antoine Flahault, and Alain-Jacques Valleron. 2009. More diseases tracked by using Google Trends. <em>      <em>Emerging infectious diseases</em>     </em>15, 8 (2009), 1327&#x2013;8.</li>     <li id="BibPLXBIB0015" label="[15]">Susan&#x00A0;Young Rojahn. 2012. Pakistan Uses Smartphone Data to Head Off Dengue Outbreak. <em>      <em>MIT Technology Review</em>     </em> (10 2012).</li>     <li id="BibPLXBIB0016" label="[16]">Marcel Salath&#x00E9;, Clark&#x00A0;C Freifeld, Sumiko&#x00A0;R Mekaru, Anna&#x00A0;F Tomasulo, and John&#x00A0;S Brownstein. 2013. Influenza A (H7N9) and the importance of digital epidemiology. <em>      <em>The New England journal of medicine</em>     </em>369, 5 (2013), 401.</li>     <li id="BibPLXBIB0017" label="[17]">Charles&#x00A0;W. Schmidt. 2012. Using social media to predict and track disease outbreaks. <em>      <em>Environmental health perspectives</em>     </em>120, 1 (2012), A31.</li>     <li id="BibPLXBIB0018" label="[18]">Antonio Valdivia and Susana Monge-Corella. 2010. Diseases tracked by using Google trends, Spain. <em>      <em>Emerging infectious diseases</em>     </em>16, 1 (2010), 168.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">     <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>Due to lack of space we have plotted time-series of only the top eight diseases here.</p>   <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a>Therefore, the sum of all tweet counts in the time-series plots for a disease will not correspond with the tweet counts in the histogram in Figure <a class="fig" href="#fig1">1</a>, which lists only unique tweets</p>   <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a>An epicurve is a time-series of disease cases.</p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>     <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3186357">https://doi.org/10.1145/3184558.3186357</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div>  </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Disease Tracking in GCC Region Using Arabic Language
+  Tweets</title><!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Disease Tracking in GCC Region
+          Using Arabic Language Tweets</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <a href="https://orcid.org/0000-0003-0308-4361" ref=
+          "author"><span class="givenName">Muhammad Usman</span>
+          <span class="surName">Ilyas</span></a> Faculty of
+          Computing and Information Technology, University of
+          Jeddah, P.O. Box 80327Jeddah, Mecca Province 21589Saudi
+          Arabia, <a href=
+          "mailto:milyas@uj.edu.sa">milyas@uj.edu.sa</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Jalal Suliman</span> <span class=
+          "surName">Alowibdi</span> Faculty of Computing and
+          Information Technology, University of Jeddah, P.O. Box
+          80327Jeddah, Mecca Province 21589Saudi Arabia, <a href=
+          "mailto:jalowibdi@uj.edu.sa">jalowibdi@uj.edu.sa</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3186357"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3186357</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Several prior studies have demonstrated the
+        possibility of tracking the outbreak and spread of diseases
+        using public tweets and other social media platforms.
+        However, almost all such prior studies were restricted to
+        geographically filtered English language tweets only. This
+        study is the first to attempt a similar approach for Arabic
+        language tweets originating from the Gulf Cooperation
+        Council (GCC) countries. We obtained a list of commonly
+        occurring diseases in the region from the Saudi Ministry of
+        Health. We used both the English disease names as well as
+        their Arabic translations to filter the stream of tweets.
+        We acquired old tweets for a period spanning 29 months. All
+        tweets were geographically filtered for the Middle East and
+        the list of disease names in both English and Arabic
+        languages. We observed that only a small fraction of tweets
+        were in English, demonstrating that prior approaches to
+        disease tracking relying on English language features are
+        less effective for this region. We also demonstrate how
+        Arabic language tweets can be used rather effectively to
+        track the spread of some infectious diseases in the region.
+        We verified our approach by demonstrating that a high
+        degree of correlation between the occurrence of
+        MERS-Coronavirus cases and Arabic language tweets on the
+        disease. We also show that infectious diseases generating
+        fewer tweets and non-infectious diseases do not exhibit the
+        same high correlation. We also verify the usefulness of
+        tracking cases using Twitter mentions by comparing against
+        a ground truth data set of MERS-CoV cases obtained from the
+        Saudi Ministry of Health.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Information systems</strong> →
+        <strong>Decision support systems;</strong> <strong>Data
+        analytics;</strong> <strong>Online analytical
+        processing;</strong> <strong>Web
+        mining;</strong></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Arabic; disease tracking;
+          epidemiology; gulf region; Twitter</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Muhammad Usman Ilyas and Jalal Suliman Alowibdi. 2018.
+          Disease Tracking in GCC Region Using Arabic Language
+          Tweets. In <em>WWW '18 Companion: The 2018 Web Conference
+          Companion,</em> <em>April 23–27, 2018,</em> <em>Lyon,
+          France. ACM, New York, NY, USA</em> 5 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3186357" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3186357</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <section id="sec-4">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">1.1</span>
+            Motivation</h3>
+          </div>
+        </header>
+        <p>Tracking the outbreak of diseases is an essential
+        function of state health departments. Departments collect
+        data from hospitals and compile it to produce a
+        comprehensive picture. The typical time between the
+        emergence of a cluster of patients, to its identification
+        and any public announcements is approximately two weeks. In
+        recent years there have been several attempts to leverage
+        the near-realtime availability of web data sources to
+        reduce this lead time. Most of these studies and
+        experiments were conducted on English language content,
+        with others in French [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0004">4</a>], Spanish [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0018">18</a>] and Chinese [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0016">16</a>]. Many of
+        these prior studies were also limited to specific countries
+        or geographic regions. In this study we apply the concept
+        to the Arabian peninsula, which is home to the Gulf
+        Cooperation Countries (GCC, which include Saudi Arabia,
+        Kuwait, Bahrain, Qatar, the UAE and Oman) and Yemen.
+        Moreover, most social media use in the region occurs in the
+        local language, Arabic, with only a fraction in
+        English.</p>
+      </section>
+      <section id="sec-5">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">1.2</span> Problem
+            Statement</h3>
+          </div>
+        </header>
+        <p>The research question we try to answer in this study is
+        the following: <em>Are techniques for disease tracking from
+        English language web-data equally applicable to Arabic
+        language social media posts from the GCC / Arabian
+        peninsula region?</em></p>
+      </section>
+      <section id="sec-6">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">1.3</span>
+            State-of-the-Art</h3>
+          </div>
+        </header>
+        <p>The approaches used in the prior state-of-the-art span
+        three approaches: (1) Collect data from hospitals and
+        health facilities, compile it and detect any disease
+        outbreaks [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href="#BibPLXBIB0007">7</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0011">11</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0013">13</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0015">15</a>]. Since
+        this approach relies on first-hand data this is considered
+        the most reliable and error free approach. However, it
+        comes at the cost of a high lead time of approximately two
+        weeks between the beginning of an outbreak and its
+        detection. (2) Periodically crawl public web data sources,
+        RSS feeds and search engine trend information for reports
+        on disease outbreaks [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0014">14</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0018">18</a>]. These approaches are not as
+        reliable as the first approach and are therefore used to
+        compliment slower but more reliable methods based on first
+        hand data. (3) The third type of approach scavenges posts
+        on various social media platforms to detect disease
+        outbreaks [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href="#BibPLXBIB0001">1</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0004">4</a>, <a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0006">6</a>, <a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0016">16</a>,
+        <a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0017">17</a>]. Given
+        the unverified nature of social media posts, these
+        approaches are perhaps least trustworthy. However, they
+        operate on near real-time data which means they have the
+        lowest lag-time.</p>
+        <p>Moreover, web-based approaches, whether they operate on
+        RSS feeds or social media posts, are language and region
+        dependent.</p>
+      </section>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">1.4</span> Proposed
+            Approach</h3>
+          </div>
+        </header>
+        <p>In this study we collected a data set of Arabic language
+        tweets containing at least one of a number of disease names
+        and that are geo-filtered for the Arabian peninsula. The
+        data sets, one for each disease, span a period of two years
+        and five months. We produce the histogram of the volume of
+        tweets mentioning each disease and observe which diseases
+        appear more frequently on Twitter and see how it relates to
+        the official data.</p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">1.5</span> Key
+            Contributions</h3>
+          </div>
+        </header>
+        <p>The contributions of this study are two-fold:</p>
+        <ol class="list-no-style">
+          <li id="list1" label="(1)">Determines which diseases from
+          the list of commonly occurring diseases in the Arabian
+          peninsula are represented in the public Twitter feed of
+          the region.<br /></li>
+          <li id="list2" label="(2)">Determine whether spikes in
+          the mentions of diseases in Arabic-language tweets from
+          the region correspond to spikes in the number of cases
+          reported.<br /></li>
+        </ol>
+      </section>
+    </section>
+    <section id="sec-9">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>Brownstein et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>] were among the early users of
+      web-sourced data for the early detection of disease
+      outbreaks. They developed HealthMap a website that crawls and
+      retrieves news articles from public news aggregators every 15
+      minutes.</p>
+      <p>Another widely used approach leverages the fact that a
+      large proportion of people in the developed world often turn
+      to the Internet to search for advice on symptoms and
+      treatments [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0002">2</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0003">3</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0005">5</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0014">14</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0018">18</a>]. Access to
+      search engine query trends are an additional source of near
+      real-time data that can be leveraged. Every search engine
+      query has a timestamp and is tied to a user's IP address,
+      which can be mapped back to the user's location with a
+      significant degree of accuracy. This means search trends can
+      be broken down to a fine temporal and spatial resolution.
+      Microsoft's Bing Keyword Research [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0012">12</a>] and Google's Google
+      Trends [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0008">8</a>]
+      are two examples of widely used search engines that have made
+      their search query information available to the public. Pelat
+      et al. [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0014">14</a>]
+      used this approach to track diseases from Google Trends.
+      Valdivia and Monge-Corella [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0018">18</a>] also used Google Trends to validate
+      this approach for Spain and using Spanish language search
+      terms. While the high degree of location and temporal
+      accuracy may make this approach seem ideal it has a serious
+      drawback - it is just as easy for a malicious user to tamper
+      with these trends by deliberately inflating search queries
+      for targeted terms. Butler [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>] reported on a flu season in which
+      Google trends drastically overestimated the spread of
+      flu.</p>
+      <p>Search query based approaches also require can only be
+      relied on in societies that enjoy a high rate of Internet
+      connectivity. In poorer, less well-connected societies like
+      Pakistan disease mapping is done by replacing the dependence
+      on search trends with survey teams and footwork, as
+      documented by Rojahn [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>]. Obviously, this approach adds a
+      significant cost that is not incurred in search trend based
+      approaches.</p>
+      <p>Corley et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>] used <a class=
+      "link-inline force-break" href=
+      "http://spinn3r.com">spinn3r.com</a>, a now defunct blog
+      indexing service, to search blogs for mentions of influenza.
+      They were able to show high correlation between mentions of
+      influenza on <a class="link-inline force-break" href=
+      "http://spinn3r.com">spinn3r.com</a> indexed blogs and CDC
+      surveillance data. The study was limited to English language
+      content only was limited to a relatively short period of only
+      20 weeks.</p>
+      <p>Culotta [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0006">6</a>]
+      took the same approach and applied it to Twitter. However, it
+      too was limited to English language content about influenza
+      cases in the US over just 10 weeks.</p>
+      <p>Chunara et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>] compared the delays between cholera
+      case reports in the aftermath of the Haiti earthquake of
+      2010. They considered data spanning a period of 100 days from
+      the Haitian Ministry of Health, HealthMap and Twitter. The
+      study was limited to English and French language Twitter
+      feeds.</p>
+      <p>Subsequent surveys of early detection of diseases such as
+      Schmidt [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0017">17</a>]
+      and Bernardo et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>] have shown that almost prior studies
+      relied on non-Arabic language data and none have been tested
+      and applied to the Arabian peninsula.</p>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Tweets Data
+          Set</h2>
+        </div>
+      </header>
+      <p>To obtain a list of commonly occurring diseases in the
+      region, we turned to the Ministry of Health of the Kingdom of
+      Saudi Arabia as our reference source [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0009">9</a>]. The list is quite
+      extensive and was mapped to the 40 Arabic language keywords
+      shown on the horizontal axis of Figure <a class="fig" href=
+      "#fig1">1</a>. The tweets were geo-filtered for the Arabian
+      peninsula and span a period of two years and five months,
+      from Jan 01, 2015 to 31 May, 2017. The data set comprises of
+      180,503 tweets in total collected using the facilities of the
+      Web Observatory of the King Abdulaziz University in Jeddah,
+      Saudi Arabia. Figure <a class="fig" href="#fig1">1</a> shows
+      a histogram of search terms and the corresponding number of
+      unique tweets that were captured as part of the data set.
+      Also overlaid with the histogram is the cumulative histogram
+      curve. The cumulative histogram curve shows that only the
+      nine most frequently occurring keywords account for 95% of
+      all tweets in the data set. Tweets relating to the Middle
+      East Respiratory Syndrome-Corona Virus (MERS-CoV) are the
+      most common and alone make up for approximately 35% of all
+      tweets in the data set.</p>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186357/images/www18companion-119-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Histogram and cumulative histogram curve
+          of number of unique tweets mentioning each
+          disease.</span>
+        </div>
+      </figure>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186357/images/www18companion-119-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">Time-series plots of tweets and Google
+          searches of various diseases from Jan 01, 2015 to May 31,
+          2017 in the GCC region.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>The English translations of the nine most commonly
+      occurring disease keywords accounting for approximately 95%
+      of the data according to the histogram in Figure <a class=
+      "fig" href="#fig1">1</a> are:</p>
+      <figure id="fig3">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186357/images/www18companion-119-fig3.jpg"
+        class="img-responsive" alt="Figure 3" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 3:</span> <span class=
+          "figure-title">Time-series plots of tweets and Google
+          searches of various diseases from Jan 01, 2015 to May 31,
+          2017 in the GCC region.</span>
+        </div>
+      </figure>
+      <p></p>
+      <ol class="list-no-style">
+        <li id="list3" label="(1)">MERS-Coronavirus<br /></li>
+        <li id="list4" label="(2)">Diabetes<br /></li>
+        <li id="list5" label="(3)">Alzheimer<br /></li>
+        <li id="list6" label="(4)">Breast cancer<br /></li>
+        <li id="list7" label="(5)">Cancer<br /></li>
+        <li id="list8" label="(6)">Sleeve gastrectomy +
+        gastrectomy<br /></li>
+        <li id="list9" label="(7)">Blood pressure +
+        hypertension<br /></li>
+        <li id="list10" label="(8)">Cholera<br /></li>
+        <li id="list11" label="(9)">Swine flu<br /></li>
+      </ol>
+      <p>However, even within this group only the first six contain
+      more than 10% (or 18,000 tweets) of the complete data
+      set.</p>
+    </section>
+    <section id="sec-11">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Data
+          Analysis</h2>
+        </div>
+      </header>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Tweets and
+            Google Searches</h3>
+          </div>
+        </header>
+        <p>We plotted the time-series of tweets for each disease
+        alongside the volume of searches obtained from Google trend
+        in Figure <a class="fig" href="#fig2">2</a> and Figure
+        <a class="fig" href="#fig3">3</a><a class="fn" href="#fn1"
+        id="foot-fn1"><sup>1</sup></a>. Please, note that the
+        number of tweets plotted against each week on the time-axis
+        include the original tweets, their retweet count and their
+        favorite count<a class="fn" href="#fn2" id=
+        "foot-fn2"><sup>2</sup></a>. Visual inspection shows
+        remarkable similarity between the time-series of Twitter
+        and Google searches for MERS-CoV. This degree of similarity
+        is also quantified by the correlation coefficients listed
+        in Table <a class="tbl" href="#tab1">1</a>. The high degree
+        of similarity between the time-series for MERS-CoV is borne
+        out by its correlation coefficient of 0.999855. As the
+        entries in Table <a class="tbl" href="#tab1">1</a> show,
+        there is a general downward trend in those values,
+        <em>i.e.</em> correlation coefficient goes down with
+        decrease in data set size. With the exception of MERS-Cov
+        and Cholera, none of the diseases at the top of the list
+        are infectious or exhibit any seasonality. This is
+        reflected by the noisy nature of their time-series and
+        their correspondingly low correlation coefficients.</p>
+        <p>An exception to this rule is breast cancer, which shows
+        two coinciding peaks in both tweet and Google search
+        time-series. These are explained by the fact that October
+        is breast cancer awareness month [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0010">10</a>], which are the times
+        when peaks occur in both signals.</p>
+        <p>Cholera and swine flu, the only other infectious
+        diseases besides MERS-CoV, have relatively low correlation
+        coefficients of 0.316445 and 0.201707, respectively. This
+        is explained by the fact that the data sets for cholera and
+        swine flu are both very small. As a matter of fact, there
+        is a steep drop-off in the size of disease data sets after
+        breast cancer, the fourth on the list.</p>
+      </section>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Tweets and
+            Case Reports</h3>
+          </div>
+        </header>
+        <p>We continue the analysis of mentions of diseases in
+        Arabic language tweets only for MERS-CoV. Of the other
+        eight diseases hardly any garners as much traffic on
+        Twitter as MERS-CoV. Furthermore, most of them are chronic
+        in nature, rather than seasonal of infectious.</p>
+        <p>In this section we analyzed the time-series of Arabic
+        tweets mentioning MERS-CoV by comparing it with the
+        epicurve<a class="fn" href="#fn3" id=
+        "foot-fn3"><sup>3</sup></a> of MERS-CoV obtained from the
+        Saudi Ministry of Health [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0011">11</a>]. The epicurve data can be
+        considered ground truth for the number of cases. Figure
+        <a class="fig" href="#fig4">4</a> is a plot of the MERS-CoV
+        epicurve and its tweets time-series. Both curves exhibit
+        strong similarities with overlapping peaks. The correlation
+        coefficient of both curves is 0.74, which can be
+        interpreted as modest-to-high correlation The high
+        correlation with the Google search time-series and the
+        moderate-to-high correlation with the epicurve go to show
+        that the time-series of Arabic language tweets is effective
+        at tracking the size of outbreaks of MERS-CoV cases in the
+        GCC region.</p>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Correlation coefficients of tweets with
+            Google searches time-series.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:center;">Rank</td>
+                <td style="text-align:left;">Disease name</td>
+                <td style="text-align:center;">Correlation</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">1.</td>
+                <td style="text-align:left;">MERS-Coronavirus</td>
+                <td style="text-align:center;">0.999855</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">2.</td>
+                <td style="text-align:left;">Diabetes</td>
+                <td style="text-align:center;">0.420736</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">3.</td>
+                <td style="text-align:left;">Alzheimer</td>
+                <td style="text-align:center;">0.044911</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">4.</td>
+                <td style="text-align:left;">Breast cancer</td>
+                <td style="text-align:center;">0.678157</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">5.</td>
+                <td style="text-align:left;">Cancer</td>
+                <td style="text-align:center;">0.057949</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">6.</td>
+                <td style="text-align:left;">Sleeve
+                gastrectomy</td>
+                <td style="text-align:center;">0.160969</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">7.</td>
+                <td style="text-align:left;">Blood pressure /
+                hypertension</td>
+                <td style="text-align:center;">-0.059175</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">8.</td>
+                <td style="text-align:left;">Cholera</td>
+                <td style="text-align:center;">0.316445</td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">9.</td>
+                <td style="text-align:left;">Swine flu</td>
+                <td style="text-align:center;">0.201707</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <figure id="fig4">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186357/images/www18companion-119-fig4.jpg"
+          class="img-responsive" alt="Figure 4" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 4:</span>
+            <span class="figure-title">Total tweets and epicurve of
+            MERS-CoV cases.</span>
+          </div>
+        </figure>
+      </section>
+    </section>
+    <section id="sec-14">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>In this study we considered the possibility of monitoring
+      the volume of tweets as a means to detecting outbreaks of
+      diseases in the GCC region. Since the overwhelming majority
+      of Twitter traffic in the GCC region is in Arabic, we used
+      Arabic language keywords. We performed this study for all
+      diseases prevalent in the region, infectious or otherwise,
+      and in the first stage used data from Google trends as ground
+      truth data.</p>
+      <p>We obtained a list of diseases common to the GCC region
+      from the Saudi Ministry of Health. Our analysis shows that
+      only a small subset of those diseases are talkd about on
+      Twitter. The tweets for the top nine diseases account for 95%
+      of the data set we collected over a 29 month period. Of those
+      nine diseases only three (MERS-CoV, cholera, swine flu) are
+      infectious diseases, but only MERS-CoV appears to regularly
+      generate sufficient traffic to be useful for analysis. We
+      also observed that seasonal public awareness campaigns for
+      non-infectious diseases like breast cancer can also exhibit
+      moderate, albeit artificial, correlation.</p>
+      <p>In order to further establish the correctness of our
+      conclusion regarding MERS-CoV we also obtained the epicurve
+      for it from the Saudi Ministry of Health. Analysis showed
+      that the time-series of the number of tweets about MERS-CoV
+      exhibits a modest-to-high correlation with the epicurve.</p>
+      <p>We conclude that, at present Twitter traffic volume, in
+      the GCC region MERS-CoV is the only infectious disease for
+      which Twitter traffic may be used for the early detection of
+      outbreaks.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Theresa&nbsp;Marie
+        Bernardo, Andrijana Rajic, Ian Young, Katie Robiadek,
+        Mai&nbsp;T Pham, and Julie&nbsp;A Funk. 2013. Scoping
+        review on search queries and social media for disease
+        surveillance: a chronology of innovation. <em><em>Journal
+        of medical Internet research</em></em> 15, 7 (2013),
+        e147.</li>
+        <li id="BibPLXBIB0002" label="[2]">John&nbsp;S Brownstein,
+        Clark&nbsp;C Freifeld, and Lawrence&nbsp;C Madoff. 2009.
+        Digital disease detection—harnessing the Web for public
+        health surveillance. <em><em>New England Journal of
+        Medicine</em></em> 360, 21 (2009), 2153–2157.</li>
+        <li id="BibPLXBIB0003" label="[3]">Declan Butler. 2013.
+        When Google got flu wrong. <em><em>Nature</em></em> 494,
+        7436 (2013), 155.</li>
+        <li id="BibPLXBIB0004" label="[4]">Rumi Chunara,
+        Jason&nbsp;R Andrews, and John&nbsp;S Brownstein. 2012.
+        Social and news media enable estimation of epidemiological
+        patterns early in the 2010 Haitian cholera outbreak.
+        <em><em>The American journal of tropical medicine and
+        hygiene</em></em> 86, 1 (2012), 39–45.</li>
+        <li id="BibPLXBIB0005" label="[5]">Courtney&nbsp;D Corley,
+        Diane&nbsp;J Cook, Armin&nbsp;R Mikler, and Karan&nbsp;P
+        Singh. 2010. Using Web and social media for influenza
+        surveillance. In <em><em>Advances in Computational
+        Biology</em></em> . Springer, 559–564.</li>
+        <li id="BibPLXBIB0006" label="[6]">Aron Culotta. 2010.
+        Towards detecting influenza epidemics by analyzing Twitter
+        messages. In <em><em>Proceedings of the first workshop on
+        social media analytics</em></em> . ACM, 115–122.</li>
+        <li id="BibPLXBIB0007" label="[7]">Center for
+        Disease&nbsp;Control. last accessed: January 15, 2018.
+        FastStats - Infectious Disease.
+        <em><em>https://www.cdc.gov/nchs/fastats/infectious-disease.htm</em></em>
+        (last accessed: January 15, 2018).</li>
+        <li id="BibPLXBIB0008" label="[8]">Google. last accessed 18
+        June 2017. Google Trends.
+        <em><em>https://trends.google.com/trends/</em></em> (last
+        accessed 18 June 2017).</li>
+        <li id="BibPLXBIB0009" label="[9]">Ministry of&nbsp;Health
+        Kingdom&nbsp;of Saudi&nbsp;Arabia. last accessed June 10,
+        2017. Diseases - Diseases List.
+        <em><em>http://www.moh.gov.sa/en/HealthAwareness/EducationalContent/Diseases/Pages/</em></em>
+        (last accessed June 10, 2017).</li>
+        <li id="BibPLXBIB0010" label="[10]">Ministry of&nbsp;Health
+        Kingdom&nbsp;of Saudi&nbsp;Arabia. last accessed June 10,
+        2017. Health Days 2016 - Breast Cancer Awareness Month.
+        <em><em>http://www.moh.gov.sa/en/HealthAwareness/healthDay/2016/Pages/HealthDay-2016-10-01-31.aspx</em></em>
+        (last accessed June 10, 2017).</li>
+        <li id="BibPLXBIB0011" label="[11]">Ministry of&nbsp;Health
+        Kingdom&nbsp;of Saudi&nbsp;Arabia. last accessed November
+        14, 2017. Statistics - Statistics.
+        <em><em>https://www.moh.gov.sa/en/ccc/pressreleases/pages/default.aspx?PageIndex=1</em></em>
+        (last accessed November 14, 2017).</li>
+        <li id="BibPLXBIB0012" label="[12]">Microsoft. last
+        accessed 18 June 2017. Bing - Keyword Research.
+        <em><em>https://www.bing.com/toolbox/keywords</em></em>
+        (last accessed 18 June 2017).</li>
+        <li id="BibPLXBIB0013" label="[13]">World&nbsp;Health
+        Organization. 2018. WHO | Global Health Observatory (GHO)
+        Data. <em><em>http://www.who.int/gho/en/</em></em>
+        (2018).</li>
+        <li id="BibPLXBIB0014" label="[14]">Camille Pelat, Clement
+        Turbelin, Avner Bar-Hen, Antoine Flahault, and
+        Alain-Jacques Valleron. 2009. More diseases tracked by
+        using Google Trends. <em><em>Emerging infectious
+        diseases</em></em> 15, 8 (2009), 1327–8.</li>
+        <li id="BibPLXBIB0015" label="[15]">Susan&nbsp;Young
+        Rojahn. 2012. Pakistan Uses Smartphone Data to Head Off
+        Dengue Outbreak. <em><em>MIT Technology Review</em></em>
+        (10 2012).</li>
+        <li id="BibPLXBIB0016" label="[16]">Marcel Salathé,
+        Clark&nbsp;C Freifeld, Sumiko&nbsp;R Mekaru, Anna&nbsp;F
+        Tomasulo, and John&nbsp;S Brownstein. 2013. Influenza A
+        (H7N9) and the importance of digital epidemiology.
+        <em><em>The New England journal of medicine</em></em> 369,
+        5 (2013), 401.</li>
+        <li id="BibPLXBIB0017" label="[17]">Charles&nbsp;W.
+        Schmidt. 2012. Using social media to predict and track
+        disease outbreaks. <em><em>Environmental health
+        perspectives</em></em> 120, 1 (2012), A31.</li>
+        <li id="BibPLXBIB0018" label="[18]">Antonio Valdivia and
+        Susana Monge-Corella. 2010. Diseases tracked by using
+        Google trends, Spain. <em><em>Emerging infectious
+        diseases</em></em> 16, 1 (2010), 168.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>Due to lack of
+    space we have plotted time-series of only the top eight
+    diseases here.</p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a>Therefore, the
+    sum of all tweet counts in the time-series plots for a disease
+    will not correspond with the tweet counts in the histogram in
+    Figure <a class="fig" href="#fig1">1</a>, which lists only
+    unique tweets</p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a>An epicurve is
+    a time-series of disease cases.</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3186357">https://doi.org/10.1145/3184558.3186357</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

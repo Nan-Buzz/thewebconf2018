@@ -1,1 +1,1436 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> <head>  <title>Transfer Learning of Artist Group Factors to Musical Genre Classification</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script> </head> <body id="main">  <section class="front-matter">   <section>    <header class="title-info">    <div class="journal-title">     <h1>      <span class="title">Transfer Learning of Artist Group Factors to Musical Genre Classification</span>      <br/>      <span class="subTitle"/>     </h1>    </div>    </header>    <div class="authorGroup">    <div class="author"><a href="https://orcid.org/0000-0001-5744-9034" ref="author"><span class="givenName">Jaehun</span>      <span class="surName">Kim</span></a>     Delft University of Technology, 6 Van Mourik BroekmanwegDelft, Netherlands<a class="fn" href="#fn1" id="foot-fn1"><sup>&#x204E;</sup></a>, <a href="mailto:j.h.kim@tudelft.nl">j.h.kim@tudelft.nl</a>    </div>    <div class="author"><a href="../../../data/deliveryimages.acm.org/10.1145/3200000/3191823/" ref="author"><span class="givenName">Minz</span>      <span class="surName">Won</span></a>     Universitat Pompeu FabraBarcelona, Spain<a class="fn" href="#fn2" id="foot-fn2"><sup>&#x2020;</sup></a>, <a href="mailto:minz.won@upf.edu">minz.won@upf.edu</a>    </div>    <div class="author">     <span class="givenName">Xavier</span>     <span class="surName">Serra</span>     Universitat Pompeu FabraBarcelona, Spain, <a href="mailto:xavier.serra@upf.edu">xavier.serra@upf.edu</a>    </div>    <div class="author">     <span class="givenName">Cynthia C. S.</span>     <span class="surName">Liem</span>     Delft University of Technology, Delft, Netherlands, <a href="mailto:c.c.s.liem@tudelft.nl">c.c.s.liem@tudelft.nl</a>    </div>                    </div>    <br/>    <div class="pubInfo">    <p>DOI: <a href="https://doi.org/10.1145/3184558.3191823" target="_blank">https://doi.org/10.1145/3184558.3191823</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">    <p>     <small>The automated recognition of music genres from audio information is a challenging problem, as genre labels are subjective and noisy. Artist labels are less subjective and less noisy, while certain artists may relate more strongly to certain genres. At the same time, at prediction time, it is not guaranteed that artist labels are available for a given audio segment. Therefore, in this work, we propose to apply the transfer learning framework, learning artist-related information which will be used at inference time for genre classification. We consider different types of artist-related information, expressed through artist group factors, which will allow for more efficient learning and stronger robustness to potential label noise. Furthermore, we investigate how to achieve the highest validation accuracy on the given FMA dataset, by experimenting with various kinds of transfer methods, including single-task transfer, multi-task transfer and finally multi-task learning.</small>    </p>    </div>    <div class="CCSconcepts">    <p> <small> <span style="font-weight:bold;">CCS Concepts:</span> &#x2022;<strong> Information systems </strong>&#x2192; <strong>Music retrieval;</strong> &#x2022;<strong> Computing methodologies </strong>&#x2192; <strong>Multi-task learning;</strong> <strong>Transfer learning;</strong> <strong>Neural networks;</strong></small> </p>    </div>    <div class="classifications">    <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>music information retrieval; multi-task learning; transfer learning; neural network</small>     </span>    </div>    <br/>    <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Jaehun Kim, Minz Won, Xavier Serra, and Cynthia C. S. Liem. 2018. Transfer Learning of Artist Group Factors to Musical Genre Classification. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 6 Pages. <a href="https://doi.org/10.1145/3184558.3191823" class="link-inline force-break"       target="_blank">https://doi.org/10.1145/3184558.3191823</a></small>     </p>    </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-5">    <header>    <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>    </div>    </header>    <p>Learning to Recognize Musical Genre from Audio is a challenge track of <em>The Web Conference 2018</em>. The main goal of the challenge is to predict musical genres of unknown audio segments correctly, by utilizing the FMA dataset &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0010">10</a>] as a training set. The challenge therefore focuses on a classification task.</p>    <p>In machine learning, many classification tasks, such as visual object recognition, consider objective and clearly separable classes. In contrast, music genres consider subjective, human-attributed labels. These may be inter-correlated (e.g. a <em>rock</em> song may also be considered <em>pop</em>, many <em>classical</em> works are also <em>instrumental</em>) and dependent of a user&#x0027;s context (e.g., a <em>French rock</em> song is not <em>International</em> to a French listener). Generally, no universal genre taxonomy exists, and even the definition of &#x2018;genre&#x2019; itself is problematic: what is usually understood as &#x2018;genre&#x2019; in Music Information Retrieval would rather be characterized as &#x2018;style&#x2019; in Musicology&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0017">17</a>]. This makes genre classification a challenging problem. In our work, considering the given labels in the challenge, we consider a musical genre to be a category that consists of songs sharing certain aspects of musical characteristics.</p>    <p>Commonly, music tracks are released with explicit mentioning of titles and artists. The identity of the artist does not suffer from semantic taxonomy problems, and can thus be considered as a more objective label than the genre label. At the same time, songs from the same artist tend to share prominent musical characteristics. Considering that an artist is commonly mapped into one or multiple specific genres, but not the whole universe of possible genres, and that the other way around, sets of artists can be seen as exemplars for certain music genres, the musical characteristics that identify an artist may also be key features of certain musical genres.</p>    <p>Therefore, it will be beneficial to exploit artist-related information in a genre classification task. At the same time, learning a direct mapping from artist identity to genre label would not be practical. First of all, for an unknown audio segment for which a genre classification should be performed, the artist label may also not be available. Secondly, artist labels may not always be informative to a system, especially when an artist is newly introduced, so no previous history on the artist exists. Finally, an artist may have been active in multiple genres at once, but not be equally representative for all these genres. Given such constraints, we wish to employ a learning framework which only requires artist labels at training time, but not at prediction time, and that will allow for the inclusion of newly introduced artists, for whom not much extra information is available beyond their songs.</p>    <p>In this work, we therefore present a multi-task transfer framework for using artist labels to improve a genre classification model. Assuming that artist labels are given for each track in the training set, these labels are used as side information, allowing a model to learn the mapping between audio and artists, while capturing patterns that might as well be useful for genre prediction.</p>    <p>It has been shown that music representations learned from raw artist labels can effectively transfer to other music-related tasks&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>]. However, learning more than thousands of artists as individual classes is not efficient for at least two reasons:</p>    <ul class="list-no-style">    <li id="list1" label="&#x2022;">Due to data sparsity, only a few tracks are assigned per class;<br/></li>    <li id="list2" label="&#x2022;">Despite the uniqueness of each artist, it can be beneficial to group them into clusters of similar artists, avoiding learning bottlenecks caused by large numbers of classes.<br/></li>    </ul>    <p>To overcome these potential problems, we therefore apply a label pre-processing step, obtaining Artist Group Factors (AGF) as learning targets, rather than individual artist identities.</p>    <p>Finally, we train Deep Convolutional Neural Networks (DCNNs) employing different learning setups, ranging from targeting genre and various types of AGFs with individual networks, to employing a shared architecture as introduced in multiple previous Multi-Task Learning (MTL) works&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0018">18</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0024">24</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0025">25</a>].</p>    <p>In the remainder of this paper, we first discuss an initial data exploration leading to our choice for AGFs (Section <a class="sec" href="#sec-6">2</a>). Subsequently, we will give a detailed description of the proposed approach (Section <a class="sec" href="#sec-7">3</a>), followed by a discussion of experimental settings (Section <a class="sec" href="#sec-20">4</a>). Finally, we will present our results (Section <a class="sec" href="#sec-21">5</a>), followed by a short discussion and conclusion (Section <a class="sec" href="#sec-24">6</a>).</p>   </section>   <section id="sec-6">    <header>    <div class="title-info">     <h2>      <span class="section-number">2</span> Initial data exploration</h2>    </div>    </header>    <p>In the beginning of the challenge, we first explored the training data, and investigated a conventional data-driven approach using a DCNN for music genre classification, with genre labels as targets.</p>    <p>First of all, we had some concerns about the reliability of the genre annotations. As they were provided by users who uploaded the content, the users did not have access to a single genre taxonomy and unified annotation strategy. Thus, user-contributed annotations are expected to show more variability than annotations by experts. Furthermore, the dataset included 25,000 tracks from 5,152 unique albums. For 5,028 out of these 5,152 albums, genre annotations were made at the album level. While all tracks in an album can belong to a single genre, this is not always true. Indeed, we could discover examples of the case in which different tracks on the same album would belong to different genres, as well as multiple misannotations. Given these reliability issues, it is not guaranteed that by targeting these annotations only, generalized model performance for genre classification can be achieved.</p>    <p>To this end, while we will consider performance for direct (main top-)genre labels as targets (which we will denote as learning task category <tt>g</tt> in the remainder of this paper), in order to obtain more generalizable results obtained on more objective and consistent labeling data, we propose a multi-task transfer framework, introducing an Artist Group (AG) prediction task targeting AGFs.</p>   </section>   <section id="sec-7">    <header>    <div class="title-info">     <h2>      <span class="section-number">3</span> Methodology</h2>    </div>    </header>    <section id="sec-8">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.1</span> Artist Group Factors</h3>     </div>    </header>    <p>The main idea of extracting AGFs is to cluster artists based on meaningful feature sets that allow for aggregation at (and beyond) the artist level. For instance, one can collect genre labels from songs belonging to each artist, and then construct a Bag-of-Word (BoW) artist-level feature vector. Each dimension of the vector represents a genre, with the magnitude of the vector indicating genre frequency among a song collection. Alternatively, a BoW feature vector can be constructed by counting latent &#x2018;terms&#x2019; belonging to each artist, which can be obtained by a dictionary learned from song-level or frame-level features through K-means clustering&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0020">20</a>] or the Sparse Coding&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0009">9</a>] method.</p>    <p>Once artist-level BoW feature vectors are constructed, standard clustering methods such as K-Means, or more sophisticated topic modeling algorithms such as Latent Dirichlet Allocation (LDA)&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0004">4</a>] can be applied to find a small number of latent groups of artists: the AGFs for this particular feature set. This 2-step cascading pipeline is illustrated in Figure <a class="fig" href="#fig1">1</a>.</p>    <p>In this work, we exploit four feature sets, which reflect different levels of musical and acoustical aspects of songs. From these feature sets, we obtain artist-level BoW vectors. Subsequently, LDA is applied to transform artist-level BoW vectors into dedicated AGF representations for the particular feature set. We will both consider these artist group prediction tasks and the main genre classification task within our learning framework: an overview summary is given in Table&#x00A0;<a class="tbl" href="#tab1">1</a>. <figure id="fig1">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191823/images/www18companion-400-fig1.jpg" class="img-responsive" alt="Figure 1"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 1:</span>       <span class="figure-title">Artist group factor extraction pipeline.</span>      </div>     </figure>    </p>    <section id="sec-9">     <p><em>3.1.1 MFCCs.</em> Mel-Frequency Cepstral Coefficients (MFCCs), which are known to be efficient low-level descriptors for timbre analysis, were used as features of the artist grouping. The coefficients are initially calculated for short-time audio frames. Considering the coefficients over all audio frames of tracks for all artists, we build an universal dictionary of features using K-Means clustering. AGFs resulting from this feature set will belong to learning task category <tt>m</tt>.</p>    </section>    <section id="sec-10">     <p><em>3.1.2 dMFCCs.</em> Along with MFCCs, we also use time-deltas of MFCCs (first-order differences between subsequent frames), to consider the temporal dynamics of the timbre for the artist grouping. AGFs resulting from this feature set will be denoted by <tt>d</tt>.</p>    </section>    <section id="sec-11">     <p><em>3.1.3 Essentia.</em> We use song-level feature vectors from Essentia&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0005">5</a>], which is a music feature extraction library. It extracts descriptors ranging from low-level features, such as statistics of spectral characteristics, to high-level features, including danceability&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0012">12</a>] or semantic features learned from the data. After filtering descriptor entries that include missing values or errors, we obtained a 4374-dimensional feature vector per track. Before training a dictionary, we apply quantile normalization: a rank-based normalization process that transforms the distribution of the given features to follow a target distribution&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0001">1</a>], which we set to be a normal distribution in this case. AGFs resulting from this feature set will belong to learning task category <tt>e</tt>.</p>    </section>    <section id="sec-12">     <p><em>3.1.4 Subgenres.</em> We also use the 150 genre labels, including sub-genres, as a pre-defined dictionary for semantic description. For these, we directly build artist-level BoW vectors by aggregating all the genre labels from tracks by an artist. AGFs resulting from this feature set will belong to learning task category <tt>s</tt>.</p>     <div class="table-responsive" id="tab1">      <div class="table-caption">       <span class="table-number">Table 1:</span>       <span class="table-title">Details of Learning Targets</span>      </div>      <table class="table">       <tbody>       <tr>        <td style="text-align:left;">id</td>        <td style="text-align:center;">Category</td>        <td style="text-align:center;">Source</td>        <td style="text-align:center;">Dictionary</td>        <td style="text-align:center;">Dimension</td>       </tr>       <tr>        <td style="text-align:left;">         <tt>g</tt>        </td>        <td style="text-align:center;">Main</td>        <td style="text-align:center;">Genre</td>        <td style="text-align:center;">N / A</td>        <td style="text-align:center;">16</td>       </tr>       <tr>        <td style="text-align:left;">         <tt>m</tt>        </td>        <td style="text-align:center;">AGF</td>        <td style="text-align:center;">MFCC</td>        <td style="text-align:center;">K-means</td>        <td style="text-align:center;">25</td>       </tr>       <tr>        <td style="text-align:left;">         <tt>d</tt>        </td>        <td style="text-align:center;"/>        <td style="text-align:center;">dMFCC</td>        <td style="text-align:center;"/>        <td style="text-align:center;">25</td>       </tr>       <tr>        <td style="text-align:left;">         <tt>e</tt>        </td>        <td style="text-align:center;"/>        <td style="text-align:center;">Essentia&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"          href="#BibPLXBIB0005">5</a>]</td>        <td style="text-align:center;"/>        <td style="text-align:center;">4374</td>       </tr>       <tr>        <td style="text-align:left;">         <tt>s</tt>        </td>        <td style="text-align:center;"/>        <td style="text-align:center;">Subgenre</td>        <td style="text-align:center;">N / A</td>        <td style="text-align:center;">150</td>       </tr>       </tbody>      </table>     </div>     <div class="table-responsive" id="tab2">      <div class="table-caption">       <span class="table-number">Table 2:</span>       <span class="table-title">Proposed DCNN structure</span>      </div>      <table class="table">       <tbody>       <tr>        <td style="text-align:left;">Layers</td>        <td style="text-align:left;">Output shape</td>       </tr>       <tr>        <td style="text-align:left;">Input layer</td>        <td style="text-align:left;">128 &#x00D7; 43 &#x00D7; 1</td>       </tr>       <tr>        <td style="text-align:left;">Conv 5 &#x00D7; 5, ELU</td>        <td style="text-align:left;">128 &#x00D7; 43 &#x00D7; 1</td>       </tr>       <tr>        <td style="text-align:left;">MaxPooling 2 &#x00D7; 1</td>        <td style="text-align:left;">64 &#x00D7; 43 &#x00D7; 16</td>       </tr>       <tr>        <td style="text-align:left;">Conv 3 &#x00D7; 3, BN, ELU</td>        <td style="text-align:left;">64 &#x00D7; 43 &#x00D7; 32</td>       </tr>       <tr>        <td style="text-align:left;">MaxPooling 2 &#x00D7; 2</td>        <td style="text-align:left;">32 &#x00D7; 21 &#x00D7; 32</td>       </tr>       <tr>        <td style="text-align:left;">Dropout (0.1)</td>        <td style="text-align:left;">32 &#x00D7; 21 &#x00D7; 32</td>       </tr>       <tr>        <td style="text-align:left;">Conv 3 &#x00D7; 3, ELU</td>        <td style="text-align:left;">32 &#x00D7; 21 &#x00D7; 64</td>       </tr>       <tr>        <td style="text-align:left;">MaxPooling 2 &#x00D7; 2</td>        <td style="text-align:left;">16 &#x00D7; 10 &#x00D7; 64</td>       </tr>       <tr>        <td style="text-align:left;">Conv 3 &#x00D7; 3, BN, ELU</td>        <td style="text-align:left;">16 &#x00D7; 10 &#x00D7; 64</td>       </tr>       <tr>        <td style="text-align:left;">MaxPooling 2 &#x00D7; 2</td>        <td style="text-align:left;">8 &#x00D7; 5 &#x00D7; 64</td>       </tr>       <tr>        <td style="text-align:left;">Dropout (0.1)</td>        <td style="text-align:left;">8 &#x00D7; 5 &#x00D7; 64</td>       </tr>       <tr>        <td style="text-align:left;">Conv 3 &#x00D7; 3, ELU</td>        <td style="text-align:left;">8 &#x00D7; 5 &#x00D7; 128</td>       </tr>       <tr>        <td style="text-align:left;">MaxPooling 2 &#x00D7; 2</td>        <td style="text-align:left;">4 &#x00D7; 2 &#x00D7; 128</td>       </tr>       <tr>        <td style="text-align:left;">Conv 3 &#x00D7; 3, ELU</td>        <td style="text-align:left;">4 &#x00D7; 2 &#x00D7; 256</td>       </tr>       <tr>        <td style="text-align:left;">Conv 1 &#x00D7; 1, BN, ELU</td>        <td style="text-align:left;">4 &#x00D7; 2 &#x00D7; 256</td>       </tr>       <tr>        <td style="text-align:left;">GlobalAveragePooling, BN</td>        <td style="text-align:left;">256</td>       </tr>       <tr>        <td style="text-align:left;">Dense, BN, ELU</td>        <td style="text-align:left;">256</td>       </tr>       <tr>        <td style="text-align:left;">Dropout (0.5)</td>        <td style="text-align:left;">256</td>       </tr>       <tr>        <td style="text-align:left;">Output layer 16 or 40</td>        <td style="text-align:left;">16 or 40</td>       </tr>       </tbody>      </table>     </div>    </section>    </section>    <section id="sec-13">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.2</span> Network Architectures</h3>     </div>    </header>    <p>The architecture of the proposed system can be divided into two parts, as shown in Figure <a class="fig" href="#fig2">2</a>. We first train multiple DCNNs, targeting the various categories of learning targets (genres or various AGFs). Subsequently, transfer takes place: a multilayer perceptron (MLP) for the final genre classification is trained, utilizing features that were derived from the previously trained DCNNs.</p>    <section id="sec-14">     <p><em>3.2.1 DCNN.</em> We adapted DCNN models to obtain transferable features for genre classification (Table <a class="tbl" href="#tab2">2</a>). The input size of the input layer is 128 &#x00D7; 43, which is the size of a spectrogram with 128 mel bins and 43 samples (1 second of audio). After the input layer, there are seven convolutional layers followed by a max-pooling layer, except for the last two layers. The first convolutional layer has 5 &#x00D7; 5 kernels and the last convolutional layer has 1 &#x00D7; 1 kernels. Except for those two layers, all convolutional layers have 3 &#x00D7; 3 kernels. Outputs of the last convolutional layer are subsampled by global-average-pooling. Finally, they are connected to two dense layers for predicting AGF clusters or genres. Batch normalization&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0013">13</a>] and dropouts&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0022">22</a>] are sparsely used to prevent overfitting. Exponential Linear Unit (ELU)&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0008">8</a>] is used as an activation function for the convolutional layers and Softmax is used for the output layer.</p>    </section>    <section id="sec-15">     <p><em>3.2.2 Shared Architecture.</em> Considering that lower layers of DCNNs usually capture lower-level features such as edges from images or spectrograms, we hypothesized that sharing lower layers among the various DCNNs can be effective under the scenario where multiple learning sources are available. With this approach, one can expect that it not only ensures sufficient specialization on task-specific upper layers, but also benefits from regularization effects on lower layers[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0014">14</a>]. Joint learning of multiple tasks with shared layers can prevent the shared layer to overfit for a specific task, instead learning underlying factors that have commonalities required across tasks&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0019">19</a>].</p>     <p>Throughout the experiment, we used the shared architecture that shares only the first convolutional block. It consists of the first convolutional and the max-pooling layer. For brevity, for the remainder of the paper, we use Single-Task Nets (STNs) and an Multi-Task Net (MTN) to refer to the non-shared networks and shared networks respectively.</p>    </section>    <section id="sec-16">     <p><em>3.2.3 Transfer method.</em> The proposed system learns and predicts a genre of an input spectrogram by transferring pre-trained features from Section&#x00A0;<a class="sec" href="#sec-14">3.2.1</a>. We trained an MLP with a single hidden layer; the size of the hidden layer was 1024. ELU non-linearity was used for the hidden layer and Softmax was used for the output layer. Dropouts of 50% were applied for the input layer and a hidden layer.</p>     <p>Note that for both the feature learning phase and the transfer learning phase, we keep using a segment-wise learning approach. Only at the final inference step, we aggregate all the segment-level predictions, by taking the average of each segment&#x0027;s predicted probability for the genres. <figure id="fig2">       <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191823/images/www18companion-400-fig2.jpg" class="img-responsive" alt="Figure 2"        longdesc=""/>       <div class="figure-caption">       <span class="figure-number">Figure 2:</span>       <span class="figure-title">Illustration for the transfer learning scenario. Dotted lines indicate the setup for the multilayer perceptron for performing final genre classification.</span>       </div>      </figure>     </p>    </section>    <section id="sec-17">     <p><em>3.2.4 Training.</em> At training time, we iteratively update the model parameters with the mini-batch stochastic gradient descent method using the Adam algorithm&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0015">15</a>]. For data augmentation, we randomly crop 1-second excerpts from the entire track included in the mini-batch. We use 64 samples per batch and set the learning rate to 0.001 across the experiments.</p>     <p>For comparison between methods, experiments are run with a fixed number of epochs. We set 1000 epochs for an MTN and 200 for STNs. Since we took a similar stochastic update algorithm to&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0018">18</a>] for the shared architecture, for the number of updates for task-specific layers in a shared network, the number of epochs used for training non-shared networks should be multiplied with the number of involved learning tasks. For the transfer learning phase, we also set the number of epochs to train the MLP to 50.</p>    </section>    </section>    <section id="sec-18">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.3</span> Pre-processing</h3>     </div>    </header>    <p>We use mel spectrograms as the input representation for the neural networks. We extract 128-dimensional mel spectra for audio frames of 46ms, with 50% overlap with adjacent frames. To enhance lower-intensity levels of input mel spectrograms at higher frequencies, we take dB-scale log amplitudes of each mel spectrum.</p>    </section>    <section id="sec-19">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.4</span> Implementation Details</h3>     </div>    </header>    <p>The experiments were run on GPU-accelerated hardware and software environments. We used Lasagne&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0011">11</a>], Theano&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0023">23</a>] and Keras&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0007">7</a>] as main experimental frameworks<a class="fn" href="#fn3" id="foot-fn3"><sup>1</sup></a>. We used a number of different GPUs, including NVIDIA GRID-K2, NVIDIA GTX 1070, NVIDIA TITAN X.</p>    </section>   </section>   <section id="sec-20">    <header>    <div class="title-info">     <h2>      <span class="section-number">4</span> Experiments</h2>    </div>    </header>    <p>To investigate the effectiveness of various types of AGFs for transfer learning, we trained all 31 possible combinations of given learning tasks, including AGFs (<tt>m</tt>, <tt>d</tt>, <tt>e</tt>, <tt>s</tt>) and main top-genre labels (<tt>g</tt>). For each run, to investigate the optimal feature architecture, we tested both shared networks and separate networks for each learning task. This leads to a total number of 62 cases, including all the combinations of learning tasks per network architecture.</p>    <p>However, in all cases in which multiple tasks are considered, the networks have a larger number of parameters compared to the case in which a network focuses on a single task. With a subsequent experiment, we therefore tried to verify the effect of more parameters and larger networks vs. the effect of using more tasks. To this end, we train wide Single Task Networks (wSTNs), targeting only genre, but having an equal number of parameters to the MTNs/STNs targeting multiple tasks. Finally, with respect to the number of tasks involved, we compare the best performance of MTNs/STNs to the performance of wSTNs with the same number of parameters.</p>    <p>As for the AGFs using song-level or frame-level features, we trained K-means algorithms employing 2048 clusters. We observed that lower numbers of clusters (e.g. 1024) can cause artists with few tracks to get a zero vector as artist-level BoW representation, due to data sparsity. Throughout the experiments, we used a fixed number of latent artist groups, set to 40.</p>    <p>Finally, for the internal evaluation, we divided the given training dataset employing a stratified random 85/15 split.</p>   </section>   <section id="sec-21">    <header>    <div class="title-info">     <h2>      <span class="section-number">5</span> Results</h2>    </div>    </header>    <section id="sec-22">    <header>     <div class="title-info">      <h3>       <span class="section-number">5.1</span> Multiple Learning Tasks in STN vs. MTN</h3>     </div>    </header>    <figure id="fig3">     <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191823/images/www18companion-400-fig3.jpg" class="img-responsive" alt="Figure 3"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 3:</span>      <span class="figure-title">Average performance for the number of tasks involved in feature learning</span>     </div>    </figure>    <div class="table-responsive" id="tab3">     <div class="table-caption">      <span class="table-number">Table 3:</span>      <span class="table-title">Comparison of the average performance with or without the main task</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;"/>       <td colspan="2" style="text-align:center;">LogLoss<hr/>       </td>       <td colspan="2" style="text-align:center;">F1<hr/>       </td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:center;">STN</td>       <td style="text-align:center;">MTN</td>       <td style="text-align:center;">STN</td>       <td style="text-align:center;">MTN</td>       </tr>       <tr>       <td style="text-align:left;">without <tt>g</tt>       </td>       <td style="text-align:left;">1.0079</td>       <td style="text-align:left;">0.9618</td>       <td style="text-align:left;">0.4932</td>       <td style="text-align:left;">0.5168</td>       </tr>       <tr>       <td style="text-align:left;">with <tt>g</tt>       </td>       <td style="text-align:left;">        <strong>0.8540</strong>       </td>       <td style="text-align:left;">        <strong>0.8486</strong>       </td>       <td style="text-align:left;">        <strong>0.6154</strong>       </td>       <td style="text-align:left;">        <strong>0.6155</strong>       </td>       </tr>      </tbody>     </table>    </div>    <p>In general, we observe that the number of learning tasks has a positive effect on both performance metrics. As shown in Table&#x00A0;<a class="tbl" href="#tab3">3</a>, it also is found that cases in which the main top-genre classification are included yield better results in comparison to other combinations of tasks.</p>    <p>Considering STN vs. MTN, on the log loss metric, MTN shows better results, but in the case of the f1-measure, the opposite is shown. Generally, considering the number of learning tasks and absolute magnitude of differences, the difference observed between the two methods cannot be deemed significant; more experiments with additional datasets and multiple splits would be needed to assess whether statistically significant differences between STN vs. MTN approaches can be obtained.</p>    <p>For both STN and MTN, the best performance we achieved uses all the learning tasks, as shown in the last row of Table <a class="tbl" href="#tab4">4</a>.</p>    <div class="table-responsive" id="tab4">     <div class="table-caption">      <span class="table-number">Table 4:</span>      <span class="table-title">The performance of various combinations of AGFs and the top-level main genre target as a feature learning task.</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;"/>       <td colspan="2" style="text-align:center;">STN<hr/>       </td>       <td colspan="2" style="text-align:center;">MTN<hr/>       </td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">LogLoss</td>       <td style="text-align:left;">F1</td>       <td style="text-align:left;">LogLoss</td>       <td style="text-align:left;">F1</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>g</tt>       </td>       <td style="text-align:left;">0.8891</td>       <td style="text-align:left;">0.5963</td>       <td style="text-align:left;">N/A</td>       <td style="text-align:left;">N/A</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>m</tt>       </td>       <td style="text-align:left;">1.1812</td>       <td style="text-align:left;">0.3581</td>       <td style="text-align:left;"/>       <td style="text-align:left;"/>       </tr>       <tr>       <td style="text-align:left;">        <tt>d</tt>       </td>       <td style="text-align:left;">1.0987</td>       <td style="text-align:left;">0.3967</td>       <td style="text-align:left;"/>       <td style="text-align:left;"/>       </tr>       <tr>       <td style="text-align:left;">        <tt>e</tt>       </td>       <td style="text-align:left;">1.2542</td>       <td style="text-align:left;">0.3437</td>       <td style="text-align:left;"/>       <td style="text-align:left;"/>       </tr>       <tr>       <td style="text-align:left;">        <tt>s</tt>       </td>       <td style="text-align:left;">0.9404</td>       <td style="text-align:left;">0.5218</td>       <td style="text-align:left;"/>       <td style="text-align:left;"/>       </tr>       <tr>       <td style="text-align:left;">        <tt>gs</tt>       </td>       <td style="text-align:left;">0.8606</td>       <td style="text-align:left;">0.6114</td>       <td style="text-align:left;">0.8578</td>       <td style="text-align:left;">0.6190</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>ge</tt>       </td>       <td style="text-align:left;">0.8811</td>       <td style="text-align:left;">0.5953</td>       <td style="text-align:left;">0.8792</td>       <td style="text-align:left;">0.5996</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>gd</tt>       </td>       <td style="text-align:left;">0.8845</td>       <td style="text-align:left;">0.5898</td>       <td style="text-align:left;">0.8803</td>       <td style="text-align:left;">0.5955</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>gm</tt>       </td>       <td style="text-align:left;">0.8874</td>       <td style="text-align:left;">0.5957</td>       <td style="text-align:left;">0.8813</td>       <td style="text-align:left;">0.6037</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>se</tt>       </td>       <td style="text-align:left;">0.9124</td>       <td style="text-align:left;">0.5537</td>       <td style="text-align:left;">0.9079</td>       <td style="text-align:left;">0.5502</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>sd</tt>       </td>       <td style="text-align:left;">0.9191</td>       <td style="text-align:left;">0.5601</td>       <td style="text-align:left;">0.9146</td>       <td style="text-align:left;">0.5412</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>sm</tt>       </td>       <td style="text-align:left;">0.9260</td>       <td style="text-align:left;">0.5581</td>       <td style="text-align:left;">0.9283</td>       <td style="text-align:left;">0.5458</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>ed</tt>       </td>       <td style="text-align:left;">1.0557</td>       <td style="text-align:left;">0.4433</td>       <td style="text-align:left;">1.0422</td>       <td style="text-align:left;">0.4399</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>em</tt>       </td>       <td style="text-align:left;">1.1186</td>       <td style="text-align:left;">0.4244</td>       <td style="text-align:left;">1.1060</td>       <td style="text-align:left;">0.4376</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>dm</tt>       </td>       <td style="text-align:left;">1.0583</td>       <td style="text-align:left;">0.4373</td>       <td style="text-align:left;">1.0704</td>       <td style="text-align:left;">0.4280</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>gse</tt>       </td>       <td style="text-align:left;">0.8361</td>       <td style="text-align:left;">0.6255</td>       <td style="text-align:left;">0.8335</td>       <td style="text-align:left;">0.6277</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>gsd</tt>       </td>       <td style="text-align:left;">0.8579</td>       <td style="text-align:left;">0.6280</td>       <td style="text-align:left;">0.8519</td>       <td style="text-align:left;">0.6150</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>gsm</tt>       </td>       <td style="text-align:left;">0.8486</td>       <td style="text-align:left;">0.6289</td>       <td style="text-align:left;">0.8541</td>       <td style="text-align:left;">0.6153</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>ged</tt>       </td>       <td style="text-align:left;">0.8528</td>       <td style="text-align:left;">0.6051</td>       <td style="text-align:left;">0.8601</td>       <td style="text-align:left;">0.6067</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>gem</tt>       </td>       <td style="text-align:left;">0.8645</td>       <td style="text-align:left;">0.5988</td>       <td style="text-align:left;">0.8701</td>       <td style="text-align:left;">0.6056</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>gdm</tt>       </td>       <td style="text-align:left;">0.8773</td>       <td style="text-align:left;">0.5985</td>       <td style="text-align:left;">0.8845</td>       <td style="text-align:left;">0.5941</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>sed</tt>       </td>       <td style="text-align:left;">0.8965</td>       <td style="text-align:left;">0.5818</td>       <td style="text-align:left;">0.8867</td>       <td style="text-align:left;">0.5640</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>sem</tt>       </td>       <td style="text-align:left;">0.9104</td>       <td style="text-align:left;">0.5834</td>       <td style="text-align:left;">0.8889</td>       <td style="text-align:left;">0.5668</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>sdm</tt>       </td>       <td style="text-align:left;">0.9211</td>       <td style="text-align:left;">0.5629</td>       <td style="text-align:left;">0.9109</td>       <td style="text-align:left;">0.5572</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>edm</tt>       </td>       <td style="text-align:left;">1.0359</td>       <td style="text-align:left;">0.4879</td>       <td style="text-align:left;">1.0365</td>       <td style="text-align:left;">0.4675</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>gsed</tt>       </td>       <td style="text-align:left;">0.8211</td>       <td style="text-align:left;">0.6343</td>       <td style="text-align:left;">0.8132</td>       <td style="text-align:left;">0.6328</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>gsem</tt>       </td>       <td style="text-align:left;">0.8264</td>       <td style="text-align:left;">0.6352</td>       <td style="text-align:left;">0.8172</td>       <td style="text-align:left;">0.6284</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>gsdm</tt>       </td>       <td style="text-align:left;">0.8407</td>       <td style="text-align:left;">0.6379</td>       <td style="text-align:left;">0.8288</td>       <td style="text-align:left;">0.6170</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>gedm</tt>       </td>       <td style="text-align:left;">0.8466</td>       <td style="text-align:left;">0.6053</td>       <td style="text-align:left;">0.8450</td>       <td style="text-align:left;">0.6152</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>sedm</tt>       </td>       <td style="text-align:left;">0.8906</td>       <td style="text-align:left;">0.5856</td>       <td style="text-align:left;">0.8875</td>       <td style="text-align:left;">0.5870</td>       </tr>       <tr>       <td style="text-align:left;">        <tt>gsedm</tt>       </td>       <td style="text-align:left;">        <strong>0.7894</strong>       </td>       <td style="text-align:left;">        <strong>0.6599</strong>       </td>       <td style="text-align:left;">        <strong>0.7727</strong>       </td>       <td style="text-align:left;">        <strong>0.6571</strong>       </td>       </tr>      </tbody>     </table>    </div>    </section>    <section id="sec-23">    <header>     <div class="title-info">      <h3>       <span class="section-number">5.2</span> Networks for Multiple Learning Tasks vs. Large Network on a Single Task</h3>     </div>    </header>    <p>We also compared the performance between the best STNs and MTNs for a given number of learning tasks, versus the performance of a wSTN that has equal model capability to these multi-task setups in terms of parameters and architecture, but only is trained on direct main top-genre classification. The corresponding results are shown in Table <a class="tbl" href="#tab5">5</a>. It can be seen that MTN representations yield better performance on the log loss metric when all 5 learning tasks (all AGFs and the main top-genre) are used, although at the same time, wSTN performs better when considering the f1-measure for the case in which 2 learning tasks are used. In other cases, differences between the setups appear marginal; further experiments would be needed to assess whether STNs/MTNs will give significant performance boosts in case a larger set of tasks would be considered.</p>    <div class="table-responsive" id="tab5">     <div class="table-caption">      <span class="table-number">Table 5:</span>      <span class="table-title">Comparison between wSTN (single genre classification task) and STN/MTN setups (multiple tasks) learning setups. The reported performances of STN and MTN consider the task combinations for which the best performance was obtained, given the mentioned number <em>N</em> of tasks.</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;"/>       <td colspan="3" style="text-align:center;">LogLoss<hr/>       </td>       <td colspan="3" style="text-align:center;">F1<hr/>       </td>       </tr>       <tr>       <td style="text-align:left;">N</td>       <td style="text-align:left;">wSTN</td>       <td style="text-align:left;">STN</td>       <td style="text-align:left;">MTN</td>       <td style="text-align:left;">wSTN</td>       <td style="text-align:left;">STN</td>       <td style="text-align:left;">MTN</td>       </tr>       <tr>       <td style="text-align:left;">2</td>       <td style="text-align:left;">0.8688</td>       <td style="text-align:left;">0.8606</td>       <td style="text-align:left;">0.8578</td>       <td style="text-align:left;">0.6071</td>       <td style="text-align:left;">0.6114</td>       <td style="text-align:left;">0.6190</td>       </tr>       <tr>       <td style="text-align:left;">3</td>       <td style="text-align:left;">0.8546</td>       <td style="text-align:left;">0.8361</td>       <td style="text-align:left;">0.8335</td>       <td style="text-align:left;">        <strong>0.6629</strong>       </td>       <td style="text-align:left;">0.6289</td>       <td style="text-align:left;">0.6277</td>       </tr>       <tr>       <td style="text-align:left;">4</td>       <td style="text-align:left;">0.8278</td>       <td style="text-align:left;">0.8211</td>       <td style="text-align:left;">0.8132</td>       <td style="text-align:left;">0.6451</td>       <td style="text-align:left;">0.6352</td>       <td style="text-align:left;">0.6328</td>       </tr>       <tr>       <td style="text-align:left;">5</td>       <td style="text-align:left;">0.8290</td>       <td style="text-align:left;">0.7893</td>       <td style="text-align:left;">        <strong>0.7727</strong>       </td>       <td style="text-align:left;">0.6528</td>       <td style="text-align:left;">0.6599</td>       <td style="text-align:left;">0.6571</td>       </tr>      </tbody>     </table>    </div>    </section>   </section>   <section id="sec-24">    <header>    <div class="title-info">     <h2>      <span class="section-number">6</span> Discussion &#x0026; Conclusion</h2>    </div>    </header>    <p>In this work, we proposed including several categories of low-rank AGFs, expressing artist-level information, into the task of classifying music genre based on musical audio. Our experimental results support the hypothesis that by targeting different categories of AGFs, deep networks can learn features from musical audio that can meaningfully support genre classification. The inclusion of multiple parallel learning tasks considering different AGF categories, and the inclusion of both genre- and AGF-based tasks in a multi-task setup, also both seem beneficial, although further work will need to be done to assess whether observed effects are truly significant. For this, other datasets will have to be included for training and testing; furthermore, alternative cluster algorithms and clustering parameters should be investigated to achieve the most robust AGF-based features.</p>   </section>  </section>  <section class="back-matter">   <section id="sec-25">    <header>    <div class="title-info">     <h2>ACKNOWLEDGMENTS</h2>    </div>    </header>    <p>This work was carried out on the Dutch national e-infrastructure with the support of SURF Cooperative. And this work is partially supported by the Maria de Maeztu Programme (MDM-2015-0502). We further acknowledge the computing support of Kakao Corporation.</p>   </section>   <section id="ref-001">    <header>    <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>    </div>    </header>    <ul class="bibUl">    <li id="BibPLXBIB0001" label="[1]">Dhammika Amaratunga and Javier Cabrera. 2001. Analysis of Data From Viral DNA Microchips. <em>      <em>J. Amer. Statist. Assoc.</em>     </em>96, 456 (2001), 1161&#x2013;1170. <a class="link-inline force-break"      href="https://doi.org/10.1198/016214501753381814"      target="_blank">https://doi.org/10.1198/016214501753381814</a>arXiv:https://doi.org/10.1198/016214501753381814</li>    <li id="BibPLXBIB0002" label="[2]">Yoshua Bengio, Aaron Courville, and Pascal Vincent. 2013. Representation learning: A review and new perspectives. <em>      <em>IEEE transactions on pattern analysis and machine intelligence</em>     </em>35, 8(2013), 1798&#x2013;1828.</li>    <li id="BibPLXBIB0003" label="[3]">Joachim Bingel and Anders S&#x00F8;gaard. 2017. Identifying beneficial task relations for multi-task learning in deep neural networks. <em>      <em>arXiv preprint arXiv:1702.08303</em>     </em>(2017).</li>    <li id="BibPLXBIB0004" label="[4]">David&#x00A0;M Blei, Andrew&#x00A0;Y Ng, and Michael&#x00A0;I Jordan. 2003. Latent dirichlet allocation. <em>      <em>Journal of machine Learning research</em>     </em>3, Jan (2003), 993&#x2013;1022.</li>    <li id="BibPLXBIB0005" label="[5]">Dmitry Bogdanov, Nicolas Wack, Emilia G&#x00F3;mez&#x00A0;Guti&#x00E9;rrez, Sankalp Gulati, Perfecto Herrera&#x00A0;Boyer, Oscar Mayor, Gerard Roma&#x00A0;Trepat, Justin Salamon, Jos&#x00E9;&#x00A0;Ricardo Zapata&#x00A0;Gonz&#x00E1;lez, and Xavier Serra. 2013. Essentia: An audio analysis library for music information retrieval. In <em>      <em>Britto A, Gouyon F, Dixon S, editors. 14th Conference of the International Society for Music Information Retrieval (ISMIR); 2013 Nov 4-8; Curitiba, Brazil.[place unknown]: ISMIR; 2013. p. 493-8.</em>     </em>International Society for Music Information Retrieval (ISMIR).</li>    <li id="BibPLXBIB0006" label="[6]">Rich Caruana. 1998. Multitask learning. In <em>      <em>Learning to learn</em>     </em>. Springer, 95&#x2013;133.</li>    <li id="BibPLXBIB0007" label="[7]">Fran&#x00E7;ois Chollet. 2015. keras. <em>&#x00A0;</em><a class="link-inline force-break" href="https://github.com/fchollet/keras">https://github.com/fchollet/keras</a>. (2015).</li>    <li id="BibPLXBIB0008" label="[8]">Djork-Arn&#x00E9; Clevert, Thomas Unterthiner, and Sepp Hochreiter. 2015. Fast and accurate deep network learning by exponential linear units (elus). <em>      <em>arXiv preprint arXiv:1511.07289</em>     </em>(2015).</li>    <li id="BibPLXBIB0009" label="[9]">Adam Coates and Andrew&#x00A0;Y Ng. 2011. The Importance of Encoding Versus Training with Sparse Coding and Vector Quantization. (2011).</li>    <li id="BibPLXBIB0010" label="[10]">Micha&#x00EB;l Defferrard, Kirell Benzi, Pierre Vandergheynst, and Xavier Bresson. 2017. FMA: A Dataset for Music Analysis. In <em>      <em>18th International Society for Music Information Retrieval Conference</em>     </em>.</li>    <li id="BibPLXBIB0011" label="[11]">Sander Dieleman, Jan Schl&#x00FC;ter, Colin Raffel, Eben Olson, S&#x00F8;ren&#x00A0;Kaae S&#x00F8;nderby, Daniel Nouri, Daniel Maturana, Martin Thoma, Eric Battenberg, Jack Kelly, Jeffrey&#x00A0;De Fauw, Michael Heilman, diogo149, Brian McFee, Hendrik Weideman, takacsg84, peterderivaz, Jon, instagibbs, Dr.&#x00A0;Kashif Rasul, CongLiu, Britefury, and Jonas Degrave. 2015. Lasagne: First release. (Aug. 2015). <a class="link-inline force-break" href="https://doi.org/10.5281/zenodo.27878"      target="_blank">https://doi.org/10.5281/zenodo.27878</a></li>    <li id="BibPLXBIB0012" label="[12]">Perfecto Herrera and Sebastian Streich. 2005. Detrended Fluctuation Analysis of Music Signals: Danceability Estimation and further Semantic Characterization. In <em>      <em>Audio Engineering Society Convention 118</em>     </em>. Audio Engineering Society.</li>    <li id="BibPLXBIB0013" label="[13]">Sergey Ioffe and Christian Szegedy. 2015. Batch normalization: Accelerating deep network training by reducing internal covariate shift. In <em>      <em>International conference on machine learning</em>     </em>. 448&#x2013;456.</li>    <li id="BibPLXBIB0014" label="[14]">Jaehun Kim, Juli&#x00E1;n Urbano, Cynthia Liem, and Alan Hanjalic. 2018. One Deep Music Representation to Rule Them All?: A comparative analysis of different representation learning strategies. <em>      <em>arXiv preprint arXiv:1802.04051</em>     </em>(2018).</li>    <li id="BibPLXBIB0015" label="[15]">Diederik&#x00A0;P Kingma and Jimmy Ba. 2014. Adam: A method for stochastic optimization. <em>      <em>arXiv preprint arXiv:1412.6980</em>     </em>(2014).</li>    <li id="BibPLXBIB0016" label="[16]">Sijin Li, Zhi-Qiang Liu, and Antoni&#x00A0;B Chan. 2014. Heterogeneous multi-task learning for human pose estimation with deep convolutional neural network. In <em>      <em>Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition Workshops</em>     </em>. 482&#x2013;489.</li>    <li id="BibPLXBIB0017" label="[17]">Cynthia C.&#x00A0;S. Liem, Andreas Rauber, Thomas Lidy, Richard Lewis, Christopher Raphael, Joshua&#x00A0;D. Reiss, Tim Crawford, and Alan Hanjalic. 2012. Music Information Technology and Professional Stakeholder Audiences: Mind the Adoption Gap. In <em>      <em>Multimodal Music Processing</em>     </em>, Meinard M&#x00FC;ller, Masataka Goto, and Markus Schedl (Eds.). <em>Dagstuhl Follow-Ups</em>, Vol.&#x00A0;3. Schloss Dagstuhl&#x2013;Leibniz-Zentrum f&#x00FC;r Informatik, Dagstuhl, Germany, 227&#x2013;246.</li>    <li id="BibPLXBIB0018" label="[18]">Wu Liu, Tao Mei, Yongdong Zhang, Cherry Che, and Jiebo Luo. 2015. Multi-task deep visual-semantic embedding for video thumbnail selection. In <em>      <em>Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition</em>     </em>. 3707&#x2013;3715.</li>    <li id="BibPLXBIB0019" label="[19]">Xiaodong Liu, Jianfeng Gao, Xiaodong He, Li Deng, Kevin Duh, and Ye-Yi Wang. 2015. Representation learning using multi-task deep neural networks for semantic classification and information retrieval. (2015).</li>    <li id="BibPLXBIB0020" label="[20]">Stuart Lloyd. 1982. Least squares quantization in PCM. <em>      <em>IEEE transactions on information theory</em>     </em>28, 2 (1982), 129&#x2013;137.</li>    <li id="BibPLXBIB0021" label="[21]">Jiyoung Park, Jongpil Lee, Jangyeon Park, Jung-Woo Ha, and Juhan Nam. 2017. Representation Learning of Music Using Artist Labels. <em>      <em>arXiv preprint arXiv:1710.06648</em>     </em>(2017).</li>    <li id="BibPLXBIB0022" label="[22]">Nitish Srivastava, Geoffrey Hinton, Alex Krizhevsky, Ilya Sutskever, and Ruslan Salakhutdinov. 2014. Dropout: A simple way to prevent neural networks from overfitting. <em>      <em>The Journal of Machine Learning Research</em>     </em>15, 1 (2014), 1929&#x2013;1958.</li>    <li id="BibPLXBIB0023" label="[23]">Theano Development Team. 2016. Theano: A Python framework for fast computation of mathematical expressions. <em>      <em>arXiv e-prints</em>     </em>abs/1605.02688 (May 2016). <a class="link-inline force-break" href="http://arxiv.org/abs/1605.02688"      target="_blank">http://arxiv.org/abs/1605.02688</a></li>    <li id="BibPLXBIB0024" label="[24]">Wenlu Zhang, Rongjian Li, Tao Zeng, Qian Sun, Sudhir Kumar, Jieping Ye, and Shuiwang Ji. 2016. Deep model based transfer and multi-task learning for biological image analysis. <em>      <em>IEEE Transactions on Big Data</em>     </em>(2016).</li>    <li id="BibPLXBIB0025" label="[25]">Zhanpeng Zhang, Ping Luo, Chen&#x00A0;Change Loy, and Xiaoou Tang. 2014. Facial landmark detection by deep multi-task learning. In <em>      <em>European Conference on Computer Vision</em>     </em>. Springer, 94&#x2013;108.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">    <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>&#x204E;</sup></a>This is the corresponding author</p>   <p id="fn2"><a href="#foot-fn2"><sup>&#x2020;</sup></a>This research was partially conducted during the author&#x0027;s internship at Kakao Corp.</p>   <p id="fn3"><a href="#foot-fn3"><sup>1</sup></a>The main code for the experiment can be found in <a class="link-inline force-break"    href="https://github.com/eldrin/Lasagne-MultiTaskLearning">https://github.com/eldrin/Lasagne-MultiTaskLearning</a>   </p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>    <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3191823">https://doi.org/10.1145/3184558.3191823</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div> </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Transfer Learning of Artist Group Factors to Musical Genre
+  Classification</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Transfer Learning of Artist Group
+          Factors to Musical Genre Classification</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <a href="https://orcid.org/0000-0001-5744-9034" ref=
+          "author"><span class="givenName">Jaehun</span>
+          <span class="surName">Kim</span></a> Delft University of
+          Technology, 6 Van Mourik BroekmanwegDelft,
+          Netherlands<a class="fn" href="#fn1" id=
+          "foot-fn1"><sup>⁎</sup></a>, <a href=
+          "mailto:j.h.kim@tudelft.nl">j.h.kim@tudelft.nl</a>
+        </div>
+        <div class="author">
+          <a href=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191823/"
+          ref="author"><span class="givenName">Minz</span>
+          <span class="surName">Won</span></a> Universitat Pompeu
+          FabraBarcelona, Spain<a class="fn" href="#fn2" id=
+          "foot-fn2"><sup>†</sup></a>, <a href=
+          "mailto:minz.won@upf.edu">minz.won@upf.edu</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Xavier</span> <span class=
+          "surName">Serra</span> Universitat Pompeu FabraBarcelona,
+          Spain, <a href=
+          "mailto:xavier.serra@upf.edu">xavier.serra@upf.edu</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Cynthia C. S.</span> <span class=
+          "surName">Liem</span> Delft University of Technology,
+          Delft, Netherlands, <a href=
+          "mailto:c.c.s.liem@tudelft.nl">c.c.s.liem@tudelft.nl</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191823"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191823</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>The automated recognition of music genres from
+        audio information is a challenging problem, as genre labels
+        are subjective and noisy. Artist labels are less subjective
+        and less noisy, while certain artists may relate more
+        strongly to certain genres. At the same time, at prediction
+        time, it is not guaranteed that artist labels are available
+        for a given audio segment. Therefore, in this work, we
+        propose to apply the transfer learning framework, learning
+        artist-related information which will be used at inference
+        time for genre classification. We consider different types
+        of artist-related information, expressed through artist
+        group factors, which will allow for more efficient learning
+        and stronger robustness to potential label noise.
+        Furthermore, we investigate how to achieve the highest
+        validation accuracy on the given FMA dataset, by
+        experimenting with various kinds of transfer methods,
+        including single-task transfer, multi-task transfer and
+        finally multi-task learning.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Information systems</strong> →
+        <strong>Music retrieval;</strong> • <strong>Computing
+        methodologies</strong> → <strong>Multi-task
+        learning;</strong> <strong>Transfer learning;</strong>
+        <strong>Neural networks;</strong></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>music information retrieval;
+          multi-task learning; transfer learning; neural
+          network</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Jaehun Kim, Minz Won, Xavier Serra, and Cynthia C. S.
+          Liem. 2018. Transfer Learning of Artist Group Factors to
+          Musical Genre Classification. In <em>WWW '18 Companion:
+          The 2018 Web Conference Companion,</em> <em>April 23–27,
+          2018,</em> <em>Lyon, France. ACM, New York, NY, USA</em>
+          6 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3191823" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191823</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Learning to Recognize Musical Genre from Audio is a
+      challenge track of <em>The Web Conference 2018</em>. The main
+      goal of the challenge is to predict musical genres of unknown
+      audio segments correctly, by utilizing the FMA dataset
+      &nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0010">10</a>]
+      as a training set. The challenge therefore focuses on a
+      classification task.</p>
+      <p>In machine learning, many classification tasks, such as
+      visual object recognition, consider objective and clearly
+      separable classes. In contrast, music genres consider
+      subjective, human-attributed labels. These may be
+      inter-correlated (e.g. a <em>rock</em> song may also be
+      considered <em>pop</em>, many <em>classical</em> works are
+      also <em>instrumental</em>) and dependent of a user's context
+      (e.g., a <em>French rock</em> song is not
+      <em>International</em> to a French listener). Generally, no
+      universal genre taxonomy exists, and even the definition of
+      ‘genre’ itself is problematic: what is usually understood as
+      ‘genre’ in Music Information Retrieval would rather be
+      characterized as ‘style’ in Musicology&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0017">17</a>]. This makes genre
+      classification a challenging problem. In our work,
+      considering the given labels in the challenge, we consider a
+      musical genre to be a category that consists of songs sharing
+      certain aspects of musical characteristics.</p>
+      <p>Commonly, music tracks are released with explicit
+      mentioning of titles and artists. The identity of the artist
+      does not suffer from semantic taxonomy problems, and can thus
+      be considered as a more objective label than the genre label.
+      At the same time, songs from the same artist tend to share
+      prominent musical characteristics. Considering that an artist
+      is commonly mapped into one or multiple specific genres, but
+      not the whole universe of possible genres, and that the other
+      way around, sets of artists can be seen as exemplars for
+      certain music genres, the musical characteristics that
+      identify an artist may also be key features of certain
+      musical genres.</p>
+      <p>Therefore, it will be beneficial to exploit artist-related
+      information in a genre classification task. At the same time,
+      learning a direct mapping from artist identity to genre label
+      would not be practical. First of all, for an unknown audio
+      segment for which a genre classification should be performed,
+      the artist label may also not be available. Secondly, artist
+      labels may not always be informative to a system, especially
+      when an artist is newly introduced, so no previous history on
+      the artist exists. Finally, an artist may have been active in
+      multiple genres at once, but not be equally representative
+      for all these genres. Given such constraints, we wish to
+      employ a learning framework which only requires artist labels
+      at training time, but not at prediction time, and that will
+      allow for the inclusion of newly introduced artists, for whom
+      not much extra information is available beyond their
+      songs.</p>
+      <p>In this work, we therefore present a multi-task transfer
+      framework for using artist labels to improve a genre
+      classification model. Assuming that artist labels are given
+      for each track in the training set, these labels are used as
+      side information, allowing a model to learn the mapping
+      between audio and artists, while capturing patterns that
+      might as well be useful for genre prediction.</p>
+      <p>It has been shown that music representations learned from
+      raw artist labels can effectively transfer to other
+      music-related tasks&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0021">21</a>]. However, learning more than
+      thousands of artists as individual classes is not efficient
+      for at least two reasons:</p>
+      <ul class="list-no-style">
+        <li id="list1" label="•">Due to data sparsity, only a few
+        tracks are assigned per class;<br /></li>
+        <li id="list2" label="•">Despite the uniqueness of each
+        artist, it can be beneficial to group them into clusters of
+        similar artists, avoiding learning bottlenecks caused by
+        large numbers of classes.<br /></li>
+      </ul>
+      <p>To overcome these potential problems, we therefore apply a
+      label pre-processing step, obtaining Artist Group Factors
+      (AGF) as learning targets, rather than individual artist
+      identities.</p>
+      <p>Finally, we train Deep Convolutional Neural Networks
+      (DCNNs) employing different learning setups, ranging from
+      targeting genre and various types of AGFs with individual
+      networks, to employing a shared architecture as introduced in
+      multiple previous Multi-Task Learning (MTL)
+      works&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0002">2</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0003">3</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0006">6</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0014">14</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0016">16</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0018">18</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0024">24</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0025">25</a>].</p>
+      <p>In the remainder of this paper, we first discuss an
+      initial data exploration leading to our choice for AGFs
+      (Section <a class="sec" href="#sec-6">2</a>). Subsequently,
+      we will give a detailed description of the proposed approach
+      (Section <a class="sec" href="#sec-7">3</a>), followed by a
+      discussion of experimental settings (Section <a class="sec"
+      href="#sec-20">4</a>). Finally, we will present our results
+      (Section <a class="sec" href="#sec-21">5</a>), followed by a
+      short discussion and conclusion (Section <a class="sec" href=
+      "#sec-24">6</a>).</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Initial data
+          exploration</h2>
+        </div>
+      </header>
+      <p>In the beginning of the challenge, we first explored the
+      training data, and investigated a conventional data-driven
+      approach using a DCNN for music genre classification, with
+      genre labels as targets.</p>
+      <p>First of all, we had some concerns about the reliability
+      of the genre annotations. As they were provided by users who
+      uploaded the content, the users did not have access to a
+      single genre taxonomy and unified annotation strategy. Thus,
+      user-contributed annotations are expected to show more
+      variability than annotations by experts. Furthermore, the
+      dataset included 25,000 tracks from 5,152 unique albums. For
+      5,028 out of these 5,152 albums, genre annotations were made
+      at the album level. While all tracks in an album can belong
+      to a single genre, this is not always true. Indeed, we could
+      discover examples of the case in which different tracks on
+      the same album would belong to different genres, as well as
+      multiple misannotations. Given these reliability issues, it
+      is not guaranteed that by targeting these annotations only,
+      generalized model performance for genre classification can be
+      achieved.</p>
+      <p>To this end, while we will consider performance for direct
+      (main top-)genre labels as targets (which we will denote as
+      learning task category <tt>g</tt> in the remainder of this
+      paper), in order to obtain more generalizable results
+      obtained on more objective and consistent labeling data, we
+      propose a multi-task transfer framework, introducing an
+      Artist Group (AG) prediction task targeting AGFs.</p>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span>
+          Methodology</h2>
+        </div>
+      </header>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Artist
+            Group Factors</h3>
+          </div>
+        </header>
+        <p>The main idea of extracting AGFs is to cluster artists
+        based on meaningful feature sets that allow for aggregation
+        at (and beyond) the artist level. For instance, one can
+        collect genre labels from songs belonging to each artist,
+        and then construct a Bag-of-Word (BoW) artist-level feature
+        vector. Each dimension of the vector represents a genre,
+        with the magnitude of the vector indicating genre frequency
+        among a song collection. Alternatively, a BoW feature
+        vector can be constructed by counting latent ‘terms’
+        belonging to each artist, which can be obtained by a
+        dictionary learned from song-level or frame-level features
+        through K-means clustering&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0020">20</a>] or the Sparse
+        Coding&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0009">9</a>] method.</p>
+        <p>Once artist-level BoW feature vectors are constructed,
+        standard clustering methods such as K-Means, or more
+        sophisticated topic modeling algorithms such as Latent
+        Dirichlet Allocation (LDA)&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0004">4</a>] can be applied to find a
+        small number of latent groups of artists: the AGFs for this
+        particular feature set. This 2-step cascading pipeline is
+        illustrated in Figure <a class="fig" href=
+        "#fig1">1</a>.</p>
+        <p>In this work, we exploit four feature sets, which
+        reflect different levels of musical and acoustical aspects
+        of songs. From these feature sets, we obtain artist-level
+        BoW vectors. Subsequently, LDA is applied to transform
+        artist-level BoW vectors into dedicated AGF representations
+        for the particular feature set. We will both consider these
+        artist group prediction tasks and the main genre
+        classification task within our learning framework: an
+        overview summary is given in Table&nbsp;<a class="tbl"
+        href="#tab1">1</a>.</p>
+        <figure id="fig1">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191823/images/www18companion-400-fig1.jpg"
+          class="img-responsive" alt="Figure 1" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 1:</span>
+            <span class="figure-title">Artist group factor
+            extraction pipeline.</span>
+          </div>
+        </figure>
+        <p></p>
+        <section id="sec-9">
+          <p><em>3.1.1 MFCCs.</em> Mel-Frequency Cepstral
+          Coefficients (MFCCs), which are known to be efficient
+          low-level descriptors for timbre analysis, were used as
+          features of the artist grouping. The coefficients are
+          initially calculated for short-time audio frames.
+          Considering the coefficients over all audio frames of
+          tracks for all artists, we build an universal dictionary
+          of features using K-Means clustering. AGFs resulting from
+          this feature set will belong to learning task category
+          <tt>m</tt>.</p>
+        </section>
+        <section id="sec-10">
+          <p><em>3.1.2 dMFCCs.</em> Along with MFCCs, we also use
+          time-deltas of MFCCs (first-order differences between
+          subsequent frames), to consider the temporal dynamics of
+          the timbre for the artist grouping. AGFs resulting from
+          this feature set will be denoted by <tt>d</tt>.</p>
+        </section>
+        <section id="sec-11">
+          <p><em>3.1.3 Essentia.</em> We use song-level feature
+          vectors from Essentia&nbsp;[<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0005">5</a>], which is a music feature
+          extraction library. It extracts descriptors ranging from
+          low-level features, such as statistics of spectral
+          characteristics, to high-level features, including
+          danceability&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0012">12</a>] or semantic features learned
+          from the data. After filtering descriptor entries that
+          include missing values or errors, we obtained a
+          4374-dimensional feature vector per track. Before
+          training a dictionary, we apply quantile normalization: a
+          rank-based normalization process that transforms the
+          distribution of the given features to follow a target
+          distribution&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0001">1</a>], which we set to be a normal
+          distribution in this case. AGFs resulting from this
+          feature set will belong to learning task category
+          <tt>e</tt>.</p>
+        </section>
+        <section id="sec-12">
+          <p><em>3.1.4 Subgenres.</em> We also use the 150 genre
+          labels, including sub-genres, as a pre-defined dictionary
+          for semantic description. For these, we directly build
+          artist-level BoW vectors by aggregating all the genre
+          labels from tracks by an artist. AGFs resulting from this
+          feature set will belong to learning task category
+          <tt>s</tt>.</p>
+          <div class="table-responsive" id="tab1">
+            <div class="table-caption">
+              <span class="table-number">Table 1:</span>
+              <span class="table-title">Details of Learning
+              Targets</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:left;">id</td>
+                  <td style="text-align:center;">Category</td>
+                  <td style="text-align:center;">Source</td>
+                  <td style="text-align:center;">Dictionary</td>
+                  <td style="text-align:center;">Dimension</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><tt>g</tt></td>
+                  <td style="text-align:center;">Main</td>
+                  <td style="text-align:center;">Genre</td>
+                  <td style="text-align:center;">N / A</td>
+                  <td style="text-align:center;">16</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><tt>m</tt></td>
+                  <td style="text-align:center;">AGF</td>
+                  <td style="text-align:center;">MFCC</td>
+                  <td style="text-align:center;">K-means</td>
+                  <td style="text-align:center;">25</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><tt>d</tt></td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">dMFCC</td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">25</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><tt>e</tt></td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">
+                    Essentia&nbsp;[<a class="bib" data-trigger=
+                    "hover" data-toggle="popover" data-placement=
+                    "top" href="#BibPLXBIB0005">5</a>]
+                  </td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">4374</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;"><tt>s</tt></td>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">Subgenre</td>
+                  <td style="text-align:center;">N / A</td>
+                  <td style="text-align:center;">150</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-responsive" id="tab2">
+            <div class="table-caption">
+              <span class="table-number">Table 2:</span>
+              <span class="table-title">Proposed DCNN
+              structure</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:left;">Layers</td>
+                  <td style="text-align:left;">Output shape</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">Input layer</td>
+                  <td style="text-align:left;">128 × 43 × 1</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">Conv 5 × 5, ELU</td>
+                  <td style="text-align:left;">128 × 43 × 1</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">MaxPooling 2 ×
+                  1</td>
+                  <td style="text-align:left;">64 × 43 × 16</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">Conv 3 × 3, BN,
+                  ELU</td>
+                  <td style="text-align:left;">64 × 43 × 32</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">MaxPooling 2 ×
+                  2</td>
+                  <td style="text-align:left;">32 × 21 × 32</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">Dropout (0.1)</td>
+                  <td style="text-align:left;">32 × 21 × 32</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">Conv 3 × 3, ELU</td>
+                  <td style="text-align:left;">32 × 21 × 64</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">MaxPooling 2 ×
+                  2</td>
+                  <td style="text-align:left;">16 × 10 × 64</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">Conv 3 × 3, BN,
+                  ELU</td>
+                  <td style="text-align:left;">16 × 10 × 64</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">MaxPooling 2 ×
+                  2</td>
+                  <td style="text-align:left;">8 × 5 × 64</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">Dropout (0.1)</td>
+                  <td style="text-align:left;">8 × 5 × 64</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">Conv 3 × 3, ELU</td>
+                  <td style="text-align:left;">8 × 5 × 128</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">MaxPooling 2 ×
+                  2</td>
+                  <td style="text-align:left;">4 × 2 × 128</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">Conv 3 × 3, ELU</td>
+                  <td style="text-align:left;">4 × 2 × 256</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">Conv 1 × 1, BN,
+                  ELU</td>
+                  <td style="text-align:left;">4 × 2 × 256</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">
+                  GlobalAveragePooling, BN</td>
+                  <td style="text-align:left;">256</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">Dense, BN, ELU</td>
+                  <td style="text-align:left;">256</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">Dropout (0.5)</td>
+                  <td style="text-align:left;">256</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">Output layer 16 or
+                  40</td>
+                  <td style="text-align:left;">16 or 40</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Network
+            Architectures</h3>
+          </div>
+        </header>
+        <p>The architecture of the proposed system can be divided
+        into two parts, as shown in Figure <a class="fig" href=
+        "#fig2">2</a>. We first train multiple DCNNs, targeting the
+        various categories of learning targets (genres or various
+        AGFs). Subsequently, transfer takes place: a multilayer
+        perceptron (MLP) for the final genre classification is
+        trained, utilizing features that were derived from the
+        previously trained DCNNs.</p>
+        <section id="sec-14">
+          <p><em>3.2.1 DCNN.</em> We adapted DCNN models to obtain
+          transferable features for genre classification (Table
+          <a class="tbl" href="#tab2">2</a>). The input size of the
+          input layer is 128 × 43, which is the size of a
+          spectrogram with 128 mel bins and 43 samples (1 second of
+          audio). After the input layer, there are seven
+          convolutional layers followed by a max-pooling layer,
+          except for the last two layers. The first convolutional
+          layer has 5 × 5 kernels and the last convolutional layer
+          has 1 × 1 kernels. Except for those two layers, all
+          convolutional layers have 3 × 3 kernels. Outputs of the
+          last convolutional layer are subsampled by
+          global-average-pooling. Finally, they are connected to
+          two dense layers for predicting AGF clusters or genres.
+          Batch normalization&nbsp;[<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0013">13</a>] and dropouts&nbsp;[<a class=
+          "bib" data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0022">22</a>] are
+          sparsely used to prevent overfitting. Exponential Linear
+          Unit (ELU)&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0008">8</a>] is used as an activation function
+          for the convolutional layers and Softmax is used for the
+          output layer.</p>
+        </section>
+        <section id="sec-15">
+          <p><em>3.2.2 Shared Architecture.</em> Considering that
+          lower layers of DCNNs usually capture lower-level
+          features such as edges from images or spectrograms, we
+          hypothesized that sharing lower layers among the various
+          DCNNs can be effective under the scenario where multiple
+          learning sources are available. With this approach, one
+          can expect that it not only ensures sufficient
+          specialization on task-specific upper layers, but also
+          benefits from regularization effects on lower
+          layers[<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0014">14</a>]. Joint learning of multiple
+          tasks with shared layers can prevent the shared layer to
+          overfit for a specific task, instead learning underlying
+          factors that have commonalities required across
+          tasks&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0006">6</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0019">19</a>].</p>
+          <p>Throughout the experiment, we used the shared
+          architecture that shares only the first convolutional
+          block. It consists of the first convolutional and the
+          max-pooling layer. For brevity, for the remainder of the
+          paper, we use Single-Task Nets (STNs) and an Multi-Task
+          Net (MTN) to refer to the non-shared networks and shared
+          networks respectively.</p>
+        </section>
+        <section id="sec-16">
+          <p><em>3.2.3 Transfer method.</em> The proposed system
+          learns and predicts a genre of an input spectrogram by
+          transferring pre-trained features from
+          Section&nbsp;<a class="sec" href="#sec-14">3.2.1</a>. We
+          trained an MLP with a single hidden layer; the size of
+          the hidden layer was 1024. ELU non-linearity was used for
+          the hidden layer and Softmax was used for the output
+          layer. Dropouts of 50% were applied for the input layer
+          and a hidden layer.</p>
+          <p>Note that for both the feature learning phase and the
+          transfer learning phase, we keep using a segment-wise
+          learning approach. Only at the final inference step, we
+          aggregate all the segment-level predictions, by taking
+          the average of each segment's predicted probability for
+          the genres.</p>
+          <figure id="fig2">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191823/images/www18companion-400-fig2.jpg"
+            class="img-responsive" alt="Figure 2" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 2:</span>
+              <span class="figure-title">Illustration for the
+              transfer learning scenario. Dotted lines indicate the
+              setup for the multilayer perceptron for performing
+              final genre classification.</span>
+            </div>
+          </figure>
+          <p></p>
+        </section>
+        <section id="sec-17">
+          <p><em>3.2.4 Training.</em> At training time, we
+          iteratively update the model parameters with the
+          mini-batch stochastic gradient descent method using the
+          Adam algorithm&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0015">15</a>]. For data augmentation, we
+          randomly crop 1-second excerpts from the entire track
+          included in the mini-batch. We use 64 samples per batch
+          and set the learning rate to 0.001 across the
+          experiments.</p>
+          <p>For comparison between methods, experiments are run
+          with a fixed number of epochs. We set 1000 epochs for an
+          MTN and 200 for STNs. Since we took a similar stochastic
+          update algorithm to&nbsp;[<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0018">18</a>] for the shared architecture, for
+          the number of updates for task-specific layers in a
+          shared network, the number of epochs used for training
+          non-shared networks should be multiplied with the number
+          of involved learning tasks. For the transfer learning
+          phase, we also set the number of epochs to train the MLP
+          to 50.</p>
+        </section>
+      </section>
+      <section id="sec-18">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span>
+            Pre-processing</h3>
+          </div>
+        </header>
+        <p>We use mel spectrograms as the input representation for
+        the neural networks. We extract 128-dimensional mel spectra
+        for audio frames of 46ms, with 50% overlap with adjacent
+        frames. To enhance lower-intensity levels of input mel
+        spectrograms at higher frequencies, we take dB-scale log
+        amplitudes of each mel spectrum.</p>
+      </section>
+      <section id="sec-19">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.4</span>
+            Implementation Details</h3>
+          </div>
+        </header>
+        <p>The experiments were run on GPU-accelerated hardware and
+        software environments. We used Lasagne&nbsp;[<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0011">11</a>], Theano&nbsp;[<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0023">23</a>] and
+        Keras&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0007">7</a>] as main experimental
+        frameworks<a class="fn" href="#fn3" id=
+        "foot-fn3"><sup>1</sup></a>. We used a number of different
+        GPUs, including NVIDIA GRID-K2, NVIDIA GTX 1070, NVIDIA
+        TITAN X.</p>
+      </section>
+    </section>
+    <section id="sec-20">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span>
+          Experiments</h2>
+        </div>
+      </header>
+      <p>To investigate the effectiveness of various types of AGFs
+      for transfer learning, we trained all 31 possible
+      combinations of given learning tasks, including AGFs
+      (<tt>m</tt>, <tt>d</tt>, <tt>e</tt>, <tt>s</tt>) and main
+      top-genre labels (<tt>g</tt>). For each run, to investigate
+      the optimal feature architecture, we tested both shared
+      networks and separate networks for each learning task. This
+      leads to a total number of 62 cases, including all the
+      combinations of learning tasks per network architecture.</p>
+      <p>However, in all cases in which multiple tasks are
+      considered, the networks have a larger number of parameters
+      compared to the case in which a network focuses on a single
+      task. With a subsequent experiment, we therefore tried to
+      verify the effect of more parameters and larger networks vs.
+      the effect of using more tasks. To this end, we train wide
+      Single Task Networks (wSTNs), targeting only genre, but
+      having an equal number of parameters to the MTNs/STNs
+      targeting multiple tasks. Finally, with respect to the number
+      of tasks involved, we compare the best performance of
+      MTNs/STNs to the performance of wSTNs with the same number of
+      parameters.</p>
+      <p>As for the AGFs using song-level or frame-level features,
+      we trained K-means algorithms employing 2048 clusters. We
+      observed that lower numbers of clusters (e.g. 1024) can cause
+      artists with few tracks to get a zero vector as artist-level
+      BoW representation, due to data sparsity. Throughout the
+      experiments, we used a fixed number of latent artist groups,
+      set to 40.</p>
+      <p>Finally, for the internal evaluation, we divided the given
+      training dataset employing a stratified random 85/15
+      split.</p>
+    </section>
+    <section id="sec-21">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Results</h2>
+        </div>
+      </header>
+      <section id="sec-22">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span> Multiple
+            Learning Tasks in STN vs. MTN</h3>
+          </div>
+        </header>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191823/images/www18companion-400-fig3.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">Average performance for the
+            number of tasks involved in feature learning</span>
+          </div>
+        </figure>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Comparison of the average performance
+            with or without the main task</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td colspan="2" style="text-align:center;">
+                  LogLoss
+                  <hr />
+                </td>
+                <td colspan="2" style="text-align:center;">
+                  F1
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:center;">STN</td>
+                <td style="text-align:center;">MTN</td>
+                <td style="text-align:center;">STN</td>
+                <td style="text-align:center;">MTN</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">without
+                <tt>g</tt></td>
+                <td style="text-align:left;">1.0079</td>
+                <td style="text-align:left;">0.9618</td>
+                <td style="text-align:left;">0.4932</td>
+                <td style="text-align:left;">0.5168</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">with <tt>g</tt></td>
+                <td style="text-align:left;">
+                <strong>0.8540</strong></td>
+                <td style="text-align:left;">
+                <strong>0.8486</strong></td>
+                <td style="text-align:left;">
+                <strong>0.6154</strong></td>
+                <td style="text-align:left;">
+                <strong>0.6155</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>In general, we observe that the number of learning tasks
+        has a positive effect on both performance metrics. As shown
+        in Table&nbsp;<a class="tbl" href="#tab3">3</a>, it also is
+        found that cases in which the main top-genre classification
+        are included yield better results in comparison to other
+        combinations of tasks.</p>
+        <p>Considering STN vs. MTN, on the log loss metric, MTN
+        shows better results, but in the case of the f1-measure,
+        the opposite is shown. Generally, considering the number of
+        learning tasks and absolute magnitude of differences, the
+        difference observed between the two methods cannot be
+        deemed significant; more experiments with additional
+        datasets and multiple splits would be needed to assess
+        whether statistically significant differences between STN
+        vs. MTN approaches can be obtained.</p>
+        <p>For both STN and MTN, the best performance we achieved
+        uses all the learning tasks, as shown in the last row of
+        Table <a class="tbl" href="#tab4">4</a>.</p>
+        <div class="table-responsive" id="tab4">
+          <div class="table-caption">
+            <span class="table-number">Table 4:</span> <span class=
+            "table-title">The performance of various combinations
+            of AGFs and the top-level main genre target as a
+            feature learning task.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td colspan="2" style="text-align:center;">
+                  STN
+                  <hr />
+                </td>
+                <td colspan="2" style="text-align:center;">
+                  MTN
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">LogLoss</td>
+                <td style="text-align:left;">F1</td>
+                <td style="text-align:left;">LogLoss</td>
+                <td style="text-align:left;">F1</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>g</tt></td>
+                <td style="text-align:left;">0.8891</td>
+                <td style="text-align:left;">0.5963</td>
+                <td style="text-align:left;">N/A</td>
+                <td style="text-align:left;">N/A</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>m</tt></td>
+                <td style="text-align:left;">1.1812</td>
+                <td style="text-align:left;">0.3581</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>d</tt></td>
+                <td style="text-align:left;">1.0987</td>
+                <td style="text-align:left;">0.3967</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>e</tt></td>
+                <td style="text-align:left;">1.2542</td>
+                <td style="text-align:left;">0.3437</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>s</tt></td>
+                <td style="text-align:left;">0.9404</td>
+                <td style="text-align:left;">0.5218</td>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;"></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>gs</tt></td>
+                <td style="text-align:left;">0.8606</td>
+                <td style="text-align:left;">0.6114</td>
+                <td style="text-align:left;">0.8578</td>
+                <td style="text-align:left;">0.6190</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>ge</tt></td>
+                <td style="text-align:left;">0.8811</td>
+                <td style="text-align:left;">0.5953</td>
+                <td style="text-align:left;">0.8792</td>
+                <td style="text-align:left;">0.5996</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>gd</tt></td>
+                <td style="text-align:left;">0.8845</td>
+                <td style="text-align:left;">0.5898</td>
+                <td style="text-align:left;">0.8803</td>
+                <td style="text-align:left;">0.5955</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>gm</tt></td>
+                <td style="text-align:left;">0.8874</td>
+                <td style="text-align:left;">0.5957</td>
+                <td style="text-align:left;">0.8813</td>
+                <td style="text-align:left;">0.6037</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>se</tt></td>
+                <td style="text-align:left;">0.9124</td>
+                <td style="text-align:left;">0.5537</td>
+                <td style="text-align:left;">0.9079</td>
+                <td style="text-align:left;">0.5502</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>sd</tt></td>
+                <td style="text-align:left;">0.9191</td>
+                <td style="text-align:left;">0.5601</td>
+                <td style="text-align:left;">0.9146</td>
+                <td style="text-align:left;">0.5412</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>sm</tt></td>
+                <td style="text-align:left;">0.9260</td>
+                <td style="text-align:left;">0.5581</td>
+                <td style="text-align:left;">0.9283</td>
+                <td style="text-align:left;">0.5458</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>ed</tt></td>
+                <td style="text-align:left;">1.0557</td>
+                <td style="text-align:left;">0.4433</td>
+                <td style="text-align:left;">1.0422</td>
+                <td style="text-align:left;">0.4399</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>em</tt></td>
+                <td style="text-align:left;">1.1186</td>
+                <td style="text-align:left;">0.4244</td>
+                <td style="text-align:left;">1.1060</td>
+                <td style="text-align:left;">0.4376</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>dm</tt></td>
+                <td style="text-align:left;">1.0583</td>
+                <td style="text-align:left;">0.4373</td>
+                <td style="text-align:left;">1.0704</td>
+                <td style="text-align:left;">0.4280</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>gse</tt></td>
+                <td style="text-align:left;">0.8361</td>
+                <td style="text-align:left;">0.6255</td>
+                <td style="text-align:left;">0.8335</td>
+                <td style="text-align:left;">0.6277</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>gsd</tt></td>
+                <td style="text-align:left;">0.8579</td>
+                <td style="text-align:left;">0.6280</td>
+                <td style="text-align:left;">0.8519</td>
+                <td style="text-align:left;">0.6150</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>gsm</tt></td>
+                <td style="text-align:left;">0.8486</td>
+                <td style="text-align:left;">0.6289</td>
+                <td style="text-align:left;">0.8541</td>
+                <td style="text-align:left;">0.6153</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>ged</tt></td>
+                <td style="text-align:left;">0.8528</td>
+                <td style="text-align:left;">0.6051</td>
+                <td style="text-align:left;">0.8601</td>
+                <td style="text-align:left;">0.6067</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>gem</tt></td>
+                <td style="text-align:left;">0.8645</td>
+                <td style="text-align:left;">0.5988</td>
+                <td style="text-align:left;">0.8701</td>
+                <td style="text-align:left;">0.6056</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>gdm</tt></td>
+                <td style="text-align:left;">0.8773</td>
+                <td style="text-align:left;">0.5985</td>
+                <td style="text-align:left;">0.8845</td>
+                <td style="text-align:left;">0.5941</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>sed</tt></td>
+                <td style="text-align:left;">0.8965</td>
+                <td style="text-align:left;">0.5818</td>
+                <td style="text-align:left;">0.8867</td>
+                <td style="text-align:left;">0.5640</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>sem</tt></td>
+                <td style="text-align:left;">0.9104</td>
+                <td style="text-align:left;">0.5834</td>
+                <td style="text-align:left;">0.8889</td>
+                <td style="text-align:left;">0.5668</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>sdm</tt></td>
+                <td style="text-align:left;">0.9211</td>
+                <td style="text-align:left;">0.5629</td>
+                <td style="text-align:left;">0.9109</td>
+                <td style="text-align:left;">0.5572</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>edm</tt></td>
+                <td style="text-align:left;">1.0359</td>
+                <td style="text-align:left;">0.4879</td>
+                <td style="text-align:left;">1.0365</td>
+                <td style="text-align:left;">0.4675</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>gsed</tt></td>
+                <td style="text-align:left;">0.8211</td>
+                <td style="text-align:left;">0.6343</td>
+                <td style="text-align:left;">0.8132</td>
+                <td style="text-align:left;">0.6328</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>gsem</tt></td>
+                <td style="text-align:left;">0.8264</td>
+                <td style="text-align:left;">0.6352</td>
+                <td style="text-align:left;">0.8172</td>
+                <td style="text-align:left;">0.6284</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>gsdm</tt></td>
+                <td style="text-align:left;">0.8407</td>
+                <td style="text-align:left;">0.6379</td>
+                <td style="text-align:left;">0.8288</td>
+                <td style="text-align:left;">0.6170</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>gedm</tt></td>
+                <td style="text-align:left;">0.8466</td>
+                <td style="text-align:left;">0.6053</td>
+                <td style="text-align:left;">0.8450</td>
+                <td style="text-align:left;">0.6152</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>sedm</tt></td>
+                <td style="text-align:left;">0.8906</td>
+                <td style="text-align:left;">0.5856</td>
+                <td style="text-align:left;">0.8875</td>
+                <td style="text-align:left;">0.5870</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"><tt>gsedm</tt></td>
+                <td style="text-align:left;">
+                <strong>0.7894</strong></td>
+                <td style="text-align:left;">
+                <strong>0.6599</strong></td>
+                <td style="text-align:left;">
+                <strong>0.7727</strong></td>
+                <td style="text-align:left;">
+                <strong>0.6571</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-23">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> Networks
+            for Multiple Learning Tasks vs. Large Network on a
+            Single Task</h3>
+          </div>
+        </header>
+        <p>We also compared the performance between the best STNs
+        and MTNs for a given number of learning tasks, versus the
+        performance of a wSTN that has equal model capability to
+        these multi-task setups in terms of parameters and
+        architecture, but only is trained on direct main top-genre
+        classification. The corresponding results are shown in
+        Table <a class="tbl" href="#tab5">5</a>. It can be seen
+        that MTN representations yield better performance on the
+        log loss metric when all 5 learning tasks (all AGFs and the
+        main top-genre) are used, although at the same time, wSTN
+        performs better when considering the f1-measure for the
+        case in which 2 learning tasks are used. In other cases,
+        differences between the setups appear marginal; further
+        experiments would be needed to assess whether STNs/MTNs
+        will give significant performance boosts in case a larger
+        set of tasks would be considered.</p>
+        <div class="table-responsive" id="tab5">
+          <div class="table-caption">
+            <span class="table-number">Table 5:</span> <span class=
+            "table-title">Comparison between wSTN (single genre
+            classification task) and STN/MTN setups (multiple
+            tasks) learning setups. The reported performances of
+            STN and MTN consider the task combinations for which
+            the best performance was obtained, given the mentioned
+            number <em>N</em> of tasks.</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td colspan="3" style="text-align:center;">
+                  LogLoss
+                  <hr />
+                </td>
+                <td colspan="3" style="text-align:center;">
+                  F1
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">N</td>
+                <td style="text-align:left;">wSTN</td>
+                <td style="text-align:left;">STN</td>
+                <td style="text-align:left;">MTN</td>
+                <td style="text-align:left;">wSTN</td>
+                <td style="text-align:left;">STN</td>
+                <td style="text-align:left;">MTN</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">2</td>
+                <td style="text-align:left;">0.8688</td>
+                <td style="text-align:left;">0.8606</td>
+                <td style="text-align:left;">0.8578</td>
+                <td style="text-align:left;">0.6071</td>
+                <td style="text-align:left;">0.6114</td>
+                <td style="text-align:left;">0.6190</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">3</td>
+                <td style="text-align:left;">0.8546</td>
+                <td style="text-align:left;">0.8361</td>
+                <td style="text-align:left;">0.8335</td>
+                <td style="text-align:left;">
+                <strong>0.6629</strong></td>
+                <td style="text-align:left;">0.6289</td>
+                <td style="text-align:left;">0.6277</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">4</td>
+                <td style="text-align:left;">0.8278</td>
+                <td style="text-align:left;">0.8211</td>
+                <td style="text-align:left;">0.8132</td>
+                <td style="text-align:left;">0.6451</td>
+                <td style="text-align:left;">0.6352</td>
+                <td style="text-align:left;">0.6328</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">5</td>
+                <td style="text-align:left;">0.8290</td>
+                <td style="text-align:left;">0.7893</td>
+                <td style="text-align:left;">
+                <strong>0.7727</strong></td>
+                <td style="text-align:left;">0.6528</td>
+                <td style="text-align:left;">0.6599</td>
+                <td style="text-align:left;">0.6571</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+    <section id="sec-24">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Discussion
+          &amp; Conclusion</h2>
+        </div>
+      </header>
+      <p>In this work, we proposed including several categories of
+      low-rank AGFs, expressing artist-level information, into the
+      task of classifying music genre based on musical audio. Our
+      experimental results support the hypothesis that by targeting
+      different categories of AGFs, deep networks can learn
+      features from musical audio that can meaningfully support
+      genre classification. The inclusion of multiple parallel
+      learning tasks considering different AGF categories, and the
+      inclusion of both genre- and AGF-based tasks in a multi-task
+      setup, also both seem beneficial, although further work will
+      need to be done to assess whether observed effects are truly
+      significant. For this, other datasets will have to be
+      included for training and testing; furthermore, alternative
+      cluster algorithms and clustering parameters should be
+      investigated to achieve the most robust AGF-based
+      features.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="sec-25">
+      <header>
+        <div class="title-info">
+          <h2>ACKNOWLEDGMENTS</h2>
+        </div>
+      </header>
+      <p>This work was carried out on the Dutch national
+      e-infrastructure with the support of SURF Cooperative. And
+      this work is partially supported by the Maria de Maeztu
+      Programme (MDM-2015-0502). We further acknowledge the
+      computing support of Kakao Corporation.</p>
+    </section>
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Dhammika Amaratunga and
+        Javier Cabrera. 2001. Analysis of Data From Viral DNA
+        Microchips. <em><em>J. Amer. Statist. Assoc.</em></em> 96,
+        456 (2001), 1161–1170. <a class="link-inline force-break"
+        href="https://doi.org/10.1198/016214501753381814" target=
+        "_blank">https://doi.org/10.1198/016214501753381814</a>arXiv:https://doi.org/10.1198/016214501753381814
+        </li>
+        <li id="BibPLXBIB0002" label="[2]">Yoshua Bengio, Aaron
+        Courville, and Pascal Vincent. 2013. Representation
+        learning: A review and new perspectives. <em><em>IEEE
+        transactions on pattern analysis and machine
+        intelligence</em></em> 35, 8(2013), 1798–1828.</li>
+        <li id="BibPLXBIB0003" label="[3]">Joachim Bingel and
+        Anders Søgaard. 2017. Identifying beneficial task relations
+        for multi-task learning in deep neural networks.
+        <em><em>arXiv preprint arXiv:1702.08303</em></em>
+        (2017).</li>
+        <li id="BibPLXBIB0004" label="[4]">David&nbsp;M Blei,
+        Andrew&nbsp;Y Ng, and Michael&nbsp;I Jordan. 2003. Latent
+        dirichlet allocation. <em><em>Journal of machine Learning
+        research</em></em> 3, Jan (2003), 993–1022.</li>
+        <li id="BibPLXBIB0005" label="[5]">Dmitry Bogdanov, Nicolas
+        Wack, Emilia Gómez&nbsp;Gutiérrez, Sankalp Gulati, Perfecto
+        Herrera&nbsp;Boyer, Oscar Mayor, Gerard Roma&nbsp;Trepat,
+        Justin Salamon, José&nbsp;Ricardo Zapata&nbsp;González, and
+        Xavier Serra. 2013. Essentia: An audio analysis library for
+        music information retrieval. In <em><em>Britto A, Gouyon F,
+        Dixon S, editors. 14th Conference of the International
+        Society for Music Information Retrieval (ISMIR); 2013 Nov
+        4-8; Curitiba, Brazil.[place unknown]: ISMIR; 2013. p.
+        493-8.</em></em> International Society for Music
+        Information Retrieval (ISMIR).</li>
+        <li id="BibPLXBIB0006" label="[6]">Rich Caruana. 1998.
+        Multitask learning. In <em><em>Learning to learn</em></em>
+        . Springer, 95–133.</li>
+        <li id="BibPLXBIB0007" label="[7]">François Chollet. 2015.
+        keras. <em>&nbsp;</em><a class="link-inline force-break"
+        href=
+        "https://github.com/fchollet/keras">https://github.com/fchollet/keras</a>.
+        (2015).
+        </li>
+        <li id="BibPLXBIB0008" label="[8]">Djork-Arné Clevert,
+        Thomas Unterthiner, and Sepp Hochreiter. 2015. Fast and
+        accurate deep network learning by exponential linear units
+        (elus). <em><em>arXiv preprint arXiv:1511.07289</em></em>
+        (2015).</li>
+        <li id="BibPLXBIB0009" label="[9]">Adam Coates and
+        Andrew&nbsp;Y Ng. 2011. The Importance of Encoding Versus
+        Training with Sparse Coding and Vector Quantization.
+        (2011).</li>
+        <li id="BibPLXBIB0010" label="[10]">Michaël Defferrard,
+        Kirell Benzi, Pierre Vandergheynst, and Xavier Bresson.
+        2017. FMA: A Dataset for Music Analysis. In <em><em>18th
+        International Society for Music Information Retrieval
+        Conference</em></em> .</li>
+        <li id="BibPLXBIB0011" label="[11]">Sander Dieleman, Jan
+        Schlüter, Colin Raffel, Eben Olson, Søren&nbsp;Kaae
+        Sønderby, Daniel Nouri, Daniel Maturana, Martin Thoma, Eric
+        Battenberg, Jack Kelly, Jeffrey&nbsp;De Fauw, Michael
+        Heilman, diogo149, Brian McFee, Hendrik Weideman,
+        takacsg84, peterderivaz, Jon, instagibbs, Dr.&nbsp;Kashif
+        Rasul, CongLiu, Britefury, and Jonas Degrave. 2015.
+        Lasagne: First release. (Aug. 2015). <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.5281/zenodo.27878" target=
+        "_blank">https://doi.org/10.5281/zenodo.27878</a>
+        </li>
+        <li id="BibPLXBIB0012" label="[12]">Perfecto Herrera and
+        Sebastian Streich. 2005. Detrended Fluctuation Analysis of
+        Music Signals: Danceability Estimation and further Semantic
+        Characterization. In <em><em>Audio Engineering Society
+        Convention 118</em></em> . Audio Engineering Society.</li>
+        <li id="BibPLXBIB0013" label="[13]">Sergey Ioffe and
+        Christian Szegedy. 2015. Batch normalization: Accelerating
+        deep network training by reducing internal covariate shift.
+        In <em><em>International conference on machine
+        learning</em></em> . 448–456.</li>
+        <li id="BibPLXBIB0014" label="[14]">Jaehun Kim, Julián
+        Urbano, Cynthia Liem, and Alan Hanjalic. 2018. One Deep
+        Music Representation to Rule Them All?: A comparative
+        analysis of different representation learning strategies.
+        <em><em>arXiv preprint arXiv:1802.04051</em></em>
+        (2018).</li>
+        <li id="BibPLXBIB0015" label="[15]">Diederik&nbsp;P Kingma
+        and Jimmy Ba. 2014. Adam: A method for stochastic
+        optimization. <em><em>arXiv preprint
+        arXiv:1412.6980</em></em> (2014).</li>
+        <li id="BibPLXBIB0016" label="[16]">Sijin Li, Zhi-Qiang
+        Liu, and Antoni&nbsp;B Chan. 2014. Heterogeneous multi-task
+        learning for human pose estimation with deep convolutional
+        neural network. In <em><em>Proceedings of the IEEE
+        Conference on Computer Vision and Pattern Recognition
+        Workshops</em></em> . 482–489.</li>
+        <li id="BibPLXBIB0017" label="[17]">Cynthia C.&nbsp;S.
+        Liem, Andreas Rauber, Thomas Lidy, Richard Lewis,
+        Christopher Raphael, Joshua&nbsp;D. Reiss, Tim Crawford,
+        and Alan Hanjalic. 2012. Music Information Technology and
+        Professional Stakeholder Audiences: Mind the Adoption Gap.
+        In <em><em>Multimodal Music Processing</em></em> , Meinard
+        Müller, Masataka Goto, and Markus Schedl (Eds.).
+        <em>Dagstuhl Follow-Ups</em>, Vol.&nbsp;3. Schloss
+        Dagstuhl–Leibniz-Zentrum für Informatik, Dagstuhl, Germany,
+        227–246.</li>
+        <li id="BibPLXBIB0018" label="[18]">Wu Liu, Tao Mei,
+        Yongdong Zhang, Cherry Che, and Jiebo Luo. 2015. Multi-task
+        deep visual-semantic embedding for video thumbnail
+        selection. In <em><em>Proceedings of the IEEE Conference on
+        Computer Vision and Pattern Recognition</em></em> .
+        3707–3715.</li>
+        <li id="BibPLXBIB0019" label="[19]">Xiaodong Liu, Jianfeng
+        Gao, Xiaodong He, Li Deng, Kevin Duh, and Ye-Yi Wang. 2015.
+        Representation learning using multi-task deep neural
+        networks for semantic classification and information
+        retrieval. (2015).</li>
+        <li id="BibPLXBIB0020" label="[20]">Stuart Lloyd. 1982.
+        Least squares quantization in PCM. <em><em>IEEE
+        transactions on information theory</em></em> 28, 2 (1982),
+        129–137.</li>
+        <li id="BibPLXBIB0021" label="[21]">Jiyoung Park, Jongpil
+        Lee, Jangyeon Park, Jung-Woo Ha, and Juhan Nam. 2017.
+        Representation Learning of Music Using Artist Labels.
+        <em><em>arXiv preprint arXiv:1710.06648</em></em>
+        (2017).</li>
+        <li id="BibPLXBIB0022" label="[22]">Nitish Srivastava,
+        Geoffrey Hinton, Alex Krizhevsky, Ilya Sutskever, and
+        Ruslan Salakhutdinov. 2014. Dropout: A simple way to
+        prevent neural networks from overfitting. <em><em>The
+        Journal of Machine Learning Research</em></em> 15, 1
+        (2014), 1929–1958.</li>
+        <li id="BibPLXBIB0023" label="[23]">Theano Development
+        Team. 2016. Theano: A Python framework for fast computation
+        of mathematical expressions. <em><em>arXiv
+        e-prints</em></em> abs/1605.02688 (May 2016). <a class=
+        "link-inline force-break" href=
+        "http://arxiv.org/abs/1605.02688" target=
+        "_blank">http://arxiv.org/abs/1605.02688</a>
+        </li>
+        <li id="BibPLXBIB0024" label="[24]">Wenlu Zhang, Rongjian
+        Li, Tao Zeng, Qian Sun, Sudhir Kumar, Jieping Ye, and
+        Shuiwang Ji. 2016. Deep model based transfer and multi-task
+        learning for biological image analysis. <em><em>IEEE
+        Transactions on Big Data</em></em> (2016).</li>
+        <li id="BibPLXBIB0025" label="[25]">Zhanpeng Zhang, Ping
+        Luo, Chen&nbsp;Change Loy, and Xiaoou Tang. 2014. Facial
+        landmark detection by deep multi-task learning. In
+        <em><em>European Conference on Computer Vision</em></em> .
+        Springer, 94–108.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>⁎</sup></a>This is the
+    corresponding author</p>
+    <p id="fn2"><a href="#foot-fn2"><sup>†</sup></a>This research
+    was partially conducted during the author's internship at Kakao
+    Corp.</p>
+    <p id="fn3"><a href="#foot-fn3"><sup>1</sup></a>The main code
+    for the experiment can be found in <a class=
+    "link-inline force-break" href=
+    "https://github.com/eldrin/Lasagne-MultiTaskLearning">https://github.com/eldrin/Lasagne-MultiTaskLearning</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191823">https://doi.org/10.1145/3184558.3191823</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

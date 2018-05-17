@@ -1,1 +1,1200 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> <head>  <title>Query Expansion with Neural Question-to-Answer Translation for FAQ-based Question Answering</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script> </head> <body id="main">  <section class="front-matter">   <section>    <header class="title-info">    <div class="journal-title">     <h1>      <span class="title">Query Expansion with Neural Question-to-Answer Translation for FAQ-based Question Answering</span>      <br/>      <span class="subTitle"/>     </h1>    </div>    </header>    <div class="authorGroup">    <div class="author">     <span class="givenName">Atsushi</span>     <span class="surName">Otsuka</span>     NTT Media Intelligence Laboratories, NTT Corporation, 1-1 HikarinookaYokosuka-Shi, Kanagawa, Japan 239-0847, <a href="mailto:otsuka.atsushi@lab.ntt.co.jp">otsuka.atsushi@lab.ntt.co.jp</a>    </div>    <div class="author">     <span class="givenName">Kyosuke</span>     <span class="surName">Nishida</span>     NTT Media Intelligence Laboratories, NTT Corporation, 1-1 HikarinookaYokosuka-Shi, Kanagawa, Japan 239-0847, <a href="mailto:nishida.kyosuke@lab.ntt.co.jp">nishida.kyosuke@lab.ntt.co.jp</a>    </div>    <div class="author">     <span class="givenName">Katsuji</span>     <span class="surName">Bessho</span>     NTT Media Intelligence Laboratories, NTT Corporation, 1-1 HikarinookaYokosuka-Shi, Kanagawa, Japan 239-0847, <a href="mailto:bessho.katsuji@lab.ntt.co.jp">bessho.katsuji@lab.ntt.co.jp</a>    </div>    <div class="author">     <span class="givenName">Hisako</span>     <span class="surName">Asano</span>     NTT Media Intelligence Laboratories, NTT Corporation, 1-1 HikarinookaYokosuka-Shi, Kanagawa, Japan 239-0847, <a href="mailto:asano.hisako@lab.ntt.co.jp">asano.hisako@lab.ntt.co.jp</a>    </div>    <div class="author">     <span class="givenName">Junji</span>     <span class="surName">Tomita</span>     NTT Media Intelligence Laboratories, NTT Corporation, 1-1 HikarinookaYokosuka-Shi, Kanagawa, Japan 239-0847, <a href="mailto:tomita.junji@lab.ntt.co.jp">tomita.junji@lab.ntt.co.jp</a>    </div>                        </div>    <br/>    <div class="pubInfo">    <p>DOI: <a href="https://doi.org/10.1145/3184558.3191537" target="_blank">https://doi.org/10.1145/3184558.3191537</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">    <p>     <small>We propose a novel Frequently Asked Question (FAQ) retrieval technique with a neural query expansion model. With the growth in Question Answering systems and mobile communications, FAQ retrieval systems have become widely used in site searches and call center support. However, FAQ retrieval often has lexical gaps between queries and answer documents. To bridge these gaps, we design a query expansion model on the basis of an Encoder-Decoder model as a type of deep neural network. The model learns the words that appear in answers for questions using Q&#x0026;A pair documents and generates the expanded queries from inputted queries to retrieve answer documents. We evaluate our proposed technique in a multi-domain FAQ retrieval task. Experimental results show that our technique retrieves FAQs more accurately than the previous methods.</small>    </p>    </div>    <div class="CCSconcepts">    <p> <small> <span style="font-weight:bold;">CCS Concepts:</span> &#x2022;<strong> Information systems </strong>&#x2192; <strong>Information retrieval query processing;</strong> &#x2022;<strong> Computing methodologies </strong>&#x2192; <em>Artificial intelligence;</em> <strong>Natural language processing;</strong></small> </p>    </div>    <div class="classifications">    <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>Query Expansion</small>, </span>     <span class="keyword">      <small> FAQ</small>, </span>     <span class="keyword">      <small> Encoder-Decoder Model</small>     </span>    </div>    <br/>    <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Atsushi Otsuka, Kyosuke Nishida, Katsuji Bessho, Hisako Asano, and Junji Tomita. 2018. Query Expansion with Neural Question-to-Answer Translation for FAQ-based Question Answering. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 6 Pages. <a href="https://doi.org/10.1145/3184558.3191537" class="link-inline force-break"       target="_blank">https://doi.org/10.1145/3184558.3191537</a></small>     </p>    </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-6">    <header>    <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>    </div>    </header>    <p>As Question Answering (QA) systems have become widespread, Frequently Asked Question (FAQ) retrieval systems have attracted particular attention in regards to mobile and voice communication [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0025">25</a>]. FAQ retrieval systems enable users to find information that will help to solve their problems by comparing an inputted query to FAQs.</p>    <p>FAQ retrieval systems are realized by combing information retrieval and natural language processing techniques [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>]. A FAQ system calculates similarities between the queries and FAQs. Earlier studies proposed techniques to improve the performance of FAQ retrieval by enhancing the similarity calculation [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0031">31</a>] and pre-processing [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>].</p>    <p>The FAQ retrieval systems still have a critical problem: lexical gaps between queries and FAQs. The gaps that previous studies considered between queries and questions are mostly paraphrases or orthographical variants. However, the gaps between queries and answers often cannot be explained by the paraphrases because the answers describe the reason for or way to resolve the question. Therefore, the similarity scores between queries and answers are difficult to calculate. To solve this problem, previous studies proposed a method to bridge the gaps between queries and answers [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0018">18</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0027">27</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0028">28</a>]. These techniques are based on word or phrase pairs to align questions with answers.</p>    <p>In this paper, we propose a FAQ retrieval method with a model to bridge the gaps between queries and answers. Our retrieval method calculates the relevance scores for questions and answers separately. The answer relevance scores are calculated by expanded queries that are generated by a query expansion model. Our query expansion model is based on an Encoder-Decoder model, which is often used for many natural language applications such as machine translation systems [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>] or dialogue systems [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0024">24</a>]. This model learns word translations from questions to answers without word alignment or co-occurrence. Our contributions are summarized as follows.</p>    <ul class="list-no-style">    <li id="list1" label="&#x2022;">We propose a query expansion model based on a neural Encoder-Decoder translation model for answers in FAQ retrieval. Different from previous studies, our model learns the translation by end-to-end from a training corpus without word alignments.<br/></li>    <li id="list2" label="&#x2022;">We evaluate the effect of the proposed model by using a multi-domain FAQ corpus that has different question types and demonstrate that the model is especially effective against factoid type FAQs.<br/></li>    </ul>   </section>   <section id="sec-7">    <header>    <div class="title-info">     <h2>      <span class="section-number">2</span> Preliminary</h2>    </div>    </header>    <p>In this section, we first define the FAQ retrieval task and then explain the query expansion model for answer retrieval.</p>    <p>    <strong>Definition 1 [FAQ retrieval]:</strong>The FAQ retrieval is the main task in this paper. We define the task as a document retrieval that outputs the top-<em>K</em> question answering (Q&#x0026;A) documents in the order of their relevance to the input query.</p>    <p>    <strong>Definition 2 [FAQ]:</strong>The FAQ is the set of Q&#x0026;A documents. One Q&#x0026;A document contains one answer for one question, and is described in natural languages.</p>    <p>    <strong>Definition 3 [Query]:</strong>The input query consists of <em>m</em> words described in natural language or a keyword list.</p>    <p>    <strong>Definition 4 [Query Expansion Model]:</strong>The query expansion model is a translation model that outputs 0 to <em>N</em> words for input queries. The model transforms the query into words on the basis of a transform function <em>f</em>. The function <em>f</em> is trained by the learning process using the training Q&#x0026;A corpus.</p>   </section>   <section id="sec-8">    <header>    <div class="title-info">     <h2>      <span class="section-number">3</span> Method</h2>    </div>    </header>    <figure id="fig1">    <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191537/images/www18companion-276-fig1.jpg" class="img-responsive" alt="Figure 1"      longdesc=""/>    <div class="figure-caption">     <span class="figure-number">Figure 1:</span>     <span class="figure-title">Flow of FAQ retrieval</span>    </div>    </figure>    <p>In this section, we describe the method for the answer retrieval using an Encoder-Decoder based query expansion model. The flow of our FAQ retrieval process is shown in Figure <a class="fig" href="#fig1">1</a>. First, we explain how to calculate scores to sort Q&#x0026;A documents. Next, we describe the query expansion model to calculate the answer score.</p>    <section id="sec-9">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.1</span> FAQ Retrieval using Question and Answer Scores</h3>     </div>    </header>    <p>We calculate relevant scores between queries and FAQs to output results. The relevant scores are calculated by aggregating question and answer scores. When we give input query <em>Q</em> and Q&#x0026;A document <em>d<sub>i</sub>     </em>, the aggregated score <em>S</em>(<em>Q</em>, <em>d<sub>i</sub>     </em>) is calculated with a linear weighted sum as follows: <div class="table-responsive" id="eq1">      <div class="display-equation">       <span class="tex mytex">\begin{eqnarray} S(Q, d_i) = \alpha S_{q} (Q, d_{(i,q)}) + \beta S_{a}(Q^{\prime }, d_{(i,qa)}) \end{eqnarray} </span>       <br/>       <span class="equation-number">(1)</span>      </div>     </div> where <em>&#x03B1;</em> and <em>&#x03B2;</em> are learnable parameters with a learning-to-rank method [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0015">15</a>], <em>S<sub>q</sub>     </em>(<em>Q</em>, <em>d</em>     <sub>(<em>i</em>, <em>q</em>)</sub>) denotes the relevance score between the query and question of a Q&#x0026;A document, and <em>S<sub>a</sub>     </em>(<em>Q</em>&#x2032;, <em>d</em>     <sub>(<em>i</em>, <em>qa</em>)</sub>) is the relevance score between the expanded query <em>Q</em>&#x2032; and Q&#x0026;A document <em>d</em>     <sub>(<em>i</em>, <em>qa</em>)</sub>.</p>    <p>The question score <em>S<sub>q</sub>     </em> is calculated by cosine similarity between query and question vectors that are centroid vectors of word vectors created by Word2vec [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0017">17</a>]. The answer score <em>S<sub>a</sub>     </em> is the keyword match based score using Okapi BM25 [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0019">19</a>].</p>    </section>    <section id="sec-10">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.2</span> Query Expansion Model for Answers</h3>     </div>    </header>    <figure id="fig2">     <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191537/images/www18companion-276-fig2.jpg" class="img-responsive" alt="Figure 2"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 2:</span>      <span class="figure-title">Architecture of query expansion model for calculating answer document scores. Here, <em>w</em>       <sub>0</sub>, <em>w</em>       <sub>1</sub> and <em>w</em>       <sub>2</sub> denote input words, and <span class="inline-equation"><span class="tex">$w^{\prime }_0$</span>       </span> and <span class="inline-equation"><span class="tex">$w^{\prime }_1$</span>       </span> are output.</span>     </div>    </figure>    <p>Our query expansion model for calculating answer scores is shown in Figure <a class="fig" href="#fig2">2</a>. Our proposed query expansion model is based on an Encoder-Decoder with an attention mechanism model, which is a kind of generation model using a deep neural network [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0002">2</a>]. In natural language processing, the Encoder-Decoder model is used as a Sequence-to-Sequence Model (Seq2Seq) for dialogue processing [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0024">24</a>] or machine translation [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0022">22</a>]. Seq2Seq takes word sequences as input and outputs translated word sequences.</p>    <p>Input words are encoded by encoder neural networks. In Seq2Seq, words are represented as vectors. These vectors are the one-hot vector, which has |<em>V</em>|-dimension elements (|<em>V</em>| is the number of unique tokens in a word vocabulary). A one-hot vector of the v-th token in a vocabulary is a binary vector that has elements that are all zeros, except for the v-th element, which is set to one. An embedding layer projects each of the one-hot vectors into a <em>E</em>-dimensional continuous vector space with a weight matrix <span class="inline-equation"><span class="tex">$W_{e} \in \mathbb {R}^{E \times |V|}$</span>     </span>     <div class="table-responsive" id="eq2">      <div class="display-equation">       <span class="tex mytex">\begin{equation} e_{t} = W_{e}x_{t} \end{equation} </span>       <br/>       <span class="equation-number">(2)</span>      </div>     </div>    </p>    <p>Seq2Seq considers the word orders of input queries by using Long Short-Term Memory (LSTM) in the encoder, but users do not always input a natural language sentence when they use FAQ retrieval systems. Thus, we use a multi layer perceptron (MLP) to exclude the effect of word order in the encoder. The outputs of the projection layer <em>h<sub>p</sub>     </em> and context layer <em>h<sub>c</sub>     </em> are lucubrated, <div class="table-responsive" id="eq3">      <div class="display-equation">       <span class="tex mytex">\begin{eqnarray} h_p &#x0026; = &#x0026; \sum _{t} W_{p}e_{t}\end{eqnarray} </span>       <br/>       <span class="equation-number">(3)</span>      </div>     </div>     <div class="table-responsive" id="eq4">      <div class="display-equation">       <span class="tex mytex">\begin{eqnarray} h_c &#x0026; = &#x0026; \mathrm{tanh}(W_{c}h_{p}) \end{eqnarray} </span>       <br/>       <span class="equation-number">(4)</span>      </div>     </div>    </p>    <p>where <span class="inline-equation"><span class="tex">$W_{p} \in \mathbb {R}^{E \times E}$</span>     </span> and <span class="inline-equation"><span class="tex">$W_{c} \in \mathbb {R}^{E \times E}$</span>     </span> denote learnable model parameters.</p>    <p>Output words are generated by decoder neural networks. The decoder LSTM receives hidden states&#x3000;<em>h<sub>c</sub>     </em> created by the encoder and outputs state vector <em>h<sub>j</sub>     </em>. The output layer translates state vectors into word tokens. The occurrence probability of token <em>y<sub>j</sub>     </em> is calculated as <div class="table-responsive" id="eq5">      <div class="display-equation">       <span class="tex mytex">\begin{eqnarray} P(y_{j} | y_{0},y_{1},...y_{j-1},\mbox{\boldmath $x$}) &#x0026; = &#x0026; g(W_{d}h_{j} + b_{d}) \end{eqnarray} </span>       <br/>       <span class="equation-number">(5)</span>      </div>     </div> where weighting matrix <em>W<sub>d</sub>     </em> and bias vector <em>b<sub>d</sub>     </em> are model parameters, <em>h<sub>j</sub>     </em> is the state vector outputted from LSTM of the decoder. and <em>g</em> denotes a soft-max function. The output token is decided by referring to the maximum value element of the probability vector <em>y<sub>j</sub>     </em>.</p>    <section id="sec-11">     <p><em>3.2.1 Corpus Reform for Model Learning.</em> We use Q&#x0026;A documents for model training. The questions are used as inputs, and the answers are used for outputs. As we explained above, query expansion does not necessarily have to output grammatical sentences but requires the keywords that can identify documents. Thus, we reform the training corpus to generate beneficial keywords by using the query expansion model. We apply <strong>Sorting</strong> and <strong>Pruning</strong> to the corpus. We introduce two processes.</p>     <p>      <strong>Sorting process.</strong>We sort words of output sentences in accordance with word importance to train a query expansion model. If the model trains in accordance with the grammar, the first output of the model is often a subject word as exemplified by &#x201C;I&#x201D;. However, such words do not benefit the queries, so here we sort output words of the training corpus in such a way that important words are output first.</p>     <p>We use a tfidf for the sorting [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0008">8</a>]. The tfidf is a numerical statistic intended to reflect how important a word is to a document in a collection or corpus and is calculated as: <div class="table-responsive" id="eq6">       <div class="display-equation">       <span class="tex mytex">\begin{eqnarray} \nonumber \mathrm{tf}(d,w) &#x0026;= &#x0026; \mathrm{freq}(d,w) \\\nonumber \mathrm{idf}(w) &#x0026; = &#x0026; log \frac{|D|}{df(w)} + 1 \\\mathrm{tfidf}(d,w) &#x0026; = &#x0026; \mathrm{tf}(d,w) \times \mathrm{idf}(w) \end{eqnarray} </span>       <br/>       <span class="equation-number">(6)</span>       </div>      </div> where frec(<em>d</em>, <em>w</em>) denotes a term-frequency for the word <em>w</em> in the document <em>d</em>, and |<em>D</em>| is the number of the documents in a corpus. We first calculate the idf in the training corpus, and sort the output words depending on the tfidf. Additionally, we apply the sorting process to the input words to set the input word limit.</p>     <p>      <strong>Pruning process.</strong>We use the outputs of the Encoder-Decoder model-based query expansion model for the query. If the output words do not appear in targeted documents, those words are not used for the retrieval even if they are very characteristic of the FAQ domain. In addition, the training time increases as the vocabulary size increases in the training corpus. In this paper, we prune the words that are not in the FAQ documents in the training corpus. Here, this process is applied only to the output words. The model needs to allow a variety of input words because the user inputs queries using various words. Thus, we prune only the output words to increase the accuracy of retrieval and the speed of model training.</p>     <div class="table-responsive" id="tab1">      <div class="table-caption">       <span class="table-number">Table 1:</span>       <span class="table-title">FAQ datasets for experiment. Values denote numbers of test queries (query), training Q&#x0026;A documents (training), and test Q&#x0026;A documents (test)</span>      </div>      <table class="table">       <tbody>       <tr>        <td style="text-align:center;">domain</td>        <td style="text-align:center;">query</td>        <td style="text-align:center;">training</td>        <td style="text-align:center;">test</td>       </tr>       <tr>        <td style="text-align:center;">smartphones</td>        <td style="text-align:right;">843</td>        <td style="text-align:right;">442,181</td>        <td>150</td>       </tr>       <tr>        <td style="text-align:center;">cosmetics</td>        <td style="text-align:right;">100</td>        <td style="text-align:right;">67,737</td>        <td>100</td>       </tr>       <tr>        <td style="text-align:center;">human relationships</td>        <td style="text-align:right;">100</td>        <td style="text-align:right;">71,591</td>        <td>100</td>       </tr>       </tbody>      </table>     </div>    </section>    </section>   </section>   <section id="sec-12">    <header>    <div class="title-info">     <h2>      <span class="section-number">4</span> Experiment and Results</h2>    </div>    </header>    <section id="sec-13">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.1</span> Dataset</h3>     </div>    </header>    <p>We created the FAQ corpuses in three domains shown in Table <a class="tbl" href="#tab1">1</a>. These domains were selected by referring to previous research [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0009">9</a>]. They analyzed the type of questions and answers on a Communication Question Answering (CQA) site and reported that the Q&#x0026;A documents can be classified on the basis of the contents of the answers. In the smartphone domain, most of the questions are factoid type, and the answer contents must be accurate, intelligent, or correct (they called this the <em>Content</em> domain). On the other hand, the many answers of the human-relationship domain are subjective or emotional (called the <em>Socio-emotional</em> domain). The cosmetics domain is a mixture of the <em>Content</em> and the <em>Socio-emotional</em> type. We aimed to evaluate our proposed method in various types of Q&#x0026;A documents.</p>    <p>We used Q&#x0026;A documents from the Japanese CQA site as a training corpus. On the CQA site, each question has several answers. We used pairs of a question and its best answer as the input and output of our query expansion model. For the test datasets, two workers created test query sentences without seeing any documents for any domain. We then collected Q&#x0026;A documents that contain the words of the queries from the Japanese Q&#x0026;A website and selected the best Q&#x0026;A documents for each query. The smartphone test set has at least one correct FAQ document in each query (the mean number of answers was 4.0). The cosmetics and human-relationship test datasets have one correct document ID per query.</p>    </section>    <section id="sec-14">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.2</span> Configuration of Experiment</h3>     </div>    </header>    <p>To evaluate the effectiveness of our proposed methods in the FAQ retrieval task, we used a standard evaluation metric in information retrieval, <em>Precision@K</em>, where <em>K</em> was 1 to 5. The <em>Precision@K</em> metric is the ratio of top-<em>K</em> outputs that contain correct Q&#x0026;A documents for corresponding test queries. For the smartphone domain that contains multiple correct documents, we used another metric, <em>nDCG@5</em> (normalized discounted cumulative gain), which is suitable for evaluating the accuracy of output rankings (for details of <em>nDCG</em>, see in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0006">6</a>]).</p>    <p>     <strong>Comparative method.</strong>For the experiments, we use two baseline methods and one comparison method. Baseline 1 and 2 methods use queries without any expansion model. Baseline 1 is FAQ retrieval based on the similarity scores between queries and questions (uses only the first term of Formula <a class="eqn" href="#eq1">1</a>). Baseline 2 is based on the scores of using questions and answers (uses all terms of Formula <a class="eqn" href="#eq1">1</a>). To compare our model with methods that use answers, we also use a Word2vec based query expansion method [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0012">12</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0017">17</a>]. The Word2vec based expand queries are generated on the basis of semantic similarities in vector space. The retrieval scores are calculated by Formula <a class="eqn" href="#eq1">1</a>.</p>    </section>    <section id="sec-15">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.3</span> Results</h3>     </div>    </header>    <section id="sec-16">     <header>      <div class="title-info">       <h4>       <span class="section-number">4.3.1</span> Accuracy of FAQ Retrieval</h4>      </div>     </header>     <figure id="fig3">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191537/images/www18companion-276-fig3.jpg" class="img-responsive" alt="Figure 3"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 3:</span>       <span class="figure-title">Ratio of queries that contain correct Q&#x0026;A in the smartphone domain</span>      </div>     </figure>     <figure id="fig4">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191537/images/www18companion-276-fig4.jpg" class="img-responsive" alt="Figure 4"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 4:</span>       <span class="figure-title">Ratio of queries that contain correct Q&#x0026;A in the cosmetics domain</span>      </div>     </figure>     <figure id="fig5">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191537/images/www18companion-276-fig5.jpg" class="img-responsive" alt="Figure 5"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 5:</span>       <span class="figure-title">Ratio of queries that contain correct Q&#x0026;A in the human-relationship domain</span>      </div>     </figure>     <div class="table-responsive" id="tab2">      <div class="table-caption">       <span class="table-number">Table 2:</span>       <span class="table-title">nDCG value in the smartphone dateset</span>      </div>      <table class="table">       <tbody>       <tr>        <td style="text-align:center;"/>        <td style="text-align:center;">baseline1</td>        <td style="text-align:center;">Word2vec</td>        <td style="text-align:center;">proposed</td>       </tr>       <tr>        <td style="text-align:center;">         <em>nDCG</em>@5</td>        <td style="text-align:right;">0.377</td>        <td style="text-align:right;">0.408</td>        <td>0.449</td>       </tr>       </tbody>      </table>     </div>     <div class="table-responsive" id="tab3">      <div class="table-caption">       <span class="table-number">Table 3:</span>       <span class="table-title">Example of query expansion. &#x201C;Word2Vec&#x201D; denotes words generated by the similarity of word vectors (the comparison method), and &#x201C;proposed&#x201D; is the outputs of the proposed query expansion model. Note that these examples are translated from Japanese to English</span>      </div>      <table class="table">       <tbody>       <tr>        <td style="text-align:center;">Domain</td>        <td colspan="2" style="text-align:center;">Query expansion<hr/>        </td>       </tr>       <tr>        <td style="text-align:center;">smartphones</td>        <td style="text-align:left;">query:</td>        <td style="text-align:left;">         <em>How to turn up the volume?</em>        </td>       </tr>       <tr>        <td style="text-align:center;"/>        <td style="text-align:left;">Word2vec:</td>        <td style="text-align:left;">down, volume, setting, bass, up-and-down</td>       </tr>       <tr>        <td style="text-align:center;"/>        <td style="text-align:left;">proposed:</td>        <td style="text-align:left;">silent, volume, speaker, sound, side, setting</td>       </tr>       <tr>        <td style="text-align:center;"/>        <td style="text-align:left;">query:</td>        <td style="text-align:left;">         <em>How to avoid expansive communication usage fees during overseas trips?</em>        </td>       </tr>       <tr>        <td style="text-align:center;"/>        <td style="text-align:left;">Word2vec:</td>        <td style="text-align:left;">money, packet, field, huge</td>       </tr>       <tr>        <td style="text-align:center;"/>        <td style="text-align:left;">proposed:</td>        <td style="text-align:left;">off, hotel, roaming-service, on, airplane-mode</td>       </tr>       <tr>        <td style="text-align:center;">cosmetics</td>        <td style="text-align:left;">query:</td>        <td style="text-align:left;">         <em>What is the best summer skin care method?</em>        </td>       </tr>       <tr>        <td style="text-align:center;"/>        <td style="text-align:left;">Word2vec:</td>        <td style="text-align:left;">commodity, time-reduction, cleansing-cream, outing</td>       </tr>       <tr>        <td style="text-align:center;"/>        <td style="text-align:left;">proposed:</td>        <td style="text-align:left;">sunscreen, ultraviolet, skin-spot</td>       </tr>       <tr>        <td style="text-align:center;"/>        <td style="text-align:left;">query:</td>        <td style="text-align:left;">         <em>What is the best winter skin care method?</em>        </td>       </tr>       <tr>        <td style="text-align:center;"/>        <td style="text-align:left;">Word2vec:</td>        <td style="text-align:left;">commodity, scrub, cleansing-cream, FANCL, sheet</td>       </tr>       <tr>        <td style="text-align:center;"/>        <td style="text-align:left;">proposed:</td>        <td style="text-align:left;">care, facial-mask, moisturize, cream</td>       </tr>       <tr>        <td style="text-align:center;">human</td>        <td style="text-align:left;">query:</td>        <td style="text-align:left;">         <em>The cost of a date for adults</em>        </td>       </tr>       <tr>        <td style="text-align:center;">relationships</td>        <td style="text-align:left;">Word2vec:</td>        <td style="text-align:left;">expensive, over, saving, education-expense</td>       </tr>       <tr>        <td style="text-align:center;"/>        <td style="text-align:left;">proposed:</td>        <td style="text-align:left;">express, smart, bill-splitting</td>       </tr>       <tr>        <td style="text-align:center;"/>        <td style="text-align:left;">query:</td>        <td style="text-align:left;">         <em>How to become fine again after being dumped?</em>        </td>       </tr>       <tr>        <td style="text-align:center;"/>        <td style="text-align:left;">Word2vec:</td>        <td style="text-align:left;">cleanly, lingering, forget, courage</td>       </tr>       <tr>        <td style="text-align:center;"/>        <td style="text-align:left;">proposed:</td>        <td style="text-align:left;">heartbreak, forget</td>       </tr>       </tbody>      </table>     </div>     <div class="table-responsive" id="tab4">      <div class="table-caption">       <span class="table-number">Table 4:</span>       <span class="table-title">Mean number of output words from our model in each domain</span>      </div>      <table class="table">       <tbody>       <tr>        <td style="text-align:center;">smartphones</td>        <td style="text-align:center;">cosmetics</td>        <td style="text-align:center;">human relationships</td>       </tr>       <tr>        <td style="text-align:right;">4.49</td>        <td style="text-align:right;">3.09</td>        <td>2.56</td>       </tr>       </tbody>      </table>     </div>     <div class="table-responsive" id="tab5">      <div class="table-caption">       <span class="table-number">Table 5:</span>       <span class="table-title">The number of vocabulary and averaged training time by comparing pruned and no pruned corpus in the smartphones domain</span>      </div>      <table class="table">       <tbody>       <tr>        <td style="text-align:center;"/>        <td style="text-align:center;">pruned</td>        <td style="text-align:center;">no pruned</td>       </tr>       <tr>        <td style="text-align:center;">vocabulary</td>        <td style="text-align:right;">2,507</td>        <td>12,926</td>       </tr>       <tr>        <td style="text-align:center;">time(1epoch)[sec]</td>        <td style="text-align:right;">1620.2</td>        <td>4540.9</td>       </tr>       </tbody>      </table>     </div>     <p>Figure <a class="fig" href="#fig3">3</a>, <a class="fig" href="#fig4">4</a> and <a class="fig" href="#fig5">5</a> show the results of <em>Precision@K</em>. Note that Baseline 1 denotes similarity score using only questions. Baseline2 denotes similarity score using both questions and answers. Most of the results of Baseline 2 that use answers without expanded queries have worse precision than those of Baseline 1. On the other hand, the experiment results show that query expansion is effective for improving the performance of FAQ retrieval. Additionally, our proposed method improves the precision more than the Word2vec based method.</p>     <p>Table <a class="tbl" href="#tab2">2</a> shows the results for <em>nDCG@5</em> in the smartphone dataset. Our proposed method achieved the best <em>nDCG@5</em>. We applied McNemar&#x0027;s test to the top-1 results. The test results show that our proposed method revealed a significant difference from Baseline 1 (<em>p</em> < .05) in the smartphone dataset and a marginally significant difference (<em>p</em> < .10) in the cosmetics dataset. There was no significant difference between the proposed method and the baselines in the human relationship dataset. In the smartphone and cosmetics dataset, our proposed method achieved better <em>Precision@K</em> than both baseline methods for all values of <em>K</em>. However, the human relationship dataset shows a different trend.</p>     <p>Our query expansion model was effective for <em>Content</em> documents such as those in the smartphone dataset. Most <em>Content</em> documents are able to provide clear answers for questions. On the other hand, most <em>Socio-emotional</em> documents do not contain obvious answers for questions. Therefore, it is assumed that our query expansion model cannot learn how to transform the question into an answer in <em>Socio-emotional</em> documents.</p>    </section>    <section id="sec-17">     <p><em>4.3.2 Outputs of Query Expansion Model.</em> Table <a class="tbl" href="#tab3">3</a> shows examples of query expansion, and Table <a class="tbl" href="#tab4">4</a> shows the number of output words from our query expansion model. Our model outputs variable numbers of words.</p>     <p>The <em>Content</em> domain outputs many words from our query expansion model. In contrast, the <em>Socio-emotional</em> domain has fewer expanded words than the <em>Content</em> type domain. This trend shows that our model learns better in the <em>Content</em> domain than in the <em>Socio-emotional</em> domain. Additionally, the <em>Content</em> domain had better results than the <em>Socio-emotional</em> domain in the FAQ retrieval task as shown in <a class="sec" href="#sec-16">4.3.1</a> We consider that our model and its outputs are effective in the FAQ retrieval task.</p>     <p>The Word2vec based query expansion model is based on the semantic word similarity; therefore, most of its expanded words are synonyms. On the other hand, our proposed method outputs words that are not synonyms of the queries. For example, the expanded word &#x201C;side&#x201D; seems to have no similarity with the query &#x201C;<em>How to turn up the volume?</em>&#x201D; in the smartphone domain. However, these have a relationship because a number of smartphones have a volume control switch on the side. It means that our model was able to learn the latent word relationships between questions and answers. Additionally, our model was able to detect the small differences in the queries such as &#x201C;summer&#x201D; and&#x201C;winter&#x201D; in the cosmetics examples.</p>     <p>Table <a class="tbl" href="#tab5">5</a> shows the effectiveness of the word pruning process in terms of training time as described in Section <a class="sec" href="#sec-11">3.2.1</a>. The vocabulary from the original corpus was reduced to 20% by the word pruning process, and the training speed was approximately 65% faster.</p>    </section>    </section>   </section>   <section id="sec-18">    <header>    <div class="title-info">     <h2>      <span class="section-number">5</span> Related Work</h2>    </div>    </header>    <p>FAQ is often used in QA, which is a chat based information provision system [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0010">10</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>]. QA systems infer an answer for an inputted question using a knowledge base [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>] and reasoning [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0023">23</a>]. Deep neural networks are now being used in QA systems [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0020">20</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0026">26</a>].</p>    <p>In this paper, we use a CQA dataset for the model learning. The CQA is a social platform that enables users to post questions to be answered by other users later. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0030">30</a>] created a ranking metric network to find expert users using a recurrent neural network. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0029">29</a>] proposed a retrieval method for high-quality Q&#x0026;A documents using a topic model that assumed a shared latent topic with questions and answers.</p>   </section>   <section id="sec-19">    <header>    <div class="title-info">     <h2>      <span class="section-number">6</span> Conclusion</h2>    </div>    </header>    <p>We presented an Encoder-Decoder based query expansion model that generates additional keywords for considering an answer document from the input queries in FAQ retrieval. Experimental results showed that our approach statistically significantly improved the accuracy of FAQ document retrieval in three domains that have different Q&#x0026;A characteristics. In particular, our method performed better than other methods for the <em>Content</em> type Q&#x0026;A documents, which are documents that contain obvious answers.</p>    <p>Our future work is to improve the query expansion model. In particular, we will address the questions that have no obvious answers or multiple answers such as those in human-relationship Q&#x0026;A domains.</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>    <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>    </div>    </header>    <ul class="bibUl">    <li id="BibPLXBIB0001" label="[1]">Amit Agarwal, Bhumika Gupta, Gaurav Bhatt, and Ankush Mittal. 2015. Construction of a Semi-Automated Model for FAQ Retrieval via Short Message Service. <em>      <em>Proc of the 7th Forum for Information Retrieval Evaluation (FIRE2015)</em>     </em> (2015), 35&#x2013;38.</li>    <li id="BibPLXBIB0002" label="[2]">Dzmitry Bahdanau, Kyunghyun Cho, and Yoshua Bengio. 2015. Neural Machine Translation by Jointly Learning to Align and Translate. <em>      <em>Proc of the 5th International Conference on Learning Representations(ICLR2015)</em>     </em> (2015).</li>    <li id="BibPLXBIB0003" label="[3]">Adam Berger, Rich Caruana, David Cohn, Dayne Freitag, and Vibhu Mittal. 2000. Bridging the Lexical Chasm: Statistical Approaches to Answer-finding. <em>      <em>Proc of the 23rd Annual International ACM SIGIR Conference on Research and Development in Information Retrieval (SIGIR2000)</em>     </em> (2000), 192&#x2013;199.</li>    <li id="BibPLXBIB0004" label="[4]">Robin&#x00A0;D. Burke, Kristian&#x00A0;J. Hammond, Vladimir&#x00A0;A. Kulyukin, Steven&#x00A0;L. Lytinen, N. Tomuro, and S. Schoenberg. 1997. Question Answering from Frequently Asked Question Files: Experiences with the FAQ Finder System. <em>      <em>Technical Report of the University of Chicago</em>     </em> (1997).</li>    <li id="BibPLXBIB0005" label="[5]">Zihang Dai, Lei Li, and Wei Xu. 2016. CFO: Conditional Focused Neural Question Answering with Large-scale Knowledge Bases. <em>      <em>Proc of the 54th Annual Meeting of the Association for Computational Linguistics (ACL2016)</em>     </em> (2016), 800&#x2013;810.</li>    <li id="BibPLXBIB0006" label="[6]">Kalervo J&#x00E4;rvelin and Jaana Kek&#x00E4;l&#x00E4;inen. 2002. Cumulated Gain-based Evaluation of IR Techniques. <em>      <em>ACM Trans. Inf. Syst.</em>     </em>20, 4 (2002), 422&#x2013;446.</li>    <li id="BibPLXBIB0007" label="[7]">Jiwoon Jeon, W.&#x00A0;Bruce Croft, and Joon&#x00A0;Ho Lee. 2005. Finding Similar Questions in Large Question and Answer Archives. <em>      <em>Proc of the 14th ACM International Conference on Information and Knowledge Management (CIKM2005)</em>     </em> (2005), 84&#x2013;90.</li>    <li id="BibPLXBIB0008" label="[8]">Karen&#x00A0;Sparck Jones. 1972. A Statistical Interpretation of Term Specificity and its Application in Retrieval. <em>      <em>Journal of Documentation</em>     </em>28 (1972), 11&#x2013;21. Issue 1.</li>    <li id="BibPLXBIB0009" label="[9]">Soojung Kim and Sanghee Oh. 2009. Users&#x2019; relevance criteria for evaluating answers in a social Q&#x0026;A site. <em>      <em>Journal of the American Society for Information Science and Technology</em>     </em>60, 4 (2009), 716&#x2013;727.</li>    <li id="BibPLXBIB0010" label="[10]">Kanako Komiya, Yuji Abe, Hajime Morita, and Yoshiyuki Kotani. 2013. Question answering system using Q &#x0026; A site corpus Query expansion and answer candidate evaluation. <em>      <em>Springerplus</em>     </em>2, 396 (2013), 1&#x2013;11.</li>    <li id="BibPLXBIB0011" label="[11]">Govind Kothari, Sumit Negi, Tanveer&#x00A0;A. Faruquie, Venkatesan&#x00A0;T. Chakaravarthy, and L.&#x00A0;Venkata Subramaniam. 2009. SMS Based Interface for FAQ Retrieval. (2009), 852&#x2013;860.</li>    <li id="BibPLXBIB0012" label="[12]">Saar Kuzi, Anna Shtok, and Oren Kurland. 2016. Query Expansion Using Word Embeddings. <em>      <em>Proc of the 25th ACM International on Conference on Information and Knowledge Management(CIKM2016)</em>     </em>(2016), 1929&#x2013;1932.</li>    <li id="BibPLXBIB0013" label="[13]">Jochen&#x00A0;L. Leidner and Chris Callison-Burch. 2003. Evaluating Question Answering Systems Using FAQ Answer Injection. <em>      <em>Proc of the 6th Annual CLUK Research Colloquium</em>     </em> (2003).</li>    <li id="BibPLXBIB0014" label="[14]">Johannes Leveling. 2012. On the Effect of Stopword Removal for SMS-Based FAQ Retrieval. <em>      <em>Proc of the 17th International Conference on Applications of Natural Language Processing and Information Systems (NLDB2012)</em>     </em> (2012), 128&#x2013;139.</li>    <li id="BibPLXBIB0015" label="[15]">Tie-Yan Liu. 2009. Learning to Rank for Information Retrieval. <em>      <em>Found. Trends Inf. Retr.</em>     </em>3, 3 (2009), 225&#x2013;331.</li>    <li id="BibPLXBIB0016" label="[16]">Shahbaaz Mhaisale, Sangameshwar Patil, and Kiran Mahamuni. 2013. Weighted Edit Distance Based FAQ Retrieval Using Noisy Queries. <em>      <em>Post-Proceedings of the 4th and 5th Workshops of the Forum for Information Retrieval Evaluation (FIRE2012&#x0026;2013)</em>     </em>(2013), 8:1&#x2013;8:4.</li>    <li id="BibPLXBIB0017" label="[17]">Tomas Mikolov, Kai Chen, Greg Corrado, and Jeffrey Dean. 2013. Efficient Estimation of Word Representations in Vector Space. <em>      <em>CoRR</em>     </em>abs/1301.3781(2013).</li>    <li id="BibPLXBIB0018" label="[18]">Stefan Riezler, Alexander Vasserman, Ioannis Tsochantaridis, Vibhu Mittal, and Yi Liu. 2007. Statistical Machine Translation for Query Expansion in Answer Retrieval. <em>      <em>Proc of the 45th Annual Meeting of the Association for Computational Linguistics (ACL2007)</em>     </em> (2007), 464&#x2013;471.</li>    <li id="BibPLXBIB0019" label="[19]">Stephen Robertson and Hugo Zaragoza. 2009. The Probabilistic Relevance Framework: BM25 and Beyond. <em>      <em>Found. Trends Inf. Retr.</em>     </em>3, 4 (2009), 333&#x2013;389.</li>    <li id="BibPLXBIB0020" label="[20]">Min&#x00A0;Joon Seo, Aniruddha Kembhavi, Ali Farhadi, and Hannaneh Hajishirzi. 2016. Bidirectional Attention Flow for Machine Comprehension. <em>      <em>Proc of the 5th International Conference on Learning Representations (ICIR2017)</em>     </em> (2016).</li>    <li id="BibPLXBIB0021" label="[21]">Anwar&#x00A0;D. Shaikh, Mukul Jain, Mukul Rawat, Rajiv&#x00A0;Ratn Shah, and Manoj Kumar. 2013. Improving accuracy of SMS based FAQ retrieval system. <em>      <em>Lecture Notes in Computer Science (including subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics)</em>     </em>7536 LNCS (2013), 142&#x2013;156.</li>    <li id="BibPLXBIB0022" label="[22]">Ilya Sutskever, Oriol Vinyals, and Quoc&#x00A0;V. Le. 2014. Sequence to Sequence Learning with Neural Networks. <em>      <em>Proc of the 27th International Conference on Neural Information Processing Systems(NIPS2014)</em>     </em> (2014), 3104&#x2013;3112.</li>    <li id="BibPLXBIB0023" label="[23]">Adam Trischler, Zheng Ye, Xingdi Yuan, Jing He, and Philip Bachman. 2016. A Parallel-Hierarchical Model for Machine Comprehension on Sparse Data. <em>      <em>Proc of the 54th Annual Meeting of the Association for Computational Linguistics (ACL2016)</em>     </em> (2016), 432&#x2013;441.</li>    <li id="BibPLXBIB0024" label="[24]">Oriol Vinyals and Quoc&#x00A0;V. Le. 2015. A Neural Conversational Model. <em>      <em>Proc of the ICML Deep Learning Workshop 2015</em>     </em> (2015).</li>    <li id="BibPLXBIB0025" label="[25]">Jotsna Waghmare and M&#x00A0;A Potey. 2015. Survey of SMS Based FAQ Retrieval Systems. <em>      <em>International Journal Of Engineering And Computer Science</em>     </em>4, 2(2015), 10259&#x2013;10263.</li>    <li id="BibPLXBIB0026" label="[26]">Jason Weston, Sumit Chopra, and Antoine Bordes. 2015. Memory Networks. <em>      <em>Proc of the 5th International Conference on Learning Representations(ICLR2015)</em>     </em> (2015).</li>    <li id="BibPLXBIB0027" label="[27]">Xiaobing Xue, Jiwoon Jeon, and W.&#x00A0;Bruce Croft. 2008. Retrieval Models for Question and Answer Archives. <em>      <em>Proc of the 31st Annual International ACM SIGIR Conference on Research and Development in Information Retrieval (SIGIR2008)</em>     </em> (2008), 475&#x2013;482.</li>    <li id="BibPLXBIB0028" label="[28]">Zheng-Tao Yu, Zhi-Yun Zheng, and Shi-Ping Tang ; Jian-Yi Guo. 2005. Query Expansion for Answer Document Retrieval in Chinese Question Answering System. <em>      <em>Proc of 2005 International Conference on Machine Learning and Cybernetics</em>     </em> (2005), 72&#x2013;77.</li>    <li id="BibPLXBIB0029" label="[29]">Kai Zhang, Wei Wu, Haocheng Wu, Zhoujun Li, and Ming Zhou. 2014. Question Retrieval with High Quality Answers in Community Question Answering. (2014), 371&#x2013;380.</li>    <li id="BibPLXBIB0030" label="[30]">Zhou Zhao, Qifan Yang, Deng Cai, Xiaofei He, and Yueting Zhuang. 2016. Expert Finding for Community-based Question Answering via Ranking Metric Network Learning. (2016), 3000&#x2013;3006.</li>    <li id="BibPLXBIB0031" label="[31]">Guangyou Zhou, Yin Zhou, Tingting He, and Wensheng Wu. 2016. Learning Semantic Representation with Neural Networks for Community Question Answering Retrieval. <em>      <em>Know.-Based Syst.</em>     </em>93, C (2016), 75&#x2013;83.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">    <h2>FOOTNOTE</h2>    </div>   </header>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>    <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3191537">https://doi.org/10.1145/3184558.3191537</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div> </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Query Expansion with Neural Question-to-Answer Translation
+  for FAQ-based Question Answering</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Query Expansion with Neural
+          Question-to-Answer Translation for FAQ-based Question
+          Answering</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Atsushi</span> <span class=
+          "surName">Otsuka</span> NTT Media Intelligence
+          Laboratories, NTT Corporation, 1-1
+          HikarinookaYokosuka-Shi, Kanagawa, Japan 239-0847,
+          <a href=
+          "mailto:otsuka.atsushi@lab.ntt.co.jp">otsuka.atsushi@lab.ntt.co.jp</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Kyosuke</span> <span class=
+          "surName">Nishida</span> NTT Media Intelligence
+          Laboratories, NTT Corporation, 1-1
+          HikarinookaYokosuka-Shi, Kanagawa, Japan 239-0847,
+          <a href=
+          "mailto:nishida.kyosuke@lab.ntt.co.jp">nishida.kyosuke@lab.ntt.co.jp</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Katsuji</span> <span class=
+          "surName">Bessho</span> NTT Media Intelligence
+          Laboratories, NTT Corporation, 1-1
+          HikarinookaYokosuka-Shi, Kanagawa, Japan 239-0847,
+          <a href=
+          "mailto:bessho.katsuji@lab.ntt.co.jp">bessho.katsuji@lab.ntt.co.jp</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Hisako</span> <span class=
+          "surName">Asano</span> NTT Media Intelligence
+          Laboratories, NTT Corporation, 1-1
+          HikarinookaYokosuka-Shi, Kanagawa, Japan 239-0847,
+          <a href=
+          "mailto:asano.hisako@lab.ntt.co.jp">asano.hisako@lab.ntt.co.jp</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Junji</span> <span class=
+          "surName">Tomita</span> NTT Media Intelligence
+          Laboratories, NTT Corporation, 1-1
+          HikarinookaYokosuka-Shi, Kanagawa, Japan 239-0847,
+          <a href=
+          "mailto:tomita.junji@lab.ntt.co.jp">tomita.junji@lab.ntt.co.jp</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191537"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191537</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>We propose a novel Frequently Asked Question
+        (FAQ) retrieval technique with a neural query expansion
+        model. With the growth in Question Answering systems and
+        mobile communications, FAQ retrieval systems have become
+        widely used in site searches and call center support.
+        However, FAQ retrieval often has lexical gaps between
+        queries and answer documents. To bridge these gaps, we
+        design a query expansion model on the basis of an
+        Encoder-Decoder model as a type of deep neural network. The
+        model learns the words that appear in answers for questions
+        using Q&amp;A pair documents and generates the expanded
+        queries from inputted queries to retrieve answer documents.
+        We evaluate our proposed technique in a multi-domain FAQ
+        retrieval task. Experimental results show that our
+        technique retrieves FAQs more accurately than the previous
+        methods.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Information systems</strong> →
+        <strong>Information retrieval query processing;</strong> •
+        <strong>Computing methodologies</strong> → <em>Artificial
+        intelligence;</em> <strong>Natural language
+        processing;</strong></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Query
+          Expansion</small>,</span> <span class=
+          "keyword"><small>FAQ</small>,</span> <span class=
+          "keyword"><small>Encoder-Decoder Model</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Atsushi Otsuka, Kyosuke Nishida, Katsuji Bessho, Hisako
+          Asano, and Junji Tomita. 2018. Query Expansion with
+          Neural Question-to-Answer Translation for FAQ-based
+          Question Answering. In <em>WWW '18 Companion: The 2018
+          Web Conference Companion,</em> <em>April 23–27,
+          2018,</em> <em>Lyon, France. ACM, New York, NY, USA</em>
+          6 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3191537" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191537</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>As Question Answering (QA) systems have become widespread,
+      Frequently Asked Question (FAQ) retrieval systems have
+      attracted particular attention in regards to mobile and voice
+      communication [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0025">25</a>]. FAQ retrieval systems enable users
+      to find information that will help to solve their problems by
+      comparing an inputted query to FAQs.</p>
+      <p>FAQ retrieval systems are realized by combing information
+      retrieval and natural language processing techniques
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0011">11</a>]. A FAQ
+      system calculates similarities between the queries and FAQs.
+      Earlier studies proposed techniques to improve the
+      performance of FAQ retrieval by enhancing the similarity
+      calculation [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0001">1</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0016">16</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0021">21</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0031">31</a>] and
+      pre-processing [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>].</p>
+      <p>The FAQ retrieval systems still have a critical problem:
+      lexical gaps between queries and FAQs. The gaps that previous
+      studies considered between queries and questions are mostly
+      paraphrases or orthographical variants. However, the gaps
+      between queries and answers often cannot be explained by the
+      paraphrases because the answers describe the reason for or
+      way to resolve the question. Therefore, the similarity scores
+      between queries and answers are difficult to calculate. To
+      solve this problem, previous studies proposed a method to
+      bridge the gaps between queries and answers [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0003">3</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0007">7</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0018">18</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0027">27</a>, <a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0028">28</a>]. These techniques are
+      based on word or phrase pairs to align questions with
+      answers.</p>
+      <p>In this paper, we propose a FAQ retrieval method with a
+      model to bridge the gaps between queries and answers. Our
+      retrieval method calculates the relevance scores for
+      questions and answers separately. The answer relevance scores
+      are calculated by expanded queries that are generated by a
+      query expansion model. Our query expansion model is based on
+      an Encoder-Decoder model, which is often used for many
+      natural language applications such as machine translation
+      systems [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0022">22</a>]
+      or dialogue systems [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0024">24</a>]. This model learns word translations
+      from questions to answers without word alignment or
+      co-occurrence. Our contributions are summarized as
+      follows.</p>
+      <ul class="list-no-style">
+        <li id="list1" label="•">We propose a query expansion model
+        based on a neural Encoder-Decoder translation model for
+        answers in FAQ retrieval. Different from previous studies,
+        our model learns the translation by end-to-end from a
+        training corpus without word alignments.<br /></li>
+        <li id="list2" label="•">We evaluate the effect of the
+        proposed model by using a multi-domain FAQ corpus that has
+        different question types and demonstrate that the model is
+        especially effective against factoid type FAQs.<br /></li>
+      </ul>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span>
+          Preliminary</h2>
+        </div>
+      </header>
+      <p>In this section, we first define the FAQ retrieval task
+      and then explain the query expansion model for answer
+      retrieval.</p>
+      <p><strong>Definition 1 [FAQ retrieval]:</strong>The FAQ
+      retrieval is the main task in this paper. We define the task
+      as a document retrieval that outputs the top-<em>K</em>
+      question answering (Q&amp;A) documents in the order of their
+      relevance to the input query.</p>
+      <p><strong>Definition 2 [FAQ]:</strong>The FAQ is the set of
+      Q&amp;A documents. One Q&amp;A document contains one answer
+      for one question, and is described in natural languages.</p>
+      <p><strong>Definition 3 [Query]:</strong>The input query
+      consists of <em>m</em> words described in natural language or
+      a keyword list.</p>
+      <p><strong>Definition 4 [Query Expansion Model]:</strong>The
+      query expansion model is a translation model that outputs 0
+      to <em>N</em> words for input queries. The model transforms
+      the query into words on the basis of a transform function
+      <em>f</em>. The function <em>f</em> is trained by the
+      learning process using the training Q&amp;A corpus.</p>
+    </section>
+    <section id="sec-8">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Method</h2>
+        </div>
+      </header>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191537/images/www18companion-276-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Flow of FAQ retrieval</span>
+        </div>
+      </figure>
+      <p>In this section, we describe the method for the answer
+      retrieval using an Encoder-Decoder based query expansion
+      model. The flow of our FAQ retrieval process is shown in
+      Figure <a class="fig" href="#fig1">1</a>. First, we explain
+      how to calculate scores to sort Q&amp;A documents. Next, we
+      describe the query expansion model to calculate the answer
+      score.</p>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> FAQ
+            Retrieval using Question and Answer Scores</h3>
+          </div>
+        </header>
+        <p>We calculate relevant scores between queries and FAQs to
+        output results. The relevant scores are calculated by
+        aggregating question and answer scores. When we give input
+        query <em>Q</em> and Q&amp;A document
+        <em>d<sub>i</sub></em> , the aggregated score
+        <em>S</em>(<em>Q</em>, <em>d<sub>i</sub></em> ) is
+        calculated with a linear weighted sum as follows:</p>
+        <div class="table-responsive" id="eq1">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{eqnarray} S(Q, d_i) =
+            \alpha S_{q} (Q, d_{(i,q)}) + \beta S_{a}(Q^{\prime },
+            d_{(i,qa)}) \end{eqnarray}</span><br />
+            <span class="equation-number">(1)</span>
+          </div>
+        </div>where <em>α</em> and <em>β</em> are learnable
+        parameters with a learning-to-rank method [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0015">15</a>], <em>S<sub>q</sub></em>
+        (<em>Q</em>, <em>d</em> <sub>(<em>i</em>,
+        <em>q</em>)</sub>) denotes the relevance score between the
+        query and question of a Q&amp;A document, and
+        <em>S<sub>a</sub></em> (<em>Q</em>′, <em>d</em>
+        <sub>(<em>i</em>, <em>qa</em>)</sub>) is the relevance
+        score between the expanded query <em>Q</em>′ and Q&amp;A
+        document <em>d</em> <sub>(<em>i</em>, <em>qa</em>)</sub>.
+        <p></p>
+        <p>The question score <em>S<sub>q</sub></em> is calculated
+        by cosine similarity between query and question vectors
+        that are centroid vectors of word vectors created by
+        Word2vec [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0017">17</a>]. The answer score
+        <em>S<sub>a</sub></em> is the keyword match based score
+        using Okapi BM25 [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0019">19</a>].</p>
+      </section>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> Query
+            Expansion Model for Answers</h3>
+          </div>
+        </header>
+        <figure id="fig2">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191537/images/www18companion-276-fig2.jpg"
+          class="img-responsive" alt="Figure 2" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 2:</span>
+            <span class="figure-title">Architecture of query
+            expansion model for calculating answer document scores.
+            Here, <em>w</em> <sub>0</sub>, <em>w</em> <sub>1</sub>
+            and <em>w</em> <sub>2</sub> denote input words, and
+            <span class="inline-equation"><span class=
+            "tex">$w^{\prime }_0$</span></span> and <span class=
+            "inline-equation"><span class="tex">$w^{\prime
+            }_1$</span></span> are output.</span>
+          </div>
+        </figure>
+        <p>Our query expansion model for calculating answer scores
+        is shown in Figure <a class="fig" href="#fig2">2</a>. Our
+        proposed query expansion model is based on an
+        Encoder-Decoder with an attention mechanism model, which is
+        a kind of generation model using a deep neural network
+        [<a class="bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0002">2</a>]. In
+        natural language processing, the Encoder-Decoder model is
+        used as a Sequence-to-Sequence Model (Seq2Seq) for dialogue
+        processing [<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0024">24</a>] or machine translation [<a class=
+        "bib" data-trigger="hover" data-toggle="popover"
+        data-placement="top" href="#BibPLXBIB0022">22</a>]. Seq2Seq
+        takes word sequences as input and outputs translated word
+        sequences.</p>
+        <p>Input words are encoded by encoder neural networks. In
+        Seq2Seq, words are represented as vectors. These vectors
+        are the one-hot vector, which has |<em>V</em>|-dimension
+        elements (|<em>V</em>| is the number of unique tokens in a
+        word vocabulary). A one-hot vector of the v-th token in a
+        vocabulary is a binary vector that has elements that are
+        all zeros, except for the v-th element, which is set to
+        one. An embedding layer projects each of the one-hot
+        vectors into a <em>E</em>-dimensional continuous vector
+        space with a weight matrix <span class=
+        "inline-equation"><span class="tex">$W_{e} \in \mathbb
+        {R}^{E \times |V|}$</span></span></p>
+        <div class="table-responsive" id="eq2">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{equation} e_{t} =
+            W_{e}x_{t} \end{equation}</span><br />
+            <span class="equation-number">(2)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>Seq2Seq considers the word orders of input queries by
+        using Long Short-Term Memory (LSTM) in the encoder, but
+        users do not always input a natural language sentence when
+        they use FAQ retrieval systems. Thus, we use a multi layer
+        perceptron (MLP) to exclude the effect of word order in the
+        encoder. The outputs of the projection layer
+        <em>h<sub>p</sub></em> and context layer
+        <em>h<sub>c</sub></em> are lucubrated,</p>
+        <div class="table-responsive" id="eq3">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{eqnarray} h_p &amp; =
+            &amp; \sum _{t} W_{p}e_{t}\end{eqnarray}</span><br />
+            <span class="equation-number">(3)</span>
+          </div>
+        </div>
+        <div class="table-responsive" id="eq4">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{eqnarray} h_c &amp; =
+            &amp; \mathrm{tanh}(W_{c}h_{p})
+            \end{eqnarray}</span><br />
+            <span class="equation-number">(4)</span>
+          </div>
+        </div>
+        <p></p>
+        <p>where <span class="inline-equation"><span class=
+        "tex">$W_{p} \in \mathbb {R}^{E \times E}$</span></span>
+        and <span class="inline-equation"><span class="tex">$W_{c}
+        \in \mathbb {R}^{E \times E}$</span></span> denote
+        learnable model parameters.</p>
+        <p>Output words are generated by decoder neural networks.
+        The decoder LSTM receives hidden
+        states　<em>h<sub>c</sub></em> created by the encoder and
+        outputs state vector <em>h<sub>j</sub></em> . The output
+        layer translates state vectors into word tokens. The
+        occurrence probability of token <em>y<sub>j</sub></em> is
+        calculated as</p>
+        <div class="table-responsive" id="eq5">
+          <div class="display-equation">
+            <span class="tex mytex">\begin{eqnarray} P(y_{j} |
+            y_{0},y_{1},...y_{j-1},\mbox{\boldmath $x$}) &amp; =
+            &amp; g(W_{d}h_{j} + b_{d}) \end{eqnarray}</span><br />
+            <span class="equation-number">(5)</span>
+          </div>
+        </div>where weighting matrix <em>W<sub>d</sub></em> and
+        bias vector <em>b<sub>d</sub></em> are model parameters,
+        <em>h<sub>j</sub></em> is the state vector outputted from
+        LSTM of the decoder. and <em>g</em> denotes a soft-max
+        function. The output token is decided by referring to the
+        maximum value element of the probability vector
+        <em>y<sub>j</sub></em> .
+        <p></p>
+        <section id="sec-11">
+          <p><em>3.2.1 Corpus Reform for Model Learning.</em> We
+          use Q&amp;A documents for model training. The questions
+          are used as inputs, and the answers are used for outputs.
+          As we explained above, query expansion does not
+          necessarily have to output grammatical sentences but
+          requires the keywords that can identify documents. Thus,
+          we reform the training corpus to generate beneficial
+          keywords by using the query expansion model. We apply
+          <strong>Sorting</strong> and <strong>Pruning</strong> to
+          the corpus. We introduce two processes.</p>
+          <p><strong>Sorting process.</strong>We sort words of
+          output sentences in accordance with word importance to
+          train a query expansion model. If the model trains in
+          accordance with the grammar, the first output of the
+          model is often a subject word as exemplified by “I”.
+          However, such words do not benefit the queries, so here
+          we sort output words of the training corpus in such a way
+          that important words are output first.</p>
+          <p>We use a tfidf for the sorting [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#BibPLXBIB0008">8</a>]. The
+          tfidf is a numerical statistic intended to reflect how
+          important a word is to a document in a collection or
+          corpus and is calculated as:</p>
+          <div class="table-responsive" id="eq6">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{eqnarray} \nonumber
+              \mathrm{tf}(d,w) &amp;= &amp; \mathrm{freq}(d,w)
+              \\\nonumber \mathrm{idf}(w) &amp; = &amp; log
+              \frac{|D|}{df(w)} + 1 \\\mathrm{tfidf}(d,w) &amp; =
+              &amp; \mathrm{tf}(d,w) \times \mathrm{idf}(w)
+              \end{eqnarray}</span><br />
+              <span class="equation-number">(6)</span>
+            </div>
+          </div>where frec(<em>d</em>, <em>w</em>) denotes a
+          term-frequency for the word <em>w</em> in the document
+          <em>d</em>, and |<em>D</em>| is the number of the
+          documents in a corpus. We first calculate the idf in the
+          training corpus, and sort the output words depending on
+          the tfidf. Additionally, we apply the sorting process to
+          the input words to set the input word limit.
+          <p></p>
+          <p><strong>Pruning process.</strong>We use the outputs of
+          the Encoder-Decoder model-based query expansion model for
+          the query. If the output words do not appear in targeted
+          documents, those words are not used for the retrieval
+          even if they are very characteristic of the FAQ domain.
+          In addition, the training time increases as the
+          vocabulary size increases in the training corpus. In this
+          paper, we prune the words that are not in the FAQ
+          documents in the training corpus. Here, this process is
+          applied only to the output words. The model needs to
+          allow a variety of input words because the user inputs
+          queries using various words. Thus, we prune only the
+          output words to increase the accuracy of retrieval and
+          the speed of model training.</p>
+          <div class="table-responsive" id="tab1">
+            <div class="table-caption">
+              <span class="table-number">Table 1:</span>
+              <span class="table-title">FAQ datasets for
+              experiment. Values denote numbers of test queries
+              (query), training Q&amp;A documents (training), and
+              test Q&amp;A documents (test)</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:center;">domain</td>
+                  <td style="text-align:center;">query</td>
+                  <td style="text-align:center;">training</td>
+                  <td style="text-align:center;">test</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">smartphones</td>
+                  <td style="text-align:right;">843</td>
+                  <td style="text-align:right;">442,181</td>
+                  <td>150</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">cosmetics</td>
+                  <td style="text-align:right;">100</td>
+                  <td style="text-align:right;">67,737</td>
+                  <td>100</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">human
+                  relationships</td>
+                  <td style="text-align:right;">100</td>
+                  <td style="text-align:right;">71,591</td>
+                  <td>100</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </section>
+    <section id="sec-12">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Experiment and
+          Results</h2>
+        </div>
+      </header>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span>
+            Dataset</h3>
+          </div>
+        </header>
+        <p>We created the FAQ corpuses in three domains shown in
+        Table <a class="tbl" href="#tab1">1</a>. These domains were
+        selected by referring to previous research [<a class="bib"
+        data-trigger="hover" data-toggle="popover" data-placement=
+        "top" href="#BibPLXBIB0009">9</a>]. They analyzed the type
+        of questions and answers on a Communication Question
+        Answering (CQA) site and reported that the Q&amp;A
+        documents can be classified on the basis of the contents of
+        the answers. In the smartphone domain, most of the
+        questions are factoid type, and the answer contents must be
+        accurate, intelligent, or correct (they called this the
+        <em>Content</em> domain). On the other hand, the many
+        answers of the human-relationship domain are subjective or
+        emotional (called the <em>Socio-emotional</em> domain). The
+        cosmetics domain is a mixture of the <em>Content</em> and
+        the <em>Socio-emotional</em> type. We aimed to evaluate our
+        proposed method in various types of Q&amp;A documents.</p>
+        <p>We used Q&amp;A documents from the Japanese CQA site as
+        a training corpus. On the CQA site, each question has
+        several answers. We used pairs of a question and its best
+        answer as the input and output of our query expansion
+        model. For the test datasets, two workers created test
+        query sentences without seeing any documents for any
+        domain. We then collected Q&amp;A documents that contain
+        the words of the queries from the Japanese Q&amp;A website
+        and selected the best Q&amp;A documents for each query. The
+        smartphone test set has at least one correct FAQ document
+        in each query (the mean number of answers was 4.0). The
+        cosmetics and human-relationship test datasets have one
+        correct document ID per query.</p>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span>
+            Configuration of Experiment</h3>
+          </div>
+        </header>
+        <p>To evaluate the effectiveness of our proposed methods in
+        the FAQ retrieval task, we used a standard evaluation
+        metric in information retrieval, <em>Precision@K</em>,
+        where <em>K</em> was 1 to 5. The <em>Precision@K</em>
+        metric is the ratio of top-<em>K</em> outputs that contain
+        correct Q&amp;A documents for corresponding test queries.
+        For the smartphone domain that contains multiple correct
+        documents, we used another metric, <em>nDCG@5</em>
+        (normalized discounted cumulative gain), which is suitable
+        for evaluating the accuracy of output rankings (for details
+        of <em>nDCG</em>, see in [<a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0006">6</a>]).</p>
+        <p><strong>Comparative method.</strong>For the experiments,
+        we use two baseline methods and one comparison method.
+        Baseline 1 and 2 methods use queries without any expansion
+        model. Baseline 1 is FAQ retrieval based on the similarity
+        scores between queries and questions (uses only the first
+        term of Formula <a class="eqn" href="#eq1">1</a>). Baseline
+        2 is based on the scores of using questions and answers
+        (uses all terms of Formula <a class="eqn" href=
+        "#eq1">1</a>). To compare our model with methods that use
+        answers, we also use a Word2vec based query expansion
+        method [<a class="bib" data-trigger="hover" data-toggle=
+        "popover" data-placement="top" href=
+        "#BibPLXBIB0012">12</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0017">17</a>]. The Word2vec based expand queries
+        are generated on the basis of semantic similarities in
+        vector space. The retrieval scores are calculated by
+        Formula <a class="eqn" href="#eq1">1</a>.</p>
+      </section>
+      <section id="sec-15">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span>
+            Results</h3>
+          </div>
+        </header>
+        <section id="sec-16">
+          <header>
+            <div class="title-info">
+              <h4><span class="section-number">4.3.1</span>
+              Accuracy of FAQ Retrieval</h4>
+            </div>
+          </header>
+          <figure id="fig3">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191537/images/www18companion-276-fig3.jpg"
+            class="img-responsive" alt="Figure 3" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 3:</span>
+              <span class="figure-title">Ratio of queries that
+              contain correct Q&amp;A in the smartphone
+              domain</span>
+            </div>
+          </figure>
+          <figure id="fig4">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191537/images/www18companion-276-fig4.jpg"
+            class="img-responsive" alt="Figure 4" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 4:</span>
+              <span class="figure-title">Ratio of queries that
+              contain correct Q&amp;A in the cosmetics
+              domain</span>
+            </div>
+          </figure>
+          <figure id="fig5">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191537/images/www18companion-276-fig5.jpg"
+            class="img-responsive" alt="Figure 5" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 5:</span>
+              <span class="figure-title">Ratio of queries that
+              contain correct Q&amp;A in the human-relationship
+              domain</span>
+            </div>
+          </figure>
+          <div class="table-responsive" id="tab2">
+            <div class="table-caption">
+              <span class="table-number">Table 2:</span>
+              <span class="table-title">nDCG value in the
+              smartphone dateset</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">baseline1</td>
+                  <td style="text-align:center;">Word2vec</td>
+                  <td style="text-align:center;">proposed</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">
+                  <em>nDCG</em>@5</td>
+                  <td style="text-align:right;">0.377</td>
+                  <td style="text-align:right;">0.408</td>
+                  <td>0.449</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-responsive" id="tab3">
+            <div class="table-caption">
+              <span class="table-number">Table 3:</span>
+              <span class="table-title">Example of query expansion.
+              “Word2Vec” denotes words generated by the similarity
+              of word vectors (the comparison method), and
+              “proposed” is the outputs of the proposed query
+              expansion model. Note that these examples are
+              translated from Japanese to English</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:center;">Domain</td>
+                  <td colspan="2" style="text-align:center;">
+                    Query expansion
+                    <hr />
+                  </td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">smartphones</td>
+                  <td style="text-align:left;">query:</td>
+                  <td style="text-align:left;"><em>How to turn up
+                  the volume?</em></td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:left;">Word2vec:</td>
+                  <td style="text-align:left;">down, volume,
+                  setting, bass, up-and-down</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:left;">proposed:</td>
+                  <td style="text-align:left;">silent, volume,
+                  speaker, sound, side, setting</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:left;">query:</td>
+                  <td style="text-align:left;"><em>How to avoid
+                  expansive communication usage fees during
+                  overseas trips?</em></td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:left;">Word2vec:</td>
+                  <td style="text-align:left;">money, packet,
+                  field, huge</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:left;">proposed:</td>
+                  <td style="text-align:left;">off, hotel,
+                  roaming-service, on, airplane-mode</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">cosmetics</td>
+                  <td style="text-align:left;">query:</td>
+                  <td style="text-align:left;"><em>What is the best
+                  summer skin care method?</em></td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:left;">Word2vec:</td>
+                  <td style="text-align:left;">commodity,
+                  time-reduction, cleansing-cream, outing</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:left;">proposed:</td>
+                  <td style="text-align:left;">sunscreen,
+                  ultraviolet, skin-spot</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:left;">query:</td>
+                  <td style="text-align:left;"><em>What is the best
+                  winter skin care method?</em></td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:left;">Word2vec:</td>
+                  <td style="text-align:left;">commodity, scrub,
+                  cleansing-cream, FANCL, sheet</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:left;">proposed:</td>
+                  <td style="text-align:left;">care, facial-mask,
+                  moisturize, cream</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">human</td>
+                  <td style="text-align:left;">query:</td>
+                  <td style="text-align:left;"><em>The cost of a
+                  date for adults</em></td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">relationships</td>
+                  <td style="text-align:left;">Word2vec:</td>
+                  <td style="text-align:left;">expensive, over,
+                  saving, education-expense</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:left;">proposed:</td>
+                  <td style="text-align:left;">express, smart,
+                  bill-splitting</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:left;">query:</td>
+                  <td style="text-align:left;"><em>How to become
+                  fine again after being dumped?</em></td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:left;">Word2vec:</td>
+                  <td style="text-align:left;">cleanly, lingering,
+                  forget, courage</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:left;">proposed:</td>
+                  <td style="text-align:left;">heartbreak,
+                  forget</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-responsive" id="tab4">
+            <div class="table-caption">
+              <span class="table-number">Table 4:</span>
+              <span class="table-title">Mean number of output words
+              from our model in each domain</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:center;">smartphones</td>
+                  <td style="text-align:center;">cosmetics</td>
+                  <td style="text-align:center;">human
+                  relationships</td>
+                </tr>
+                <tr>
+                  <td style="text-align:right;">4.49</td>
+                  <td style="text-align:right;">3.09</td>
+                  <td>2.56</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-responsive" id="tab5">
+            <div class="table-caption">
+              <span class="table-number">Table 5:</span>
+              <span class="table-title">The number of vocabulary
+              and averaged training time by comparing pruned and no
+              pruned corpus in the smartphones domain</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="text-align:center;"></td>
+                  <td style="text-align:center;">pruned</td>
+                  <td style="text-align:center;">no pruned</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">vocabulary</td>
+                  <td style="text-align:right;">2,507</td>
+                  <td>12,926</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">
+                  time(1epoch)[sec]</td>
+                  <td style="text-align:right;">1620.2</td>
+                  <td>4540.9</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Figure <a class="fig" href="#fig3">3</a>, <a class=
+          "fig" href="#fig4">4</a> and <a class="fig" href=
+          "#fig5">5</a> show the results of <em>Precision@K</em>.
+          Note that Baseline 1 denotes similarity score using only
+          questions. Baseline2 denotes similarity score using both
+          questions and answers. Most of the results of Baseline 2
+          that use answers without expanded queries have worse
+          precision than those of Baseline 1. On the other hand,
+          the experiment results show that query expansion is
+          effective for improving the performance of FAQ retrieval.
+          Additionally, our proposed method improves the precision
+          more than the Word2vec based method.</p>
+          <p>Table <a class="tbl" href="#tab2">2</a> shows the
+          results for <em>nDCG@5</em> in the smartphone dataset.
+          Our proposed method achieved the best <em>nDCG@5</em>. We
+          applied McNemar's test to the top-1 results. The test
+          results show that our proposed method revealed a
+          significant difference from Baseline 1 (<em>p</em> &lt;
+          .05) in the smartphone dataset and a marginally
+          significant difference (<em>p</em> &lt; .10) in the
+          cosmetics dataset. There was no significant difference
+          between the proposed method and the baselines in the
+          human relationship dataset. In the smartphone and
+          cosmetics dataset, our proposed method achieved better
+          <em>Precision@K</em> than both baseline methods for all
+          values of <em>K</em>. However, the human relationship
+          dataset shows a different trend.</p>
+          <p>Our query expansion model was effective for
+          <em>Content</em> documents such as those in the
+          smartphone dataset. Most <em>Content</em> documents are
+          able to provide clear answers for questions. On the other
+          hand, most <em>Socio-emotional</em> documents do not
+          contain obvious answers for questions. Therefore, it is
+          assumed that our query expansion model cannot learn how
+          to transform the question into an answer in
+          <em>Socio-emotional</em> documents.</p>
+        </section>
+        <section id="sec-17">
+          <p><em>4.3.2 Outputs of Query Expansion Model.</em> Table
+          <a class="tbl" href="#tab3">3</a> shows examples of query
+          expansion, and Table <a class="tbl" href="#tab4">4</a>
+          shows the number of output words from our query expansion
+          model. Our model outputs variable numbers of words.</p>
+          <p>The <em>Content</em> domain outputs many words from
+          our query expansion model. In contrast, the
+          <em>Socio-emotional</em> domain has fewer expanded words
+          than the <em>Content</em> type domain. This trend shows
+          that our model learns better in the <em>Content</em>
+          domain than in the <em>Socio-emotional</em> domain.
+          Additionally, the <em>Content</em> domain had better
+          results than the <em>Socio-emotional</em> domain in the
+          FAQ retrieval task as shown in <a class="sec" href=
+          "#sec-16">4.3.1</a> We consider that our model and its
+          outputs are effective in the FAQ retrieval task.</p>
+          <p>The Word2vec based query expansion model is based on
+          the semantic word similarity; therefore, most of its
+          expanded words are synonyms. On the other hand, our
+          proposed method outputs words that are not synonyms of
+          the queries. For example, the expanded word “side” seems
+          to have no similarity with the query “<em>How to turn up
+          the volume?</em>” in the smartphone domain. However,
+          these have a relationship because a number of smartphones
+          have a volume control switch on the side. It means that
+          our model was able to learn the latent word relationships
+          between questions and answers. Additionally, our model
+          was able to detect the small differences in the queries
+          such as “summer” and“winter” in the cosmetics
+          examples.</p>
+          <p>Table <a class="tbl" href="#tab5">5</a> shows the
+          effectiveness of the word pruning process in terms of
+          training time as described in Section <a class="sec"
+          href="#sec-11">3.2.1</a>. The vocabulary from the
+          original corpus was reduced to 20% by the word pruning
+          process, and the training speed was approximately 65%
+          faster.</p>
+        </section>
+      </section>
+    </section>
+    <section id="sec-18">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>FAQ is often used in QA, which is a chat based information
+      provision system [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0010">10</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0013">13</a>]. QA systems infer an answer for an
+      inputted question using a knowledge base [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0005">5</a>] and reasoning [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0023">23</a>]. Deep
+      neural networks are now being used in QA systems [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0020">20</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0026">26</a>].</p>
+      <p>In this paper, we use a CQA dataset for the model
+      learning. The CQA is a social platform that enables users to
+      post questions to be answered by other users later.
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0030">30</a>] created a
+      ranking metric network to find expert users using a recurrent
+      neural network. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0029">29</a>] proposed a retrieval method for
+      high-quality Q&amp;A documents using a topic model that
+      assumed a shared latent topic with questions and answers.</p>
+    </section>
+    <section id="sec-19">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>We presented an Encoder-Decoder based query expansion
+      model that generates additional keywords for considering an
+      answer document from the input queries in FAQ retrieval.
+      Experimental results showed that our approach statistically
+      significantly improved the accuracy of FAQ document retrieval
+      in three domains that have different Q&amp;A characteristics.
+      In particular, our method performed better than other methods
+      for the <em>Content</em> type Q&amp;A documents, which are
+      documents that contain obvious answers.</p>
+      <p>Our future work is to improve the query expansion model.
+      In particular, we will address the questions that have no
+      obvious answers or multiple answers such as those in
+      human-relationship Q&amp;A domains.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Amit Agarwal, Bhumika
+        Gupta, Gaurav Bhatt, and Ankush Mittal. 2015. Construction
+        of a Semi-Automated Model for FAQ Retrieval via Short
+        Message Service. <em><em>Proc of the 7th Forum for
+        Information Retrieval Evaluation (FIRE2015)</em></em>
+        (2015), 35–38.</li>
+        <li id="BibPLXBIB0002" label="[2]">Dzmitry Bahdanau,
+        Kyunghyun Cho, and Yoshua Bengio. 2015. Neural Machine
+        Translation by Jointly Learning to Align and Translate.
+        <em><em>Proc of the 5th International Conference on
+        Learning Representations(ICLR2015)</em></em> (2015).</li>
+        <li id="BibPLXBIB0003" label="[3]">Adam Berger, Rich
+        Caruana, David Cohn, Dayne Freitag, and Vibhu Mittal. 2000.
+        Bridging the Lexical Chasm: Statistical Approaches to
+        Answer-finding. <em><em>Proc of the 23rd Annual
+        International ACM SIGIR Conference on Research and
+        Development in Information Retrieval (SIGIR2000)</em></em>
+        (2000), 192–199.</li>
+        <li id="BibPLXBIB0004" label="[4]">Robin&nbsp;D. Burke,
+        Kristian&nbsp;J. Hammond, Vladimir&nbsp;A. Kulyukin,
+        Steven&nbsp;L. Lytinen, N. Tomuro, and S. Schoenberg. 1997.
+        Question Answering from Frequently Asked Question Files:
+        Experiences with the FAQ Finder System. <em><em>Technical
+        Report of the University of Chicago</em></em> (1997).</li>
+        <li id="BibPLXBIB0005" label="[5]">Zihang Dai, Lei Li, and
+        Wei Xu. 2016. CFO: Conditional Focused Neural Question
+        Answering with Large-scale Knowledge Bases. <em><em>Proc of
+        the 54th Annual Meeting of the Association for
+        Computational Linguistics (ACL2016)</em></em> (2016),
+        800–810.</li>
+        <li id="BibPLXBIB0006" label="[6]">Kalervo Järvelin and
+        Jaana Kekäläinen. 2002. Cumulated Gain-based Evaluation of
+        IR Techniques. <em><em>ACM Trans. Inf. Syst.</em></em> 20,
+        4 (2002), 422–446.</li>
+        <li id="BibPLXBIB0007" label="[7]">Jiwoon Jeon,
+        W.&nbsp;Bruce Croft, and Joon&nbsp;Ho Lee. 2005. Finding
+        Similar Questions in Large Question and Answer Archives.
+        <em><em>Proc of the 14th ACM International Conference on
+        Information and Knowledge Management (CIKM2005)</em></em>
+        (2005), 84–90.</li>
+        <li id="BibPLXBIB0008" label="[8]">Karen&nbsp;Sparck Jones.
+        1972. A Statistical Interpretation of Term Specificity and
+        its Application in Retrieval. <em><em>Journal of
+        Documentation</em></em> 28 (1972), 11–21. Issue 1.</li>
+        <li id="BibPLXBIB0009" label="[9]">Soojung Kim and Sanghee
+        Oh. 2009. Users’ relevance criteria for evaluating answers
+        in a social Q&amp;A site. <em><em>Journal of the American
+        Society for Information Science and Technology</em></em>
+        60, 4 (2009), 716–727.</li>
+        <li id="BibPLXBIB0010" label="[10]">Kanako Komiya, Yuji
+        Abe, Hajime Morita, and Yoshiyuki Kotani. 2013. Question
+        answering system using Q &amp; A site corpus Query
+        expansion and answer candidate evaluation.
+        <em><em>Springerplus</em></em> 2, 396 (2013), 1–11.</li>
+        <li id="BibPLXBIB0011" label="[11]">Govind Kothari, Sumit
+        Negi, Tanveer&nbsp;A. Faruquie, Venkatesan&nbsp;T.
+        Chakaravarthy, and L.&nbsp;Venkata Subramaniam. 2009. SMS
+        Based Interface for FAQ Retrieval. (2009), 852–860.</li>
+        <li id="BibPLXBIB0012" label="[12]">Saar Kuzi, Anna Shtok,
+        and Oren Kurland. 2016. Query Expansion Using Word
+        Embeddings. <em><em>Proc of the 25th ACM International on
+        Conference on Information and Knowledge
+        Management(CIKM2016)</em></em> (2016), 1929–1932.</li>
+        <li id="BibPLXBIB0013" label="[13]">Jochen&nbsp;L. Leidner
+        and Chris Callison-Burch. 2003. Evaluating Question
+        Answering Systems Using FAQ Answer Injection. <em><em>Proc
+        of the 6th Annual CLUK Research Colloquium</em></em>
+        (2003).</li>
+        <li id="BibPLXBIB0014" label="[14]">Johannes Leveling.
+        2012. On the Effect of Stopword Removal for SMS-Based FAQ
+        Retrieval. <em><em>Proc of the 17th International
+        Conference on Applications of Natural Language Processing
+        and Information Systems (NLDB2012)</em></em> (2012),
+        128–139.</li>
+        <li id="BibPLXBIB0015" label="[15]">Tie-Yan Liu. 2009.
+        Learning to Rank for Information Retrieval. <em><em>Found.
+        Trends Inf. Retr.</em></em> 3, 3 (2009), 225–331.</li>
+        <li id="BibPLXBIB0016" label="[16]">Shahbaaz Mhaisale,
+        Sangameshwar Patil, and Kiran Mahamuni. 2013. Weighted Edit
+        Distance Based FAQ Retrieval Using Noisy Queries.
+        <em><em>Post-Proceedings of the 4th and 5th Workshops of
+        the Forum for Information Retrieval Evaluation
+        (FIRE2012&amp;2013)</em></em> (2013), 8:1–8:4.</li>
+        <li id="BibPLXBIB0017" label="[17]">Tomas Mikolov, Kai
+        Chen, Greg Corrado, and Jeffrey Dean. 2013. Efficient
+        Estimation of Word Representations in Vector Space.
+        <em><em>CoRR</em></em> abs/1301.3781(2013).</li>
+        <li id="BibPLXBIB0018" label="[18]">Stefan Riezler,
+        Alexander Vasserman, Ioannis Tsochantaridis, Vibhu Mittal,
+        and Yi Liu. 2007. Statistical Machine Translation for Query
+        Expansion in Answer Retrieval. <em><em>Proc of the 45th
+        Annual Meeting of the Association for Computational
+        Linguistics (ACL2007)</em></em> (2007), 464–471.</li>
+        <li id="BibPLXBIB0019" label="[19]">Stephen Robertson and
+        Hugo Zaragoza. 2009. The Probabilistic Relevance Framework:
+        BM25 and Beyond. <em><em>Found. Trends Inf. Retr.</em></em>
+        3, 4 (2009), 333–389.</li>
+        <li id="BibPLXBIB0020" label="[20]">Min&nbsp;Joon Seo,
+        Aniruddha Kembhavi, Ali Farhadi, and Hannaneh Hajishirzi.
+        2016. Bidirectional Attention Flow for Machine
+        Comprehension. <em><em>Proc of the 5th International
+        Conference on Learning Representations (ICIR2017)</em></em>
+        (2016).</li>
+        <li id="BibPLXBIB0021" label="[21]">Anwar&nbsp;D. Shaikh,
+        Mukul Jain, Mukul Rawat, Rajiv&nbsp;Ratn Shah, and Manoj
+        Kumar. 2013. Improving accuracy of SMS based FAQ retrieval
+        system. <em><em>Lecture Notes in Computer Science
+        (including subseries Lecture Notes in Artificial
+        Intelligence and Lecture Notes in Bioinformatics)</em></em>
+        7536 LNCS (2013), 142–156.</li>
+        <li id="BibPLXBIB0022" label="[22]">Ilya Sutskever, Oriol
+        Vinyals, and Quoc&nbsp;V. Le. 2014. Sequence to Sequence
+        Learning with Neural Networks. <em><em>Proc of the 27th
+        International Conference on Neural Information Processing
+        Systems(NIPS2014)</em></em> (2014), 3104–3112.</li>
+        <li id="BibPLXBIB0023" label="[23]">Adam Trischler, Zheng
+        Ye, Xingdi Yuan, Jing He, and Philip Bachman. 2016. A
+        Parallel-Hierarchical Model for Machine Comprehension on
+        Sparse Data. <em><em>Proc of the 54th Annual Meeting of the
+        Association for Computational Linguistics
+        (ACL2016)</em></em> (2016), 432–441.</li>
+        <li id="BibPLXBIB0024" label="[24]">Oriol Vinyals and
+        Quoc&nbsp;V. Le. 2015. A Neural Conversational Model.
+        <em><em>Proc of the ICML Deep Learning Workshop
+        2015</em></em> (2015).</li>
+        <li id="BibPLXBIB0025" label="[25]">Jotsna Waghmare and
+        M&nbsp;A Potey. 2015. Survey of SMS Based FAQ Retrieval
+        Systems. <em><em>International Journal Of Engineering And
+        Computer Science</em></em> 4, 2(2015), 10259–10263.</li>
+        <li id="BibPLXBIB0026" label="[26]">Jason Weston, Sumit
+        Chopra, and Antoine Bordes. 2015. Memory Networks.
+        <em><em>Proc of the 5th International Conference on
+        Learning Representations(ICLR2015)</em></em> (2015).</li>
+        <li id="BibPLXBIB0027" label="[27]">Xiaobing Xue, Jiwoon
+        Jeon, and W.&nbsp;Bruce Croft. 2008. Retrieval Models for
+        Question and Answer Archives. <em><em>Proc of the 31st
+        Annual International ACM SIGIR Conference on Research and
+        Development in Information Retrieval (SIGIR2008)</em></em>
+        (2008), 475–482.</li>
+        <li id="BibPLXBIB0028" label="[28]">Zheng-Tao Yu, Zhi-Yun
+        Zheng, and Shi-Ping Tang ; Jian-Yi Guo. 2005. Query
+        Expansion for Answer Document Retrieval in Chinese Question
+        Answering System. <em><em>Proc of 2005 International
+        Conference on Machine Learning and Cybernetics</em></em>
+        (2005), 72–77.</li>
+        <li id="BibPLXBIB0029" label="[29]">Kai Zhang, Wei Wu,
+        Haocheng Wu, Zhoujun Li, and Ming Zhou. 2014. Question
+        Retrieval with High Quality Answers in Community Question
+        Answering. (2014), 371–380.</li>
+        <li id="BibPLXBIB0030" label="[30]">Zhou Zhao, Qifan Yang,
+        Deng Cai, Xiaofei He, and Yueting Zhuang. 2016. Expert
+        Finding for Community-based Question Answering via Ranking
+        Metric Network Learning. (2016), 3000–3006.</li>
+        <li id="BibPLXBIB0031" label="[31]">Guangyou Zhou, Yin
+        Zhou, Tingting He, and Wensheng Wu. 2016. Learning Semantic
+        Representation with Neural Networks for Community Question
+        Answering Retrieval. <em><em>Know.-Based Syst.</em></em>
+        93, C (2016), 75–83.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191537">https://doi.org/10.1145/3184558.3191537</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

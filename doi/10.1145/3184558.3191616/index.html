@@ -1,1 +1,1062 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> <head>  <title>Towards a Benchmark for Fact Checking with Knowledge Bases</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script> </head> <body id="main">  <section class="front-matter">   <section>    <header class="title-info">    <div class="journal-title">     <h1>      <span class="title">Towards a Benchmark for Fact Checking with Knowledge Bases</span>      <br/>      <span class="subTitle"/>     </h1>    </div>    </header>    <div class="authorGroup">    <div class="author">     <span class="givenName">Viet-Phi</span>     <span class="surName">Huynh</span>     EURECOM, France    </div>    <div class="author">     <span class="givenName">Paolo</span>     <span class="surName">Papotti</span>     EURECOM, France    </div>        </div>    <br/>    <div class="pubInfo">    <p>DOI: <a href="https://doi.org/10.1145/3184558.3191616" target="_blank">https://doi.org/10.1145/3184558.3191616</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">    <p>     <small>Fact checking is the task of determining if a given claim holds. Several algorithms have been developed to check facts with reference information in the form of knowledge bases. While individual algorithms have been experimentally evaluated, we provide a first publicly available benchmark evaluating fact checking implementations across a range of assumptions about the properties of the facts and the reference data. We used our benchmark to compare algorithms designed on different principles and assumptions, as well as algorithms that can solve similar tasks developed in closely related communities. Our evaluation provided us with a number of new insights concerning the factors that impact the performance of the different methods.</small>    </p>    </div>    <div class="classifications">    <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Viet-Phi Huynh and Paolo Papotti. 2018. Towards a Benchmark for Fact Checking with Knowledge Bases. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 5 Pages. <a href="https://doi.org/10.1145/3184558.3191616" class="link-inline force-break"       target="_blank">https://doi.org/10.1145/3184558.3191616</a></small>     </p>    </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-2">    <header>    <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>    </div>    </header>    <p>Fact checking refers to the task of verification of textual content. Given the increase of incorrect claims over the Web, fact checking is no longer an activity for journalists only. To tackle the spread of misleading information, Web companies have introduced forms of fact checking in their services. In these approaches, information on the trust of the news is gathered from websites (e.g., politifact.com, factcheck.org, and snopes.com), where journalists manually assess the quality of the information.</p>    <p>However, the proliferation of websites and bots spreading false information has motivated an effort for computational fact checking&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>], which aims at automatic verification to scale over thousands of daily facts. Several algorithms focus on different types of facts and different domains. We are interested here in techniques that focus on validating &#x201C;worth checking&#x201D; facts against trustful Knowledge Bases (KBs)&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0010">10</a>]. In the following, we assume the facts and the entities involved have been identified&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>], and focus our attention on the step estimating the <em>veracity</em> of a given fact (expressed as structured data) w.r.t. reference data considered trusted.</p>    <p>The core problem for fact checking with KBs is that we cannot assume the reference information to be complete (Open World Assumption), i.e., we cannot say if a fact not in the KB is false or just missing&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>]. Given a KB <em>K</em> and a fact <em>f</em>, the fact checking algorithms should therefore state if <em>f</em> is a valid missing fact in <em>K</em>.</p>    <p>There are many factors that affect the outcome of the fact checking step. The quality of the reference KB plays a pivotal role, and it must be selected according to the specific domain. Once the KB has been fixed, there is the challenge of picking the right algorithm to validate the facts. There are several proposals available, that differ significantly in their principles and assumptions. Also, given the novelty of the field and the complexity of the problem, there are still no established and unified sets of metrics and datasets.</p>    <p>In this work, we lay the foundation for a benchmark to compare and contrast fact checking algorithms that rely on external information in the form of RDF KBs. Our ultimate goal is to create a benchmark with a large variety of annotated datasets, tools to create synthetic datasets with different properties, and metrics to evaluate different algorithms on a level playing field.</p>    <p>Our contributions in this work are the following.</p>    <p>1. We classify most of the existing fact checking algorithms by their methodology and discuss their main properties (Section&#x00A0;<a class="sec" href="#sec-3">2</a>).</p>    <p>2. We craft the datasets and the metrics for a fair evaluation of the methods in an early version of our benchmark (Section&#x00A0;<a class="sec" href="#sec-13">3</a>).</p>    <p>3. We demonstrate the use of the benchmark<a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a> with an experimental analysis of representative algorithms. (Section&#x00A0;<a class="sec" href="#sec-14">4</a>).</p>   </section>   <section id="sec-3">    <header>    <div class="title-info">     <h2>      <span class="section-number">2</span> Algorithm Classification</h2>    </div>    </header>    <p>We first give some background and fix the terminology. We then classify different fact checking algorithms according the methods they use to solve the problem.</p>    <section id="sec-4">    <header>     <div class="title-info">      <h3>       <span class="section-number">2.1</span> Background</h3>     </div>    </header>    <p>A <em>fact</em> is defined as a triple that has the form of (&#x201D;subject&#x201D; <em>s</em>, &#x201D;predicate&#x201D; <em>p</em>, &#x201D;object&#x201D; <em>o</em>). Natural language processing (NLP) techniques are used to convert a claim in natural language into a structured format. Facts can be classified into categories, such as numerical, quote, and object property. We focus on object properties, which are facts stating a relationship between the subject and the object in a sentence, e.g., Sacramento is the capital of California.</p>    <p>A <em>Knowledge Base</em> (KB) is a direct graph where nodes correspond to entities (subject or object in a fact) and edges correspond to binary predicates among entities. We focus on algorithms that take as input a KB and a fact that is not part of it. Such algorithms assess if the given fact belongs to the missing part of the KB (therefore is &#x201C;true&#x201D;) or no (is &#x201C;false&#x201D;).</p>    <p>Methods assume that training examples (labelled facts) are available to build the models. We will detail how we craft our datasets in terms of training data, but, in general, the common assumption is that the KB is trustable, and true facts are extracted from it.</p>    </section>    <section id="sec-5">    <header>     <div class="title-info">      <h3>       <span class="section-number">2.2</span> Path Based Algorithms</h3>     </div>    </header>    <p>Given a fact (<em>s</em>, <em>p</em>, <em>o</em>), this group of algorithms makes a decision for it by exploiting the paths in the KB of existing <em>p</em> triples. These KB triples act as positive examples for the learning of the alternative paths (different from <em>p</em>) between their subjects and objects. Properties of the paths are then modeled as features in a classifier that decides if predicate <em>p</em> holds for the given <em>s</em> and <em>o</em>.</p>    <section id="sec-6">     <p><em>2.2.1 Knowledge Linker (KL).</em> This algorithm builds an internal model based on a weighted adjacency matrix with edge weights computed as the in-degree of each node in the KB, then transformed to similarity scores&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0003">3</a>]. As the model ignores the labels of the predicates, it evaluates the validity of an input fact based on measuring the proximity between its subject and object. Two distance closures are introduced. With the <em>Metric closure</em>, every path connecting a given subject and object is mapped to a score computed on the generality of the nodes in the path, where the generality of a node is its frequency in the KB. The more often the node occurs in KB, the less information it conveys. With the <em>Ultra-metric closure</em>, only the node with highest generality is used to compute the score for each possible path. In both cases, the maximum score is equivalent to the shortest path between subject and object.</p>    </section>    <section id="sec-7">     <p><em>2.2.2 Discriminate Predicate Path Mining (KG-Miner).</em> This algorithm identifies and exploits frequent anchored predicate paths between pair of entities in the KB&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0010">10</a>]. Given an input fact (<em>s, p, o</em>), it collects as training data the predicate paths for node pairs that satisfy <em>p</em> in the KB and have subject with the same type of <em>s</em> (denoted &#x03D5;(<em>s</em>)) and object with type of <em>o</em> (denoted &#x03D5;(<em>o</em>)). From each subject <em>u</em> &#x2208; &#x03D5;(<em>s</em>) and corresponding object <em>v</em> &#x2208; &#x03D5;(<em>o</em>), predicate paths that alternatively represent predicate <em>p</em> are extracted from the KB with a depth-first search (DFS) traversing the graph from <em>u</em> to <em>v</em> up to a length of <em>m</em>. The information gain of these paths and corresponding labels is computed based on their number of occurrences. It then selects the most discriminative paths and plugs them into training for a logistic regression model that optimizes the Area Under Receiver Operating Characteristic (AUROC). This model is then used to compute the likelihood of an input fact.</p>    </section>    <section id="sec-8">     <p><em>2.2.3 Path Ranking Algorithm (PRA).</em> PRA discovers the relationships among entities in a stochastic way by performing random walk inference over the KB&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0007">7</a>]. For the feature extraction, from a given training set of triples, it uses <em>two-sided, unconstrained</em> random walk starting at the source and corresponding target nodes to retrieve paths connected between them. Top <em>k</em> paths for each training instance are kept based on their number of occurrences and are collected into a feature matrix. A value in the matrix corresponding to a training instance (<em>s, p, o</em>) is the probability of arriving at the target node <em>o</em> by a random walk starting at source node <em>s</em> and following a specific path among its top <em>k</em> paths. This probability is computed using the approximate method of rejection sampling to reduce the computational complexity. The feature matrix is then used with a classifier to validate the input fact.</p>    </section>    </section>    <section id="sec-9">    <header>     <div class="title-info">      <h3>       <span class="section-number">2.3</span> Sub-Graph Based Algorithms</h3>     </div>    </header>    <p>Given a fact, this method extends the previous approach by using sub-graphs of the KB that model the subjects and the objects of the examples. These sub-graphs can be built in different ways, and their features are used in a classifier to evaluate input facts.</p>    <section id="sec-10">     <p><em>2.3.1 Sub-graph Feature Extraction (SFE).</em> SFE [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0006">6</a>] extracts features from sub-graphs built from the nodes in the KB. Such features are then used in a classifier to test input facts. While KG-Miner uses a full-graph exhaustive search to extract features, which is costly with complexity proportional to the out-degree to the power of path length per node, PRA uses random walk, which reduces the computational time, but leads to an approximation. To avoid these issues, SFE provides a more efficient way to extract features by using a sub-graph breadth-first search (BFS).</p>     <p>Given a parameter <em>m</em>, the <em>sub-graph of depth m</em> for each node <em>n</em> is the result of <em>m</em> BFS steps starting at it. Features are then extracted with two variants. In the first one (Predicate Path), it uses a sequence of predicates that connect a source node to target node by intersecting the sub-graphs of source and target on intermediate sharing nodes (similar to KG-Miner and PRA). The alternative (one-sided) uses a sequence of predicates that starts at source node or target node, but does not necessary reach at corresponding target or source node. SFE uses <em>binary features</em>: it disregards the frequency (like KG-Miner) and the probability (like PRA) of feature paths.</p>    </section>    </section>    <section id="sec-11">    <header>     <div class="title-info">      <h3>       <span class="section-number">2.4</span> Embedding Based Algorithms</h3>     </div>    </header>    <p>Embeddings encode entities and relations in the KB into a low-dimensional vector space while preserving certain information of the graph and minimizing a margin-based ranking loss. The idea is that a relation in the graph can be interpreted as a translation from subject entity to object entity in the embedding space.</p>    <p>To verify a fact (<em>s, p, o</em>), this method checks the relevance of the embedding representations <strong>s</strong> of <em>s</em> and <strong>o</strong> of <em>o</em> with respect to embedding representation <strong>p</strong> of relation <em>p</em> though a specific score function <em>f(s, p, o)</em>. The score function <em>f</em> depends on the projection used to transform entities and relations.</p>    <section id="sec-12">     <p><em>2.4.1 Knowledge Graph Embedding (Para_GraphE).</em> TransE [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0002">2</a>] represents a relation <em>p</em> from triple (<em>s, p, o</em>) as a translation from subject <em>s</em> to object <em>o</em> on the same low-dimensional embedding space, that is <strong>s + p</strong> &#x2248; <strong>o</strong> if (<em>s, p, o</em>) is true. Its score function is defined as: <em>f</em>(<em>s</em>, <em>p</em>, <em>o</em>) = &#x2016;<strong>s + p &#x2212; o</strong>&#x2016;, where &#x2016;.&#x2016; can be either L1 or L2 norm.</p>     <p>TransE has drawbacks when dealing with non functional relations. As it uses the same embedding space for both entities and relations, a many-to-one relation, for example, requires different subject entities in this relation to have identical embedding representation, which is not a good assumption. To address this issue, TransH enables an entity to have different embedding representations w.r.t. the different relations it participates [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0011">11</a>]. For each relation <em>p</em>, it introduces a relation-specific hyperplane <em>w<sub>p</sub>      </em> (normal vector) and defines embedding vector <strong>p</strong> on this hyperplane.</p>     <p>There are other methods that can be adapted to verify facts with KBs, such as logical rules mined from the KB itself&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#BibPLXBIB0009">9</a>]. We leave the study of such rule-based algorithms to future work.</p>    </section>    </section>   </section>   <section id="sec-13">    <header>    <div class="title-info">     <h2>      <span class="section-number">3</span> The Benchmark</h2>    </div>    </header>    <p>    <strong>Knowledge Graph.</strong>We instantiate our benchmark with DBPedia [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>], an RDF knowledge base with triples extracted from Wikipedia. From these triples, we construct a graph by assigning each unique entity to a graph node, and converting the triple into a directed edge with label &#x201C;predicate&#x201D; from the entity &#x201C;subject&#x201D; to entity &#x201C;object&#x201D;. We obtain a directed graph with &#x2248; 4M nodes, &#x2248; 27M edges, and 671 relations. Other KBs can be plugged to the benchmark as long as they are expressed according to the graph format.</p>    <div class="table-responsive" id="tab1">    <div class="table-caption">     <span class="table-number">Table 1:</span>     <span class="table-title">Datasets in the benchmark (false claims in italic)</span>    </div>    <table class="table">     <tbody>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;">       <strong>Dataset</strong>       </td>       <td style="text-align:center;">       <strong>Example Facts</strong>       </td>       <td style="text-align:center;">       <strong>True / Total</strong>       </td>      </tr>      <tr>       <td style="text-align:center;">Functional</td>       <td style="text-align:center;">Capital 1</td>       <td style="text-align:center;">Arizona, capital, Phoenix</td>       <td style="text-align:center;">50 / 300</td>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;"/>       <td style="text-align:center;">       <em>Arizona, capital, Oregon</em>       </td>       <td style="text-align:center;"/>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;">Capital 2</td>       <td style="text-align:center;">Massachusetts, capital, Boston</td>       <td style="text-align:center;">50 / 259</td>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;"/>       <td style="text-align:center;">       <em>Massachusetts, capital, Worcester</em>       </td>       <td style="text-align:center;"/>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;">Capital 3</td>       <td style="text-align:center;">Massachusetts, capital, Boston</td>       <td style="text-align:center;">50 / 259</td>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;"/>       <td style="text-align:center;">       <em>Massachusetts, capital, Worcester</em>       </td>       <td style="text-align:center;"/>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;"/>       <td style="text-align:center;">France, capital, Paris<sup>*</sup>       </td>       <td style="text-align:center;"/>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;"/>       <td style="text-align:center;">Japan, capital, Tokyo<sup>*</sup>       </td>       <td style="text-align:center;"/>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;"/>       <td style="text-align:center;">       <em>Japan, capital, Osaka<sup>*</sup>       </em>       </td>       <td style="text-align:center;"/>      </tr>      <tr>       <td style="text-align:center;">Non functional</td>       <td style="text-align:center;">Bestseller</td>       <td style="text-align:center;">Never Go Back, author, Lee Child</td>       <td style="text-align:center;">93 / 558</td>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;"/>       <td style="text-align:center;">Personal (novel), author, Lee Child</td>       <td/>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;"/>       <td style="text-align:center;">       <em>Greater Journey, author, Michael Lewis</em>       </td>       <td/>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;">Award</td>       <td style="text-align:center;">J. Kittinger, award, War Prisoner Medal</td>       <td style="text-align:center;">100 / 600</td>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;"/>       <td style="text-align:center;">J. Kittinger, award, Bronze Star Medal</td>       <td/>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;"/>       <td style="text-align:center;">H. F. Davison, award, Military Cross</td>       <td/>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;"/>       <td style="text-align:center;">J. L. Morgan, award, Military Cross</td>       <td/>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;"/>       <td style="text-align:center;">       <em>Lothar Linke, award, 2009 RTHK</em>       </td>       <td/>      </tr>      <tr>       <td colspan="4" style="text-align:left;">       <sup>*</sup> The instances used only for training.<hr/>       </td>      </tr>     </tbody>    </table>    </div>    <p>    <strong>Test cases.</strong>We collect and extend test cases used for fact checking in the literature. Each dataset includes both true and false facts for a specific relation, as shown in Table&#x00A0;<a class="tbl" href="#tab1">1</a>. We distinguish functional and nonfunctional relations, and craft datasets that have different properties:</p>    <p>    <strong>Capital 1</strong>. A one-to-one relation, which contains facts <em>capital(city,state)</em> for 50 US states. From these 50 correct capital city-state triples, we create 200 incorrect triples by random matching each capital to 4 other states for a total of 200 statements (50 true and 250 false).</p>    <p>    <strong>Capital 2</strong>. A one-to-one relation, which contains again true facts for relation <em>capital</em> for 50 US states but with <em>challenging false facts</em>. Unlike <strong>Capital 1</strong>, in which false instances are created by random matching capital cities to states, in <strong>Capital 2</strong> contains as false facts triples extracted from relation <em>largestCities</em>, which is semantically close to <em>capital</em>. For each state in the 50 correct capital-state triples, we include its largest cities in the test set for a total of 209 false facts.</p>    <p>    <strong>Capital 3</strong>. A one-to-one relation, which focuses on checking relation <em>capital</em> of 50 US states but with <em>heterogeneous positive examples in training</em>. In <strong>Capital</strong> datasets <strong>1</strong> and <strong>2</strong>, training entities are semantically close to entities in testing phase. That is, to check whether a US city is capital of a US state, the methods rely on the information from other US capitals and cities. In this dataset, we train the algorithms with capital of countries in the world. Now, the examples model a more general concept of <em>capital</em>, as it is no longer simply a US capital city of a US state. We employ the same 259 true/false instances as <strong>Capital 2</strong> for testing stage, but training stage includes worldwide facts, such as Paris-France as true labels, and Osaka-Japan as false labels.</p>    <p>    <strong>Bestseller</strong>. A one-to-many relation, where we focus on the persons in the <em>author</em> relation with at least one book. We collected 63 authors who wrote 93 books that appeared on New York Time bestseller list between 2010 and 2015 (an author can have more than one best-seller book). We create 465 incorrect pairs by random matching each book to 4 other authors.</p>    <p>    <strong>Award</strong>. A many-to-many relation, for which we check statements between persons who won prizes as an <em>award</em>. We consider 50 persons who are awarded 69 prizes from different fields (military, sport, art). We create 500 negative-labeled pairs by random matching each person to 5 other prizes.</p>    <p>    <strong>Evaluation metric.</strong>We use the Area Under the Receiver Operating Characteristic curve (AUROC) as a metric to evaluate the algorithms. Our datasets have a low proportion of true statements and AUROC is more informative than classification accuracy when dealing with high class imbalance.</p>   </section>   <section id="sec-14">    <header>    <div class="title-info">     <h2>      <span class="section-number">4</span> Algorithm Analysis</h2>    </div>    </header>    <p>The goal of this section is to show that the right benchmark can lead to useful insights about the advantages and limits of the different methods. We executed different algorithms with our datasets to better understand their behavior and the current state of the art.</p>    <p>    <strong>Experiment setting.</strong>We test KL with metric and ultra-metric closure&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>]. KG Miner and SFE are tested with the maximum predicate path length <em>m</em> equals to 3 (default value&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0010">10</a>]), 4, and 5. PRA is set with number of random walk per source node w/s = 100 and 200, number of random walk per feature path w/p = 50 (default value&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0007">7</a>]) and 100. For TransE, TransH, we set 100 as embedding dimension and implement embedding learning with a margin of one and a learning rate of 0.01 for 1,000 epochs, as recommended&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>]. Since learning embeddings in a large-scale graph is expensive, we use a framework that offers its multi-thread implementation&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0012">12</a>].</p>    <p>All experiments are performed on a on machine with 8 1.8Ghz CPUs and 16GB RAM using 10-fold cross validation, except for <strong>Capital 3</strong>, in which the testing set is different from the training one. Source code and datasets of the benchmark can be found at&#x00A0;<a class="link-inline force-break"     href="https://github.com/huynhvp/Benchmark_Fact_Checking">https://github.com/huynhvp/Benchmark_Fact_Checking</a>. </p>    <div class="table-responsive" id="tab2">    <div class="table-caption">     <span class="table-number">Table 2:</span>     <span class="table-title">Accuracy Performance (AUROC) using 10-fold cross validation</span>    </div>    <table class="table">     <tbody>      <tr>       <td style="text-align:center;">       <strong>Algorithm</strong>       </td>       <td style="text-align:center;">Feature</td>       <td style="text-align:center;">Settings</td>       <td style="text-align:center;">       <strong>Capital 1</strong>       </td>       <td style="text-align:center;">       <strong>Capital 2</strong>       </td>       <td style="text-align:center;">       <strong>Capital 3<sup>*</sup>       </strong>       </td>       <td style="text-align:center;">       <strong>Bestseller</strong>       </td>       <td style="text-align:center;">       <strong>Award</strong>       </td>      </tr>      <tr>       <td style="text-align:center;">KL</td>       <td style="text-align:center;">Metric</td>       <td style="text-align:center;"/>       <td style="text-align:center;">0.98</td>       <td style="text-align:center;">0.75</td>       <td style="text-align:center;">0.75</td>       <td style="text-align:center;">0.82</td>       <td style="text-align:center;">       <strong>0.87</strong>       </td>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;">Ultra-metric</td>       <td style="text-align:center;"/>       <td style="text-align:center;">0.98</td>       <td style="text-align:center;">0.75</td>       <td style="text-align:center;">0.75</td>       <td style="text-align:center;">0.67</td>       <td style="text-align:center;">0.47</td>      </tr>      <tr>       <td style="text-align:center;">KG-Miner</td>       <td style="text-align:center;">Predicate path</td>       <td style="text-align:center;">maxdepth (m) = 3</td>       <td style="text-align:center;">       <strong>1.0</strong>       </td>       <td style="text-align:center;">0.92</td>       <td style="text-align:center;">0.88</td>       <td style="text-align:center;">0.78</td>       <td style="text-align:center;">0.47</td>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;"/>       <td style="text-align:center;">m = 4</td>       <td style="text-align:center;">Timeout</td>       <td style="text-align:center;">Timeout</td>       <td style="text-align:center;">Timeout</td>       <td style="text-align:center;">Timeout</td>       <td style="text-align:center;">Timeout</td>      </tr>      <tr>       <td style="text-align:center;">PRA</td>       <td style="text-align:center;">Random walk path</td>       <td style="text-align:center;">walk/source (w/s) = 100, walk/path (w/p) = 50</td>       <td style="text-align:center;">0.98</td>       <td style="text-align:center;">0.87</td>       <td style="text-align:center;">0.91</td>       <td style="text-align:center;">0.83</td>       <td style="text-align:center;">0.79</td>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;"/>       <td style="text-align:center;">w/s = 200, w/p = 100</td>       <td style="text-align:center;">0.99</td>       <td style="text-align:center;">0.91</td>       <td style="text-align:center;">       <strong>0.92</strong>       </td>       <td style="text-align:center;">0.84</td>       <td style="text-align:center;">0.79</td>      </tr>      <tr>       <td style="text-align:center;">SFE</td>       <td style="text-align:center;">PRA-style</td>       <td style="text-align:center;">m = 3</td>       <td style="text-align:center;">       <strong>1.0</strong>       </td>       <td style="text-align:center;">0.93</td>       <td style="text-align:center;">0.87</td>       <td style="text-align:center;">0.80</td>       <td style="text-align:center;">0.46</td>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;"/>       <td style="text-align:center;">m = 5</td>       <td style="text-align:center;">       <strong>1.0</strong>       </td>       <td style="text-align:center;">       <strong>0.97</strong>       </td>       <td style="text-align:center;">       <strong>0.92</strong>       </td>       <td style="text-align:center;">       <strong>0.89</strong>       </td>       <td style="text-align:center;">0.84</td>      </tr>      <tr>       <td style="text-align:center;">Para_graphE</td>       <td style="text-align:center;">TransE</td>       <td style="text-align:center;">embedding = 100, <em>r</em> = 0.01</td>       <td style="text-align:center;">0.84</td>       <td style="text-align:center;">0.66</td>       <td style="text-align:center;">0.66</td>       <td style="text-align:center;">0.65</td>       <td style="text-align:center;">0.73</td>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;">TransH</td>       <td style="text-align:center;">embedding = 100, <em>r</em> = 0.01</td>       <td style="text-align:center;">0.82</td>       <td style="text-align:center;">0.58</td>       <td style="text-align:center;">0.58</td>       <td style="text-align:center;">0.64</td>       <td style="text-align:center;">0.74</td>      </tr>      <tr>       <td colspan="8" style="text-align:left;">       <sup>*</sup> Cross validation not applied for <strong>Capital 3</strong> since we use different testing and training sets<hr/>       </td>      </tr>     </tbody>    </table>    </div>    <p>    <strong>Results and observations.</strong>Qualitative results are reported in Table&#x00A0;<a class="tbl" href="#tab2">2</a>. All methods perform well in the simple, one-to-one relation <strong>Capital 1</strong>. Due to the clear false facts and the semantically similar training examples, there are few paths/sub-graphs between 2 entities in false facts and entities in true facts are highly connected. However, differences in the methods become clear with the other datasets involving nonfunctional relations (<strong>Bestseller, Award</strong>) or complex training data (<strong>Capital 2,3</strong>).</p>    <p>    <em>KL</em> is more robust to nonfunctional predicates than other path-based methods. The reason is that it does not rely on the predicate semantics as expressed by the labels. However, KL has issues in the classification of <strong>Capital 2</strong>, where false instances are created from other close but different relations. For example, Cambridge is not <em>capital</em> of Massachusetts, but it is one of its <em>largestCities</em>. Due to the lack of semantics, KL treats both Cambridge and Boston as capital of Massachusetts because it finds good proximity between the two cities and the state in the graph. This leads to worse result, compared to KG-Miner, PRA and SFE.</p>    <p>    <em>KG-Miner, PRA, SFE</em>outperform KL and GraphE but show a significant drop in quality for <strong>Capital 2</strong>, where the true <em>capitalOf</em> statements are mixed with false statements that relate to <em>largestCities</em> predicate. The two predicates have similar paths that lead to misclassification in some cases. Moreover, <strong>17/50</strong> US capital-cities are also the largest city in their states, which leads to degraded performance as the algorithms treat capitals as largest cities. Increasing the path length leads to more discriminative/informative features, thereby improving the performance, as we see with SFE from <em>length=3</em> (AUROC = 0.93) to <em>length=5</em> (AUROC = 0.97). However, this comes with a trade-off in computational complexity, as we discuss later.</p>    <p>    <em>KGMiner, PRA, SFE</em> are also challenged by the more intricate training set in <strong>Capital 3</strong>, with the best methods now achieving AUROC = 0.92. This show the <em>context-dependency</em> of discriminative path-based models, where a specific relation may have different &#x201C;definitions&#x201D; in different contexts. For example, US state capitals and worldwide capitals are different in many ways (such as scale, the institutions they host) and this is reflected by their features.</p>    <p>    <em>Non functional predicate</em>    <strong>Award</strong>is difficult to model for all methods due to two reasons. First, awards come from very different fields, so it is hard to find a recurrent pattern for most of the people who got at least one. Second, it is hard to define <strong>award</strong> with short predicate paths, as shown by the poor results in <em>length 3</em> KG-Miner and SFE. Extracting longer paths brings a significant improvement with <em>length 5</em> SFE outperforming <em>length 3</em>, as the algorithm can now find informative paths that nicely support checking <strong>Award</strong> facts. Similar comments apply for <strong>Bestseller</strong>, where the impact of the nonfunctional triples is smaller because of the large number of authors with only one book.</p>    <p>    <em>TransE and TransH</em> do not achieve the same performance of the other methods. Also, no clear distinctions are visible when comparing their results, despite TransH is expected to better handle non functional relations. This may due to the knowledge graph we used in this work. DBPedia graph is larger and denser than FB15K (&#x2248; 75K nodes, &#x2248; 315K edges), the largest graph used in previous tests&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>].</p>    <div class="table-responsive" id="tab3">    <div class="table-caption">     <span class="table-number">Table 3:</span>     <span class="table-title">Average feature extraction time (sec) for fact.</span>    </div>    <table class="table">     <tbody>      <tr>       <td style="text-align:center;">       <strong>Algorithm</strong>       </td>       <td style="text-align:center;">Setting</td>       <td style="text-align:center;">Time (seconds)</td>      </tr>      <tr>       <td style="text-align:center;">KL</td>       <td style="text-align:center;">Metric</td>       <td style="text-align:center;">10.5</td>      </tr>      <tr>       <td style="text-align:center;">KG-Miner</td>       <td style="text-align:center;">m = 3</td>       <td style="text-align:center;">0.12</td>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;">m = 4</td>       <td style="text-align:center;">> 600</td>      </tr>      <tr>       <td style="text-align:center;">PRA</td>       <td style="text-align:center;">w/s = 100, w/p = 50</td>       <td style="text-align:center;">0.48</td>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;">w/s = 200, w/p = 100</td>       <td style="text-align:center;">0.60</td>      </tr>      <tr>       <td style="text-align:center;">SFE</td>       <td style="text-align:center;">m = 3</td>       <td style="text-align:center;">0.001</td>      </tr>      <tr>       <td style="text-align:center;"/>       <td style="text-align:center;">m = 5</td>       <td style="text-align:center;">0.01</td>      </tr>      <tr>       <td style="text-align:center;">Para_graphE</td>       <td style="text-align:center;">TransE/TransH</td>       <td style="text-align:center;">4 hours (to learn embed.)</td>      </tr>     </tbody>    </table>    </div>    <p>We report in Table&#x00A0;<a class="tbl" href="#tab3">3</a> the average execution times for each algorithm to calculate the inference of a fact. Path-based algorithms are faster than computational models such as KL or stochastic models like TransE, TransH, and PRA. As expected, sub-graph search in SFE is more efficient than full-graph search in KG-Miner when increasing the predicate path length.</p>   </section>   <section id="sec-15">    <header>    <div class="title-info">     <h2>      <span class="section-number">5</span> Conclusions</h2>    </div>    </header>    <p>This work is the first step towards a general benchmark for fact checking algorithms. We plan to extend it with more datasets, including more predicates and more KBs, and more algorithms. An important missing component is a generator of synthetic scenarios that makes use of the lessons learned with our initial datasets. The generator will create scenarios of arbitrary size and complexity by mixing the properties we highlighted, such as challenging false facts and heterogeneous true facts. Another important direction is to extend the test bed with real facts from news, from example from existing fact check challenges (e.g., <a class="link-inline force-break" href="https://herox.com/factcheck">https://herox.com/factcheck</a>).</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>    <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>    </div>    </header>    <ul class="bibUl">    <li id="BibPLXBIB0001" label="[1]">Christian Bizer, Jens Lehmann, Georgi Kobilarov, S&#x00F6;ren Auer, Christian Becker, Richard Cyganiak, and Sebastian Hellmann. 2009. DBpedia-A crystallization point for the Web of Data. <em>      <em>Web Semantics: science, services and agents on the world wide web</em>     </em>7, 3(2009), 154&#x2013;165.</li>    <li id="BibPLXBIB0002" label="[2]">Antoine Bordes, Nicolas Usunier, Alberto Garcia-Duran, Jason Weston, and Oksana Yakhnenko. 2013. Translating embeddings for modeling multi-relational data. In <em>      <em>NIPS</em>     </em>. 2787&#x2013;2795.</li>    <li id="BibPLXBIB0003" label="[3]">Giovanni&#x00A0;Luca Ciampaglia, Prashant Shiralkar, Luis&#x00A0;M Rocha, Johan Bollen, Filippo Menczer, and Alessandro Flammini. 2015. Computational fact checking from knowledge networks. <em>      <em>PloS one</em>     </em>10, 6 (2015), e0128193.</li>    <li id="BibPLXBIB0004" label="[4]">Emilio Ferrara, Onur Varol, Clayton&#x00A0;A. Davis, Filippo Menczer, and Alessandro Flammini. 2016. The rise of social bots. <em>      <em>Commun. ACM</em>     </em>59, 7 (2016), 96&#x2013;104.</li>    <li id="BibPLXBIB0005" label="[5]">Luis&#x00A0;Antonio Gal&#x00E1;rraga, Christina Teflioudi, Katja Hose, and Fabian Suchanek. 2013. AMIE: association rule mining under incomplete evidence in ontological knowledge bases. In <em>      <em>WWW</em>     </em>. ACM, 413&#x2013;422.</li>    <li id="BibPLXBIB0006" label="[6]">Matt Gardner and Tom&#x00A0;M Mitchell. 2015. Efficient and Expressive Knowledge Base Completion Using Subgraph Feature Extraction. In <em>      <em>EMNLP</em>     </em>. 1488&#x2013;1498.</li>    <li id="BibPLXBIB0007" label="[7]">Matt Gardner, Partha&#x00A0;Pratim Talukdar, Jayant Krishnamurthy, and Tom Mitchell. 2014. Incorporating vector space similarity in random walk inference over knowledge bases. In <em>      <em>EMNLP</em>     </em>.</li>    <li id="BibPLXBIB0008" label="[8]">Naeemul Hassan, Fatma Arslan, Chengkai Li, and Mark Tremayne. 2017. Toward Automated Fact-Checking: Detecting Check-worthy Factual Claims by ClaimBuster. In <em>      <em>KDD</em>     </em>.</li>    <li id="BibPLXBIB0009" label="[9]">Stefano Ortona, Vamsi Meduri, and Paolo Papotti. 2018. Robust discovery of positive and negative rules in knowledge-bases. In <em>      <em>ICDE</em>     </em>.</li>    <li id="BibPLXBIB0010" label="[10]">Baoxu Shi and Tim Weninger. 2016. Discriminative predicate path mining for fact checking in knowledge graphs. <em>      <em>Knowledge-Based Systems</em>     </em>104 (2016), 123&#x2013;133.</li>    <li id="BibPLXBIB0011" label="[11]">Zhen Wang, Jianwen Zhang, Jianlin Feng, and Zheng Chen. 2014. Knowledge Graph Embedding by Translating on Hyperplanes.. In <em>      <em>AAAI</em>     </em>. 1112&#x2013;1119.</li>    <li id="BibPLXBIB0012" label="[12]">Wu-Jun&#x00A0;Li Xiao-Fan&#x00A0;Niu. 2017. ParaGraphE: A Library for Parallel Knowledge Graph Embedding. In <em>      <em>arXiv. 2017.</em>     </em></li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">    <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>Code and data available at&#x00A0;<a class="link-inline force-break"    href="https://github.com/huynhvp/Benchmark_Fact_Checking">https://github.com/huynhvp/Benchmark_Fact_Checking</a>   </p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>    <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3191616">https://doi.org/10.1145/3184558.3191616</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div> </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Towards a Benchmark for Fact Checking with Knowledge
+  Bases</title><!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Towards a Benchmark for Fact
+          Checking with Knowledge Bases</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Viet-Phi</span> <span class=
+          "surName">Huynh</span> EURECOM, France
+        </div>
+        <div class="author">
+          <span class="givenName">Paolo</span> <span class=
+          "surName">Papotti</span> EURECOM, France
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191616"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191616</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Fact checking is the task of determining if a
+        given claim holds. Several algorithms have been developed
+        to check facts with reference information in the form of
+        knowledge bases. While individual algorithms have been
+        experimentally evaluated, we provide a first publicly
+        available benchmark evaluating fact checking
+        implementations across a range of assumptions about the
+        properties of the facts and the reference data. We used our
+        benchmark to compare algorithms designed on different
+        principles and assumptions, as well as algorithms that can
+        solve similar tasks developed in closely related
+        communities. Our evaluation provided us with a number of
+        new insights concerning the factors that impact the
+        performance of the different methods.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Viet-Phi Huynh and Paolo Papotti. 2018. Towards a
+          Benchmark for Fact Checking with Knowledge Bases. In
+          <em>WWW '18 Companion: The 2018 Web Conference
+          Companion,</em> <em>April 23–27, 2018,</em> <em>Lyon,
+          France. ACM, New York, NY, USA</em> 5 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3191616" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191616</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-2">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>Fact checking refers to the task of verification of
+      textual content. Given the increase of incorrect claims over
+      the Web, fact checking is no longer an activity for
+      journalists only. To tackle the spread of misleading
+      information, Web companies have introduced forms of fact
+      checking in their services. In these approaches, information
+      on the trust of the news is gathered from websites (e.g.,
+      politifact.com, factcheck.org, and snopes.com), where
+      journalists manually assess the quality of the
+      information.</p>
+      <p>However, the proliferation of websites and bots spreading
+      false information has motivated an effort for computational
+      fact checking&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>], which aims at automatic verification
+      to scale over thousands of daily facts. Several algorithms
+      focus on different types of facts and different domains. We
+      are interested here in techniques that focus on validating
+      “worth checking” facts against trustful Knowledge Bases
+      (KBs)&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0003">3</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0010">10</a>]. In the
+      following, we assume the facts and the entities involved have
+      been identified&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0008">8</a>], and focus our attention on the step
+      estimating the <em>veracity</em> of a given fact (expressed
+      as structured data) w.r.t. reference data considered
+      trusted.</p>
+      <p>The core problem for fact checking with KBs is that we
+      cannot assume the reference information to be complete (Open
+      World Assumption), i.e., we cannot say if a fact not in the
+      KB is false or just missing&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0005">5</a>]. Given a KB <em>K</em> and
+      a fact <em>f</em>, the fact checking algorithms should
+      therefore state if <em>f</em> is a valid missing fact in
+      <em>K</em>.</p>
+      <p>There are many factors that affect the outcome of the fact
+      checking step. The quality of the reference KB plays a
+      pivotal role, and it must be selected according to the
+      specific domain. Once the KB has been fixed, there is the
+      challenge of picking the right algorithm to validate the
+      facts. There are several proposals available, that differ
+      significantly in their principles and assumptions. Also,
+      given the novelty of the field and the complexity of the
+      problem, there are still no established and unified sets of
+      metrics and datasets.</p>
+      <p>In this work, we lay the foundation for a benchmark to
+      compare and contrast fact checking algorithms that rely on
+      external information in the form of RDF KBs. Our ultimate
+      goal is to create a benchmark with a large variety of
+      annotated datasets, tools to create synthetic datasets with
+      different properties, and metrics to evaluate different
+      algorithms on a level playing field.</p>
+      <p>Our contributions in this work are the following.</p>
+      <p>1. We classify most of the existing fact checking
+      algorithms by their methodology and discuss their main
+      properties (Section&nbsp;<a class="sec" href=
+      "#sec-3">2</a>).</p>
+      <p>2. We craft the datasets and the metrics for a fair
+      evaluation of the methods in an early version of our
+      benchmark (Section&nbsp;<a class="sec" href=
+      "#sec-13">3</a>).</p>
+      <p>3. We demonstrate the use of the benchmark<a class="fn"
+      href="#fn1" id="foot-fn1"><sup>1</sup></a> with an
+      experimental analysis of representative algorithms.
+      (Section&nbsp;<a class="sec" href="#sec-14">4</a>).</p>
+    </section>
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Algorithm
+          Classification</h2>
+        </div>
+      </header>
+      <p>We first give some background and fix the terminology. We
+      then classify different fact checking algorithms according
+      the methods they use to solve the problem.</p>
+      <section id="sec-4">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span>
+            Background</h3>
+          </div>
+        </header>
+        <p>A <em>fact</em> is defined as a triple that has the form
+        of (”subject” <em>s</em>, ”predicate” <em>p</em>, ”object”
+        <em>o</em>). Natural language processing (NLP) techniques
+        are used to convert a claim in natural language into a
+        structured format. Facts can be classified into categories,
+        such as numerical, quote, and object property. We focus on
+        object properties, which are facts stating a relationship
+        between the subject and the object in a sentence, e.g.,
+        Sacramento is the capital of California.</p>
+        <p>A <em>Knowledge Base</em> (KB) is a direct graph where
+        nodes correspond to entities (subject or object in a fact)
+        and edges correspond to binary predicates among entities.
+        We focus on algorithms that take as input a KB and a fact
+        that is not part of it. Such algorithms assess if the given
+        fact belongs to the missing part of the KB (therefore is
+        “true”) or no (is “false”).</p>
+        <p>Methods assume that training examples (labelled facts)
+        are available to build the models. We will detail how we
+        craft our datasets in terms of training data, but, in
+        general, the common assumption is that the KB is trustable,
+        and true facts are extracted from it.</p>
+      </section>
+      <section id="sec-5">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> Path Based
+            Algorithms</h3>
+          </div>
+        </header>
+        <p>Given a fact (<em>s</em>, <em>p</em>, <em>o</em>), this
+        group of algorithms makes a decision for it by exploiting
+        the paths in the KB of existing <em>p</em> triples. These
+        KB triples act as positive examples for the learning of the
+        alternative paths (different from <em>p</em>) between their
+        subjects and objects. Properties of the paths are then
+        modeled as features in a classifier that decides if
+        predicate <em>p</em> holds for the given <em>s</em> and
+        <em>o</em>.</p>
+        <section id="sec-6">
+          <p><em>2.2.1 Knowledge Linker (KL).</em> This algorithm
+          builds an internal model based on a weighted adjacency
+          matrix with edge weights computed as the in-degree of
+          each node in the KB, then transformed to similarity
+          scores&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0003">3</a>]. As the model ignores the labels
+          of the predicates, it evaluates the validity of an input
+          fact based on measuring the proximity between its subject
+          and object. Two distance closures are introduced. With
+          the <em>Metric closure</em>, every path connecting a
+          given subject and object is mapped to a score computed on
+          the generality of the nodes in the path, where the
+          generality of a node is its frequency in the KB. The more
+          often the node occurs in KB, the less information it
+          conveys. With the <em>Ultra-metric closure</em>, only the
+          node with highest generality is used to compute the score
+          for each possible path. In both cases, the maximum score
+          is equivalent to the shortest path between subject and
+          object.</p>
+        </section>
+        <section id="sec-7">
+          <p><em>2.2.2 Discriminate Predicate Path Mining
+          (KG-Miner).</em> This algorithm identifies and exploits
+          frequent anchored predicate paths between pair of
+          entities in the KB&nbsp;[<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0010">10</a>]. Given an input fact (<em>s, p,
+          o</em>), it collects as training data the predicate paths
+          for node pairs that satisfy <em>p</em> in the KB and have
+          subject with the same type of <em>s</em> (denoted
+          ϕ(<em>s</em>)) and object with type of <em>o</em>
+          (denoted ϕ(<em>o</em>)). From each subject <em>u</em> ∈
+          ϕ(<em>s</em>) and corresponding object <em>v</em> ∈
+          ϕ(<em>o</em>), predicate paths that alternatively
+          represent predicate <em>p</em> are extracted from the KB
+          with a depth-first search (DFS) traversing the graph from
+          <em>u</em> to <em>v</em> up to a length of <em>m</em>.
+          The information gain of these paths and corresponding
+          labels is computed based on their number of occurrences.
+          It then selects the most discriminative paths and plugs
+          them into training for a logistic regression model that
+          optimizes the Area Under Receiver Operating
+          Characteristic (AUROC). This model is then used to
+          compute the likelihood of an input fact.</p>
+        </section>
+        <section id="sec-8">
+          <p><em>2.2.3 Path Ranking Algorithm (PRA).</em> PRA
+          discovers the relationships among entities in a
+          stochastic way by performing random walk inference over
+          the KB&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0007">7</a>]. For the feature extraction, from
+          a given training set of triples, it uses <em>two-sided,
+          unconstrained</em> random walk starting at the source and
+          corresponding target nodes to retrieve paths connected
+          between them. Top <em>k</em> paths for each training
+          instance are kept based on their number of occurrences
+          and are collected into a feature matrix. A value in the
+          matrix corresponding to a training instance (<em>s, p,
+          o</em>) is the probability of arriving at the target node
+          <em>o</em> by a random walk starting at source node
+          <em>s</em> and following a specific path among its top
+          <em>k</em> paths. This probability is computed using the
+          approximate method of rejection sampling to reduce the
+          computational complexity. The feature matrix is then used
+          with a classifier to validate the input fact.</p>
+        </section>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.3</span> Sub-Graph
+            Based Algorithms</h3>
+          </div>
+        </header>
+        <p>Given a fact, this method extends the previous approach
+        by using sub-graphs of the KB that model the subjects and
+        the objects of the examples. These sub-graphs can be built
+        in different ways, and their features are used in a
+        classifier to evaluate input facts.</p>
+        <section id="sec-10">
+          <p><em>2.3.1 Sub-graph Feature Extraction (SFE).</em> SFE
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#BibPLXBIB0006">6</a>] extracts features from sub-graphs
+          built from the nodes in the KB. Such features are then
+          used in a classifier to test input facts. While KG-Miner
+          uses a full-graph exhaustive search to extract features,
+          which is costly with complexity proportional to the
+          out-degree to the power of path length per node, PRA uses
+          random walk, which reduces the computational time, but
+          leads to an approximation. To avoid these issues, SFE
+          provides a more efficient way to extract features by
+          using a sub-graph breadth-first search (BFS).</p>
+          <p>Given a parameter <em>m</em>, the <em>sub-graph of
+          depth m</em> for each node <em>n</em> is the result of
+          <em>m</em> BFS steps starting at it. Features are then
+          extracted with two variants. In the first one (Predicate
+          Path), it uses a sequence of predicates that connect a
+          source node to target node by intersecting the sub-graphs
+          of source and target on intermediate sharing nodes
+          (similar to KG-Miner and PRA). The alternative
+          (one-sided) uses a sequence of predicates that starts at
+          source node or target node, but does not necessary reach
+          at corresponding target or source node. SFE uses
+          <em>binary features</em>: it disregards the frequency
+          (like KG-Miner) and the probability (like PRA) of feature
+          paths.</p>
+        </section>
+      </section>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.4</span> Embedding
+            Based Algorithms</h3>
+          </div>
+        </header>
+        <p>Embeddings encode entities and relations in the KB into
+        a low-dimensional vector space while preserving certain
+        information of the graph and minimizing a margin-based
+        ranking loss. The idea is that a relation in the graph can
+        be interpreted as a translation from subject entity to
+        object entity in the embedding space.</p>
+        <p>To verify a fact (<em>s, p, o</em>), this method checks
+        the relevance of the embedding representations
+        <strong>s</strong> of <em>s</em> and <strong>o</strong> of
+        <em>o</em> with respect to embedding representation
+        <strong>p</strong> of relation <em>p</em> though a specific
+        score function <em>f(s, p, o)</em>. The score function
+        <em>f</em> depends on the projection used to transform
+        entities and relations.</p>
+        <section id="sec-12">
+          <p><em>2.4.1 Knowledge Graph Embedding
+          (Para_GraphE).</em> TransE [<a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0002">2</a>] represents a relation <em>p</em>
+          from triple (<em>s, p, o</em>) as a translation from
+          subject <em>s</em> to object <em>o</em> on the same
+          low-dimensional embedding space, that is <strong>s +
+          p</strong> ≈ <strong>o</strong> if (<em>s, p, o</em>) is
+          true. Its score function is defined as:
+          <em>f</em>(<em>s</em>, <em>p</em>, <em>o</em>) =
+          ‖<strong>s + p − o</strong>‖, where ‖.‖ can be either L1
+          or L2 norm.</p>
+          <p>TransE has drawbacks when dealing with non functional
+          relations. As it uses the same embedding space for both
+          entities and relations, a many-to-one relation, for
+          example, requires different subject entities in this
+          relation to have identical embedding representation,
+          which is not a good assumption. To address this issue,
+          TransH enables an entity to have different embedding
+          representations w.r.t. the different relations it
+          participates [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0011">11</a>]. For each relation <em>p</em>,
+          it introduces a relation-specific hyperplane
+          <em>w<sub>p</sub></em> (normal vector) and defines
+          embedding vector <strong>p</strong> on this
+          hyperplane.</p>
+          <p>There are other methods that can be adapted to verify
+          facts with KBs, such as logical rules mined from the KB
+          itself&nbsp;[<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0005">5</a>, <a class="bib" data-trigger=
+          "hover" data-toggle="popover" data-placement="top" href=
+          "#BibPLXBIB0009">9</a>]. We leave the study of such
+          rule-based algorithms to future work.</p>
+        </section>
+      </section>
+    </section>
+    <section id="sec-13">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> The
+          Benchmark</h2>
+        </div>
+      </header>
+      <p><strong>Knowledge Graph.</strong>We instantiate our
+      benchmark with DBPedia [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>], an RDF knowledge base with triples
+      extracted from Wikipedia. From these triples, we construct a
+      graph by assigning each unique entity to a graph node, and
+      converting the triple into a directed edge with label
+      “predicate” from the entity “subject” to entity “object”. We
+      obtain a directed graph with ≈ 4M nodes, ≈ 27M edges, and 671
+      relations. Other KBs can be plugged to the benchmark as long
+      as they are expressed according to the graph format.</p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">Datasets in the benchmark (false claims in
+          italic)</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">
+              <strong>Dataset</strong></td>
+              <td style="text-align:center;"><strong>Example
+              Facts</strong></td>
+              <td style="text-align:center;"><strong>True /
+              Total</strong></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Functional</td>
+              <td style="text-align:center;">Capital 1</td>
+              <td style="text-align:center;">Arizona, capital,
+              Phoenix</td>
+              <td style="text-align:center;">50 / 300</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"><em>Arizona, capital,
+              Oregon</em></td>
+              <td style="text-align:center;"></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">Capital 2</td>
+              <td style="text-align:center;">Massachusetts,
+              capital, Boston</td>
+              <td style="text-align:center;">50 / 259</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"><em>Massachusetts,
+              capital, Worcester</em></td>
+              <td style="text-align:center;"></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">Capital 3</td>
+              <td style="text-align:center;">Massachusetts,
+              capital, Boston</td>
+              <td style="text-align:center;">50 / 259</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"><em>Massachusetts,
+              capital, Worcester</em></td>
+              <td style="text-align:center;"></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">France, capital,
+              Paris<sup>*</sup></td>
+              <td style="text-align:center;"></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">Japan, capital,
+              Tokyo<sup>*</sup></td>
+              <td style="text-align:center;"></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"><em>Japan, capital,
+              Osaka<sup>*</sup></em></td>
+              <td style="text-align:center;"></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Non functional</td>
+              <td style="text-align:center;">Bestseller</td>
+              <td style="text-align:center;">Never Go Back, author,
+              Lee Child</td>
+              <td style="text-align:center;">93 / 558</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">Personal (novel),
+              author, Lee Child</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"><em>Greater Journey,
+              author, Michael Lewis</em></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">Award</td>
+              <td style="text-align:center;">J. Kittinger, award,
+              War Prisoner Medal</td>
+              <td style="text-align:center;">100 / 600</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">J. Kittinger, award,
+              Bronze Star Medal</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">H. F. Davison, award,
+              Military Cross</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">J. L. Morgan, award,
+              Military Cross</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"><em>Lothar Linke,
+              award, 2009 RTHK</em></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td colspan="4" style="text-align:left;">
+                <sup>*</sup> The instances used only for training.
+                <hr />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Test cases.</strong>We collect and extend test
+      cases used for fact checking in the literature. Each dataset
+      includes both true and false facts for a specific relation,
+      as shown in Table&nbsp;<a class="tbl" href="#tab1">1</a>. We
+      distinguish functional and nonfunctional relations, and craft
+      datasets that have different properties:</p>
+      <p><strong>Capital 1</strong>. A one-to-one relation, which
+      contains facts <em>capital(city,state)</em> for 50 US states.
+      From these 50 correct capital city-state triples, we create
+      200 incorrect triples by random matching each capital to 4
+      other states for a total of 200 statements (50 true and 250
+      false).</p>
+      <p><strong>Capital 2</strong>. A one-to-one relation, which
+      contains again true facts for relation <em>capital</em> for
+      50 US states but with <em>challenging false facts</em>.
+      Unlike <strong>Capital 1</strong>, in which false instances
+      are created by random matching capital cities to states, in
+      <strong>Capital 2</strong> contains as false facts triples
+      extracted from relation <em>largestCities</em>, which is
+      semantically close to <em>capital</em>. For each state in the
+      50 correct capital-state triples, we include its largest
+      cities in the test set for a total of 209 false facts.</p>
+      <p><strong>Capital 3</strong>. A one-to-one relation, which
+      focuses on checking relation <em>capital</em> of 50 US states
+      but with <em>heterogeneous positive examples in
+      training</em>. In <strong>Capital</strong> datasets
+      <strong>1</strong> and <strong>2</strong>, training entities
+      are semantically close to entities in testing phase. That is,
+      to check whether a US city is capital of a US state, the
+      methods rely on the information from other US capitals and
+      cities. In this dataset, we train the algorithms with capital
+      of countries in the world. Now, the examples model a more
+      general concept of <em>capital</em>, as it is no longer
+      simply a US capital city of a US state. We employ the same
+      259 true/false instances as <strong>Capital 2</strong> for
+      testing stage, but training stage includes worldwide facts,
+      such as Paris-France as true labels, and Osaka-Japan as false
+      labels.</p>
+      <p><strong>Bestseller</strong>. A one-to-many relation, where
+      we focus on the persons in the <em>author</em> relation with
+      at least one book. We collected 63 authors who wrote 93 books
+      that appeared on New York Time bestseller list between 2010
+      and 2015 (an author can have more than one best-seller book).
+      We create 465 incorrect pairs by random matching each book to
+      4 other authors.</p>
+      <p><strong>Award</strong>. A many-to-many relation, for which
+      we check statements between persons who won prizes as an
+      <em>award</em>. We consider 50 persons who are awarded 69
+      prizes from different fields (military, sport, art). We
+      create 500 negative-labeled pairs by random matching each
+      person to 5 other prizes.</p>
+      <p><strong>Evaluation metric.</strong>We use the Area Under
+      the Receiver Operating Characteristic curve (AUROC) as a
+      metric to evaluate the algorithms. Our datasets have a low
+      proportion of true statements and AUROC is more informative
+      than classification accuracy when dealing with high class
+      imbalance.</p>
+    </section>
+    <section id="sec-14">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Algorithm
+          Analysis</h2>
+        </div>
+      </header>
+      <p>The goal of this section is to show that the right
+      benchmark can lead to useful insights about the advantages
+      and limits of the different methods. We executed different
+      algorithms with our datasets to better understand their
+      behavior and the current state of the art.</p>
+      <p><strong>Experiment setting.</strong>We test KL with metric
+      and ultra-metric closure&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>]. KG Miner and SFE are tested with the
+      maximum predicate path length <em>m</em> equals to 3 (default
+      value&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href=
+      "#BibPLXBIB0010">10</a>]), 4, and 5. PRA is set with number
+      of random walk per source node w/s = 100 and 200, number of
+      random walk per feature path w/p = 50 (default
+      value&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0007">7</a>])
+      and 100. For TransE, TransH, we set 100 as embedding
+      dimension and implement embedding learning with a margin of
+      one and a learning rate of 0.01 for 1,000 epochs, as
+      recommended&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>]. Since learning embeddings in a
+      large-scale graph is expensive, we use a framework that
+      offers its multi-thread implementation&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0012">12</a>].</p>
+      <p>All experiments are performed on a on machine with 8
+      1.8Ghz CPUs and 16GB RAM using 10-fold cross validation,
+      except for <strong>Capital 3</strong>, in which the testing
+      set is different from the training one. Source code and
+      datasets of the benchmark can be found at&nbsp;<a class=
+      "link-inline force-break" href=
+      "https://github.com/huynhvp/Benchmark_Fact_Checking">https://github.com/huynhvp/Benchmark_Fact_Checking</a>.</p>
+      <div class="table-responsive" id="tab2">
+        <div class="table-caption">
+          <span class="table-number">Table 2:</span> <span class=
+          "table-title">Accuracy Performance (AUROC) using 10-fold
+          cross validation</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:center;">
+              <strong>Algorithm</strong></td>
+              <td style="text-align:center;">Feature</td>
+              <td style="text-align:center;">Settings</td>
+              <td style="text-align:center;"><strong>Capital
+              1</strong></td>
+              <td style="text-align:center;"><strong>Capital
+              2</strong></td>
+              <td style="text-align:center;"><strong>Capital
+              3<sup>*</sup></strong></td>
+              <td style="text-align:center;">
+              <strong>Bestseller</strong></td>
+              <td style="text-align:center;">
+              <strong>Award</strong></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">KL</td>
+              <td style="text-align:center;">Metric</td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">0.98</td>
+              <td style="text-align:center;">0.75</td>
+              <td style="text-align:center;">0.75</td>
+              <td style="text-align:center;">0.82</td>
+              <td style="text-align:center;">
+              <strong>0.87</strong></td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">Ultra-metric</td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">0.98</td>
+              <td style="text-align:center;">0.75</td>
+              <td style="text-align:center;">0.75</td>
+              <td style="text-align:center;">0.67</td>
+              <td style="text-align:center;">0.47</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">KG-Miner</td>
+              <td style="text-align:center;">Predicate path</td>
+              <td style="text-align:center;">maxdepth (m) = 3</td>
+              <td style="text-align:center;">
+              <strong>1.0</strong></td>
+              <td style="text-align:center;">0.92</td>
+              <td style="text-align:center;">0.88</td>
+              <td style="text-align:center;">0.78</td>
+              <td style="text-align:center;">0.47</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">m = 4</td>
+              <td style="text-align:center;">Timeout</td>
+              <td style="text-align:center;">Timeout</td>
+              <td style="text-align:center;">Timeout</td>
+              <td style="text-align:center;">Timeout</td>
+              <td style="text-align:center;">Timeout</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">PRA</td>
+              <td style="text-align:center;">Random walk path</td>
+              <td style="text-align:center;">walk/source (w/s) =
+              100, walk/path (w/p) = 50</td>
+              <td style="text-align:center;">0.98</td>
+              <td style="text-align:center;">0.87</td>
+              <td style="text-align:center;">0.91</td>
+              <td style="text-align:center;">0.83</td>
+              <td style="text-align:center;">0.79</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">w/s = 200, w/p =
+              100</td>
+              <td style="text-align:center;">0.99</td>
+              <td style="text-align:center;">0.91</td>
+              <td style="text-align:center;">
+              <strong>0.92</strong></td>
+              <td style="text-align:center;">0.84</td>
+              <td style="text-align:center;">0.79</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">SFE</td>
+              <td style="text-align:center;">PRA-style</td>
+              <td style="text-align:center;">m = 3</td>
+              <td style="text-align:center;">
+              <strong>1.0</strong></td>
+              <td style="text-align:center;">0.93</td>
+              <td style="text-align:center;">0.87</td>
+              <td style="text-align:center;">0.80</td>
+              <td style="text-align:center;">0.46</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">m = 5</td>
+              <td style="text-align:center;">
+              <strong>1.0</strong></td>
+              <td style="text-align:center;">
+              <strong>0.97</strong></td>
+              <td style="text-align:center;">
+              <strong>0.92</strong></td>
+              <td style="text-align:center;">
+              <strong>0.89</strong></td>
+              <td style="text-align:center;">0.84</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Para_graphE</td>
+              <td style="text-align:center;">TransE</td>
+              <td style="text-align:center;">embedding = 100,
+              <em>r</em> = 0.01</td>
+              <td style="text-align:center;">0.84</td>
+              <td style="text-align:center;">0.66</td>
+              <td style="text-align:center;">0.66</td>
+              <td style="text-align:center;">0.65</td>
+              <td style="text-align:center;">0.73</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">TransH</td>
+              <td style="text-align:center;">embedding = 100,
+              <em>r</em> = 0.01</td>
+              <td style="text-align:center;">0.82</td>
+              <td style="text-align:center;">0.58</td>
+              <td style="text-align:center;">0.58</td>
+              <td style="text-align:center;">0.64</td>
+              <td style="text-align:center;">0.74</td>
+            </tr>
+            <tr>
+              <td colspan="8" style="text-align:left;">
+                <sup>*</sup> Cross validation not applied for
+                <strong>Capital 3</strong> since we use different
+                testing and training sets
+                <hr />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Results and observations.</strong>Qualitative
+      results are reported in Table&nbsp;<a class="tbl" href=
+      "#tab2">2</a>. All methods perform well in the simple,
+      one-to-one relation <strong>Capital 1</strong>. Due to the
+      clear false facts and the semantically similar training
+      examples, there are few paths/sub-graphs between 2 entities
+      in false facts and entities in true facts are highly
+      connected. However, differences in the methods become clear
+      with the other datasets involving nonfunctional relations
+      (<strong>Bestseller, Award</strong>) or complex training data
+      (<strong>Capital 2,3</strong>).</p>
+      <p><em>KL</em> is more robust to nonfunctional predicates
+      than other path-based methods. The reason is that it does not
+      rely on the predicate semantics as expressed by the labels.
+      However, KL has issues in the classification of
+      <strong>Capital 2</strong>, where false instances are created
+      from other close but different relations. For example,
+      Cambridge is not <em>capital</em> of Massachusetts, but it is
+      one of its <em>largestCities</em>. Due to the lack of
+      semantics, KL treats both Cambridge and Boston as capital of
+      Massachusetts because it finds good proximity between the two
+      cities and the state in the graph. This leads to worse
+      result, compared to KG-Miner, PRA and SFE.</p>
+      <p><em>KG-Miner, PRA, SFE</em>outperform KL and GraphE but
+      show a significant drop in quality for <strong>Capital
+      2</strong>, where the true <em>capitalOf</em> statements are
+      mixed with false statements that relate to
+      <em>largestCities</em> predicate. The two predicates have
+      similar paths that lead to misclassification in some cases.
+      Moreover, <strong>17/50</strong> US capital-cities are also
+      the largest city in their states, which leads to degraded
+      performance as the algorithms treat capitals as largest
+      cities. Increasing the path length leads to more
+      discriminative/informative features, thereby improving the
+      performance, as we see with SFE from <em>length=3</em> (AUROC
+      = 0.93) to <em>length=5</em> (AUROC = 0.97). However, this
+      comes with a trade-off in computational complexity, as we
+      discuss later.</p>
+      <p><em>KGMiner, PRA, SFE</em> are also challenged by the more
+      intricate training set in <strong>Capital 3</strong>, with
+      the best methods now achieving AUROC = 0.92. This show the
+      <em>context-dependency</em> of discriminative path-based
+      models, where a specific relation may have different
+      “definitions” in different contexts. For example, US state
+      capitals and worldwide capitals are different in many ways
+      (such as scale, the institutions they host) and this is
+      reflected by their features.</p>
+      <p><em>Non functional predicate</em> <strong>Award</strong>is
+      difficult to model for all methods due to two reasons. First,
+      awards come from very different fields, so it is hard to find
+      a recurrent pattern for most of the people who got at least
+      one. Second, it is hard to define <strong>award</strong> with
+      short predicate paths, as shown by the poor results in
+      <em>length 3</em> KG-Miner and SFE. Extracting longer paths
+      brings a significant improvement with <em>length 5</em> SFE
+      outperforming <em>length 3</em>, as the algorithm can now
+      find informative paths that nicely support checking
+      <strong>Award</strong> facts. Similar comments apply for
+      <strong>Bestseller</strong>, where the impact of the
+      nonfunctional triples is smaller because of the large number
+      of authors with only one book.</p>
+      <p><em>TransE and TransH</em> do not achieve the same
+      performance of the other methods. Also, no clear distinctions
+      are visible when comparing their results, despite TransH is
+      expected to better handle non functional relations. This may
+      due to the knowledge graph we used in this work. DBPedia
+      graph is larger and denser than FB15K (≈ 75K nodes, ≈ 315K
+      edges), the largest graph used in previous
+      tests&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>].</p>
+      <div class="table-responsive" id="tab3">
+        <div class="table-caption">
+          <span class="table-number">Table 3:</span> <span class=
+          "table-title">Average feature extraction time (sec) for
+          fact.</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:center;">
+              <strong>Algorithm</strong></td>
+              <td style="text-align:center;">Setting</td>
+              <td style="text-align:center;">Time (seconds)</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">KL</td>
+              <td style="text-align:center;">Metric</td>
+              <td style="text-align:center;">10.5</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">KG-Miner</td>
+              <td style="text-align:center;">m = 3</td>
+              <td style="text-align:center;">0.12</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">m = 4</td>
+              <td style="text-align:center;">&gt; 600</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">PRA</td>
+              <td style="text-align:center;">w/s = 100, w/p =
+              50</td>
+              <td style="text-align:center;">0.48</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">w/s = 200, w/p =
+              100</td>
+              <td style="text-align:center;">0.60</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">SFE</td>
+              <td style="text-align:center;">m = 3</td>
+              <td style="text-align:center;">0.001</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;"></td>
+              <td style="text-align:center;">m = 5</td>
+              <td style="text-align:center;">0.01</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">Para_graphE</td>
+              <td style="text-align:center;">TransE/TransH</td>
+              <td style="text-align:center;">4 hours (to learn
+              embed.)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>We report in Table&nbsp;<a class="tbl" href="#tab3">3</a>
+      the average execution times for each algorithm to calculate
+      the inference of a fact. Path-based algorithms are faster
+      than computational models such as KL or stochastic models
+      like TransE, TransH, and PRA. As expected, sub-graph search
+      in SFE is more efficient than full-graph search in KG-Miner
+      when increasing the predicate path length.</p>
+    </section>
+    <section id="sec-15">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span>
+          Conclusions</h2>
+        </div>
+      </header>
+      <p>This work is the first step towards a general benchmark
+      for fact checking algorithms. We plan to extend it with more
+      datasets, including more predicates and more KBs, and more
+      algorithms. An important missing component is a generator of
+      synthetic scenarios that makes use of the lessons learned
+      with our initial datasets. The generator will create
+      scenarios of arbitrary size and complexity by mixing the
+      properties we highlighted, such as challenging false facts
+      and heterogeneous true facts. Another important direction is
+      to extend the test bed with real facts from news, from
+      example from existing fact check challenges (e.g., <a class=
+      "link-inline force-break" href=
+      "https://herox.com/factcheck">https://herox.com/factcheck</a>).</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Christian Bizer, Jens
+        Lehmann, Georgi Kobilarov, Sören Auer, Christian Becker,
+        Richard Cyganiak, and Sebastian Hellmann. 2009. DBpedia-A
+        crystallization point for the Web of Data. <em><em>Web
+        Semantics: science, services and agents on the world wide
+        web</em></em> 7, 3(2009), 154–165.</li>
+        <li id="BibPLXBIB0002" label="[2]">Antoine Bordes, Nicolas
+        Usunier, Alberto Garcia-Duran, Jason Weston, and Oksana
+        Yakhnenko. 2013. Translating embeddings for modeling
+        multi-relational data. In <em><em>NIPS</em></em> .
+        2787–2795.</li>
+        <li id="BibPLXBIB0003" label="[3]">Giovanni&nbsp;Luca
+        Ciampaglia, Prashant Shiralkar, Luis&nbsp;M Rocha, Johan
+        Bollen, Filippo Menczer, and Alessandro Flammini. 2015.
+        Computational fact checking from knowledge networks.
+        <em><em>PloS one</em></em> 10, 6 (2015), e0128193.</li>
+        <li id="BibPLXBIB0004" label="[4]">Emilio Ferrara, Onur
+        Varol, Clayton&nbsp;A. Davis, Filippo Menczer, and
+        Alessandro Flammini. 2016. The rise of social bots.
+        <em><em>Commun. ACM</em></em> 59, 7 (2016), 96–104.</li>
+        <li id="BibPLXBIB0005" label="[5]">Luis&nbsp;Antonio
+        Galárraga, Christina Teflioudi, Katja Hose, and Fabian
+        Suchanek. 2013. AMIE: association rule mining under
+        incomplete evidence in ontological knowledge bases. In
+        <em><em>WWW</em></em> . ACM, 413–422.</li>
+        <li id="BibPLXBIB0006" label="[6]">Matt Gardner and
+        Tom&nbsp;M Mitchell. 2015. Efficient and Expressive
+        Knowledge Base Completion Using Subgraph Feature
+        Extraction. In <em><em>EMNLP</em></em> . 1488–1498.</li>
+        <li id="BibPLXBIB0007" label="[7]">Matt Gardner,
+        Partha&nbsp;Pratim Talukdar, Jayant Krishnamurthy, and Tom
+        Mitchell. 2014. Incorporating vector space similarity in
+        random walk inference over knowledge bases. In
+        <em><em>EMNLP</em></em> .</li>
+        <li id="BibPLXBIB0008" label="[8]">Naeemul Hassan, Fatma
+        Arslan, Chengkai Li, and Mark Tremayne. 2017. Toward
+        Automated Fact-Checking: Detecting Check-worthy Factual
+        Claims by ClaimBuster. In <em><em>KDD</em></em> .</li>
+        <li id="BibPLXBIB0009" label="[9]">Stefano Ortona, Vamsi
+        Meduri, and Paolo Papotti. 2018. Robust discovery of
+        positive and negative rules in knowledge-bases. In
+        <em><em>ICDE</em></em> .</li>
+        <li id="BibPLXBIB0010" label="[10]">Baoxu Shi and Tim
+        Weninger. 2016. Discriminative predicate path mining for
+        fact checking in knowledge graphs. <em><em>Knowledge-Based
+        Systems</em></em> 104 (2016), 123–133.</li>
+        <li id="BibPLXBIB0011" label="[11]">Zhen Wang, Jianwen
+        Zhang, Jianlin Feng, and Zheng Chen. 2014. Knowledge Graph
+        Embedding by Translating on Hyperplanes.. In
+        <em><em>AAAI</em></em> . 1112–1119.</li>
+        <li id="BibPLXBIB0012" label="[12]">Wu-Jun&nbsp;Li
+        Xiao-Fan&nbsp;Niu. 2017. ParaGraphE: A Library for Parallel
+        Knowledge Graph Embedding. In <em><em>arXiv.
+        2017.</em></em></li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>Code and data
+    available at&nbsp;<a class="link-inline force-break" href=
+    "https://github.com/huynhvp/Benchmark_Fact_Checking">https://github.com/huynhvp/Benchmark_Fact_Checking</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191616">https://doi.org/10.1145/3184558.3191616</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

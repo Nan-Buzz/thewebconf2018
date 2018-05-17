@@ -1,1 +1,1434 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> <head>  <title>The Liquid User Experience API</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script> </head> <body id="main">  <section class="front-matter">   <section>    <header class="title-info">    <div class="journal-title">     <h1>      <span class="title">The Liquid User Experience API</span>      <br/>      <span class="subTitle"/>     </h1>    </div>    </header>    <div class="authorGroup">    <div class="author">     <span class="givenName">Andrea</span>     <span class="surName">Gallidabino</span>     Software Institute, Faculty of Informatics, USI, Lugano, Switzerland, <a href="mailto:andrea.gallidabino@gmail.com">andrea.gallidabino@gmail.com</a>    </div>    <div class="author">     <span class="givenName">Cesare</span>     <span class="surName">Pautasso</span>     Software Institute, Faculty of Informatics, USI, Lugano, Switzerland, <a href="mailto:c.pautasso@ieee.org">c.pautasso@ieee.org</a>    </div>            </div>    <br/>    <div class="pubInfo">    <p>DOI: <a href="https://doi.org/10.1145/3184558.3188738" target="_blank">https://doi.org/10.1145/3184558.3188738</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">    <p>     <small>In the past years the average number of Web-enabled devices owned by each user has significantly increased. Liquid Web applications enable users to take advantage of all their devices sequentially to migrate their running applications across them or simultaneously when running different views of the same application at the same time on each device. Developers of liquid Web application need to control how to expose the liquid behavior of their cross-device Web applications to the users. To do so, they can use the API of Liquid.js we describe in this paper. Liquid.js is a framework for building component-based rich Web applications which run across multiple Web-enabled devices. The framework is based on technologies such as Polymer, WebRTC, WebWorkers, PouchDB and Yjs. Liquid.js helps to build decentralized Web applications whose components can seamlessly flow directly between Web browsers carrying along their execution state. The Liquid.js API gives developers fine-grained control over the liquid user experience primitives, device discovery, and the lifecycle of liquid Web components.</small>    </p>    </div>    <div class="classifications">    <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>Liquid Software</small>, </span>     <span class="keyword">      <small> Web Components</small>, </span>     <span class="keyword">      <small> API</small>     </span>    </div>    <br/>    <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Andrea Gallidabino and Cesare Pautasso. 2018. The Liquid User Experience API. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 9 Pages. <a href="https://doi.org/10.1145/3184558.3188738" class="link-inline force-break"       target="_blank">https://doi.org/10.1145/3184558.3188738</a></small>     </p>    </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-3">    <header>    <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>    </div>    </header>    <p>As more and more heterogeneous devices (e.g., mobile phones, tablets, laptops, but also watches, cars and smart TVs) are used to access the Web, it becomes important to take responsive Web design &#x2013; where Web applications can adapt to individual devices &#x2013; to the next level&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0010">10</a>]. The liquid software metaphor&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>] represents how software should behave when it is deployed across multiple devices: as a liquid adapts to the shape of its container, similarly, liquid software flows across and adapts to take full advantage of the set of devices on which it is deployed. Liquid software can: (1) adapt its user interface to the set of devices being concurrently used to run the application; (2) seamlessly migrate a running application across multiple devices following the user attention&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>]; (3) synchronize the state of applications distributed across multiple devices.</p>    <p>Native mobile platforms have started to feature continuity/handoff capabilities to address multi-device usage, a feature that is only starting to become present in few individual Web applications, but so far has been mostly ignored within the underlying Web platform. In this paper we describe the developer API of the Liquid.js for Polymer framework, which is used to build component-based, decentralized Web applications that can be dynamically deployed across multiple Web-enabled devices.</p>    <p>Liquid.js for Polymer<a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a> is a prototype framework for developing liquid Web applications which can be used with existing Polymer-based rich Web applications. To get started, the framework simply requires developers to annotate existing Polymer custom elements to explicitly indicate which property values should be transferred or synchronized across devices&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>]. This paper fully describes the features and the APIs exposed by the framework that can be used by developers for creating customized liquid user experiences with fine-grained control over the lifecycle of liquid Web applications: decentralized Web applications that can be dynamically deployed on multiple Web-enabled heterogeneous devices.</p>    <p>Liquid.js allows developers to support the following use case scenarios&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>]: &#x2022; <strong>Sequential use</strong> - one single user runs the application using one single device at a time. The user can switch from one device to another and continue to run the same application on the second device with the expectation that: 1) the application seamlessly adapts to the new device hardware and software capabilities and 2) the user can instantaneously resume working on the new device. For example, after planning a trip using a map displayed on a large-screen fixed device, the directions are transferred on a mobile device that will be carried along while traveling. &#x2022; <strong>Simultaneous use</strong> - one user connects to the application from multiple devices at the same time, i.e., the user opens a session by running the application both on his phone and on his laptop simultaneously. For example, credit card payments entered on e-commerce Websites using a personal computer may require approval by using the fingerprint or face scanner found on a smartphone before the checkout transaction completes. Depending on the capabilities of the devices connected, each device may show a responsive view of the same user interface, or it could display a dedicated view, allowing each device to play a distinct and complementary role in the distributed user interface of the application&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>]. &#x2022; <strong>Collaborative use</strong> - several users open and run the same application on multiple devices. The collaboration between the users can be either sequential or simultaneous. For example, users build a collaborative slideshow by selecting pictures taken with their personal phones to be displayed on a shared public display. The multi-user scenarios with liquid software and data flowing across device ownership boundaries has important privacy and security implications that are not discussed in this paper. Also the API presented in this paper does not feature any authentication or access control mechanism, which is out of scope for this paper where we focus on the single-user scenarios.</p>   </section>   <section id="sec-4">    <header>    <div class="title-info">     <h2>      <span class="section-number">2</span> Related Work</h2>    </div>    </header>    <p>In the literature there are many frameworks that enable the creation of Web applications with behaviors originally described in the <em>Liquid Software manifesto</em>&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>]. Nevertheless Liquid.js is the first one to propose an API featuring the liquid user experience primitives described in&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>].</p>    <p>PolyChrome&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>] is a centralized Web framework for building co-browsing applications, where the implemented views can span on multiple surfaces deployed on multiple devices. The framework defines and supports four predefined layouts: <em>stitching</em>, <em>replication</em>, <em>nesting</em>, and <em>overloading</em>. The PolyChrome API makes a distinction between <em>interactions</em> and <em>events</em>: <em>interactions</em> change the data of the application and are sent to the Web server where the central state of the application is stored; <em>events</em> change the view displayed on the devices and are directly exchanged between all paired devices. Polychrome can create components out of legacy applications in order to create views spanning across multiple devices. Polychrome makes the whole Web application liquid, while Liquid.js targets component-based applications: in Liquid.js it is possible to migrate, fork and clone individual components across different devices so that developers can have full control on the granularity of the liquid user experience.</p>    <p>In the cross-device distributed user interfaces research area XD-MVC&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0009">9</a>] is a Web framework which can be used to develop decentralized cross-device applications focused on automatic cross-device adaptation of its user interface. The framework allows to easily decompose and migrate component-based Web application built on the Polymer framework. Migration is implemented at the application level, however only the state is synchronized between devices. From the developer point of view, migration is implemented by clipping off child components from their parents depending on which device they are deployed, simulating the expected <em>migration</em> behavior expected by Liquid software. XD-MVC supports declarative adaptation of the view layer as views and components can be annotated with rules that describe how components are expected to be shown across multiple devices. By interpreting up these rules, XD-MVC is able to decide which parts of a view need to be clipped depending on the configuration of the set of connected devices. The Liquid.js API we present in this paper allows developers to programmatically control and fine-tune the deployment configuration of liquid Web applications and could be used to implement similar rule-based adaptation policies.</p>   </section>   <section id="sec-5">    <header>    <div class="title-info">     <h2>      <span class="section-number">3</span> Liquid.js for Polymer</h2>    </div>    </header>    <figure id="fig1">    <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3188738/images/www18companion-244-fig1.jpg" class="img-responsive" alt="Figure 1"      longdesc=""/>    <div class="figure-caption">     <span class="figure-number">Figure 1:</span>     <span class="figure-title">Liquid.js Architecture</span>    </div>    </figure>    <p>Liquid.js for Polymer&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>] is a Web framework for building decentralized, component-based, liquid Web applications that can be deployed across multiple heterogeneous devices. The assumption is that applications developed using Liquid.js are built using the Web Components standard, which provides the necessary abstractions to structure the application user interface and its state into modular, reusable and composable units and that can be independently deployed across multiple devices. While for sequential usage scenarios it is sufficient to make the whole Web application liquid, a fine-grained component-based approach is particularly suitable for simultaneous usage scenarios. This way, developer may control the deployment configuration of each part of the user interface and best decide how to empower the users to rearrange and lay out the Web application across all available devices.</p>    <p>More specifically, we assume that components are built with the Polymer framework, developed by Google. Liquid.js is compatible with any of the Polymer components that can be found on the <em>Catalogue of Web Components</em><a class="fn" href="#fn2" id="foot-fn2"><sup>2</sup></a> as well as with any Polymer component built by Web developers complying with Polymer v1.x rules. Liquid.js transparently takes care of the state synchronization thanks to Yjs&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0012">12</a>], a connector for concurrency control and conflict resolution which communicates over both WebSockets and WebRTC peer to peer connections.</p>    <p>Developers using Liquid.js&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>] need to inject the Liquid <em>behavior</em> into the Polymer components they decide to make Liquid so that they can be dynamically migrated to run on other devices. More precisely, the Liquid behavior gives to a stateful Web component the ability to be dynamically deployed, migrated, forked, and cloned on any Web browser-enabled device.</p>    <p>To do so, the state of a Web component can be annotated following the Liquid.js conventions. Developers can choose which components are Liquid and they can explicitly define which properties should be shared with other devices upon the migration of the component. Liquid.js reads the annotated components and transparently manages asset deployment, state migration and synchronization between components running on different devices. The Liquid.js convention labels any Polymer component importing the Liquid behavior as a <em>liquid component</em>, and any Polymer property that need to be synchronized as a <em>liquid property</em>. Liquid properties can only be defined inside a liquid component. A liquid component can be instantiated on any <em>device</em> running a Web browser connected to the liquid Web application discovery server.</p>    <p>Liquid.js allows users to instantiate any component provided by the Web application on any of their devices, furthermore it allows users to migrate those components directly across any other device. By default, Liquid.js wraps the Polymer component around a frame which displays a menu with the corresponding liquid user experience actions (i.e., migrate the component to another device as shown in Figure&#x00A0;<a class="fig" href="#fig3">2</a> a). Developers can however choose to hide such frame and completely redesign and customize the liquid user experience using the API described in this paper.</p>    <p>Whenever a component moves across devices, if the target does not yet own the assets of the component, it will request them from the source so that they can be dynamically loaded on the new device. To do so, Liquid.js supports both a centralized and decentralized approach to distribute and deploy the assets of a Web application. Like any other traditional Web application, the server of the liquid application (see Figure&#x00A0;<a class="fig" href="#fig1">1</a>) stores all the assets of the application (i.e., the HTML, CSS, and JavaScript files containing the definition of liquid components). As assets are downloaded by the clients connected to the application, Liquid.js no longer relies only on the central Web server. Since clients own a copy of the assets they can help the server by sending the assets to new clients connecting to the application. Clients can <em>distribute</em> assets to their neighbouring devices through peer-to-peer channels created with the WebRTC Peer Connection and DataChannel APIs. Creating a fully distributed architecture from the very beginning is impossible with current Web technologies, because users connecting from their Web browsers do not yet own a public IP address, thus they need to connect to a Web server in any case for discovery purposes. Therefore the server of the liquid application takes care of the discovery of the clients by implementing a <em>Signaling Server</em> which can also be used for relaying messages between the devices that cannot create a direct WebRTC connection between them.</p>    <p>Liquid.js identifies liquid properties, liquid components and devices with unique identifiers (URIs). The framework applies an identifier to each device upon connection and it assigns an identifier to liquid components and their properties whenever they are instantiated. These identifiers can be used as URIs&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>] within the framework whenever there is the need to refer to them, e.g. in order to migrate a liquid component from a device to another the source <em>componentURI</em> and the target <em>deviceURI</em> have to be known. Liquid.js URIs follow the liquid URI scheme and are dereferenceable through the framework and not by using the HTTP protocol. URIs simplify the design of the API as the same methods can be applied both to components deployed on the device issuing the command as well as to remote components.</p>    <p>The liquid behavior transparently communicates directly with the core components of the library, the <em>Liquid API</em> component, and the <em>y-liquid</em> component (see Figure&#x00A0;<a class="fig" href="#fig1">1</a>). The latter defines the implementation of a connector for the Yjs framework&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0012">12</a>] which takes care of synchronizing data structures between devices. Whenever the state of the component&#x0027;s liquid properties changes, the Yjs and the y-liquid connector create and send synchronization messages which are automatically delivered to other paired devices.</p>    <p>The existing behavior of any application built without using Liquid.js (legacy Polymer components) is left unchanged also if it is upgraded to liquid, as the components still have full access to any W3C HTML5 APIs or any imported library defined in the main JavaScript environment. Liquid.js wraps the solid Polymer components and sets up proxy traps and object observers on the annotated Polymer properties. This approach allows to separate concerns between the liquid behavior and the actual component behavior without requiring developers to change the code they already own. Instead, they only need to explicitly annotate as liquid the properties whose values should be migrated or kept synchronized across devices. For more information on the internals of Liquid.js, refer to&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>].</p>   </section>   <section id="sec-6">    <header>    <div class="title-info">     <h2>      <span class="section-number">4</span> The Liquid.js API</h2>    </div>    </header>    <p>The core Liquid.js API deals with device configuration and discovery, controls the liquid component lifecycle and exposes the liquid user experience primitives that can be used for advanced customization scenarios of the default user experience controls provided by Liquid.js. Additionally, the API offers a cross-device version of many useful HTML5 APIs, such as Liquid WebWorkers, for offloading computationally intensive tasks across devices, Liquid Storage, for managing the runtime state of components shared across multiple devices, and Local Persistence, for storing snapshots of component state. The Assets API supports peer to peer deployment of the Web application assets and the Connection API provides a decentralized event bus. Many of the described methods are asynchronous because they require inter-device communication. In this case, they return Promises to represent the successful or failed completion of the asynchronous method invocation.</p>    <section id="sec-7">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.1</span> Framework Configuration API</h3>     </div>    </header>    <div class="table-responsive" id="tab1">     <div class="table-caption">      <span class="table-number">Table 1:</span>      <span class="table-title">Liquid.js API: framework configuration</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;">        <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3188738/images/www18companion-244-graphic2.jpg" class="img-responsive" alt=""         longdesc=""/>       </td>       </tr>      </tbody>     </table>    </div>    <p>The Framework Configuration API (see Table&#x00A0;<a class="tbl" href="#tab1">1</a>) allows developers to configure the client-side of Liquid.js and instantiate the Liquid.js framework properly. The <em>configure</em> method expects an <em>options</em> object (see&#x00A0;Listing&#x00A0;1 for default values) in which the developer should at least define the host address of the Web server used for discovery and asset deployment. <figure id="fig2">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3188738/images/www18companion-244-fig2.jpg" class="img-responsive" alt=""       longdesc=""/>     </figure>    </p>    <p>The <em>getLoadableComponents</em> returns the list of components stored and accessible from the server-side. To enumerate the component types cached and available from other devices, use the Assets API.</p>    <div class="table-responsive" id="tab2">     <div class="table-caption">      <span class="table-number">Table 2:</span>      <span class="table-title">Liquid.js API: component lifecycle and liquid storage</span>     </div>     <table class="table">      <tbody>       <tr>       <td colspan="2" style="text-align:right;">        <strong>Method name and parameters</strong>        <hr/>       </td>       <td style="text-align:left;">        <strong>Return value</strong>       </td>       </tr>       <tr>       <td colspan="3" style="text-align:left;">        <strong>Component Lifecycle</strong>        <hr/>       </td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">loadComponentType(componentTypeURI)</td>       <td style="text-align:left;">Promise(componentTypeURI)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">createComponent(componentType[,DeviceURI,&#x00A0;DOMElem,&#x00A0;UIType])</td>       <td style="text-align:left;">Promise(createdComponentURI)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">registerComponent(componentURI)</td>       <td style="text-align:left;">Promise(componentURI)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">instantiateComponent(compType[,DOMEl,&#x00A0;UIType])</td>       <td style="text-align:left;">Promise(instantiatedComponent)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">deleteComponent(componentURI)</td>       <td style="text-align:left;">Promise()</td>       </tr>       <tr>       <td colspan="3" style="text-align:left;">        <strong>Liquid Storage for Stateful Component Synchronization</strong>        <hr/>       </td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">getState(componentURI)</td>       <td style="text-align:left;">Promise(stateSnapshot)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">setState(componentURI,&#x00A0;stateSnapshot)</td>       <td style="text-align:left;">Promise(componentURI)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">pairComponent(sourceCompURI1,&#x00A0;targetCompURI2)</td>       <td style="text-align:left;">Promise()</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">unpairComponent(sourceCompURI1,&#x00A0;targetCompURI2)</td>       <td style="text-align:left;">Promise()</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">pairProperty(sourcePropURI,&#x00A0;targetPropURI)</td>       <td style="text-align:left;">Promise()</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">unpairProperty(sourcePropURI,&#x00A0;targetPropURI)</td>       <td style="text-align:left;">Promise()</td>       </tr>      </tbody>     </table>    </div>    <p>Since it is difficult for the user to recognize a device by its <em>deviceURI</em>, Liquid.js allows developers to assign <em>devicenames</em> to the devices with the method <em>setDevicename</em>. The function can be called only on the device issuing the API method, it is not possible to change the deviceName of remote devices. If the developer chooses to label devices with a name, it can replace all occurrences of <em>deviceURI</em> with the assigned devicename in all methods calls of the API. The server guarantees the uniqueness of the devicename.</p>    <p>The remaining methods of this API return a snapshot of the current deployment configuration of the liquid Web application. The <em>getAllComponentURIs</em> method returns either the componentURIs identifiers of all instantiated components inside the target device(s), or by default all URIs of the instantiated component on the issuing device. To access the actual components (the JavaScript object representing their custom element) use the <em>getAllComponentInstances</em> and <em>getComponentInstance</em>. These can only retrieve components instantiated on the device executing the command, since it is impossible to return a reference to a remote object. If the developer calls the <em>getComponentInstance</em> with an invalid componentURI, or a URI pointing to a remote component, the value <em>undefined</em> is returned.</p>    </section>    <section id="sec-8">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.2</span> Component Lifecycle API</h3>     </div>    </header>    <p>The Component Lifecycle API (Table&#x00A0;<a class="tbl" href="#tab2">2</a>) are the core methods of the Liquid.js framework. Together with the Liquid User Experience primitives <em>migrate</em>, <em>fork</em>, <em>clone</em> (see next Section <a class="sec" href="#sec-9">4.3</a>) can be used to implement customized liquid user experiences. The LUE primitives themselves are a pipelined composition of the methods described in this Section. Exposing them in the API provides access to fine-granular mechanisms so that developers can combine them in different ways to fine-time their own liquid user experience.</p>    <p>The <em>loadComponentType</em> is the first necessary step in the component lifecycle. It first checks that the assets of a component are loaded on the issuing device. If they are not yet loaded, it will request them from the Web server and dynamically load them into the Web browser. The second step on the lifecycle consists of the <em>createComponent</em> method, which creates and appends the HTML custom element tag corresponding to the Polymer component to the target DOMElement inside the DOM. The <em>registerComponent</em> takes an existing Polymer component and marks it as liquid component. If a component is not registered with Liquid.js, then any method called on this component will fail apart from <em>registerComponent</em> and <em>deleteComponent</em>. For convenience, the <em>instantiateComponent</em> method simplifies the process of instantiating a component in a single call, which is functionally equivalent to pipelining the three methods <em>loadComponentType</em> &#x2192; <em>createComponent</em> &#x2192; <em>registerComponent</em>. The <em>deleteComponent</em> removes the target component from the DOM and deletes it; a deleted component is lost forever as its state cannot be retrieved. The only way to save and later restore a component is to store a snapshot of its state by using the Local Persistence API (see subsection&#x00A0;<a class="sec" href="#sec-12">4.6</a>).</p>    <p>The liquid storage for stateful component synchronization methods can be used if the target liquid component defines at least one liquid property. The <em>getState</em> method returns a snapshot of the state of a liquid component in the form of {<em>propertyName</em>: <em>value</em>}. The <em>setState</em> method allows to apply a state snapshot to the target component. The <em>pairComponent</em> and <em>pairProperty</em> establish a binding between two properties or between all properties sharing the same name of two different component instances so that their values will be kept synchronized thereafter. The pairing is reverted by calling either the <em>unpairComponent</em> or <em>unpairProperty</em> methods.</p>    </section>    <section id="sec-9">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.3</span> Liquid User Experience (LUE) API</h3>     </div>    </header>    <div class="table-responsive" id="tab3">     <div class="table-caption">      <span class="table-number">Table 3:</span>      <span class="table-title">Liquid.js API: Liquid User Experience (LUE)</span>     </div>     <table class="table">      <tbody>       <tr>       <td colspan="2" style="text-align:right;">        <strong>Method name and parameters</strong>        <hr/>       </td>       <td style="text-align:left;">        <strong>Return value</strong>       </td>       </tr>       <tr>       <td colspan="3" style="text-align:left;">        <strong>Liquid User Experience</strong>        <hr/>       </td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">migrateComponent(sourceCompURI, targetDevURI)</td>       <td style="text-align:left;">Promise(migratedComponentURI)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">forkComponent(sourceCompURI, targetDevURI)</td>       <td style="text-align:left;">Promise(forkedComponentURI)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">cloneComponent(sourceCompURI, targetDevURI)</td>       <td style="text-align:left;">Promise(clonedComponentURI)</td>       </tr>      </tbody>     </table>    </div>    <p>The Liquid User Experience API (see Table&#x00A0;<a class="tbl" href="#tab3">3</a>) builds upon the component lifecycle and liquid storage APIs to deliver the following three primitives&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0005">5</a>]:</p>    <p>&#x2022; <strong>Migrate</strong>: a liquid component (and its runtime execution state) is transferred from one device to another. Whenever a user performs a migrate command on a component, he perceives that it visually moves from the source device to the target device while the original instance of the component disappears on the source device. Once the migration completes, the user can continue working on the target device resuming from the state immediately before the migration was triggered. Every time a component is migrated, the framework transparently transfers 1) the migrated component assets and 2) a snapshot of its state; the target device loads the asset if it was not already loaded, then it instantiates a new component on the target device and finally it applies the snapshot of the state sent from the source device.</p>    <p>&#x2022; <strong>Fork</strong>: the fork method allows to instantiate a copy of any liquid component on a new device. From the user perspective, the source component running on the initial device is unaffected by the primitive. However, on the target device a new instance of the same liquid component appears carrying over the same state. Along with the state it had on the source device, the component carries over also the same view it was previously presenting. The copies are not connected after the command finishes executing, and the states of the original component and the forked one can evolve separately.</p>    <p>&#x2022; <strong>Clone</strong>: similarly to the fork method, cloning allows to instantiate a copy of a liquid component on any target device. Differently from the fork method, the state of the original and of the cloned components is kept synchronized.</p>    <p>The LUE primitives are actually implemented as compositions of the <em>component lifecycle</em> methods (see subsection&#x00A0;<a class="sec" href="#sec-8">4.2</a>): e.g. the <em>migrateComponent</em> method is implemented by pipelining the following methods: <em>connectDevice</em> &#x2192; <em>getComponentState</em> &#x2192; <em>getLoadedAssets</em> &#x2192; <em>requestAsset</em> &#x2192; <em>loadAsset</em> &#x2192; <em>loadComponentType</em> &#x2192; <em>registerComponent</em> &#x2192; <em>createComponent</em> &#x2192; <em>setComponentState</em> &#x2192; <em>deleteComponent</em>. The pipelines defining the <em>forkComponent</em> and the <em>cloneCompoment</em> methods are very similar to the migrateComponent one, without the final call to <em>deleteComponent</em> in the case of the fork primitive, and the additional call to <em>pairComponent</em> for the clone primitive.</p>    </section>    <section id="sec-10">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.4</span> Device Discovery API</h3>     </div>    </header>    <div class="table-responsive" id="tab4">     <div class="table-caption">      <span class="table-number">Table 4:</span>      <span class="table-title">Liquid.js API: Device Discovery</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;">        <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3188738/images/www18companion-244-graphic4.jpg" class="img-responsive" alt=""         longdesc=""/>       </td>       </tr>      </tbody>     </table>    </div>    <p>The Device Discovery API (see Table&#x00A0;<a class="tbl" href="#tab4">4</a>) allows developers to access and read the metadata related to the set of remotely connected devices constituting the execution environment of the liquid Web application. The framework fingerprints all connected devices using ClientJS, this information is the only information stored on the Web server of Liquid.js and is broadcast to all machines whenever they connect to the application. The deviceInfo object has the following form: <em>{deviceURI, clientjsFingerPrint, devicename, hardwareData}</em>. In the fingerprint we include the information about the current platform type, recognizing the following three categories: Desktop/Laptop, Tablet, and Phone. There are other possible platform values, but currently Liquid.js supports these three as they can run Web browsers supporting its dependencies (e.g., WebRTC, Polymer). The <em>getDevicesList</em> and the <em>getDeviceInfoList</em> ask Liquid.js to retrieve the latest version of the list of the known and currently available devices from the Web server. The <em>getDeviceURI</em> methods returns the URI of the device issuing the command.</p>    </section>    <section id="sec-11">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.5</span> Liquid WebWorker API (beta)</h3>     </div>    </header>    <div class="table-responsive" id="tab5">     <div class="table-caption">      <span class="table-number">Table 5:</span>      <span class="table-title">Liquid.js API: worker offloading</span>     </div>     <table class="table">      <tbody>       <tr>       <td colspan="2" style="text-align:right;">        <strong>Method name and parameters</strong>        <hr/>       </td>       <td style="text-align:left;">        <strong>Return value</strong>       </td>       </tr>       <tr>       <td colspan="3" style="text-align:left;">        <strong>Liquid.js API</strong>        <hr/>       </td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">createLiquidWorker(workerName, workerURI)</td>       <td style="text-align:left;">Promise(worker)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">createLiquidWorkerArray({workerName, workerURI}[])</td>       <td style="text-align:left;">Promise(workers[])</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">pairDeviceWorkers(DeviceURI)</td>       <td style="text-align:left;">Promise(DeviceURI)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">postLiquidWorkerMessage(workerName, message)</td>       <td style="text-align:left;">Promise(callResponse)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">terminateLiquidWorker(workerName)</td>       <td style="text-align:left;">Promise(workerName)</td>       </tr>       <tr>       <td colspan="3" style="text-align:left;">        <strong>Liquid Worker API</strong>        <hr/>       </td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">postMessage(message)</td>       <td style="text-align:left;">Promise(callResponse)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">_postMessage(message)</td>       <td style="text-align:left;">Promise(callResponse)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">terminate()</td>       <td style="text-align:left;">Promise()</td>       </tr>      </tbody>     </table>    </div>    <p>The Liquid WebWorker API (see Table&#x00A0;<a class="tbl" href="#tab5">5</a>) is used for sharing the computational power of multiple devices to run computationally-heavy tasks by automatically offloading WebWorkers from weaker devices to more powerful ones.</p>    <p>The <em>createLiquidWorker</em> method allows the developer to create a WebWorker that can be shared across devices. If developers need to create multiple Liquid Workers, they can call the method <em>createLiquidWorkerArray</em> and pass an array listing all the Liquid Workers to be created. The purpose of the <em>pairDeviceWorkers</em> method is to establish a trust relationship between devices so that all Liquid Workers identified by the same name in the source device and in the target device can be executed replacing the other. When the <em>postLiquidWorkerMessage</em> method is called, Liquid.js will attempt to reduce the worker execution time and automatically decide whether the message should be sent to the local worker or to a remote one running on the pool of paired devices. Finally the <em>terminateLiquidWorker</em> methods ends the lifecycle of a Liquid worker.</p>    <p>The developer can access the Liquid worker API also without passing through the Liquid.js object, since the Liquid worker object itself exposes an API. If that is the case then the methods <em>postMessage</em> and <em>terminate</em> have the same functionalities of <em>postLiquidWorkerMessage</em> and <em>terminateLiquidWorker</em>. The <em>_postMessage</em> method bypasses the offloading functionality and ensures the task is executed on the local device.</p>    </section>    <section id="sec-12">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.6</span> Local Persistence API</h3>     </div>    </header>    <div class="table-responsive" id="tab6">     <div class="table-caption">      <span class="table-number">Table 6:</span>      <span class="table-title">Liquid.js API: local persistence</span>     </div>     <table class="table">      <tbody>       <tr>       <td colspan="3" style="text-align:left;">        <strong>Device level</strong>        <hr/>       </td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">saveDeviceState(key)</td>       <td style="text-align:left;">Promise(key)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">loadDeviceState(key)</td>       <td style="text-align:left;">Promise(key)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">getAllDeviceState()</td>       <td style="text-align:left;">Promise(deviceStateSummaries[])</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">getDeviceState(key)</td>       <td style="text-align:left;">Promise(deviceStateSummary)</td>       </tr>       <tr>       <td colspan="3" style="text-align:left;">        <strong>Component level</strong>        <hr/>       </td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">saveComponentState(key, compURI)</td>       <td style="text-align:left;">Promise(key)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">loadComponentState(key)</td>       <td style="text-align:left;">Promise(key)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">getAllComponentState()</td>       <td style="text-align:left;">Promise(compStateSummaries[])</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">getComponentState(key)</td>       <td style="text-align:left;">Promise(compStateSummary)</td>       </tr>       <tr>       <td colspan="3" style="text-align:left;">        <strong>Property level</strong>        <hr/>       </td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">savePropertyState(key, propURI)</td>       <td style="text-align:left;">Promise(key)</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">getAllPropertyState()</td>       <td style="text-align:left;">Promise(propertyStateValues[])</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:left;">getPropertyState(key)</td>       <td style="text-align:left;">Promise(propertyStateValue)</td>       </tr>      </tbody>     </table>    </div>    <p>The Local Persistence API (see Table&#x00A0;<a class="tbl" href="#tab6">6</a>) allows saving snapshots of the state of liquid components inside a PouchDB<a class="fn" href="#fn3" id="foot-fn3"><sup>3</sup></a> database running within the Web browser. The snapshot of the state can be saved at the device, component or property levels and any snapshot of the state can be loaded whenever the corresponding method is invoked. The snapshot is taken internally by the Liquid.js framework and does not need to be passed as a parameter to the save functions. The memento of the state is stored in JSON format, so that it can be exchanged across devices by using the event bus. The three abstraction levels allow the developer to <em>save</em> a snapshot of the corresponding state by giving the unique <em>key</em> that will be used by the PouchDB database to identify the snapshot. All abstraction levels define a <em>getAll</em> and <em>get</em> method for snapshots retrieval. Finally the device and component levels also define a <em>load</em> method which will restore on the current device the retrieved snapshot, the method will instantiate and reload the state of all liquid components contained in the snapshot. The property-level API does not define any <em>load</em> method because properties cannot be instantiated independently from the liquid component they belong to.</p>    </section>    <section id="sec-13">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.7</span> Assets API</h3>     </div>    </header>    <div class="table-responsive" id="tab7">     <div class="table-caption">      <span class="table-number">Table 7:</span>      <span class="table-title">Liquid.js API: Assets (peer to peer)</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;">        <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3188738/images/www18companion-244-graphic5.jpg" class="img-responsive" alt=""         longdesc=""/>       </td>       </tr>      </tbody>     </table>    </div>    <p>The Asset API (see Table&#x00A0;<a class="tbl" href="#tab7">7</a>) is used to request and load asset files. In order to create a distributed environment that rely on the Web server as little as possible, Liquid.js allows clients to exchange asset files among one another. To make this possible, at least one connected client needs to own a cached copy of the assets initially stored on the Web server. For security reasons not all assets can be shared using the Asset API, the list of shareable assets must be filled in a configuration file. Assets can be shared only on-demand, clients cannot send assets directly to other clients if the receiving client did not send a request. The <em>requestAsset</em> method allows the developer to poll a device for a specific asset which can then be executed on the machine by calling the <em>loadAsset</em> function. The <em>getAsset</em> method retrieves the script of any asset that was previously executed on the machine, and the <em>getLoadedAssets</em> methods returns an array containing all names of executed scripts. The <em>loadingChange</em> event is associated to this API: whenever Liquid.js is in the process of requesting or loading a file from another client it will set its loading status to true, in all other cases the status is set to false.</p>    </section>    <section id="sec-14">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.8</span> Connection API and Event Bus</h3>     </div>    </header>    <div class="table-responsive" id="tab8">     <div class="table-caption">      <span class="table-number">Table 8:</span>      <span class="table-title">Liquid.js API: device connection and event bus</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;">        <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3188738/images/www18companion-244-graphic6.jpg" class="img-responsive" alt=""         longdesc=""/>       </td>       </tr>      </tbody>     </table>    </div>    <p>The Connection API (see Table&#x00A0;<a class="tbl" href="#tab8">8</a>) defines all methods that can be used by the developers to communicate with other devices, or with the Web server if they need to exchange data with it. The API exposes three methods that can be used to enhance the server-client communication passing through a WebSocket channel: the <em>isSocketConnected</em> method returns the current status of the connection, the <em>sendSocketCustomMessage</em> method is used for direct communication with the server through special purpose socket messages, and the <em>socketDisconnect</em> method closes the connection with the server. The remaining four methods are used to interact with the WebRTC channels connecting clients: the <em>connectDevice</em> ask Liquid.js to open a connection between the current device and the target device, similarly the <em>disconnectDevice</em> forces to close an opened connection between target clients; the <em>sendMessage</em> method allows developer to exchange messages with other clients; and the <em>getConnectionList</em> method returns an array containing all deviceURIs of all devices that share an opened connection with the issuing device.</p>    <p>The device connection API triggers the <em>connect</em>, <em>disconnect</em> and <em>reconnect</em> events whenever the socketConnected status changes. Moreover the developers can define their own custom sockets events if they are developing Web applications that need to communicate directly with the Web server.</p>    </section>   </section>   <section id="sec-15">    <header>    <div class="title-info">     <h2>      <span class="section-number">5</span> Custom Liquid User Experience Examples</h2>    </div>    </header>    <figure id="fig3">    <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3188738/images/www18companion-244-fig3.jpg" class="img-responsive" alt="Figure 3"      longdesc=""/>    <div class="figure-caption">     <span class="figure-number">Figure 3:</span>     <span class="figure-title">Default and customized Liquid User Experiences</span>    </div>    </figure>    <p>We have used the Liquid.JS API to build the demos available on <a class="link-inline force-break" href="http://liquid.inf.usi.ch">http://liquid.inf.usi.ch</a>. The screenshots in Figure&#x00A0;<a class="fig" href="#fig3">2</a> a and <a class="fig" href="#fig3">2</a> b show the same <em>picture</em> liquid component instantiated in two different Web applications loading the default visual user interface of a Liquid.js application and a customized version.</p>    <p>The liquid Web application shown in Figure&#x00A0;<a class="fig" href="#fig3">2</a> a has a toolbar on which it is possible to see the current <em>connectionStatus</em> of the application, see and edit the <em>devicename</em> of the device and instantiate new components by using the dropdown menu. Each instantiated liquid components is wrapped with a frame which displays a menu containing a list of possible actions to apply on the selected component, e.g. from the dropdown menu users can choose to <em>migrate</em>, <em>fork</em> or <em>clone</em> the component to the devices named <em>ThisDevice</em> and <em>OtherDevice</em>, fork on all connected devices or delete the component.</p>    <p>The liquid Web application shown in Figure&#x00A0;<a class="fig" href="#fig3">2</a> b also features a toolbar. With it, the user can only see the automatically generated <em>devicename</em> (i.e., P0, P1, P2), can toggle a button switching the selected LUE primitive between <em>migrate</em> and <em>clone</em> and press a green button labeled as <em>share</em> (in the screenshot it is green). Whenever the user presses the <em>share</em> buttons it switches on and off the white icons shown on the top-right corner of the <em>picture</em> liquid components (see left picture). Those icons provide affordances which can be dragged to migrate or clone the component elsewhere. The target device is also represented as a colored icon located within the dark frame shown surrounding the browser window. This frame appears as soon as the user starts dragging the white liquid component icon. If the dragged icon is dropped on any of those devices the component will be migrated or cloned on the target device, depending on the pre-selected action. Listing&#x00A0;2 shows the code executed when the user drops the icon on one of the colored circles. <figure id="fig4">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3188738/images/www18companion-244-fig4.jpg" class="img-responsive" alt=""      longdesc=""/>    </figure>    </p>   </section>   <section id="sec-16">    <header>    <div class="title-info">     <h2>      <span class="section-number">6</span> Conclusions and Future Work</h2>    </div>    </header>    <p>With Liquid.js it is possible to migrate, fork and clone Polymer components once they import the Liquid behavior. A Polymer component contains the definition of its UI (HTML5 and CSS3), its logic (JavaScript) and its state (Web Component Properties). The API design takes advantage of standard Web/JavaScript idioms such as URIs for the identification and location of entities which can be deployed locally or remotely and Promises to simplify dealing with asynchronous, long-running operations. We have attempted to keep the Liquid.js API free from Polymer-specific concepts so that it can be generally applicable to other Web component frameworks in which the state of a component can be explicitly represented as a set of properties.</p>    <p>The liquid user experience primitives we provide move and synchronize all layers (model, view, controller) of a component from one device to another along with the assets defining it. While our experience with developing liquid Web applications indicates that this is a reasonable solution for programmatically implementing the liquid user experience, our next goal is to design a rule-based approach so that developers can declaratively specify how the liquid components should be deployed across multiple devices. On one side, the liquid user experience defines how a user interacts with the software in a multiple device environment to configure and re-arrange its distributed user interface. On the other side, developers should be able to define rules to automatically adapt and continuously re-adapt their applications to the set of available devices, while still letting the user further customize where and how the UI of the software should be displayed. The Liquid.js APIs we described in this paper provides all necessary mechanisms to experiment with different forms of complementary view adaptation.</p>   </section>   <section id="sec-17">    <header>    <div class="title-info">     <h2>Acknowledgements</h2>    </div>    </header>    <p>This work is partially supported by the SNF with the &#x201D;Fundamentals of Parallel Programming for PaaS Clouds&#x201D; project (Nr. 153560).</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>    <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>    </div>    </header>    <ul class="bibUl">    <li id="BibPLXBIB0001" label="[1]">Sriram&#x00A0;Karthik Badam and Niklas Elmqvist. 2014. Polychrome: A cross-device framework for collaborative web visualization. In <em>      <em>Proc. of the Ninth ACM International Conference on Interactive Tabletops and Surfaces</em>     </em>. ACM, 109&#x2013;118.</li>    <li id="BibPLXBIB0002" label="[2]">Andrea Gallidabino. 2016. Migrating and Pairing Recursive Stateful Components Between Multiple Devices with Liquid.js for Polymer. In <em>      <em>Proc. of the 16th International Conference on Web Engineering (ICWE)</em>     </em>. 555&#x2013;558. <a class="link-inline force-break"      href="https://doi.org/10.1007/978-3-319-38791-8_47"      target="_blank">https://doi.org/10.1007/978-3-319-38791-8_47</a></li>    <li id="BibPLXBIB0003" label="[3]">Andrea Gallidabino and Cesare Pautasso. 2016. Deploying Stateful Web Components on Multiple Devices with Liquid.js for Polymer. In <em>      <em>Proc. of CBSE</em>     </em>. IEEE, 85&#x2013;90.</li>    <li id="BibPLXBIB0004" label="[4]">Andrea Gallidabino and Cesare Pautasso. 2016. The Liquid.js Framework for Migrating and Cloning Stateful Web Components across Multiple Devices. In <em>      <em>Proc. of the 25th International Conference on the World Wide Web (WWW), Demonstrations</em>     </em>. 183&#x2013;186. <a class="link-inline force-break" href="https://doi.org/10.1145/2872518.2890538"      target="_blank">https://doi.org/10.1145/2872518.2890538</a></li>    <li id="BibPLXBIB0005" label="[5]">Andrea Gallidabino, Cesare Pautasso, Tommi Mikkonen, Kari Systa, Jari-Pekka Voutilainen, and Antero Taivalsaari. 2017. Architecting Liquid Software. <em>      <em>Journal of Web Engineering</em>     </em>16, 5&#x0026;6 (September 2017), 433&#x2013;470.</li>    <li id="BibPLXBIB0006" label="[6]">Google. 2012. The New Multi-screen World: Understanding Cross-platform Consumer Behavior. (2012). <a class="link-inline force-break"      href="http://services.google.com/fh/files/misc/multiscreenworld_final.pdf">http://services.google.com/fh/files/misc/multiscreenworld_final.pdf</a>.</li>    <li id="BibPLXBIB0007" label="[7]">John Hartman, Udi Manber, Larry Peterson, and Todd Proebsting. 1996. <em>      <em>Liquid software: A new paradigm for networked systems</em>     </em>. Technical Report 96-11. University of Arizona.</li>    <li id="BibPLXBIB0008" label="[8]">Maria Husmann, Nicola Marcacci&#x00A0;Rossi, and Moira&#x00A0;C. Norrie. 2016. Usage Analysis of Cross-Device Web Applications. In <em>      <em>Proc. 5th ACM Intl. Symposium on Pervasive Displays</em>     </em>. ACM, 212&#x2013;219.</li>    <li id="BibPLXBIB0009" label="[9]">Maria Husmann and Moira&#x00A0;C. Norrie. 2015. XD-MVC: Support for Cross-Device Development. In <em>      <em>1st Intl. Workshop on Interacting with Multi-Device Ecologies in the Wild (Cross-Surface 2015)</em>     </em>. ETH Z&#x00FC;rich, Switzerland, Z&#x00FC;rich.</li>    <li id="BibPLXBIB0010" label="[10]">Michal Levin. 2014. <em>      <em>Designing Multi-device Experiences: An Ecosystem Approach to User Experiences Across Devices</em>     </em>. O&#x0027;Reilly.</li>    <li id="BibPLXBIB0011" label="[11]">Paul Luff and Christian Heath. 1998. Mobility in collaboration. In <em>      <em>Proceedings of the 1998 ACM conference on Computer supported cooperative work</em>     </em>. ACM, 305&#x2013;314.</li>    <li id="BibPLXBIB0012" label="[12]">Petru Nicolaescu, Kevin Jahns, Michael Derntl, and Ralf Klamma. 2015. Yjs: A Framework for Near Real-Time P2P Shared Editing on Arbitrary Data Types. In <em>      <em>Proc. of ICWE</em>     </em>. Springer, 675&#x2013;678.</li>    <li id="BibPLXBIB0013" label="[13]">Antero Taivalsaari, Tommi Mikkonen, and Kari Systa. 2014. Liquid Software Manifesto: The Era of Multiple Device Ownership and Its Implications for Software Architecture. In <em>      <em>Proc. of the 38th Annual IEEE Computer Software and Applications Conference (COMPSAC)</em>     </em>. IEEE, 338&#x2013;343.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">    <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>Website: <a class="link-inline force-break" href="http://liquid.inf.usi.ch/">http://liquid.inf.usi.ch/</a> and GitHub: <a class="link-inline force-break" href="https://github.com/liquidjs">https://github.com/liquidjs</a>   </p>   <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class="link-inline force-break" href="https://www.webcomponents.org/">https://www.webcomponents.org/</a>   </p>   <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class="link-inline force-break" href="https://pouchdb.com/">https://pouchdb.com/</a>   </p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>    <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3188738">https://doi.org/10.1145/3184558.3188738</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div> </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>The Liquid User Experience API</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">The Liquid User Experience
+          API</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Andrea</span> <span class=
+          "surName">Gallidabino</span> Software Institute, Faculty
+          of Informatics, USI, Lugano, Switzerland, <a href=
+          "mailto:andrea.gallidabino@gmail.com">andrea.gallidabino@gmail.com</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Cesare</span> <span class=
+          "surName">Pautasso</span> Software Institute, Faculty of
+          Informatics, USI, Lugano, Switzerland, <a href=
+          "mailto:c.pautasso@ieee.org">c.pautasso@ieee.org</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3188738"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3188738</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>In the past years the average number of
+        Web-enabled devices owned by each user has significantly
+        increased. Liquid Web applications enable users to take
+        advantage of all their devices sequentially to migrate
+        their running applications across them or simultaneously
+        when running different views of the same application at the
+        same time on each device. Developers of liquid Web
+        application need to control how to expose the liquid
+        behavior of their cross-device Web applications to the
+        users. To do so, they can use the API of Liquid.js we
+        describe in this paper. Liquid.js is a framework for
+        building component-based rich Web applications which run
+        across multiple Web-enabled devices. The framework is based
+        on technologies such as Polymer, WebRTC, WebWorkers,
+        PouchDB and Yjs. Liquid.js helps to build decentralized Web
+        applications whose components can seamlessly flow directly
+        between Web browsers carrying along their execution state.
+        The Liquid.js API gives developers fine-grained control
+        over the liquid user experience primitives, device
+        discovery, and the lifecycle of liquid Web
+        components.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>Liquid
+          Software</small>,</span> <span class="keyword"><small>Web
+          Components</small>,</span> <span class=
+          "keyword"><small>API</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Andrea Gallidabino and Cesare Pautasso. 2018. The Liquid
+          User Experience API. In <em>WWW '18 Companion: The 2018
+          Web Conference Companion,</em> <em>April 23–27,
+          2018,</em> <em>Lyon, France. ACM, New York, NY, USA</em>
+          9 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3188738" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3188738</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>As more and more heterogeneous devices (e.g., mobile
+      phones, tablets, laptops, but also watches, cars and smart
+      TVs) are used to access the Web, it becomes important to take
+      responsive Web design – where Web applications can adapt to
+      individual devices – to the next level&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0010">10</a>]. The liquid software
+      metaphor&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0013">13</a>] represents how software should
+      behave when it is deployed across multiple devices: as a
+      liquid adapts to the shape of its container, similarly,
+      liquid software flows across and adapts to take full
+      advantage of the set of devices on which it is deployed.
+      Liquid software can: (1) adapt its user interface to the set
+      of devices being concurrently used to run the application;
+      (2) seamlessly migrate a running application across multiple
+      devices following the user attention&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0011">11</a>]; (3) synchronize the
+      state of applications distributed across multiple
+      devices.</p>
+      <p>Native mobile platforms have started to feature
+      continuity/handoff capabilities to address multi-device
+      usage, a feature that is only starting to become present in
+      few individual Web applications, but so far has been mostly
+      ignored within the underlying Web platform. In this paper we
+      describe the developer API of the Liquid.js for Polymer
+      framework, which is used to build component-based,
+      decentralized Web applications that can be dynamically
+      deployed across multiple Web-enabled devices.</p>
+      <p>Liquid.js for Polymer<a class="fn" href="#fn1" id=
+      "foot-fn1"><sup>1</sup></a> is a prototype framework for
+      developing liquid Web applications which can be used with
+      existing Polymer-based rich Web applications. To get started,
+      the framework simply requires developers to annotate existing
+      Polymer custom elements to explicitly indicate which property
+      values should be transferred or synchronized across
+      devices&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>]. This paper fully describes the
+      features and the APIs exposed by the framework that can be
+      used by developers for creating customized liquid user
+      experiences with fine-grained control over the lifecycle of
+      liquid Web applications: decentralized Web applications that
+      can be dynamically deployed on multiple Web-enabled
+      heterogeneous devices.</p>
+      <p>Liquid.js allows developers to support the following use
+      case scenarios&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>]: • <strong>Sequential use</strong> -
+      one single user runs the application using one single device
+      at a time. The user can switch from one device to another and
+      continue to run the same application on the second device
+      with the expectation that: 1) the application seamlessly
+      adapts to the new device hardware and software capabilities
+      and 2) the user can instantaneously resume working on the new
+      device. For example, after planning a trip using a map
+      displayed on a large-screen fixed device, the directions are
+      transferred on a mobile device that will be carried along
+      while traveling. • <strong>Simultaneous use</strong> - one
+      user connects to the application from multiple devices at the
+      same time, i.e., the user opens a session by running the
+      application both on his phone and on his laptop
+      simultaneously. For example, credit card payments entered on
+      e-commerce Websites using a personal computer may require
+      approval by using the fingerprint or face scanner found on a
+      smartphone before the checkout transaction completes.
+      Depending on the capabilities of the devices connected, each
+      device may show a responsive view of the same user interface,
+      or it could display a dedicated view, allowing each device to
+      play a distinct and complementary role in the distributed
+      user interface of the application&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0008">8</a>]. • <strong>Collaborative
+      use</strong> - several users open and run the same
+      application on multiple devices. The collaboration between
+      the users can be either sequential or simultaneous. For
+      example, users build a collaborative slideshow by selecting
+      pictures taken with their personal phones to be displayed on
+      a shared public display. The multi-user scenarios with liquid
+      software and data flowing across device ownership boundaries
+      has important privacy and security implications that are not
+      discussed in this paper. Also the API presented in this paper
+      does not feature any authentication or access control
+      mechanism, which is out of scope for this paper where we
+      focus on the single-user scenarios.</p>
+    </section>
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Related
+          Work</h2>
+        </div>
+      </header>
+      <p>In the literature there are many frameworks that enable
+      the creation of Web applications with behaviors originally
+      described in the <em>Liquid Software
+      manifesto</em>&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0013">13</a>]. Nevertheless Liquid.js is the first
+      one to propose an API featuring the liquid user experience
+      primitives described in&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>].</p>
+      <p>PolyChrome&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>] is a centralized Web framework for
+      building co-browsing applications, where the implemented
+      views can span on multiple surfaces deployed on multiple
+      devices. The framework defines and supports four predefined
+      layouts: <em>stitching</em>, <em>replication</em>,
+      <em>nesting</em>, and <em>overloading</em>. The PolyChrome
+      API makes a distinction between <em>interactions</em> and
+      <em>events</em>: <em>interactions</em> change the data of the
+      application and are sent to the Web server where the central
+      state of the application is stored; <em>events</em> change
+      the view displayed on the devices and are directly exchanged
+      between all paired devices. Polychrome can create components
+      out of legacy applications in order to create views spanning
+      across multiple devices. Polychrome makes the whole Web
+      application liquid, while Liquid.js targets component-based
+      applications: in Liquid.js it is possible to migrate, fork
+      and clone individual components across different devices so
+      that developers can have full control on the granularity of
+      the liquid user experience.</p>
+      <p>In the cross-device distributed user interfaces research
+      area XD-MVC&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>] is a Web framework which can be used
+      to develop decentralized cross-device applications focused on
+      automatic cross-device adaptation of its user interface. The
+      framework allows to easily decompose and migrate
+      component-based Web application built on the Polymer
+      framework. Migration is implemented at the application level,
+      however only the state is synchronized between devices. From
+      the developer point of view, migration is implemented by
+      clipping off child components from their parents depending on
+      which device they are deployed, simulating the expected
+      <em>migration</em> behavior expected by Liquid software.
+      XD-MVC supports declarative adaptation of the view layer as
+      views and components can be annotated with rules that
+      describe how components are expected to be shown across
+      multiple devices. By interpreting up these rules, XD-MVC is
+      able to decide which parts of a view need to be clipped
+      depending on the configuration of the set of connected
+      devices. The Liquid.js API we present in this paper allows
+      developers to programmatically control and fine-tune the
+      deployment configuration of liquid Web applications and could
+      be used to implement similar rule-based adaptation
+      policies.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Liquid.js for
+          Polymer</h2>
+        </div>
+      </header>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3188738/images/www18companion-244-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Liquid.js Architecture</span>
+        </div>
+      </figure>
+      <p>Liquid.js for Polymer&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>] is a Web framework for building
+      decentralized, component-based, liquid Web applications that
+      can be deployed across multiple heterogeneous devices. The
+      assumption is that applications developed using Liquid.js are
+      built using the Web Components standard, which provides the
+      necessary abstractions to structure the application user
+      interface and its state into modular, reusable and composable
+      units and that can be independently deployed across multiple
+      devices. While for sequential usage scenarios it is
+      sufficient to make the whole Web application liquid, a
+      fine-grained component-based approach is particularly
+      suitable for simultaneous usage scenarios. This way,
+      developer may control the deployment configuration of each
+      part of the user interface and best decide how to empower the
+      users to rearrange and lay out the Web application across all
+      available devices.</p>
+      <p>More specifically, we assume that components are built
+      with the Polymer framework, developed by Google. Liquid.js is
+      compatible with any of the Polymer components that can be
+      found on the <em>Catalogue of Web Components</em><a class=
+      "fn" href="#fn2" id="foot-fn2"><sup>2</sup></a> as well as
+      with any Polymer component built by Web developers complying
+      with Polymer v1.x rules. Liquid.js transparently takes care
+      of the state synchronization thanks to Yjs&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0012">12</a>], a
+      connector for concurrency control and conflict resolution
+      which communicates over both WebSockets and WebRTC peer to
+      peer connections.</p>
+      <p>Developers using Liquid.js&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0004">4</a>] need to inject the Liquid
+      <em>behavior</em> into the Polymer components they decide to
+      make Liquid so that they can be dynamically migrated to run
+      on other devices. More precisely, the Liquid behavior gives
+      to a stateful Web component the ability to be dynamically
+      deployed, migrated, forked, and cloned on any Web
+      browser-enabled device.</p>
+      <p>To do so, the state of a Web component can be annotated
+      following the Liquid.js conventions. Developers can choose
+      which components are Liquid and they can explicitly define
+      which properties should be shared with other devices upon the
+      migration of the component. Liquid.js reads the annotated
+      components and transparently manages asset deployment, state
+      migration and synchronization between components running on
+      different devices. The Liquid.js convention labels any
+      Polymer component importing the Liquid behavior as a
+      <em>liquid component</em>, and any Polymer property that need
+      to be synchronized as a <em>liquid property</em>. Liquid
+      properties can only be defined inside a liquid component. A
+      liquid component can be instantiated on any <em>device</em>
+      running a Web browser connected to the liquid Web application
+      discovery server.</p>
+      <p>Liquid.js allows users to instantiate any component
+      provided by the Web application on any of their devices,
+      furthermore it allows users to migrate those components
+      directly across any other device. By default, Liquid.js wraps
+      the Polymer component around a frame which displays a menu
+      with the corresponding liquid user experience actions (i.e.,
+      migrate the component to another device as shown in
+      Figure&nbsp;<a class="fig" href="#fig3">2</a> a). Developers
+      can however choose to hide such frame and completely redesign
+      and customize the liquid user experience using the API
+      described in this paper.</p>
+      <p>Whenever a component moves across devices, if the target
+      does not yet own the assets of the component, it will request
+      them from the source so that they can be dynamically loaded
+      on the new device. To do so, Liquid.js supports both a
+      centralized and decentralized approach to distribute and
+      deploy the assets of a Web application. Like any other
+      traditional Web application, the server of the liquid
+      application (see Figure&nbsp;<a class="fig" href=
+      "#fig1">1</a>) stores all the assets of the application
+      (i.e., the HTML, CSS, and JavaScript files containing the
+      definition of liquid components). As assets are downloaded by
+      the clients connected to the application, Liquid.js no longer
+      relies only on the central Web server. Since clients own a
+      copy of the assets they can help the server by sending the
+      assets to new clients connecting to the application. Clients
+      can <em>distribute</em> assets to their neighbouring devices
+      through peer-to-peer channels created with the WebRTC Peer
+      Connection and DataChannel APIs. Creating a fully distributed
+      architecture from the very beginning is impossible with
+      current Web technologies, because users connecting from their
+      Web browsers do not yet own a public IP address, thus they
+      need to connect to a Web server in any case for discovery
+      purposes. Therefore the server of the liquid application
+      takes care of the discovery of the clients by implementing a
+      <em>Signaling Server</em> which can also be used for relaying
+      messages between the devices that cannot create a direct
+      WebRTC connection between them.</p>
+      <p>Liquid.js identifies liquid properties, liquid components
+      and devices with unique identifiers (URIs). The framework
+      applies an identifier to each device upon connection and it
+      assigns an identifier to liquid components and their
+      properties whenever they are instantiated. These identifiers
+      can be used as URIs&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>] within the framework whenever there
+      is the need to refer to them, e.g. in order to migrate a
+      liquid component from a device to another the source
+      <em>componentURI</em> and the target <em>deviceURI</em> have
+      to be known. Liquid.js URIs follow the liquid URI scheme and
+      are dereferenceable through the framework and not by using
+      the HTTP protocol. URIs simplify the design of the API as the
+      same methods can be applied both to components deployed on
+      the device issuing the command as well as to remote
+      components.</p>
+      <p>The liquid behavior transparently communicates directly
+      with the core components of the library, the <em>Liquid
+      API</em> component, and the <em>y-liquid</em> component (see
+      Figure&nbsp;<a class="fig" href="#fig1">1</a>). The latter
+      defines the implementation of a connector for the Yjs
+      framework&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0012">12</a>] which takes care of synchronizing
+      data structures between devices. Whenever the state of the
+      component's liquid properties changes, the Yjs and the
+      y-liquid connector create and send synchronization messages
+      which are automatically delivered to other paired
+      devices.</p>
+      <p>The existing behavior of any application built without
+      using Liquid.js (legacy Polymer components) is left unchanged
+      also if it is upgraded to liquid, as the components still
+      have full access to any W3C HTML5 APIs or any imported
+      library defined in the main JavaScript environment. Liquid.js
+      wraps the solid Polymer components and sets up proxy traps
+      and object observers on the annotated Polymer properties.
+      This approach allows to separate concerns between the liquid
+      behavior and the actual component behavior without requiring
+      developers to change the code they already own. Instead, they
+      only need to explicitly annotate as liquid the properties
+      whose values should be migrated or kept synchronized across
+      devices. For more information on the internals of Liquid.js,
+      refer to&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>].</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> The Liquid.js
+          API</h2>
+        </div>
+      </header>
+      <p>The core Liquid.js API deals with device configuration and
+      discovery, controls the liquid component lifecycle and
+      exposes the liquid user experience primitives that can be
+      used for advanced customization scenarios of the default user
+      experience controls provided by Liquid.js. Additionally, the
+      API offers a cross-device version of many useful HTML5 APIs,
+      such as Liquid WebWorkers, for offloading computationally
+      intensive tasks across devices, Liquid Storage, for managing
+      the runtime state of components shared across multiple
+      devices, and Local Persistence, for storing snapshots of
+      component state. The Assets API supports peer to peer
+      deployment of the Web application assets and the Connection
+      API provides a decentralized event bus. Many of the described
+      methods are asynchronous because they require inter-device
+      communication. In this case, they return Promises to
+      represent the successful or failed completion of the
+      asynchronous method invocation.</p>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Framework
+            Configuration API</h3>
+          </div>
+        </header>
+        <div class="table-responsive" id="tab1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Liquid.js API: framework
+            configuration</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;"><img src=
+                "../../../data/deliveryimages.acm.org/10.1145/3190000/3188738/images/www18companion-244-graphic2.jpg"
+                class="img-responsive" alt="" longdesc="" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The Framework Configuration API (see
+        Table&nbsp;<a class="tbl" href="#tab1">1</a>) allows
+        developers to configure the client-side of Liquid.js and
+        instantiate the Liquid.js framework properly. The
+        <em>configure</em> method expects an <em>options</em>
+        object (see&nbsp;Listing&nbsp;1 for default values) in
+        which the developer should at least define the host address
+        of the Web server used for discovery and asset
+        deployment.</p>
+        <figure id="fig2">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3188738/images/www18companion-244-fig2.jpg"
+          class="img-responsive" alt="" longdesc="" />
+        </figure>
+        <p></p>
+        <p>The <em>getLoadableComponents</em> returns the list of
+        components stored and accessible from the server-side. To
+        enumerate the component types cached and available from
+        other devices, use the Assets API.</p>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Liquid.js API: component lifecycle and
+            liquid storage</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td colspan="2" style="text-align:right;">
+                  <strong>Method name and parameters</strong>
+                  <hr />
+                </td>
+                <td style="text-align:left;"><strong>Return
+                value</strong></td>
+              </tr>
+              <tr>
+                <td colspan="3" style="text-align:left;">
+                  <strong>Component Lifecycle</strong>
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                loadComponentType(componentTypeURI)</td>
+                <td style="text-align:left;">
+                Promise(componentTypeURI)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                createComponent(componentType[,DeviceURI,&nbsp;DOMElem,&nbsp;UIType])</td>
+                <td style="text-align:left;">
+                Promise(createdComponentURI)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                registerComponent(componentURI)</td>
+                <td style="text-align:left;">
+                Promise(componentURI)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                instantiateComponent(compType[,DOMEl,&nbsp;UIType])</td>
+                <td style="text-align:left;">
+                Promise(instantiatedComponent)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                deleteComponent(componentURI)</td>
+                <td style="text-align:left;">Promise()</td>
+              </tr>
+              <tr>
+                <td colspan="3" style="text-align:left;">
+                  <strong>Liquid Storage for Stateful Component
+                  Synchronization</strong>
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                getState(componentURI)</td>
+                <td style="text-align:left;">
+                Promise(stateSnapshot)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                setState(componentURI,&nbsp;stateSnapshot)</td>
+                <td style="text-align:left;">
+                Promise(componentURI)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                pairComponent(sourceCompURI1,&nbsp;targetCompURI2)</td>
+                <td style="text-align:left;">Promise()</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                unpairComponent(sourceCompURI1,&nbsp;targetCompURI2)</td>
+                <td style="text-align:left;">Promise()</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                pairProperty(sourcePropURI,&nbsp;targetPropURI)</td>
+                <td style="text-align:left;">Promise()</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                unpairProperty(sourcePropURI,&nbsp;targetPropURI)</td>
+                <td style="text-align:left;">Promise()</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Since it is difficult for the user to recognize a device
+        by its <em>deviceURI</em>, Liquid.js allows developers to
+        assign <em>devicenames</em> to the devices with the method
+        <em>setDevicename</em>. The function can be called only on
+        the device issuing the API method, it is not possible to
+        change the deviceName of remote devices. If the developer
+        chooses to label devices with a name, it can replace all
+        occurrences of <em>deviceURI</em> with the assigned
+        devicename in all methods calls of the API. The server
+        guarantees the uniqueness of the devicename.</p>
+        <p>The remaining methods of this API return a snapshot of
+        the current deployment configuration of the liquid Web
+        application. The <em>getAllComponentURIs</em> method
+        returns either the componentURIs identifiers of all
+        instantiated components inside the target device(s), or by
+        default all URIs of the instantiated component on the
+        issuing device. To access the actual components (the
+        JavaScript object representing their custom element) use
+        the <em>getAllComponentInstances</em> and
+        <em>getComponentInstance</em>. These can only retrieve
+        components instantiated on the device executing the
+        command, since it is impossible to return a reference to a
+        remote object. If the developer calls the
+        <em>getComponentInstance</em> with an invalid componentURI,
+        or a URI pointing to a remote component, the value
+        <em>undefined</em> is returned.</p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> Component
+            Lifecycle API</h3>
+          </div>
+        </header>
+        <p>The Component Lifecycle API (Table&nbsp;<a class="tbl"
+        href="#tab2">2</a>) are the core methods of the Liquid.js
+        framework. Together with the Liquid User Experience
+        primitives <em>migrate</em>, <em>fork</em>, <em>clone</em>
+        (see next Section <a class="sec" href="#sec-9">4.3</a>) can
+        be used to implement customized liquid user experiences.
+        The LUE primitives themselves are a pipelined composition
+        of the methods described in this Section. Exposing them in
+        the API provides access to fine-granular mechanisms so that
+        developers can combine them in different ways to fine-time
+        their own liquid user experience.</p>
+        <p>The <em>loadComponentType</em> is the first necessary
+        step in the component lifecycle. It first checks that the
+        assets of a component are loaded on the issuing device. If
+        they are not yet loaded, it will request them from the Web
+        server and dynamically load them into the Web browser. The
+        second step on the lifecycle consists of the
+        <em>createComponent</em> method, which creates and appends
+        the HTML custom element tag corresponding to the Polymer
+        component to the target DOMElement inside the DOM. The
+        <em>registerComponent</em> takes an existing Polymer
+        component and marks it as liquid component. If a component
+        is not registered with Liquid.js, then any method called on
+        this component will fail apart from
+        <em>registerComponent</em> and <em>deleteComponent</em>.
+        For convenience, the <em>instantiateComponent</em> method
+        simplifies the process of instantiating a component in a
+        single call, which is functionally equivalent to pipelining
+        the three methods <em>loadComponentType</em> →
+        <em>createComponent</em> → <em>registerComponent</em>. The
+        <em>deleteComponent</em> removes the target component from
+        the DOM and deletes it; a deleted component is lost forever
+        as its state cannot be retrieved. The only way to save and
+        later restore a component is to store a snapshot of its
+        state by using the Local Persistence API (see
+        subsection&nbsp;<a class="sec" href="#sec-12">4.6</a>).</p>
+        <p>The liquid storage for stateful component
+        synchronization methods can be used if the target liquid
+        component defines at least one liquid property. The
+        <em>getState</em> method returns a snapshot of the state of
+        a liquid component in the form of {<em>propertyName</em>:
+        <em>value</em>}. The <em>setState</em> method allows to
+        apply a state snapshot to the target component. The
+        <em>pairComponent</em> and <em>pairProperty</em> establish
+        a binding between two properties or between all properties
+        sharing the same name of two different component instances
+        so that their values will be kept synchronized thereafter.
+        The pairing is reverted by calling either the
+        <em>unpairComponent</em> or <em>unpairProperty</em>
+        methods.</p>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span> Liquid User
+            Experience (LUE) API</h3>
+          </div>
+        </header>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Liquid.js API: Liquid User Experience
+            (LUE)</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td colspan="2" style="text-align:right;">
+                  <strong>Method name and parameters</strong>
+                  <hr />
+                </td>
+                <td style="text-align:left;"><strong>Return
+                value</strong></td>
+              </tr>
+              <tr>
+                <td colspan="3" style="text-align:left;">
+                  <strong>Liquid User Experience</strong>
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                migrateComponent(sourceCompURI, targetDevURI)</td>
+                <td style="text-align:left;">
+                Promise(migratedComponentURI)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                forkComponent(sourceCompURI, targetDevURI)</td>
+                <td style="text-align:left;">
+                Promise(forkedComponentURI)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                cloneComponent(sourceCompURI, targetDevURI)</td>
+                <td style="text-align:left;">
+                Promise(clonedComponentURI)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The Liquid User Experience API (see Table&nbsp;<a class=
+        "tbl" href="#tab3">3</a>) builds upon the component
+        lifecycle and liquid storage APIs to deliver the following
+        three primitives&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0005">5</a>]:</p>
+        <p>• <strong>Migrate</strong>: a liquid component (and its
+        runtime execution state) is transferred from one device to
+        another. Whenever a user performs a migrate command on a
+        component, he perceives that it visually moves from the
+        source device to the target device while the original
+        instance of the component disappears on the source device.
+        Once the migration completes, the user can continue working
+        on the target device resuming from the state immediately
+        before the migration was triggered. Every time a component
+        is migrated, the framework transparently transfers 1) the
+        migrated component assets and 2) a snapshot of its state;
+        the target device loads the asset if it was not already
+        loaded, then it instantiates a new component on the target
+        device and finally it applies the snapshot of the state
+        sent from the source device.</p>
+        <p>• <strong>Fork</strong>: the fork method allows to
+        instantiate a copy of any liquid component on a new device.
+        From the user perspective, the source component running on
+        the initial device is unaffected by the primitive. However,
+        on the target device a new instance of the same liquid
+        component appears carrying over the same state. Along with
+        the state it had on the source device, the component
+        carries over also the same view it was previously
+        presenting. The copies are not connected after the command
+        finishes executing, and the states of the original
+        component and the forked one can evolve separately.</p>
+        <p>• <strong>Clone</strong>: similarly to the fork method,
+        cloning allows to instantiate a copy of a liquid component
+        on any target device. Differently from the fork method, the
+        state of the original and of the cloned components is kept
+        synchronized.</p>
+        <p>The LUE primitives are actually implemented as
+        compositions of the <em>component lifecycle</em> methods
+        (see subsection&nbsp;<a class="sec" href="#sec-8">4.2</a>):
+        e.g. the <em>migrateComponent</em> method is implemented by
+        pipelining the following methods: <em>connectDevice</em> →
+        <em>getComponentState</em> → <em>getLoadedAssets</em> →
+        <em>requestAsset</em> → <em>loadAsset</em> →
+        <em>loadComponentType</em> → <em>registerComponent</em> →
+        <em>createComponent</em> → <em>setComponentState</em> →
+        <em>deleteComponent</em>. The pipelines defining the
+        <em>forkComponent</em> and the <em>cloneCompoment</em>
+        methods are very similar to the migrateComponent one,
+        without the final call to <em>deleteComponent</em> in the
+        case of the fork primitive, and the additional call to
+        <em>pairComponent</em> for the clone primitive.</p>
+      </section>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.4</span> Device
+            Discovery API</h3>
+          </div>
+        </header>
+        <div class="table-responsive" id="tab4">
+          <div class="table-caption">
+            <span class="table-number">Table 4:</span> <span class=
+            "table-title">Liquid.js API: Device Discovery</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;"><img src=
+                "../../../data/deliveryimages.acm.org/10.1145/3190000/3188738/images/www18companion-244-graphic4.jpg"
+                class="img-responsive" alt="" longdesc="" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The Device Discovery API (see Table&nbsp;<a class="tbl"
+        href="#tab4">4</a>) allows developers to access and read
+        the metadata related to the set of remotely connected
+        devices constituting the execution environment of the
+        liquid Web application. The framework fingerprints all
+        connected devices using ClientJS, this information is the
+        only information stored on the Web server of Liquid.js and
+        is broadcast to all machines whenever they connect to the
+        application. The deviceInfo object has the following form:
+        <em>{deviceURI, clientjsFingerPrint, devicename,
+        hardwareData}</em>. In the fingerprint we include the
+        information about the current platform type, recognizing
+        the following three categories: Desktop/Laptop, Tablet, and
+        Phone. There are other possible platform values, but
+        currently Liquid.js supports these three as they can run
+        Web browsers supporting its dependencies (e.g., WebRTC,
+        Polymer). The <em>getDevicesList</em> and the
+        <em>getDeviceInfoList</em> ask Liquid.js to retrieve the
+        latest version of the list of the known and currently
+        available devices from the Web server. The
+        <em>getDeviceURI</em> methods returns the URI of the device
+        issuing the command.</p>
+      </section>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.5</span> Liquid
+            WebWorker API (beta)</h3>
+          </div>
+        </header>
+        <div class="table-responsive" id="tab5">
+          <div class="table-caption">
+            <span class="table-number">Table 5:</span> <span class=
+            "table-title">Liquid.js API: worker offloading</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td colspan="2" style="text-align:right;">
+                  <strong>Method name and parameters</strong>
+                  <hr />
+                </td>
+                <td style="text-align:left;"><strong>Return
+                value</strong></td>
+              </tr>
+              <tr>
+                <td colspan="3" style="text-align:left;">
+                  <strong>Liquid.js API</strong>
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                createLiquidWorker(workerName, workerURI)</td>
+                <td style="text-align:left;">Promise(worker)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                createLiquidWorkerArray({workerName,
+                workerURI}[])</td>
+                <td style="text-align:left;">
+                Promise(workers[])</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                pairDeviceWorkers(DeviceURI)</td>
+                <td style="text-align:left;">
+                Promise(DeviceURI)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                postLiquidWorkerMessage(workerName, message)</td>
+                <td style="text-align:left;">
+                Promise(callResponse)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                terminateLiquidWorker(workerName)</td>
+                <td style="text-align:left;">
+                Promise(workerName)</td>
+              </tr>
+              <tr>
+                <td colspan="3" style="text-align:left;">
+                  <strong>Liquid Worker API</strong>
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                postMessage(message)</td>
+                <td style="text-align:left;">
+                Promise(callResponse)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                _postMessage(message)</td>
+                <td style="text-align:left;">
+                Promise(callResponse)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">terminate()</td>
+                <td style="text-align:left;">Promise()</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The Liquid WebWorker API (see Table&nbsp;<a class="tbl"
+        href="#tab5">5</a>) is used for sharing the computational
+        power of multiple devices to run computationally-heavy
+        tasks by automatically offloading WebWorkers from weaker
+        devices to more powerful ones.</p>
+        <p>The <em>createLiquidWorker</em> method allows the
+        developer to create a WebWorker that can be shared across
+        devices. If developers need to create multiple Liquid
+        Workers, they can call the method
+        <em>createLiquidWorkerArray</em> and pass an array listing
+        all the Liquid Workers to be created. The purpose of the
+        <em>pairDeviceWorkers</em> method is to establish a trust
+        relationship between devices so that all Liquid Workers
+        identified by the same name in the source device and in the
+        target device can be executed replacing the other. When the
+        <em>postLiquidWorkerMessage</em> method is called,
+        Liquid.js will attempt to reduce the worker execution time
+        and automatically decide whether the message should be sent
+        to the local worker or to a remote one running on the pool
+        of paired devices. Finally the
+        <em>terminateLiquidWorker</em> methods ends the lifecycle
+        of a Liquid worker.</p>
+        <p>The developer can access the Liquid worker API also
+        without passing through the Liquid.js object, since the
+        Liquid worker object itself exposes an API. If that is the
+        case then the methods <em>postMessage</em> and
+        <em>terminate</em> have the same functionalities of
+        <em>postLiquidWorkerMessage</em> and
+        <em>terminateLiquidWorker</em>. The <em>_postMessage</em>
+        method bypasses the offloading functionality and ensures
+        the task is executed on the local device.</p>
+      </section>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.6</span> Local
+            Persistence API</h3>
+          </div>
+        </header>
+        <div class="table-responsive" id="tab6">
+          <div class="table-caption">
+            <span class="table-number">Table 6:</span> <span class=
+            "table-title">Liquid.js API: local persistence</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td colspan="3" style="text-align:left;">
+                  <strong>Device level</strong>
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                saveDeviceState(key)</td>
+                <td style="text-align:left;">Promise(key)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                loadDeviceState(key)</td>
+                <td style="text-align:left;">Promise(key)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                getAllDeviceState()</td>
+                <td style="text-align:left;">
+                Promise(deviceStateSummaries[])</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                getDeviceState(key)</td>
+                <td style="text-align:left;">
+                Promise(deviceStateSummary)</td>
+              </tr>
+              <tr>
+                <td colspan="3" style="text-align:left;">
+                  <strong>Component level</strong>
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                saveComponentState(key, compURI)</td>
+                <td style="text-align:left;">Promise(key)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                loadComponentState(key)</td>
+                <td style="text-align:left;">Promise(key)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                getAllComponentState()</td>
+                <td style="text-align:left;">
+                Promise(compStateSummaries[])</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                getComponentState(key)</td>
+                <td style="text-align:left;">
+                Promise(compStateSummary)</td>
+              </tr>
+              <tr>
+                <td colspan="3" style="text-align:left;">
+                  <strong>Property level</strong>
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">savePropertyState(key,
+                propURI)</td>
+                <td style="text-align:left;">Promise(key)</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                getAllPropertyState()</td>
+                <td style="text-align:left;">
+                Promise(propertyStateValues[])</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:left;">
+                getPropertyState(key)</td>
+                <td style="text-align:left;">
+                Promise(propertyStateValue)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The Local Persistence API (see Table&nbsp;<a class="tbl"
+        href="#tab6">6</a>) allows saving snapshots of the state of
+        liquid components inside a PouchDB<a class="fn" href="#fn3"
+        id="foot-fn3"><sup>3</sup></a> database running within the
+        Web browser. The snapshot of the state can be saved at the
+        device, component or property levels and any snapshot of
+        the state can be loaded whenever the corresponding method
+        is invoked. The snapshot is taken internally by the
+        Liquid.js framework and does not need to be passed as a
+        parameter to the save functions. The memento of the state
+        is stored in JSON format, so that it can be exchanged
+        across devices by using the event bus. The three
+        abstraction levels allow the developer to <em>save</em> a
+        snapshot of the corresponding state by giving the unique
+        <em>key</em> that will be used by the PouchDB database to
+        identify the snapshot. All abstraction levels define a
+        <em>getAll</em> and <em>get</em> method for snapshots
+        retrieval. Finally the device and component levels also
+        define a <em>load</em> method which will restore on the
+        current device the retrieved snapshot, the method will
+        instantiate and reload the state of all liquid components
+        contained in the snapshot. The property-level API does not
+        define any <em>load</em> method because properties cannot
+        be instantiated independently from the liquid component
+        they belong to.</p>
+      </section>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.7</span> Assets
+            API</h3>
+          </div>
+        </header>
+        <div class="table-responsive" id="tab7">
+          <div class="table-caption">
+            <span class="table-number">Table 7:</span> <span class=
+            "table-title">Liquid.js API: Assets (peer to
+            peer)</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;"><img src=
+                "../../../data/deliveryimages.acm.org/10.1145/3190000/3188738/images/www18companion-244-graphic5.jpg"
+                class="img-responsive" alt="" longdesc="" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The Asset API (see Table&nbsp;<a class="tbl" href=
+        "#tab7">7</a>) is used to request and load asset files. In
+        order to create a distributed environment that rely on the
+        Web server as little as possible, Liquid.js allows clients
+        to exchange asset files among one another. To make this
+        possible, at least one connected client needs to own a
+        cached copy of the assets initially stored on the Web
+        server. For security reasons not all assets can be shared
+        using the Asset API, the list of shareable assets must be
+        filled in a configuration file. Assets can be shared only
+        on-demand, clients cannot send assets directly to other
+        clients if the receiving client did not send a request. The
+        <em>requestAsset</em> method allows the developer to poll a
+        device for a specific asset which can then be executed on
+        the machine by calling the <em>loadAsset</em> function. The
+        <em>getAsset</em> method retrieves the script of any asset
+        that was previously executed on the machine, and the
+        <em>getLoadedAssets</em> methods returns an array
+        containing all names of executed scripts. The
+        <em>loadingChange</em> event is associated to this API:
+        whenever Liquid.js is in the process of requesting or
+        loading a file from another client it will set its loading
+        status to true, in all other cases the status is set to
+        false.</p>
+      </section>
+      <section id="sec-14">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.8</span> Connection
+            API and Event Bus</h3>
+          </div>
+        </header>
+        <div class="table-responsive" id="tab8">
+          <div class="table-caption">
+            <span class="table-number">Table 8:</span> <span class=
+            "table-title">Liquid.js API: device connection and
+            event bus</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;"><img src=
+                "../../../data/deliveryimages.acm.org/10.1145/3190000/3188738/images/www18companion-244-graphic6.jpg"
+                class="img-responsive" alt="" longdesc="" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The Connection API (see Table&nbsp;<a class="tbl" href=
+        "#tab8">8</a>) defines all methods that can be used by the
+        developers to communicate with other devices, or with the
+        Web server if they need to exchange data with it. The API
+        exposes three methods that can be used to enhance the
+        server-client communication passing through a WebSocket
+        channel: the <em>isSocketConnected</em> method returns the
+        current status of the connection, the
+        <em>sendSocketCustomMessage</em> method is used for direct
+        communication with the server through special purpose
+        socket messages, and the <em>socketDisconnect</em> method
+        closes the connection with the server. The remaining four
+        methods are used to interact with the WebRTC channels
+        connecting clients: the <em>connectDevice</em> ask
+        Liquid.js to open a connection between the current device
+        and the target device, similarly the
+        <em>disconnectDevice</em> forces to close an opened
+        connection between target clients; the <em>sendMessage</em>
+        method allows developer to exchange messages with other
+        clients; and the <em>getConnectionList</em> method returns
+        an array containing all deviceURIs of all devices that
+        share an opened connection with the issuing device.</p>
+        <p>The device connection API triggers the <em>connect</em>,
+        <em>disconnect</em> and <em>reconnect</em> events whenever
+        the socketConnected status changes. Moreover the developers
+        can define their own custom sockets events if they are
+        developing Web applications that need to communicate
+        directly with the Web server.</p>
+      </section>
+    </section>
+    <section id="sec-15">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Custom Liquid
+          User Experience Examples</h2>
+        </div>
+      </header>
+      <figure id="fig3">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3188738/images/www18companion-244-fig3.jpg"
+        class="img-responsive" alt="Figure 3" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 3:</span> <span class=
+          "figure-title">Default and customized Liquid User
+          Experiences</span>
+        </div>
+      </figure>
+      <p>We have used the Liquid.JS API to build the demos
+      available on <a class="link-inline force-break" href=
+      "http://liquid.inf.usi.ch">http://liquid.inf.usi.ch</a>. The
+      screenshots in Figure&nbsp;<a class="fig" href="#fig3">2</a>
+      a and <a class="fig" href="#fig3">2</a> b show the same
+      <em>picture</em> liquid component instantiated in two
+      different Web applications loading the default visual user
+      interface of a Liquid.js application and a customized
+      version.</p>
+      <p>The liquid Web application shown in Figure&nbsp;<a class=
+      "fig" href="#fig3">2</a> a has a toolbar on which it is
+      possible to see the current <em>connectionStatus</em> of the
+      application, see and edit the <em>devicename</em> of the
+      device and instantiate new components by using the dropdown
+      menu. Each instantiated liquid components is wrapped with a
+      frame which displays a menu containing a list of possible
+      actions to apply on the selected component, e.g. from the
+      dropdown menu users can choose to <em>migrate</em>,
+      <em>fork</em> or <em>clone</em> the component to the devices
+      named <em>ThisDevice</em> and <em>OtherDevice</em>, fork on
+      all connected devices or delete the component.</p>
+      <p>The liquid Web application shown in Figure&nbsp;<a class=
+      "fig" href="#fig3">2</a> b also features a toolbar. With it,
+      the user can only see the automatically generated
+      <em>devicename</em> (i.e., P0, P1, P2), can toggle a button
+      switching the selected LUE primitive between <em>migrate</em>
+      and <em>clone</em> and press a green button labeled as
+      <em>share</em> (in the screenshot it is green). Whenever the
+      user presses the <em>share</em> buttons it switches on and
+      off the white icons shown on the top-right corner of the
+      <em>picture</em> liquid components (see left picture). Those
+      icons provide affordances which can be dragged to migrate or
+      clone the component elsewhere. The target device is also
+      represented as a colored icon located within the dark frame
+      shown surrounding the browser window. This frame appears as
+      soon as the user starts dragging the white liquid component
+      icon. If the dragged icon is dropped on any of those devices
+      the component will be migrated or cloned on the target
+      device, depending on the pre-selected action. Listing&nbsp;2
+      shows the code executed when the user drops the icon on one
+      of the colored circles.</p>
+      <figure id="fig4">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3188738/images/www18companion-244-fig4.jpg"
+        class="img-responsive" alt="" longdesc="" />
+      </figure>
+      <p></p>
+    </section>
+    <section id="sec-16">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Conclusions and
+          Future Work</h2>
+        </div>
+      </header>
+      <p>With Liquid.js it is possible to migrate, fork and clone
+      Polymer components once they import the Liquid behavior. A
+      Polymer component contains the definition of its UI (HTML5
+      and CSS3), its logic (JavaScript) and its state (Web
+      Component Properties). The API design takes advantage of
+      standard Web/JavaScript idioms such as URIs for the
+      identification and location of entities which can be deployed
+      locally or remotely and Promises to simplify dealing with
+      asynchronous, long-running operations. We have attempted to
+      keep the Liquid.js API free from Polymer-specific concepts so
+      that it can be generally applicable to other Web component
+      frameworks in which the state of a component can be
+      explicitly represented as a set of properties.</p>
+      <p>The liquid user experience primitives we provide move and
+      synchronize all layers (model, view, controller) of a
+      component from one device to another along with the assets
+      defining it. While our experience with developing liquid Web
+      applications indicates that this is a reasonable solution for
+      programmatically implementing the liquid user experience, our
+      next goal is to design a rule-based approach so that
+      developers can declaratively specify how the liquid
+      components should be deployed across multiple devices. On one
+      side, the liquid user experience defines how a user interacts
+      with the software in a multiple device environment to
+      configure and re-arrange its distributed user interface. On
+      the other side, developers should be able to define rules to
+      automatically adapt and continuously re-adapt their
+      applications to the set of available devices, while still
+      letting the user further customize where and how the UI of
+      the software should be displayed. The Liquid.js APIs we
+      described in this paper provides all necessary mechanisms to
+      experiment with different forms of complementary view
+      adaptation.</p>
+    </section>
+    <section id="sec-17">
+      <header>
+        <div class="title-info">
+          <h2>Acknowledgements</h2>
+        </div>
+      </header>
+      <p>This work is partially supported by the SNF with the
+      ”Fundamentals of Parallel Programming for PaaS Clouds”
+      project (Nr. 153560).</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Sriram&nbsp;Karthik
+        Badam and Niklas Elmqvist. 2014. Polychrome: A cross-device
+        framework for collaborative web visualization. In
+        <em><em>Proc. of the Ninth ACM International Conference on
+        Interactive Tabletops and Surfaces</em></em> . ACM,
+        109–118.</li>
+        <li id="BibPLXBIB0002" label="[2]">Andrea Gallidabino.
+        2016. Migrating and Pairing Recursive Stateful Components
+        Between Multiple Devices with Liquid.js for Polymer. In
+        <em><em>Proc. of the 16th International Conference on Web
+        Engineering (ICWE)</em></em> . 555–558. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1007/978-3-319-38791-8_47" target=
+        "_blank">https://doi.org/10.1007/978-3-319-38791-8_47</a>
+        </li>
+        <li id="BibPLXBIB0003" label="[3]">Andrea Gallidabino and
+        Cesare Pautasso. 2016. Deploying Stateful Web Components on
+        Multiple Devices with Liquid.js for Polymer. In
+        <em><em>Proc. of CBSE</em></em> . IEEE, 85–90.</li>
+        <li id="BibPLXBIB0004" label="[4]">Andrea Gallidabino and
+        Cesare Pautasso. 2016. The Liquid.js Framework for
+        Migrating and Cloning Stateful Web Components across
+        Multiple Devices. In <em><em>Proc. of the 25th
+        International Conference on the World Wide Web (WWW),
+        Demonstrations</em></em> . 183–186. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/2872518.2890538" target="_blank">
+          https://doi.org/10.1145/2872518.2890538</a>
+        </li>
+        <li id="BibPLXBIB0005" label="[5]">Andrea Gallidabino,
+        Cesare Pautasso, Tommi Mikkonen, Kari Systa, Jari-Pekka
+        Voutilainen, and Antero Taivalsaari. 2017. Architecting
+        Liquid Software. <em><em>Journal of Web
+        Engineering</em></em> 16, 5&amp;6 (September 2017),
+        433–470.</li>
+        <li id="BibPLXBIB0006" label="[6]">Google. 2012. The New
+        Multi-screen World: Understanding Cross-platform Consumer
+        Behavior. (2012). <a class="link-inline force-break"
+          href="http://services.google.com/fh/files/misc/multiscreenworld_final.pdf">
+          http://services.google.com/fh/files/misc/multiscreenworld_final.pdf</a>.
+        </li>
+        <li id="BibPLXBIB0007" label="[7]">John Hartman, Udi
+        Manber, Larry Peterson, and Todd Proebsting. 1996.
+        <em><em>Liquid software: A new paradigm for networked
+        systems</em></em> . Technical Report 96-11. University of
+        Arizona.</li>
+        <li id="BibPLXBIB0008" label="[8]">Maria Husmann, Nicola
+        Marcacci&nbsp;Rossi, and Moira&nbsp;C. Norrie. 2016. Usage
+        Analysis of Cross-Device Web Applications. In <em><em>Proc.
+        5th ACM Intl. Symposium on Pervasive Displays</em></em> .
+        ACM, 212–219.</li>
+        <li id="BibPLXBIB0009" label="[9]">Maria Husmann and
+        Moira&nbsp;C. Norrie. 2015. XD-MVC: Support for
+        Cross-Device Development. In <em><em>1st Intl. Workshop on
+        Interacting with Multi-Device Ecologies in the Wild
+        (Cross-Surface 2015)</em></em> . ETH Zürich, Switzerland,
+        Zürich.</li>
+        <li id="BibPLXBIB0010" label="[10]">Michal Levin. 2014.
+        <em><em>Designing Multi-device Experiences: An Ecosystem
+        Approach to User Experiences Across Devices</em></em> .
+        O'Reilly.</li>
+        <li id="BibPLXBIB0011" label="[11]">Paul Luff and Christian
+        Heath. 1998. Mobility in collaboration. In
+        <em><em>Proceedings of the 1998 ACM conference on Computer
+        supported cooperative work</em></em> . ACM, 305–314.</li>
+        <li id="BibPLXBIB0012" label="[12]">Petru Nicolaescu, Kevin
+        Jahns, Michael Derntl, and Ralf Klamma. 2015. Yjs: A
+        Framework for Near Real-Time P2P Shared Editing on
+        Arbitrary Data Types. In <em><em>Proc. of ICWE</em></em> .
+        Springer, 675–678.</li>
+        <li id="BibPLXBIB0013" label="[13]">Antero Taivalsaari,
+        Tommi Mikkonen, and Kari Systa. 2014. Liquid Software
+        Manifesto: The Era of Multiple Device Ownership and Its
+        Implications for Software Architecture. In <em><em>Proc. of
+        the 38th Annual IEEE Computer Software and Applications
+        Conference (COMPSAC)</em></em> . IEEE, 338–343.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>Website:
+    <a class="link-inline force-break" href=
+    "http://liquid.inf.usi.ch/">http://liquid.inf.usi.ch/</a> and
+    GitHub: <a class="link-inline force-break" href=
+    "https://github.com/liquidjs">https://github.com/liquidjs</a></p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.webcomponents.org/">https://www.webcomponents.org/</a></p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "https://pouchdb.com/">https://pouchdb.com/</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3188738">https://doi.org/10.1145/3184558.3188738</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

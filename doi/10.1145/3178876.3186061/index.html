@@ -1,1 +1,1814 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> <head>  <title>Facebook (A)Live? Are Live Social Broadcasts Really Broadcasts?</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script> </head> <body id="main">  <section class="front-matter">   <section>    <header class="title-info">    <div class="journal-title">     <h1>      <span class="title">Facebook (A)Live? Are Live Social Broadcasts Really <em>Broad</em>casts?</span>      <br/>      <span class="subTitle"/>     </h1>    </div>    </header>    <div class="authorGroup">    <div class="author">     <span class="givenName">Aravindh</span>     <span class="surName">Raman</span>,     King&#x0027;s College London, <a href="mailto:aravindh.raman@kcl.ac.uk">aravindh.raman@kcl.ac.uk</a>    </div>    <div class="author">     <span class="givenName">Gareth</span>     <span class="surName">Tyson</span>,     Queen Mary University of London, <a href="mailto:g.tyson@qmul.ac.uk">g.tyson@qmul.ac.uk</a>    </div>    <div class="author">     <span class="givenName">Nishanth</span>     <span class="surName">Sastry</span>,     King&#x0027;s College London, <a href="mailto:nishanth.sastry@kcl.ac.uk">nishanth.sastry@kcl.ac.uk</a>    </div>                </div>    <br/>    <div class="pubInfo">    <p>DOI: <a href="https://doi.org/10.1145/3178876.3186061" target="_blank">https://doi.org/10.1145/3178876.3186061</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3178876" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">    <p>     <small>The era of live-broadcast is back but with two major changes. First, unlike traditional TV broadcasts, content is now streamed over the Internet enabling it to reach a&#x00A0;<em>wider</em> audience. Second, due to various user-generated content platforms it has become possible for&#x00A0;<em>anyone</em> to get involved, streaming their own content to the world. This emerging trend of <em>going live</em> usually happens via social platforms, where users perform live social broadcasts predominantly from their mobile devices, allowing their friends (and the general public) to engage with the stream in real-time. With the growing popularity of such platforms, the burden on the current Internet infrastructure is therefore expected to multiply. With this in mind, we explore one such prominent platform &#x2014; Facebook Live. We gather 3TB of data, representing one month of global activity and explore the characteristics of live social broadcast. From this, we derive simple yet effective principles which can decrease the network burden. We then dissect global and hyper-local properties of the video while on-air, by capturing the geography of the broadcasters or the users who produce the video and the viewers or the users who interact with it. Finally, we study the social engagement while the video is live and distinguish the key aspects when the same video goes on-demand. A common theme throughout the paper is that, despite its name, many attributes of Facebook Live deviate from both the concepts of <em>live</em> and <em>broadcast</em>.</small>    </p>    </div>    <div class="CCSconcepts">    <p> <small> <span style="font-weight:bold;">CCS Concepts:</span> &#x2022;<strong> Social and professional topics </strong>&#x2192; <strong>User characteristics;</strong> &#x2022;<strong> Networks </strong>&#x2192; <em>Network components;</em> <em>Network measurement;</em> &#x2022;<strong> Information systems </strong>&#x2192; <strong>World Wide Web;</strong> <em>Information systems applications;</em> </small> </p>    </div>    <div class="classifications">    <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>social live broadcast; user behaviour; edge computing</small>     </span>    </div>    <br/>    <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Aravindh Raman, Gareth Tyson, and Nishanth Sastry. 2018. Facebook (A)Live? Are Live Social Broadcasts Really <em>Broad</em>casts?. In <em>WWW 2018: The 2018 Web Conference,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 10 Pages. <a href="https://doi.org/10.1145/3178876.3186061" class="link-inline force-break"       target="_blank">https://doi.org/10.1145/3178876.3186061</a></small>     </p>    </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-4">    <header>    <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>    </div>    </header>    <p>The online sharing of user-generated content is now a day-to-day activity for many users around the world&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>]. Whereas traditionally this has followed a &#x201C;static&#x201D; upload model (where users create a video offline, and then upload their content on a platform like YouTube for on-demand viewing), recent years have seen a noticeable shift towards live equivalents. Mobile applications such as Facebook Live, Periscope and Instagram Live allow users to easily broadcast their activities to a potentially global audience. We term this medium <em>social live broadcast</em>, and distinguish it from more traditional forms of live streaming such as Twitch, which are not based on social platforms and are not impacted by the various cultural and demographic implications of a social graph-based delivery.</p>    <p>One prominent example of live social broadcast is <em>Facebook Live</em>. The platform is simple: it allows any Facebook user to &#x201C;go live&#x201D; and stream their mobile camera feed to friends (and others if public). An interesting twist is that the video optionally remains available after the broadcast, to be viewed on-demand, thus offering functionality similar to traditional user-generated platforms like YouTube. From a user behaviour perspective, Facebook Live is a particularly powerful platform due to the presence of both amateur and professional users, and the combination of live and non-live video delivery. Further, with a strong social network and a global reach, Facebook allows us to extract social features and geographical patterns. From an infrastructural perspective, it also opens up several challenges and opportunities, <em>e.g.,</em> to exploit social localities for edge caching.</p>    <p>In this paper, we make two broad contributions. First, we characterise user behaviour in mobile live social broadcast. Second, where appropriate, we highlight relevant implications for mobile live social video delivery derived from our observations. To this end, we have collected a large-scale dataset covering one month of activity on Facebook Live. This dataset not only encompasses information regarding access patterns, but also geographical indicators on where broadcasters and viewers are located. To the best of our knowledge, we are the first to study Facebook Live and, importantly, the first to derive key systems insights. Whereas the limited body of past research has focussed on performance aspects&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0027">27</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0032">32</a>], we strive to understand its end user characteristics, as well as how this might create architectural design opportunities.</p>    <p>We begin by characterising broadcaster and viewer properties (&#x00A7;<a class="sec" href="#sec-10">4</a>). We quantify Facebook Live&#x0027;s popularity, observing 3.2 million accounts performing broadcasts, with a peak of 62 million online viewers (&#x00A7;<a class="sec" href="#sec-11">4.1</a>). We identify three types of broadcasts. The majority (95%) are from social users on Facebook&#x0027;s mobile app, whilst the minority are from Facebook page accounts (4%) and applications using Facebook&#x0027;s third party API (1%). Although social users typically perform short broadcasts, we find a non-negligible number of mobile users with broadcast sessions exceeding one hour (&#x00A7;<a class="sec" href="#sec-12">4.2</a>). However, nearly half of these streams go unwatched, even for regular broadcasters. Despite this, we find that the Facebook app uploads all content regardless of viewers, wasting user device battery and network resources. We therefore propose a simple scheme, whereby content is locally cached on a device until viewers arrive. We find that 21.91% (21.33TB) of data could be offloaded from delivery through this simple innovation (&#x00A7;<a class="sec" href="#sec-13">4.3</a>).</p>    <p>We then dissect the geographical patterns of both broadcasters and viewers (&#x00A7;<a class="sec" href="#sec-14">5</a>). We confirm that Facebook Live has a global reach (&#x00A7;<a class="sec" href="#sec-15">5.1</a>). The majority of popular broadcasters are based in Europe, South East Asia, Brazil and the East Coast of the United States. Driven by social properties, most broadcasts are highly localised. For example, 8% of viewers are within a city-level radius of 25KM from the broadcaster, accounting for 1.57M viewers. That said, we also observe a significant proportion of international consumption too (overall, 39.8% of viewers are domestic and the remaining are international). There are some distinct power players here. For example, residents in the United States stream a disproportionate amount of broadcasts to Mexico and Canada. This highlights well the social properties of Facebook Live, whereby users tend to consume directly from friends (who may be in different countries due to immigration).</p>    <p>Finally, we refocus our attention on user engagement (&#x00A7;<a class="sec" href="#sec-18">6</a>). We find that popular broadcasts consistently garner views rapidly. However, this is not the norm &#x2014; the median view count typically remains below 10 throughout the entire duration of streams. We also compare this against archived on-demand videos, <em>i.e.,</em> streams that were live but subsequently made available for later viewing. We find that, in fact, most engagement (comments, likes, shares) happen <em>after</em> a stream has been archived, thereby demoting the importance of the live component. We finally combine the above observations to question to what extent Facebook Live is truly live, social and broadcasting (&#x00A7;<a class="sec" href="#sec-21">7</a>).</p>   </section>   <section id="sec-5">    <header>    <div class="title-info">     <h2>      <span class="section-number">2</span> Background &#x0026; Related Work</h2>    </div>    </header>    <p>    <strong>Online Video Delivery:</strong> Our work overlaps with studies looking at user generated (UGC) video platforms, <em>e.g.,</em> &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0030">30</a>]. These include user behaviour analysis&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0035">35</a>] to understand consumption patterns&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0018">18</a>]. Facebook Live departs from the traditional UGC model of interaction, with users live broadcasting through their mobile device and online social network (rather than simply uploading videos). This allows for a number of new lines of exploration, particularly relating to how <em>live</em> videos are created and consumed by social ties. There have been a small number of studies into live streaming platforms, including Akamai&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0028">28</a>], BBC iPlayer&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0015">15</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0017">17</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0024">24</a>] or CNLive&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0020">20</a>]. These professional platforms serve a wide range of international and professional content, although we emphasise that this differs dramatically from the user generated content discussed above. Perhaps the most famous user generated live streaming platform of the day is Twitch, which has seen increasing research attention&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0009">9</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0010">10</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0012">12</a>]. This streams live computer gameplay, but differs from Facebook Live in that it is not mobile, nor integrated within a social network.</p>    <p>    <strong>Geographical Video Access Patterns:</strong> Another major part of our work is investigating the geographical properties of social broadcast and consumption. There have been a small set of studies looking at the geographical properties of video access. Li <em>et al.</em> &#x00A0; looked at the the location of viewers watching PPTV in China&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>]. They found that a significant portion of videos get at least 70% of their views from just 3 out of 33 provincial locations. Similar studies have been performed for YouTube, finding that users tend to access videos nearby to them&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>]. Whereas studies have been done looking at spatial localities in Facebook&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0034">34</a>] and Twitter&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0026">26</a>], this has not inspected broadcasts. Interestingly, the integration of live social broadcast with a platform like Facebook also conflates two factors impacting spatial access patterns: (<em>i</em>)&#x00A0;Content locality, which is the propensity for content generated nearby to be more relevant to a user; and (<em>ii</em>)&#x00A0;Social locality, which is the propensity of content generated by friends to be more relevant.</p>    <p>    <strong>Social Live Broadcasts:</strong> We take inspiration from the above works, but emphasise <em>social live broadcasts platforms</em> such as Facebook Live and Periscope&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0027">27</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0032">32</a>] are distinct from these systems in a number of ways. They allow any user to broadcast themselves (usually from a mobile device) to their friends and possibly other interested parties. Unlike traditional user-generated video platforms, live social streaming drives consumption in realtime. Critically, this is done through direct integration with a social network, notifying online users of the broadcast. This throws up interesting questions that do not emerge in past studies on live platforms. For example, we later explore the social interactions between viewers and broadcasters in real time. Beyond this, the unique social API of Facebook Live allows us to dive into questions regarding user locations to understand their impact on content creation and consumption.</p>    <p>To the best of our knowledge, we are the first to study Facebook Live at scale; thus, intentionally, we strive to offer a broad characterisation covering the key novel aspects of the system. There are, however, a small number of studies on related social live streaming platforms. Wang <em>et al.</em> studied Periscope from an infrastructural perspective&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0032">32</a>], focussing on understanding how Periscope scales up. This focussed on popular streams, whereas we also focus on the behaviour of unpopular streams (which are more frequently occurring). We also integrate this with exploration of geographical and social properties of the broadcasters. A related paper&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0027">27</a>] inspected Periscope to capture performance metrics, <em>e.g.,</em> video quality, stall events, power consumption. Tang <em>et al.</em> focussed on a small set of Meerkat and Periscope broadcasts using crowd sourced analysis and interviews; they focussed on things like motivation for usage&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0029">29</a>]. This social analysis, however, was based on just 767 (manually analysed) live broadcasts. The focus of our paper is very different. We take a user-facing perspective, empirically exploring the ways users interact with Facebook Live on both a global and regional level. Although we do this at scale, we also focus on both highly popular and unpopular users to understand system implications for both.</p>   </section>   <section id="sec-6">    <header>    <div class="title-info">     <h2>      <span class="section-number">3</span> Datasets &#x0026; Methodology</h2>    </div>    </header>    <p>To explore Facebook Live, it is first necessary to collect a large and meaningful dataset of both the broadcasters and viewers. Hence, we begin by describing the data collection methodology employed.</p>    <div class="table-responsive" id="tab1">    <div class="table-caption">     <span class="table-number">Table 1:</span>     <span class="table-title">Summary of dataset separated across continents. Peak view counts are computed cumulatively across all videos in a snapshot (originating on the continent).</span>    </div>    <table class="table">     <thead>      <tr>       <th style="text-align:left;">Attribute</th>       <th style="text-align:center;">Total</th>       <th style="text-align:center;">NA</th>       <th style="text-align:center;">EU</th>       <th style="text-align:center;">AS</th>       <th style="text-align:center;">AF</th>       <th style="text-align:center;">SA</th>       <th style="text-align:center;">OC</th>      </tr>     </thead>     <tbody>      <tr>       <td style="text-align:left;"># of broadcasts</td>       <td style="text-align:right;">6.5 M</td>       <td style="text-align:right;">1.9 M</td>       <td style="text-align:right;">707 K</td>       <td style="text-align:right;">2.66 M</td>       <td style="text-align:right;">117 K</td>       <td style="text-align:right;">810 K</td>       <td style="text-align:right;">52 K</td>      </tr>      <tr>       <td style="text-align:left;"># of broadcasters</td>       <td style="text-align:right;">3.29 M</td>       <td style="text-align:right;">856 K</td>       <td style="text-align:right;">336 K</td>       <td style="text-align:right;">1.35 M</td>       <td style="text-align:right;">64.6 K</td>       <td style="text-align:right;">418 K</td>       <td style="text-align:right;">25.4 K</td>      </tr>      <tr>       <td style="text-align:left;"># of broadcasts with over 100 views</td>       <td style="text-align:right;">61 K</td>       <td style="text-align:right;">15.2 K</td>       <td style="text-align:right;">8.2 K</td>       <td style="text-align:right;">23 K</td>       <td style="text-align:right;">1.5 K</td>       <td style="text-align:right;">6.4 K</td>       <td style="text-align:center;">426</td>      </tr>      <tr>       <td style="text-align:left;"># of broadcasters with over 100 views</td>       <td style="text-align:right;">19 K</td>       <td style="text-align:right;">4.8 K</td>       <td style="text-align:right;">3 K</td>       <td style="text-align:right;">6.5 K</td>       <td style="text-align:center;">522</td>       <td style="text-align:right;">2.5 K</td>       <td style="text-align:center;">163</td>      </tr>      <tr>       <td style="text-align:left;">Peak # of viewers</td>       <td style="text-align:right;">60 M</td>       <td style="text-align:right;">17.6 M</td>       <td style="text-align:right;">7.39 M</td>       <td style="text-align:right;">20 M</td>       <td style="text-align:right;">1 M</td>       <td style="text-align:right;">6.8 M</td>       <td style="text-align:right;">387 K</td>      </tr>     </tbody>    </table>    </div>    <section id="sec-7">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.1</span> Data Capture Methodology</h3>     </div>    </header>    <p>We have written a crawler that automatically collects information on publicly accessible Facebook broadcasts. These are taken from the Facebook Live map,<a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a> which publishes broadcasts in realtime. The crawler collects this data every two minutes, providing a periodic snapshot of all geo-tagged public streams in the system (including their metadata). This was executed between 7-Nov-2016 and 2-Dec-2016, resulting in 3TB of data.<a class="fn" href="#fn2" id="foot-fn2"><sup>2</sup></a> This covered 6.5 million broadcasts by 3.29 million unique broadcasters, and viewed by a peak of 62 million users. Amongst several events captured, our dataset covered the US Presidential election of Nov 2016, Thanksgiving (26th November) and Armistice Day (11th November).</p>    <p>On Facebook Live, a broadcaster can go live using any of the following three mechanisms: (<em>i</em>)&#x00A0;<strong>From App</strong>: Users or pages can create live streams using the Facebook App or Facebook Mentions<a class="fn" href="#fn3" id="foot-fn3"><sup>3</sup></a> from their Android or iOS devices. Note that the feature of going live from the browser was introduced three months after the crawl.<a class="fn" href="#fn4" id="foot-fn4"><sup>4</sup></a> (<em>ii</em>)&#x00A0;<strong>From Publisher tools</strong><a class="fn" href="#fn5" id="foot-fn5"><sup>5</sup></a>: Facebook Pages<a class="fn" href="#fn6" id="foot-fn6"><sup>6</sup></a> can use this feature allowing them to use any external device or software to stream the live content. (<em>iii</em>)&#x00A0;<strong>Using Developer API</strong>: Developers can use the live API<a class="fn" href="#fn7" id="foot-fn7"><sup>7</sup></a> and embed it in their app to broadcast their content through Facebook. 95%, 4% and < 1% of broadcasts belong to each of these above category respectively.</p>    <p>For every broadcast, the following data is collected every two minutes: (<em>i</em>)&#x00A0;<strong>Broadcaster metadata</strong>: The broadcaster&#x0027;s username and the geo-tag coordinates (<em>cf.</em> &#x00A7;<a class="sec" href="#sec-8">3.2</a>). The broadcaster can be either an individual user account or, alternatively, a Facebook Page (typically created for organisations, <em>e.g.,</em> political parties). In the latter case, we also collect information about the category of the broadcast page, <em>e.g.,</em> Media, Sport, Shopping <em>etc.</em> Geo-tags are added by the user based on their GPS coordinates; if a user does not share location information explicitly, any publicly accessible location information in their profile will be used. (<em>ii</em>)&#x00A0;<strong>Viewer information</strong>: The number of live viewers per broadcast, as well as the location coordinates of the viewers (returned by Facebook).</p>    <p>Engagement attributes are also collected, namely the number of likes, shares and comments during the broadcast. After eight months we then revisited any videos that had been archived for later on-demand access, collecting the number of likes, shares, comments and the bitrate (46.1% of live streams were archived). Table&#x00A0;<a class="tbl" href="#tab1">1</a> provides a summary of the dataset across different regions.</p>    <p>To give context regarding the <em>types</em> of content material, we briefly inspect the categorical tags within the Page broadcasts. Figure&#x00A0;<a class="fig" href="#fig1">1</a> presents the fraction of broadcasts that fall into each category, as well as the fraction of the overall viewership that each category attracts. Media, which covers things like news and TV content, gains by far the highest viewership (over 50%), despite constituting less than 20% of broadcasts. &#x201C;Religious Place of Worship&#x201D; is second most popular by the number of broadcasters, driven by the US and Brazil where they constitute over 30% of the streams. Measuring across the world, however, 40% of the religious broadcasts do not garner even a single view. Other content types ranging from arts to shopping can be seen of assorted popularities. <figure id="fig1">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig1.jpg" class="img-responsive" alt="Figure 1"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 1:</span>       <span class="figure-title">Fraction of broadcasters and viewers for each category. Note that &#x201C;Other&#x201D; is a category provided by the Facebook itself.</span>      </div>     </figure>    </p>    </section>    <section id="sec-8">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.2</span> On Facebook&#x0027;s geo-coordinates</h3>     </div>    </header>    <p>As stated above, we collect geo-coordinates for viewers and broadcasters. These are used by Facebook to visualise locations on a public map for users. Before continuing, it is important to validate the fidelity of these coordinates and explain the level of sampling Facebook utilises when returning locations of viewers. Every broadcast is accompanied by a longitude-latitude pair from where the broadcast happens and the viewer locations are reported for the broadcasts that have greater than 100 views.</p>    <p>     <em>All</em> the broadcasters have geo-tags, whilst the mean percentage of viewers that also have locations reported is 55%, with a standard deviation of 12.83. We regularly observe broadcasters reporting multiple locations per broadcast (this could be because the user has moved or because Facebook has introduced noise to protect the location privacy of broadcasters). To explore this, for each broadcast, we take all reported coordinates for the broadcaster and compute the centroid. We then calculate the maximum distance between the centroid and all geo-co-ordinates reported &#x2014; this gives the upper bound of any noise potentially introduced. Figure&#x00A0;<a class="fig" href="#fig2">2</a> presents a Cumulative Distribution Function (CDF) of the results. We find that <em>no</em> broadcaster reports a distance that varies greater than 7 KM from the centroid. This indicates that any noise (if introduced) will only undermine accuracy by this upper bound; this is sufficiently accurate to allow global-scale geo analysis. Finally, we convert each geo-coordinate into its country of origin using country polygons. For subsequent statistics related to distance, we utilise Vincenty&#x0027;s formula for computing the distance between coordinates&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0031">31</a>]. <figure id="fig2">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig2.jpg" class="img-responsive" alt="Figure 2"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 2:</span>       <span class="figure-title">CDF of maximum distance from centroid of locations reported for each broadcaster, as well as the mean and median distance between reported locations per broadcast.</span>      </div>     </figure>    </p>    </section>    <section id="sec-9">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.3</span> On Facebook&#x0027;s infrastructure</h3>     </div>    </header>    <p>Before continuing, we briefly outline how Facebook Live operates from an infrastructural perspective&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0001">1</a>]. When users go live, they are redirected to their closest Point of Presence (PoP) using RTMPS. Video data is adaptively encoded by the Facebook mobile app, and then uploaded to a data centre via the PoP. Typically, data is uploaded in a high definition format, but quality is degraded in cases of poor connectivity. Any users wishing to view the stream downloads a manifest file, and begins requesting listed video chunks via Facebook&#x0027;s CDN (mainly Akamai), where caching also takes place.</p>    </section>   </section>   <section id="sec-10">    <header>    <div class="title-info">     <h2>      <span class="section-number">4</span> Characterising Live Broadcasts</h2>    </div>    </header>    <p>We begin by characterising the global activities of broadcasters and their viewerships on Facebook Live.</p>    <section id="sec-11">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.1</span> How popular is Facebook Live?</h3>     </div>    </header>    <p>First, we look at the overall popularity of the platform, as measured by the number of broadcasters and viewers. Figure&#x00A0;<a class="fig" href="#fig3">3</a> presents an hourly time series across our dataset. It counts both the number of broadcasts (Y1-axis) and viewers (Y2-axis). We see a roughly stable trend for viewers, but erratic trends for broadcasters. This is largely due to a high number of broadcasts in November 2016 due to the US Presidential elections. We also observe periodic spikes in utilisation. These centre on weekends, indicating the social nature of the broadcast platform. <figure id="fig3">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig3.jpg" class="img-responsive" alt="Figure 3"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 3:</span>       <span class="figure-title">Cumulative number of broadcasters and viewers per hour during measurement period. Note that between 18th and 22nd November, monitoring ceased due to a failure in our crawler.</span>      </div>     </figure>    </p>    <p>Whereas the above quantifies how popular Facebook Live is, it does not demonstrate the popularity of individual broadcasters. This is typically a more important metric for users wishing to use their broadcasts for promotion. Figure&#x00A0;4a presents a CDF of the peak view counts<a class="fn" href="#fn8" id="foot-fn8"><sup>8</sup></a> for each broadcast. Two lines are present: (<em>i</em>)&#x00A0;Broadcasts by <strong>User</strong> accounts, which are generated by individual Facebook users on their mobile device and (<em>ii</em>)&#x00A0;Broadcasts by <strong>Page</strong> accounts, which are generated by Facebook Pages.</p>    <p>It can be seen that Page broadcasts gain significantly more viewers than typical user broadcasts. To add further context, Table&#x00A0;<a class="tbl" href="#tab2">2</a> presents the Top 10 broadcasters, ranked by peak viewing figures. It can be seen that 7 out of the Top 10 broadcasters are Pages. Even though Page broadcasters only contribute 4.26% of the streams, they collect almost 35% of all views. In stark contrast, we find that 41.5% of user broadcasts <em>never</em> gain a single viewer, whilst 55.35% of broadcasters have at least one stream that remains unwatched. In fact, the median view count for user broadcasts is just 1. This raises questions regarding the extent that Facebook Live is actually used as a social <em>broad</em>cast medium in practice, as opposed to a unicast stream that is seen by one or even zero viewers. <figure id="fig4">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig4.jpg" class="img-responsive" alt="Figure 4"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 4:</span>       <span class="figure-title">Broadcast characteristics: (a) CDF of peak view counts (for broadcasts with a view count > 1). Broadcasts are separated into those generated by Users and Pages. 41.47% and 37.39% of the user and page videos go unwatched; 9% of user videos and 5% of page videos get just a single view. (b) CDF of broadcast duration. Broadcasts are separated into streams generated by Page accounts and User accounts, as well as popular (> 100 peak views) and unpopular (0 views) streams. (c) Size of uploaded broadcast files, for user, page and app videos, as well as videos with 0 or 1 viewers.</span>      </div>     </figure>    </p>    <p>To study this further, we separate all users into buckets based on the total number of broadcasts they have performed. For each bucket, we compute the fraction of broadcasts that gained 0 viewers, 1 viewer and > 1 viewers. Figure&#x00A0;<a class="fig" href="#fig5">5</a> presents our findings as a stacked bar chart; buckets are plotted on the X-axis and the fraction of broadcasts with zero views is plotted on the Y-axis. We also plot the number of samples in each bucket on the Y2-axis. Unsurprisingly we find on the Y2-axis that the number of broadcasters in each bucket decreases as the threshold for number of broadcasts increases. Focusing on the Y1-axis, we find, as expected, that the heavy users who broadcast more have a lower proportion of unwatched streams. However, we observe that <em>all</em> user groups generate unwatched material. This extends to users who generate tens of broadcasts. This confirms that unwatched material is not simply created by experimental users who just &#x201C;try out&#x201D; Facebook Live once. Instead, it is a persistent characteristic of broadcasters. For example, for users with 10 broadcasts, we find that 29.56% of broadcasts gain 0 viewers, 7.9% gain 1 viewer and the remainder gain above 1 viewer. Interestingly, the graph also demonstrates a valley-like trend, whereby users with a small number of broadcasts largely gain 0 viewers (45.8% for below 5 broadcasts), whilst users with a high number of broadcasters also generate a lot of unwatched streams (36.35% for above 100 broadcasts). Users who fall in the middle of the spectrum (40&#x2013;50 broadcasts) have the lowest proportion of unwatched material. Although this observation is impacted by the smaller sample sizes for user groups with large numbers of broadcasts (as shown on the Y2-axis), our manual inspection reveals that such &#x201C;unpopular&#x201D; users tend to generate large numbers of uninteresting material, <em>e.g.,</em> unprocessed personal diaries. It should also be noted that the generation of unwatched material is not exclusive to mobile users; some categories of Page streams exhibit similar properties, <em>e.g.,</em> 40% of &#x201C;Religious&#x201D; streams from Page accounts are never viewed, and 13% for &#x201C;Media&#x201D; streams. Overall, 37.4% of Page streams have zero views. <figure id="fig5">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig5.jpg" class="img-responsive" alt="Figure 5"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 5:</span>       <span class="figure-title">Distribution of number of peak viewers (Y1-axis on the left) bucketed based on the broadcast(s) made by an user. Y2-axis (on the right) shows the total number of broadcasters falling under a bucket of total broadcasts performed.</span>      </div>     </figure>    </p>    <div class="table-responsive" id="tab2">     <div class="table-caption">      <span class="table-number">Table 2:</span>      <span class="table-title">Top broadcasters based on median view count.</span>     </div>     <table class="table">      <thead>       <tr>       <th style="text-align:left;">Handle</th>       <th style="text-align:left;">Type</th>       <th style="text-align:center;">Median Viewers</th>       <th style="text-align:left;">Description</th>       <th style="text-align:left;">Category</th>       <th style="text-align:left;">Verified</th>       </tr>      </thead>      <tbody>       <tr>       <td style="text-align:left;">@zuck</td>       <td style="text-align:left;">User</td>       <td style="text-align:center;">48471</td>       <td style="text-align:left;">Facebook founder</td>       <td style="text-align:left;">User</td>       <td style="text-align:left;">Yes</td>       </tr>       <tr>       <td style="text-align:left;">@GilmoreGirls</td>       <td style="text-align:left;">Page</td>       <td style="text-align:center;">39162</td>       <td style="text-align:left;">Popular TV drama</td>       <td style="text-align:left;">TV Programme</td>       <td style="text-align:left;">Yes</td>       </tr>       <tr>       <td style="text-align:left;">@buzzfeedtasty</td>       <td style="text-align:left;">Page</td>       <td style="text-align:center;">34369</td>       <td style="text-align:left;">Food news outlet</td>       <td style="text-align:left;">Media</td>       <td style="text-align:left;">Yes</td>       </tr>       <tr>       <td style="text-align:left;">@pena6789</td>       <td style="text-align:left;">User</td>       <td style="text-align:center;">16952</td>       <td style="text-align:left;">Adult content</td>       <td style="text-align:left;">User</td>       <td style="text-align:left;">NA</td>       </tr>       <tr>       <td style="text-align:left;">@WhiteHouse</td>       <td style="text-align:left;">Page</td>       <td style="text-align:center;">16124</td>       <td style="text-align:left;">Official WH page</td>       <td style="text-align:left;">Historical Landmark</td>       <td style="text-align:left;">Yes</td>       </tr>       <tr>       <td style="text-align:left;">@FoxNews</td>       <td style="text-align:left;">Page</td>       <td style="text-align:center;">14721</td>       <td style="text-align:left;">News outlet</td>       <td style="text-align:left;">Media</td>       <td style="text-align:left;">Yes</td>       </tr>       <tr>       <td style="text-align:left;">@bendeac</td>       <td style="text-align:left;">User</td>       <td style="text-align:center;">13289</td>       <td style="text-align:left;">Romanian Actor</td>       <td style="text-align:left;">User</td>       <td style="text-align:left;">No</td>       </tr>       <tr>       <td style="text-align:left;">@RealMadrid</td>       <td style="text-align:left;">Page</td>       <td style="text-align:center;">12783</td>       <td style="text-align:left;">Popular football team</td>       <td style="text-align:left;">Sports Team</td>       <td style="text-align:left;">Yes</td>       </tr>       <tr>       <td style="text-align:left;">@WesternJournalism</td>       <td style="text-align:left;">Page</td>       <td style="text-align:center;">10507</td>       <td style="text-align:left;">News outlet</td>       <td style="text-align:left;">Media</td>       <td style="text-align:left;">Yes</td>       </tr>       <tr>       <td style="text-align:left;">@BuzzFeed</td>       <td style="text-align:left;">Page</td>       <td style="text-align:center;">10276</td>       <td style="text-align:left;">News outlet</td>       <td style="text-align:left;">Media</td>       <td style="text-align:left;">Yes</td>       </tr>      </tbody>     </table>    </div>    </section>    <section id="sec-12">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.2</span> How long are broadcasts?</h3>     </div>    </header>    <p>The previous section has highlighted that nearly half of all user broadcasts are never viewed. We next inspect the durations of these broadcasts to understand the resources consumed (both in terms of user time and upload volume). Figure&#x00A0;4b presents a CDF of the duration of broadcasts separated into a number of groups. App broadcasts are, by far, the longest with 53.46% exceeding half an hour. This is largely driven by the fact that most apps broadcast computer gameplay. Broadcasts performed by Pages also tend to be substantially longer in duration than User broadcasts. Almost 30% of the Page broadcasts exceed half an hour, compared to just 6% for User broadcasts (where 77.34% are under 10 minutes).</p>    <p>This trend may be partly driven by the greater popularity of Page streams (<em>cf.</em> Figure&#x00A0;4a). To examine this more closely for mobile users, Figure&#x00A0;4a breaks User broadcasts into two groups: (<em>i</em>)&#x00A0;<strong>Popular</strong>, which gain over 100 viewers at peak; and (<em>ii</em>)&#x00A0;<strong>Unpopular</strong>, which are never viewed. In-line with our previous statement, we see that more popular streams broadcast for longer. 25% of these streams last longer than half an hour, whereas this is just 2% for unpopular streams. Critically, however, we still find a non-negligible number of unwatched streams that broadcast for extended periods (80k videos are longer than 20 minutes).</p>    <p>Currently, streams with zero views are live streamed to Facebook&#x0027;s infrastructure regardless of their popularity. This observation suggests significant waste in network, client and server resouces. For example, the average duration for unwatched streams is five and a half minutes. With a bitrate of 500kbps, this would generate 18MB of needless traffic per broadcast (with battery and network costs). This therefore raises the question of how such content is delivered. Whereas uploads are obviously necessary for archived streams (<em>i.e.,</em> ones that remain on a user&#x0027;s profile), this is profligate for live streams that are not archived. This is because such data is immediately discarded without anybody ever seeing it. Importantly, we find that only 41.7% of unwatched streams are actually archived &#x2014; for the remainder, it is unnecessary to waste device resources in performing the live upload to the PoP. This observation leads us to inspect the size of the archived videos (<em>i.e.,</em> videos marked by the users as being available for on-demand viewing later on) to understand the precise volume of this upload process. Figure&#x00A0;<a class="fig" href="#fig4">4c</a> presents the distribution of file sizes for all archived videos. The median file size for broadcasts with zero views is 8.57 MB, with 45% exceeding 10 MB.</p>    </section>    <section id="sec-13">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.3</span> Is broadcast really necessary?</h3>     </div>    </header>    <p>Combining the above observations, we see that Facebook Live is predominantly (95%) used by mobile users to broadcast content. Pages garner a disproportionate number of viewers, whilst 41.47% of user broadcasts languish in obscurity, never being viewed. These observations indicate that the current &#x201C;cloud-based&#x201D; model of delivery is misplaced. As it stands, the Facebook mobile app uploads content regardless of view counts. This opens up interesting opportunities for hyper-local storage. For example, video content can be cached locally on the mobile device, and only uploaded once the first viewer arrives<a class="fn" href="#fn9" id="foot-fn9"><sup>9</sup></a>. Upon the completion of a broadcast, users are given the option of archiving the content. Live content that is not watched and not archived can be cached locally and then discarded after broadcast. If the user wishes to archive the video, it can be automatically uploaded to Facebook when convenient (<em>e.g.,</em> via WiFi). This simple change would reduce use of battery and network for the 55.58% of broadcasters who (at least once) generate an unwatched video. It would also save an average of 5.84MB per upload. Note that this also covers broadcasters who generate <em>any</em> video chunks that are never watched. For example, 44.1% of streams in their first 2 minutes have zero viewers, out of which 7.8% continue to garner viewers later. Hence, such users need not upload the first chunks until a viewer arrives<a class="fn" href="#fn10" id="foot-fn10"><sup>10</sup></a>.</p>    </section>   </section>   <section id="sec-14">    <header>    <div class="title-info">     <h2>      <span class="section-number">5</span> Geographical Exploration</h2>    </div>    </header>    <p>The previous section has highlighted the nature of social broadcast, focussing on the large number of unwatched and unpopular streams. Next, we inspect the opposite end of the spectrum &#x2014; highly popular streams. A unique aspect of Facebook Live is that it provides the locations of stream viewers for broadcasts with an audience of 100+. This allows us to understand the geographical relationship between broadcasters and viewers.</p>    <section id="sec-15">    <header>     <div class="title-info">      <h3>       <span class="section-number">5.1</span> Where are the users?</h3>     </div>    </header>    <p>We begin by inspecting the locations of users to understand where Facebook Live&#x0027;s userbase is. Figure&#x00A0;<a class="fig" href="#fig6">6</a> presents viewer (blue) and broadcaster (green) locations for any streams that garner above 100 viewers. This covers 45K broadcasts, and 20.3 million viewers. The map shows a significant spread of broadcasters (green) with a focus on East Coast US, Brazil, Europe and South East Asia. It can be seen that most major conurbations are covered. A particularly nice feature of the dataset is that locations are based on mobile GPS-based geo-tags (rather than IP address). This gives us accurate geographical vantage into regions such as China, which typically access Facebook via VPN (thereby changing their reported IP geolocation). It can be seen that despite the blocking of Facebook, there are a number of users in China. In the rest of this section, we focus on the top 19 countries measured by broadcasters and consumers. These countries are obtained taking the union of the top 15 countries in terms of broadcasters and top 15 in terms of consumers.</p>    <p>Figure&#x00A0;<a class="fig" href="#fig7">7</a> presents the percentage of broadcasters and viewers based in each of the top 19 countries. A clear ranking can be observed; the US dominates both the number of broadcasters and viewers, followed by Thailand and Vietnam. The latter is particularly interesting, as in many cases we find that the number of viewers and broadcasters in a country do not necessarily correlate. For instance, whereas, in the US or Brazil, the fraction of viewers and broadcasters is relatively <em>similar</em>, Thailand generates a significant proportion of the world&#x0027;s broadcasts (11.26%), but only constitutes 8% of the viewers. Conversely, in Turkey, there are significant fraction of viewers (7.1% of the world&#x0027;s viewers), but only 2.94% of broadcasters. Similar observations can be made across many other countries, including Korea, Peru and Romania. Through manual inspection, we find a number of potential reasons. For instance, Turkey blocks access to Facebook; therefore, most users are likely accessing it via circumvention tools. Whereas Turkish users may be keen on consuming content, they may be less willing to expose themselves by broadcasting on a censored medium. In the case of Thailand, we find that a notable portion of adult content is being streamed, and this niche content attracts a globally distributed viewership (rather than just in Thailand). <figure id="fig6">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig6.jpg" class="img-responsive" alt="Figure 6"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 6:</span>       <span class="figure-title">Locations of influential broadcasters (> 100 viewers) and the respective viewers across the globe</span>      </div>     </figure>     <figure id="fig7">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig7.jpg" class="img-responsive" alt="Figure 7"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 7:</span>       <span class="figure-title">Contribution of broadcasters and viewers from top-accessed countries.</span>      </div>     </figure>    </p>    </section>    <section id="sec-16">    <header>     <div class="title-info">      <h3>       <span class="section-number">5.2</span> How far away are viewers?</h3>     </div>    </header>    <p>Although the above reveals the locations of broadcasters and viewers, it does not show their relationships. From a systems-perspective, this is critical for optimising delay-<em>in</em>tolerant communications as ideally viewers, broadcasters and any intermediate servers would be within short distances. Regarding the latter, there have been a number of recent proposals regarding the placement of servers within cell towers and local network PoPs, <em>i.e.,</em> so-called mobile edge computing&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0022">22</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"      href="#BibPLXBIB0033">33</a>]. Thus, we next inspect the distance that viewers are from the broadcasters they watch. Figure&#x00A0;9a presents CDFs of the distance between broadcasters and their viewers for user accounts. We separate broadcasters into their respective countries. In cases where the distribution plateaus, typically the broadcasters and viewers are separated by an ocean (<em>e.g.,</em> in the case of Philippines this is the distance across the Pacific to reach US-based viewers, who constitute 9% of the country&#x0027;s audience).</p>    <p>It can be seen that a notable subset of broadcasters are hyper-local to their consumers. This is shown well in Figure&#x00A0;<a class="fig" href="#fig8">8</a>, which presents a heatmap of viewer locations relative to the broadcasater. Overall, 8% of viewers are within 25 KM of the broadcaster and constitute a city-level locality. South Korea is the most extreme in this regard; 11% of viewers are within 25KM, with 4% actually under 5KM. We can also inspect the opposite end of the spectrum. 11.35% of viewers are over 10,000 KM away from their broadcaster. Here, subtle differences can be seen between broadcasters from different countries. For example, broadcasters from the Philippines, a tiny island in the middle of Western Pacific, tend to be further away from their viewers (only 37.81% of viewers are closer than 1000 KM), whereas Turkish broadcasters generally garner more nearby viewers (52.71% are closer than 1000 KM). As previously discussed, this local content consumption suggests that live social streaming would be well placed to benefit from technologies such as mobile edge computing. <figure id="fig8">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig8.jpg" class="img-responsive" alt="Figure 8"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 8:</span>       <span class="figure-title">Number of viewers (binned at 500m) within a radius of 5KM, 25KM and 40KM when all the broadcasters location are shifted to origin.</span>      </div>     </figure>     <figure id="fig9">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig9.jpg" class="img-responsive" alt="Figure 9"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 9:</span>       <span class="figure-title">Geographical footprint: (a) CDF of distance between broadcasters of their viewers. Multiple plots are presented for broadcasters in different countries (b) Fraction of views from users in the same country as the broadcaster (c) Fraction of views from users in a <em>different</em> country from the broadcaster, shown as a heat map of content broadcast from one country consumed in another country, plotted for the union of top 15 producers and consumers.</span>      </div>     </figure>    </p>    </section>    <section id="sec-17">    <header>     <div class="title-info">      <h3>       <span class="section-number">5.3</span> Domestic or international?</h3>     </div>    </header>    <p>It should be remembered that distance can be deceptive due to the various sizes of individual countries. Since we expect infrastructure to be confined within country borders, we next separate all broadcasters and viewers into their respective countries. Figure&#x00A0;9b presents the fraction of the views for videos of a country which come from domestic viewers. This is computed as follows: For a given country, we take the total view count of all videos broadcasted from that country. We then present the <em>fraction</em> of these views that are domestic, <em>i.e.,</em> from viewers in the same country as the broadcaster. In some cases (<em>e.g.,</em> Thailand, Vietnam), over 80% of views are domestic, suggesting strong language, social and cultural ties drive consumption. In other cases, under 20% of viewers are domestic (<em>e.g.,</em> Germany). This suggests such countries generate highly popular international content. However, we note that almost all videos have a non-trivial local viewership; and thus would benefit from caching locally in the country of broadcast, regardless of whether the video also has an international appeal or not.</p>    <p>To explore the international views, Figure&#x00A0;<a class="fig" href="#fig9">9c</a> presents a heat map of the <em>non-domestic</em> views. Each cell in the matrix represents the fraction of views for videos of a country which come from a specific consumer country. For the sake of clarity, the fraction of domestic views (where the producer and consumer are from the same country) are not plotted. Further, only the top 19 producers and consumers are shown; thus the fraction of the heat map values across all consumers might not add up to 1.</p>    <p>It can immediately be seen that a small number of countries stand-out in regards to the global reach of their content. The US is the most prominent, with a particularly large build-up of viewers in Mexico and Canada. This is not surprising considering the high degrees of immigration and cultural overlap between these three countries. Despite our prior observation about local consumption, Thailand and Vietnam also have a large number of viewers from other countries. Much like the US, this is driven by the large number of broadcasts in the country.</p>    <p>Before concluding, we note that Figure&#x00A0;<a class="fig" href="#fig9">9c</a> is intended to illustrate some interesting international trends and is not a complete picture &#x2013; for instance, countries like Germany and Turkey, which have a high proportion of non-domestic views (Figure&#x00A0;9b) do not show up with high values in this heat map because the viewers for the video broadcasts from these countries are not amongst the top 15 consumers.</p>    </section>   </section>   <section id="sec-18">    <header>    <div class="title-info">     <h2>      <span class="section-number">6</span> Understanding Engagement</h2>    </div>    </header>    <p>Our final analysis briefly explores engagement factors. We explore the extent to which views, and other social engagement measures such as numbers of likes, comments and shares evolve over the lifetime of a video, both during the live broadcast, as well as afterwards, and draw implications for mobile livecasting. The main takeaway is that most of the engagement happens <em>after</em> the live broadcast, lending further support to the idea that Facebook Live can be treated similarly to an on-demand service, as opposed to a live broadcast.</p>    <section id="sec-19">    <header>     <div class="title-info">      <h3>       <span class="section-number">6.1</span> Evolution of views over time</h3>     </div>    </header>    <p>First, we capture the instantaneous number of viewers for <em>all</em> broadcasts. We do this until minute 34 (&#x2248; 95% of videos end before 34 minutes). The number of viewers depends to some extent on the quality of the video, but also upon the duration &#x2013; longer videos have a higher chance of catching friends who come online, and notice the live broadcast. Yet, many of them may lose interest and leave after some time, so the later minutes of the video may lack sufficient viewers. To avoid introducing bias through the varying sample size across each time interval bucket, we randomly pick 100k videos for each time intervals, and study the distribution of viewer counts. <figure id="fig10">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig10.jpg" class="img-responsive" alt="Figure 10"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 10:</span>       <span class="figure-title">View evolution over 2 minute intervals</span>      </div>     </figure>    </p>    <p>Figure&#x00A0;<a class="fig" href="#fig10">10</a> shows a box-and-whiskers plot of the number of viewers in each interval across the videos. Each box extends from the lower to upper quartile values of the number of viewers, with a line at the median. The whiskers extend from the box to show the range of the data. Flier points past the end of the whiskers are not shown for clarity. The viewer counts increase after the first interval, and there is a larger variance in the later time buckets, indicating that sufficiently interesting longer videos accumulate viewers over time. But the median number of viewers remains comfortably under 10, even after 20&#x2013;30 minutes of broadcast, again underscoring that it is not very difficult to support most live broadcasts. <figure id="fig11">      <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig11.jpg" class="img-responsive" alt="Figure 11"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 11:</span>       <span class="figure-title">Distribution of engagement metrics (shares, likes, comments) across all broadcast streams.</span>      </div>     </figure>    </p>    </section>    <section id="sec-20">    <header>     <div class="title-info">      <h3>       <span class="section-number">6.2</span> Social engagement</h3>     </div>    </header>    <p>A key feature of Facebook Live is the ability for viewers to interact with broadcasters. This comes in the form of likes, shares and comments. In a sense, this offers an alternative measure of popularity when compared to the earlier discussion of viewer counts.</p>    <p>Figure&#x00A0;<a class="fig" href="#fig11">11</a> presents the distribution of these engagement metrics for all broadcasts. The figure presents these metrics across three time windows: (<em>i</em>)&#x00A0;During the live broadcast; (<em>ii</em>)&#x00A0;a day later for videos that have been archived on-demand; and (<em>iii</em>)&#x00A0;8 months later. The pattern indicates the type of engagement, whilst the grayscale colour separates broadcasts into four popularity groups &#x2013; those that get 0 engagement (likes/comments/shares), 1&#x2013;10 engagements, 11&#x2013;100 engagements or more than 100 engagements.</p>    <p>Most of the engagement happens <em>after</em> the live broadcast. It is therefore questionable to what extent this is a <em>live</em> platform. On average during the live broadcast, videos receive 6.7 likes, 8.4 comments and 0.54 shares. One day after broadcast, the engagement counts jump to 29.84 likes, 16.33 comments, and 1.33 shares. These numbers do not change much in the next 8 months; thus the majority of interaction happens in the 1 day after broadcast. Notice that about 40% (47%) of videos collect no likes (comments) during the live broadcast, but this number drops to 3% (16%) after a day. From an infrastructure design perspective, this interaction pattern makes it easier to support social engagement, since on-demand is easier to manager than live streaming, which requires synchronisation of the display of likes and comments across all viewers at the point in the stream where the interaction happened.</p>    <p>We note that during the live broadcasts, comments tend to outnumber likes, but the engagement after the broadcast tends to be through likes. Comments represent a much stronger form of engagement; thus we conjecture that users who watch and interact with the live stream may be close friends of the user, whereas the later engagement could be from other friends or the general public.</p>    </section>   </section>   <section id="sec-21">    <header>    <div class="title-info">     <h2>      <span class="section-number">7</span> Conclusion, Implications and Future Work</h2>    </div>    </header>    <p>In this paper we explored the usage of Facebook Live in terms of three major factors: video characteristics; geography of broadcasters and viewers; and the social engagement. We began by characterising broadcast behaviour (&#x00A7;<a class="sec" href="#sec-10">4</a>). Being a popular platform, Facebook Live encounters peaks of 63 million online viewers. Despite this, we find that popularity is typically reserved for Page accounts and a small set of celebrity users. Over half of the social users on Facebook Live generate unwatched content at least once, with 41.5% of broadcasts never being viewed. This casts doubt over both the terms <em>social</em> and <em>broadcast</em> in social live broadcast. In response, we proposed a simple mechanism to alleviate network and battery consumption. In cases where live streams receive no viewers, we proposed locally storing the content on the broadcasters&#x2019; mobile devices until viewers arrive (rather than uploading video chunks that are never watched). Although this may introduce a slightly greater startup delay from viewers, such a model would reduce the number of bytes transferred by 21.9%, and mean that 23.18% of videos never need to leave the mobile device (only those that are viewed or archived by the broadcasters, allowing on-demand access later on, must be uploaded).</p>    <p>We then proceeded to explore the geographical (&#x00A7;<a class="sec" href="#sec-14">5</a>) properties of the system. Due to the social nature of Facebook Live, streams exhibit high degrees of locality. 8% of viewers are within 25 KM of the broadcaster. We argue that this makes the service well suited to many recently proposed mobile edge computing architectures (<em>e.g.,</em> &#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0023">23</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0025">25</a>]). Unsurprisingly, these observations also result in clear trends in consumption with most users accessing domestic content. Exceptions to this tend to align with high levels of cultural and language similarity. Finally, we explored viewer engagement (&#x00A7;<a class="sec" href="#sec-18">6</a>) to find that even popular streams (<em>i.e.,</em> > 10 viewers) have periods of being unwatched. We also found that most social engagement actually occurs <em>after</em> the live stream for the 46% of streams that were archived. This, again, casts doubt over the term <em>live</em> in social live broadcast, with Facebook Live exhibiting on-demand-style behaviour for many consumers.</p>    <p>This paper constitutes a key contribution within the broader field of mobile social video consumption. However, there remains a series of interesting points for exploration. We have noted several systems implications from our findings. Implementing and evaluating these concepts would be a fruitful line of exploration, particularly as many are simple and could be easily integrated into social broadcast apps. We should note, however, that we anticipate significant growth in the use of Facebook Live in the future. Hence, it is important to monitor how behaviour evolves to understand the long-term applicability of design choices. To date, we have also not been able to dive into how the social graph impacts video popularity, nor how such data could be used to predict and inform delivery strategies. Understanding how social topology impacts content consumption would be a clear line of future work. We also found that a number of spatial properties were correlated; we wish to expand this type of correlation analysis to other domains, <em>e.g.,</em> understanding if broadcasts correlate with socioeconomic metrics or things like tourism and immigration levels from other countries. Predictive models for capacity planning and/or caching could make great use of such insight.</p>   </section>  </section>  <section class="back-matter">   <section id="sec-22">    <header>    <div class="title-info">     <h2>ACKNOWLEDGMENTS</h2>    </div>    </header>    <p>The work is partially supported by the EU-India REACH Project under Grant ICI+/2014/342-986, by UK Engineering and Physical Sciences Research Council (EPSRC) via the Internet of Silicon Retinas Project, Grant No. EP/P022723/1, an EPSRC Impact Acceleration award, and by the H2020 MONROE Project Open Call 2 Grant CaMCoW, under Grant No. 644399.</p>   </section>   <section id="ref-001">    <header>    <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>    </div>    </header>    <ul class="bibUl">    <li id="BibPLXBIB0001" label="[1]"><em>      <em>Under the hood: Broadcasting live video to millions</em>     </em>. Technical Report. Facebook. <a class="link-inline force-break" href="https://code.facebook.com/posts/1653074404941839/under-the-hood-broadcasting-live-video-to-millions/"      target="_blank">https://code.facebook.com/posts/1653074404941839/under-the-hood-broadcasting-live-video-to-millions/</a></li>    <li id="BibPLXBIB0002" label="[2]"><em>      <em>White paper: Cisco VNI Forecast and Methodology, 2015-2020</em>     </em>. Technical Report. Cisco. <a class="link-inline force-break" href="http://www.cisco.com/c/en/us/solutions/collateral/service-provider/visual-networking-index-vni/complete-white-paper-c11-481360.pdf"      target="_blank">http://www.cisco.com/c/en/us/solutions/collateral/service-provider/visual-networking-index-vni/complete-white-paper-c11-481360.pdf</a></li>    <li id="BibPLXBIB0003" label="[3]">Pablo Ameigeiras, Juan&#x00A0;J. Ramos-Munoz, Jorge Navarro-Ortiz, and J.M. Lopez-Soler. 2012. Analysis and modelling of YouTube traffic. <em>      <em>Transactions on Emerging Telecommunications Technologies</em>     </em>23, 4(2012), 360&#x2013;377. <a class="link-inline force-break" href="http://dx.doi.org/10.1002/ett.2546"      target="_blank">http://dx.doi.org/10.1002/ett.2546</a></li>    <li id="BibPLXBIB0004" label="[4]">Michael&#x00A0;Till Beck, Martin Werner, Sebastian Feld, and Thomas Schimper. 2014. Mobile Edge Computing: A Taxonomy. In <em>      <em>Proc. of the Sixth International Conference on Advances in Future Internet</em>     </em>. 48&#x2013;55.</li>    <li id="BibPLXBIB0005" label="[5]">Anders Brodersen, Salvatore Scellato, and Mirjam Wattenhofer. 2012. YouTube Around the World: Geographic Popularity of Videos. In <em>      <em>Proceedings of the 21st International Conference on World Wide Web</em>     (WWW &#x2019;12)</em>. ACM, New York, NY, USA, 241&#x2013;250. <a class="link-inline force-break"      href="http://dx.doi.org/10.1145/2187836.2187870"      target="_blank">http://dx.doi.org/10.1145/2187836.2187870</a></li>    <li id="BibPLXBIB0006" label="[6]">Meeyoung Cha, Haewoon Kwak, Pablo Rodriguez, Yong-Yeol Ahn, and Sue Moon. 2009. Analyzing the Video Popularity Characteristics of Large-scale User Generated Content Systems. <em>      <em>IEEE/ACM Trans. Netw.</em>     </em>17, 5 (Oct. 2009), 1357&#x2013;1370. <a class="link-inline force-break"      href="http://dx.doi.org/10.1109/TNET.2008.2011358"      target="_blank">http://dx.doi.org/10.1109/TNET.2008.2011358</a></li>    <li id="BibPLXBIB0007" label="[7]">Bin Chang, Liang Dai, Yi Cui, and Yuan Xue. 2008. On Feasibility of P2P On-Demand Streaming via Empirical VoD User Behavior Analysis. (June 2008). <a class="link-inline force-break"      href="http://dx.doi.org/10.1109/ICDCS.Workshops.2008.94"      target="_blank">http://dx.doi.org/10.1109/ICDCS.Workshops.2008.94</a></li>    <li id="BibPLXBIB0008" label="[8]">Yu Chen, Yang Yu, Wei Zhang, and Junyi Shen. 2008. Analyzing User Behavior History for constructing user profile. In <em>      <em>2008 IEEE International Symposium on IT in Medicine and Education</em>     </em>. 343&#x2013;348. <a class="link-inline force-break"      href="http://dx.doi.org/10.1109/ITME.2008.4743884"      target="_blank">http://dx.doi.org/10.1109/ITME.2008.4743884</a></li>    <li id="BibPLXBIB0009" label="[9]">Jie Deng, Felix Cuadrado, Gareth Tyson, and Steve Uhlig. 2015. Behind the game: Exploring the twitch streaming platform. In <em>      <em>Network and Systems Support for Games (NetGames), 2015 International Workshop on</em>     </em>. IEEE, 1&#x2013;6.</li>    <li id="BibPLXBIB0010" label="[10]">Jie Deng, Gareth Tyson, Felix Cuadrado, and Steve Uhlig. 2017. Internet scale user-generated live video streaming: The Twitch case. In <em>      <em>International Conference on Passive and Active Network Measurement</em>     </em>. Springer, 60&#x2013;71.</li>    <li id="BibPLXBIB0011" label="[11]">Vijay Gopalakrishnan, Rittwik Jana, Ralph Knag, K.&#x00A0;K. Ramakrishnan, Deborah&#x00A0;F. Swayne, and Vinay&#x00A0;A. Vaishampayan. 2010. Characterizing Interactive Behavior in a Large-Scale Operational IPTV Environment. In <em>      <em>2010 Proceedings IEEE INFOCOM</em>     </em>. 1&#x2013;5. <a class="link-inline force-break"      href="http://dx.doi.org/10.1109/INFCOM.2010.5462236"      target="_blank">http://dx.doi.org/10.1109/INFCOM.2010.5462236</a></li>    <li id="BibPLXBIB0012" label="[12]">William&#x00A0;A. Hamilton, Oliver Garretson, and Andruid Kerne. 2014. Streaming on Twitch: Fostering Participatory Communities of Play Within Live Mixed Media. In <em>      <em>Proceedings of the 32nd Annual ACM Conference on Human Factors in Computing Systems</em>     (CHI &#x2019;14)</em>. ACM, New York, NY, USA, 1315&#x2013;1324. <a class="link-inline force-break"      href="http://dx.doi.org/10.1145/2556288.2557048"      target="_blank">http://dx.doi.org/10.1145/2556288.2557048</a></li>    <li id="BibPLXBIB0013" label="[13]">Bo Hu, Mohsen Jamali, and Martin Ester. 2012. Learning the Strength of the Factors Influencing User Behavior in Online Social Networks. (Aug 2012), 368&#x2013;375. <a class="link-inline force-break" href="http://dx.doi.org/10.1109/ASONAM.2012.67"      target="_blank">http://dx.doi.org/10.1109/ASONAM.2012.67</a></li>    <li id="BibPLXBIB0014" label="[14]">Sagar Joglekar, Nishanth Sastry, and Miriam Redi. 2017. Like at First Sight: Understanding User Engagement with the World of Microvideos. In <em>      <em>International Conference on Social Informatics</em>     </em>. Springer, 237&#x2013;256.</li>    <li id="BibPLXBIB0015" label="[15]">Dmytro Karamshuk, Nishanth Sastry, Mustafa Al-Bassam, Andrew Secker, and Jigna Chandaria. 2016. Take-Away TV: Recharging Work Commutes With Predictive Preloading of Catch-Up TV Content. <em>      <em>IEEE Journal on Selected Areas in Communications</em>     </em>34, 8 (Aug 2016), 2091&#x2013;2101. <a class="link-inline force-break"      href="http://dx.doi.org/10.1109/JSAC.2016.2577298"      target="_blank">http://dx.doi.org/10.1109/JSAC.2016.2577298</a></li>    <li id="BibPLXBIB0016" label="[16]">Dmytro Karamshuk, Nishanth Sastry, Andrew Secker, and Jigna Chandaria. 2015. ISP-friendly peer-assisted on-demand streaming of long duration content in BBC iPlayer. In <em>      <em>2015 IEEE Conference on Computer Communications (INFOCOM)</em>     </em>. 289&#x2013;297. <a class="link-inline force-break"      href="http://dx.doi.org/10.1109/INFOCOM.2015.7218393"      target="_blank">http://dx.doi.org/10.1109/INFOCOM.2015.7218393</a></li>    <li id="BibPLXBIB0017" label="[17]">Dmytro Karamshuk, Nishanth Sastry, Andrew Secker, and Jigna Chandaria. 2015. On factors affecting the usage and adoption of a nation-wide TV streaming service. In <em>      <em>2015 INFOCOM</em>     </em>. 837&#x2013;845. <a class="link-inline force-break"      href="http://dx.doi.org/10.1109/INFOCOM.2015.7218454"      target="_blank">http://dx.doi.org/10.1109/INFOCOM.2015.7218454</a></li>    <li id="BibPLXBIB0018" label="[18]">Ming-Chun Lee, Andreas&#x00A0;F. Molisch, Nishanth Sastry, and Aravindh Raman. 2017. Individual Preference Probability Modeling for Video Content in Wireless Caching Networks. In <em>      <em>GLOBECOM 2017 - 2017 IEEE Global Communications Conference</em>     </em>. 1&#x2013;7. <a class="link-inline force-break"      href="http://dx.doi.org/10.1109/GLOCOM.2017.8254963"      target="_blank">http://dx.doi.org/10.1109/GLOCOM.2017.8254963</a></li>    <li id="BibPLXBIB0019" label="[19]">Adisorn Lertsinsrubtavee, Anwaar Ali, Carlos Molina-Jimenez, Arjuna Sathiaseelan, and Jon Crowcroft. 2017. PiCasso: A lightweight edge computing platform. In <em>      <em>2017 IEEE 6th International Conference on Cloud Networking (CloudNet)</em>     </em>. 1&#x2013;7. <a class="link-inline force-break"      href="http://dx.doi.org/10.1109/CloudNet.2017.8071529"      target="_blank">http://dx.doi.org/10.1109/CloudNet.2017.8071529</a></li>    <li id="BibPLXBIB0020" label="[20]">Yuheng Li, Yiping Zhang, and Ruixi Yuan. 2011. Measurement and Analysis of a Large Scale Commercial Mobile Internet TV System. In <em>      <em>Proceedings of the 2011 ACM SIGCOMM Conference on Internet Measurement Conference</em>     (IMC &#x2019;11)</em>. ACM, New York, NY, USA, 209&#x2013;224. <a class="link-inline force-break"      href="http://dx.doi.org/10.1145/2068816.2068837"      target="_blank">http://dx.doi.org/10.1145/2068816.2068837</a></li>    <li id="BibPLXBIB0021" label="[21]">Zhenyu Li, Gaogang Xie, Jiali Lin, Yun Jin, Mohamed-Ali Kaafar, and Kav&#x00E9; Salamatian. 2014. On the geographic patterns of a large-scale mobile video-on-demand system. In <em>      <em>IEEE INFOCOM 2014 - IEEE Conference on Computer Communications</em>     </em>. 397&#x2013;405. <a class="link-inline force-break"      href="http://dx.doi.org/10.1109/INFOCOM.2014.6847962"      target="_blank">http://dx.doi.org/10.1109/INFOCOM.2014.6847962</a></li>    <li id="BibPLXBIB0022" label="[22]">Pavel Mach and Zdenek Becvar. 2017. Mobile Edge Computing: A Survey on Architecture and Computation Offloading. <em>      <em>IEEE Communications Surveys Tutorials</em>     </em>19, 3 (thirdquarter 2017), 1628&#x2013;1656. <a class="link-inline force-break"      href="http://dx.doi.org/10.1109/COMST.2017.2682318"      target="_blank">http://dx.doi.org/10.1109/COMST.2017.2682318</a></li>    <li id="BibPLXBIB0023" label="[23]">Yuyi Mao, Changsheng You, Jun Zhang, Kaibin Huang, and Khaled&#x00A0;Ben Letaief. 2017. Mobile Edge Computing: Survey and Research Outlook. <em>      <em>CoRR</em>     </em>abs/1701.01090(2017). arxiv:1701.01090 <a class="link-inline force-break" href="http://arxiv.org/abs/1701.01090"      target="_blank">http://arxiv.org/abs/1701.01090</a></li>    <li id="BibPLXBIB0024" label="[24]">Gianfranco Nencioni, Nishanth Sastry, Gareth Tyson, Vijay Badrinarayanan, Dmytro Karamshuk, Jigna Chandaria, and Jon Crowcroft. 2016. SCORE: Exploiting Global Broadcasts to Create Offline Personal Channels for On-Demand Access. <em>      <em>IEEE/ACM Transactions on Networking</em>     </em>24, 4 (Aug 2016), 2429&#x2013;2442. <a class="link-inline force-break"      href="http://dx.doi.org/10.1109/TNET.2015.2456186"      target="_blank">http://dx.doi.org/10.1109/TNET.2015.2456186</a></li>    <li id="BibPLXBIB0025" label="[25]">Aravindh Raman, Nishanth Sastry, Arjuna Sathiaseelan, Jigna Chandaria, and Andrew Secker. 2017. Wi-Stitch: Content Delivery in Converged Edge Networks. <em>      <em>SIGCOMM Comput. Commun. Rev.</em>     </em>47, 5 (Oct. 2017), 73&#x2013;78. <a class="link-inline force-break"      href="http://dx.doi.org/10.1145/3155055.3155067"      target="_blank">http://dx.doi.org/10.1145/3155055.3155067</a></li>    <li id="BibPLXBIB0026" label="[26]">Tiago Rodrigues, Fabr&#x00ED;cio Benevenuto, Meeyoung Cha, Krishna Gummadi, and Virg&#x00ED;lio Almeida. 2011. On Word-of-mouth Based Discovery of the Web. In <em>      <em>Proceedings of the 2011 ACM SIGCOMM Conference on Internet Measurement Conference</em>     (IMC &#x2019;11)</em>. ACM, New York, NY, USA, 381&#x2013;396. <a class="link-inline force-break"      href="http://dx.doi.org/10.1145/2068816.2068852"      target="_blank">http://dx.doi.org/10.1145/2068816.2068852</a></li>    <li id="BibPLXBIB0027" label="[27]">Matti Siekkinen, Enrico Masala, and Teemu K&#x00E4;m&#x00E4;r&#x00E4;inen. 2016. A First Look at Quality of Mobile Live Streaming Experience: The Case of Periscope. In <em>      <em>Proceedings of the 2016 Internet Measurement Conference</em>     (IMC &#x2019;16)</em>. ACM, New York, NY, USA, 477&#x2013;483. <a class="link-inline force-break"      href="http://dx.doi.org/10.1145/2987443.2987472"      target="_blank">http://dx.doi.org/10.1145/2987443.2987472</a></li>    <li id="BibPLXBIB0028" label="[28]">Kunwadee Sripanidkulchai, Bruce Maggs, and Hui Zhang. 2004. An Analysis of Live Streaming Workloads on the Internet. In <em>      <em>Proceedings of the 4th ACM SIGCOMM Conference on Internet Measurement</em>     (IMC &#x2019;04)</em>. ACM, New York, NY, USA, 41&#x2013;54. <a class="link-inline force-break"      href="http://dx.doi.org/10.1145/1028788.1028795"      target="_blank">http://dx.doi.org/10.1145/1028788.1028795</a></li>    <li id="BibPLXBIB0029" label="[29]">John&#x00A0;C. Tang, Gina Venolia, and Kori&#x00A0;M. Inkpen. 2016. Meerkat and Periscope: I Stream, You Stream, Apps Stream for Live Streams. In <em>      <em>Proceedings of the 2016 CHI Conference on Human Factors in Computing Systems</em>     (CHI &#x2019;16)</em>. ACM, New York, NY, USA, 4770&#x2013;4780. <a class="link-inline force-break"      href="http://dx.doi.org/10.1145/2858036.2858374"      target="_blank">http://dx.doi.org/10.1145/2858036.2858374</a></li>    <li id="BibPLXBIB0030" label="[30]">Gareth Tyson, Yehia Elkhatib, Nishanth Sastry, and Steve Uhlig. 2013. Demystifying Porn 2.0: A Look into a Major Adult Video Streaming Website. In <em>      <em>Proceedings of the 2013 Conference on Internet Measurement Conference</em>     (IMC &#x2019;13)</em>. ACM, New York, NY, USA, 417&#x2013;426. <a class="link-inline force-break"      href="http://dx.doi.org/10.1145/2504730.2504739"      target="_blank">http://dx.doi.org/10.1145/2504730.2504739</a></li>    <li id="BibPLXBIB0031" label="[31]">Thaddeus Vincenty. 1975. Direct and inverse solutions of geodesics on the ellipsoid with application of nested equations. <em>      <em>Survey review</em>     </em>23, 176 (1975), 88&#x2013;93.</li>    <li id="BibPLXBIB0032" label="[32]">Bolun Wang, Xinyi Zhang, Gang Wang, Haitao Zheng, and Ben&#x00A0;Y. Zhao. 2016. Anatomy of a Personalized Livestreaming System. In <em>      <em>Proceedings of the 2016 Internet Measurement Conference</em>     (IMC &#x2019;16)</em>. ACM, New York, NY, USA, 485&#x2013;498. <a class="link-inline force-break"      href="http://dx.doi.org/10.1145/2987443.2987453"      target="_blank">http://dx.doi.org/10.1145/2987443.2987453</a></li>    <li id="BibPLXBIB0033" label="[33]">Shuo Wang, Xing Zhang, Yan Zhang, Lin Wang, Juwo Yang, and Wenbo Wang. 2017. A Survey on Mobile Edge Networks: Convergence of Computing, Caching and Communications. <em>      <em>IEEE Access</em>     </em>5(2017), 6757&#x2013;6779. <a class="link-inline force-break"      href="http://dx.doi.org/10.1109/ACCESS.2017.2685434"      target="_blank">http://dx.doi.org/10.1109/ACCESS.2017.2685434</a></li>    <li id="BibPLXBIB0034" label="[34]">Mike&#x00A0;P. Wittie, Veljko Pejovic, Lara Deek, Kevin&#x00A0;C. Almeroth, and Ben&#x00A0;Y. Zhao. 2010. Exploiting Locality of Interest in Online Social Networks. In <em>      <em>Proceedings of the 6th International COnference</em>     (Co-NEXT &#x2019;10)</em>. ACM, New York, NY, USA, Article 25, 12&#x00A0;pages. <a class="link-inline force-break"      href="http://dx.doi.org/10.1145/1921168.1921201"      target="_blank">http://dx.doi.org/10.1145/1921168.1921201</a></li>    <li id="BibPLXBIB0035" label="[35]">Kun Xing, Bofeng Zhang, Bo Zhou, and Yucong Liu. 2011. Behavior based user interests extraction algorithm. <em>      <em>Internet of Things (iThings)</em>     </em>(2011). <a class="link-inline force-break"      href="http://dx.doi.org/10.1109/iThings/CPSCom.2011.70"      target="_blank">http://dx.doi.org/10.1109/iThings/CPSCom.2011.70</a></li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">    <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a>fb.com/livemap</p>   <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a>Note that between 18-Nov and 22-Nov the measurements ceased. This was due to an unavoidable server failure. Consequently, this time period is omitted from our later analysis.</p>   <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class="link-inline force-break"    href="https://newsroom.fb.com/news/2015/08/connect-with-public-figures-through-live/">https://newsroom.fb.com/news/2015/08/connect-with-public-figures-through-live/</a>   </p>   <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a><a class="link-inline force-break"    href="https://newsroom.fb.com/news/2017/03/new-ways-to-go-live-now-from-your-computer/">https://newsroom.fb.com/news/2017/03/new-ways-to-go-live-now-from-your-computer/</a>   </p>   <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a><a class="link-inline force-break"    href="https://www.facebook.com/facebookmedia/get-started/live">https://www.facebook.com/facebookmedia/get-started/live</a>   </p>   <p id="fn6"><a href="#foot-fn6"><sup>6</sup></a><a class="link-inline force-break"    href="https://www.facebook.com/business/learn/facebook-page-basics">https://www.facebook.com/business/learn/facebook-page-basics</a>   </p>   <p id="fn7"><a href="#foot-fn7"><sup>7</sup></a><a class="link-inline force-break"    href="https://developers.facebook.com/docs/videos/live-video">https://developers.facebook.com/docs/videos/live-video</a>   </p>   <p id="fn8"><a href="#foot-fn8"><sup>8</sup></a>Note that the number of viewers changes as viewers join and leave a broadcast. Since our trace collects data at 2-minute intervals, we show the peak number of viewers recorded.</p>   <p id="fn9"><a href="#foot-fn9"><sup>9</sup></a>To entice new viewers, a short GIF or video highlight of a few seconds can be shown, to indicate the ongoing video broadcast.</p>   <p id="fn10"><a href="#foot-fn10"><sup>10</sup></a>In the current Facebook live design, new viewers cannot rewind on a live stream; thus these first chunks need not be uploaded even after the first viewers arrive.</p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>    <em>WWW '18, April 23&#x2013;27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5639-8/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3178876.3186061">https://doi.org/10.1145/3178876.3186061</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div> </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Facebook (A)Live? Are Live Social Broadcasts Really
+  Broadcasts?</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Facebook (A)Live? Are Live Social
+          Broadcasts Really <em>Broad</em>casts?</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Aravindh</span> <span class=
+          "surName">Raman</span>, King's College London, <a href=
+          "mailto:aravindh.raman@kcl.ac.uk">aravindh.raman@kcl.ac.uk</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Gareth</span> <span class=
+          "surName">Tyson</span>, Queen Mary University of London,
+          <a href=
+          "mailto:g.tyson@qmul.ac.uk">g.tyson@qmul.ac.uk</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Nishanth</span> <span class=
+          "surName">Sastry</span>, King's College London, <a href=
+          "mailto:nishanth.sastry@kcl.ac.uk">nishanth.sastry@kcl.ac.uk</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3178876.3186061"
+        target=
+        "_blank">https://doi.org/10.1145/3178876.3186061</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3178876" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>The era of live-broadcast is back but with two
+        major changes. First, unlike traditional TV broadcasts,
+        content is now streamed over the Internet enabling it to
+        reach a&nbsp;<em>wider</em> audience. Second, due to
+        various user-generated content platforms it has become
+        possible for&nbsp;<em>anyone</em> to get involved,
+        streaming their own content to the world. This emerging
+        trend of <em>going live</em> usually happens via social
+        platforms, where users perform live social broadcasts
+        predominantly from their mobile devices, allowing their
+        friends (and the general public) to engage with the stream
+        in real-time. With the growing popularity of such
+        platforms, the burden on the current Internet
+        infrastructure is therefore expected to multiply. With this
+        in mind, we explore one such prominent platform — Facebook
+        Live. We gather 3TB of data, representing one month of
+        global activity and explore the characteristics of live
+        social broadcast. From this, we derive simple yet effective
+        principles which can decrease the network burden. We then
+        dissect global and hyper-local properties of the video
+        while on-air, by capturing the geography of the
+        broadcasters or the users who produce the video and the
+        viewers or the users who interact with it. Finally, we
+        study the social engagement while the video is live and
+        distinguish the key aspects when the same video goes
+        on-demand. A common theme throughout the paper is that,
+        despite its name, many attributes of Facebook Live deviate
+        from both the concepts of <em>live</em> and
+        <em>broadcast</em>.</small></p>
+      </div>
+      <div class="CCSconcepts">
+        <p><small><span style="font-weight:bold;">CCS
+        Concepts:</span> • <strong>Social and professional
+        topics</strong> → <strong>User characteristics;</strong> •
+        <strong>Networks</strong> → <em>Network components;</em>
+        <em>Network measurement;</em> • <strong>Information
+        systems</strong> → <strong>World Wide Web;</strong>
+        <em>Information systems applications;</em></small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class="keyword"><small>social live broadcast; user
+          behaviour; edge computing</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Aravindh Raman, Gareth Tyson, and Nishanth Sastry. 2018.
+          Facebook (A)Live? Are Live Social Broadcasts Really
+          <em>Broad</em>casts?. In <em>WWW 2018: The 2018 Web
+          Conference,</em> <em>April 23–27, 2018,</em> <em>Lyon,
+          France. ACM, New York, NY, USA</em> 10 Pages. <a href=
+          "https://doi.org/10.1145/3178876.3186061" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3178876.3186061</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>The online sharing of user-generated content is now a
+      day-to-day activity for many users around the
+      world&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0002">2</a>].
+      Whereas traditionally this has followed a “static” upload
+      model (where users create a video offline, and then upload
+      their content on a platform like YouTube for on-demand
+      viewing), recent years have seen a noticeable shift towards
+      live equivalents. Mobile applications such as Facebook Live,
+      Periscope and Instagram Live allow users to easily broadcast
+      their activities to a potentially global audience. We term
+      this medium <em>social live broadcast</em>, and distinguish
+      it from more traditional forms of live streaming such as
+      Twitch, which are not based on social platforms and are not
+      impacted by the various cultural and demographic implications
+      of a social graph-based delivery.</p>
+      <p>One prominent example of live social broadcast is
+      <em>Facebook Live</em>. The platform is simple: it allows any
+      Facebook user to “go live” and stream their mobile camera
+      feed to friends (and others if public). An interesting twist
+      is that the video optionally remains available after the
+      broadcast, to be viewed on-demand, thus offering
+      functionality similar to traditional user-generated platforms
+      like YouTube. From a user behaviour perspective, Facebook
+      Live is a particularly powerful platform due to the presence
+      of both amateur and professional users, and the combination
+      of live and non-live video delivery. Further, with a strong
+      social network and a global reach, Facebook allows us to
+      extract social features and geographical patterns. From an
+      infrastructural perspective, it also opens up several
+      challenges and opportunities, <em>e.g.,</em> to exploit
+      social localities for edge caching.</p>
+      <p>In this paper, we make two broad contributions. First, we
+      characterise user behaviour in mobile live social broadcast.
+      Second, where appropriate, we highlight relevant implications
+      for mobile live social video delivery derived from our
+      observations. To this end, we have collected a large-scale
+      dataset covering one month of activity on Facebook Live. This
+      dataset not only encompasses information regarding access
+      patterns, but also geographical indicators on where
+      broadcasters and viewers are located. To the best of our
+      knowledge, we are the first to study Facebook Live and,
+      importantly, the first to derive key systems insights.
+      Whereas the limited body of past research has focussed on
+      performance aspects&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0027">27</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0032">32</a>], we strive to understand its end
+      user characteristics, as well as how this might create
+      architectural design opportunities.</p>
+      <p>We begin by characterising broadcaster and viewer
+      properties (§<a class="sec" href="#sec-10">4</a>). We
+      quantify Facebook Live's popularity, observing 3.2 million
+      accounts performing broadcasts, with a peak of 62 million
+      online viewers (§<a class="sec" href="#sec-11">4.1</a>). We
+      identify three types of broadcasts. The majority (95%) are
+      from social users on Facebook's mobile app, whilst the
+      minority are from Facebook page accounts (4%) and
+      applications using Facebook's third party API (1%). Although
+      social users typically perform short broadcasts, we find a
+      non-negligible number of mobile users with broadcast sessions
+      exceeding one hour (§<a class="sec" href="#sec-12">4.2</a>).
+      However, nearly half of these streams go unwatched, even for
+      regular broadcasters. Despite this, we find that the Facebook
+      app uploads all content regardless of viewers, wasting user
+      device battery and network resources. We therefore propose a
+      simple scheme, whereby content is locally cached on a device
+      until viewers arrive. We find that 21.91% (21.33TB) of data
+      could be offloaded from delivery through this simple
+      innovation (§<a class="sec" href="#sec-13">4.3</a>).</p>
+      <p>We then dissect the geographical patterns of both
+      broadcasters and viewers (§<a class="sec" href=
+      "#sec-14">5</a>). We confirm that Facebook Live has a global
+      reach (§<a class="sec" href="#sec-15">5.1</a>). The majority
+      of popular broadcasters are based in Europe, South East Asia,
+      Brazil and the East Coast of the United States. Driven by
+      social properties, most broadcasts are highly localised. For
+      example, 8% of viewers are within a city-level radius of 25KM
+      from the broadcaster, accounting for 1.57M viewers. That
+      said, we also observe a significant proportion of
+      international consumption too (overall, 39.8% of viewers are
+      domestic and the remaining are international). There are some
+      distinct power players here. For example, residents in the
+      United States stream a disproportionate amount of broadcasts
+      to Mexico and Canada. This highlights well the social
+      properties of Facebook Live, whereby users tend to consume
+      directly from friends (who may be in different countries due
+      to immigration).</p>
+      <p>Finally, we refocus our attention on user engagement
+      (§<a class="sec" href="#sec-18">6</a>). We find that popular
+      broadcasts consistently garner views rapidly. However, this
+      is not the norm — the median view count typically remains
+      below 10 throughout the entire duration of streams. We also
+      compare this against archived on-demand videos,
+      <em>i.e.,</em> streams that were live but subsequently made
+      available for later viewing. We find that, in fact, most
+      engagement (comments, likes, shares) happen <em>after</em> a
+      stream has been archived, thereby demoting the importance of
+      the live component. We finally combine the above observations
+      to question to what extent Facebook Live is truly live,
+      social and broadcasting (§<a class="sec" href=
+      "#sec-21">7</a>).</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Background
+          &amp; Related Work</h2>
+        </div>
+      </header>
+      <p><strong>Online Video Delivery:</strong> Our work overlaps
+      with studies looking at user generated (UGC) video platforms,
+      <em>e.g.,</em> &nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0030">30</a>]. These include user behaviour
+      analysis&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0035">35</a>] to understand consumption
+      patterns&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0008">8</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0018">18</a>]. Facebook Live departs from the
+      traditional UGC model of interaction, with users live
+      broadcasting through their mobile device and online social
+      network (rather than simply uploading videos). This allows
+      for a number of new lines of exploration, particularly
+      relating to how <em>live</em> videos are created and consumed
+      by social ties. There have been a small number of studies
+      into live streaming platforms, including
+      Akamai&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0028">28</a>],
+      BBC iPlayer&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0017">17</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0024">24</a>] or CNLive&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0020">20</a>]. These professional
+      platforms serve a wide range of international and
+      professional content, although we emphasise that this differs
+      dramatically from the user generated content discussed above.
+      Perhaps the most famous user generated live streaming
+      platform of the day is Twitch, which has seen increasing
+      research attention&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0010">10</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0012">12</a>]. This streams live computer
+      gameplay, but differs from Facebook Live in that it is not
+      mobile, nor integrated within a social network.</p>
+      <p><strong>Geographical Video Access Patterns:</strong>
+      Another major part of our work is investigating the
+      geographical properties of social broadcast and consumption.
+      There have been a small set of studies looking at the
+      geographical properties of video access. Li <em>et al.</em>
+      &nbsp; looked at the the location of viewers watching PPTV in
+      China&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0021">21</a>].
+      They found that a significant portion of videos get at least
+      70% of their views from just 3 out of 33 provincial
+      locations. Similar studies have been performed for YouTube,
+      finding that users tend to access videos nearby to
+      them&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0005">5</a>].
+      Whereas studies have been done looking at spatial localities
+      in Facebook&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0034">34</a>] and Twitter&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0026">26</a>], this has not inspected
+      broadcasts. Interestingly, the integration of live social
+      broadcast with a platform like Facebook also conflates two
+      factors impacting spatial access patterns:
+      (<em>i</em>)&nbsp;Content locality, which is the propensity
+      for content generated nearby to be more relevant to a user;
+      and (<em>ii</em>)&nbsp;Social locality, which is the
+      propensity of content generated by friends to be more
+      relevant.</p>
+      <p><strong>Social Live Broadcasts:</strong> We take
+      inspiration from the above works, but emphasise <em>social
+      live broadcasts platforms</em> such as Facebook Live and
+      Periscope&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0027">27</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0032">32</a>] are distinct from these systems in a
+      number of ways. They allow any user to broadcast themselves
+      (usually from a mobile device) to their friends and possibly
+      other interested parties. Unlike traditional user-generated
+      video platforms, live social streaming drives consumption in
+      realtime. Critically, this is done through direct integration
+      with a social network, notifying online users of the
+      broadcast. This throws up interesting questions that do not
+      emerge in past studies on live platforms. For example, we
+      later explore the social interactions between viewers and
+      broadcasters in real time. Beyond this, the unique social API
+      of Facebook Live allows us to dive into questions regarding
+      user locations to understand their impact on content creation
+      and consumption.</p>
+      <p>To the best of our knowledge, we are the first to study
+      Facebook Live at scale; thus, intentionally, we strive to
+      offer a broad characterisation covering the key novel aspects
+      of the system. There are, however, a small number of studies
+      on related social live streaming platforms. Wang <em>et
+      al.</em> studied Periscope from an infrastructural
+      perspective&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0032">32</a>], focussing on understanding how
+      Periscope scales up. This focussed on popular streams,
+      whereas we also focus on the behaviour of unpopular streams
+      (which are more frequently occurring). We also integrate this
+      with exploration of geographical and social properties of the
+      broadcasters. A related paper&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0027">27</a>] inspected Periscope to
+      capture performance metrics, <em>e.g.,</em> video quality,
+      stall events, power consumption. Tang <em>et al.</em>
+      focussed on a small set of Meerkat and Periscope broadcasts
+      using crowd sourced analysis and interviews; they focussed on
+      things like motivation for usage&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0029">29</a>]. This social analysis,
+      however, was based on just 767 (manually analysed) live
+      broadcasts. The focus of our paper is very different. We take
+      a user-facing perspective, empirically exploring the ways
+      users interact with Facebook Live on both a global and
+      regional level. Although we do this at scale, we also focus
+      on both highly popular and unpopular users to understand
+      system implications for both.</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> Datasets &amp;
+          Methodology</h2>
+        </div>
+      </header>
+      <p>To explore Facebook Live, it is first necessary to collect
+      a large and meaningful dataset of both the broadcasters and
+      viewers. Hence, we begin by describing the data collection
+      methodology employed.</p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">Summary of dataset separated across
+          continents. Peak view counts are computed cumulatively
+          across all videos in a snapshot (originating on the
+          continent).</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Attribute</th>
+              <th style="text-align:center;">Total</th>
+              <th style="text-align:center;">NA</th>
+              <th style="text-align:center;">EU</th>
+              <th style="text-align:center;">AS</th>
+              <th style="text-align:center;">AF</th>
+              <th style="text-align:center;">SA</th>
+              <th style="text-align:center;">OC</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:left;"># of broadcasts</td>
+              <td style="text-align:right;">6.5 M</td>
+              <td style="text-align:right;">1.9 M</td>
+              <td style="text-align:right;">707 K</td>
+              <td style="text-align:right;">2.66 M</td>
+              <td style="text-align:right;">117 K</td>
+              <td style="text-align:right;">810 K</td>
+              <td style="text-align:right;">52 K</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"># of broadcasters</td>
+              <td style="text-align:right;">3.29 M</td>
+              <td style="text-align:right;">856 K</td>
+              <td style="text-align:right;">336 K</td>
+              <td style="text-align:right;">1.35 M</td>
+              <td style="text-align:right;">64.6 K</td>
+              <td style="text-align:right;">418 K</td>
+              <td style="text-align:right;">25.4 K</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"># of broadcasts with
+              over 100 views</td>
+              <td style="text-align:right;">61 K</td>
+              <td style="text-align:right;">15.2 K</td>
+              <td style="text-align:right;">8.2 K</td>
+              <td style="text-align:right;">23 K</td>
+              <td style="text-align:right;">1.5 K</td>
+              <td style="text-align:right;">6.4 K</td>
+              <td style="text-align:center;">426</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"># of broadcasters with
+              over 100 views</td>
+              <td style="text-align:right;">19 K</td>
+              <td style="text-align:right;">4.8 K</td>
+              <td style="text-align:right;">3 K</td>
+              <td style="text-align:right;">6.5 K</td>
+              <td style="text-align:center;">522</td>
+              <td style="text-align:right;">2.5 K</td>
+              <td style="text-align:center;">163</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Peak # of viewers</td>
+              <td style="text-align:right;">60 M</td>
+              <td style="text-align:right;">17.6 M</td>
+              <td style="text-align:right;">7.39 M</td>
+              <td style="text-align:right;">20 M</td>
+              <td style="text-align:right;">1 M</td>
+              <td style="text-align:right;">6.8 M</td>
+              <td style="text-align:right;">387 K</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <section id="sec-7">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span> Data
+            Capture Methodology</h3>
+          </div>
+        </header>
+        <p>We have written a crawler that automatically collects
+        information on publicly accessible Facebook broadcasts.
+        These are taken from the Facebook Live map,<a class="fn"
+        href="#fn1" id="foot-fn1"><sup>1</sup></a> which publishes
+        broadcasts in realtime. The crawler collects this data
+        every two minutes, providing a periodic snapshot of all
+        geo-tagged public streams in the system (including their
+        metadata). This was executed between 7-Nov-2016 and
+        2-Dec-2016, resulting in 3TB of data.<a class="fn" href=
+        "#fn2" id="foot-fn2"><sup>2</sup></a> This covered 6.5
+        million broadcasts by 3.29 million unique broadcasters, and
+        viewed by a peak of 62 million users. Amongst several
+        events captured, our dataset covered the US Presidential
+        election of Nov 2016, Thanksgiving (26th November) and
+        Armistice Day (11th November).</p>
+        <p>On Facebook Live, a broadcaster can go live using any of
+        the following three mechanisms:
+        (<em>i</em>)&nbsp;<strong>From App</strong>: Users or pages
+        can create live streams using the Facebook App or Facebook
+        Mentions<a class="fn" href="#fn3" id=
+        "foot-fn3"><sup>3</sup></a> from their Android or iOS
+        devices. Note that the feature of going live from the
+        browser was introduced three months after the
+        crawl.<a class="fn" href="#fn4" id=
+        "foot-fn4"><sup>4</sup></a> (<em>ii</em>)&nbsp;<strong>From
+        Publisher tools</strong><a class="fn" href="#fn5" id=
+        "foot-fn5"><sup>5</sup></a>: Facebook Pages<a class="fn"
+        href="#fn6" id="foot-fn6"><sup>6</sup></a> can use this
+        feature allowing them to use any external device or
+        software to stream the live content.
+        (<em>iii</em>)&nbsp;<strong>Using Developer API</strong>:
+        Developers can use the live API<a class="fn" href="#fn7"
+        id="foot-fn7"><sup>7</sup></a> and embed it in their app to
+        broadcast their content through Facebook. 95%, 4% and &lt;
+        1% of broadcasts belong to each of these above category
+        respectively.</p>
+        <p>For every broadcast, the following data is collected
+        every two minutes: (<em>i</em>)&nbsp;<strong>Broadcaster
+        metadata</strong>: The broadcaster's username and the
+        geo-tag coordinates (<em>cf.</em> §<a class="sec" href=
+        "#sec-8">3.2</a>). The broadcaster can be either an
+        individual user account or, alternatively, a Facebook Page
+        (typically created for organisations, <em>e.g.,</em>
+        political parties). In the latter case, we also collect
+        information about the category of the broadcast page,
+        <em>e.g.,</em> Media, Sport, Shopping <em>etc.</em>
+        Geo-tags are added by the user based on their GPS
+        coordinates; if a user does not share location information
+        explicitly, any publicly accessible location information in
+        their profile will be used.
+        (<em>ii</em>)&nbsp;<strong>Viewer information</strong>: The
+        number of live viewers per broadcast, as well as the
+        location coordinates of the viewers (returned by
+        Facebook).</p>
+        <p>Engagement attributes are also collected, namely the
+        number of likes, shares and comments during the broadcast.
+        After eight months we then revisited any videos that had
+        been archived for later on-demand access, collecting the
+        number of likes, shares, comments and the bitrate (46.1% of
+        live streams were archived). Table&nbsp;<a class="tbl"
+        href="#tab1">1</a> provides a summary of the dataset across
+        different regions.</p>
+        <p>To give context regarding the <em>types</em> of content
+        material, we briefly inspect the categorical tags within
+        the Page broadcasts. Figure&nbsp;<a class="fig" href=
+        "#fig1">1</a> presents the fraction of broadcasts that fall
+        into each category, as well as the fraction of the overall
+        viewership that each category attracts. Media, which covers
+        things like news and TV content, gains by far the highest
+        viewership (over 50%), despite constituting less than 20%
+        of broadcasts. “Religious Place of Worship” is second most
+        popular by the number of broadcasters, driven by the US and
+        Brazil where they constitute over 30% of the streams.
+        Measuring across the world, however, 40% of the religious
+        broadcasts do not garner even a single view. Other content
+        types ranging from arts to shopping can be seen of assorted
+        popularities.</p>
+        <figure id="fig1">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig1.jpg"
+          class="img-responsive" alt="Figure 1" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 1:</span>
+            <span class="figure-title">Fraction of broadcasters and
+            viewers for each category. Note that “Other” is a
+            category provided by the Facebook itself.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> On
+            Facebook's geo-coordinates</h3>
+          </div>
+        </header>
+        <p>As stated above, we collect geo-coordinates for viewers
+        and broadcasters. These are used by Facebook to visualise
+        locations on a public map for users. Before continuing, it
+        is important to validate the fidelity of these coordinates
+        and explain the level of sampling Facebook utilises when
+        returning locations of viewers. Every broadcast is
+        accompanied by a longitude-latitude pair from where the
+        broadcast happens and the viewer locations are reported for
+        the broadcasts that have greater than 100 views.</p>
+        <p><em>All</em> the broadcasters have geo-tags, whilst the
+        mean percentage of viewers that also have locations
+        reported is 55%, with a standard deviation of 12.83. We
+        regularly observe broadcasters reporting multiple locations
+        per broadcast (this could be because the user has moved or
+        because Facebook has introduced noise to protect the
+        location privacy of broadcasters). To explore this, for
+        each broadcast, we take all reported coordinates for the
+        broadcaster and compute the centroid. We then calculate the
+        maximum distance between the centroid and all
+        geo-co-ordinates reported — this gives the upper bound of
+        any noise potentially introduced. Figure&nbsp;<a class=
+        "fig" href="#fig2">2</a> presents a Cumulative Distribution
+        Function (CDF) of the results. We find that <em>no</em>
+        broadcaster reports a distance that varies greater than 7
+        KM from the centroid. This indicates that any noise (if
+        introduced) will only undermine accuracy by this upper
+        bound; this is sufficiently accurate to allow global-scale
+        geo analysis. Finally, we convert each geo-coordinate into
+        its country of origin using country polygons. For
+        subsequent statistics related to distance, we utilise
+        Vincenty's formula for computing the distance between
+        coordinates&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0031">31</a>].</p>
+        <figure id="fig2">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig2.jpg"
+          class="img-responsive" alt="Figure 2" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 2:</span>
+            <span class="figure-title">CDF of maximum distance from
+            centroid of locations reported for each broadcaster, as
+            well as the mean and median distance between reported
+            locations per broadcast.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span> On
+            Facebook's infrastructure</h3>
+          </div>
+        </header>
+        <p>Before continuing, we briefly outline how Facebook Live
+        operates from an infrastructural
+        perspective&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0001">1</a>]. When users go live, they are
+        redirected to their closest Point of Presence (PoP) using
+        RTMPS. Video data is adaptively encoded by the Facebook
+        mobile app, and then uploaded to a data centre via the PoP.
+        Typically, data is uploaded in a high definition format,
+        but quality is degraded in cases of poor connectivity. Any
+        users wishing to view the stream downloads a manifest file,
+        and begins requesting listed video chunks via Facebook's
+        CDN (mainly Akamai), where caching also takes place.</p>
+      </section>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Characterising
+          Live Broadcasts</h2>
+        </div>
+      </header>
+      <p>We begin by characterising the global activities of
+      broadcasters and their viewerships on Facebook Live.</p>
+      <section id="sec-11">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> How popular
+            is Facebook Live?</h3>
+          </div>
+        </header>
+        <p>First, we look at the overall popularity of the
+        platform, as measured by the number of broadcasters and
+        viewers. Figure&nbsp;<a class="fig" href="#fig3">3</a>
+        presents an hourly time series across our dataset. It
+        counts both the number of broadcasts (Y1-axis) and viewers
+        (Y2-axis). We see a roughly stable trend for viewers, but
+        erratic trends for broadcasters. This is largely due to a
+        high number of broadcasts in November 2016 due to the US
+        Presidential elections. We also observe periodic spikes in
+        utilisation. These centre on weekends, indicating the
+        social nature of the broadcast platform.</p>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig3.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">Cumulative number of
+            broadcasters and viewers per hour during measurement
+            period. Note that between 18th and 22nd November,
+            monitoring ceased due to a failure in our
+            crawler.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>Whereas the above quantifies how popular Facebook Live
+        is, it does not demonstrate the popularity of individual
+        broadcasters. This is typically a more important metric for
+        users wishing to use their broadcasts for promotion.
+        Figure&nbsp;4a presents a CDF of the peak view
+        counts<a class="fn" href="#fn8" id=
+        "foot-fn8"><sup>8</sup></a> for each broadcast. Two lines
+        are present: (<em>i</em>)&nbsp;Broadcasts by
+        <strong>User</strong> accounts, which are generated by
+        individual Facebook users on their mobile device and
+        (<em>ii</em>)&nbsp;Broadcasts by <strong>Page</strong>
+        accounts, which are generated by Facebook Pages.</p>
+        <p>It can be seen that Page broadcasts gain significantly
+        more viewers than typical user broadcasts. To add further
+        context, Table&nbsp;<a class="tbl" href="#tab2">2</a>
+        presents the Top 10 broadcasters, ranked by peak viewing
+        figures. It can be seen that 7 out of the Top 10
+        broadcasters are Pages. Even though Page broadcasters only
+        contribute 4.26% of the streams, they collect almost 35% of
+        all views. In stark contrast, we find that 41.5% of user
+        broadcasts <em>never</em> gain a single viewer, whilst
+        55.35% of broadcasters have at least one stream that
+        remains unwatched. In fact, the median view count for user
+        broadcasts is just 1. This raises questions regarding the
+        extent that Facebook Live is actually used as a social
+        <em>broad</em>cast medium in practice, as opposed to a
+        unicast stream that is seen by one or even zero
+        viewers.</p>
+        <figure id="fig4">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig4.jpg"
+          class="img-responsive" alt="Figure 4" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 4:</span>
+            <span class="figure-title">Broadcast characteristics:
+            (a) CDF of peak view counts (for broadcasts with a view
+            count &gt; 1). Broadcasts are separated into those
+            generated by Users and Pages. 41.47% and 37.39% of the
+            user and page videos go unwatched; 9% of user videos
+            and 5% of page videos get just a single view. (b) CDF
+            of broadcast duration. Broadcasts are separated into
+            streams generated by Page accounts and User accounts,
+            as well as popular (&gt; 100 peak views) and unpopular
+            (0 views) streams. (c) Size of uploaded broadcast
+            files, for user, page and app videos, as well as videos
+            with 0 or 1 viewers.</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>To study this further, we separate all users into
+        buckets based on the total number of broadcasts they have
+        performed. For each bucket, we compute the fraction of
+        broadcasts that gained 0 viewers, 1 viewer and &gt; 1
+        viewers. Figure&nbsp;<a class="fig" href="#fig5">5</a>
+        presents our findings as a stacked bar chart; buckets are
+        plotted on the X-axis and the fraction of broadcasts with
+        zero views is plotted on the Y-axis. We also plot the
+        number of samples in each bucket on the Y2-axis.
+        Unsurprisingly we find on the Y2-axis that the number of
+        broadcasters in each bucket decreases as the threshold for
+        number of broadcasts increases. Focusing on the Y1-axis, we
+        find, as expected, that the heavy users who broadcast more
+        have a lower proportion of unwatched streams. However, we
+        observe that <em>all</em> user groups generate unwatched
+        material. This extends to users who generate tens of
+        broadcasts. This confirms that unwatched material is not
+        simply created by experimental users who just “try out”
+        Facebook Live once. Instead, it is a persistent
+        characteristic of broadcasters. For example, for users with
+        10 broadcasts, we find that 29.56% of broadcasts gain 0
+        viewers, 7.9% gain 1 viewer and the remainder gain above 1
+        viewer. Interestingly, the graph also demonstrates a
+        valley-like trend, whereby users with a small number of
+        broadcasts largely gain 0 viewers (45.8% for below 5
+        broadcasts), whilst users with a high number of
+        broadcasters also generate a lot of unwatched streams
+        (36.35% for above 100 broadcasts). Users who fall in the
+        middle of the spectrum (40–50 broadcasts) have the lowest
+        proportion of unwatched material. Although this observation
+        is impacted by the smaller sample sizes for user groups
+        with large numbers of broadcasts (as shown on the Y2-axis),
+        our manual inspection reveals that such “unpopular” users
+        tend to generate large numbers of uninteresting material,
+        <em>e.g.,</em> unprocessed personal diaries. It should also
+        be noted that the generation of unwatched material is not
+        exclusive to mobile users; some categories of Page streams
+        exhibit similar properties, <em>e.g.,</em> 40% of
+        “Religious” streams from Page accounts are never viewed,
+        and 13% for “Media” streams. Overall, 37.4% of Page streams
+        have zero views.</p>
+        <figure id="fig5">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig5.jpg"
+          class="img-responsive" alt="Figure 5" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 5:</span>
+            <span class="figure-title">Distribution of number of
+            peak viewers (Y1-axis on the left) bucketed based on
+            the broadcast(s) made by an user. Y2-axis (on the
+            right) shows the total number of broadcasters falling
+            under a bucket of total broadcasts performed.</span>
+          </div>
+        </figure>
+        <p></p>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Top broadcasters based on median view
+            count.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Handle</th>
+                <th style="text-align:left;">Type</th>
+                <th style="text-align:center;">Median Viewers</th>
+                <th style="text-align:left;">Description</th>
+                <th style="text-align:left;">Category</th>
+                <th style="text-align:left;">Verified</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">@zuck</td>
+                <td style="text-align:left;">User</td>
+                <td style="text-align:center;">48471</td>
+                <td style="text-align:left;">Facebook founder</td>
+                <td style="text-align:left;">User</td>
+                <td style="text-align:left;">Yes</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">@GilmoreGirls</td>
+                <td style="text-align:left;">Page</td>
+                <td style="text-align:center;">39162</td>
+                <td style="text-align:left;">Popular TV drama</td>
+                <td style="text-align:left;">TV Programme</td>
+                <td style="text-align:left;">Yes</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">@buzzfeedtasty</td>
+                <td style="text-align:left;">Page</td>
+                <td style="text-align:center;">34369</td>
+                <td style="text-align:left;">Food news outlet</td>
+                <td style="text-align:left;">Media</td>
+                <td style="text-align:left;">Yes</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">@pena6789</td>
+                <td style="text-align:left;">User</td>
+                <td style="text-align:center;">16952</td>
+                <td style="text-align:left;">Adult content</td>
+                <td style="text-align:left;">User</td>
+                <td style="text-align:left;">NA</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">@WhiteHouse</td>
+                <td style="text-align:left;">Page</td>
+                <td style="text-align:center;">16124</td>
+                <td style="text-align:left;">Official WH page</td>
+                <td style="text-align:left;">Historical
+                Landmark</td>
+                <td style="text-align:left;">Yes</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">@FoxNews</td>
+                <td style="text-align:left;">Page</td>
+                <td style="text-align:center;">14721</td>
+                <td style="text-align:left;">News outlet</td>
+                <td style="text-align:left;">Media</td>
+                <td style="text-align:left;">Yes</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">@bendeac</td>
+                <td style="text-align:left;">User</td>
+                <td style="text-align:center;">13289</td>
+                <td style="text-align:left;">Romanian Actor</td>
+                <td style="text-align:left;">User</td>
+                <td style="text-align:left;">No</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">@RealMadrid</td>
+                <td style="text-align:left;">Page</td>
+                <td style="text-align:center;">12783</td>
+                <td style="text-align:left;">Popular football
+                team</td>
+                <td style="text-align:left;">Sports Team</td>
+                <td style="text-align:left;">Yes</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">
+                @WesternJournalism</td>
+                <td style="text-align:left;">Page</td>
+                <td style="text-align:center;">10507</td>
+                <td style="text-align:left;">News outlet</td>
+                <td style="text-align:left;">Media</td>
+                <td style="text-align:left;">Yes</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">@BuzzFeed</td>
+                <td style="text-align:left;">Page</td>
+                <td style="text-align:center;">10276</td>
+                <td style="text-align:left;">News outlet</td>
+                <td style="text-align:left;">Media</td>
+                <td style="text-align:left;">Yes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec-12">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span> How long
+            are broadcasts?</h3>
+          </div>
+        </header>
+        <p>The previous section has highlighted that nearly half of
+        all user broadcasts are never viewed. We next inspect the
+        durations of these broadcasts to understand the resources
+        consumed (both in terms of user time and upload volume).
+        Figure&nbsp;4b presents a CDF of the duration of broadcasts
+        separated into a number of groups. App broadcasts are, by
+        far, the longest with 53.46% exceeding half an hour. This
+        is largely driven by the fact that most apps broadcast
+        computer gameplay. Broadcasts performed by Pages also tend
+        to be substantially longer in duration than User
+        broadcasts. Almost 30% of the Page broadcasts exceed half
+        an hour, compared to just 6% for User broadcasts (where
+        77.34% are under 10 minutes).</p>
+        <p>This trend may be partly driven by the greater
+        popularity of Page streams (<em>cf.</em> Figure&nbsp;4a).
+        To examine this more closely for mobile users,
+        Figure&nbsp;4a breaks User broadcasts into two groups:
+        (<em>i</em>)&nbsp;<strong>Popular</strong>, which gain over
+        100 viewers at peak; and
+        (<em>ii</em>)&nbsp;<strong>Unpopular</strong>, which are
+        never viewed. In-line with our previous statement, we see
+        that more popular streams broadcast for longer. 25% of
+        these streams last longer than half an hour, whereas this
+        is just 2% for unpopular streams. Critically, however, we
+        still find a non-negligible number of unwatched streams
+        that broadcast for extended periods (80k videos are longer
+        than 20 minutes).</p>
+        <p>Currently, streams with zero views are live streamed to
+        Facebook's infrastructure regardless of their popularity.
+        This observation suggests significant waste in network,
+        client and server resouces. For example, the average
+        duration for unwatched streams is five and a half minutes.
+        With a bitrate of 500kbps, this would generate 18MB of
+        needless traffic per broadcast (with battery and network
+        costs). This therefore raises the question of how such
+        content is delivered. Whereas uploads are obviously
+        necessary for archived streams (<em>i.e.,</em> ones that
+        remain on a user's profile), this is profligate for live
+        streams that are not archived. This is because such data is
+        immediately discarded without anybody ever seeing it.
+        Importantly, we find that only 41.7% of unwatched streams
+        are actually archived — for the remainder, it is
+        unnecessary to waste device resources in performing the
+        live upload to the PoP. This observation leads us to
+        inspect the size of the archived videos (<em>i.e.,</em>
+        videos marked by the users as being available for on-demand
+        viewing later on) to understand the precise volume of this
+        upload process. Figure&nbsp;<a class="fig" href=
+        "#fig4">4c</a> presents the distribution of file sizes for
+        all archived videos. The median file size for broadcasts
+        with zero views is 8.57 MB, with 45% exceeding 10 MB.</p>
+      </section>
+      <section id="sec-13">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span> Is
+            broadcast really necessary?</h3>
+          </div>
+        </header>
+        <p>Combining the above observations, we see that Facebook
+        Live is predominantly (95%) used by mobile users to
+        broadcast content. Pages garner a disproportionate number
+        of viewers, whilst 41.47% of user broadcasts languish in
+        obscurity, never being viewed. These observations indicate
+        that the current “cloud-based” model of delivery is
+        misplaced. As it stands, the Facebook mobile app uploads
+        content regardless of view counts. This opens up
+        interesting opportunities for hyper-local storage. For
+        example, video content can be cached locally on the mobile
+        device, and only uploaded once the first viewer
+        arrives<a class="fn" href="#fn9" id=
+        "foot-fn9"><sup>9</sup></a>. Upon the completion of a
+        broadcast, users are given the option of archiving the
+        content. Live content that is not watched and not archived
+        can be cached locally and then discarded after broadcast.
+        If the user wishes to archive the video, it can be
+        automatically uploaded to Facebook when convenient
+        (<em>e.g.,</em> via WiFi). This simple change would reduce
+        use of battery and network for the 55.58% of broadcasters
+        who (at least once) generate an unwatched video. It would
+        also save an average of 5.84MB per upload. Note that this
+        also covers broadcasters who generate <em>any</em> video
+        chunks that are never watched. For example, 44.1% of
+        streams in their first 2 minutes have zero viewers, out of
+        which 7.8% continue to garner viewers later. Hence, such
+        users need not upload the first chunks until a viewer
+        arrives<a class="fn" href="#fn10" id=
+        "foot-fn10"><sup>10</sup></a>.</p>
+      </section>
+    </section>
+    <section id="sec-14">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Geographical
+          Exploration</h2>
+        </div>
+      </header>
+      <p>The previous section has highlighted the nature of social
+      broadcast, focussing on the large number of unwatched and
+      unpopular streams. Next, we inspect the opposite end of the
+      spectrum — highly popular streams. A unique aspect of
+      Facebook Live is that it provides the locations of stream
+      viewers for broadcasts with an audience of 100+. This allows
+      us to understand the geographical relationship between
+      broadcasters and viewers.</p>
+      <section id="sec-15">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.1</span> Where are
+            the users?</h3>
+          </div>
+        </header>
+        <p>We begin by inspecting the locations of users to
+        understand where Facebook Live's userbase is.
+        Figure&nbsp;<a class="fig" href="#fig6">6</a> presents
+        viewer (blue) and broadcaster (green) locations for any
+        streams that garner above 100 viewers. This covers 45K
+        broadcasts, and 20.3 million viewers. The map shows a
+        significant spread of broadcasters (green) with a focus on
+        East Coast US, Brazil, Europe and South East Asia. It can
+        be seen that most major conurbations are covered. A
+        particularly nice feature of the dataset is that locations
+        are based on mobile GPS-based geo-tags (rather than IP
+        address). This gives us accurate geographical vantage into
+        regions such as China, which typically access Facebook via
+        VPN (thereby changing their reported IP geolocation). It
+        can be seen that despite the blocking of Facebook, there
+        are a number of users in China. In the rest of this
+        section, we focus on the top 19 countries measured by
+        broadcasters and consumers. These countries are obtained
+        taking the union of the top 15 countries in terms of
+        broadcasters and top 15 in terms of consumers.</p>
+        <p>Figure&nbsp;<a class="fig" href="#fig7">7</a> presents
+        the percentage of broadcasters and viewers based in each of
+        the top 19 countries. A clear ranking can be observed; the
+        US dominates both the number of broadcasters and viewers,
+        followed by Thailand and Vietnam. The latter is
+        particularly interesting, as in many cases we find that the
+        number of viewers and broadcasters in a country do not
+        necessarily correlate. For instance, whereas, in the US or
+        Brazil, the fraction of viewers and broadcasters is
+        relatively <em>similar</em>, Thailand generates a
+        significant proportion of the world's broadcasts (11.26%),
+        but only constitutes 8% of the viewers. Conversely, in
+        Turkey, there are significant fraction of viewers (7.1% of
+        the world's viewers), but only 2.94% of broadcasters.
+        Similar observations can be made across many other
+        countries, including Korea, Peru and Romania. Through
+        manual inspection, we find a number of potential reasons.
+        For instance, Turkey blocks access to Facebook; therefore,
+        most users are likely accessing it via circumvention tools.
+        Whereas Turkish users may be keen on consuming content,
+        they may be less willing to expose themselves by
+        broadcasting on a censored medium. In the case of Thailand,
+        we find that a notable portion of adult content is being
+        streamed, and this niche content attracts a globally
+        distributed viewership (rather than just in Thailand).</p>
+        <figure id="fig6">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig6.jpg"
+          class="img-responsive" alt="Figure 6" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 6:</span>
+            <span class="figure-title">Locations of influential
+            broadcasters (&gt; 100 viewers) and the respective
+            viewers across the globe</span>
+          </div>
+        </figure>
+        <figure id="fig7">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig7.jpg"
+          class="img-responsive" alt="Figure 7" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 7:</span>
+            <span class="figure-title">Contribution of broadcasters
+            and viewers from top-accessed countries.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-16">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.2</span> How far
+            away are viewers?</h3>
+          </div>
+        </header>
+        <p>Although the above reveals the locations of broadcasters
+        and viewers, it does not show their relationships. From a
+        systems-perspective, this is critical for optimising
+        delay-<em>in</em>tolerant communications as ideally
+        viewers, broadcasters and any intermediate servers would be
+        within short distances. Regarding the latter, there have
+        been a number of recent proposals regarding the placement
+        of servers within cell towers and local network PoPs,
+        <em>i.e.,</em> so-called mobile edge
+        computing&nbsp;[<a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover"
+        data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0022">22</a>, <a class="bib" data-trigger=
+        "hover" data-toggle="popover" data-placement="top" href=
+        "#BibPLXBIB0033">33</a>]. Thus, we next inspect the
+        distance that viewers are from the broadcasters they watch.
+        Figure&nbsp;9a presents CDFs of the distance between
+        broadcasters and their viewers for user accounts. We
+        separate broadcasters into their respective countries. In
+        cases where the distribution plateaus, typically the
+        broadcasters and viewers are separated by an ocean
+        (<em>e.g.,</em> in the case of Philippines this is the
+        distance across the Pacific to reach US-based viewers, who
+        constitute 9% of the country's audience).</p>
+        <p>It can be seen that a notable subset of broadcasters are
+        hyper-local to their consumers. This is shown well in
+        Figure&nbsp;<a class="fig" href="#fig8">8</a>, which
+        presents a heatmap of viewer locations relative to the
+        broadcasater. Overall, 8% of viewers are within 25 KM of
+        the broadcaster and constitute a city-level locality. South
+        Korea is the most extreme in this regard; 11% of viewers
+        are within 25KM, with 4% actually under 5KM. We can also
+        inspect the opposite end of the spectrum. 11.35% of viewers
+        are over 10,000 KM away from their broadcaster. Here,
+        subtle differences can be seen between broadcasters from
+        different countries. For example, broadcasters from the
+        Philippines, a tiny island in the middle of Western
+        Pacific, tend to be further away from their viewers (only
+        37.81% of viewers are closer than 1000 KM), whereas Turkish
+        broadcasters generally garner more nearby viewers (52.71%
+        are closer than 1000 KM). As previously discussed, this
+        local content consumption suggests that live social
+        streaming would be well placed to benefit from technologies
+        such as mobile edge computing.</p>
+        <figure id="fig8">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig8.jpg"
+          class="img-responsive" alt="Figure 8" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 8:</span>
+            <span class="figure-title">Number of viewers (binned at
+            500m) within a radius of 5KM, 25KM and 40KM when all
+            the broadcasters location are shifted to origin.</span>
+          </div>
+        </figure>
+        <figure id="fig9">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig9.jpg"
+          class="img-responsive" alt="Figure 9" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 9:</span>
+            <span class="figure-title">Geographical footprint: (a)
+            CDF of distance between broadcasters of their viewers.
+            Multiple plots are presented for broadcasters in
+            different countries (b) Fraction of views from users in
+            the same country as the broadcaster (c) Fraction of
+            views from users in a <em>different</em> country from
+            the broadcaster, shown as a heat map of content
+            broadcast from one country consumed in another country,
+            plotted for the union of top 15 producers and
+            consumers.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-17">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">5.3</span> Domestic or
+            international?</h3>
+          </div>
+        </header>
+        <p>It should be remembered that distance can be deceptive
+        due to the various sizes of individual countries. Since we
+        expect infrastructure to be confined within country
+        borders, we next separate all broadcasters and viewers into
+        their respective countries. Figure&nbsp;9b presents the
+        fraction of the views for videos of a country which come
+        from domestic viewers. This is computed as follows: For a
+        given country, we take the total view count of all videos
+        broadcasted from that country. We then present the
+        <em>fraction</em> of these views that are domestic,
+        <em>i.e.,</em> from viewers in the same country as the
+        broadcaster. In some cases (<em>e.g.,</em> Thailand,
+        Vietnam), over 80% of views are domestic, suggesting strong
+        language, social and cultural ties drive consumption. In
+        other cases, under 20% of viewers are domestic
+        (<em>e.g.,</em> Germany). This suggests such countries
+        generate highly popular international content. However, we
+        note that almost all videos have a non-trivial local
+        viewership; and thus would benefit from caching locally in
+        the country of broadcast, regardless of whether the video
+        also has an international appeal or not.</p>
+        <p>To explore the international views,
+        Figure&nbsp;<a class="fig" href="#fig9">9c</a> presents a
+        heat map of the <em>non-domestic</em> views. Each cell in
+        the matrix represents the fraction of views for videos of a
+        country which come from a specific consumer country. For
+        the sake of clarity, the fraction of domestic views (where
+        the producer and consumer are from the same country) are
+        not plotted. Further, only the top 19 producers and
+        consumers are shown; thus the fraction of the heat map
+        values across all consumers might not add up to 1.</p>
+        <p>It can immediately be seen that a small number of
+        countries stand-out in regards to the global reach of their
+        content. The US is the most prominent, with a particularly
+        large build-up of viewers in Mexico and Canada. This is not
+        surprising considering the high degrees of immigration and
+        cultural overlap between these three countries. Despite our
+        prior observation about local consumption, Thailand and
+        Vietnam also have a large number of viewers from other
+        countries. Much like the US, this is driven by the large
+        number of broadcasts in the country.</p>
+        <p>Before concluding, we note that Figure&nbsp;<a class=
+        "fig" href="#fig9">9c</a> is intended to illustrate some
+        interesting international trends and is not a complete
+        picture – for instance, countries like Germany and Turkey,
+        which have a high proportion of non-domestic views
+        (Figure&nbsp;9b) do not show up with high values in this
+        heat map because the viewers for the video broadcasts from
+        these countries are not amongst the top 15 consumers.</p>
+      </section>
+    </section>
+    <section id="sec-18">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Understanding
+          Engagement</h2>
+        </div>
+      </header>
+      <p>Our final analysis briefly explores engagement factors. We
+      explore the extent to which views, and other social
+      engagement measures such as numbers of likes, comments and
+      shares evolve over the lifetime of a video, both during the
+      live broadcast, as well as afterwards, and draw implications
+      for mobile livecasting. The main takeaway is that most of the
+      engagement happens <em>after</em> the live broadcast, lending
+      further support to the idea that Facebook Live can be treated
+      similarly to an on-demand service, as opposed to a live
+      broadcast.</p>
+      <section id="sec-19">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">6.1</span> Evolution
+            of views over time</h3>
+          </div>
+        </header>
+        <p>First, we capture the instantaneous number of viewers
+        for <em>all</em> broadcasts. We do this until minute 34 (≈
+        95% of videos end before 34 minutes). The number of viewers
+        depends to some extent on the quality of the video, but
+        also upon the duration – longer videos have a higher chance
+        of catching friends who come online, and notice the live
+        broadcast. Yet, many of them may lose interest and leave
+        after some time, so the later minutes of the video may lack
+        sufficient viewers. To avoid introducing bias through the
+        varying sample size across each time interval bucket, we
+        randomly pick 100k videos for each time intervals, and
+        study the distribution of viewer counts.</p>
+        <figure id="fig10">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig10.jpg"
+          class="img-responsive" alt="Figure 10" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 10:</span>
+            <span class="figure-title">View evolution over 2 minute
+            intervals</span>
+          </div>
+        </figure>
+        <p></p>
+        <p>Figure&nbsp;<a class="fig" href="#fig10">10</a> shows a
+        box-and-whiskers plot of the number of viewers in each
+        interval across the videos. Each box extends from the lower
+        to upper quartile values of the number of viewers, with a
+        line at the median. The whiskers extend from the box to
+        show the range of the data. Flier points past the end of
+        the whiskers are not shown for clarity. The viewer counts
+        increase after the first interval, and there is a larger
+        variance in the later time buckets, indicating that
+        sufficiently interesting longer videos accumulate viewers
+        over time. But the median number of viewers remains
+        comfortably under 10, even after 20–30 minutes of
+        broadcast, again underscoring that it is not very difficult
+        to support most live broadcasts.</p>
+        <figure id="fig11">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3190000/3186061/images/www2018-70-fig11.jpg"
+          class="img-responsive" alt="Figure 11" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 11:</span>
+            <span class="figure-title">Distribution of engagement
+            metrics (shares, likes, comments) across all broadcast
+            streams.</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+      <section id="sec-20">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">6.2</span> Social
+            engagement</h3>
+          </div>
+        </header>
+        <p>A key feature of Facebook Live is the ability for
+        viewers to interact with broadcasters. This comes in the
+        form of likes, shares and comments. In a sense, this offers
+        an alternative measure of popularity when compared to the
+        earlier discussion of viewer counts.</p>
+        <p>Figure&nbsp;<a class="fig" href="#fig11">11</a> presents
+        the distribution of these engagement metrics for all
+        broadcasts. The figure presents these metrics across three
+        time windows: (<em>i</em>)&nbsp;During the live broadcast;
+        (<em>ii</em>)&nbsp;a day later for videos that have been
+        archived on-demand; and (<em>iii</em>)&nbsp;8 months later.
+        The pattern indicates the type of engagement, whilst the
+        grayscale colour separates broadcasts into four popularity
+        groups – those that get 0 engagement
+        (likes/comments/shares), 1–10 engagements, 11–100
+        engagements or more than 100 engagements.</p>
+        <p>Most of the engagement happens <em>after</em> the live
+        broadcast. It is therefore questionable to what extent this
+        is a <em>live</em> platform. On average during the live
+        broadcast, videos receive 6.7 likes, 8.4 comments and 0.54
+        shares. One day after broadcast, the engagement counts jump
+        to 29.84 likes, 16.33 comments, and 1.33 shares. These
+        numbers do not change much in the next 8 months; thus the
+        majority of interaction happens in the 1 day after
+        broadcast. Notice that about 40% (47%) of videos collect no
+        likes (comments) during the live broadcast, but this number
+        drops to 3% (16%) after a day. From an infrastructure
+        design perspective, this interaction pattern makes it
+        easier to support social engagement, since on-demand is
+        easier to manager than live streaming, which requires
+        synchronisation of the display of likes and comments across
+        all viewers at the point in the stream where the
+        interaction happened.</p>
+        <p>We note that during the live broadcasts, comments tend
+        to outnumber likes, but the engagement after the broadcast
+        tends to be through likes. Comments represent a much
+        stronger form of engagement; thus we conjecture that users
+        who watch and interact with the live stream may be close
+        friends of the user, whereas the later engagement could be
+        from other friends or the general public.</p>
+      </section>
+    </section>
+    <section id="sec-21">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">7</span> Conclusion,
+          Implications and Future Work</h2>
+        </div>
+      </header>
+      <p>In this paper we explored the usage of Facebook Live in
+      terms of three major factors: video characteristics;
+      geography of broadcasters and viewers; and the social
+      engagement. We began by characterising broadcast behaviour
+      (§<a class="sec" href="#sec-10">4</a>). Being a popular
+      platform, Facebook Live encounters peaks of 63 million online
+      viewers. Despite this, we find that popularity is typically
+      reserved for Page accounts and a small set of celebrity
+      users. Over half of the social users on Facebook Live
+      generate unwatched content at least once, with 41.5% of
+      broadcasts never being viewed. This casts doubt over both the
+      terms <em>social</em> and <em>broadcast</em> in social live
+      broadcast. In response, we proposed a simple mechanism to
+      alleviate network and battery consumption. In cases where
+      live streams receive no viewers, we proposed locally storing
+      the content on the broadcasters’ mobile devices until viewers
+      arrive (rather than uploading video chunks that are never
+      watched). Although this may introduce a slightly greater
+      startup delay from viewers, such a model would reduce the
+      number of bytes transferred by 21.9%, and mean that 23.18% of
+      videos never need to leave the mobile device (only those that
+      are viewed or archived by the broadcasters, allowing
+      on-demand access later on, must be uploaded).</p>
+      <p>We then proceeded to explore the geographical (§<a class=
+      "sec" href="#sec-14">5</a>) properties of the system. Due to
+      the social nature of Facebook Live, streams exhibit high
+      degrees of locality. 8% of viewers are within 25 KM of the
+      broadcaster. We argue that this makes the service well suited
+      to many recently proposed mobile edge computing architectures
+      (<em>e.g.,</em> &nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0019">19</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0023">23</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0025">25</a>]). Unsurprisingly, these observations
+      also result in clear trends in consumption with most users
+      accessing domestic content. Exceptions to this tend to align
+      with high levels of cultural and language similarity.
+      Finally, we explored viewer engagement (§<a class="sec" href=
+      "#sec-18">6</a>) to find that even popular streams
+      (<em>i.e.,</em> &gt; 10 viewers) have periods of being
+      unwatched. We also found that most social engagement actually
+      occurs <em>after</em> the live stream for the 46% of streams
+      that were archived. This, again, casts doubt over the term
+      <em>live</em> in social live broadcast, with Facebook Live
+      exhibiting on-demand-style behaviour for many consumers.</p>
+      <p>This paper constitutes a key contribution within the
+      broader field of mobile social video consumption. However,
+      there remains a series of interesting points for exploration.
+      We have noted several systems implications from our findings.
+      Implementing and evaluating these concepts would be a
+      fruitful line of exploration, particularly as many are simple
+      and could be easily integrated into social broadcast apps. We
+      should note, however, that we anticipate significant growth
+      in the use of Facebook Live in the future. Hence, it is
+      important to monitor how behaviour evolves to understand the
+      long-term applicability of design choices. To date, we have
+      also not been able to dive into how the social graph impacts
+      video popularity, nor how such data could be used to predict
+      and inform delivery strategies. Understanding how social
+      topology impacts content consumption would be a clear line of
+      future work. We also found that a number of spatial
+      properties were correlated; we wish to expand this type of
+      correlation analysis to other domains, <em>e.g.,</em>
+      understanding if broadcasts correlate with socioeconomic
+      metrics or things like tourism and immigration levels from
+      other countries. Predictive models for capacity planning
+      and/or caching could make great use of such insight.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="sec-22">
+      <header>
+        <div class="title-info">
+          <h2>ACKNOWLEDGMENTS</h2>
+        </div>
+      </header>
+      <p>The work is partially supported by the EU-India REACH
+      Project under Grant ICI+/2014/342-986, by UK Engineering and
+      Physical Sciences Research Council (EPSRC) via the Internet
+      of Silicon Retinas Project, Grant No. EP/P022723/1, an EPSRC
+      Impact Acceleration award, and by the H2020 MONROE Project
+      Open Call 2 Grant CaMCoW, under Grant No. 644399.</p>
+    </section>
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">
+          <em><em>Under the hood: Broadcasting live video to
+          millions</em></em> . Technical Report. Facebook.
+          <a class="link-inline force-break" href=
+          "https://code.facebook.com/posts/1653074404941839/under-the-hood-broadcasting-live-video-to-millions/"
+          target=
+          "_blank">https://code.facebook.com/posts/1653074404941839/under-the-hood-broadcasting-live-video-to-millions/</a>
+        </li>
+        <li id="BibPLXBIB0002" label="[2]">
+          <em><em>White paper: Cisco VNI Forecast and Methodology,
+          2015-2020</em></em> . Technical Report. Cisco. <a class=
+          "link-inline force-break" href=
+          "http://www.cisco.com/c/en/us/solutions/collateral/service-provider/visual-networking-index-vni/complete-white-paper-c11-481360.pdf"
+          target=
+          "_blank">http://www.cisco.com/c/en/us/solutions/collateral/service-provider/visual-networking-index-vni/complete-white-paper-c11-481360.pdf</a>
+        </li>
+        <li id="BibPLXBIB0003" label="[3]">Pablo Ameigeiras,
+        Juan&nbsp;J. Ramos-Munoz, Jorge Navarro-Ortiz, and J.M.
+        Lopez-Soler. 2012. Analysis and modelling of YouTube
+        traffic. <em><em>Transactions on Emerging
+        Telecommunications Technologies</em></em> 23, 4(2012),
+        360–377. <a class="link-inline force-break" href=
+        "http://dx.doi.org/10.1002/ett.2546" target=
+        "_blank">http://dx.doi.org/10.1002/ett.2546</a>
+        </li>
+        <li id="BibPLXBIB0004" label="[4]">Michael&nbsp;Till Beck,
+        Martin Werner, Sebastian Feld, and Thomas Schimper. 2014.
+        Mobile Edge Computing: A Taxonomy. In <em><em>Proc. of the
+        Sixth International Conference on Advances in Future
+        Internet</em></em> . 48–55.</li>
+        <li id="BibPLXBIB0005" label="[5]">Anders Brodersen,
+        Salvatore Scellato, and Mirjam Wattenhofer. 2012. YouTube
+        Around the World: Geographic Popularity of Videos. In <em>
+          <em>Proceedings of the 21st International Conference on
+          World Wide Web</em> (WWW ’12)</em>. ACM, New York, NY,
+          USA, 241–250. <a class="link-inline force-break" href=
+          "http://dx.doi.org/10.1145/2187836.2187870" target=
+          "_blank">http://dx.doi.org/10.1145/2187836.2187870</a>
+        </li>
+        <li id="BibPLXBIB0006" label="[6]">Meeyoung Cha, Haewoon
+        Kwak, Pablo Rodriguez, Yong-Yeol Ahn, and Sue Moon. 2009.
+        Analyzing the Video Popularity Characteristics of
+        Large-scale User Generated Content Systems.
+        <em><em>IEEE/ACM Trans. Netw.</em></em> 17, 5 (Oct. 2009),
+        1357–1370. <a class="link-inline force-break" href=
+        "http://dx.doi.org/10.1109/TNET.2008.2011358" target=
+        "_blank">http://dx.doi.org/10.1109/TNET.2008.2011358</a>
+        </li>
+        <li id="BibPLXBIB0007" label="[7]">Bin Chang, Liang Dai, Yi
+        Cui, and Yuan Xue. 2008. On Feasibility of P2P On-Demand
+        Streaming via Empirical VoD User Behavior Analysis. (June
+        2008). <a class="link-inline force-break" href=
+        "http://dx.doi.org/10.1109/ICDCS.Workshops.2008.94"
+          target="_blank">http://dx.doi.org/10.1109/ICDCS.Workshops.2008.94</a>
+        </li>
+        <li id="BibPLXBIB0008" label="[8]">Yu Chen, Yang Yu, Wei
+        Zhang, and Junyi Shen. 2008. Analyzing User Behavior
+        History for constructing user profile. In <em><em>2008 IEEE
+        International Symposium on IT in Medicine and
+        Education</em></em> . 343–348. <a class=
+        "link-inline force-break" href=
+        "http://dx.doi.org/10.1109/ITME.2008.4743884" target=
+        "_blank">http://dx.doi.org/10.1109/ITME.2008.4743884</a>
+        </li>
+        <li id="BibPLXBIB0009" label="[9]">Jie Deng, Felix
+        Cuadrado, Gareth Tyson, and Steve Uhlig. 2015. Behind the
+        game: Exploring the twitch streaming platform. In
+        <em><em>Network and Systems Support for Games (NetGames),
+        2015 International Workshop on</em></em> . IEEE, 1–6.</li>
+        <li id="BibPLXBIB0010" label="[10]">Jie Deng, Gareth Tyson,
+        Felix Cuadrado, and Steve Uhlig. 2017. Internet scale
+        user-generated live video streaming: The Twitch case. In
+        <em><em>International Conference on Passive and Active
+        Network Measurement</em></em> . Springer, 60–71.</li>
+        <li id="BibPLXBIB0011" label="[11]">Vijay Gopalakrishnan,
+        Rittwik Jana, Ralph Knag, K.&nbsp;K. Ramakrishnan,
+        Deborah&nbsp;F. Swayne, and Vinay&nbsp;A. Vaishampayan.
+        2010. Characterizing Interactive Behavior in a Large-Scale
+        Operational IPTV Environment. In <em><em>2010 Proceedings
+        IEEE INFOCOM</em></em> . 1–5. <a class=
+        "link-inline force-break" href=
+        "http://dx.doi.org/10.1109/INFCOM.2010.5462236" target=
+        "_blank">http://dx.doi.org/10.1109/INFCOM.2010.5462236</a>
+        </li>
+        <li id="BibPLXBIB0012" label="[12]">William&nbsp;A.
+        Hamilton, Oliver Garretson, and Andruid Kerne. 2014.
+        Streaming on Twitch: Fostering Participatory Communities of
+        Play Within Live Mixed Media. In <em><em>Proceedings of the
+        32nd Annual ACM Conference on Human Factors in Computing
+        Systems</em> (CHI ’14)</em>. ACM, New York, NY, USA,
+        1315–1324. <a class="link-inline force-break" href=
+        "http://dx.doi.org/10.1145/2556288.2557048" target=
+        "_blank">http://dx.doi.org/10.1145/2556288.2557048</a>
+        </li>
+        <li id="BibPLXBIB0013" label="[13]">Bo Hu, Mohsen Jamali,
+        and Martin Ester. 2012. Learning the Strength of the
+        Factors Influencing User Behavior in Online Social
+        Networks. (Aug 2012), 368–375. <a class=
+        "link-inline force-break" href=
+        "http://dx.doi.org/10.1109/ASONAM.2012.67" target="_blank">
+          http://dx.doi.org/10.1109/ASONAM.2012.67</a>
+        </li>
+        <li id="BibPLXBIB0014" label="[14]">Sagar Joglekar,
+        Nishanth Sastry, and Miriam Redi. 2017. Like at First
+        Sight: Understanding User Engagement with the World of
+        Microvideos. In <em><em>International Conference on Social
+        Informatics</em></em> . Springer, 237–256.</li>
+        <li id="BibPLXBIB0015" label="[15]">Dmytro Karamshuk,
+        Nishanth Sastry, Mustafa Al-Bassam, Andrew Secker, and
+        Jigna Chandaria. 2016. Take-Away TV: Recharging Work
+        Commutes With Predictive Preloading of Catch-Up TV Content.
+        <em><em>IEEE Journal on Selected Areas in
+        Communications</em></em> 34, 8 (Aug 2016), 2091–2101.
+        <a class="link-inline force-break" href=
+        "http://dx.doi.org/10.1109/JSAC.2016.2577298" target=
+        "_blank">http://dx.doi.org/10.1109/JSAC.2016.2577298</a>
+        </li>
+        <li id="BibPLXBIB0016" label="[16]">Dmytro Karamshuk,
+        Nishanth Sastry, Andrew Secker, and Jigna Chandaria. 2015.
+        ISP-friendly peer-assisted on-demand streaming of long
+        duration content in BBC iPlayer. In <em><em>2015 IEEE
+        Conference on Computer Communications (INFOCOM)</em></em> .
+        289–297. <a class="link-inline force-break" href=
+        "http://dx.doi.org/10.1109/INFOCOM.2015.7218393" target=
+        "_blank">http://dx.doi.org/10.1109/INFOCOM.2015.7218393</a>
+        </li>
+        <li id="BibPLXBIB0017" label="[17]">Dmytro Karamshuk,
+        Nishanth Sastry, Andrew Secker, and Jigna Chandaria. 2015.
+        On factors affecting the usage and adoption of a
+        nation-wide TV streaming service. In <em><em>2015
+        INFOCOM</em></em> . 837–845. <a class=
+        "link-inline force-break" href=
+        "http://dx.doi.org/10.1109/INFOCOM.2015.7218454" target=
+        "_blank">http://dx.doi.org/10.1109/INFOCOM.2015.7218454</a>
+        </li>
+        <li id="BibPLXBIB0018" label="[18]">Ming-Chun Lee,
+        Andreas&nbsp;F. Molisch, Nishanth Sastry, and Aravindh
+        Raman. 2017. Individual Preference Probability Modeling for
+        Video Content in Wireless Caching Networks. In
+        <em><em>GLOBECOM 2017 - 2017 IEEE Global Communications
+        Conference</em></em> . 1–7. <a class=
+        "link-inline force-break" href=
+        "http://dx.doi.org/10.1109/GLOCOM.2017.8254963" target=
+        "_blank">http://dx.doi.org/10.1109/GLOCOM.2017.8254963</a>
+        </li>
+        <li id="BibPLXBIB0019" label="[19]">Adisorn
+        Lertsinsrubtavee, Anwaar Ali, Carlos Molina-Jimenez, Arjuna
+        Sathiaseelan, and Jon Crowcroft. 2017. PiCasso: A
+        lightweight edge computing platform. In <em><em>2017 IEEE
+        6th International Conference on Cloud Networking
+        (CloudNet)</em></em> . 1–7. <a class=
+        "link-inline force-break" href=
+        "http://dx.doi.org/10.1109/CloudNet.2017.8071529" target=
+        "_blank">http://dx.doi.org/10.1109/CloudNet.2017.8071529</a>
+        </li>
+        <li id="BibPLXBIB0020" label="[20]">Yuheng Li, Yiping
+        Zhang, and Ruixi Yuan. 2011. Measurement and Analysis of a
+        Large Scale Commercial Mobile Internet TV System. In
+        <em><em>Proceedings of the 2011 ACM SIGCOMM Conference on
+        Internet Measurement Conference</em> (IMC ’11)</em>. ACM,
+        New York, NY, USA, 209–224. <a class=
+        "link-inline force-break" href=
+        "http://dx.doi.org/10.1145/2068816.2068837" target=
+        "_blank">http://dx.doi.org/10.1145/2068816.2068837</a>
+        </li>
+        <li id="BibPLXBIB0021" label="[21]">Zhenyu Li, Gaogang Xie,
+        Jiali Lin, Yun Jin, Mohamed-Ali Kaafar, and Kavé
+        Salamatian. 2014. On the geographic patterns of a
+        large-scale mobile video-on-demand system. In <em><em>IEEE
+        INFOCOM 2014 - IEEE Conference on Computer
+        Communications</em></em> . 397–405. <a class=
+        "link-inline force-break" href=
+        "http://dx.doi.org/10.1109/INFOCOM.2014.6847962" target=
+        "_blank">http://dx.doi.org/10.1109/INFOCOM.2014.6847962</a>
+        </li>
+        <li id="BibPLXBIB0022" label="[22]">Pavel Mach and Zdenek
+        Becvar. 2017. Mobile Edge Computing: A Survey on
+        Architecture and Computation Offloading. <em><em>IEEE
+        Communications Surveys Tutorials</em></em> 19, 3
+        (thirdquarter 2017), 1628–1656. <a class=
+        "link-inline force-break" href=
+        "http://dx.doi.org/10.1109/COMST.2017.2682318" target=
+        "_blank">http://dx.doi.org/10.1109/COMST.2017.2682318</a>
+        </li>
+        <li id="BibPLXBIB0023" label="[23]">Yuyi Mao, Changsheng
+        You, Jun Zhang, Kaibin Huang, and Khaled&nbsp;Ben Letaief.
+        2017. Mobile Edge Computing: Survey and Research Outlook.
+        <em><em>CoRR</em></em> abs/1701.01090(2017).
+        arxiv:1701.01090 <a class="link-inline force-break" href=
+        "http://arxiv.org/abs/1701.01090" target=
+        "_blank">http://arxiv.org/abs/1701.01090</a>
+        </li>
+        <li id="BibPLXBIB0024" label="[24]">Gianfranco Nencioni,
+        Nishanth Sastry, Gareth Tyson, Vijay Badrinarayanan, Dmytro
+        Karamshuk, Jigna Chandaria, and Jon Crowcroft. 2016. SCORE:
+        Exploiting Global Broadcasts to Create Offline Personal
+        Channels for On-Demand Access. <em><em>IEEE/ACM
+        Transactions on Networking</em></em> 24, 4 (Aug 2016),
+        2429–2442. <a class="link-inline force-break" href=
+        "http://dx.doi.org/10.1109/TNET.2015.2456186" target=
+        "_blank">http://dx.doi.org/10.1109/TNET.2015.2456186</a>
+        </li>
+        <li id="BibPLXBIB0025" label="[25]">Aravindh Raman,
+        Nishanth Sastry, Arjuna Sathiaseelan, Jigna Chandaria, and
+        Andrew Secker. 2017. Wi-Stitch: Content Delivery in
+        Converged Edge Networks. <em><em>SIGCOMM Comput. Commun.
+        Rev.</em></em> 47, 5 (Oct. 2017), 73–78. <a class=
+        "link-inline force-break" href=
+        "http://dx.doi.org/10.1145/3155055.3155067" target=
+        "_blank">http://dx.doi.org/10.1145/3155055.3155067</a>
+        </li>
+        <li id="BibPLXBIB0026" label="[26]">Tiago Rodrigues,
+        Fabrício Benevenuto, Meeyoung Cha, Krishna Gummadi, and
+        Virgílio Almeida. 2011. On Word-of-mouth Based Discovery of
+        the Web. In <em><em>Proceedings of the 2011 ACM SIGCOMM
+        Conference on Internet Measurement Conference</em> (IMC
+        ’11)</em>. ACM, New York, NY, USA, 381–396. <a class=
+        "link-inline force-break" href=
+        "http://dx.doi.org/10.1145/2068816.2068852" target=
+        "_blank">http://dx.doi.org/10.1145/2068816.2068852</a>
+        </li>
+        <li id="BibPLXBIB0027" label="[27]">Matti Siekkinen, Enrico
+        Masala, and Teemu Kämäräinen. 2016. A First Look at Quality
+        of Mobile Live Streaming Experience: The Case of Periscope.
+        In <em><em>Proceedings of the 2016 Internet Measurement
+        Conference</em> (IMC ’16)</em>. ACM, New York, NY, USA,
+        477–483. <a class="link-inline force-break" href=
+        "http://dx.doi.org/10.1145/2987443.2987472" target=
+        "_blank">http://dx.doi.org/10.1145/2987443.2987472</a>
+        </li>
+        <li id="BibPLXBIB0028" label="[28]">Kunwadee
+        Sripanidkulchai, Bruce Maggs, and Hui Zhang. 2004. An
+        Analysis of Live Streaming Workloads on the Internet. In
+        <em><em>Proceedings of the 4th ACM SIGCOMM Conference on
+        Internet Measurement</em> (IMC ’04)</em>. ACM, New York,
+        NY, USA, 41–54. <a class="link-inline force-break" href=
+        "http://dx.doi.org/10.1145/1028788.1028795" target=
+        "_blank">http://dx.doi.org/10.1145/1028788.1028795</a>
+        </li>
+        <li id="BibPLXBIB0029" label="[29]">John&nbsp;C. Tang, Gina
+        Venolia, and Kori&nbsp;M. Inkpen. 2016. Meerkat and
+        Periscope: I Stream, You Stream, Apps Stream for Live
+        Streams. In <em><em>Proceedings of the 2016 CHI Conference
+        on Human Factors in Computing Systems</em> (CHI ’16)</em>.
+        ACM, New York, NY, USA, 4770–4780. <a class=
+        "link-inline force-break" href=
+        "http://dx.doi.org/10.1145/2858036.2858374" target=
+        "_blank">http://dx.doi.org/10.1145/2858036.2858374</a>
+        </li>
+        <li id="BibPLXBIB0030" label="[30]">Gareth Tyson, Yehia
+        Elkhatib, Nishanth Sastry, and Steve Uhlig. 2013.
+        Demystifying Porn 2.0: A Look into a Major Adult Video
+        Streaming Website. In <em><em>Proceedings of the 2013
+        Conference on Internet Measurement Conference</em> (IMC
+        ’13)</em>. ACM, New York, NY, USA, 417–426. <a class=
+        "link-inline force-break" href=
+        "http://dx.doi.org/10.1145/2504730.2504739" target=
+        "_blank">http://dx.doi.org/10.1145/2504730.2504739</a>
+        </li>
+        <li id="BibPLXBIB0031" label="[31]">Thaddeus Vincenty.
+        1975. Direct and inverse solutions of geodesics on the
+        ellipsoid with application of nested equations.
+        <em><em>Survey review</em></em> 23, 176 (1975), 88–93.</li>
+        <li id="BibPLXBIB0032" label="[32]">Bolun Wang, Xinyi
+        Zhang, Gang Wang, Haitao Zheng, and Ben&nbsp;Y. Zhao. 2016.
+        Anatomy of a Personalized Livestreaming System. In <em><em>
+          Proceedings of the 2016 Internet Measurement
+          Conference</em> (IMC ’16)</em>. ACM, New York, NY, USA,
+          485–498. <a class="link-inline force-break" href=
+          "http://dx.doi.org/10.1145/2987443.2987453" target=
+          "_blank">http://dx.doi.org/10.1145/2987443.2987453</a>
+        </li>
+        <li id="BibPLXBIB0033" label="[33]">Shuo Wang, Xing Zhang,
+        Yan Zhang, Lin Wang, Juwo Yang, and Wenbo Wang. 2017. A
+        Survey on Mobile Edge Networks: Convergence of Computing,
+        Caching and Communications. <em><em>IEEE Access</em></em>
+        5(2017), 6757–6779. <a class="link-inline force-break"
+          href="http://dx.doi.org/10.1109/ACCESS.2017.2685434"
+          target=
+          "_blank">http://dx.doi.org/10.1109/ACCESS.2017.2685434</a>
+        </li>
+        <li id="BibPLXBIB0034" label="[34]">Mike&nbsp;P. Wittie,
+        Veljko Pejovic, Lara Deek, Kevin&nbsp;C. Almeroth, and
+        Ben&nbsp;Y. Zhao. 2010. Exploiting Locality of Interest in
+        Online Social Networks. In <em><em>Proceedings of the 6th
+        International COnference</em> (Co-NEXT ’10)</em>. ACM, New
+        York, NY, USA, Article 25, 12&nbsp;pages. <a class=
+        "link-inline force-break" href=
+        "http://dx.doi.org/10.1145/1921168.1921201" target=
+        "_blank">http://dx.doi.org/10.1145/1921168.1921201</a>
+        </li>
+        <li id="BibPLXBIB0035" label="[35]">Kun Xing, Bofeng Zhang,
+        Bo Zhou, and Yucong Liu. 2011. Behavior based user
+        interests extraction algorithm. <em><em>Internet of Things
+        (iThings)</em></em> (2011). <a class=
+        "link-inline force-break" href=
+        "http://dx.doi.org/10.1109/iThings/CPSCom.2011.70"
+          target="_blank">http://dx.doi.org/10.1109/iThings/CPSCom.2011.70</a>
+        </li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href=
+    "#foot-fn1"><sup>1</sup></a>fb.com/livemap</p>
+    <p id="fn2"><a href="#foot-fn2"><sup>2</sup></a>Note that
+    between 18-Nov and 22-Nov the measurements ceased. This was due
+    to an unavoidable server failure. Consequently, this time
+    period is omitted from our later analysis.</p>
+    <p id="fn3"><a href="#foot-fn3"><sup>3</sup></a><a class=
+    "link-inline force-break" href=
+    "https://newsroom.fb.com/news/2015/08/connect-with-public-figures-through-live/">https://newsroom.fb.com/news/2015/08/connect-with-public-figures-through-live/</a></p>
+    <p id="fn4"><a href="#foot-fn4"><sup>4</sup></a><a class=
+    "link-inline force-break" href=
+    "https://newsroom.fb.com/news/2017/03/new-ways-to-go-live-now-from-your-computer/">https://newsroom.fb.com/news/2017/03/new-ways-to-go-live-now-from-your-computer/</a></p>
+    <p id="fn5"><a href="#foot-fn5"><sup>5</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.facebook.com/facebookmedia/get-started/live">https://www.facebook.com/facebookmedia/get-started/live</a></p>
+    <p id="fn6"><a href="#foot-fn6"><sup>6</sup></a><a class=
+    "link-inline force-break" href=
+    "https://www.facebook.com/business/learn/facebook-page-basics">https://www.facebook.com/business/learn/facebook-page-basics</a></p>
+    <p id="fn7"><a href="#foot-fn7"><sup>7</sup></a><a class=
+    "link-inline force-break" href=
+    "https://developers.facebook.com/docs/videos/live-video">https://developers.facebook.com/docs/videos/live-video</a></p>
+    <p id="fn8"><a href="#foot-fn8"><sup>8</sup></a>Note that the
+    number of viewers changes as viewers join and leave a
+    broadcast. Since our trace collects data at 2-minute intervals,
+    we show the peak number of viewers recorded.</p>
+    <p id="fn9"><a href="#foot-fn9"><sup>9</sup></a>To entice new
+    viewers, a short GIF or video highlight of a few seconds can be
+    shown, to indicate the ongoing video broadcast.</p>
+    <p id="fn10"><a href="#foot-fn10"><sup>10</sup></a>In the
+    current Facebook live design, new viewers cannot rewind on a
+    live stream; thus these first chunks need not be uploaded even
+    after the first viewers arrive.</p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23–27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5639-8/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3178876.3186061">https://doi.org/10.1145/3178876.3186061</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

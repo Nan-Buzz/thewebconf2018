@@ -1,1 +1,805 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> <head>  <title>Do Violent People Smile? Social Media Analysis of their Profile Pictures</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script> </head> <body id="main">  <section class="front-matter">   <section>    <header class="title-info">    <div class="journal-title">     <h1>      <span class="title">Do Violent People Smile? Social Media Analysis of their Profile Pictures</span>      <br/>      <span class="subTitle"/>     </h1>    </div>    </header>    <div class="authorGroup">    <div class="author">     <span class="givenName">Mauro</span>     <span class="surName">Coletto</span>     Ca&#x2019; Foscari University, Venice, Italy, <a href="mailto:mauro.coletto@unive.it">mauro.coletto@unive.it</a>    </div>    <div class="author">     <span class="givenName">Claudio</span>     <span class="surName">Lucchese</span>     Ca&#x2019; Foscari University, Venice, Italy, <a href="mailto:claudio.lucchese@unive.it">claudio.lucchese@unive.it</a>    </div>    <div class="author">     <span class="givenName">Salvatore</span>     <span class="surName">Orlando</span>     Ca&#x2019; Foscari University, Venice, Italy, <a href="mailto:orlando@unive.it">orlando@unive.it</a>    </div>                </div>    <br/>    <div class="pubInfo">    <p>DOI: <a href="https://doi.org/10.1145/3184558.3191594" target="_blank">https://doi.org/10.1145/3184558.3191594</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">    <p>     <small>The popularity of online social platforms has also determined the emergence of violent and abusive behaviors reflecting real life issues into the digital arena. Cyberbullying, Internet banging, pedopornography, sexting are examples of these behaviors, as witnessed in the social media environments.</small>    </p>    <p>     <small>Several studies have shown how to approximately detect those behaviors by analyzing the social interactions and in particular the content of the exchanged messages. The features considered in the models basically include detection of offensive language through NLP techniques and vocabularies, social network structural measures and, if available, user context information.</small>    </p>    <p>     <small>Our goal is to investigate those users who adopt offensive language and hate speech in Twitter by analyzing their profile pictures. Results show that violent people smile less and they are dominating by anger, fear and sadness.</small>    </p>    </div>    <div class="classifications">    <div class="author">     <span style="font-weight:bold;">      <small>Keywords:</small>     </span>     <span class="keyword">      <small>cyberbullying</small>, </span>     <span class="keyword">      <small> violence</small>, </span>     <span class="keyword">      <small> social media</small>, </span>     <span class="keyword">      <small> offensive language</small>, </span>     <span class="keyword">      <small> smile</small>, </span>     <span class="keyword">      <small> profile pictures</small>, </span>     <span class="keyword">      <small> face++</small>, </span>     <span class="keyword">      <small> Twitter</small>, </span>     <span class="keyword">      <small> emotion</small>     </span>    </div>    <br/>    <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Mauro Coletto, Claudio Lucchese, and Salvatore Orlando. 2018. Do Violent People Smile? Social Media Analysis of their Profile Pictures. In <em>WWW '18 Companion: The 2018 Web Conference Companion,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 4 Pages. <a href="https://doi.org/10.1145/3184558.3191594" class="link-inline force-break"       target="_blank">https://doi.org/10.1145/3184558.3191594</a></small>     </p>    </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-4">    <header>    <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>    </div>    </header>    <p>The use of online social networks and micro-blogging platforms as a source to detect and quantify social phenomena is a recurrent task, in particular in the field of Social Network Analysis and Computational Social Science. Several studies can be found in different contexts using social media to study collective phenomena: from pandemics detection [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0012">12</a>] to political elections prediction [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>], from misinformation spreading [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>] to migration analysis [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>].</p>    <p>A relevant context where social media have a strong role are abusive behaviors [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>] related to offensive language adopted by users in their virtual interactions. Many studies focused on the detection of cyberbullying, violence, internet banging through the analysis of conversations and messages in social media by mean of text mining and machine learning models [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0010">10</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>]. While additional features related to the structure of the social network and the user context can be used to improve model accuracy [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0017">17</a>], the automatic detection of offensive messages is a critical issue which involves the use of lexical resources (profanity dictionaries), sentiment analysis techniques, NLP processing methods and meta information.</p>    <p>In [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>] the authors propose an interesting machine learning approach based on different features (uni-grams, bi-grams, tri-grams, POS tags, Flesch-Kincaid Grade Level and Flesch Reading Ease scores, sentiment and other metrics) to detect offensive language and hate speech.</p>    <p>We adopt this method to detect users utilizing offensive language and hate speech in order to analyze their profile pictures to describe visual features of the typical violent users.</p>    <p>To study the visual traits of the profile picture we use a computer vision approach [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>] used in many recent works. In the context of Social Media this method has recently been used to study the categories in which selfies appear on Instagram [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0009">9</a>], cultural trends in Facebook photographs [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>] or different profile pictures characteristics in different Social Media [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0020">20</a>].</p>   </section>   <section id="sec-5">    <header>    <div class="title-info">     <h2>      <span class="section-number">2</span> Data</h2>    </div>    </header>    <p>We explore two different Twitter collections to be less dataset dependent. The two datasets were collected in different periods with a large temporal gap, thus allowing us to also evaluate possible evolution through time. We also use a dataset of news, and a vocabulary of bad words.</p>    <p>    <strong>TwitterA</strong>. We use the Twitter dataset released by CAW2.0 (Content Analysis in Web 2.0) workshop in WWW 2009 conference which has been widely used in the context of cyberbullying detection [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0016">16</a>]. The corpus contains &#x2248; 977<em>k</em> tweets written in English by &#x2248; 27<em>k</em> unique users from Dec 2008 to Jan 2009.</p>    <p>    <strong>TwitterB</strong>. We use a second Twitter dataset, containing &#x2248; 1<em>M</em> tweets written in English by &#x2248; 643<em>k</em> unique users collected through the Twitter APIs in December 2015.</p>    <p>    <strong>NewsC - Additional dataset</strong>. We use a dataset containing 1<em>M</em> news, released by Signal Media (NewsIR&#x2019;16 workshop). The purpose of the dataset in only to reinforce the validity of the machine learning model used. The news, mainly in English, were originally collected from a variety of news sources and blogs for a period of 1 month (1-30 September 2015).</p>    <p>    <strong>Profanity vocabulary</strong>. To create a comprehensive dictionary of bad words, we use the following online sources:</p>    <ul class="list-no-style">    <li id="list1" label="&#x2022;">list of offensive expressions from hatebase.org (1000 +)<br/></li>    <li id="list2" label="&#x2022;">list of swear words from bannedwordlist.com (70 + terms)<br/></li>    <li id="list3" label="&#x2022;">list of English terms that could be found offensive by Luis von Ahn (1300 + terms)<br/></li>    <li id="list4" label="&#x2022;">list of bad words to filter social media content from FrontGate (700 + terms)<br/></li>    </ul>    <p>By merging them, we obtain a list of 2704 single expressions/terms which can be used to filter social media content and news in order to find offensive content.</p>   </section>   <section id="sec-6">    <header>    <div class="title-info">     <h2>      <span class="section-number">3</span> Methodology</h2>    </div>    </header>    <p>Hate speech language has been widely studied in the NLP community [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0015">15</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0018">18</a>], despite the existence of a persistent critical point in using dictionaries and lexical sources containing terms that are related to hate speech in specific contexts only, but that can have neutral or positive meanings in other contexts. For this reason we adopted both a dictionary approach combined with the machine learning (ML) method proposed by [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>] to detect offensive tweets. Specifically, we applied a filter to the collected tweets based on the profanity vocabulary described above. By filtering the datasets we selected: for TwitterA 15% of the dataset (143k documents), for TwitterB 17% (168k documents). After this filtering phase, we applied to the resulting tweets the ML-based method to detect hate speech and offensive language. The ML model is based on a logistic regression with L2 regularization. The features considered in that work are: bi-grams, uni-grams, and tri-grams features (weighted by TF-IDF), Penn Part-of-Speech (POS) tags, Flesch-Kincaid Grade Level and Flesch Reading Ease scores, sentiment lexicon and other general indicators (characters, words, syllables, hashtags, mentions, replies, retweets). The model discriminates among hate speech tweets (<strong>class 0</strong>), offensive tweets (<strong>class 1</strong>), and neutral tweets (<strong>class 2</strong>). We refer to the tweets classified as class 0 or class 1 as <em>violent</em> ones, and the tweets of class 2 as <em>non violent</em> ones. We trained the ML model on the dataset proposed in the original paper with cross validation. The model is very accurate: 94% in both precision and recall. We considered the same features described in the original papers, among which 10k most frequent terms (if-idf) and 5k pos tags.</p>    <div class="table-responsive" id="tab1">    <div class="table-caption">     <span class="table-number">Table 1:</span>     <span class="table-title">Classification of the filtered tweets</span>    </div>    <table class="table">     <tbody>      <tr>       <td style="text-align:left;">       <strong>dataset</strong>       </td>       <td style="text-align:center;">       <strong>class</strong>       </td>       <td style="text-align:center;">       <strong>percentage</strong>       </td>       <td style="text-align:center;">       <strong>tweets</strong>       </td>      </tr>      <tr>       <td style="text-align:left;"/>       <td style="text-align:center;">0</td>       <td style="text-align:center;">2%</td>       <td style="text-align:center;">3.5<em>k</em>       </td>      </tr>      <tr>       <td style="text-align:left;">TwitterA</td>       <td style="text-align:center;">1</td>       <td style="text-align:center;">24%</td>       <td style="text-align:center;">34<em>k</em>       </td>      </tr>      <tr>       <td style="text-align:left;"/>       <td style="text-align:center;">2</td>       <td style="text-align:center;">74%</td>       <td style="text-align:center;">106<em>k</em>       </td>      </tr>      <tr>       <td style="text-align:left;"/>       <td style="text-align:center;">0</td>       <td style="text-align:center;">5%</td>       <td style="text-align:center;">8.9<em>k</em>       </td>      </tr>      <tr>       <td style="text-align:left;">TwitterB</td>       <td style="text-align:center;">1</td>       <td style="text-align:center;">30%</td>       <td style="text-align:center;">50<em>k</em>       </td>      </tr>      <tr>       <td style="text-align:left;"/>       <td style="text-align:center;">2</td>       <td style="text-align:center;">65%</td>       <td style="text-align:center;">109<em>k</em>       </td>      </tr>     </tbody>    </table>    </div>    <p>By applying the learned ML model to our filtered datasets, we classified tweets as described in Table&#x00A0;<a class="tbl" href="#tab1">1</a>. The high percentage of neutral tweets indicates the limitation of the vocabulary approach in identifying properly violent content. To reinforce the validity of the process we applied both the filtering and the ML method to the NewsC dataset, by splitting the news in sentences with a size comparable to a tweet. The filtering excluded 88% of the sentences. Applying to the remaining 12% the ML method, we obtained that 96% of the remaining corpus still resulted neutral, highlighting differences in the violent tones of the content from official newspapers and from Social Media, that are not easily detected by a vocabulary based method. This evidence reinforces the validity of the ML model, which looks not only at terms frequency, in detecting offensive content.</p>   </section>   <section id="sec-7">    <header>    <div class="title-info">     <h2>      <span class="section-number">4</span> Profile Picture Analysis</h2>    </div>    </header>    <figure id="fig1">    <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191594/images/www18companion-333-fig3.jpg" class="img-responsive" alt="Figure 1"      longdesc=""/>    <div class="figure-caption">     <span class="figure-number">Figure 1:</span>     <span class="figure-title">Smile index distribution on TwitterA</span>    </div>    </figure>    <figure id="fig2">    <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191594/images/www18companion-333-fig4.jpg" class="img-responsive" alt="Figure 2"      longdesc=""/>    <div class="figure-caption">     <span class="figure-number">Figure 2:</span>     <span class="figure-title">Smile index distribution on TwitterB</span>    </div>    </figure>    <p>We used the publicly available API developed by Face++, a cloud-based facial recognition system. Face++ is a service providing highly accurate user information inferred by their profile pictures. Given a picture containing a face, the Face++ algorithm extracts information concerning demographics of the individual, as well as the emotions of the detected face. Face++ reports a 99.5% accuracy on an established facial recognition benchmark [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>]; this accuracy is further supported by the results in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>], which reports a 97% +/- 5% accuracy on similar photos. Through Face++, we thus collected demographic information (gender, age), ethnicity, smile intensity and emotions for 13k users (for TwitterA), 18k users (for TwitterB). Face++ is able to identify emotions including confidence scores for anger, disgust, fear, happiness, neutral, sadness, and surprise.</p>    <section id="sec-8">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.1</span> Demographic Analysis</h3>     </div>    </header>    <p>Table&#x00A0;<a class="tbl" href="#tab2">2</a> shows the results of the demographic analysis.</p>    <div class="table-responsive" id="tab2">     <div class="table-caption">      <span class="table-number">Table 2:</span>      <span class="table-title">Demographic Analysis</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;">        <strong>dataset</strong>       </td>       <td style="text-align:center;">        <strong>class</strong>       </td>       <td style="text-align:center;">        <strong>ratio M/F</strong>       </td>       <td style="text-align:center;">        <strong>avg. age</strong>       </td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:center;">0</td>       <td style="text-align:center;">1.12</td>       <td style="text-align:center;">44</td>       </tr>       <tr>       <td style="text-align:left;">TwitterA</td>       <td style="text-align:center;">1</td>       <td style="text-align:center;">1.24</td>       <td style="text-align:center;">45</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:center;">2</td>       <td style="text-align:center;">1.26</td>       <td style="text-align:center;">46</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:center;">0</td>       <td style="text-align:center;">1.04</td>       <td style="text-align:center;">40</td>       </tr>       <tr>       <td style="text-align:left;">TwitterB</td>       <td style="text-align:center;">1</td>       <td style="text-align:center;">0.75</td>       <td style="text-align:center;">37</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:center;">2</td>       <td style="text-align:center;">0.78</td>       <td style="text-align:center;">40</td>       </tr>      </tbody>     </table>    </div>    <p>For lack of space we do not report the full age distributions by gender, but we highlight the most relevant evidences. In both datasets violent people are on average younger, this reinforcing the possible presence of so-called cyberbullies, usually teenagers, who determine a decrease of the average age of the group. The class 1 is characterized by a higher percentage of female users compared to the general population, indicating that using violent language is not predominantly a male behavior. Less evidences can be underlined on hate speech, since the clusters are smaller and less statistically significant.</p>    </section>    <section id="sec-9">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.2</span> Ethnicity</h3>     </div>    </header>    <p>Table&#x00A0;<a class="tbl" href="#tab3">3</a> reports the results of the ethnicity analysis.</p>    <div class="table-responsive" id="tab3">     <div class="table-caption">      <span class="table-number">Table 3:</span>      <span class="table-title">Ethnicity</span>     </div>     <table class="table">      <tbody>       <tr>       <td style="text-align:left;">        <strong>dataset</strong>       </td>       <td style="text-align:center;">        <strong>class</strong>       </td>       <td style="text-align:center;">        <strong>white</strong>       </td>       <td style="text-align:center;">        <strong>black</strong>       </td>       <td style="text-align:center;">        <strong>asian</strong>       </td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:center;">0</td>       <td style="text-align:center;">0.71</td>       <td style="text-align:center;">0.12</td>       <td style="text-align:center;">0.17</td>       </tr>       <tr>       <td style="text-align:left;">TwitterA</td>       <td style="text-align:center;">1</td>       <td style="text-align:center;">0.71</td>       <td style="text-align:center;">0.11</td>       <td style="text-align:center;">0.18</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:center;">2</td>       <td style="text-align:center;">0.76</td>       <td style="text-align:center;">0.09</td>       <td style="text-align:center;">0.16</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:center;">0</td>       <td style="text-align:center;">0.54</td>       <td style="text-align:center;">0.24</td>       <td style="text-align:center;">0.22</td>       </tr>       <tr>       <td style="text-align:left;">TwitterB</td>       <td style="text-align:center;">1</td>       <td style="text-align:center;">0.53</td>       <td style="text-align:center;">0.12</td>       <td style="text-align:center;">0.23</td>       </tr>       <tr>       <td style="text-align:left;"/>       <td style="text-align:center;">2</td>       <td style="text-align:center;">0.64</td>       <td style="text-align:center;">0.13</td>       <td style="text-align:center;">0.23</td>       </tr>      </tbody>     </table>    </div>    <p>No significant differences in the ethnicity of the users in class 0 and 1, but if we look to the differences between violent users and neutral we see that there is an increase of black people compared to white ones. We measured the statistical significance through the t-test and the evidences are confirmed with a predominance of black people being statistically significant among violent users (p-value:0.0015). Differences in the Asian portion are instead not statistically significant. We explored additional features, for instance the presence of glasses and sun glasses on the faces, but there are no statistically significant evidences of a different behavior among people who wear them or not.</p>    </section>    <section id="sec-10">    <header>     <div class="title-info">      <h3>       <span class="section-number">4.3</span> Analysis of Emotions</h3>     </div>    </header>    <p>By analyzing the profile images of the users we can compute a smile index which indicates the intensity of the smile in the picture (scale 0-100: 0 concave curve, 100 extreme smile). In Figure&#x00A0;<a class="fig" href="#fig1">1</a> and in Figure&#x00A0;<a class="fig" href="#fig2">2</a> we report the boxplot of the smile index for the considered profile pictures. The means in the boxplot are different for the various classes, and the results are statistically significant (t-test with a p values less than 10<sup>6</sup>). They show an interesting trend: violent users have a low smile index compared to neutral users whose smile index is higher on average. Through Face++, we also collected information about the emotions of the users depicted in the analyzed profile pictures. Figure&#x00A0;<a class="fig" href="#fig3">3</a> reports the emotions analyzed for TwitterA and TwitterB datasets. The results for the two datasets are consistent. Violent people are characterized on average by statistically significantly higher values in anger, fear and sadness. Also the feeling of surprise is higher for violent users, in particular in the first dataset, showing excitement. On the other hand, the feeling of happiness is much more present among users not detected as violent or offensive compared to users belonging to class 2. The difference in happiness between violent and nonviolent users is particularly relevant. The two datasets are different for collection, period, users, but still the results between violent people and neutral ones are consistent, thus indicating the validity of the evidences. We conclude by remarking that there is a correlation between the information extracted from profile pictures and the user violent behavior. Further social and psychological analysis is required to understand if the features highlighted in violent users profiles are caused by an explicit will of exhibiting an aggressive attitude, or whether this is an implicit outcome of a specific group of individuals, or a life conduct. <figure id="fig3">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191594/images/www18companion-333-fig7.jpg" class="img-responsive" alt="Figure 3"       longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 3:</span>       <span class="figure-title">Analysis of Emotions</span>      </div>     </figure>    </p>    </section>   </section>   <section id="sec-11">    <header>    <div class="title-info">     <h2>      <span class="section-number">5</span> Conclusion</h2>    </div>    </header>    <p>To the best of our knowledge, this is the first study on profile pictures regarding violent people in Social Media. We adopted a double approach by using an ad hoc vocabulary of profanities, built by merging different sources, and a recent ML model able to detect both hate speech and offensive communication. We applied the two methods in sequence, in order to detect violent users to be further analyzed through their profile pictures. To validate the generality of the method, we considered two datesets collected in different periods (2009 and 2015), containing about 1 M tweets each. The analysis of the profile picture was based on 13k users for the first dataset, and 18k users for the second. Results show that violent users are younger, with a higher percentage of female users adopting offensive language. As regards ethnicity, there is a higher concentration of black people among violent users. One reason might be that especially in US the language spoken by low class society is rich of offensive slang expressions. Moreover aggressive users smile less, and they appear not happy in their profile pictures, dominated by fear, sadness and anger. These feelings are both consequence of their aggressiveness, and probably also of an unconscious desire to appear more violent.</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>    <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>    </div>    </header>    <ul class="bibUl">    <li id="BibPLXBIB0001" label="[1]">Mohammed&#x00A0;Ali Al-garadi, Kasturi&#x00A0;Dewi Varathan, and Sri&#x00A0;Devi Ravana. 2016. Cybercrime detection in online communications: The experimental case of cyberbullying detection in the Twitter network. <em>      <em>Computers in Human Behavior</em>     </em>63 (2016), 433&#x2013;443.</li>    <li id="BibPLXBIB0002" label="[2]">Saeideh Bakhshi, David&#x00A0;A Shamma, and Eric Gilbert. 2014. Faces engage us: Photos with faces attract more likes and comments on instagram. In <em>      <em>ACM Human factors in computing systems</em>     </em>. 965&#x2013;974.</li>    <li id="BibPLXBIB0003" label="[3]">Alessandro Bessi, Mauro Coletto, George&#x00A0;Alexandru Davidescu, Antonio Scala, Guido Caldarelli, and Walter Quattrociocchi. 2015. Science vs conspiracy: Collective narratives in the age of misinformation. <em>      <em>PloS one</em>     </em>10, 2 (2015), e0118093.</li>    <li id="BibPLXBIB0004" label="[4]">Despoina Chatzakou, Nicolas Kourtellis, Jeremy Blackburn, Emiliano De&#x00A0;Cristofaro, Gianluca Stringhini, and Athena Vakali. 2017. Detecting Aggressors and Bullies on Twitter. In <em>      <em>Proceedings of the 26th International Conference on World Wide Web Companion</em>     </em>. International World Wide Web Conferences Steering Committee, 767&#x2013;768.</li>    <li id="BibPLXBIB0005" label="[5]">Mauro Coletto, Claudio Lucchese, Cristina&#x00A0;Ioana Muntean, Franco&#x00A0;Maria Nardini, Andrea Esuli, Chiara Renso, and Raffaele Perego. 2016. Sentiment-enhanced Multidimensional Analysis of Online Social Networks: Perception of the Mediterranean Refugees Crisis. In <em>      <em>ASONAM 2016</em>     </em>.</li>    <li id="BibPLXBIB0006" label="[6]">M Coletto, C Lucchese, S Orlando, and R Perego. 2015. Electoral Predictions with Twitter: a Machine-Learning approach. In <em>      <em>IIR 2015, Cagliari, Italy</em>     </em>.</li>    <li id="BibPLXBIB0007" label="[7]">Maral Dadvar, Dolf Trieschnigg, Roeland Ordelman, and Franciska de Jong. 2013. Improving cyberbullying detection with user context. In <em>      <em>European Conference on Information Retrieval</em>     </em>. Springer, 693&#x2013;696.</li>    <li id="BibPLXBIB0008" label="[8]">Thomas Davidson, Dana Warmsley, Michael Macy, and Ingmar Weber. 2017. Automated Hate Speech Detection and the Problem of Offensive Language. <em>      <em>ICWSM 2017</em>     </em> (2017).</li>    <li id="BibPLXBIB0009" label="[9]">Julia Deeb-Swihart, Christopher Polack, Eric Gilbert, and Irfan&#x00A0;A Essa. 2017. Selfie-Presentation in Everyday Life: A Large-Scale Characterization of Selfie Contexts on Instagram.. In <em>      <em>ICWSM</em>     </em>. 42&#x2013;51.</li>    <li id="BibPLXBIB0010" label="[10]">Karthik Dinakar, Roi Reichart, and Henry Lieberman. 2011. Modeling the detection of Textual Cyberbullying.<em>      <em>The Social Mobile Web</em>     </em>11, 02 (2011).</li>    <li id="BibPLXBIB0011" label="[11]">Qianjia Huang, Vivek&#x00A0;Kumar Singh, and Pradeep&#x00A0;Kumar Atrey. 2014. Cyber Bullying Detection Using Social and Textual Analysis. In <em>      <em>Intl. Workshop on Socially-Aware Multimedia, ACM SAM 2014</em>     </em>. 3&#x2013;6.</li>    <li id="BibPLXBIB0012" label="[12]">Vasileios Lampos, Tijl De&#x00A0;Bie, and Nello Cristianini. 2010. Flu detector-tracking epidemics on Twitter. In <em>      <em>Machine Learning and Knowledge Discovery in Databases</em>     </em>. Springer, 599&#x2013;602.</li>    <li id="BibPLXBIB0013" label="[13]">Parma Nand, Rivindu Perera, and Abhijeet Kasture. [n. d.]. &#x201C;How Bullying is this Message?&#x201D;: A Psychometric Thermometer for Bullying.</li>    <li id="BibPLXBIB0014" label="[14]">Desmond&#x00A0;Upton Patton, Robert&#x00A0;D Eschmann, and Dirk&#x00A0;A Butler. 2013. Internet banging: New trends in social media, gang violence, masculinity and hip hop. <em>      <em>Computers in Human Behavior</em>     </em>29, 5 (2013), A54&#x2013;A59.</li>    <li id="BibPLXBIB0015" label="[15]">Anna Schmidt and Michael Wiegand. 2017. A Survey on Hate Speech Detection using Natural Language Processing. <em>      <em>SocialNLP 2017</em>     </em> (2017).</li>    <li id="BibPLXBIB0016" label="[16]">Vivek&#x00A0;K Singh, Qianjia Huang, and Pradeep&#x00A0;K Atrey. [n. d.]. Cyberbullying detection using probabilistic socio-textual information fusion. In <em>      <em>IEEE/ACM ASOMAN 2016</em>     </em>. 884&#x2013;887.</li>    <li id="BibPLXBIB0017" label="[17]">A Squicciarini, S Rajtmajer, Y Liu, and Christopher Griffin. 2015. Identification and characterization of cyberbullying dynamics in an online social network. In <em>      <em>IEEE/ACM ASOMAN 2015</em>     </em>. 280&#x2013;285.</li>    <li id="BibPLXBIB0018" label="[18]">Wenbo Wang, Lu Chen, Krishnaprasad Thirunarayan, and Amit&#x00A0;P Sheth. 2014. Cursing in english on twitter. In <em>      <em>ACM conf. on Computer supported cooperative work &#x0026; social computing</em>     </em>. ACM, 415&#x2013;425.</li>    <li id="BibPLXBIB0019" label="[19]">Quanzeng You, Dar&#x00ED;o Garc&#x00ED;a-Garc&#x00ED;a, Mahohar Paluri, Jiebo Luo, and Jungseock Joo. 2017. Cultural Diffusion and Trends in Facebook Photographs. <em>      <em>ICWSM 2017</em>     </em> (2017).</li>    <li id="BibPLXBIB0020" label="[20]">Changtao Zhong, Hau-wen Chan, Dmytro Karamshu, Dongwon Lee, and Nishanth Sastry. 2017. Wearing Many (Social) Hats: How Different are Your Different Social Network Personae?<em>      <em>ICWSM 2017</em>     </em> (2017).</li>    <li id="BibPLXBIB0021" label="[21]">Erjin Zhou, Zhimin Cao, and Qi Yin. 2015. Naive-deep face recognition: Touching the limit of LFW benchmark or not?<em>      <em>arXiv preprint arXiv:1501.04690</em>     </em>(2015).</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">    <h2>FOOTNOTE</h2>    </div>   </header>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>    <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3191594">https://doi.org/10.1145/3184558.3191594</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div> </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Do Violent People Smile? Social Media Analysis of their
+  Profile Pictures</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Do Violent People Smile? Social
+          Media Analysis of their Profile Pictures</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Mauro</span> <span class=
+          "surName">Coletto</span> Ca’ Foscari University, Venice,
+          Italy, <a href=
+          "mailto:mauro.coletto@unive.it">mauro.coletto@unive.it</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Claudio</span> <span class=
+          "surName">Lucchese</span> Ca’ Foscari University, Venice,
+          Italy, <a href=
+          "mailto:claudio.lucchese@unive.it">claudio.lucchese@unive.it</a>
+        </div>
+        <div class="author">
+          <span class="givenName">Salvatore</span> <span class=
+          "surName">Orlando</span> Ca’ Foscari University, Venice,
+          Italy, <a href=
+          "mailto:orlando@unive.it">orlando@unive.it</a>
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191594"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191594</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>The popularity of online social platforms has
+        also determined the emergence of violent and abusive
+        behaviors reflecting real life issues into the digital
+        arena. Cyberbullying, Internet banging, pedopornography,
+        sexting are examples of these behaviors, as witnessed in
+        the social media environments.</small></p>
+        <p><small>Several studies have shown how to approximately
+        detect those behaviors by analyzing the social interactions
+        and in particular the content of the exchanged messages.
+        The features considered in the models basically include
+        detection of offensive language through NLP techniques and
+        vocabularies, social network structural measures and, if
+        available, user context information.</small></p>
+        <p><small>Our goal is to investigate those users who adopt
+        offensive language and hate speech in Twitter by analyzing
+        their profile pictures. Results show that violent people
+        smile less and they are dominating by anger, fear and
+        sadness.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>Keywords:</small></span>
+          <span class=
+          "keyword"><small>cyberbullying</small>,</span>
+          <span class="keyword"><small>violence</small>,</span>
+          <span class="keyword"><small>social media</small>,</span>
+          <span class="keyword"><small>offensive
+          language</small>,</span> <span class=
+          "keyword"><small>smile</small>,</span> <span class=
+          "keyword"><small>profile pictures</small>,</span>
+          <span class="keyword"><small>face++</small>,</span>
+          <span class="keyword"><small>Twitter</small>,</span>
+          <span class="keyword"><small>emotion</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Mauro Coletto, Claudio Lucchese, and Salvatore Orlando.
+          2018. Do Violent People Smile? Social Media Analysis of
+          their Profile Pictures. In <em>WWW '18 Companion: The
+          2018 Web Conference Companion,</em> <em>April 23–27,
+          2018,</em> <em>Lyon, France. ACM, New York, NY, USA</em>
+          4 Pages. <a href=
+          "https://doi.org/10.1145/3184558.3191594" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3184558.3191594</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <p>The use of online social networks and micro-blogging
+      platforms as a source to detect and quantify social phenomena
+      is a recurrent task, in particular in the field of Social
+      Network Analysis and Computational Social Science. Several
+      studies can be found in different contexts using social media
+      to study collective phenomena: from pandemics detection
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0012">12</a>] to
+      political elections prediction [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>], from misinformation spreading
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0003">3</a>] to
+      migration analysis [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>].</p>
+      <p>A relevant context where social media have a strong role
+      are abusive behaviors [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>] related to offensive language
+      adopted by users in their virtual interactions. Many studies
+      focused on the detection of cyberbullying, violence, internet
+      banging through the analysis of conversations and messages in
+      social media by mean of text mining and machine learning
+      models [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0010">10</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0013">13</a>]. While
+      additional features related to the structure of the social
+      network and the user context can be used to improve model
+      accuracy [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0007">7</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0011">11</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0017">17</a>], the
+      automatic detection of offensive messages is a critical issue
+      which involves the use of lexical resources (profanity
+      dictionaries), sentiment analysis techniques, NLP processing
+      methods and meta information.</p>
+      <p>In [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0008">8</a>]
+      the authors propose an interesting machine learning approach
+      based on different features (uni-grams, bi-grams, tri-grams,
+      POS tags, Flesch-Kincaid Grade Level and Flesch Reading Ease
+      scores, sentiment and other metrics) to detect offensive
+      language and hate speech.</p>
+      <p>We adopt this method to detect users utilizing offensive
+      language and hate speech in order to analyze their profile
+      pictures to describe visual features of the typical violent
+      users.</p>
+      <p>To study the visual traits of the profile picture we use a
+      computer vision approach [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0021">21</a>] used in many recent works. In the
+      context of Social Media this method has recently been used to
+      study the categories in which selfies appear on Instagram
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0009">9</a>], cultural
+      trends in Facebook photographs [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0019">19</a>] or different profile pictures
+      characteristics in different Social Media [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0020">20</a>].</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Data</h2>
+        </div>
+      </header>
+      <p>We explore two different Twitter collections to be less
+      dataset dependent. The two datasets were collected in
+      different periods with a large temporal gap, thus allowing us
+      to also evaluate possible evolution through time. We also use
+      a dataset of news, and a vocabulary of bad words.</p>
+      <p><strong>TwitterA</strong>. We use the Twitter dataset
+      released by CAW2.0 (Content Analysis in Web 2.0) workshop in
+      WWW 2009 conference which has been widely used in the context
+      of cyberbullying detection [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0016">16</a>]. The corpus contains ≈ 977<em>k</em>
+      tweets written in English by ≈ 27<em>k</em> unique users from
+      Dec 2008 to Jan 2009.</p>
+      <p><strong>TwitterB</strong>. We use a second Twitter
+      dataset, containing ≈ 1<em>M</em> tweets written in English
+      by ≈ 643<em>k</em> unique users collected through the Twitter
+      APIs in December 2015.</p>
+      <p><strong>NewsC - Additional dataset</strong>. We use a
+      dataset containing 1<em>M</em> news, released by Signal Media
+      (NewsIR’16 workshop). The purpose of the dataset in only to
+      reinforce the validity of the machine learning model used.
+      The news, mainly in English, were originally collected from a
+      variety of news sources and blogs for a period of 1 month
+      (1-30 September 2015).</p>
+      <p><strong>Profanity vocabulary</strong>. To create a
+      comprehensive dictionary of bad words, we use the following
+      online sources:</p>
+      <ul class="list-no-style">
+        <li id="list1" label="•">list of offensive expressions from
+        hatebase.org (1000 +)<br /></li>
+        <li id="list2" label="•">list of swear words from
+        bannedwordlist.com (70 + terms)<br /></li>
+        <li id="list3" label="•">list of English terms that could
+        be found offensive by Luis von Ahn (1300 +
+        terms)<br /></li>
+        <li id="list4" label="•">list of bad words to filter social
+        media content from FrontGate (700 + terms)<br /></li>
+      </ul>
+      <p>By merging them, we obtain a list of 2704 single
+      expressions/terms which can be used to filter social media
+      content and news in order to find offensive content.</p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span>
+          Methodology</h2>
+        </div>
+      </header>
+      <p>Hate speech language has been widely studied in the NLP
+      community [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0015">15</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0018">18</a>], despite
+      the existence of a persistent critical point in using
+      dictionaries and lexical sources containing terms that are
+      related to hate speech in specific contexts only, but that
+      can have neutral or positive meanings in other contexts. For
+      this reason we adopted both a dictionary approach combined
+      with the machine learning (ML) method proposed by [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0008">8</a>] to detect
+      offensive tweets. Specifically, we applied a filter to the
+      collected tweets based on the profanity vocabulary described
+      above. By filtering the datasets we selected: for TwitterA
+      15% of the dataset (143k documents), for TwitterB 17% (168k
+      documents). After this filtering phase, we applied to the
+      resulting tweets the ML-based method to detect hate speech
+      and offensive language. The ML model is based on a logistic
+      regression with L2 regularization. The features considered in
+      that work are: bi-grams, uni-grams, and tri-grams features
+      (weighted by TF-IDF), Penn Part-of-Speech (POS) tags,
+      Flesch-Kincaid Grade Level and Flesch Reading Ease scores,
+      sentiment lexicon and other general indicators (characters,
+      words, syllables, hashtags, mentions, replies, retweets). The
+      model discriminates among hate speech tweets (<strong>class
+      0</strong>), offensive tweets (<strong>class 1</strong>), and
+      neutral tweets (<strong>class 2</strong>). We refer to the
+      tweets classified as class 0 or class 1 as <em>violent</em>
+      ones, and the tweets of class 2 as <em>non violent</em> ones.
+      We trained the ML model on the dataset proposed in the
+      original paper with cross validation. The model is very
+      accurate: 94% in both precision and recall. We considered the
+      same features described in the original papers, among which
+      10k most frequent terms (if-idf) and 5k pos tags.</p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">Classification of the filtered
+          tweets</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="text-align:left;">
+              <strong>dataset</strong></td>
+              <td style="text-align:center;">
+              <strong>class</strong></td>
+              <td style="text-align:center;">
+              <strong>percentage</strong></td>
+              <td style="text-align:center;">
+              <strong>tweets</strong></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:center;">0</td>
+              <td style="text-align:center;">2%</td>
+              <td style="text-align:center;">3.5<em>k</em></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">TwitterA</td>
+              <td style="text-align:center;">1</td>
+              <td style="text-align:center;">24%</td>
+              <td style="text-align:center;">34<em>k</em></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:center;">2</td>
+              <td style="text-align:center;">74%</td>
+              <td style="text-align:center;">106<em>k</em></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:center;">0</td>
+              <td style="text-align:center;">5%</td>
+              <td style="text-align:center;">8.9<em>k</em></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">TwitterB</td>
+              <td style="text-align:center;">1</td>
+              <td style="text-align:center;">30%</td>
+              <td style="text-align:center;">50<em>k</em></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;"></td>
+              <td style="text-align:center;">2</td>
+              <td style="text-align:center;">65%</td>
+              <td style="text-align:center;">109<em>k</em></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>By applying the learned ML model to our filtered datasets,
+      we classified tweets as described in Table&nbsp;<a class=
+      "tbl" href="#tab1">1</a>. The high percentage of neutral
+      tweets indicates the limitation of the vocabulary approach in
+      identifying properly violent content. To reinforce the
+      validity of the process we applied both the filtering and the
+      ML method to the NewsC dataset, by splitting the news in
+      sentences with a size comparable to a tweet. The filtering
+      excluded 88% of the sentences. Applying to the remaining 12%
+      the ML method, we obtained that 96% of the remaining corpus
+      still resulted neutral, highlighting differences in the
+      violent tones of the content from official newspapers and
+      from Social Media, that are not easily detected by a
+      vocabulary based method. This evidence reinforces the
+      validity of the ML model, which looks not only at terms
+      frequency, in detecting offensive content.</p>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Profile Picture
+          Analysis</h2>
+        </div>
+      </header>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191594/images/www18companion-333-fig3.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">Smile index distribution on
+          TwitterA</span>
+        </div>
+      </figure>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3200000/3191594/images/www18companion-333-fig4.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title">Smile index distribution on
+          TwitterB</span>
+        </div>
+      </figure>
+      <p>We used the publicly available API developed by Face++, a
+      cloud-based facial recognition system. Face++ is a service
+      providing highly accurate user information inferred by their
+      profile pictures. Given a picture containing a face, the
+      Face++ algorithm extracts information concerning demographics
+      of the individual, as well as the emotions of the detected
+      face. Face++ reports a 99.5% accuracy on an established
+      facial recognition benchmark [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0021">21</a>]; this accuracy is further supported
+      by the results in [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>], which reports a 97% +/- 5% accuracy
+      on similar photos. Through Face++, we thus collected
+      demographic information (gender, age), ethnicity, smile
+      intensity and emotions for 13k users (for TwitterA), 18k
+      users (for TwitterB). Face++ is able to identify emotions
+      including confidence scores for anger, disgust, fear,
+      happiness, neutral, sadness, and surprise.</p>
+      <section id="sec-8">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.1</span> Demographic
+            Analysis</h3>
+          </div>
+        </header>
+        <p>Table&nbsp;<a class="tbl" href="#tab2">2</a> shows the
+        results of the demographic analysis.</p>
+        <div class="table-responsive" id="tab2">
+          <div class="table-caption">
+            <span class="table-number">Table 2:</span> <span class=
+            "table-title">Demographic Analysis</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">
+                <strong>dataset</strong></td>
+                <td style="text-align:center;">
+                <strong>class</strong></td>
+                <td style="text-align:center;"><strong>ratio
+                M/F</strong></td>
+                <td style="text-align:center;"><strong>avg.
+                age</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">1.12</td>
+                <td style="text-align:center;">44</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">TwitterA</td>
+                <td style="text-align:center;">1</td>
+                <td style="text-align:center;">1.24</td>
+                <td style="text-align:center;">45</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:center;">2</td>
+                <td style="text-align:center;">1.26</td>
+                <td style="text-align:center;">46</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">1.04</td>
+                <td style="text-align:center;">40</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">TwitterB</td>
+                <td style="text-align:center;">1</td>
+                <td style="text-align:center;">0.75</td>
+                <td style="text-align:center;">37</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:center;">2</td>
+                <td style="text-align:center;">0.78</td>
+                <td style="text-align:center;">40</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>For lack of space we do not report the full age
+        distributions by gender, but we highlight the most relevant
+        evidences. In both datasets violent people are on average
+        younger, this reinforcing the possible presence of
+        so-called cyberbullies, usually teenagers, who determine a
+        decrease of the average age of the group. The class 1 is
+        characterized by a higher percentage of female users
+        compared to the general population, indicating that using
+        violent language is not predominantly a male behavior. Less
+        evidences can be underlined on hate speech, since the
+        clusters are smaller and less statistically
+        significant.</p>
+      </section>
+      <section id="sec-9">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.2</span>
+            Ethnicity</h3>
+          </div>
+        </header>
+        <p>Table&nbsp;<a class="tbl" href="#tab3">3</a> reports the
+        results of the ethnicity analysis.</p>
+        <div class="table-responsive" id="tab3">
+          <div class="table-caption">
+            <span class="table-number">Table 3:</span> <span class=
+            "table-title">Ethnicity</span>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td style="text-align:left;">
+                <strong>dataset</strong></td>
+                <td style="text-align:center;">
+                <strong>class</strong></td>
+                <td style="text-align:center;">
+                <strong>white</strong></td>
+                <td style="text-align:center;">
+                <strong>black</strong></td>
+                <td style="text-align:center;">
+                <strong>asian</strong></td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0.71</td>
+                <td style="text-align:center;">0.12</td>
+                <td style="text-align:center;">0.17</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">TwitterA</td>
+                <td style="text-align:center;">1</td>
+                <td style="text-align:center;">0.71</td>
+                <td style="text-align:center;">0.11</td>
+                <td style="text-align:center;">0.18</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:center;">2</td>
+                <td style="text-align:center;">0.76</td>
+                <td style="text-align:center;">0.09</td>
+                <td style="text-align:center;">0.16</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0.54</td>
+                <td style="text-align:center;">0.24</td>
+                <td style="text-align:center;">0.22</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">TwitterB</td>
+                <td style="text-align:center;">1</td>
+                <td style="text-align:center;">0.53</td>
+                <td style="text-align:center;">0.12</td>
+                <td style="text-align:center;">0.23</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;"></td>
+                <td style="text-align:center;">2</td>
+                <td style="text-align:center;">0.64</td>
+                <td style="text-align:center;">0.13</td>
+                <td style="text-align:center;">0.23</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>No significant differences in the ethnicity of the users
+        in class 0 and 1, but if we look to the differences between
+        violent users and neutral we see that there is an increase
+        of black people compared to white ones. We measured the
+        statistical significance through the t-test and the
+        evidences are confirmed with a predominance of black people
+        being statistically significant among violent users
+        (p-value:0.0015). Differences in the Asian portion are
+        instead not statistically significant. We explored
+        additional features, for instance the presence of glasses
+        and sun glasses on the faces, but there are no
+        statistically significant evidences of a different behavior
+        among people who wear them or not.</p>
+      </section>
+      <section id="sec-10">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">4.3</span> Analysis of
+            Emotions</h3>
+          </div>
+        </header>
+        <p>By analyzing the profile images of the users we can
+        compute a smile index which indicates the intensity of the
+        smile in the picture (scale 0-100: 0 concave curve, 100
+        extreme smile). In Figure&nbsp;<a class="fig" href=
+        "#fig1">1</a> and in Figure&nbsp;<a class="fig" href=
+        "#fig2">2</a> we report the boxplot of the smile index for
+        the considered profile pictures. The means in the boxplot
+        are different for the various classes, and the results are
+        statistically significant (t-test with a p values less than
+        10<sup>6</sup>). They show an interesting trend: violent
+        users have a low smile index compared to neutral users
+        whose smile index is higher on average. Through Face++, we
+        also collected information about the emotions of the users
+        depicted in the analyzed profile pictures.
+        Figure&nbsp;<a class="fig" href="#fig3">3</a> reports the
+        emotions analyzed for TwitterA and TwitterB datasets. The
+        results for the two datasets are consistent. Violent people
+        are characterized on average by statistically significantly
+        higher values in anger, fear and sadness. Also the feeling
+        of surprise is higher for violent users, in particular in
+        the first dataset, showing excitement. On the other hand,
+        the feeling of happiness is much more present among users
+        not detected as violent or offensive compared to users
+        belonging to class 2. The difference in happiness between
+        violent and nonviolent users is particularly relevant. The
+        two datasets are different for collection, period, users,
+        but still the results between violent people and neutral
+        ones are consistent, thus indicating the validity of the
+        evidences. We conclude by remarking that there is a
+        correlation between the information extracted from profile
+        pictures and the user violent behavior. Further social and
+        psychological analysis is required to understand if the
+        features highlighted in violent users profiles are caused
+        by an explicit will of exhibiting an aggressive attitude,
+        or whether this is an implicit outcome of a specific group
+        of individuals, or a life conduct.</p>
+        <figure id="fig3">
+          <img src=
+          "../../../data/deliveryimages.acm.org/10.1145/3200000/3191594/images/www18companion-333-fig7.jpg"
+          class="img-responsive" alt="Figure 3" longdesc="" />
+          <div class="figure-caption">
+            <span class="figure-number">Figure 3:</span>
+            <span class="figure-title">Analysis of Emotions</span>
+          </div>
+        </figure>
+        <p></p>
+      </section>
+    </section>
+    <section id="sec-11">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>To the best of our knowledge, this is the first study on
+      profile pictures regarding violent people in Social Media. We
+      adopted a double approach by using an ad hoc vocabulary of
+      profanities, built by merging different sources, and a recent
+      ML model able to detect both hate speech and offensive
+      communication. We applied the two methods in sequence, in
+      order to detect violent users to be further analyzed through
+      their profile pictures. To validate the generality of the
+      method, we considered two datesets collected in different
+      periods (2009 and 2015), containing about 1 M tweets each.
+      The analysis of the profile picture was based on 13k users
+      for the first dataset, and 18k users for the second. Results
+      show that violent users are younger, with a higher percentage
+      of female users adopting offensive language. As regards
+      ethnicity, there is a higher concentration of black people
+      among violent users. One reason might be that especially in
+      US the language spoken by low class society is rich of
+      offensive slang expressions. Moreover aggressive users smile
+      less, and they appear not happy in their profile pictures,
+      dominated by fear, sadness and anger. These feelings are both
+      consequence of their aggressiveness, and probably also of an
+      unconscious desire to appear more violent.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Mohammed&nbsp;Ali
+        Al-garadi, Kasturi&nbsp;Dewi Varathan, and Sri&nbsp;Devi
+        Ravana. 2016. Cybercrime detection in online
+        communications: The experimental case of cyberbullying
+        detection in the Twitter network. <em><em>Computers in
+        Human Behavior</em></em> 63 (2016), 433–443.</li>
+        <li id="BibPLXBIB0002" label="[2]">Saeideh Bakhshi,
+        David&nbsp;A Shamma, and Eric Gilbert. 2014. Faces engage
+        us: Photos with faces attract more likes and comments on
+        instagram. In <em><em>ACM Human factors in computing
+        systems</em></em> . 965–974.</li>
+        <li id="BibPLXBIB0003" label="[3]">Alessandro Bessi, Mauro
+        Coletto, George&nbsp;Alexandru Davidescu, Antonio Scala,
+        Guido Caldarelli, and Walter Quattrociocchi. 2015. Science
+        vs conspiracy: Collective narratives in the age of
+        misinformation. <em><em>PloS one</em></em> 10, 2 (2015),
+        e0118093.</li>
+        <li id="BibPLXBIB0004" label="[4]">Despoina Chatzakou,
+        Nicolas Kourtellis, Jeremy Blackburn, Emiliano
+        De&nbsp;Cristofaro, Gianluca Stringhini, and Athena Vakali.
+        2017. Detecting Aggressors and Bullies on Twitter. In
+        <em><em>Proceedings of the 26th International Conference on
+        World Wide Web Companion</em></em> . International World
+        Wide Web Conferences Steering Committee, 767–768.</li>
+        <li id="BibPLXBIB0005" label="[5]">Mauro Coletto, Claudio
+        Lucchese, Cristina&nbsp;Ioana Muntean, Franco&nbsp;Maria
+        Nardini, Andrea Esuli, Chiara Renso, and Raffaele Perego.
+        2016. Sentiment-enhanced Multidimensional Analysis of
+        Online Social Networks: Perception of the Mediterranean
+        Refugees Crisis. In <em><em>ASONAM 2016</em></em> .</li>
+        <li id="BibPLXBIB0006" label="[6]">M Coletto, C Lucchese, S
+        Orlando, and R Perego. 2015. Electoral Predictions with
+        Twitter: a Machine-Learning approach. In <em><em>IIR 2015,
+        Cagliari, Italy</em></em> .</li>
+        <li id="BibPLXBIB0007" label="[7]">Maral Dadvar, Dolf
+        Trieschnigg, Roeland Ordelman, and Franciska de Jong. 2013.
+        Improving cyberbullying detection with user context. In
+        <em><em>European Conference on Information
+        Retrieval</em></em> . Springer, 693–696.</li>
+        <li id="BibPLXBIB0008" label="[8]">Thomas Davidson, Dana
+        Warmsley, Michael Macy, and Ingmar Weber. 2017. Automated
+        Hate Speech Detection and the Problem of Offensive
+        Language. <em><em>ICWSM 2017</em></em> (2017).</li>
+        <li id="BibPLXBIB0009" label="[9]">Julia Deeb-Swihart,
+        Christopher Polack, Eric Gilbert, and Irfan&nbsp;A Essa.
+        2017. Selfie-Presentation in Everyday Life: A Large-Scale
+        Characterization of Selfie Contexts on Instagram.. In
+        <em><em>ICWSM</em></em> . 42–51.</li>
+        <li id="BibPLXBIB0010" label="[10]">Karthik Dinakar, Roi
+        Reichart, and Henry Lieberman. 2011. Modeling the detection
+        of Textual Cyberbullying. <em><em>The Social Mobile
+        Web</em></em> 11, 02 (2011).</li>
+        <li id="BibPLXBIB0011" label="[11]">Qianjia Huang,
+        Vivek&nbsp;Kumar Singh, and Pradeep&nbsp;Kumar Atrey. 2014.
+        Cyber Bullying Detection Using Social and Textual Analysis.
+        In <em><em>Intl. Workshop on Socially-Aware Multimedia, ACM
+        SAM 2014</em></em> . 3–6.</li>
+        <li id="BibPLXBIB0012" label="[12]">Vasileios Lampos, Tijl
+        De&nbsp;Bie, and Nello Cristianini. 2010. Flu
+        detector-tracking epidemics on Twitter. In <em><em>Machine
+        Learning and Knowledge Discovery in Databases</em></em> .
+        Springer, 599–602.</li>
+        <li id="BibPLXBIB0013" label="[13]">Parma Nand, Rivindu
+        Perera, and Abhijeet Kasture. [n. d.]. “How Bullying is
+        this Message?”: A Psychometric Thermometer for
+        Bullying.</li>
+        <li id="BibPLXBIB0014" label="[14]">Desmond&nbsp;Upton
+        Patton, Robert&nbsp;D Eschmann, and Dirk&nbsp;A Butler.
+        2013. Internet banging: New trends in social media, gang
+        violence, masculinity and hip hop. <em><em>Computers in
+        Human Behavior</em></em> 29, 5 (2013), A54–A59.</li>
+        <li id="BibPLXBIB0015" label="[15]">Anna Schmidt and
+        Michael Wiegand. 2017. A Survey on Hate Speech Detection
+        using Natural Language Processing. <em><em>SocialNLP
+        2017</em></em> (2017).</li>
+        <li id="BibPLXBIB0016" label="[16]">Vivek&nbsp;K Singh,
+        Qianjia Huang, and Pradeep&nbsp;K Atrey. [n. d.].
+        Cyberbullying detection using probabilistic socio-textual
+        information fusion. In <em><em>IEEE/ACM ASOMAN
+        2016</em></em> . 884–887.</li>
+        <li id="BibPLXBIB0017" label="[17]">A Squicciarini, S
+        Rajtmajer, Y Liu, and Christopher Griffin. 2015.
+        Identification and characterization of cyberbullying
+        dynamics in an online social network. In <em><em>IEEE/ACM
+        ASOMAN 2015</em></em> . 280–285.</li>
+        <li id="BibPLXBIB0018" label="[18]">Wenbo Wang, Lu Chen,
+        Krishnaprasad Thirunarayan, and Amit&nbsp;P Sheth. 2014.
+        Cursing in english on twitter. In <em><em>ACM conf. on
+        Computer supported cooperative work &amp; social
+        computing</em></em> . ACM, 415–425.</li>
+        <li id="BibPLXBIB0019" label="[19]">Quanzeng You, Darío
+        García-García, Mahohar Paluri, Jiebo Luo, and Jungseock
+        Joo. 2017. Cultural Diffusion and Trends in Facebook
+        Photographs. <em><em>ICWSM 2017</em></em> (2017).</li>
+        <li id="BibPLXBIB0020" label="[20]">Changtao Zhong, Hau-wen
+        Chan, Dmytro Karamshu, Dongwon Lee, and Nishanth Sastry.
+        2017. Wearing Many (Social) Hats: How Different are Your
+        Different Social Network Personae? <em><em>ICWSM
+        2017</em></em> (2017).</li>
+        <li id="BibPLXBIB0021" label="[21]">Erjin Zhou, Zhimin Cao,
+        and Qi Yin. 2015. Naive-deep face recognition: Touching the
+        limit of LFW benchmark or not? <em><em>arXiv preprint
+        arXiv:1501.04690</em></em> (2015).</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191594">https://doi.org/10.1145/3184558.3191594</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

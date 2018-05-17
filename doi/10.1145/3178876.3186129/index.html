@@ -1,1 +1,1642 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> <head>  <title>Mapping the Invocation Structure of Online Political Interaction</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script> </head> <body id="main">  <section class="front-matter">   <section>    <header class="title-info">    <div class="journal-title">     <h1>      <span class="title">Mapping the Invocation Structure of Online Political Interaction</span>      <br/>      <span class="subTitle"/>     </h1>    </div>    </header>    <div class="authorGroup">    <div class="author">     <span class="givenName">Manish</span>     <span class="surName">Raghavan</span>,     Cornell University    </div>    <div class="author">     <span class="givenName">Ashton</span>     <span class="surName">Anderson</span>,     University of Toronto    </div>    <div class="author">     <span class="givenName">Jon</span>     <span class="surName">Kleinberg</span>,     Cornell University    </div>                </div>    <br/>    <div class="pubInfo">    <p>DOI: <a href="https://doi.org/10.1145/3178876.3186129" target="_blank">https://doi.org/10.1145/3178876.3186129</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3178876" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">    <p>     <small>The surge in political information, discourse, and interaction has been one of the most important developments in social media over the past several years. There is rich structure in the interaction among different viewpoints on the ideological spectrum. However, we still have only a limited analytical vocabulary for expressing the ways in which these viewpoints interact.</small>    </p>    <p>     <small>In this paper, we develop network-based methods that operate on the ways in which users share content; we construct <em>invocation graphs</em> on Web domains showing the extent to which pages from one domain are invoked by users to reply to posts containing pages from other domains. When we locate the domains on a political spectrum induced from the data, we obtain an embedded graph showing how these interaction links span different distances on the spectrum. The structure of this embedded network, and its evolution over time, helps us derive macro-level insights about how political interaction unfolded through 2016, leading up to the US Presidential election. In particular, we find that the domains invoked in replies spanned increasing distances on the spectrum over the months approaching the election, and that there was clear asymmetry between the left-to-right and right-to-left patterns of linkage.</small>    </p>    </div>    <div class="classifications">    <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>       Manish Raghavan, Ashton Anderson, and Jon Kleinberg. 2018. Mapping the Invocation Structure of Online Political Interaction. In <em>WWW 2018: The 2018 Web Conference,</em>       <em>April 23&#x2013;27, 2018,</em>       <em> Lyon, France. ACM, New York, NY, USA</em> 10 Pages. <a href="https://doi.org/10.1145/3178876.3186129" class="link-inline force-break"       target="_blank">https://doi.org/10.1145/3178876.3186129</a></small>     </p>    </div>    </div>   </section>  </section>  <section class="body">   <section id="sec-4">    <header>    <div class="title-info">     <h2>      <span class="section-number">1</span> Introduction</h2>    </div>    </header>    <figure id="fig1">    <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig1.jpg" class="img-responsive" alt="Figure 1"      longdesc=""/>    <div class="figure-caption">     <span class="figure-number">Figure 1:</span>     <span class="figure-title">A section from an example invocation graph containing instances from our data. In each case, an article from domain <em>B</em> in response to an article from domain <em>A</em> contributes to the link from <em>B</em> to <em>A</em>. The link from Breitbart to The New York Times comes from articles like the pair shown here, a Breitbart article on the Times&#x2019; taxes in response to a Times article on Donald Trump&#x0027;s taxes. Other links demonstrate an interaction where one article supports another: for example, a New York Times article shared in response to a Guardian article on Russian information operations contributes to the link from The Times to The Guardian.</span>    </div>    </figure>    <p>Political interaction has long constituted a key use of social media, and there is a correspondingly rich history of research into its structure &#x2014; one that extends the much longer history of scholarship on the role of media in the political process [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0023">23</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0025">25</a>].</p>    <p>A crucial issue in this line of work is the extent to which political interaction on social media takes place primarily among users who are ideologically similar, or whether it reaches across the political spectrum. Early analysis of political blogging indicated a clustered structure, with a high density of linkage among ideologically similar blogs and a lower density of linkage between blogs with strongly differing views [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>]. Subsequent work, looking at platforms that arose further into the evolution of social media, suggested that a more complex structure was developing, in which homophily in views remained a powerful force, but where the platforms were providing users with some level of cross-cutting exposure [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>]. These questions are important, as they ask whether online political interaction consists of opposing sides who engage with each other, or well-separated clusters who are isolated in &#x201C;echo chambers&#x201D; or &#x201C;filter bubbles&#x201D; [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0027">27</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0030">30</a>].</p>    <p>The answers to such questions depend intrinsically on which types of interactions are being considered. Existing work in the online domain has implicitly focused on two standard forms of interaction: page-to-page interaction, expressed by hyperlinks among documents [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>]; and user-to-user interaction, expressed by communication among people on social platforms [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0009">9</a>]. Each of these induces a network on a set of entities &#x2014; sources and users respectively &#x2014; which can then be analyzed relative to an underlying political spectrum.</p>    <p>    <strong>Networks of sources invoked by users.</strong>. Here we consider a different type of political interaction network, defined as follows. When a user <em>u</em> shares a page <em>A</em>, and a user <em>v</em> replies by sharing a page <em>B</em>, there is not simply an interaction between users <em>u</em> and <em>v</em>; an interaction is also induced between pages <em>A</em> and <em>B</em>. As reshares develop into a widespread style of social media content production [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0010">10</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0017">17</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0024">24</a>], the ability of users to deploy page references as proxies in their discussion becomes an activity requiring very low effort, and we find through a large-scale analysis of Twitter data leading up to the 2016 U.S. Presidential election that such <em>A</em>-<em>B</em> interactions are widespread: users regularly invoke links in this back-and-forth fashion when they interact with each other.</p>    <p>These <em>invoked interactions</em> between pages <em>A</em> and <em>B</em> are fundamentally different from both user-to-user and page-to-page interaction networks. Unlike free-form user-to-user interactions, they create logical relationships among the information sources, not just the consumers and sharers of these sources. But they are not like traditional page-to-page interactions either, because they are not based on a hyperlink from <em>A</em> to <em>B</em>, and they are not in general determined by the authors of either <em>A</em> or <em>B</em>; it is the readers <em>deciding how <em>A</em> and <em>B</em> should be used in discussion</em> who are determining the logical link between them. In this sense, invoked interactions between <em>A</em> and <em>B</em> are not directly under the control of the authors of <em>A</em> and <em>B</em>; they form a kind of &#x201C;revealed interpretation&#x201D; of <em>A</em> and <em>B</em> once they are released into social media.</p>    <p>The idea that replying to page <em>A</em> with page <em>B</em> can create a semantically meaningful connection between <em>A</em> and <em>B</em> formed the basis of an elegant technique due to Frigerri, Adamic, Eckles, and Cheng [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0012">12</a>] for identifying pages to debunk widely circulated rumors. Drawing on the fact that snopes.com is a heavily-used site for evaluating Internet rumors, they demonstrated that many instances of a pair (<em>B</em>, <em>A</em>), where <em>A</em> is a page appearing in Facebook posts and <em>B</em> is a page on snopes.com, serves as strong evidence that <em>B</em> is providing a judgment on the credibility of <em>A</em>. In this way, scanning the replies to posts where <em>A</em> occurs for pages residing on snopes.com provides an automated method for identifying a page <em>B</em> that can help users evaluate the veracity of <em>A</em>.</p>    <p>Given that invoked interactions between pages <em>A</em> and <em>B</em> more generally are voluminous, transcending any one particular domain or use case, what do we learn if we consider the set of all such interactions as a network in its own right, latent in a social media platform?</p>    <p>    <strong>The present work: The structure of invocation graphs.</strong>. We are interested in understanding the global structure of the network of invoked interactions, and developing methods that can probe this structure, particularly for questions related to political interaction. Because our primary focus in this work will be at the granularity of news and blogging <em>sources</em> rather than the individual pages they produce, we will consider this network at the level of domains: using a large Twitter dataset covering all of 2016 up to the U.S. Presidential election, we say that an <em>invoked interaction</em> from domain <em>B</em> to domain <em>A</em> occurs whenever a user replies to a tweet containing a page from domain <em>A</em> with a page from domain <em>B</em>.</p>    <p>We define the <em>invocation graph</em> on a set of domains of interest as follows: for all pairs of domains <em>A</em> and <em>B</em> where there is at least one invoked interaction from <em>B</em> to <em>A</em>, we include a weighted directed edge (<em>B</em>, <em>A</em>) whose weight is equal to the number of such invoked interactions. Because we want to study how portions of the invocation graph reflect aspects of political interaction, we choose the node set (i.e. the domains of interest) using a preprocessing step that only includes domains that were extensively retweeted with the official Twitter accounts of Hillary Clinton and Donald Trump, and then apply some further filtering heuristics that we describe in the next section.</p>    <p>After this filtering, we have an invocation graph that reflects the ways in which Twitter users interacted with one another by invoking content from different politically relevant domains over the course of 2016. Figure&#x00A0;<a class="fig" href="#fig1">1</a> shows a few domains of such an invocation graph with some sample interactions from our data. We can see these interactions can be supportive, like an in-depth New York Times report on Russian information operations shared in reply to an article from The Guardian on the same subject, or adversarial, like a Breitbart article on the New York Times&#x2019; taxes shared in response to a Times article on Donald Trump&#x0027;s taxes. These replies exhibit rich structure and give a sense for how complex political interactions unfold on social media</p>    <p>We can thus return to some of the initial motivating questions and ask how this interaction was structured relative to a political spectrum containing support for Clinton on the left and support for Trump on the right. We do this using a political spectrum induced from the data, rather than relying on external domain knowledge. There are a number of ways to do this [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0014">14</a>] that yield broadly consistent results, and we employ a method of Benkler et al (described further in the next section) that bases the spectrum on the relative frequency of co-tweets with the Clinton and Trump Twitter accounts [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>].</p>    <p>    <strong>Embedding the Invocation Graph in a Political Spectrum.</strong>. Having thus located the domains on a political spectrum, we now have an <em>embedded</em> version of the invocation graph: the nodes, representing domains, are embedded in a one-dimensional spectrum, and the weighted directed edges span pairs of points in this spectrum. We can now ask how the edges are distributed across distances on the spectrum, ranging from short-range interactions that connect domains of similar political orientation to long-range interactions that reach across sides. In examining these questions, it is crucial to recall that these links among domains are not defined by hyperlinks in the content on these domains, but instead via the replies made by users when they invoke this content in discussions: it is not that the domains are replying to each other, but that they are being invoked in replies by users. The data thus reflects choices made by the consumers of the content, rather than by authors of the content.</p>    <p>In Section 3, we propose a set of methods to analyze how the edges of the invocation graph span the underlying spectrum. A core component of these methods is, for a domain <em>x</em>, to consider its <em>out-link distribution</em> &#x2014; the distribution of &#x201C;landing points&#x201D; on the political spectrum for all links out of <em>x</em>. As we move from left to right along the spectrum, tracking the out-link distributions of domains we encounter along the way, do the means of these distributions tend to move from left to right as well, or do they tend to move inversely from right to left? The former case would indicate a positive correlation in the locations of the source and target of an invoked interaction (<em>B</em>, <em>A</em>), suggesting links are used to connect to similar sides of the political spectrum; the latter case would correspond to a negative correlation and hence connections across the spectrum, with domains on the left being invoked to reply to domains on the right, and vice versa.</p>    <p>It is not a priori obvious which type of correlation we should expect to see; and as a reinforcement of this fact, we find that the nature of the correlation actually inverts over the course of 2016 leading up to the U.S. Presidential election. In the early parts of 2016 we have a positive correlation, with politically similar domains being invoked to reply to each other; but by the time we reach the months directly preceding the election, this same correlation measure has become negative, indicating that most of the linking is now crossing the spectrum. We verify this effect using multiple measures, including one in which we compare the trends across the spectrum to what we&#x0027;d observe in a <em>randomly rewired</em> version of the embedded graph.</p>    <p>We also propose a set of methods to identify inherent <em>asymmetries</em> in the patterns of linkage: do replies from left to right have the same structure as replies from right to left? Using our measures, we find strong asymmetries in the 2016 Twitter data, with domains on the right side of the spectrum having a disproportionately high rate of out-links in the invocation graph and domains on the left side of the spectrum having a disproportionately high rate of in-links. This right-to-left flow in the replies persists across the entire time range, and is a key characteristic of the structure.</p>    <p>Since a recurring theme in our analyses is the way in which replies increasingly engaged opposite sides of the political spectrum as 2016 went on, it is interesting to ask whether we see a similar effect in a more traditional user-to-user interaction graph, with nodes corresponding to users and directed edges to replies from one user to another. To explore this, we adapt the techniques developed for the invocation graph to a user-to-user graph built from Reddit. Specifically, we analyze a snapshot of Reddit&#x0027;s politics subreddit, <tt>r/politics</tt>, for the same period of 2016 up to the election; we classify users by whether they had posted to the Clinton or Trump subreddits, and then look at the rate of replies among different types of users. We find that the trend on Reddit closely tracks the trend in the invocation graph built from Twitter, with increasing linkage between the two sides as the election approached.</p>    <p>Overall, our methodology suggests that the invocation graph on domains, and its embedding into a one-dimensional spectrum, captures important aspects of political interaction on social media &#x2014; the tendency of users to interact by invoking links to authored content, and the use of these interaction patterns to thus reveal relationships among the content based on usage in everyday discussion.</p>   </section>   <section id="sec-5">    <header>    <div class="title-info">     <h2>      <span class="section-number">2</span> Basic Definitions</h2>    </div>    </header>    <p>We begin with a Twitter dataset containing aggregate-level information about tweet-reply pairs. For each month from January to November 2016 (the US Presidential election was held on November 8, 2016), the dataset consists of pairs of domains <em>x</em>    <sub>1</sub> and <em>x</em>    <sub>2</sub> along with an accompanying count, the number of times a tweet containing a page from domain <em>x</em>    <sub>1</sub> was posted in reply to a tweet containing a page from domain <em>x</em>    <sub>2</sub>. In addition, for each month, we have an auxiliary dataset of co-occurrences: for each domain <em>x</em>, the number of times a user posted a tweet containing a page from <em>x</em> on the same day that the user retweeted Hillary Clinton&#x0027;s or Donald Trump&#x0027;s personal Twitter account. Finally, we have the number of retweets of Clinton or Trump for each month.</p>    <p>The invocation graph we construct from this data is a directed graph with domains as vertices, where each domain corresponds to a news source. We draw an edge <em>x</em>    <sub>1</sub> &#x2192; <em>x</em>    <sub>2</sub> if a tweet containing a URL from domain <em>x</em>    <sub>1</sub> is posted in reply to a tweet containing a URL from domain <em>x</em>    <sub>2</sub>. The weight of this edge is the number of such tweet-reply pairs. On first inspection, the most prominent feature of this graph is that self-loops (consisting of links from a domain <em>x</em> to itself) have much higher weight than other edges. Since our goal is to examine political interactions between domains, we remove all self-loops from the graph.</p>    <p>    <strong>Isolating Political Domains.</strong>. The first issue we encounter is that Twitter contains a wide range of URLs, not just pages from politically relevant domains. We could select only known political domains by whitelisting them, i.e. only considering the subgraph over a predefined set of domains; however, this approach will inevitably miss out on influential but less well-known news sources.</p>    <p>On the other hand, there are challenges to a completely unsupervised approach. URLs on Twitter are dominated by social media sites (e.g. twitter.com, facebook.com) as well as content-hosting sites (e.g. imgur.com, bitly.com) which produce virtually no content of their own, but instead host user-uploaded content such as images, links, and text. While the usage of these content-hosting sites would be interesting to study, this is outside the scope of our work.</p>    <p>We begin by blacklisting several known social media and content-hosting domains and remove them from the graph. However, there are plenty of domains that appear on Twitter that are not politically relevant, and we cannot individually remove each such domain. To filter out such domains, we need some measure of <em>political engagement</em> for each domain. We can construct such a measure by using the observation that politically relevant domains should frequently co-occur with known political entities &#x2013; in our case, the official Twitter accounts of Hillary Clinton and Donald Trump.</p>    <p>Our measure of political engagement for a domain, then, is simply the number of times a user posted a tweet with that domain on the same day that he or she retweeted either Clinton&#x0027;s or Trump&#x0027;s official Twitter account. Intuitively, the more politically engaging a domain is, the more it will co-occur with these political entities. With this proxy, we can select domains with high political engagement, excluding social-media and content-hosting domains.</p>    <p>As a final filter, we require that each domain have an edge of at weight least <em>W</em> to some other domain in the political subgraph. This restricts our attention to the most actively used political domains. Based on this, we can formally define the invocation graph. Every domain in the invocation graph</p>    <ul class="list-no-style">    <li id="list1" label="&#x2022;">is not blacklisted (social media and content-hosting domains)<br/></li>    <li id="list2" label="&#x2022;">has political engagement above some threshold <em>p</em>     <br/></li>    <li id="list3" label="&#x2022;">has at least one edge to another domain in the invocation graph with weight at least <em>W</em>     <br/></li>    </ul>    <p>We require the invocation graph be connected and contain some seed domain. Any choice of popular American news outlet would yield exactly the same result, as they all belong to the same connected component. (We use nytimes.com, but the choice is immaterial.)</p>    <p>Based on this definition, the algorithm to construct the invocation graph is as follows: begin with the full graph, remove all nodes that are either blacklisted or have political engagement below <em>p</em>, and run a breadth-first search beginning at nytimes.com following only edges of weight at least <em>W</em>. In practice, we find that the values we use for <em>p</em> and <em>W</em> don&#x0027;t affect our results much, and all of the results presented here use <em>p</em> = 10000 and <em>W</em> = 100. Because we study the change in this invocation graph over time, we build a new graph <em>G<sup>m</sup>    </em> for each month <em>m</em> from January to November 2016.</p>    <p>    <strong>A Political Spectrum.</strong>. In order to characterize the political nature of this graph, we need some way of organizing the domains along a political spectrum. Drawing on techniques from [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0005">5</a>] and our definition of political engagement, we define the quantities <em>P<sub>T</sub>    </em>(<em>x</em>|<em>C</em>) and <em>P<sub>T</sub>    </em>(<em>x</em>|<em>T</em>) for each domain <em>x</em> as the empirical probabilities that a user posted a tweet containing a URL from domain <em>x</em> given that, on the same day, he/she retweeted Clinton&#x0027;s or Trump&#x0027;s official account respectively. Intuitively, if a user has retweeted Clinton on a given day, the domains that he/she invokes are more likely to be on Clinton&#x0027;s end of the political spectrum, and the same is true for Trump. Figure&#x00A0;<a class="fig" href="#fig2">2</a> shows the resulting values, where the blue line is <em>P<sub>T</sub>    </em>(<em>x</em>|<em>C</em>) = <em>P<sub>T</sub>    </em>(<em>x</em>|<em>T</em>). Interestingly, most domains lie above this line, suggesting a difference in the populations of users retweeting Clinton and Trump respectively. <figure id="fig2">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig2.jpg" class="img-responsive" alt="Figure 2"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 2:</span>      <span class="figure-title">       <em>P<sub>T</sub>       </em>(<em>x</em>|<em>C</em>) vs. <em>P<sub>T</sub>       </em>(<em>x</em>|<em>T</em>) for September 2016.</span>     </div>    </figure>    </p>    <p>Furthermore, we can condense this information into a single <em>political score</em> for each domain: <div class="table-responsive" id="eq1">     <div class="display-equation">      <span class="tex mytex">\begin{equation} s_T(x) = \frac{P_T(x|T)}{P_T(x|C)+ P_T(x|T)} \end{equation} </span>      <br/>      <span class="equation-number">(1)</span>     </div>    </div> Note that <em>s<sub>T</sub>    </em>(<em>x</em>) &#x2208; [0, 1], and the larger <em>s<sub>T</sub>    </em>(<em>x</em>) is, the closer <em>x</em> is to the Trump end of the spectrum. Throughout this section, we use the spectrum built on January-September 2016.</p>   </section>   <section id="sec-6">    <header>    <div class="title-info">     <h2>      <span class="section-number">3</span> Methodology</h2>    </div>    </header>    <figure id="fig3">    <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig3.jpg" class="img-responsive" alt="Figure 3"      longdesc=""/>    <div class="figure-caption">     <span class="figure-number">Figure 3:</span>     <span class="figure-title">Correlation between <em>s<sub>T</sub>      </em>(<em>x</em>) and <em>&#x03B4;</em>      <sub>out</sub>(<em>x</em>) for January and October.</span>    </div>    </figure>    <p>With these definitions, we can analyze various properties of the invocation graph, and in particular, its interaction with the political spectrum. Do usage patterns of news articles and other political content differ across the political spectrum? How do these patterns change leading up to the election? Using the invocation graph in tandem with the political spectrum, we can shed light on these questions.</p>    <p>    <strong>Out-link Distributions.</strong>. A key characteristic we study is the <em>out-link distribution</em> for a domain <em>x</em>: the distribution of positions on the political spectrum where edges originating from <em>x</em> land. A domain&#x0027;s out-links describe the way in which it is used to reply to other domains. For example, if a domain has many out-links to other domains near it on the political spectrum, one might expect that it is being used to reinforce a particular point of view; however, if it has many out-links to the opposite end of the spectrum, it may instead be used to disagree or argue with an opposing viewpoint.</p>    <p>To draw upon this intuition, we ask how <em>x</em>&#x2019;s out-link distribution varies based on its political score <em>s<sub>T</sub>    </em>(<em>x</em>). As a baseline for comparison, we compute the <em>global</em> out-link distribution &#x2014; the distribution over the political spectrum of where edges in <em>G</em> land. Comparing to this baseline will give us some insight as to how <em>x</em>&#x2019;s linking pattern differs from the &#x201C;average&#x201D; linking pattern.</p>    <p>However, since <em>G</em> contains no self-loops, <em>x</em> doesn&#x0027;t link to itself, while the global out-link distribution contains links to <em>x</em>. To prevent this from biasing the comparison, we instead compare <em>x</em>&#x2019;s out-link distribution to the out-link distribution of <em>G</em>\<em>x</em>, that is, <em>G</em> with <em>x</em> and all edges into or out of <em>x</em> removed.</p>    <p>Thus, <em>x</em>&#x2019;s out-link distribution distribution <em>d</em>(<em>x</em>, <em>G</em>) is a distribution over [0, 1] assigning probability mass to <em>y</em> &#x2208; [0, 1] proportional to the weight of edges from <em>x</em> to <em>x</em>&#x2032; such that <em>s<sub>T</sub>    </em>(<em>x</em>&#x2032;) = <em>y</em>. The global out-link distribution <em>D</em>(<em>G</em>\<em>x</em>) can then be expressed as <div class="table-responsive">     <div class="display-equation">      <span class="tex mytex">\[ D(G \backslash x) = \frac{\sum _{x^{\prime } \in G \backslash x} d(x^{\prime }, G \backslash x) \cdot \operatorname{vol}(x^{\prime }, G \backslash x)}{\sum _{x^{\prime } \in G \backslash x} \operatorname{vol}(x^{\prime }, G \backslash x)}, \] </span>      <br/>     </div>    </div> where <span class="inline-equation"><span class="tex">$\operatorname{vol}(x^{\prime }, G \backslash x)$</span>    </span> is the total weight of edges leaving <em>x</em>&#x2032; in <em>G</em>\<em>x</em>. In other words, <em>D</em>(<em>G</em>\<em>x</em>) is the weighted average of <em>d</em>(<em>x</em>&#x2032;, <em>G</em>\<em>x</em>) for <em>x</em>&#x2032; &#x2208; <em>G</em>\<em>x</em>.</p>    <p>We make the comparison between these distributions formal as follows: for each <em>x</em>, let <em>&#x03BC;</em>    <sub>out</sub>(<em>x</em>) be the weighted average political score of the domains that <em>x</em> links to, so that <span class="inline-equation"><span class="tex">$\mu _{\text{out}}(x) = \mathbb {E} \left[ d(x, G) \right]$</span>    </span>. This gives an estimate of what types of domains <em>x</em> is used to reply to &#x2014; if <em>&#x03BC;</em>    <sub>out</sub>(<em>x</em>) is close to 0, then <em>x</em> is used primarily to reply to Clinton-related domains, while if it is close to 1, then <em>x</em> is used primarily to reply to Trump-related domains. In a slight abuse of notation, let <em>&#x03BC;</em>    <sub>out</sub>(<em>G</em>\<em>x</em>) be the weighted average political score of all endpoints of edges in <em>G</em>\<em>x</em>, so <span class="inline-equation"><span class="tex">$\mu _{\text{out}}(G \backslash x) = \mathbb {E} \left[ D(G \backslash x) \right]$</span>    </span>. Then, <div class="table-responsive" id="eq2">     <div class="display-equation">      <span class="tex mytex">\begin{equation} \delta _{\text{out}}(x) = \mu _{\text{out}}(x) - \mu _{\text{out}}(G \backslash x) \end{equation} </span>      <br/>      <span class="equation-number">(2)</span>     </div>    </div> is a measure of how much <em>x</em> deviates from other domains towards the Trump end of the political spectrum.</p>    <p>From past work documenting <em>homophily</em> in online political activity&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>], one might expect that a domain will be used primarily to engage with politically similar domains, implying that <em>s<sub>T</sub>    </em>(<em>x</em>) is positively correlated with <em>&#x03B4;</em>    <sub>out</sub>(<em>x</em>). Furthermore, it is not a priori obvious whether this trend should become more or less pronounced leading up to the election &#x2014; do the opposing parties increasingly converse within themselves, or do they engage with one another?</p>    <p>Figure&#x00A0;<a class="fig" href="#fig3">3</a> shows that in January, domains are more likely to have links in the graph to politically similar domains, so <em>s<sub>T</sub>    </em>(<em>x</em>) and <em>&#x03B4;</em>    <sub>out</sub>(<em>x</em>) are positively correlated. However, by October, this correlation has reversed: on average, domains are being used to reply <em>across</em> the political spectrum instead of to politically similar domains. Replies seem to be adversarial, as with the breitbart.com &#x2192; nytimes.com edge in Figure&#x00A0;<a class="fig" href="#fig1">1</a>.</p>    <p>To understand this change in correlation over time, we define <em>a</em>(<em>G<sup>m</sup>    </em>) to be the slope of the correlation between <em>s<sub>T</sub>    </em>(<em>x</em>) and <em>&#x03B4;</em>    <sub>out</sub>(<em>x</em>) for month <em>m</em>. Figure&#x00A0;<a class="fig" href="#fig4">4</a> shows that <em>a</em>(<em>G<sup>m</sup>    </em>) decreases significantly from January to October 2016. This suggests that as the election drew nearer, the fraction of interaction between opposite ends of the spectrum increased, and domains from the two opposing sides were actually being invoked more often to reply to each other. <figure id="fig4">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig4.jpg" class="img-responsive" alt="Figure 4"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 4:</span>      <span class="figure-title">       <em>a</em>(<em>G</em>) for January-November.</span>     </div>    </figure>    </p>    <p>    <strong>Edge Lengths and Crossing Points.</strong>. Another way of characterizing the political aspects of the invocation graph is to consider the lengths and locations of the edges on the political spectrum. As the interaction between opposing viewpoints increases, we expect to see longer edges in the invocation graph that cross the political spectrum instead of staying on one side. Figure&#x00A0;<a class="fig" href="#fig5">5</a> shows that this trend holds true between January and October &#x2014; while most links had length close to 0 in with respect to the political spectrum in January, by October, many longer edges were present. <figure id="fig5">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig5.jpg" class="img-responsive" alt="Figure 5"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 5:</span>      <span class="figure-title">Edge length distributions for January vs. October.</span>     </div>    </figure>    </p>    <p>To enable us to visualize where on the spectrum edges lie, we make the following definitions. For a point <em>y</em> &#x2208; [0, 1], let <em>f</em>    <sub>&#x2192;</sub>(<em>y</em>, <em>G</em>) be the number of edges (<em>x</em>    <sub>1</sub>, <em>x</em>    <sub>2</sub>) such that <em>s<sub>T</sub>    </em>(<em>x</em>    <sub>1</sub>) < <em>y</em> < <em>s<sub>T</sub>    </em>(<em>x</em>    <sub>2</sub>). Similarly, let <em>f</em>    <sub>&#x2190;</sub>(<em>y</em>, <em>G</em>) be the number of edges such that <em>s<sub>T</sub>    </em>(<em>x</em>    <sub>1</sub>) > <em>y</em> > <em>s<sub>T</sub>    </em>(<em>x</em>    <sub>2</sub>). In other words, <em>f</em>    <sub>&#x2192;</sub>(<em>y</em>, <em>G</em>) is the number of edges crossing <em>y</em> from left to right on the political spectrum, and <em>f</em>    <sub>&#x2190;</sub>(<em>y</em>, <em>G</em>) is the number of edges crossing <em>y</em> from right to left. <figure id="fig6">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig6.jpg" class="img-responsive" alt="Figure 6"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 6:</span>      <span class="figure-title">       <em>f</em>       <sub>&#x2192;</sub>(<em>y</em>) and <em>f</em>       <sub>&#x2190;</sub>(<em>y</em>) for <em>G</em> and <span class="inline-equation"><span class="tex">$\hat{G}$.</span>       </span>      </span>     </div>    </figure>    </p>    <p>In order to interpret these functions, we need a baseline to compare against. A natural baseline in such scenarios is the <em>randomly rewired</em> graph <span class="inline-equation"><span class="tex">$\hat{G}$</span>    </span>, the idea of which goes back to&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0026">26</a>]. In <span class="inline-equation"><span class="tex">$\hat{G}$</span>    </span>, every vertex has the same indegree and outdegree as in <em>G</em>, but each edge has a randomly chosen endpoint. Note that this can create self-loops, which <em>G</em> does not have by construction; however, the number of self-loops in <span class="inline-equation"><span class="tex">$\hat{G}$</span>    </span> is small (often 0 for a given randomization) and therefore their effect on this analysis is negligible. Figure&#x00A0;<a class="fig" href="#fig6">6</a> shows <em>f</em>    <sub>&#x2192;</sub> and <em>f</em>    <sub>&#x2190;</sub> for <em>G</em> and <span class="inline-equation"><span class="tex">$\hat{G}$</span>    </span>, where the values shown for <span class="inline-equation"><span class="tex">$\hat{G}$</span>    </span> are in expectation. In January, both <em>f</em>    <sub>&#x2192;</sub> and <em>f</em>    <sub>&#x2190;</sub> are dominated by their rewired counterparts, while in October, the opposite is true. This suggests that at the beginning of the year, domains were used to reply to politically similar domains, resulting in shorter edges than a random baseline, while closer to the election, domains were used to reply across the political spectrum. This comparison allows us to get a sense for how actual behavior deviates from random behavior, and how this deviation changes over time.</p>    <p>    <strong>Asymmetry in Out-links.</strong>. Another striking feature of Figure&#x00A0;<a class="fig" href="#fig6">6</a> is that <em>f</em>    <sub>&#x2190;</sub> dominates <em>f</em>    <sub>&#x2192;</sub>, showing that many more links crossed right-to-left than left-to-right. Intuitively, it seems that a disproportionate number of edges originate on the right and end on the left, corresponding to right-leaning domains being used to reply to left-leaning domains. We can make this precise by defining <em>r</em>(<em>x</em>) as the ratio of indegree(<em>x</em>)/(indegree(<em>x</em>) + outdegree(<em>x</em>)) and analyzing how <em>r</em>(<em>x</em>) changes with <em>s<sub>T</sub>    </em>(<em>x</em>). Figure&#x00A0;<a class="fig" href="#fig7">7</a> shows that <em>r</em>(<em>x</em>) is negatively correlated with <em>s<sub>T</sub>    </em>(<em>x</em>), meaning that domains on the right end of the political spectrum produce a disproportionate number of out-links compared to domains on the left end. In other words, domains on the right are more often used to reply to other domains, while domains on the left are more often the recipients of replies. <figure id="fig7">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig7.jpg" class="img-responsive" alt="Figure 7"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 7:</span>      <span class="figure-title">       <em>s<sub>T</sub>       </em>(<em>x</em>) vs. <em>r</em>(<em>x</em>) for October.</span>     </div>    </figure>    </p>   </section>   <section id="sec-7">    <header>    <div class="title-info">     <h2>      <span class="section-number">4</span> Comparing to the User Level</h2>    </div>    </header>    <p>Having established a set of results for the structure of invocation graphs on Twitter, we would like to verify that our findings are qualitatively consistent with what we see in more traditional user-to-user communication graphs on social media. Since our Twitter dataset doesn&#x0027;t contain information about individual users, we instead turn to a publicly available Reddit dataset<a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a>. Reddit is a community discussion website organized into posts, or &#x201C;submissions,&#x201D; and comments on those submissions. Comments are threaded, so that a comment is either in reply to a top-level post or to another comment. The data consists of every post and comment from Reddit in 2016, along with its author&#x0027;s username. Reddit is subdivided into forums for particular topics called <em>subreddits</em>. We focus on three subreddits in particular: <tt>r/politics</tt>, <tt>r/hillaryclinton</tt>, and <tt>r/The_Donald</tt>, which are devoted to politics, Hillary Clinton, and Donald Trump respectively. All three subreddits were among the most active subreddits during 2016. Note that in addition to studying user-to-user dynamics on Reddit, in principle we could also use Reddit data to replicate our Twitter invocation-graph analysis at the domain level; however, it turns out that Reddit contains too few comments with URLs for robust domain-level trends to emerge.</p>    <p>    <strong>Interactions at the User Level.</strong>. In order to test for analogous trends at the user level to those we found at the domain level, we need to modify our methods. In particular, we now need some kind of political information about users. Whereas in Section&#x00A0;<a class="sec" href="#sec-5">2</a> we anchored the political spectrum to the official Clinton and Trump Twitter accounts, here we anchor our notion of political affiliations to <tt>r/hillaryclinton</tt> and <tt>r/The_Donald</tt>. Since most users are active in at most one of the two subreddits, we have a simpler notion of a political score: we define a set <em>U<sub>C</sub>    </em> of users who posted in <tt>r/hillaryclinton</tt> but not <tt>r/The_Donald</tt>, and we define a set <em>U<sub>T</sub>    </em> of users who posted in <tt>r/The_Donald</tt> but not <tt>r/hillaryclinton</tt>. There are 22,164 users in <em>U<sub>C</sub>    </em> and 281,334 users in <em>U<sub>T</sub>    </em> (more than ten times the size of <em>U<sub>C</sub>    </em>). We assume that most users in <em>U<sub>C</sub>    </em> are pro-Clinton, while most users in <em>U<sub>T</sub>    </em> are pro-Trump (this is consistent with the explicit ground rules for participating in these subreddits).</p>    <p>    <strong>Validating Political Information from Subreddits.</strong>. We verify that <tt>r/hillaryclinton</tt> and <tt>r/The_Donald</tt> contain strong signal about political orientation by adapting our methodology from Twitter to build a spectrum over the domains on Reddit, and then comparing this spectrum to the one built from Twitter. To do this, we define <em>P<sub>R</sub>    </em>(<em>x</em>|<em>C</em>) to be the empirical probability that a post or comment in <tt>r/hillaryclinton</tt> contains a URL from domain <em>x</em> (and analogously for <em>P<sub>R</sub>    </em>(<em>x</em>|<em>T</em>) and <tt>r/The_Donald</tt>). As in&#x00A0;(<a class="eqn" href="#eq1">1</a>), we can define a political score from Reddit as <div class="table-responsive" id="eq3">     <div class="display-equation">      <span class="tex mytex">\begin{equation} s_R(x) = \frac{P_R(x|T)}{P_R(x|C)+ P_R(x|T)}. \end{equation} </span>      <br/>      <span class="equation-number">(3)</span>     </div>    </div>    </p>    <p>Table&#x00A0;<a class="tbl" href="#tab1">1</a> shows the orderings of the Twitter and Reddit spectra for 21 domains. The Spearman rank correlation&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0028">28</a>] (a measure of squared distance) between the two orderings is 0.871 (compared to a maximum of 0.757 over 10,000 randomly shuffled orderings). Thus the two settings align well, demonstrating that our notion of political affiliation is adaptable to Reddit, and that it contains strong and consistent signal.</p>    <div class="table-responsive" id="tab1">    <div class="table-caption">     <span class="table-number">Table 1:</span>     <span class="table-title">Comparison of Twitter and Reddit political spectra.</span>    </div>    <table class="table"> 			 <thead>      <tr>       <th style="text-align:center;"/>       <th style="text-align:center;">Twitter</th>       <th style="text-align:center;">Reddit</th>      </tr> 			 </thead>     <tbody>      <tr>       <td style="text-align:center;">1</td>       <td style="text-align:center;">donaldjtrump.com</td>       <td style="text-align:center;">thegatewaypundit.com</td>      </tr>      <tr>       <td style="text-align:center;">2</td>       <td style="text-align:center;">thegatewaypundit.com</td>       <td style="text-align:center;">zerohedge.com</td>      </tr>      <tr>       <td style="text-align:center;">3</td>       <td style="text-align:center;">breitbart.com</td>       <td style="text-align:center;">breitbart.com</td>      </tr>      <tr>       <td style="text-align:center;">4</td>       <td style="text-align:center;">dailycaller.com</td>       <td style="text-align:center;">donaldjtrump.com</td>      </tr>      <tr>       <td style="text-align:center;">5</td>       <td style="text-align:center;">zerohedge.com</td>       <td style="text-align:center;">dailycaller.com</td>      </tr>      <tr>       <td style="text-align:center;">6</td>       <td style="text-align:center;">foxnews.com</td>       <td style="text-align:center;">dailymail.co.uk</td>      </tr>      <tr>       <td style="text-align:center;">7</td>       <td style="text-align:center;">nypost.com</td>       <td style="text-align:center;">foxnews.com</td>      </tr>      <tr>       <td style="text-align:center;">8</td>       <td style="text-align:center;">dailymail.co.uk</td>       <td style="text-align:center;">nypost.com</td>      </tr>      <tr>       <td style="text-align:center;">9</td>       <td style="text-align:center;">thehill.com</td>       <td style="text-align:center;">bbc.co.uk</td>      </tr>      <tr>       <td style="text-align:center;">10</td>       <td style="text-align:center;">politico.com</td>       <td style="text-align:center;">theguardian.com</td>      </tr>      <tr>       <td style="text-align:center;">11</td>       <td style="text-align:center;">cbsnews.com</td>       <td style="text-align:center;">cbsnews.com</td>      </tr>      <tr>       <td style="text-align:center;">12</td>       <td style="text-align:center;">nbcnews.com</td>       <td style="text-align:center;">cnn.com</td>      </tr>      <tr>       <td style="text-align:center;">13</td>       <td style="text-align:center;">cnn.com</td>       <td style="text-align:center;">thehill.com</td>      </tr>      <tr>       <td style="text-align:center;">14</td>       <td style="text-align:center;">washingtonpost.com</td>       <td style="text-align:center;">nbcnews.com</td>      </tr>      <tr>       <td style="text-align:center;">15</td>       <td style="text-align:center;">bbc.co.uk</td>       <td style="text-align:center;">huffingtonpost.com</td>      </tr>      <tr>       <td style="text-align:center;">16</td>       <td style="text-align:center;">theguardian.com</td>       <td style="text-align:center;">washingtonpost.com</td>      </tr>      <tr>       <td style="text-align:center;">17</td>       <td style="text-align:center;">nytimes.com</td>       <td style="text-align:center;">nytimes.com</td>      </tr>      <tr>       <td style="text-align:center;">18</td>       <td style="text-align:center;">huffingtonpost.com</td>       <td style="text-align:center;">politico.com</td>      </tr>      <tr>       <td style="text-align:center;">19</td>       <td style="text-align:center;">politifact.com</td>       <td style="text-align:center;">newsweek.com</td>      </tr>      <tr>       <td style="text-align:center;">20</td>       <td style="text-align:center;">newsweek.com</td>       <td style="text-align:center;">politifact.com</td>      </tr>      <tr>       <td style="text-align:center;">21</td>       <td style="text-align:center;">hillaryclinton.com</td>       <td style="text-align:center;">hillaryclinton.com</td>      </tr>     </tbody>    </table>    </div>    <p>    <strong>Building a User-to-User Graph on Reddit.</strong>. With this notion of political affiliation, we can now investigate some basic properties of political discourse on Reddit. Just as we first restricted our attention to political domains on Twitter, here we restrict our attention to the main political subreddit <tt>r/politics</tt>. Since only a subset of the users in <tt>r/politics</tt> are in either <em>U<sub>C</sub>    </em> or <em>U<sub>T</sub>    </em>, we focus on comment-reply pairs in which both users involved are in one of <em>U<sub>C</sub>    </em> or <em>U<sub>T</sub>    </em>. There are 4 possible types of interaction: <em>U<sub>C</sub>    </em> &#x2192; <em>U<sub>C</sub>    </em>, <em>U<sub>C</sub>    </em> &#x2192; <em>U<sub>T</sub>    </em>, <em>U<sub>T</sub>    </em> &#x2192; <em>U<sub>C</sub>    </em>, and <em>U<sub>T</sub>    </em> &#x2192; <em>U<sub>T</sub>    </em> where <em>p</em> &#x2192; <em>q</em> means that a user from <em>p</em> posts a reply to a comment from a user in <em>q</em>. Let <em>n</em>    <sub>     <em>p</em> &#x2192; <em>q</em>    </sub> be the number of <em>p</em> &#x2192; <em>q</em> interactions in a given time period. We organize the data into sliding windows of 30 days. In the following plots, the value at a particular date represents the 30-day window ending at that date. Figure&#x00A0;8a shows comment counts throughout 2016 averaged over the next 30 days, and Figure&#x00A0;8b shows what fraction of the comments were each type of interaction. <figure id="fig8">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig8.jpg" class="img-responsive" alt="Figure 8"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 8:</span>      <span class="figure-title">User-level trends from the Reddit dataset. In Figure&#x00A0;<a class="fig" href="#fig8">8c</a>, a decrease in (<em>n</em>       <sub>       <em>C</em> &#x2192; <em>C</em>       </sub> + <em>n</em>       <sub>       <em>T</em> &#x2192; <em>T</em>       </sub>)/(<em>n</em>       <sub>       <em>C</em> &#x2192; <em>T</em>       </sub> + <em>n</em>       <sub>       <em>T</em> &#x2192; <em>C</em>       </sub>) shows more interaction reaching across the spectrum.</span>     </div>    </figure>    </p>    <p>Figure&#x00A0;8b shows that a steadily rising number of comments are cross-cutting (e.g., are of types <em>U<sub>C</sub>    </em> &#x2192; <em>U<sub>T</sub>    </em> and <em>U<sub>T</sub>    </em> &#x2192; <em>U<sub>C</sub>    </em>) from the beginning of 2016 up until the election in early November, followed by a return to a baseline rate. Figure&#x00A0;<a class="fig" href="#fig8">8c</a> further reinforces this point, showing a strong negative slope in the ratio of edges between users of the same political leaning and users of different political leanings from January until the November 8 election. These results are consistent with our findings our Twitter, where an increasing fraction of political interactions reach across the political spectrum on Twitter up until the election.</p>    <p>To interpret the significance of these results, we adapt our random rewiring technique to the user level by randomly reassigning users to comments, preserving the invariant that each user still posts the same number of comments as in the original data. Whether we randomize globally (a comment is randomly attributed to any user from all of 2016) or each month (a comment is attributed to a randomly chosen user from the same month that comment was written), the results are the same &#x2013; the observed slope is significantly more negative than the minimum over 100 random trials.</p>    <p>Using our Reddit dataset, we&#x0027;ve shown that our invocation graph methodology can be adapted to analyze traditional user-user communication graphs. In particular, we&#x0027;ve used co-occurrences to determine political information about both users and domains. The month-to-month trend found at the user level mirrors our findings on Twitter &#x2014; in the months leading up to the election, online political interaction increasingly reached across the political spectrum.</p>   </section>   <section id="sec-8">    <header>    <div class="title-info">     <h2>      <span class="section-number">5</span> Two-Dimensional Alignment</h2>    </div>    </header>    <p>Our formulation of the political spectrum in this work indicates that it has a natural <em>two-dimensional</em> structure, with one dimension corresponding to co-occurrence probabilities with content related to one candidate, and the other dimension corresponding to co-occurrence probabilities with content related to the other candidate.</p>    <p>In Section&#x00A0;<a class="sec" href="#sec-7">4</a>, when we established that our invocation graph methodology extends naturally to the traditional user-level setting, part of our analysis involved measuring how well the one-dimensional spectra <em>s<sub>T</sub>    </em>(&#x00B7;) and <em>s<sub>R</sub>    </em>(&#x00B7;) shown in Table&#x00A0;<a class="tbl" href="#tab1">1</a> align. Here we consider how to measure the alignment of the corresponding two-dimensional spectra.</p>    <p>To make this comparison, we need to account for the fact that axes may have different scales (e.g. posts on Reddit contain URLs at a different rate than on Twitter). This means we need to scale <em>P<sub>R</sub>    </em>(<em>x</em>|<em>C</em>) and <em>P<sub>R</sub>    </em>(<em>x</em>|<em>T</em>) in order to find the &#x201C;best match&#x201D; between the two spectra. We formalize this as the following optimization problem, minimizing the squared &#x2113;<sub>2</sub> distance of each pair of points: <div class="table-responsive" id="eq4">     <div class="display-equation">      <span class="tex mytex">\begin{equation} \min _{a,b: a,b \ge 0} \sum _{x \in D} (P_T(x|C)- aP_R(x|C))^2 + (P_T(x|T)- b P_R(x|T))^2 \end{equation} </span>      <br/>      <span class="equation-number">(4)</span>     </div>    </div> where <em>D</em> is the set of domains. Since all points lie in the first quadrant, we can drop the constraint <em>a</em>, <em>b</em> &#x2265; 0. Note that&#x00A0;(<a class="eqn" href="#eq4">4</a>) can be separated into 2 identical optimization problems of the form <div class="table-responsive" id="eq5">     <div class="display-equation">      <span class="tex mytex">\begin{equation} \min _c \sum _{x \in D} (u_x - cv_x)^2. \end{equation} </span>      <br/>      <span class="equation-number">(5)</span>     </div>    </div> If <em>u</em> and <em>v</em> are the vectors [<em>u<sub>x</sub>    </em>: <em>x</em> &#x2208; <em>D</em>]<sup>&#x22A4;</sup> and [<em>v<sub>x</sub>    </em>: <em>x</em> &#x2208; <em>D</em>]<sup>&#x22A4;</sup> respectively, then this can be written as <span class="inline-equation"><span class="tex">$\min _c \sum _{x \in D} \Vert u - cv\Vert _2^2$</span>    </span>. This is convex and has derivative <div class="table-responsive">     <div class="display-equation">      <span class="tex mytex">\[ \frac{d}{dc} \Vert u - cv\Vert _2^2 = \frac{d}{dc} (u-cv)^\top (u-cv) = 2v^\top u - 2cv^\top v. \] </span>      <br/>     </div>    </div> Setting this equal to 0, we find that&#x00A0;(<a class="eqn" href="#eq5">5</a>) has the solution <span class="inline-equation"><span class="tex">$c = \frac{v^\top u}{v ^\top v}$</span>    </span>.</p>    <p>Using this, we can scale the Reddit spectrum to compare it to the Twitter spectrum, producing the plot shown in Figure&#x00A0;<a class="fig" href="#fig9">9</a>. The spectra roughly align, with the domains in approximately the same positions for both Twitter and Reddit. <figure id="fig9">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig9.jpg" class="img-responsive" alt="Figure 9"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 9:</span>      <span class="figure-title">Scaled spectrum comparison.</span>     </div>    </figure>    </p>    <p>If instead we wish to minimize &#x2113;<sub>1</sub> distance between pairs of points, we get the optimization problem <div class="table-responsive" id="eq6">     <div class="display-equation">      <span class="tex mytex">\begin{equation} \min _{a,b: a,b \ge 0} \sum _{x \in D} |P_T(x|C)- aP_R(x|C)| + |P_T(x|T)- b P_R(x|T)| \end{equation} </span>      <br/>      <span class="equation-number">(6)</span>     </div>    </div> Again, this results in two separate optimizations of the form <div class="table-responsive" id="eq7">     <div class="display-equation">      <span class="tex mytex">\begin{equation} \min _c \sum _{x \in D} |u_x - cv_x|. \end{equation} </span>      <br/>      <span class="equation-number">(7)</span>     </div>    </div> The subgradient of each term is <div class="table-responsive">     <div class="display-equation">      <span class="tex mytex">\[ {{\lt}CASE-START{\gt}\left\lbrace \begin{array}{@{}l@{\quad }l@{}}\lbrace v_x \cdot \text{sign}(cv_x - u_x)\rbrace &#x0026; u_x \ne cv_x \\ [-v_x, v_x] &#x0026; \text{otherwise} \end{array}\right.{\lt}CASE-END{\gt}} \] </span>      <br/>     </div>    </div> We sort the <em>x</em>&#x2019;s by increasing <em>u<sub>x</sub>    </em>/<em>v<sub>x</sub>    </em>, so <span class="inline-equation"><span class="tex">$i {\lt} j \Longrightarrow u_{x_i}/v_{x_i} \le u_{x_j}/v_{x_j}$</span>    </span>, and then choose <em>i</em> such that <div class="table-responsive">     <div class="display-equation">      <span class="tex mytex">\[ \sum _{j \le i} v_{x_j} {\gt} \sum _{j {\gt} i} v_{x_j} ~~~ \text{and} ~~~ \sum _{j {\lt} i} v_{x_j} {\lt} \sum _{j \ge i} v_{x_j}. \] </span>      <br/>     </div>    </div> Essentially, <em>i balances</em> the <span class="inline-equation"><span class="tex">$v_{x_j}$</span>    </span>&#x2019;s, splitting them into two sets such that adding <span class="inline-equation"><span class="tex">$v_{x_i}$</span>    </span> to either set gives that set the larger sum of the two. Thus, the subgradient of&#x00A0;(<a class="eqn" href="#eq7">7</a>) contains 0 for <span class="inline-equation"><span class="tex">$c = \frac{u_{x_i}}{v_{x_i}}$</span>    </span>, making this the solution to&#x00A0;(<a class="eqn" href="#eq6">6</a>). <figure id="fig10">     <img src="../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig10.jpg" class="img-responsive" alt="Figure 10"      longdesc=""/>     <div class="figure-caption">      <span class="figure-number">Figure 10:</span>      <span class="figure-title">Spectrum Comparison for January and February 2016 on Twitter.</span>     </div>    </figure>    </p>    <p>We can also use this same alignment technique to compare spectra between months. Figures&#x00A0;10a and&#x00A0;10b show that in absolute terms, the spectra produced by January and February on Twitter look quite different. In fact, after scaling the axes, the spectra align very well (Figure&#x00A0;10c, using &#x2113;<sub>1</sub>-minimization). One way to see this is to compare the quality of alignment in our data the quality of alignment among shuffled versions of the spectra for January and February, where the domains labeling the points are randomly permuted; we find that the alignment for the real data has much lower cost than the typical alignment for shuffled data. The disparity between the unscaled spectra seems to indicate an influx of users in February who retweeted Clinton but didn&#x0027;t necessarily engage in other sorts of political activity; this left the relative position of other domains in the two-dimensional spectrum unaffected.</p>    <p>We also note this type of scaling doesn&#x0027;t affect the one-dimensional orderings in Table&#x00A0;<a class="tbl" href="#tab1">1</a>. We can rewrite the political score as <span class="inline-equation"><span class="tex">$s_T(x) = \frac{1}{1 + \tan \theta _T}$</span>    </span>, where <em>&#x03B8;<sub>T</sub>    </em> is the angle of <em>x</em> from the <em>P<sub>T</sub>    </em>(<em>x</em>|<em>C</em>) axis. Since scaling the axes preserves the ordering of these angles, it also preserves the one-dimensional rankings.</p>   </section>   <section id="sec-9">    <header>    <div class="title-info">     <h2>      <span class="section-number">6</span> Further Related Work</h2>    </div>    </header>    <p>Our work builds on rich literatures in online social media, online news, information diffusion, and the landscape of online political interaction, and it also draws on a long history of work studying the role of media in politics.</p>    <p>With access to information now abundant, a growing line of work has investigated how this impacts consumption of political information. As mentioned in the introduction, a key issue has been measuring the extent to which online political interaction crosses ideological divides, or whether it stays relatively confined in &#x201C;filter bubbles&#x201D; or &#x201C;echo chambers&#x201D;&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0015">15</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0027">27</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0031">31</a>]. Concerns about the Web potentially catalyzing balkanization, or fragmentation into isolated ideological divisions, date from the 1990s&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0032">32</a>]. Early empirical work on the structure of online political interaction through blogging identified strong ideological partitions evident in large-scale analysis of linking patterns&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0001">1</a>], whereas analyses of more recent social media platforms finds evidence for a more complex structure, in which both ideological entrenchment and exposure to more diverse content is promoted on the Web&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0011">11</a>].</p>    <p>More broadly, our paper relates to the extensive work on the structure of information sharing on the Web&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0004">4</a>], as well as theoretical work on how network structure affects information flow&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0018">18</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0020">20</a>]. This structure has been quantified in many ways, particularly by organizing shares into information cascades&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0008">8</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0017">17</a>], where nodes are typically people and edges between people indicate if one person directly shared a piece of content with another person. In contrast, our work here introduces and studies invocation graphs, where nodes are information sources and edges indicate that a user shared content from one source in response to content from another source.</p>    <p>The role of the media in politics is the subject of an active field of study&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0019">19</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0029">29</a>]. Particularly relevant to our work here is the study of how news and public opinion spread through social networks, including the early theory of two-step flow&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0021">21</a>]. More recently, there has been a spirited debate about the impact that &#x201C;influencers&#x201D; have on these processes&#x00A0;[<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0022">22</a>, <a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#BibPLXBIB0033">33</a>].</p>   </section>   <section id="sec-10">    <header>    <div class="title-info">     <h2>      <span class="section-number">7</span> Conclusion</h2>    </div>    </header>    <p>In this work we have introduced <em>invocation graphs</em>, together with a set of techniques for analyzing them, as a means of probing the structure of online political interaction. In combination with previous methods for inducing a political spectrum from data, we develop methods for measuring several important phenomena. In particular, we analyzed a natural embedding of the invocation graph in the political spectrum, and asked how its edges are distributed across this spectrum&#x2014;whether they are sequestered in ideological pockets or whether they span larger ideological distances. Applying these techniques to political interaction on Twitter in the months leading up to the 2016 US Presidential election, we observed that political interaction via the invocation graph became increasingly cross-cutting as the election neared. We also developed methods to analyze whether there are inherent asymmetries between how the right and the left engage each other via replies. Applying our techniques to Twitter, we found that edges in in the invocation graph more consistently went from sources on the right to sources on the left than in the other direction.</p>    <p>It is worth emphasizing a critical feature of invocation graphs, which is that they are composed of <em>invoked interactions</em> as opposed to direct interactions. Although on a surface level invocation graphs may resemble the hyperlink graphs that form a basic staple of Web analysis, they are actually quite different, as the links are generally not under the nodes&#x2019; control. News sources publish content, and then it is up to the readership to determine how these sources connect to each other in the invocation graph. In this sense, relative positions and functions of news domains in invocation graphs are indicative of how the public actually uses them in online political discussion. Beyond the ideological territory news sources may try to explicitly claim for themselves, invocation graphs position these sources according to their roles in political interaction.</p>    <p>There are a number of important directions that remain to be pursued. First, it is intriguing to see how interaction both in the invocation graph on Twitter and the user-to-user interaction graph on Reddit became more and more ideologically cross-cutting as the election approached, given that homophily would suggest that most links should link to nearby points on the spectrum. Is there a systematic way to relate this trend to an underlying level of polarization, so that changes in the structure of the embedded invocation graph might provide insight into polarization and how it evolves? Second, beyond the two large social media datasets we considered, it would be illuminating to apply our methods in other settings as well. In particular, does online debate increasingly cross ideological divides in the run-up to milestone events in general, or was this specific to the 2016 US Presidential election? In general, we believe that applying and extending our methods for online political interaction using invocation graphs contains many promising directions for future work.</p>    <p>    <strong>Acknowledgements.</strong>. We thank Lada Adamic, Glenn Altschuler, Isabel Kloumann, and Michael Macy for valuable discussions about these topics. MR is supported by an NSF Graduate Research Fellowship (DGE-1650441). JK is supported in part by a Simons Investigator Award, an ARO MURI grant, and NSF grant 1741441. This work was performed in part while AA and MR were at Microsoft Research.</p>   </section>  </section>  <section class="back-matter">   <section id="ref-001">    <header>    <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>    </div>    </header>    <ul class="bibUl">    <li id="BibPLXBIB0001" label="[1]">Lada&#x00A0;A. Adamic and Natalie Glance. 2005. The Political Blogosphere and the 2004 U.S. Election: Divided They Blog. In <em>      <em>Proceedings of the 3rd International Workshop on Link Discovery</em>     </em>(LinkKDD &#x2019;05). ACM, New York, NY, USA, 36&#x2013;43. 1-59593-215-1<a class="link-inline force-break" href="https://doi.org/10.1145/1134271.1134277"      target="_blank">https://doi.org/10.1145/1134271.1134277</a></li>    <li id="BibPLXBIB0002" label="[2]">Eytan Bakshy, Jake&#x00A0;M Hofman, Winter&#x00A0;A Mason, and Duncan&#x00A0;J Watts. 2011. Everyone&#x0027;s an influencer: quantifying influence on twitter. In <em>      <em>Proceedings of the fourth ACM international conference on Web search and data mining</em>     </em>. ACM, 65&#x2013;74.</li>    <li id="BibPLXBIB0003" label="[3]">Eytan Bakshy, Solomon Messing, and Lada&#x00A0;A Adamic. 2015. Exposure to ideologically diverse news and opinion on Facebook. <em>      <em>Science</em>     </em>348, 6239 (2015), 1130&#x2013;1132.</li>    <li id="BibPLXBIB0004" label="[4]">Eytan Bakshy, Itamar Rosenn, Cameron&#x00A0;A. Marlow, and Lada&#x00A0;A. Adamic. 2012. The Role of Social Networks in Information Diffusion. In <em>      <em>Proc. World Wide Web Conference</em>     </em>.</li>    <li id="BibPLXBIB0005" label="[5]">Yochai Benkler, Robert Faris, Hal Roberts, and Ethan Zuckerman. 2017. Study: Breitbart-led right-wing media ecosystem altered broader media agenda. <em>      <em>Columbia Journalism Review</em>     </em>1, 4.1 (2017), 7.</li>    <li id="BibPLXBIB0006" label="[6]">W.&#x00A0;Lance Bennett. 1996. <em>      <em>News: The politics of illusion</em>     </em>. Longman.</li>    <li id="BibPLXBIB0007" label="[7]">Meeyoung Cha, Hamed Haddadi, Fabricio Benevenuto, and P&#x00A0;Krishna Gummadi. 2010. Measuring user influence in twitter: The million follower fallacy.<em>      <em>ICWSM</em>     </em>10, 10-17 (2010), 30.</li>    <li id="BibPLXBIB0008" label="[8]">Justin Cheng, Lada&#x00A0;A. Adamic, P.&#x00A0;Alex Dow, Jon&#x00A0;M. Kleinberg, and Jure Leskovec. 2014. Can cascades be predicted?. In <em>      <em>23rd International World Wide Web Conference, WWW &#x2019;14, Seoul, Republic of Korea, April 7-11, 2014</em>     </em>. 925&#x2013;936. <a class="link-inline force-break" href="https://doi.org/10.1145/2566486.2567997"      target="_blank">https://doi.org/10.1145/2566486.2567997</a></li>    <li id="BibPLXBIB0009" label="[9]">Michael Conover, Jacob Ratkiewicz, Matthew&#x00A0;R. Francisco, Bruno Gon&#x00E7;alves, Filippo Menczer, and Alessandro Flammini. 2011. Political Polarization on Twitter. In <em>      <em>Proceedings of the Fifth International Conference on Weblogs and Social Media, Barcelona, Catalonia, Spain, July 17-21, 2011</em>     </em>. <a class="link-inline force-break" href="http://www.aaai.org/ocs/index.php/ICWSM/ICWSM11/paper/view/2847"      target="_blank">http://www.aaai.org/ocs/index.php/ICWSM/ICWSM11/paper/view/2847</a></li>    <li id="BibPLXBIB0010" label="[10]">P.&#x00A0;Alex Dow, Lada&#x00A0;A. Adamic, and Adrien Friggeri. 2013. The Anatomy of Large Facebook Cascades. In <em>      <em>Proceedings of the Seventh International Conference on Weblogs and Social Media, ICWSM 2013, Cambridge, Massachusetts, USA, July 8-11, 2013.</em>     </em><a class="link-inline force-break" href="http://www.aaai.org/ocs/index.php/ICWSM/ICWSM13/paper/view/6123"      target="_blank">http://www.aaai.org/ocs/index.php/ICWSM/ICWSM13/paper/view/6123</a></li>    <li id="BibPLXBIB0011" label="[11]">Seth Flaxman, Sharad Goel, and Justin Rao. 2016. Filter Bubbles, Echo Chambers, and Online News Consumption. <em>      <em>Public Opinion Quarterly</em>     </em>80 (2016).</li>    <li id="BibPLXBIB0012" label="[12]">Adrien Friggeri, Lada&#x00A0;A Adamic, Dean Eckles, and Justin Cheng. 2014. Rumor Cascades. In <em>      <em>ICWSM</em>     </em>.</li>    <li id="BibPLXBIB0013" label="[13]">R&#x00A0;Kelly Garrett. 2009. Echo chambers online?: Politically motivated selective exposure among Internet news users. <em>      <em>Journal of Computer-Mediated Communication</em>     </em>14, 2 (2009), 265&#x2013;285.</li>    <li id="BibPLXBIB0014" label="[14]">Matthew Gentzkow and Jesse&#x00A0;M Shapiro. 2010. What drives media slant? Evidence from US daily newspapers. <em>      <em>Econometrica</em>     </em>78, 1 (2010), 35&#x2013;71.</li>    <li id="BibPLXBIB0015" label="[15]">Eric Gilbert, Tony Bergstrom, and Karrie Karahalios. 2009. Blogs are echo chambers: Blogs are echo chambers. In <em>      <em>HICSS&#x2019;09. 42nd Hawaii International Conference on System Sciences</em>     </em>. IEEE, 1&#x2013;10.</li>    <li id="BibPLXBIB0016" label="[16]">Malcolm Gladwell. 2006. <em>      <em>The tipping point: How little things can make a big difference</em>     </em>. Little, Brown.</li>    <li id="BibPLXBIB0017" label="[17]">Sharad Goel, Ashton Anderson, Jake&#x00A0;M. Hofman, and Duncan&#x00A0;J. Watts. 2016. The Structural Virality of Online Diffusion. <em>      <em>Management Science</em>     </em>62, 1 (2016), 180&#x2013;196. <a class="link-inline force-break" href="https://doi.org/10.1287/mnsc.2015.2158"      target="_blank">https://doi.org/10.1287/mnsc.2015.2158</a></li>    <li id="BibPLXBIB0018" label="[18]">Benjamin Golub and Matthew&#x00A0;O Jackson. 2009. How homophily affects learning and diffusion in networks. (2009).</li>    <li id="BibPLXBIB0019" label="[19]">Doris&#x00A0;A Graber and Johanna Dunaway. 2017. <em>      <em>Mass media and American politics</em>     </em>. Cq Press.</li>    <li id="BibPLXBIB0020" label="[20]">Matthew&#x00A0;O Jackson and Leeat Yariv. 2006. Diffusion on social networks. <em>      <em>Economie publique/Public economics</em>     </em>16 (2006).</li>    <li id="BibPLXBIB0021" label="[21]">Elihu Katz. 1957. The two-step flow of communication: An up-to-date report on an hypothesis. <em>      <em>Public opinion quarterly</em>     </em>21, 1 (1957), 61&#x2013;78.</li>    <li id="BibPLXBIB0022" label="[22]">Elihu Katz and Paul&#x00A0;Felix Lazarsfeld. 1966. <em>      <em>Personal Influence, The part played by people in the flow of mass communications</em>     </em>. Transaction Publishers.</li>    <li id="BibPLXBIB0023" label="[23]">Bill Kovach and Tom Rosenstiel. 1999. <em>      <em>Warp Speed: America in the Age of Mixed Media</em>     </em>. Century Foundation Press.</li>    <li id="BibPLXBIB0024" label="[24]">Ravi Kumar, Mohammad Mahdian, and Mary McGlohon. 2010. Dynamics of Conversations. In <em>      <em>ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</em>     </em>. 553&#x2013;562.</li>    <li id="BibPLXBIB0025" label="[25]">Paul&#x00A0;F. Lazarsfeld, Bernard Berelson, and Hazel Gaudet. 1944. <em>      <em>The People&#x0027;s Choice: How the Voter Makes Up His Mind in a Presidential Campaign</em>     </em>. Duell, Sloan, and Pearce.</li>    <li id="BibPLXBIB0026" label="[26]">Michael Molloy and Bruce Reed. 1995. A critical point for random graphs with a given degree sequence. <em>      <em>Random structures &#x0026; algorithms</em>     </em>6, 2-3 (1995), 161&#x2013;180.</li>    <li id="BibPLXBIB0027" label="[27]">Eli Pariser. 2011. <em>      <em>The Filter Bubble: What the Internet is Hiding from You</em>     </em>. Viking.</li>    <li id="BibPLXBIB0028" label="[28]">Charles Spearman. 1904. The proof and measurement of association between two things. <em>      <em>The American journal of psychology</em>     </em>15, 1 (1904), 72&#x2013;101.</li>    <li id="BibPLXBIB0029" label="[29]">John Street. 2010. <em>      <em>Mass media, politics and democracy</em>     </em>. Palgrave Macmillan.</li>    <li id="BibPLXBIB0030" label="[30]">Cass Sunstein. 2007. <em>      <em>Republic.com</em>     </em>. Princeton University Press.</li>    <li id="BibPLXBIB0031" label="[31]">Cass&#x00A0;R Sunstein. 2001. <em>      <em>Echo chambers: Bush v. Gore, impeachment, and beyond</em>     </em>. Princeton University Press Princeton, NJ.</li>    <li id="BibPLXBIB0032" label="[32]">Marshall Van&#x00A0;Alstyne and Erik Brynjolfsson. 1996. Could the Internet balkanize science?<em>      <em>Science</em>     </em>274, 5292 (1996), 1479.</li>    <li id="BibPLXBIB0033" label="[33]">Duncan&#x00A0;J Watts and Peter&#x00A0;Sheridan Dodds. 2007. Influentials, networks, and public opinion formation. <em>      <em>Journal of consumer research</em>     </em>34, 4 (2007), 441&#x2013;458.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">    <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class="link-inline force-break" href="https://files.pushshift.io/reddit/">https://files.pushshift.io/reddit/</a>   </p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY&#x00A0;4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>    <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018; IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY&#x00A0;4.0 License. ACM ISBN 978-1-4503-5639-8/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3178876.3186129">https://doi.org/10.1145/3178876.3186129</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div> </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>Mapping the Invocation Structure of Online Political
+  Interaction</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">Mapping the Invocation Structure
+          of Online Political Interaction</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Manish</span> <span class=
+          "surName">Raghavan</span>, Cornell University
+        </div>
+        <div class="author">
+          <span class="givenName">Ashton</span> <span class=
+          "surName">Anderson</span>, University of Toronto
+        </div>
+        <div class="author">
+          <span class="givenName">Jon</span> <span class=
+          "surName">Kleinberg</span>, Cornell University
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3178876.3186129"
+        target=
+        "_blank">https://doi.org/10.1145/3178876.3186129</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3178876" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>The surge in political information, discourse,
+        and interaction has been one of the most important
+        developments in social media over the past several years.
+        There is rich structure in the interaction among different
+        viewpoints on the ideological spectrum. However, we still
+        have only a limited analytical vocabulary for expressing
+        the ways in which these viewpoints interact.</small></p>
+        <p><small>In this paper, we develop network-based methods
+        that operate on the ways in which users share content; we
+        construct <em>invocation graphs</em> on Web domains showing
+        the extent to which pages from one domain are invoked by
+        users to reply to posts containing pages from other
+        domains. When we locate the domains on a political spectrum
+        induced from the data, we obtain an embedded graph showing
+        how these interaction links span different distances on the
+        spectrum. The structure of this embedded network, and its
+        evolution over time, helps us derive macro-level insights
+        about how political interaction unfolded through 2016,
+        leading up to the US Presidential election. In particular,
+        we find that the domains invoked in replies spanned
+        increasing distances on the spectrum over the months
+        approaching the election, and that there was clear
+        asymmetry between the left-to-right and right-to-left
+        patterns of linkage.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Manish Raghavan, Ashton Anderson, and Jon Kleinberg.
+          2018. Mapping the Invocation Structure of Online
+          Political Interaction. In <em>WWW 2018: The 2018 Web
+          Conference,</em> <em>April 23–27, 2018,</em> <em>Lyon,
+          France. ACM, New York, NY, USA</em> 10 Pages. <a href=
+          "https://doi.org/10.1145/3178876.3186129" class=
+          "link-inline force-break" target=
+          "_blank">https://doi.org/10.1145/3178876.3186129</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec-4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          Introduction</h2>
+        </div>
+      </header>
+      <figure id="fig1">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig1.jpg"
+        class="img-responsive" alt="Figure 1" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 1:</span> <span class=
+          "figure-title">A section from an example invocation graph
+          containing instances from our data. In each case, an
+          article from domain <em>B</em> in response to an article
+          from domain <em>A</em> contributes to the link from
+          <em>B</em> to <em>A</em>. The link from Breitbart to The
+          New York Times comes from articles like the pair shown
+          here, a Breitbart article on the Times’ taxes in response
+          to a Times article on Donald Trump's taxes. Other links
+          demonstrate an interaction where one article supports
+          another: for example, a New York Times article shared in
+          response to a Guardian article on Russian information
+          operations contributes to the link from The Times to The
+          Guardian.</span>
+        </div>
+      </figure>
+      <p>Political interaction has long constituted a key use of
+      social media, and there is a correspondingly rich history of
+      research into its structure — one that extends the much
+      longer history of scholarship on the role of media in the
+      political process [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0006">6</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0023">23</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0025">25</a>].</p>
+      <p>A crucial issue in this line of work is the extent to
+      which political interaction on social media takes place
+      primarily among users who are ideologically similar, or
+      whether it reaches across the political spectrum. Early
+      analysis of political blogging indicated a clustered
+      structure, with a high density of linkage among ideologically
+      similar blogs and a lower density of linkage between blogs
+      with strongly differing views [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>]. Subsequent work, looking at
+      platforms that arose further into the evolution of social
+      media, suggested that a more complex structure was
+      developing, in which homophily in views remained a powerful
+      force, but where the platforms were providing users with some
+      level of cross-cutting exposure [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>]. These questions are important, as
+      they ask whether online political interaction consists of
+      opposing sides who engage with each other, or well-separated
+      clusters who are isolated in “echo chambers” or “filter
+      bubbles” [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0011">11</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0027">27</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0030">30</a>].</p>
+      <p>The answers to such questions depend intrinsically on
+      which types of interactions are being considered. Existing
+      work in the online domain has implicitly focused on two
+      standard forms of interaction: page-to-page interaction,
+      expressed by hyperlinks among documents [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0001">1</a>]; and user-to-user
+      interaction, expressed by communication among people on
+      social platforms [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0004">4</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0009">9</a>]. Each of these induces a network on a
+      set of entities — sources and users respectively — which can
+      then be analyzed relative to an underlying political
+      spectrum.</p>
+      <p><strong>Networks of sources invoked by users.</strong>.
+      Here we consider a different type of political interaction
+      network, defined as follows. When a user <em>u</em> shares a
+      page <em>A</em>, and a user <em>v</em> replies by sharing a
+      page <em>B</em>, there is not simply an interaction between
+      users <em>u</em> and <em>v</em>; an interaction is also
+      induced between pages <em>A</em> and <em>B</em>. As reshares
+      develop into a widespread style of social media content
+      production [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0008">8</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0010">10</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0017">17</a>, <a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0024">24</a>], the
+      ability of users to deploy page references as proxies in
+      their discussion becomes an activity requiring very low
+      effort, and we find through a large-scale analysis of Twitter
+      data leading up to the 2016 U.S. Presidential election that
+      such <em>A</em>-<em>B</em> interactions are widespread: users
+      regularly invoke links in this back-and-forth fashion when
+      they interact with each other.</p>
+      <p>These <em>invoked interactions</em> between pages
+      <em>A</em> and <em>B</em> are fundamentally different from
+      both user-to-user and page-to-page interaction networks.
+      Unlike free-form user-to-user interactions, they create
+      logical relationships among the information sources, not just
+      the consumers and sharers of these sources. But they are not
+      like traditional page-to-page interactions either, because
+      they are not based on a hyperlink from <em>A</em> to
+      <em>B</em>, and they are not in general determined by the
+      authors of either <em>A</em> or <em>B</em>; it is the readers
+      <em>deciding how <em>A</em> and <em>B</em> should be used in
+      discussion</em> who are determining the logical link between
+      them. In this sense, invoked interactions between <em>A</em>
+      and <em>B</em> are not directly under the control of the
+      authors of <em>A</em> and <em>B</em>; they form a kind of
+      “revealed interpretation” of <em>A</em> and <em>B</em> once
+      they are released into social media.</p>
+      <p>The idea that replying to page <em>A</em> with page
+      <em>B</em> can create a semantically meaningful connection
+      between <em>A</em> and <em>B</em> formed the basis of an
+      elegant technique due to Frigerri, Adamic, Eckles, and Cheng
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0012">12</a>] for
+      identifying pages to debunk widely circulated rumors. Drawing
+      on the fact that snopes.com is a heavily-used site for
+      evaluating Internet rumors, they demonstrated that many
+      instances of a pair (<em>B</em>, <em>A</em>), where
+      <em>A</em> is a page appearing in Facebook posts and
+      <em>B</em> is a page on snopes.com, serves as strong evidence
+      that <em>B</em> is providing a judgment on the credibility of
+      <em>A</em>. In this way, scanning the replies to posts where
+      <em>A</em> occurs for pages residing on snopes.com provides
+      an automated method for identifying a page <em>B</em> that
+      can help users evaluate the veracity of <em>A</em>.</p>
+      <p>Given that invoked interactions between pages <em>A</em>
+      and <em>B</em> more generally are voluminous, transcending
+      any one particular domain or use case, what do we learn if we
+      consider the set of all such interactions as a network in its
+      own right, latent in a social media platform?</p>
+      <p><strong>The present work: The structure of invocation
+      graphs.</strong>. We are interested in understanding the
+      global structure of the network of invoked interactions, and
+      developing methods that can probe this structure,
+      particularly for questions related to political interaction.
+      Because our primary focus in this work will be at the
+      granularity of news and blogging <em>sources</em> rather than
+      the individual pages they produce, we will consider this
+      network at the level of domains: using a large Twitter
+      dataset covering all of 2016 up to the U.S. Presidential
+      election, we say that an <em>invoked interaction</em> from
+      domain <em>B</em> to domain <em>A</em> occurs whenever a user
+      replies to a tweet containing a page from domain <em>A</em>
+      with a page from domain <em>B</em>.</p>
+      <p>We define the <em>invocation graph</em> on a set of
+      domains of interest as follows: for all pairs of domains
+      <em>A</em> and <em>B</em> where there is at least one invoked
+      interaction from <em>B</em> to <em>A</em>, we include a
+      weighted directed edge (<em>B</em>, <em>A</em>) whose weight
+      is equal to the number of such invoked interactions. Because
+      we want to study how portions of the invocation graph reflect
+      aspects of political interaction, we choose the node set
+      (i.e. the domains of interest) using a preprocessing step
+      that only includes domains that were extensively retweeted
+      with the official Twitter accounts of Hillary Clinton and
+      Donald Trump, and then apply some further filtering
+      heuristics that we describe in the next section.</p>
+      <p>After this filtering, we have an invocation graph that
+      reflects the ways in which Twitter users interacted with one
+      another by invoking content from different politically
+      relevant domains over the course of 2016.
+      Figure&nbsp;<a class="fig" href="#fig1">1</a> shows a few
+      domains of such an invocation graph with some sample
+      interactions from our data. We can see these interactions can
+      be supportive, like an in-depth New York Times report on
+      Russian information operations shared in reply to an article
+      from The Guardian on the same subject, or adversarial, like a
+      Breitbart article on the New York Times’ taxes shared in
+      response to a Times article on Donald Trump's taxes. These
+      replies exhibit rich structure and give a sense for how
+      complex political interactions unfold on social media</p>
+      <p>We can thus return to some of the initial motivating
+      questions and ask how this interaction was structured
+      relative to a political spectrum containing support for
+      Clinton on the left and support for Trump on the right. We do
+      this using a political spectrum induced from the data, rather
+      than relying on external domain knowledge. There are a number
+      of ways to do this [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0014">14</a>] that yield broadly consistent
+      results, and we employ a method of Benkler et al (described
+      further in the next section) that bases the spectrum on the
+      relative frequency of co-tweets with the Clinton and Trump
+      Twitter accounts [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>].</p>
+      <p><strong>Embedding the Invocation Graph in a Political
+      Spectrum.</strong>. Having thus located the domains on a
+      political spectrum, we now have an <em>embedded</em> version
+      of the invocation graph: the nodes, representing domains, are
+      embedded in a one-dimensional spectrum, and the weighted
+      directed edges span pairs of points in this spectrum. We can
+      now ask how the edges are distributed across distances on the
+      spectrum, ranging from short-range interactions that connect
+      domains of similar political orientation to long-range
+      interactions that reach across sides. In examining these
+      questions, it is crucial to recall that these links among
+      domains are not defined by hyperlinks in the content on these
+      domains, but instead via the replies made by users when they
+      invoke this content in discussions: it is not that the
+      domains are replying to each other, but that they are being
+      invoked in replies by users. The data thus reflects choices
+      made by the consumers of the content, rather than by authors
+      of the content.</p>
+      <p>In Section 3, we propose a set of methods to analyze how
+      the edges of the invocation graph span the underlying
+      spectrum. A core component of these methods is, for a domain
+      <em>x</em>, to consider its <em>out-link distribution</em> —
+      the distribution of “landing points” on the political
+      spectrum for all links out of <em>x</em>. As we move from
+      left to right along the spectrum, tracking the out-link
+      distributions of domains we encounter along the way, do the
+      means of these distributions tend to move from left to right
+      as well, or do they tend to move inversely from right to
+      left? The former case would indicate a positive correlation
+      in the locations of the source and target of an invoked
+      interaction (<em>B</em>, <em>A</em>), suggesting links are
+      used to connect to similar sides of the political spectrum;
+      the latter case would correspond to a negative correlation
+      and hence connections across the spectrum, with domains on
+      the left being invoked to reply to domains on the right, and
+      vice versa.</p>
+      <p>It is not a priori obvious which type of correlation we
+      should expect to see; and as a reinforcement of this fact, we
+      find that the nature of the correlation actually inverts over
+      the course of 2016 leading up to the U.S. Presidential
+      election. In the early parts of 2016 we have a positive
+      correlation, with politically similar domains being invoked
+      to reply to each other; but by the time we reach the months
+      directly preceding the election, this same correlation
+      measure has become negative, indicating that most of the
+      linking is now crossing the spectrum. We verify this effect
+      using multiple measures, including one in which we compare
+      the trends across the spectrum to what we'd observe in a
+      <em>randomly rewired</em> version of the embedded graph.</p>
+      <p>We also propose a set of methods to identify inherent
+      <em>asymmetries</em> in the patterns of linkage: do replies
+      from left to right have the same structure as replies from
+      right to left? Using our measures, we find strong asymmetries
+      in the 2016 Twitter data, with domains on the right side of
+      the spectrum having a disproportionately high rate of
+      out-links in the invocation graph and domains on the left
+      side of the spectrum having a disproportionately high rate of
+      in-links. This right-to-left flow in the replies persists
+      across the entire time range, and is a key characteristic of
+      the structure.</p>
+      <p>Since a recurring theme in our analyses is the way in
+      which replies increasingly engaged opposite sides of the
+      political spectrum as 2016 went on, it is interesting to ask
+      whether we see a similar effect in a more traditional
+      user-to-user interaction graph, with nodes corresponding to
+      users and directed edges to replies from one user to another.
+      To explore this, we adapt the techniques developed for the
+      invocation graph to a user-to-user graph built from Reddit.
+      Specifically, we analyze a snapshot of Reddit's politics
+      subreddit, <tt>r/politics</tt>, for the same period of 2016
+      up to the election; we classify users by whether they had
+      posted to the Clinton or Trump subreddits, and then look at
+      the rate of replies among different types of users. We find
+      that the trend on Reddit closely tracks the trend in the
+      invocation graph built from Twitter, with increasing linkage
+      between the two sides as the election approached.</p>
+      <p>Overall, our methodology suggests that the invocation
+      graph on domains, and its embedding into a one-dimensional
+      spectrum, captures important aspects of political interaction
+      on social media — the tendency of users to interact by
+      invoking links to authored content, and the use of these
+      interaction patterns to thus reveal relationships among the
+      content based on usage in everyday discussion.</p>
+    </section>
+    <section id="sec-5">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span> Basic
+          Definitions</h2>
+        </div>
+      </header>
+      <p>We begin with a Twitter dataset containing aggregate-level
+      information about tweet-reply pairs. For each month from
+      January to November 2016 (the US Presidential election was
+      held on November 8, 2016), the dataset consists of pairs of
+      domains <em>x</em> <sub>1</sub> and <em>x</em> <sub>2</sub>
+      along with an accompanying count, the number of times a tweet
+      containing a page from domain <em>x</em> <sub>1</sub> was
+      posted in reply to a tweet containing a page from domain
+      <em>x</em> <sub>2</sub>. In addition, for each month, we have
+      an auxiliary dataset of co-occurrences: for each domain
+      <em>x</em>, the number of times a user posted a tweet
+      containing a page from <em>x</em> on the same day that the
+      user retweeted Hillary Clinton's or Donald Trump's personal
+      Twitter account. Finally, we have the number of retweets of
+      Clinton or Trump for each month.</p>
+      <p>The invocation graph we construct from this data is a
+      directed graph with domains as vertices, where each domain
+      corresponds to a news source. We draw an edge <em>x</em>
+      <sub>1</sub> → <em>x</em> <sub>2</sub> if a tweet containing
+      a URL from domain <em>x</em> <sub>1</sub> is posted in reply
+      to a tweet containing a URL from domain <em>x</em>
+      <sub>2</sub>. The weight of this edge is the number of such
+      tweet-reply pairs. On first inspection, the most prominent
+      feature of this graph is that self-loops (consisting of links
+      from a domain <em>x</em> to itself) have much higher weight
+      than other edges. Since our goal is to examine political
+      interactions between domains, we remove all self-loops from
+      the graph.</p>
+      <p><strong>Isolating Political Domains.</strong>. The first
+      issue we encounter is that Twitter contains a wide range of
+      URLs, not just pages from politically relevant domains. We
+      could select only known political domains by whitelisting
+      them, i.e. only considering the subgraph over a predefined
+      set of domains; however, this approach will inevitably miss
+      out on influential but less well-known news sources.</p>
+      <p>On the other hand, there are challenges to a completely
+      unsupervised approach. URLs on Twitter are dominated by
+      social media sites (e.g. twitter.com, facebook.com) as well
+      as content-hosting sites (e.g. imgur.com, bitly.com) which
+      produce virtually no content of their own, but instead host
+      user-uploaded content such as images, links, and text. While
+      the usage of these content-hosting sites would be interesting
+      to study, this is outside the scope of our work.</p>
+      <p>We begin by blacklisting several known social media and
+      content-hosting domains and remove them from the graph.
+      However, there are plenty of domains that appear on Twitter
+      that are not politically relevant, and we cannot individually
+      remove each such domain. To filter out such domains, we need
+      some measure of <em>political engagement</em> for each
+      domain. We can construct such a measure by using the
+      observation that politically relevant domains should
+      frequently co-occur with known political entities – in our
+      case, the official Twitter accounts of Hillary Clinton and
+      Donald Trump.</p>
+      <p>Our measure of political engagement for a domain, then, is
+      simply the number of times a user posted a tweet with that
+      domain on the same day that he or she retweeted either
+      Clinton's or Trump's official Twitter account. Intuitively,
+      the more politically engaging a domain is, the more it will
+      co-occur with these political entities. With this proxy, we
+      can select domains with high political engagement, excluding
+      social-media and content-hosting domains.</p>
+      <p>As a final filter, we require that each domain have an
+      edge of at weight least <em>W</em> to some other domain in
+      the political subgraph. This restricts our attention to the
+      most actively used political domains. Based on this, we can
+      formally define the invocation graph. Every domain in the
+      invocation graph</p>
+      <ul class="list-no-style">
+        <li id="list1" label="•">is not blacklisted (social media
+        and content-hosting domains)<br /></li>
+        <li id="list2" label="•">has political engagement above
+        some threshold <em>p</em><br /></li>
+        <li id="list3" label="•">has at least one edge to another
+        domain in the invocation graph with weight at least
+        <em>W</em><br /></li>
+      </ul>
+      <p>We require the invocation graph be connected and contain
+      some seed domain. Any choice of popular American news outlet
+      would yield exactly the same result, as they all belong to
+      the same connected component. (We use nytimes.com, but the
+      choice is immaterial.)</p>
+      <p>Based on this definition, the algorithm to construct the
+      invocation graph is as follows: begin with the full graph,
+      remove all nodes that are either blacklisted or have
+      political engagement below <em>p</em>, and run a
+      breadth-first search beginning at nytimes.com following only
+      edges of weight at least <em>W</em>. In practice, we find
+      that the values we use for <em>p</em> and <em>W</em> don't
+      affect our results much, and all of the results presented
+      here use <em>p</em> = 10000 and <em>W</em> = 100. Because we
+      study the change in this invocation graph over time, we build
+      a new graph <em>G<sup>m</sup></em> for each month <em>m</em>
+      from January to November 2016.</p>
+      <p><strong>A Political Spectrum.</strong>. In order to
+      characterize the political nature of this graph, we need some
+      way of organizing the domains along a political spectrum.
+      Drawing on techniques from [<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0005">5</a>] and our definition of political
+      engagement, we define the quantities <em>P<sub>T</sub></em>
+      (<em>x</em>|<em>C</em>) and <em>P<sub>T</sub></em>
+      (<em>x</em>|<em>T</em>) for each domain <em>x</em> as the
+      empirical probabilities that a user posted a tweet containing
+      a URL from domain <em>x</em> given that, on the same day,
+      he/she retweeted Clinton's or Trump's official account
+      respectively. Intuitively, if a user has retweeted Clinton on
+      a given day, the domains that he/she invokes are more likely
+      to be on Clinton's end of the political spectrum, and the
+      same is true for Trump. Figure&nbsp;<a class="fig" href=
+      "#fig2">2</a> shows the resulting values, where the blue line
+      is <em>P<sub>T</sub></em> (<em>x</em>|<em>C</em>) =
+      <em>P<sub>T</sub></em> (<em>x</em>|<em>T</em>).
+      Interestingly, most domains lie above this line, suggesting a
+      difference in the populations of users retweeting Clinton and
+      Trump respectively.</p>
+      <figure id="fig2">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig2.jpg"
+        class="img-responsive" alt="Figure 2" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 2:</span> <span class=
+          "figure-title"><em>P<sub>T</sub></em>
+          (<em>x</em>|<em>C</em>) vs. <em>P<sub>T</sub></em>
+          (<em>x</em>|<em>T</em>) for September 2016.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>Furthermore, we can condense this information into a
+      single <em>political score</em> for each domain:</p>
+      <div class="table-responsive" id="eq1">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} s_T(x) =
+          \frac{P_T(x|T)}{P_T(x|C)+ P_T(x|T)}
+          \end{equation}</span><br />
+          <span class="equation-number">(1)</span>
+        </div>
+      </div>Note that <em>s<sub>T</sub></em> (<em>x</em>) ∈ [0, 1],
+      and the larger <em>s<sub>T</sub></em> (<em>x</em>) is, the
+      closer <em>x</em> is to the Trump end of the spectrum.
+      Throughout this section, we use the spectrum built on
+      January-September 2016.
+      <p></p>
+    </section>
+    <section id="sec-6">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span>
+          Methodology</h2>
+        </div>
+      </header>
+      <figure id="fig3">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig3.jpg"
+        class="img-responsive" alt="Figure 3" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 3:</span> <span class=
+          "figure-title">Correlation between <em>s<sub>T</sub></em>
+          (<em>x</em>) and <em>δ</em> <sub>out</sub>(<em>x</em>)
+          for January and October.</span>
+        </div>
+      </figure>
+      <p>With these definitions, we can analyze various properties
+      of the invocation graph, and in particular, its interaction
+      with the political spectrum. Do usage patterns of news
+      articles and other political content differ across the
+      political spectrum? How do these patterns change leading up
+      to the election? Using the invocation graph in tandem with
+      the political spectrum, we can shed light on these
+      questions.</p>
+      <p><strong>Out-link Distributions.</strong>. A key
+      characteristic we study is the <em>out-link distribution</em>
+      for a domain <em>x</em>: the distribution of positions on the
+      political spectrum where edges originating from <em>x</em>
+      land. A domain's out-links describe the way in which it is
+      used to reply to other domains. For example, if a domain has
+      many out-links to other domains near it on the political
+      spectrum, one might expect that it is being used to reinforce
+      a particular point of view; however, if it has many out-links
+      to the opposite end of the spectrum, it may instead be used
+      to disagree or argue with an opposing viewpoint.</p>
+      <p>To draw upon this intuition, we ask how <em>x</em>’s
+      out-link distribution varies based on its political score
+      <em>s<sub>T</sub></em> (<em>x</em>). As a baseline for
+      comparison, we compute the <em>global</em> out-link
+      distribution — the distribution over the political spectrum
+      of where edges in <em>G</em> land. Comparing to this baseline
+      will give us some insight as to how <em>x</em>’s linking
+      pattern differs from the “average” linking pattern.</p>
+      <p>However, since <em>G</em> contains no self-loops,
+      <em>x</em> doesn't link to itself, while the global out-link
+      distribution contains links to <em>x</em>. To prevent this
+      from biasing the comparison, we instead compare <em>x</em>’s
+      out-link distribution to the out-link distribution of
+      <em>G</em>\<em>x</em>, that is, <em>G</em> with <em>x</em>
+      and all edges into or out of <em>x</em> removed.</p>
+      <p>Thus, <em>x</em>’s out-link distribution distribution
+      <em>d</em>(<em>x</em>, <em>G</em>) is a distribution over [0,
+      1] assigning probability mass to <em>y</em> ∈ [0, 1]
+      proportional to the weight of edges from <em>x</em> to
+      <em>x</em>′ such that <em>s<sub>T</sub></em> (<em>x</em>′) =
+      <em>y</em>. The global out-link distribution
+      <em>D</em>(<em>G</em>\<em>x</em>) can then be expressed
+      as</p>
+      <div class="table-responsive">
+        <div class="display-equation">
+          <span class="tex mytex">\[ D(G \backslash x) = \frac{\sum
+          _{x^{\prime } \in G \backslash x} d(x^{\prime }, G
+          \backslash x) \cdot \operatorname{vol}(x^{\prime }, G
+          \backslash x)}{\sum _{x^{\prime } \in G \backslash x}
+          \operatorname{vol}(x^{\prime }, G \backslash x)},
+          \]</span><br />
+        </div>
+      </div>where <span class="inline-equation"><span class=
+      "tex">$\operatorname{vol}(x^{\prime }, G \backslash
+      x)$</span></span> is the total weight of edges leaving
+      <em>x</em>′ in <em>G</em>\<em>x</em>. In other words,
+      <em>D</em>(<em>G</em>\<em>x</em>) is the weighted average of
+      <em>d</em>(<em>x</em>′, <em>G</em>\<em>x</em>) for
+      <em>x</em>′ ∈ <em>G</em>\<em>x</em>.
+      <p></p>
+      <p>We make the comparison between these distributions formal
+      as follows: for each <em>x</em>, let <em>μ</em>
+      <sub>out</sub>(<em>x</em>) be the weighted average political
+      score of the domains that <em>x</em> links to, so that
+      <span class="inline-equation"><span class="tex">$\mu
+      _{\text{out}}(x) = \mathbb {E} \left[ d(x, G)
+      \right]$</span></span> . This gives an estimate of what types
+      of domains <em>x</em> is used to reply to — if <em>μ</em>
+      <sub>out</sub>(<em>x</em>) is close to 0, then <em>x</em> is
+      used primarily to reply to Clinton-related domains, while if
+      it is close to 1, then <em>x</em> is used primarily to reply
+      to Trump-related domains. In a slight abuse of notation, let
+      <em>μ</em> <sub>out</sub>(<em>G</em>\<em>x</em>) be the
+      weighted average political score of all endpoints of edges in
+      <em>G</em>\<em>x</em>, so <span class=
+      "inline-equation"><span class="tex">$\mu _{\text{out}}(G
+      \backslash x) = \mathbb {E} \left[ D(G \backslash x)
+      \right]$</span></span> . Then,</p>
+      <div class="table-responsive" id="eq2">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} \delta
+          _{\text{out}}(x) = \mu _{\text{out}}(x) - \mu
+          _{\text{out}}(G \backslash x) \end{equation}</span><br />
+          <span class="equation-number">(2)</span>
+        </div>
+      </div>is a measure of how much <em>x</em> deviates from other
+      domains towards the Trump end of the political spectrum.
+      <p></p>
+      <p>From past work documenting <em>homophily</em> in online
+      political activity&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>], one might expect that a domain will
+      be used primarily to engage with politically similar domains,
+      implying that <em>s<sub>T</sub></em> (<em>x</em>) is
+      positively correlated with <em>δ</em>
+      <sub>out</sub>(<em>x</em>). Furthermore, it is not a priori
+      obvious whether this trend should become more or less
+      pronounced leading up to the election — do the opposing
+      parties increasingly converse within themselves, or do they
+      engage with one another?</p>
+      <p>Figure&nbsp;<a class="fig" href="#fig3">3</a> shows that
+      in January, domains are more likely to have links in the
+      graph to politically similar domains, so
+      <em>s<sub>T</sub></em> (<em>x</em>) and <em>δ</em>
+      <sub>out</sub>(<em>x</em>) are positively correlated.
+      However, by October, this correlation has reversed: on
+      average, domains are being used to reply <em>across</em> the
+      political spectrum instead of to politically similar domains.
+      Replies seem to be adversarial, as with the breitbart.com →
+      nytimes.com edge in Figure&nbsp;<a class="fig" href=
+      "#fig1">1</a>.</p>
+      <p>To understand this change in correlation over time, we
+      define <em>a</em>(<em>G<sup>m</sup></em> ) to be the slope of
+      the correlation between <em>s<sub>T</sub></em> (<em>x</em>)
+      and <em>δ</em> <sub>out</sub>(<em>x</em>) for month
+      <em>m</em>. Figure&nbsp;<a class="fig" href="#fig4">4</a>
+      shows that <em>a</em>(<em>G<sup>m</sup></em> ) decreases
+      significantly from January to October 2016. This suggests
+      that as the election drew nearer, the fraction of interaction
+      between opposite ends of the spectrum increased, and domains
+      from the two opposing sides were actually being invoked more
+      often to reply to each other.</p>
+      <figure id="fig4">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig4.jpg"
+        class="img-responsive" alt="Figure 4" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 4:</span> <span class=
+          "figure-title"><em>a</em>(<em>G</em>) for
+          January-November.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p><strong>Edge Lengths and Crossing Points.</strong>.
+      Another way of characterizing the political aspects of the
+      invocation graph is to consider the lengths and locations of
+      the edges on the political spectrum. As the interaction
+      between opposing viewpoints increases, we expect to see
+      longer edges in the invocation graph that cross the political
+      spectrum instead of staying on one side.
+      Figure&nbsp;<a class="fig" href="#fig5">5</a> shows that this
+      trend holds true between January and October — while most
+      links had length close to 0 in with respect to the political
+      spectrum in January, by October, many longer edges were
+      present.</p>
+      <figure id="fig5">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig5.jpg"
+        class="img-responsive" alt="Figure 5" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 5:</span> <span class=
+          "figure-title">Edge length distributions for January vs.
+          October.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>To enable us to visualize where on the spectrum edges lie,
+      we make the following definitions. For a point <em>y</em> ∈
+      [0, 1], let <em>f</em> <sub>→</sub>(<em>y</em>, <em>G</em>)
+      be the number of edges (<em>x</em> <sub>1</sub>, <em>x</em>
+      <sub>2</sub>) such that <em>s<sub>T</sub></em> (<em>x</em>
+      <sub>1</sub>) &lt; <em>y</em> &lt; <em>s<sub>T</sub></em>
+      (<em>x</em> <sub>2</sub>). Similarly, let <em>f</em>
+      <sub>←</sub>(<em>y</em>, <em>G</em>) be the number of edges
+      such that <em>s<sub>T</sub></em> (<em>x</em> <sub>1</sub>)
+      &gt; <em>y</em> &gt; <em>s<sub>T</sub></em> (<em>x</em>
+      <sub>2</sub>). In other words, <em>f</em>
+      <sub>→</sub>(<em>y</em>, <em>G</em>) is the number of edges
+      crossing <em>y</em> from left to right on the political
+      spectrum, and <em>f</em> <sub>←</sub>(<em>y</em>, <em>G</em>)
+      is the number of edges crossing <em>y</em> from right to
+      left.</p>
+      <figure id="fig6">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig6.jpg"
+        class="img-responsive" alt="Figure 6" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 6:</span> <span class=
+          "figure-title"><em>f</em> <sub>→</sub>(<em>y</em>) and
+          <em>f</em> <sub>←</sub>(<em>y</em>) for <em>G</em> and
+          <span class="inline-equation"><span class=
+          "tex">$\hat{G}$.</span></span></span>
+        </div>
+      </figure>
+      <p></p>
+      <p>In order to interpret these functions, we need a baseline
+      to compare against. A natural baseline in such scenarios is
+      the <em>randomly rewired</em> graph <span class=
+      "inline-equation"><span class="tex">$\hat{G}$</span></span> ,
+      the idea of which goes back to&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0026">26</a>]. In <span class=
+      "inline-equation"><span class="tex">$\hat{G}$</span></span> ,
+      every vertex has the same indegree and outdegree as in
+      <em>G</em>, but each edge has a randomly chosen endpoint.
+      Note that this can create self-loops, which <em>G</em> does
+      not have by construction; however, the number of self-loops
+      in <span class="inline-equation"><span class=
+      "tex">$\hat{G}$</span></span> is small (often 0 for a given
+      randomization) and therefore their effect on this analysis is
+      negligible. Figure&nbsp;<a class="fig" href="#fig6">6</a>
+      shows <em>f</em> <sub>→</sub> and <em>f</em> <sub>←</sub> for
+      <em>G</em> and <span class="inline-equation"><span class=
+      "tex">$\hat{G}$</span></span> , where the values shown for
+      <span class="inline-equation"><span class=
+      "tex">$\hat{G}$</span></span> are in expectation. In January,
+      both <em>f</em> <sub>→</sub> and <em>f</em> <sub>←</sub> are
+      dominated by their rewired counterparts, while in October,
+      the opposite is true. This suggests that at the beginning of
+      the year, domains were used to reply to politically similar
+      domains, resulting in shorter edges than a random baseline,
+      while closer to the election, domains were used to reply
+      across the political spectrum. This comparison allows us to
+      get a sense for how actual behavior deviates from random
+      behavior, and how this deviation changes over time.</p>
+      <p><strong>Asymmetry in Out-links.</strong>. Another striking
+      feature of Figure&nbsp;<a class="fig" href="#fig6">6</a> is
+      that <em>f</em> <sub>←</sub> dominates <em>f</em>
+      <sub>→</sub>, showing that many more links crossed
+      right-to-left than left-to-right. Intuitively, it seems that
+      a disproportionate number of edges originate on the right and
+      end on the left, corresponding to right-leaning domains being
+      used to reply to left-leaning domains. We can make this
+      precise by defining <em>r</em>(<em>x</em>) as the ratio of
+      indegree(<em>x</em>)/(indegree(<em>x</em>) +
+      outdegree(<em>x</em>)) and analyzing how
+      <em>r</em>(<em>x</em>) changes with <em>s<sub>T</sub></em>
+      (<em>x</em>). Figure&nbsp;<a class="fig" href="#fig7">7</a>
+      shows that <em>r</em>(<em>x</em>) is negatively correlated
+      with <em>s<sub>T</sub></em> (<em>x</em>), meaning that
+      domains on the right end of the political spectrum produce a
+      disproportionate number of out-links compared to domains on
+      the left end. In other words, domains on the right are more
+      often used to reply to other domains, while domains on the
+      left are more often the recipients of replies.</p>
+      <figure id="fig7">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig7.jpg"
+        class="img-responsive" alt="Figure 7" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 7:</span> <span class=
+          "figure-title"><em>s<sub>T</sub></em> (<em>x</em>) vs.
+          <em>r</em>(<em>x</em>) for October.</span>
+        </div>
+      </figure>
+      <p></p>
+    </section>
+    <section id="sec-7">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span> Comparing to
+          the User Level</h2>
+        </div>
+      </header>
+      <p>Having established a set of results for the structure of
+      invocation graphs on Twitter, we would like to verify that
+      our findings are qualitatively consistent with what we see in
+      more traditional user-to-user communication graphs on social
+      media. Since our Twitter dataset doesn't contain information
+      about individual users, we instead turn to a publicly
+      available Reddit dataset<a class="fn" href="#fn1" id=
+      "foot-fn1"><sup>1</sup></a>. Reddit is a community discussion
+      website organized into posts, or “submissions,” and comments
+      on those submissions. Comments are threaded, so that a
+      comment is either in reply to a top-level post or to another
+      comment. The data consists of every post and comment from
+      Reddit in 2016, along with its author's username. Reddit is
+      subdivided into forums for particular topics called
+      <em>subreddits</em>. We focus on three subreddits in
+      particular: <tt>r/politics</tt>, <tt>r/hillaryclinton</tt>,
+      and <tt>r/The_Donald</tt>, which are devoted to politics,
+      Hillary Clinton, and Donald Trump respectively. All three
+      subreddits were among the most active subreddits during 2016.
+      Note that in addition to studying user-to-user dynamics on
+      Reddit, in principle we could also use Reddit data to
+      replicate our Twitter invocation-graph analysis at the domain
+      level; however, it turns out that Reddit contains too few
+      comments with URLs for robust domain-level trends to
+      emerge.</p>
+      <p><strong>Interactions at the User Level.</strong>. In order
+      to test for analogous trends at the user level to those we
+      found at the domain level, we need to modify our methods. In
+      particular, we now need some kind of political information
+      about users. Whereas in Section&nbsp;<a class="sec" href=
+      "#sec-5">2</a> we anchored the political spectrum to the
+      official Clinton and Trump Twitter accounts, here we anchor
+      our notion of political affiliations to
+      <tt>r/hillaryclinton</tt> and <tt>r/The_Donald</tt>. Since
+      most users are active in at most one of the two subreddits,
+      we have a simpler notion of a political score: we define a
+      set <em>U<sub>C</sub></em> of users who posted in
+      <tt>r/hillaryclinton</tt> but not <tt>r/The_Donald</tt>, and
+      we define a set <em>U<sub>T</sub></em> of users who posted in
+      <tt>r/The_Donald</tt> but not <tt>r/hillaryclinton</tt>.
+      There are 22,164 users in <em>U<sub>C</sub></em> and 281,334
+      users in <em>U<sub>T</sub></em> (more than ten times the size
+      of <em>U<sub>C</sub></em> ). We assume that most users in
+      <em>U<sub>C</sub></em> are pro-Clinton, while most users in
+      <em>U<sub>T</sub></em> are pro-Trump (this is consistent with
+      the explicit ground rules for participating in these
+      subreddits).</p>
+      <p><strong>Validating Political Information from
+      Subreddits.</strong>. We verify that
+      <tt>r/hillaryclinton</tt> and <tt>r/The_Donald</tt> contain
+      strong signal about political orientation by adapting our
+      methodology from Twitter to build a spectrum over the domains
+      on Reddit, and then comparing this spectrum to the one built
+      from Twitter. To do this, we define <em>P<sub>R</sub></em>
+      (<em>x</em>|<em>C</em>) to be the empirical probability that
+      a post or comment in <tt>r/hillaryclinton</tt> contains a URL
+      from domain <em>x</em> (and analogously for
+      <em>P<sub>R</sub></em> (<em>x</em>|<em>T</em>) and
+      <tt>r/The_Donald</tt>). As in&nbsp;(<a class="eqn" href=
+      "#eq1">1</a>), we can define a political score from Reddit
+      as</p>
+      <div class="table-responsive" id="eq3">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} s_R(x) =
+          \frac{P_R(x|T)}{P_R(x|C)+ P_R(x|T)}.
+          \end{equation}</span><br />
+          <span class="equation-number">(3)</span>
+        </div>
+      </div>
+      <p></p>
+      <p>Table&nbsp;<a class="tbl" href="#tab1">1</a> shows the
+      orderings of the Twitter and Reddit spectra for 21 domains.
+      The Spearman rank correlation&nbsp;[<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#BibPLXBIB0028">28</a>] (a measure of squared
+      distance) between the two orderings is 0.871 (compared to a
+      maximum of 0.757 over 10,000 randomly shuffled orderings).
+      Thus the two settings align well, demonstrating that our
+      notion of political affiliation is adaptable to Reddit, and
+      that it contains strong and consistent signal.</p>
+      <div class="table-responsive" id="tab1">
+        <div class="table-caption">
+          <span class="table-number">Table 1:</span> <span class=
+          "table-title">Comparison of Twitter and Reddit political
+          spectra.</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="text-align:center;"></th>
+              <th style="text-align:center;">Twitter</th>
+              <th style="text-align:center;">Reddit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:center;">1</td>
+              <td style="text-align:center;">donaldjtrump.com</td>
+              <td style="text-align:center;">
+              thegatewaypundit.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">2</td>
+              <td style="text-align:center;">
+              thegatewaypundit.com</td>
+              <td style="text-align:center;">zerohedge.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">3</td>
+              <td style="text-align:center;">breitbart.com</td>
+              <td style="text-align:center;">breitbart.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">4</td>
+              <td style="text-align:center;">dailycaller.com</td>
+              <td style="text-align:center;">donaldjtrump.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">5</td>
+              <td style="text-align:center;">zerohedge.com</td>
+              <td style="text-align:center;">dailycaller.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">6</td>
+              <td style="text-align:center;">foxnews.com</td>
+              <td style="text-align:center;">dailymail.co.uk</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">7</td>
+              <td style="text-align:center;">nypost.com</td>
+              <td style="text-align:center;">foxnews.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">8</td>
+              <td style="text-align:center;">dailymail.co.uk</td>
+              <td style="text-align:center;">nypost.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">9</td>
+              <td style="text-align:center;">thehill.com</td>
+              <td style="text-align:center;">bbc.co.uk</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">10</td>
+              <td style="text-align:center;">politico.com</td>
+              <td style="text-align:center;">theguardian.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">11</td>
+              <td style="text-align:center;">cbsnews.com</td>
+              <td style="text-align:center;">cbsnews.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">12</td>
+              <td style="text-align:center;">nbcnews.com</td>
+              <td style="text-align:center;">cnn.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">13</td>
+              <td style="text-align:center;">cnn.com</td>
+              <td style="text-align:center;">thehill.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">14</td>
+              <td style="text-align:center;">
+              washingtonpost.com</td>
+              <td style="text-align:center;">nbcnews.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">15</td>
+              <td style="text-align:center;">bbc.co.uk</td>
+              <td style="text-align:center;">
+              huffingtonpost.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">16</td>
+              <td style="text-align:center;">theguardian.com</td>
+              <td style="text-align:center;">
+              washingtonpost.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">17</td>
+              <td style="text-align:center;">nytimes.com</td>
+              <td style="text-align:center;">nytimes.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">18</td>
+              <td style="text-align:center;">
+              huffingtonpost.com</td>
+              <td style="text-align:center;">politico.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">19</td>
+              <td style="text-align:center;">politifact.com</td>
+              <td style="text-align:center;">newsweek.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">20</td>
+              <td style="text-align:center;">newsweek.com</td>
+              <td style="text-align:center;">politifact.com</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">21</td>
+              <td style="text-align:center;">
+              hillaryclinton.com</td>
+              <td style="text-align:center;">
+              hillaryclinton.com</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Building a User-to-User Graph on Reddit.</strong>.
+      With this notion of political affiliation, we can now
+      investigate some basic properties of political discourse on
+      Reddit. Just as we first restricted our attention to
+      political domains on Twitter, here we restrict our attention
+      to the main political subreddit <tt>r/politics</tt>. Since
+      only a subset of the users in <tt>r/politics</tt> are in
+      either <em>U<sub>C</sub></em> or <em>U<sub>T</sub></em> , we
+      focus on comment-reply pairs in which both users involved are
+      in one of <em>U<sub>C</sub></em> or <em>U<sub>T</sub></em> .
+      There are 4 possible types of interaction:
+      <em>U<sub>C</sub></em> → <em>U<sub>C</sub></em> ,
+      <em>U<sub>C</sub></em> → <em>U<sub>T</sub></em> ,
+      <em>U<sub>T</sub></em> → <em>U<sub>C</sub></em> , and
+      <em>U<sub>T</sub></em> → <em>U<sub>T</sub></em> where
+      <em>p</em> → <em>q</em> means that a user from <em>p</em>
+      posts a reply to a comment from a user in <em>q</em>. Let
+      <em>n</em> <sub><em>p</em> → <em>q</em></sub> be the number
+      of <em>p</em> → <em>q</em> interactions in a given time
+      period. We organize the data into sliding windows of 30 days.
+      In the following plots, the value at a particular date
+      represents the 30-day window ending at that date.
+      Figure&nbsp;8a shows comment counts throughout 2016 averaged
+      over the next 30 days, and Figure&nbsp;8b shows what fraction
+      of the comments were each type of interaction.</p>
+      <figure id="fig8">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig8.jpg"
+        class="img-responsive" alt="Figure 8" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 8:</span> <span class=
+          "figure-title">User-level trends from the Reddit dataset.
+          In Figure&nbsp;<a class="fig" href="#fig8">8c</a>, a
+          decrease in (<em>n</em> <sub><em>C</em> →
+          <em>C</em></sub> + <em>n</em> <sub><em>T</em> →
+          <em>T</em></sub> )/(<em>n</em> <sub><em>C</em> →
+          <em>T</em></sub> + <em>n</em> <sub><em>T</em> →
+          <em>C</em></sub> ) shows more interaction reaching across
+          the spectrum.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>Figure&nbsp;8b shows that a steadily rising number of
+      comments are cross-cutting (e.g., are of types
+      <em>U<sub>C</sub></em> → <em>U<sub>T</sub></em> and
+      <em>U<sub>T</sub></em> → <em>U<sub>C</sub></em> ) from the
+      beginning of 2016 up until the election in early November,
+      followed by a return to a baseline rate.
+      Figure&nbsp;<a class="fig" href="#fig8">8c</a> further
+      reinforces this point, showing a strong negative slope in the
+      ratio of edges between users of the same political leaning
+      and users of different political leanings from January until
+      the November 8 election. These results are consistent with
+      our findings our Twitter, where an increasing fraction of
+      political interactions reach across the political spectrum on
+      Twitter up until the election.</p>
+      <p>To interpret the significance of these results, we adapt
+      our random rewiring technique to the user level by randomly
+      reassigning users to comments, preserving the invariant that
+      each user still posts the same number of comments as in the
+      original data. Whether we randomize globally (a comment is
+      randomly attributed to any user from all of 2016) or each
+      month (a comment is attributed to a randomly chosen user from
+      the same month that comment was written), the results are the
+      same – the observed slope is significantly more negative than
+      the minimum over 100 random trials.</p>
+      <p>Using our Reddit dataset, we've shown that our invocation
+      graph methodology can be adapted to analyze traditional
+      user-user communication graphs. In particular, we've used
+      co-occurrences to determine political information about both
+      users and domains. The month-to-month trend found at the user
+      level mirrors our findings on Twitter — in the months leading
+      up to the election, online political interaction increasingly
+      reached across the political spectrum.</p>
+    </section>
+    <section id="sec-8">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">5</span> Two-Dimensional
+          Alignment</h2>
+        </div>
+      </header>
+      <p>Our formulation of the political spectrum in this work
+      indicates that it has a natural <em>two-dimensional</em>
+      structure, with one dimension corresponding to co-occurrence
+      probabilities with content related to one candidate, and the
+      other dimension corresponding to co-occurrence probabilities
+      with content related to the other candidate.</p>
+      <p>In Section&nbsp;<a class="sec" href="#sec-7">4</a>, when
+      we established that our invocation graph methodology extends
+      naturally to the traditional user-level setting, part of our
+      analysis involved measuring how well the one-dimensional
+      spectra <em>s<sub>T</sub></em> (·) and <em>s<sub>R</sub></em>
+      (·) shown in Table&nbsp;<a class="tbl" href="#tab1">1</a>
+      align. Here we consider how to measure the alignment of the
+      corresponding two-dimensional spectra.</p>
+      <p>To make this comparison, we need to account for the fact
+      that axes may have different scales (e.g. posts on Reddit
+      contain URLs at a different rate than on Twitter). This means
+      we need to scale <em>P<sub>R</sub></em>
+      (<em>x</em>|<em>C</em>) and <em>P<sub>R</sub></em>
+      (<em>x</em>|<em>T</em>) in order to find the “best match”
+      between the two spectra. We formalize this as the following
+      optimization problem, minimizing the squared ℓ<sub>2</sub>
+      distance of each pair of points:</p>
+      <div class="table-responsive" id="eq4">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} \min _{a,b: a,b
+          \ge 0} \sum _{x \in D} (P_T(x|C)- aP_R(x|C))^2 +
+          (P_T(x|T)- b P_R(x|T))^2 \end{equation}</span><br />
+          <span class="equation-number">(4)</span>
+        </div>
+      </div>where <em>D</em> is the set of domains. Since all
+      points lie in the first quadrant, we can drop the constraint
+      <em>a</em>, <em>b</em> ≥ 0. Note that&nbsp;(<a class="eqn"
+      href="#eq4">4</a>) can be separated into 2 identical
+      optimization problems of the form
+      <div class="table-responsive" id="eq5">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} \min _c \sum _{x
+          \in D} (u_x - cv_x)^2. \end{equation}</span><br />
+          <span class="equation-number">(5)</span>
+        </div>
+      </div>If <em>u</em> and <em>v</em> are the vectors
+      [<em>u<sub>x</sub></em> : <em>x</em> ∈
+      <em>D</em>]<sup>⊤</sup> and [<em>v<sub>x</sub></em> :
+      <em>x</em> ∈ <em>D</em>]<sup>⊤</sup> respectively, then this
+      can be written as <span class="inline-equation"><span class=
+      "tex">$\min _c \sum _{x \in D} \Vert u - cv\Vert
+      _2^2$</span></span> . This is convex and has derivative
+      <div class="table-responsive">
+        <div class="display-equation">
+          <span class="tex mytex">\[ \frac{d}{dc} \Vert u - cv\Vert
+          _2^2 = \frac{d}{dc} (u-cv)^\top (u-cv) = 2v^\top u -
+          2cv^\top v. \]</span><br />
+        </div>
+      </div>Setting this equal to 0, we find that&nbsp;(<a class=
+      "eqn" href="#eq5">5</a>) has the solution <span class=
+      "inline-equation"><span class="tex">$c = \frac{v^\top u}{v
+      ^\top v}$</span></span> .
+      <p></p>
+      <p>Using this, we can scale the Reddit spectrum to compare it
+      to the Twitter spectrum, producing the plot shown in
+      Figure&nbsp;<a class="fig" href="#fig9">9</a>. The spectra
+      roughly align, with the domains in approximately the same
+      positions for both Twitter and Reddit.</p>
+      <figure id="fig9">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig9.jpg"
+        class="img-responsive" alt="Figure 9" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 9:</span> <span class=
+          "figure-title">Scaled spectrum comparison.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>If instead we wish to minimize ℓ<sub>1</sub> distance
+      between pairs of points, we get the optimization problem</p>
+      <div class="table-responsive" id="eq6">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} \min _{a,b: a,b
+          \ge 0} \sum _{x \in D} |P_T(x|C)- aP_R(x|C)| + |P_T(x|T)-
+          b P_R(x|T)| \end{equation}</span><br />
+          <span class="equation-number">(6)</span>
+        </div>
+      </div>Again, this results in two separate optimizations of
+      the form
+      <div class="table-responsive" id="eq7">
+        <div class="display-equation">
+          <span class="tex mytex">\begin{equation} \min _c \sum _{x
+          \in D} |u_x - cv_x|. \end{equation}</span><br />
+          <span class="equation-number">(7)</span>
+        </div>
+      </div>The subgradient of each term is
+      <div class="table-responsive">
+        <div class="display-equation">
+          <span class="tex mytex">\[
+          {{\lt}CASE-START{\gt}\left\lbrace
+          \begin{array}{@{}l@{\quad }l@{}}\lbrace v_x \cdot
+          \text{sign}(cv_x - u_x)\rbrace &amp; u_x \ne cv_x \\
+          [-v_x, v_x] &amp; \text{otherwise}
+          \end{array}\right.{\lt}CASE-END{\gt}} \]</span><br />
+        </div>
+      </div>We sort the <em>x</em>’s by increasing
+      <em>u<sub>x</sub></em> /<em>v<sub>x</sub></em> , so
+      <span class="inline-equation"><span class="tex">$i {\lt} j
+      \Longrightarrow u_{x_i}/v_{x_i} \le
+      u_{x_j}/v_{x_j}$</span></span> , and then choose <em>i</em>
+      such that
+      <div class="table-responsive">
+        <div class="display-equation">
+          <span class="tex mytex">\[ \sum _{j \le i} v_{x_j} {\gt}
+          \sum _{j {\gt} i} v_{x_j} ~~~ \text{and} ~~~ \sum _{j
+          {\lt} i} v_{x_j} {\lt} \sum _{j \ge i} v_{x_j}.
+          \]</span><br />
+        </div>
+      </div>Essentially, <em>i balances</em> the <span class=
+      "inline-equation"><span class="tex">$v_{x_j}$</span></span>
+      ’s, splitting them into two sets such that adding
+      <span class="inline-equation"><span class=
+      "tex">$v_{x_i}$</span></span> to either set gives that set
+      the larger sum of the two. Thus, the subgradient
+      of&nbsp;(<a class="eqn" href="#eq7">7</a>) contains 0 for
+      <span class="inline-equation"><span class="tex">$c =
+      \frac{u_{x_i}}{v_{x_i}}$</span></span> , making this the
+      solution to&nbsp;(<a class="eqn" href="#eq6">6</a>).
+      <figure id="fig10">
+        <img src=
+        "../../../data/deliveryimages.acm.org/10.1145/3190000/3186129/images/www2018-138-fig10.jpg"
+        class="img-responsive" alt="Figure 10" longdesc="" />
+        <div class="figure-caption">
+          <span class="figure-number">Figure 10:</span>
+          <span class="figure-title">Spectrum Comparison for
+          January and February 2016 on Twitter.</span>
+        </div>
+      </figure>
+      <p></p>
+      <p>We can also use this same alignment technique to compare
+      spectra between months. Figures&nbsp;10a and&nbsp;10b show
+      that in absolute terms, the spectra produced by January and
+      February on Twitter look quite different. In fact, after
+      scaling the axes, the spectra align very well
+      (Figure&nbsp;10c, using ℓ<sub>1</sub>-minimization). One way
+      to see this is to compare the quality of alignment in our
+      data the quality of alignment among shuffled versions of the
+      spectra for January and February, where the domains labeling
+      the points are randomly permuted; we find that the alignment
+      for the real data has much lower cost than the typical
+      alignment for shuffled data. The disparity between the
+      unscaled spectra seems to indicate an influx of users in
+      February who retweeted Clinton but didn't necessarily engage
+      in other sorts of political activity; this left the relative
+      position of other domains in the two-dimensional spectrum
+      unaffected.</p>
+      <p>We also note this type of scaling doesn't affect the
+      one-dimensional orderings in Table&nbsp;<a class="tbl" href=
+      "#tab1">1</a>. We can rewrite the political score as
+      <span class="inline-equation"><span class="tex">$s_T(x) =
+      \frac{1}{1 + \tan \theta _T}$</span></span> , where
+      <em>θ<sub>T</sub></em> is the angle of <em>x</em> from the
+      <em>P<sub>T</sub></em> (<em>x</em>|<em>C</em>) axis. Since
+      scaling the axes preserves the ordering of these angles, it
+      also preserves the one-dimensional rankings.</p>
+    </section>
+    <section id="sec-9">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">6</span> Further Related
+          Work</h2>
+        </div>
+      </header>
+      <p>Our work builds on rich literatures in online social
+      media, online news, information diffusion, and the landscape
+      of online political interaction, and it also draws on a long
+      history of work studying the role of media in politics.</p>
+      <p>With access to information now abundant, a growing line of
+      work has investigated how this impacts consumption of
+      political information. As mentioned in the introduction, a
+      key issue has been measuring the extent to which online
+      political interaction crosses ideological divides, or whether
+      it stays relatively confined in “filter bubbles” or “echo
+      chambers”&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0003">3</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0011">11</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0013">13</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0015">15</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0027">27</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0031">31</a>]. Concerns about the Web potentially
+      catalyzing balkanization, or fragmentation into isolated
+      ideological divisions, date from the 1990s&nbsp;[<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0032">32</a>]. Early
+      empirical work on the structure of online political
+      interaction through blogging identified strong ideological
+      partitions evident in large-scale analysis of linking
+      patterns&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0001">1</a>], whereas analyses of more recent
+      social media platforms finds evidence for a more complex
+      structure, in which both ideological entrenchment and
+      exposure to more diverse content is promoted on the
+      Web&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0003">3</a>,
+      <a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#BibPLXBIB0011">11</a>].</p>
+      <p>More broadly, our paper relates to the extensive work on
+      the structure of information sharing on the
+      Web&nbsp;[<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#BibPLXBIB0004">4</a>],
+      as well as theoretical work on how network structure affects
+      information flow&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0018">18</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0020">20</a>]. This structure has been quantified
+      in many ways, particularly by organizing shares into
+      information cascades&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0008">8</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0017">17</a>], where nodes are typically people
+      and edges between people indicate if one person directly
+      shared a piece of content with another person. In contrast,
+      our work here introduces and studies invocation graphs, where
+      nodes are information sources and edges indicate that a user
+      shared content from one source in response to content from
+      another source.</p>
+      <p>The role of the media in politics is the subject of an
+      active field of study&nbsp;[<a class="bib" data-trigger=
+      "hover" data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0019">19</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0029">29</a>]. Particularly relevant to our work
+      here is the study of how news and public opinion spread
+      through social networks, including the early theory of
+      two-step flow&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0021">21</a>]. More recently, there has been a
+      spirited debate about the impact that “influencers” have on
+      these processes&nbsp;[<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0002">2</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0007">7</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0016">16</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0022">22</a>, <a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#BibPLXBIB0033">33</a>].</p>
+    </section>
+    <section id="sec-10">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">7</span> Conclusion</h2>
+        </div>
+      </header>
+      <p>In this work we have introduced <em>invocation
+      graphs</em>, together with a set of techniques for analyzing
+      them, as a means of probing the structure of online political
+      interaction. In combination with previous methods for
+      inducing a political spectrum from data, we develop methods
+      for measuring several important phenomena. In particular, we
+      analyzed a natural embedding of the invocation graph in the
+      political spectrum, and asked how its edges are distributed
+      across this spectrum—whether they are sequestered in
+      ideological pockets or whether they span larger ideological
+      distances. Applying these techniques to political interaction
+      on Twitter in the months leading up to the 2016 US
+      Presidential election, we observed that political interaction
+      via the invocation graph became increasingly cross-cutting as
+      the election neared. We also developed methods to analyze
+      whether there are inherent asymmetries between how the right
+      and the left engage each other via replies. Applying our
+      techniques to Twitter, we found that edges in in the
+      invocation graph more consistently went from sources on the
+      right to sources on the left than in the other direction.</p>
+      <p>It is worth emphasizing a critical feature of invocation
+      graphs, which is that they are composed of <em>invoked
+      interactions</em> as opposed to direct interactions. Although
+      on a surface level invocation graphs may resemble the
+      hyperlink graphs that form a basic staple of Web analysis,
+      they are actually quite different, as the links are generally
+      not under the nodes’ control. News sources publish content,
+      and then it is up to the readership to determine how these
+      sources connect to each other in the invocation graph. In
+      this sense, relative positions and functions of news domains
+      in invocation graphs are indicative of how the public
+      actually uses them in online political discussion. Beyond the
+      ideological territory news sources may try to explicitly
+      claim for themselves, invocation graphs position these
+      sources according to their roles in political
+      interaction.</p>
+      <p>There are a number of important directions that remain to
+      be pursued. First, it is intriguing to see how interaction
+      both in the invocation graph on Twitter and the user-to-user
+      interaction graph on Reddit became more and more
+      ideologically cross-cutting as the election approached, given
+      that homophily would suggest that most links should link to
+      nearby points on the spectrum. Is there a systematic way to
+      relate this trend to an underlying level of polarization, so
+      that changes in the structure of the embedded invocation
+      graph might provide insight into polarization and how it
+      evolves? Second, beyond the two large social media datasets
+      we considered, it would be illuminating to apply our methods
+      in other settings as well. In particular, does online debate
+      increasingly cross ideological divides in the run-up to
+      milestone events in general, or was this specific to the 2016
+      US Presidential election? In general, we believe that
+      applying and extending our methods for online political
+      interaction using invocation graphs contains many promising
+      directions for future work.</p>
+      <p><strong>Acknowledgements.</strong>. We thank Lada Adamic,
+      Glenn Altschuler, Isabel Kloumann, and Michael Macy for
+      valuable discussions about these topics. MR is supported by
+      an NSF Graduate Research Fellowship (DGE-1650441). JK is
+      supported in part by a Simons Investigator Award, an ARO MURI
+      grant, and NSF grant 1741441. This work was performed in part
+      while AA and MR were at Microsoft Research.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ref-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="BibPLXBIB0001" label="[1]">Lada&nbsp;A. Adamic and
+        Natalie Glance. 2005. The Political Blogosphere and the
+        2004 U.S. Election: Divided They Blog. In
+        <em><em>Proceedings of the 3rd International Workshop on
+        Link Discovery</em></em> (LinkKDD ’05). ACM, New York, NY,
+        USA, 36–43. 1-59593-215-1<a class="link-inline force-break"
+          href="https://doi.org/10.1145/1134271.1134277" target=
+          "_blank">https://doi.org/10.1145/1134271.1134277</a>
+        </li>
+        <li id="BibPLXBIB0002" label="[2]">Eytan Bakshy,
+        Jake&nbsp;M Hofman, Winter&nbsp;A Mason, and Duncan&nbsp;J
+        Watts. 2011. Everyone's an influencer: quantifying
+        influence on twitter. In <em><em>Proceedings of the fourth
+        ACM international conference on Web search and data
+        mining</em></em> . ACM, 65–74.</li>
+        <li id="BibPLXBIB0003" label="[3]">Eytan Bakshy, Solomon
+        Messing, and Lada&nbsp;A Adamic. 2015. Exposure to
+        ideologically diverse news and opinion on Facebook.
+        <em><em>Science</em></em> 348, 6239 (2015), 1130–1132.</li>
+        <li id="BibPLXBIB0004" label="[4]">Eytan Bakshy, Itamar
+        Rosenn, Cameron&nbsp;A. Marlow, and Lada&nbsp;A. Adamic.
+        2012. The Role of Social Networks in Information Diffusion.
+        In <em><em>Proc. World Wide Web Conference</em></em> .</li>
+        <li id="BibPLXBIB0005" label="[5]">Yochai Benkler, Robert
+        Faris, Hal Roberts, and Ethan Zuckerman. 2017. Study:
+        Breitbart-led right-wing media ecosystem altered broader
+        media agenda. <em><em>Columbia Journalism Review</em></em>
+        1, 4.1 (2017), 7.</li>
+        <li id="BibPLXBIB0006" label="[6]">W.&nbsp;Lance Bennett.
+        1996. <em><em>News: The politics of illusion</em></em> .
+        Longman.</li>
+        <li id="BibPLXBIB0007" label="[7]">Meeyoung Cha, Hamed
+        Haddadi, Fabricio Benevenuto, and P&nbsp;Krishna Gummadi.
+        2010. Measuring user influence in twitter: The million
+        follower fallacy. <em><em>ICWSM</em></em> 10, 10-17 (2010),
+        30.</li>
+        <li id="BibPLXBIB0008" label="[8]">Justin Cheng,
+        Lada&nbsp;A. Adamic, P.&nbsp;Alex Dow, Jon&nbsp;M.
+        Kleinberg, and Jure Leskovec. 2014. Can cascades be
+        predicted?. In <em><em>23rd International World Wide Web
+        Conference, WWW ’14, Seoul, Republic of Korea, April 7-11,
+        2014</em></em> . 925–936. <a class=
+        "link-inline force-break" href=
+        "https://doi.org/10.1145/2566486.2567997" target="_blank">
+          https://doi.org/10.1145/2566486.2567997</a>
+        </li>
+        <li id="BibPLXBIB0009" label="[9]">Michael Conover, Jacob
+        Ratkiewicz, Matthew&nbsp;R. Francisco, Bruno Gonçalves,
+        Filippo Menczer, and Alessandro Flammini. 2011. Political
+        Polarization on Twitter. In <em><em>Proceedings of the
+        Fifth International Conference on Weblogs and Social Media,
+        Barcelona, Catalonia, Spain, July 17-21, 2011</em></em> .
+        <a class="link-inline force-break" href=
+        "http://www.aaai.org/ocs/index.php/ICWSM/ICWSM11/paper/view/2847"
+          target=
+          "_blank">http://www.aaai.org/ocs/index.php/ICWSM/ICWSM11/paper/view/2847</a>
+        </li>
+        <li id="BibPLXBIB0010" label="[10]">P.&nbsp;Alex Dow,
+        Lada&nbsp;A. Adamic, and Adrien Friggeri. 2013. The Anatomy
+        of Large Facebook Cascades. In <em><em>Proceedings of the
+        Seventh International Conference on Weblogs and Social
+        Media, ICWSM 2013, Cambridge, Massachusetts, USA, July
+        8-11, 2013.</em></em> <a class="link-inline force-break"
+        href=
+        "http://www.aaai.org/ocs/index.php/ICWSM/ICWSM13/paper/view/6123"
+          target=
+          "_blank">http://www.aaai.org/ocs/index.php/ICWSM/ICWSM13/paper/view/6123</a>
+        </li>
+        <li id="BibPLXBIB0011" label="[11]">Seth Flaxman, Sharad
+        Goel, and Justin Rao. 2016. Filter Bubbles, Echo Chambers,
+        and Online News Consumption. <em><em>Public Opinion
+        Quarterly</em></em> 80 (2016).</li>
+        <li id="BibPLXBIB0012" label="[12]">Adrien Friggeri,
+        Lada&nbsp;A Adamic, Dean Eckles, and Justin Cheng. 2014.
+        Rumor Cascades. In <em><em>ICWSM</em></em> .</li>
+        <li id="BibPLXBIB0013" label="[13]">R&nbsp;Kelly Garrett.
+        2009. Echo chambers online?: Politically motivated
+        selective exposure among Internet news users.
+        <em><em>Journal of Computer-Mediated
+        Communication</em></em> 14, 2 (2009), 265–285.</li>
+        <li id="BibPLXBIB0014" label="[14]">Matthew Gentzkow and
+        Jesse&nbsp;M Shapiro. 2010. What drives media slant?
+        Evidence from US daily newspapers.
+        <em><em>Econometrica</em></em> 78, 1 (2010), 35–71.</li>
+        <li id="BibPLXBIB0015" label="[15]">Eric Gilbert, Tony
+        Bergstrom, and Karrie Karahalios. 2009. Blogs are echo
+        chambers: Blogs are echo chambers. In <em><em>HICSS’09.
+        42nd Hawaii International Conference on System
+        Sciences</em></em> . IEEE, 1–10.</li>
+        <li id="BibPLXBIB0016" label="[16]">Malcolm Gladwell. 2006.
+        <em><em>The tipping point: How little things can make a big
+        difference</em></em> . Little, Brown.</li>
+        <li id="BibPLXBIB0017" label="[17]">Sharad Goel, Ashton
+        Anderson, Jake&nbsp;M. Hofman, and Duncan&nbsp;J. Watts.
+        2016. The Structural Virality of Online Diffusion. <em><em>
+          Management Science</em></em> 62, 1 (2016), 180–196.
+          <a class="link-inline force-break" href=
+          "https://doi.org/10.1287/mnsc.2015.2158" target=
+          "_blank">https://doi.org/10.1287/mnsc.2015.2158</a>
+        </li>
+        <li id="BibPLXBIB0018" label="[18]">Benjamin Golub and
+        Matthew&nbsp;O Jackson. 2009. How homophily affects
+        learning and diffusion in networks. (2009).</li>
+        <li id="BibPLXBIB0019" label="[19]">Doris&nbsp;A Graber and
+        Johanna Dunaway. 2017. <em><em>Mass media and American
+        politics</em></em> . Cq Press.</li>
+        <li id="BibPLXBIB0020" label="[20]">Matthew&nbsp;O Jackson
+        and Leeat Yariv. 2006. Diffusion on social networks.
+        <em><em>Economie publique/Public economics</em></em> 16
+        (2006).</li>
+        <li id="BibPLXBIB0021" label="[21]">Elihu Katz. 1957. The
+        two-step flow of communication: An up-to-date report on an
+        hypothesis. <em><em>Public opinion quarterly</em></em> 21,
+        1 (1957), 61–78.</li>
+        <li id="BibPLXBIB0022" label="[22]">Elihu Katz and
+        Paul&nbsp;Felix Lazarsfeld. 1966. <em><em>Personal
+        Influence, The part played by people in the flow of mass
+        communications</em></em> . Transaction Publishers.</li>
+        <li id="BibPLXBIB0023" label="[23]">Bill Kovach and Tom
+        Rosenstiel. 1999. <em><em>Warp Speed: America in the Age of
+        Mixed Media</em></em> . Century Foundation Press.</li>
+        <li id="BibPLXBIB0024" label="[24]">Ravi Kumar, Mohammad
+        Mahdian, and Mary McGlohon. 2010. Dynamics of
+        Conversations. In <em><em>ACM SIGKDD International
+        Conference on Knowledge Discovery and Data Mining</em></em>
+        . 553–562.</li>
+        <li id="BibPLXBIB0025" label="[25]">Paul&nbsp;F.
+        Lazarsfeld, Bernard Berelson, and Hazel Gaudet. 1944.
+        <em><em>The People's Choice: How the Voter Makes Up His
+        Mind in a Presidential Campaign</em></em> . Duell, Sloan,
+        and Pearce.</li>
+        <li id="BibPLXBIB0026" label="[26]">Michael Molloy and
+        Bruce Reed. 1995. A critical point for random graphs with a
+        given degree sequence. <em><em>Random structures &amp;
+        algorithms</em></em> 6, 2-3 (1995), 161–180.</li>
+        <li id="BibPLXBIB0027" label="[27]">Eli Pariser. 2011.
+        <em><em>The Filter Bubble: What the Internet is Hiding from
+        You</em></em> . Viking.</li>
+        <li id="BibPLXBIB0028" label="[28]">Charles Spearman. 1904.
+        The proof and measurement of association between two
+        things. <em><em>The American journal of
+        psychology</em></em> 15, 1 (1904), 72–101.</li>
+        <li id="BibPLXBIB0029" label="[29]">John Street. 2010.
+        <em><em>Mass media, politics and democracy</em></em> .
+        Palgrave Macmillan.</li>
+        <li id="BibPLXBIB0030" label="[30]">Cass Sunstein. 2007.
+        <em><em>Republic.com</em></em> . Princeton University
+        Press.</li>
+        <li id="BibPLXBIB0031" label="[31]">Cass&nbsp;R Sunstein.
+        2001. <em><em>Echo chambers: Bush v. Gore, impeachment, and
+        beyond</em></em> . Princeton University Press Princeton,
+        NJ.</li>
+        <li id="BibPLXBIB0032" label="[32]">Marshall
+        Van&nbsp;Alstyne and Erik Brynjolfsson. 1996. Could the
+        Internet balkanize science? <em><em>Science</em></em> 274,
+        5292 (1996), 1479.</li>
+        <li id="BibPLXBIB0033" label="[33]">Duncan&nbsp;J Watts and
+        Peter&nbsp;Sheridan Dodds. 2007. Influentials, networks,
+        and public opinion formation. <em><em>Journal of consumer
+        research</em></em> 34, 4 (2007), 441–458.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a class=
+    "link-inline force-break" href=
+    "https://files.pushshift.io/reddit/">https://files.pushshift.io/reddit/</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY&nbsp;4.0) license.
+      Authors reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018; IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY&nbsp;4.0
+      License. ACM ISBN 978-1-4503-5639-8/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3178876.3186129">https://doi.org/10.1145/3178876.3186129</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>

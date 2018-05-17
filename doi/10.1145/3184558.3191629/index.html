@@ -1,1 +1,1345 @@
-<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> <head>  <title>LDA Meets Word2Vec: A Novel Model for Academic Abstract Clustering</title>  <!-- Copyright (c) 2010-2015 The MathJax Consortium --><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>  <meta name="viewport" content="width=device-width; initial-scale=1.0;"></meta>  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>  <link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css"/><link media="screen, print" rel="stylesheet"    href="../../../data/dl.acm.org/pubs/lib/css/main.css"/><script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type="text/javascript"></script>  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type="text/javascript"></script>  <script type="text/javascript"    src="../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js"></script>  <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script> </head> <body id="main">  <section class="front-matter">   <section>    <header class="title-info">    <div class="journal-title">     <h1>      <span class="title">LDA Meets Word2Vec: A Novel Model for Academic Abstract Clustering</span>      <br/>      <span class="subTitle"/>     </h1>    </div>    </header>    <div class="authorGroup">    <div class="author">     <span class="givenName">Changzhou</span>     <span class="surName">Li</span>,     School of Data and Computer Science, Sun Yat-sen University, Guangzhou, China    </div>        <div class="author">     <span class="givenName">Yao</span>     <span class="surName">Lu</span>,     School of Data and Computer Science, Sun Yat-sen University, Guangzhou, China    </div>        <div class="author">     <span class="givenName">Junfeng</span>     <span class="surName">Wu</span>,     School of Data and Computer Science, Sun Yat-sen University, Guangzhou, China    </div>        <div class="author">     <span class="givenName">Yongrui</span>     <span class="surName">Zhang</span>,     School of Data and Computer Science, Sun Yat-sen University, Guangzhou, China    </div>        <div class="author">     <span class="givenName">Zhongzhou</span>     <span class="surName">Xia</span>,     School of Data and Computer Science, Sun Yat-sen University, Guangzhou, China    </div>        <div class="author">     <span class="givenName">Tianchen</span>     <span class="surName">Wang</span>,     School of Mathematics, Sun Yat-sen University, Guangzhou, China    </div>        <div class="author">     <span class="givenName">Dantian</span>     <span class="surName">Yu</span>,     School of Mathematics, Sun Yat-sen University, Guangzhou, China    </div>        <div class="author">     <span class="givenName">Xurui</span>     <span class="surName">Chen</span>,     School of Mathematics, Sun Yat-sen University, Guangzhou, China    </div>        <div class="author">     <span class="givenName">Peidong</span>     <span class="surName">Liu</span>,     School of Data and Computer Science, Sun Yat-sen University, Guangzhou, China    </div>        <div class="author">     <span class="givenName">Junyu</span>     <span class="surName">Guo</span>,     School of Mathematics, Sun Yat-sen University, Guangzhou, China    </div>        </div>    <br/>    <div class="pubInfo">    <p>DOI: <a href="https://doi.org/10.1145/3184558.3191629" target="_blank">https://doi.org/10.1145/3184558.3191629</a>     <br/>WWW '18: <a href="https://doi.org/10.1145/3184558" target="_blank">Proceedings of The Web Conference 2018</a>, Lyon, France, April 2018</p>    </div>    <div class="abstract">    <p>     <small>Clustering narrow-domain short texts, such as academic abstracts, is an extremely difficult clustering problem. Firstly, short texts lead to low frequency and sparseness of words, making clustering results highly unstable and inaccurate; Secondly, narrow domain leads to great overlapping of insignificant words and makes it hard to distinguish between sub-domains, or fine-grained clusters. The vocabulary size is also too small to construct a good word bag needed by traditional clustering algorithms like LDA to give a meaningful topic distribution. A novel clustering model, Partitioned Word2Vec-LDA (PW-LDA), is proposed in this paper to tackle the described problems. Since the purpose sentences of an abstract contain crucial information about the topic of the paper, we firstly implement a novel algorithm to extract them from the abstracts according to its structural features. Then high-frequency words are removed from those purpose sentences to get a purified-purpose corpus and LDA and Word2Vec models are trained. After combining the results of both models, we can cluster the abstracts more precisely. Our model uses abstract text instead of keywords to cluster because keywords may be ambiguous and cause unsatisfied clustering results shown by previous work. Experimental results show that the clustering results of PW-LDA are much more accurate and stable than state-of-the-art techniques.</small>    </p>    </div>    <div class="classifications">    <div class="author">     <span style="font-weight:bold;">      <small>KEYWORDS:</small>     </span>     <span class="keyword">      <small>Short text clustering</small>, </span>     <span class="keyword">      <small>LDA</small>, </span>     <span class="keyword">      <small>Word2Vec</small>, </span>     <span class="keyword">      <small>Abstract</small>, </span>     <span class="keyword">      <small>Document clustering</small>     </span>    </div>    <br/>    <div class="AcmReferenceFormat">     <p>      <small>       <span style="font-weight:bold;">ACM Reference Format:</span>       <br/>Changzhou Li1, Yao Lu, Junfeng Wu, Yongrui Zhang, Zhongzhou Xia, Tianchen Wang, Dantian Yu, Xurui Chen, Peidong Liu and Junyu Guo. 2018. LDA Meets Word2Vec: A Novel Model for Academic Abstract Clustering. In <em>Proceedings of The 2018 Web Conference Companion (WWW '18 Companion). ACM, New York, NY, USA, 12 pages.</em> <a href="https://doi.org/10.1145/3184558.3191629" target="_blank">https://doi.org/10.1145/3184558.3191629</a></small>     </p>    </div>    </div>   </section>  </section>  <section class="body">   <section id="sec1">    <header>    <div class="title-info">     <h2>      <span class="section-number">1</span> INTRODUCTION</h2>    </div>    </header>    <p>Text clustering among academic papers is a useful approach in text data mining. It helps researchers to explore information based on the text clusters [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib1">1</a>]. Clustering algorithms applied to multi-domain document collections are various and widely used [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib2">2</a>]. However, clustering of narrow-domain texts such as texts that are all about computer science or all about medicine has not been studied well although it plays a significant role in scientific research. Thus, recently researchers have put more focus on it [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib3">3</a>,<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib4">4</a>,<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib5">5</a>].</p>    <p>Considering the fact that free access to full-text academic papers is not always available and the high dimension of full-text data, it is not practical to use the full-text data for clustering. Traditional keyword-based approach for clustering documents gives unstable and imprecise results [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib6">6</a>]. And it fails on narrow-domain clustering, or fine-grained clustering. Actually, keywords of papers from the same domain overlap greatly and contribute little to differentiate fine-grained topics. Alexandrov et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib5">5</a>,<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib6">6</a>] suggested to cluster abstracts, which contain more information about the topics than keywords.</p>    <p>As a kind of short texts, abstracts face the problem of sparsity when being clustered. To solve this problem, different methods have been proposed [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib8">8</a>,<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib9">9</a>,<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib10">10</a>,<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib11">11</a>]. One of the most popular methods is Latent Dirichlet Allocation(LDA) model, in which a single topic is defined as a probability distribution over words, so that each document can be viewed as a mixture of various topics. Each word is generated by a specific topic individually in LDA model, and the corresponding topic is drawn from its associated proportion distribution [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib12">12</a>]. LDA has the advantage of reducing the dimension of text data. Based on the external Wikipedia corpus, Phanetal et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib13">13</a>] proposed to use LDA to discover hidden topics and expand short texts. In [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib14">14</a>], K-means clustering algorithms is enhanced based on LDA model. Onan et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib15">15</a>] came up with an improved ant algorithm with LDA-based representation for text document clustering. However, those models that have a good result in other types of short texts often give very unstable or imprecise results when clustering abstracts of academic papers, technical reports, patents and so on [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib7">7</a>]. Although LDA excels at extracting the lateral topic information out of the text internally, its low-dimensional characteristic weakens the ability to differentiate the texts [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib16">16</a>]. For instance, Alexandrov et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib7">7</a>] admitted that abstracts cannot be clustered with the same quality as full texts in their experiment.</p>    <p>Since we are dealing with document collections containing documents from one narrow domain and the size of an abstract is small, the intersection of text information is strong and it can greatly weaken the clustering results [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib7">7</a>]. To avoid the negative effect, it is critical to extract key information from an abstract. Generally speaking, the abstracts of academic papers usually contain three important elements of a research: the purpose, the new method, and the results or conclusions. Based on this observation, we propose Partition Word2Vec-LDA (PW-LDA) model, a novel fine-grained text clustering model for abstracts.</p>    <p>Instead of using the entire abstract, we extract the purpose sentences from the abstract, followed by other information extraction steps. Next, LDA and Word2Vec are utilized together to obtain embeddings which represents sentences and topics respectively. Word2Vec, proposed by Mikolov et al. [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib17">17</a>], takes surrounding words around a certain word into consideration and it is efficient and accurate in tasks related to the measurement of word similarity. A hybrid approach in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"     href="#bib18">18</a>] combines Word2Vec and LDA to extract features from documents with bag-of-distances in a semantic space. It not only connects the relationship between documents and topics, but also integrates the contextual relationships among words, which leads to a good classification performance. Inspired by this idea, we propose the topic embeddings and the sentence embeddings and use them to measure the similarity between different topics and documents.</p>    <p>The main contribution of our work is that we propose PW-LDA, a novel fine-grained text clustering model for abstracts. It can be summarized as follows: (1) We develop a method to extract purpose sentences that are the key information in the abstract used for clustering. (2) We propose a novel model combining LDA and Word2Vec to get a good result in fine-grained text clustering of abstracts. The rest of the paper is organized as follows. In Section <a class="sec" href="#sec2">2</a>, we will describe the framework of our model. Section <a class="sec" href="#sec3">3</a> provides details about experiments which compare our model with other relevant methods. Conclusions are presented in Section <a class="sec" href="#sec4">4</a>.</p>   </section>   <section id="sec2">    <header>    <div class="title-info">     <h2>      <span class="section-number">2</span> METHODOLOGY</h2>    </div>    </header>    <section id="sec2Z1">    <header>     <div class="title-info">      <h3>       <span class="section-number">2.1</span> Preliminaries</h3>     </div>    </header>    <section id="sec2Z1Z1">     <p><em>2.1.1 LDA (Latent Dirichlet Allocation).</em> LDA is a popular generative probabilistic topic model, where each document is represented as a random mixture of latent topics and each topic is represented as a distribution over fixed set of words [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#bib12">12</a>]. In LDA, each document can exhibit multiple topics with different degrees. The words in each document are the observed data, according to which, the main objective is to infer the underlying latent topic structure. For each document in the corpus, the words are generated with a two-staged procedure. First, a distribution over topics is randomly chosen. Then, for each word of the document, a topic from the distribution over topics is randomly chosen and a word from the particular distribution is randomly chosen. LDA can be modelled as a three-level Bayesian graphical model. This graphical model of LDA is presented in <a class="fig" href="#fig1">Fig. 1</a> . In <a class="fig" href="#fig1">Fig. 1</a>, nodes are random variables and edges represent possible dependencies between the variables. In this representation, <span class="inline-equation"><span class="tex">${\rm{\alpha }}$ </span>      </span> and <span class="inline-equation"><span class="tex">${\rm{\beta }}$ </span>      </span> denotes the Dirichlet parameter, <span class="inline-equation"><span class="tex">${\rm{\theta }}$ </span>      </span> denotes document-level topic variables, <span class="inline-equation"><span class="tex">${\rm{z}}$ </span>      </span> denotes per-word topic assignment, <span class="inline-equation"><span class="tex">${\rm{w}}$ </span>      </span> denotes the observed word. As the three-layered representation in <a class="fig" href="#fig1">Fig. 1</a> shows, <span class="inline-equation"><span class="tex">${\rm{\alpha }}$ </span>      </span> and <span class="inline-equation"><span class="tex">${\rm{\beta }}$ </span>      </span> parameters depend on number of topics and vocabulary size [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#bib12">12</a>], document-level topic variables are sampled for each document and word-level variables are sampled for each word of the document. In LDA, a word is a discrete data from a vocabulary indexed as <span class="inline-equation"><span class="tex">$1, \ldots ,V$ </span>      </span>. A document is a sequence of N words <span class="inline-equation"><span class="tex">${\rm{w}} = ( {{w_1},{w_2}, \ldots ,{w_N}} )$ </span>      </span>. A corpus consists of M documents and represented as <span class="inline-equation"><span class="tex">${\rm{D}} = ( {{D_1},{D_2}, \ldots ,{D_M}} )$ </span>      </span>.</p>     <figure id="fig1">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image1.jpg" class="img-responsive" alt="Figure 1:" longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 1:</span>       <span class="figure-title">The graphical model of LDA.</span>      </div>     </figure>     <figure id="fig2">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image2.jpg" class="img-responsive" alt="Figure 2:" longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 2:</span>       <span class="figure-title">Neural network structure for language model.</span>      </div>     </figure>     <figure id="fig3">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image3.jpeg" class="img-responsive" alt="Figure 3:" longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 3:</span>       <span class="figure-title">Different &#x201C;stopwords&#x201D; for different corpus.</span>      </div>     </figure>     <p>The joint probability of LDA is <div class="table-responsive" id="eqn1">       <div class="display-equation">       <span class="tex mytex">\begin{equation}p\left( {\theta ,z,w{\rm{|}}\alpha ,\beta } \right) = p\left( {\theta {\rm{|}}\alpha } \right){\rm{*}}\mathop \prod \limits_{n - 1}^N p\left( {{z_n}{\rm{|}}\theta } \right){\rm{*}}p({w_n}|{z_n},\beta )\end{equation}</span>       <br/>       <span class="equation-number">(1)</span>       </div>      </div>     </p>     <p>In the parameter solving process, <span class="inline-equation"><span class="tex">${\rm{w}}$ </span>      </span> denotes observation variables, <span class="inline-equation"><span class="tex">${\rm{\theta }}$ </span>      </span> and <span class="inline-equation"><span class="tex">$z$ </span>      </span> denote hidden variables. By applying EM algorithm, <span class="inline-equation"><span class="tex">$\alpha $ </span>      </span> and <span class="inline-equation"><span class="tex">$\beta $ </span>      </span> are learned.</p>    </section>    <section id="sec2Z1Z2">     <p><em>2.1.2 Word2Vec.</em> The word embedding model uses the idea of neural network to train the language model and treats each word as a vector. The model assumes that each word&#x0027;s appearance only relates to a limited number of words before it, focusing on the sequential combination of words. By using tanh as the activation function, the joint probabilities of sequences are calculated from the sequence of word vectors, and neural network is used to optimize the model and coefficients.</p>     <p>      <span class="inline-equation"><span class="tex">$C( w )$ </span>      </span> represents the word vector corresponding to a certain word, and <span class="inline-equation"><span class="tex">$C$ </span>      </span> is an <span class="inline-equation"><span class="tex">$| V |*m$ </span>      </span> matrix, where <span class="inline-equation"><span class="tex">$| V |$ </span>      </span> is the size of the vocabulary and <span class="inline-equation"><span class="tex">${\rm{m}}$ </span>      </span> is the dimension of the word vector.</p>     <p>The first layer (input layer) of the network is a vector, denoted by <span class="inline-equation"><span class="tex">$x$ </span>      </span>, is formed by <span class="inline-equation"><span class="tex">$n - 1$ </span>      </span> vectors <span class="inline-equation"><span class="tex">$C( {{w_{t - n + 1}}} ),{\rm{\;\;}} \ldots ,{\rm{\;}}C( {{w_{t - 2}}} ),{\rm{\;\;}}C( {{w_{t - 1}}} )$ </span>      </span>. The second layer (hidden layer) of the network is calculated using <span class="inline-equation"><span class="tex">$d + Hx$ </span>      </span>. <span class="inline-equation"><span class="tex">$d$ </span>      </span> is the bias term, after which tanh is used as the activation function. The third layer (output layer) of the network has a total of <span class="inline-equation"><span class="tex">$| V |$ </span>      </span> nodes, and each node <span class="inline-equation"><span class="tex">$({y_i})$ </span>      </span> represents the unnormalized probability of the <span class="inline-equation"><span class="tex">$i - 1$ </span>      </span>th word. Finally, the output value is normalized to the rate by using the Softmax function. <div class="table-responsive" id="eqn2">       <div class="display-equation">       <span class="tex mytex">\begin{equation}y = b + Wx + Utanh\left( {d + Hx} \right)\end{equation}</span>       <br/>       <span class="equation-number">(2)</span>       </div>      </div>     </p>    </section>    </section>    <section id="sec2Z2">    <header>     <div class="title-info">      <h3>       <span class="section-number">2.2</span> Proposed Method</h3>     </div>    </header>    <p>The framework of the proposed model PW-LDA will be introduced in this section. Given a dataset of abstracts from academic papers in the same narrow domain, our goal is to cluster the dataset into a fine-grained cluster <span class="inline-equation"><span class="tex">${\rm{C}}$ </span>     </span>.</p>    <section id="sec2Z2Z1">     <p><em>2.2.1 Challenges &amp; Solutions.</em> Two major challenges can be overcome by our model:</p>     <p>1.	Short texts:</p>     <p>&#x25CF;	LDA+Word2Vec helps reduce the sparsity of short texts.</p>     <p>LDA is traditionally used for document topic clustering. It defines global hierarchical relationships between words, documents and topics. However, we cannot get a good &#x201C;document-topic distribution&#x201D; from LDA due to the sparsity of abstracts and low frequencies of terms, thus leading to a bad clustering result.</p>     <p>We also refuse to use keywords in <strong>clustering</strong> because generally only 10% or 20% of the keywords from the complete keyword list occur in every document and their absolute frequency usually is one or two. In this case, changing a keyword frequency by one can significantly change the clustering results [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#bib5">5</a>,<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#bib7">7</a>,<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#bib3">3</a>]. Instead of clustering, keywords are usually used in classification problems where exact matches are needed. However, it is clustering that is mostly used in recommendation system rather than classification. When clustering academic papers into different topics using PW-LDA, we take many factors into consideration: the probability distribution of words for different topics, semantics of context and syntax. As a result, a reader may be able to find more overall related papers for the latent topic he or she is searching for.</p>     <p>Word2Vec is a word embedding model to predict a target word from its surrounding contextual words. In Word2Vec, semantically similar words are mapped to nearby points in a continuous vector space and order of words is taken into consideration as well.</p>     <p>To solve this problem, we get inspiration from [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#bib18">18</a>] and combines LDA with Word2Vec in our new model PW-LDA.</p>     <p>2.	Narrow domain:</p>     <p>&#x25CF;	Purpose sentences extraction method, high-frequency words removal and LDA+Word2Vec all help enhance the capability of discrimination and predication for narrow-domain texts clustering.</p>     <p>We notice that the structure of an abstract from scientific academic paper can usually be partitioned into three parts: &#x201C;<strong>purpose</strong>&#x201D;, &#x201C;<strong>method</strong>&#x201D;, and &#x201C;<strong>conclusion</strong>&#x201D;. The &#x201C;purpose&#x201D; part mostly appears at the beginning of an abstract and explains research background, research questions and purpose. The following information is usually outlined [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#bib19">19</a>]: <ol class="list-no-style">       <li label="1)">What is already known about the subject.<br/></li>       <li label="2)">What is not known about the subject and hence what the study intended to examine (or what the paper seeks to present).<br/></li>      </ol>     </p>     <p>Therefore, <strong>purpose sentences</strong> are most relevant to the topic of a scientific paper. we introduce Text Partition Algorithm (see Algorithm <a class="tbl" href="#tb3">1</a>) to partition abstracts into three parts. A purified-purpose corpus is obtained by removing high frequency words from purpose sentences corpus. This step is important for achieving a higher accuracy of clustering. As we mentioned in the abstract, narrow domain leads to great overlapping of insignificant words and makes it hard to distinguish between sub-domains. For example, words like &#x201C;factor&#x201D;, &#x201C;characteristic&#x201D;, &#x201C;control&#x201D;, &#x201C;measure&#x201D; all appear frequently in our purpose corpus. These words are not removed in previous preprocessing step because they are not seen as common stopwords. However, when the clustering domain becomes narrower, these high frequency words will appear in many subdomains and have substantial negative effects on fine-grained clustering.</p>     <div class="table-responsive" id="tb3">      <div class="table-caption">       <span class="table-number">Algorithm 1:</span>       <span class="table-title">Text Partition</span>      </div>      <table class="table">       <tbody>       <tr>        <td>         <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image5.jpg" class="img-responsive" alt="" longdesc=""/>        </td>       </tr>       </tbody>      </table>     </div>     <p>Therefore, now they should be treated as new &#x201C;stopwords&#x201D; and be removed. See Fig.3 for illustration of this.</p>     <p>A comparison experiment on training Word2Vec model using different corpus is shown in Fig.8. It shows that purpose corpus with high-frequency words removed has the highest accuracy.</p>    </section>    <section id="sec2Z2Z2">     <p><em>2.2.2 General Framework.</em> With LDA+Word2Vec, we can project words, document and topic in a semantic vector space and use word embeddings (Word2Vec) to build document embeddings (Doc2Vec) and topic embeddings (Top2Vec), meanwhile having the flexibility to choose different forms of vector transformation (weighted or unweighted vectors) based on our specific needs.</p>     <p>Two major changes are made to the method used in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#bib18">18</a>] to obtain document and topic vectors: 1. Replacing the original corpus with our purified-purpose corpus. 2. Replacing Euclidean distance with cosine distance.</p>     <p>As described in [<a class="bib" data-trigger="hover" data-toggle="popover" data-placement="top"       href="#bib18">18</a>], given a set of documents <span class="inline-equation"><span class="tex">${\rm{D}} = \{ {{\rm{d}}_1},{{\rm{d}}_2}, \ldots ,{{\rm{d}}_{\rm{n}}}\} $ </span>      </span>, words that still remain in purified-purpose corpus for every corresponding document constitute a new set <span class="inline-equation"><span class="tex">${\rm{P}} = \{ {{\rm{p}}_1},{{\rm{p}}_2}, \ldots ,{{\rm{p}}_{\rm{n}}}\} $ </span>      </span>, whose vocabulary is built with <span class="inline-equation"><span class="tex">${\rm{N}}$ </span>      </span> words: <span class="inline-equation"><span class="tex">${\rm{W}} = \{ {{\rm{w}}_1},{{\rm{w}}_2}, \ldots ,{{\rm{w}}_{\rm{N}}}\} $ </span>      </span>. By training <span class="inline-equation"><span class="tex">${\rm{P}}$ </span>      </span>, LDA outputs <span class="inline-equation"><span class="tex">${\rm{T\;}}$ </span>      </span>latent topics <span class="inline-equation"><span class="tex">$\{ {{{\rm{t}}_1},{{\rm{t}}_2}, \ldots ,{{\rm{t}}_{\rm{T}}}} \}$ </span>      </span>. We rank the probabilities of words from the highest to the lowest for each topic and denote the <span class="inline-equation"><span class="tex">${{\rm{j}}^{{\rm{th}}}}$ </span>      </span> word in topic <span class="inline-equation"><span class="tex">${{\rm{t}}_{\rm{i}}}$ </span>      </span> as <span class="inline-equation"><span class="tex">${{\rm{\theta }}_{{{\rm{i}}_{\rm{j}}}}}$ </span>      </span>. Word2Vec trains <span class="inline-equation"><span class="tex">${\rm{P}}$ </span>      </span> and vectorizes each word in vocabulary <span class="inline-equation"><span class="tex">${\rm{W}}$ </span>      </span> into a fixed size (dimension) vector <span class="inline-equation"><span class="tex">$\{ {{\rm{v}}( {{{\rm{w}}_1}} ),{\rm{v}}( {{{\rm{w}}_2}} ), \ldots ,{\rm{v}}( {{{\rm{w}}_{\rm{N}}}} )} \}$ </span>      </span>. To generate topic vector <span class="inline-equation"><span class="tex">${\rm{v}}( {{{\rm{t}}_{\rm{i}}}} )$ </span>      </span>, <span class="inline-equation"><span class="tex">${\rm{h}}$ </span>      </span> highest-probability words in <span class="inline-equation"><span class="tex">${{\rm{t}}_{\rm{i}}}$ </span>      </span> are selected and its probabilities are rescaled as weights in <span class="inline-equation"><span class="tex">$( 3 )$ </span>      </span>. In <span class="inline-equation"><span class="tex">$( 4 )$ </span>      </span>, the topic vector is a weighted sum of <span class="inline-equation"><span class="tex">${\rm{these\;h}}$ </span>      </span> word vectors. <div class="table-responsive" id="eqn3">       <div class="display-equation">       <span class="tex mytex">\begin{equation} {{\rm{\omega }}_{{{\rm{i}}_{\rm{j}}}}} = \frac{{{{\rm{\theta }}_{{i_j}}}}}{{\mathop \sum \nolimits_{n = 1}^h {{\rm{\theta }}_{{i_n}}}}}\end{equation}</span>       <br/>       <span class="equation-number">(3)</span>       </div>      </div>      <div class="table-responsive" id="eqn4">       <div class="display-equation">       <span class="tex mytex">\begin{equation}v\left( {{t_i}} \right) = \mathop \sum \limits_{n = 1}^h {{\rm{\omega }}_{{i_n}}}v\left( {{w_{{i_n}}}} \right)\end{equation}</span>       <br/>       <span class="equation-number">(4)</span>       </div>      </div>     </p>     <p>In (5), document vector is calculated by firstly summing the vectors of words in <span class="inline-equation"><span class="tex">${{\rm{p}}_{\rm{i}}}$ </span>      </span> to get the &#x201C;centroid&#x201D; of all words in document <span class="inline-equation"><span class="tex">${\rm{i}}$ </span>      </span>. Since documents have different length, we then divide the previous vector by the number of words <span class="inline-equation"><span class="tex">${{\rm{c}}_{\rm{i}}}{\rm{\;}}$ </span>      </span>in <span class="inline-equation"><span class="tex">${{\rm{p}}_{\rm{i}}}$ </span>      </span> to scale the measurement at the same level. <div class="table-responsive" id="eqn5">       <div class="display-equation">       <span class="tex mytex">\begin{equation} {\rm{v}}\left( {{p_i}} \right) = \frac{1}{c}\mathop \sum \limits_{n = 1}^c v\left( {{w_{{i_n}}}} \right)\end{equation}</span>       <br/>       <span class="equation-number">(5)</span>       </div>      </div>     </p>     <p>Cosine distance in semantic vector space measures cosine similarity between document and topics. In (6), for a single document, we calculate distances from it to all latent topics and choose the topic with the smallest cosine distance to be the topic of this document. <div class="table-responsive" id="eqn6">       <div class="display-equation">       <span class="tex mytex"/>       <br/>       <span class="equation-number">(6)</span>       </div>      </div>     </p>    </section>    <section id="sec2Z2Z3">     <p><em>2.2.3 Specific Steps.</em> A flowchart of PW-LDA is shown in <a class="fig" href="#fig4">Fig. 4</a> and the specific steps are as following:</p>     <figure id="fig4">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image4.jpg" class="img-responsive" alt="Figure 4:" longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 4:</span>       <span class="figure-title">Flowchart of the proposed model PW-LDA.</span>      </div>     </figure>     <p>      <strong>       <em>Step 1</em>      </strong>: From Wan Fang Med Database<a class="fn" href="#fn1" id="foot-fn1"><sup>1</sup></a>, choose 10 different topics (set <span class="inline-equation"><span class="tex">${\rm{T}} = 10$ </span>      </span>) and sample 300 papers for each topic to get 3000 documents as dataset <span class="inline-equation"><span class="tex">${\rm{X}}$ </span>      </span>.</p>     <p>      <strong>       <em>Step 2</em>      </strong>: Preprocess the dataset <span class="inline-equation"><span class="tex">${\rm{X}}$ </span>      </span> to get the <strong>preprocessed corpus</strong> and train Word2Vec model A to get the word embeddings.</p>     <p>Preprocessing involves the following: <ol class="list-no-style">       <li label="(1)">Segment texts;<br/></li>       <li label="(2)">Remove stop words and words whose lengths are less than 2 characters;<br/></li>      </ol>     </p>     <p>      <strong>       <em>Step 3</em>      </strong>: Partition the preprocessed corpus from <em>Step 2</em> into <strong>purpose corpus</strong>, method corpus and conclusion corpus by Algorithm <a class="tbl" href="#tb3">1</a>. (A sentence embedding is represented by averaging the embeddings of words in that sentence and use Euclidean distance to measure the distance between two consecutive sentences. The distance between the last sentence of the previous part and the first sentence of the next part is usually far, resulting in a peak in the line plot. One example for a single abstract is shown in Fig.5 and others are similar.)</p>     <p>      <strong>       <em>Step 4</em>      </strong>: Purify the information of purpose corpus obtained from <em>Step 2</em> by removing the words whose frequency of occurrence being</p>     <figure id="fig5">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image6.jpg" class="img-responsive" alt="Figure 5:" longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 5:</span>       <span class="figure-title">the Euclidean distance between Sentence embeddings.</span>      </div>     </figure>     <p>the top 20% of the purpose corpus to get the <strong>purified-purpose corpus</strong>. This corpus has higher concentration of topic information than the purpose corpus, let alone preprocessed corpus.</p>     <p>      <strong>       <em>Step 5</em>      </strong>: Train a new Word2Vec model <span class="inline-equation"><span class="tex">${\rm{B}}$ </span>      </span> by using the <strong>purified-purpose corpus</strong> obtained from <em>Step 3</em>, in which similar words have smaller cosine distance compared with Word2Vec model <span class="inline-equation"><span class="tex">${\rm{A}}$ </span>      </span>. Note that all the word embeddings used after this step are from Word2Vec model <span class="inline-equation"><span class="tex">${\rm{B}}$ </span>      </span>.</p>     <p>      <strong>       <em>Step 6</em>      </strong>: Train the LDA model by using the <strong>purified-purpose corpus</strong> obtained from <em>Step 3</em>.</p>     <p>      <strong>       <em>Step 7</em>      </strong>: Get topic embeddings using Eq.(4) from the clusters generated by LDA in <em>Step 5</em>. Here we set the number of selected topic words <span class="inline-equation"><span class="tex">${\rm{h}}$ </span>      </span> to be 5.</p>     <p>      <strong>       <em>Step 8</em>      </strong>: Get document embedding for a single document using Eq.(5).</p>     <p>      <strong>       <em>Step 9</em>      </strong>: Find the clustering category of each document by computing the cosine similarity of document embeddings in <em>Step 7</em> and topic embeddings in <em>Step 6</em> using <a class="eqn" href="#eqn6">Eq. (6)</a>.</p>    </section>    </section>   </section>   <section id="sec3">    <header>    <div class="title-info">     <h2>      <span class="section-number">3</span> RESULTS AND DISCUSSION</h2>    </div>    </header>    <p>In this section, we conduct experiment with our model on a labeled dataset and discuss the result.</p>    <section id="sec3Z1">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.1</span> DATASET</h3>     </div>    </header>    <p>Our experiment dataset is built up by selecting 10 diseases as topics and then getting 300 different documents for each topic from Wan Fang Med Database.</p>    <p>In Table <a class="tbl" href="#tb1">1</a>, we compare the preprocessed corpus with the purified-purpose corpus. Preprocessed corpus is obtained from 3000 documents after text preprocessing. Purified-purpose corpus is obtained by removing high frequency words from purpose corpus. In the table, &#x2018;C&#x2019; denotes the number of clustering centers for LDA, which is the same as the number of topics. &#x2018;Num&#x2019; denotes the number of documents we have in total. &#x2018;Mean/Max&#x2019; denotes the mean word number over the max word number of all the documents, and |V| denotes the size of a dictionary.</p>    <div class="table-responsive" id="tb1">     <div class="table-caption">      <span class="table-number">Table 1:</span>      <span class="table-title">Comparison of:preprocessed corpus and:purified-purpose corpus.</span>     </div>     <table class="table">      <thead>       <tr>       <th style="text-align:left;">Corpus\Abbr</th>       <th style="text-align:left;">C</th>       <th style="text-align:left;">Num</th>       <th style="text-align:left;">Mean/Max</th>       <th style="text-align:left;"> |V|</th>       </tr>      </thead>      <tbody>       <tr>       <td style="text-align:left;">Preprocessed corpus</td>       <td style="text-align:left;">10</td>       <td style="text-align:left;">3000</td>       <td style="text-align:left;">73.6/394</td>       <td style="text-align:left;">220822</td>       </tr>       <tr>       <td style="text-align:left;">Purified-purpose corpus</td>       <td style="text-align:left;">10</td>       <td style="text-align:left;">3000</td>       <td style="text-align:left;">5.24/32</td>       <td style="text-align:left;">15731</td>       </tr>      </tbody>     </table>    </div>    </section>    <section id="sec3Z2">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.2</span> EVALUATION METRICS</h3>     </div>    </header>    <p>The clustering performance of our model PW-LDA is evaluate by comparing the obtained cluster labels of the texts from the model and their original labels. Three metrics, accuracy (ACC), normalized mutual information (NMI) and adjusted rand index (ARI), are used to measure the clustering performance.</p>    <section id="sec3Z2Z1">     <p><em>3.2.1 accuracy (ACC).</em> Given a text <span class="inline-equation"><span class="tex">${{\rm{x}}_{\rm{i}}}$ </span>      </span>, let <span class="inline-equation"><span class="tex">${{\rm{c}}_{\rm{i}}}$ </span>      </span> and <span class="inline-equation"><span class="tex">${{\rm{y}}_{\rm{i}}}$ </span>      </span> denote the obtained cluster label and the original label of the document, respectively, then ACC can be calculated by <div class="table-responsive" id="eqn7">       <div class="display-equation">       <span class="tex mytex">\begin{equation}ACC = \frac{{\mathop \sum \nolimits_{i = 1}^n f({y_i},map\left( {{c_i}} \right))}}{n}\end{equation}</span>       <br/>       <span class="equation-number">(7)</span>       </div>      </div>where <span class="inline-equation"><span class="tex">${\rm{n}}$ </span>      </span> is the number of documents in the corpus. When <span class="inline-equation"><span class="tex">${\rm{x}} = {\rm{y}}$ </span>      </span>, <span class="inline-equation"><span class="tex">${\rm{f}}( {{\rm{x}},{\rm{y}}} ) = 1$ </span>      </span>, otherwise <span class="inline-equation"><span class="tex">${\rm{f}}( {{\rm{x}},{\rm{y}}} ) = 0$ </span>      </span>. The function map transforms the obtained cluster label <span class="inline-equation"><span class="tex">${{\rm{c}}_{\rm{i}}}$ </span>      </span> into its corresponding label from corpus.</p>    </section>    <section id="sec3Z2Z2">     <p><em>3.2.2 normalized mutual information (NMI).</em> Normalized mutual information between original label set <span class="inline-equation"><span class="tex">${\rm{Y}}$ </span>      </span> and cluster label set <span class="inline-equation"><span class="tex">${\rm{C}}$ </span>      </span> is a popular metric which can be used for evaluating clustering tasks. NMI is defined as <div class="table-responsive" id="eqn8">       <div class="display-equation">       <span class="tex mytex">\begin{equation}NMI\left( {Y,C} \right) = \frac{{MI\left( {Y,C} \right)}}{{\sqrt {H\left( Y \right)H\left( C \right)} }}\end{equation}</span>       <br/>       <span class="equation-number">(8)</span>       </div>      </div>where <span class="inline-equation"><span class="tex">${\rm{MI}}( {{\rm{Y}},{\rm{C}}} )$ </span>      </span> is mutual information between <span class="inline-equation"><span class="tex">${\rm{Y}}$ </span>      </span> and <span class="inline-equation"><span class="tex">${\rm{C}}$ </span>      </span>, <span class="inline-equation"><span class="tex">${\rm{H}}$ </span>      </span> is the entropy and the denominator is used to normalize the mutual information in the range of (0,1).</p>    </section>    <section id="sec3Z2Z3">     <p><em>3.2.3 adjusted rand index (ARI).</em> The Rand index is applied to measuring the similarity between two data clustering. The adjusted Rand index is the corrected-for-chance version of the Rand index. <span class="inline-equation"><span class="tex">${\rm{ARI}}$ </span>      </span> is defined as <div class="table-responsive" id="eqn9">       <div class="display-equation">       <span class="tex mytex">\begin{equation}ARI = \frac{{\mathop \sum \nolimits_{ij} \left( {\begin{array}{@{}*{1}{c}@{}} {{n_{ij}}}\\ 2 \end{array}} \right) - \frac{{\mathop \sum \nolimits_i \left( {\begin{array}{@{}*{1}{c}@{}} {{{\rm{a}}_{\rm{i}}}}\\ 2 \end{array}} \right){\rm{*}}\mathop \sum \nolimits_j \left( {\begin{array}{@{}*{1}{c}@{}} {{{\rm{b}}_{\rm{j}}}}\\ 2 \end{array}} \right)}}{{\left( {\begin{array}{@{}*{1}{c}@{}} n\\ 2 \end{array}} \right)}}}}{{\frac{{\mathop \sum \nolimits_i \left( {\begin{array}{@{}*{1}{c}@{}} {{a_i}}\\ 2 \end{array}} \right) + \mathop \sum \nolimits_j \left( {\begin{array}{@{}*{1}{c}@{}} {{b_j}}\\ 2 \end{array}} \right)}}{2} - \frac{{\mathop \sum \nolimits_i \left( {\begin{array}{@{}*{1}{c}@{}} {{a_i}}\\ 2 \end{array}} \right){\rm{*}}\mathop \sum \nolimits_j \left( {\begin{array}{@{}*{1}{c}@{}} {{b_j}}\\ 2 \end{array}} \right)}}{{\left( {\begin{array}{@{}*{1}{c}@{}} n\\ 2 \end{array}} \right)}}}}\end{equation}</span>       <br/>       <span class="equation-number">(9)</span>       </div>      </div>where <span class="inline-equation"><span class="tex">${\rm{n}}$ </span>      </span> is the number of documents of a corpus, <span class="inline-equation"><span class="tex">${{\rm{n}}_{{\rm{ij}}}}$ </span>      </span> is the number of documents with cluster label <span class="inline-equation"><span class="tex">${\rm{i}}$ </span>      </span> and original label<span class="inline-equation"><span class="tex">${\rm{\;j}}$ </span>      </span>, <span class="inline-equation"><span class="tex">${{\rm{a}}_{\rm{i}}}$ </span>      </span> is the number of documents with cluster label <span class="inline-equation"><span class="tex">${\rm{i}}$ </span>      </span>, <span class="inline-equation"><span class="tex">${{\rm{b}}_{\rm{j}}}$ </span>      </span> is the number of documents with original label <span class="inline-equation"><span class="tex">${\rm{j}}$ </span>      </span>. Here <span class="inline-equation"><span class="tex">$( {\begin{array}{@{}*{1}{c}@{}} {\rm{n}}\\ 2 \end{array}} )$ </span>      </span> denotes how many different combinations of 2 documents can be drawn from the corpus, <span class="inline-equation"><span class="tex">$( {\begin{array}{@{}*{1}{c}@{}} n\\ 2 \end{array}} ) = \frac{{{\rm{n}}( {{\rm{n}} - 1} )}}{2}$ </span>      </span>     </p>    </section>    </section>    <section id="sec3Z3">    <header>     <div class="title-info">      <h3>       <span class="section-number">3.3</span> QUANTITATIVE RESULT</h3>     </div>    </header>    <section id="sec3Z3Z1">     <p><em>3.3.1 Comparison of different Word2Vec sizes.</em> We try to figure out the influence of Word2Vec size (dimension of the vector) on the performance of clustering. The experiment sets the number of LDA topic words to pick to be 5. <a class="fig" href="#fig6">Fig. 6</a> shows ACC, NMI and ARI in the trial. Size 50 performs a little better than other Word2Vec sizes and it is used in our experiment. We know that bigger Word2Vec size is usually suitable for larger corpus.</p>     <figure id="fig6">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image7.jpg" class="img-responsive" alt="Figure 6:" longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 6:</span>       <span class="figure-title">Performance of PW-LDA in different Word2Vec size.</span>      </div>     </figure>    </section>    <section id="sec3Z3Z2">     <p><em>3.3.2 Influence of different number of LDA topic words on clustering performance.</em> We try to investigate to what extent the number of LDA topic words influences the clustering performance. The experiment sets the Word2Vec size to be 50. <a class="fig" href="#fig7">Fig. 7</a> shows ACC, NMI and ARI of the experiment. With the lower bound as 5, the smaller the number is, the better it performs. The words ranked after 13 have low weights and contribute little to the topic vector. Therefore, 5 topic words are selected in our experiment.</p>     <figure id="fig7">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image8.jpg" class="img-responsive" alt="Figure 7:" longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 7:</span>       <span class="figure-title">Performance of PW-LDA in different numbers of LDA topic words.</span>      </div>     </figure>    </section>    <section id="sec3Z3Z3">     <p><em>3.3.3 Comparison of training Word2Vec model B on preprocessed corpus (entire abstracts), purpose corpus and purified-purpose corpus.</em> We compare the clustering result of using three different corpora to train Word2Vec model B, controlling all the other procedures unchanged. <a class="fig" href="#fig8">Fig. 8</a> shows that the purified-purpose corpus has the best result among the three, for purified-purpose corpus has higher concentration of information about topics.</p>     <figure id="fig8">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image9.jpg" class="img-responsive" alt="Figure 8:" longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 8:</span>       <span class="figure-title">Performance of training Word2Vec model B on preprocessed corpus, purpose corpus &amp; purified-purpose corpus.</span>      </div>     </figure>     <figure id="fig9">      <img src="../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image10.jpg" class="img-responsive" alt="Figure 9:" longdesc=""/>      <div class="figure-caption">       <span class="figure-number">Figure 9:</span>       <span class="figure-title">Performance of PW-LDA and TF-IDF+LDA+W2V.</span>      </div>     </figure>    </section>    <section id="sec3Z3Z4">     <p><em>3.3.4 Comparison of information extraction.</em> We compare the information extraction method of our model with TF-IDF. TF-IDF calculates the product of a word&#x0027;s TF value and IDF value, which can represent the importance of that word in the text. The counterpart trains TF-IDF model on the preprocessed corpus and selects words whose TF-IDF value ranks top 10 for every abstract. Then calculate a document embedding by summing the word embeddings from that document and divided by 10. <a class="fig" href="#fig8">Fig. 8</a> shows the performance of the proposed method and TF-IDF. It can be seen that PW-LDA performs better than TF-IDF. This is because words which are more closely related to the topic usually appear less frequently in the academic abstract and more frequently in the main body. Therefore, it makes their TF-IDF values too low to be selected.</p>    </section>    <section id="sec3Z3Z5">     <p><em>3.3.5 Comparison of clustering results from different models.</em> We compare PW-LDA with some popular clustering methods, including KMeans, PLSA, LDA and P-LDA. PLSA is the predecessor of LDA, which is also a special LDA with no prior distribution. P-LDA is training LDA on purified-purpose corpus.</p>     <p>For each model, programs run for 10 times and the mean value is used to exclude the randomness of LDA algorithm in the experiment. Table <a class="tbl" href="#tb2">2</a> show the performance of them. PW-LDA has higher accuracy compared with others, and it is a significant improvement of NMI and ARI.</p>     <div class="table-responsive" id="tb2">      <div class="table-caption">       <span class="table-number">Table 2:</span>       <span class="table-title">Comparison of Different Models.</span>      </div>      <table class="table">       <thead>       <tr>        <th style="text-align:center;">Model\Metrix</th>        <th style="text-align:center;">ACC</th>        <th style="text-align:center;">NMI</th>        <th style="text-align:center;">ARI</th>       </tr>       </thead>       <tbody>       <tr>        <td style="text-align:center;">KMeans</td>        <td style="text-align:center;">0.510</td>        <td style="text-align:center;">0.413</td>        <td style="text-align:center;">0.259</td>       </tr>       <tr>        <td style="text-align:center;">PLSA</td>        <td style="text-align:center;">0.577</td>        <td style="text-align:center;">0.465</td>        <td style="text-align:center;">0.359</td>       </tr>       <tr>        <td style="text-align:center;">LDA</td>        <td style="text-align:center;">0.592</td>        <td style="text-align:center;">0.469</td>        <td style="text-align:center;">0.356</td>       </tr>       <tr>        <td style="text-align:center;">P-LDA</td>        <td style="text-align:center;">0.467</td>        <td style="text-align:center;">0.366</td>        <td style="text-align:center;">0.259</td>       </tr>       <tr>        <td style="text-align:center;">PW-LDA</td>        <td style="text-align:center;">         <strong>0.688</strong>        </td>        <td style="text-align:center;">         <strong>0.741</strong>        </td>        <td style="text-align:center;">         <strong>0.726</strong>        </td>       </tr>       </tbody>      </table>     </div>     <p>The lower accuracy of P-LDA than LDA shows how sparsity can have negative effect on the clustering result of LDA.</p>    </section>    </section>   </section>   <section id="sec4">    <header>    <div class="title-info">     <h2>      <span class="section-number">4</span> CONCLUSIONS</h2>    </div>    </header>    <p>In this paper, we introduced a novel clustering model based on the combination of Latent Dirichlet Allocation (LDA) and Word2Vec skip-gram model. The model refines the information of short texts from academic abstracts according to the feature of paragraphs and it generates topic embeddings containing more information compared with BOW model. It uses less data to train the word embedding and probability matrix. We have shown that this method has better performance than some traditional ones.</p>    <p>In the future, we will explore papers from more academic fields and further verify the effectiveness of PW-LDA. Apart from using purpose corpus, we are also interested in using method corpus to do clustering. This may give us a brand-new standard for classification of papers, which put academic papers into different categories based on the research methods they use rather than the specific field they study. And one may find the same idea or research method being used in a computer literature and a medical literature at the same time. Furthermore, parallel computing can be implemented to ensure practicality.</p>   </section>  </section>  <section class="back-matter">   <section id="ack-001">    <header>    <div class="title-info">     <h2>ACKNOWLEDGMENTS</h2>    </div>    </header>    <p>The research was supported in part by Ministry of Science and Technology of China under grant 2016YFB0200602, by National Science Foundation of China under grant 11401601, by Guangdong Province Frontier and Key Technology Innovative Grant 2015B010110003 and 2016B030307003, by Guangdong Province Applied Science and Technology Research Grant 2015B020233008, by Guangzhou Cooperative and Creative Key Grant 201604020003, by Guangzhou Science and Technology Creative Key Grant 2017B020210001.</p>   </section>   <section id="bib-sec-001">    <header>    <div class="title-info">     <h2 class="page-brake-head">REFERENCES</h2>    </div>    </header>    <ul class="bibUl">    <li id="bib1" label="[1]">Yu, L. (2009). Research and application of text feature extraction technology documents. (Doctoral dissertation, Beijing University of Posts and Telecommunications).</li>    <li id="bib2" label="[2]">K. Premalatha, &amp; A.M. Natarajan. (2010). A literature review on document clustering. Information Technology Journal, 9(5).</li>    <li id="bib3" label="[3]">Popova, S., Danilova, V., &amp; Egorov, A. (2014). Clustering narrow-domain short texts using k-means, linguistic patterns and lsi. Communications in Computer &amp; Information Science, 436, 66-77.</li>    <li id="bib4" label="[4]">Pinto, D., &amp; Rosso, P. (2011). A Self-enriching Methodology for Clustering Narrow Domain Short Texts. Oxford University Press.</li>    <li id="bib5" label="[5]">Pinto, D., &amp; Rosso, P. (2007). Clustering Narrow-Domain Short Texts by Using the Kullback-Leibler Distance. International Conference on Intelligent Text Processing and Computational Linguistics (Vol.4394, pp.611-622). Springer Berlin Heidelberg.</li>    <li id="bib6" label="[6]">Makagonov, P., Alexandrov, M., &amp; Gelbukh, A. (2004). Clustering Abstracts Instead of Full Texts. Text, Speech and Dialogue. Springer Berlin Heidelberg.</li>    <li id="bib7" label="[7]">Alexandrov, M., Gelbukh, A., &amp; Rosso, P. (2005). An approach to clustering abstracts. International Conference on Natural Language Processing and Information Systems (Vol.3513, pp.275-285). Springer-Verlag.</li>    <li id="bib8" label="[8]">Zheng, C. T., Liu, C., &amp; Wong, H. S. (2017). Corpus-based topic diffusion for short text clustering. Neurocomputing.</li>    <li id="bib9" label="[9]">Cagnina, L., Errecalde, M., Ingaramo, D., &amp; Rosso, P. (2014). An efficient particle swarm optimization approach to cluster short texts. Information Sciences, 265(5), 36-49.</li>    <li id="bib10" label="[10]">Seifzadeh S, Farahat A K, Kamel M S, <em>et al.</em> Short-Text Clustering using Statistical Semantics[J]. 2015:805-810.</li>    <li id="bib11" label="[11]">Xu, J., Wang, P., Tian, G., Xu, B., Zhao, J., &amp; Wang, F., <em>et al.</em> (2015). Short text clustering via convolutional neural networks. Institute of Automation Chinese Academy of Sciences, 62-69.</li>    <li id="bib12" label="[12]">Blei, D. M., Ng, A. Y., &amp; Jordan, M. I. (2003). Latent dirichlet allocation. J Machine Learning Research Archive, 3, 993-1022.</li>    <li id="bib13" label="[13]">Phan, X. H., Nguyen, L. M., &amp; Horiguchi, S. (2008). Learning to Classify Short and Sparse Text &amp; Web with Hidden Topics from Large-scale Data Collections. The International Conference of World Wide Web (pp.91-100).</li>    <li id="bib14" label="[14]">Kelaiaia, A., &amp; Merouani, H. F. (2013). Clustering with probabilistic topic models on arabic texts. Studies in Computational Intelligence, 488, 65-74.</li>    <li id="bib15" label="[15]">Onan, A., Bulut, H., &amp; Korukoglu, S. (2017). An improved ant algorithm with LDA-based representation for text document clustering. Sage Publications, Inc.</li>    <li id="bib16" label="[16]">Kumar, M., Yadav, D. K., &amp; Gupta, V. K. (2016). Frequent term based text document clustering: A new approach. International Conference on Soft Computing Techniques and Implementations (pp.11-15). IEEE.</li>    <li id="bib17" label="[17]">Mikolov, T., Chen, K., Corrado, G., &amp; Dean, J. (2013). Efficient estimation of word representations in vector space. Computer Science.</li>    <li id="bib18" label="[18]">Wang, Z., Ma, L., &amp; Zhang, Y. (2016). A Hybrid Document Feature Extraction Method Using Latent Dirichlet Allocation and Word2Vec. IEEE First International Conference on Data Science in Cyberspace (pp.98-103). IEEE Computer Society.</li>    <li id="bib19" label="[19]">Andrade, C. (2011). How to write a good abstract for a scientific paper or conference presentation.&#x00A0;Indian Journal of Psychiatry,&#x00A0;53(2), 172&#x2013;175.</li>    </ul>   </section>  </section>  <section id="foot-001" class="footnote">   <header>    <div class="title-info">    <h2>FOOTNOTE</h2>    </div>   </header>   <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a href="http://med.wanfangdata.com.cn/" target="_blank">http://med.wanfangdata.com.cn/</a></p>   <div class="bibStrip">    <p>This paper is published under the Creative Commons Attribution 4.0 International (CC-BY 4.0) license. Authors reserve their rights to disseminate the work on their personal and corporate Web sites with the appropriate attribution.</p>    <p>    <em>WWW '18, April 23-27, 2018, Lyon, France</em>    </p>    <p>&#x00A9; 2018 IW3C2 (International World Wide Web Conference Committee), published under Creative Commons CC-BY 4.0 License. ACM ISBN 978-1-4503-5640-4/18/04.<br/>DOI: <a class="link-inline force-break" target="_blank"     href="https://doi.org/10.1145/3184558.3191629">https://doi.org/10.1145/3184558.3191629</a>    </p>   </div>  </section>  <div class="pubHistory">   <p/>  </div> </body> </html> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 for Linux version 5.7.16" />
+  <title>LDA Meets Word2Vec: A Novel Model for Academic Abstract
+  Clustering</title>
+  <!-- Copyright (c) 2010-2015 The MathJax Consortium -->
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width; initial-scale=1.0;" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/bootstrap-theme.min.css" />
+  <link media="screen, print" rel="stylesheet" href=
+  "../../../data/dl.acm.org/pubs/lib/css/main.css" />
+  <script src="../../../data/dl.acm.org/pubs/lib/js/jquery.min.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bootstrap.min.js"
+  type="text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/bibCit.js" type=
+  "text/javascript"></script>
+  <script src="../../../data/dl.acm.org/pubs/lib/js/divTab.js" type=
+  "text/javascript"></script>
+  <script type="text/javascript" src=
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/x-mathjax-config">
+  <![CDATA[
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  ]]>
+  </script>
+</head>
+<body id="main">
+  <section class="front-matter">
+    <section>
+      <header class="title-info">
+        <div class="journal-title">
+          <h1><span class="title">LDA Meets Word2Vec: A Novel Model
+          for Academic Abstract Clustering</span><br />
+          <span class="subTitle"></span></h1>
+        </div>
+      </header>
+      <div class="authorGroup">
+        <div class="author">
+          <span class="givenName">Changzhou</span> <span class=
+          "surName">Li</span>, School of Data and Computer Science,
+          Sun Yat-sen University, Guangzhou, China
+        </div>
+        <div class="author">
+          <span class="givenName">Yao</span> <span class=
+          "surName">Lu</span>, School of Data and Computer Science,
+          Sun Yat-sen University, Guangzhou, China
+        </div>
+        <div class="author">
+          <span class="givenName">Junfeng</span> <span class=
+          "surName">Wu</span>, School of Data and Computer Science,
+          Sun Yat-sen University, Guangzhou, China
+        </div>
+        <div class="author">
+          <span class="givenName">Yongrui</span> <span class=
+          "surName">Zhang</span>, School of Data and Computer
+          Science, Sun Yat-sen University, Guangzhou, China
+        </div>
+        <div class="author">
+          <span class="givenName">Zhongzhou</span> <span class=
+          "surName">Xia</span>, School of Data and Computer
+          Science, Sun Yat-sen University, Guangzhou, China
+        </div>
+        <div class="author">
+          <span class="givenName">Tianchen</span> <span class=
+          "surName">Wang</span>, School of Mathematics, Sun Yat-sen
+          University, Guangzhou, China
+        </div>
+        <div class="author">
+          <span class="givenName">Dantian</span> <span class=
+          "surName">Yu</span>, School of Mathematics, Sun Yat-sen
+          University, Guangzhou, China
+        </div>
+        <div class="author">
+          <span class="givenName">Xurui</span> <span class=
+          "surName">Chen</span>, School of Mathematics, Sun Yat-sen
+          University, Guangzhou, China
+        </div>
+        <div class="author">
+          <span class="givenName">Peidong</span> <span class=
+          "surName">Liu</span>, School of Data and Computer
+          Science, Sun Yat-sen University, Guangzhou, China
+        </div>
+        <div class="author">
+          <span class="givenName">Junyu</span> <span class=
+          "surName">Guo</span>, School of Mathematics, Sun Yat-sen
+          University, Guangzhou, China
+        </div>
+      </div><br />
+      <div class="pubInfo">
+        <p>DOI: <a href="https://doi.org/10.1145/3184558.3191629"
+        target=
+        "_blank">https://doi.org/10.1145/3184558.3191629</a><br />
+        WWW '18: <a href="https://doi.org/10.1145/3184558" target=
+        "_blank">Proceedings of The Web Conference 2018</a>, Lyon,
+        France, April 2018</p>
+      </div>
+      <div class="abstract">
+        <p><small>Clustering narrow-domain short texts, such as
+        academic abstracts, is an extremely difficult clustering
+        problem. Firstly, short texts lead to low frequency and
+        sparseness of words, making clustering results highly
+        unstable and inaccurate; Secondly, narrow domain leads to
+        great overlapping of insignificant words and makes it hard
+        to distinguish between sub-domains, or fine-grained
+        clusters. The vocabulary size is also too small to
+        construct a good word bag needed by traditional clustering
+        algorithms like LDA to give a meaningful topic
+        distribution. A novel clustering model, Partitioned
+        Word2Vec-LDA (PW-LDA), is proposed in this paper to tackle
+        the described problems. Since the purpose sentences of an
+        abstract contain crucial information about the topic of the
+        paper, we firstly implement a novel algorithm to extract
+        them from the abstracts according to its structural
+        features. Then high-frequency words are removed from those
+        purpose sentences to get a purified-purpose corpus and LDA
+        and Word2Vec models are trained. After combining the
+        results of both models, we can cluster the abstracts more
+        precisely. Our model uses abstract text instead of keywords
+        to cluster because keywords may be ambiguous and cause
+        unsatisfied clustering results shown by previous work.
+        Experimental results show that the clustering results of
+        PW-LDA are much more accurate and stable than
+        state-of-the-art techniques.</small></p>
+      </div>
+      <div class="classifications">
+        <div class="author">
+          <span style=
+          "font-weight:bold;"><small>KEYWORDS:</small></span>
+          <span class="keyword"><small>Short text
+          clustering</small>,</span> <span class=
+          "keyword"><small>LDA</small>,</span> <span class=
+          "keyword"><small>Word2Vec</small>,</span> <span class=
+          "keyword"><small>Abstract</small>,</span> <span class=
+          "keyword"><small>Document clustering</small></span>
+        </div><br />
+        <div class="AcmReferenceFormat">
+          <p><small><span style="font-weight:bold;">ACM Reference
+          Format:</span><br />
+          Changzhou Li1, Yao Lu, Junfeng Wu, Yongrui Zhang,
+          Zhongzhou Xia, Tianchen Wang, Dantian Yu, Xurui Chen,
+          Peidong Liu and Junyu Guo. 2018. LDA Meets Word2Vec: A
+          Novel Model for Academic Abstract Clustering. In
+          <em>Proceedings of The 2018 Web Conference Companion (WWW
+          '18 Companion). ACM, New York, NY, USA, 12 pages.</em>
+          <a href="https://doi.org/10.1145/3184558.3191629" target=
+          "_blank">https://doi.org/10.1145/3184558.3191629</a></small></p>
+        </div>
+      </div>
+    </section>
+  </section>
+  <section class="body">
+    <section id="sec1">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">1</span>
+          INTRODUCTION</h2>
+        </div>
+      </header>
+      <p>Text clustering among academic papers is a useful approach
+      in text data mining. It helps researchers to explore
+      information based on the text clusters [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib1">1</a>]. Clustering algorithms applied to
+      multi-domain document collections are various and widely used
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib2">2</a>]. However, clustering
+      of narrow-domain texts such as texts that are all about
+      computer science or all about medicine has not been studied
+      well although it plays a significant role in scientific
+      research. Thus, recently researchers have put more focus on
+      it [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib3">3</a>,<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib4">4</a>,<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib5">5</a>].</p>
+      <p>Considering the fact that free access to full-text
+      academic papers is not always available and the high
+      dimension of full-text data, it is not practical to use the
+      full-text data for clustering. Traditional keyword-based
+      approach for clustering documents gives unstable and
+      imprecise results [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib6">6</a>]. And it fails on narrow-domain clustering, or
+      fine-grained clustering. Actually, keywords of papers from
+      the same domain overlap greatly and contribute little to
+      differentiate fine-grained topics. Alexandrov et al.
+      [<a class="bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib5">5</a>,<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib6">6</a>] suggested to cluster abstracts,
+      which contain more information about the topics than
+      keywords.</p>
+      <p>As a kind of short texts, abstracts face the problem of
+      sparsity when being clustered. To solve this problem,
+      different methods have been proposed [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib8">8</a>,<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib9">9</a>,<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib10">10</a>,<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib11">11</a>]. One of the most popular methods is Latent
+      Dirichlet Allocation(LDA) model, in which a single topic is
+      defined as a probability distribution over words, so that
+      each document can be viewed as a mixture of various topics.
+      Each word is generated by a specific topic individually in
+      LDA model, and the corresponding topic is drawn from its
+      associated proportion distribution [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib12">12</a>]. LDA has the advantage of
+      reducing the dimension of text data. Based on the external
+      Wikipedia corpus, Phanetal et al. [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib13">13</a>] proposed to use LDA to discover
+      hidden topics and expand short texts. In [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib14">14</a>], K-means clustering algorithms is
+      enhanced based on LDA model. Onan et al. [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib15">15</a>] came up with an improved ant
+      algorithm with LDA-based representation for text document
+      clustering. However, those models that have a good result in
+      other types of short texts often give very unstable or
+      imprecise results when clustering abstracts of academic
+      papers, technical reports, patents and so on [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib7">7</a>]. Although LDA excels at extracting
+      the lateral topic information out of the text internally, its
+      low-dimensional characteristic weakens the ability to
+      differentiate the texts [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib16">16</a>]. For instance, Alexandrov et al. [<a class=
+      "bib" data-trigger="hover" data-toggle="popover"
+      data-placement="top" href="#bib7">7</a>] admitted that
+      abstracts cannot be clustered with the same quality as full
+      texts in their experiment.</p>
+      <p>Since we are dealing with document collections containing
+      documents from one narrow domain and the size of an abstract
+      is small, the intersection of text information is strong and
+      it can greatly weaken the clustering results [<a class="bib"
+      data-trigger="hover" data-toggle="popover" data-placement=
+      "top" href="#bib7">7</a>]. To avoid the negative effect, it
+      is critical to extract key information from an abstract.
+      Generally speaking, the abstracts of academic papers usually
+      contain three important elements of a research: the purpose,
+      the new method, and the results or conclusions. Based on this
+      observation, we propose Partition Word2Vec-LDA (PW-LDA)
+      model, a novel fine-grained text clustering model for
+      abstracts.</p>
+      <p>Instead of using the entire abstract, we extract the
+      purpose sentences from the abstract, followed by other
+      information extraction steps. Next, LDA and Word2Vec are
+      utilized together to obtain embeddings which represents
+      sentences and topics respectively. Word2Vec, proposed by
+      Mikolov et al. [<a class="bib" data-trigger="hover"
+      data-toggle="popover" data-placement="top" href=
+      "#bib17">17</a>], takes surrounding words around a certain
+      word into consideration and it is efficient and accurate in
+      tasks related to the measurement of word similarity. A hybrid
+      approach in [<a class="bib" data-trigger="hover" data-toggle=
+      "popover" data-placement="top" href="#bib18">18</a>] combines
+      Word2Vec and LDA to extract features from documents with
+      bag-of-distances in a semantic space. It not only connects
+      the relationship between documents and topics, but also
+      integrates the contextual relationships among words, which
+      leads to a good classification performance. Inspired by this
+      idea, we propose the topic embeddings and the sentence
+      embeddings and use them to measure the similarity between
+      different topics and documents.</p>
+      <p>The main contribution of our work is that we propose
+      PW-LDA, a novel fine-grained text clustering model for
+      abstracts. It can be summarized as follows: (1) We develop a
+      method to extract purpose sentences that are the key
+      information in the abstract used for clustering. (2) We
+      propose a novel model combining LDA and Word2Vec to get a
+      good result in fine-grained text clustering of abstracts. The
+      rest of the paper is organized as follows. In Section
+      <a class="sec" href="#sec2">2</a>, we will describe the
+      framework of our model. Section <a class="sec" href=
+      "#sec3">3</a> provides details about experiments which
+      compare our model with other relevant methods. Conclusions
+      are presented in Section <a class="sec" href=
+      "#sec4">4</a>.</p>
+    </section>
+    <section id="sec2">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">2</span>
+          METHODOLOGY</h2>
+        </div>
+      </header>
+      <section id="sec2Z1">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.1</span>
+            Preliminaries</h3>
+          </div>
+        </header>
+        <section id="sec2Z1Z1">
+          <p><em>2.1.1 LDA (Latent Dirichlet Allocation).</em> LDA
+          is a popular generative probabilistic topic model, where
+          each document is represented as a random mixture of
+          latent topics and each topic is represented as a
+          distribution over fixed set of words [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#bib12">12</a>]. In LDA, each
+          document can exhibit multiple topics with different
+          degrees. The words in each document are the observed
+          data, according to which, the main objective is to infer
+          the underlying latent topic structure. For each document
+          in the corpus, the words are generated with a two-staged
+          procedure. First, a distribution over topics is randomly
+          chosen. Then, for each word of the document, a topic from
+          the distribution over topics is randomly chosen and a
+          word from the particular distribution is randomly chosen.
+          LDA can be modelled as a three-level Bayesian graphical
+          model. This graphical model of LDA is presented in
+          <a class="fig" href="#fig1">Fig. 1</a> . In <a class=
+          "fig" href="#fig1">Fig. 1</a>, nodes are random variables
+          and edges represent possible dependencies between the
+          variables. In this representation, <span class=
+          "inline-equation"><span class="tex">${\rm{\alpha
+          }}$</span></span> and <span class=
+          "inline-equation"><span class="tex">${\rm{\beta
+          }}$</span></span> denotes the Dirichlet parameter,
+          <span class="inline-equation"><span class=
+          "tex">${\rm{\theta }}$</span></span> denotes
+          document-level topic variables, <span class=
+          "inline-equation"><span class=
+          "tex">${\rm{z}}$</span></span> denotes per-word topic
+          assignment, <span class="inline-equation"><span class=
+          "tex">${\rm{w}}$</span></span> denotes the observed word.
+          As the three-layered representation in <a class="fig"
+          href="#fig1">Fig. 1</a> shows, <span class=
+          "inline-equation"><span class="tex">${\rm{\alpha
+          }}$</span></span> and <span class=
+          "inline-equation"><span class="tex">${\rm{\beta
+          }}$</span></span> parameters depend on number of topics
+          and vocabulary size [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#bib12">12</a>], document-level topic variables are
+          sampled for each document and word-level variables are
+          sampled for each word of the document. In LDA, a word is
+          a discrete data from a vocabulary indexed as <span class=
+          "inline-equation"><span class="tex">$1, \ldots
+          ,V$</span></span> . A document is a sequence of N words
+          <span class="inline-equation"><span class="tex">${\rm{w}}
+          = ( {{w_1},{w_2}, \ldots ,{w_N}} )$</span></span> . A
+          corpus consists of M documents and represented as
+          <span class="inline-equation"><span class="tex">${\rm{D}}
+          = ( {{D_1},{D_2}, \ldots ,{D_M}} )$</span></span> .</p>
+          <figure id="fig1">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image1.jpg"
+            class="img-responsive" alt="Figure 1:" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 1:</span>
+              <span class="figure-title">The graphical model of
+              LDA.</span>
+            </div>
+          </figure>
+          <figure id="fig2">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image2.jpg"
+            class="img-responsive" alt="Figure 2:" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 2:</span>
+              <span class="figure-title">Neural network structure
+              for language model.</span>
+            </div>
+          </figure>
+          <figure id="fig3">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image3.jpeg"
+            class="img-responsive" alt="Figure 3:" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 3:</span>
+              <span class="figure-title">Different “stopwords” for
+              different corpus.</span>
+            </div>
+          </figure>
+          <p>The joint probability of LDA is</p>
+          <div class="table-responsive" id="eqn1">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}p\left(
+              {\theta ,z,w{\rm{|}}\alpha ,\beta } \right) = p\left(
+              {\theta {\rm{|}}\alpha } \right){\rm{*}}\mathop \prod
+              \limits_{n - 1}^N p\left( {{z_n}{\rm{|}}\theta }
+              \right){\rm{*}}p({w_n}|{z_n},\beta
+              )\end{equation}</span><br />
+              <span class="equation-number">(1)</span>
+            </div>
+          </div>
+          <p></p>
+          <p>In the parameter solving process, <span class=
+          "inline-equation"><span class=
+          "tex">${\rm{w}}$</span></span> denotes observation
+          variables, <span class="inline-equation"><span class=
+          "tex">${\rm{\theta }}$</span></span> and <span class=
+          "inline-equation"><span class="tex">$z$</span></span>
+          denote hidden variables. By applying EM algorithm,
+          <span class="inline-equation"><span class="tex">$\alpha
+          $</span></span> and <span class=
+          "inline-equation"><span class="tex">$\beta
+          $</span></span> are learned.</p>
+        </section>
+        <section id="sec2Z1Z2">
+          <p><em>2.1.2 Word2Vec.</em> The word embedding model uses
+          the idea of neural network to train the language model
+          and treats each word as a vector. The model assumes that
+          each word's appearance only relates to a limited number
+          of words before it, focusing on the sequential
+          combination of words. By using tanh as the activation
+          function, the joint probabilities of sequences are
+          calculated from the sequence of word vectors, and neural
+          network is used to optimize the model and
+          coefficients.</p>
+          <p><span class="inline-equation"><span class="tex">$C( w
+          )$</span></span> represents the word vector corresponding
+          to a certain word, and <span class=
+          "inline-equation"><span class="tex">$C$</span></span> is
+          an <span class="inline-equation"><span class="tex">$| V
+          |*m$</span></span> matrix, where <span class=
+          "inline-equation"><span class="tex">$| V |$</span></span>
+          is the size of the vocabulary and <span class=
+          "inline-equation"><span class=
+          "tex">${\rm{m}}$</span></span> is the dimension of the
+          word vector.</p>
+          <p>The first layer (input layer) of the network is a
+          vector, denoted by <span class=
+          "inline-equation"><span class="tex">$x$</span></span> ,
+          is formed by <span class="inline-equation"><span class=
+          "tex">$n - 1$</span></span> vectors <span class=
+          "inline-equation"><span class="tex">$C( {{w_{t - n + 1}}}
+          ),{\rm{\;\;}} \ldots ,{\rm{\;}}C( {{w_{t - 2}}}
+          ),{\rm{\;\;}}C( {{w_{t - 1}}} )$</span></span> . The
+          second layer (hidden layer) of the network is calculated
+          using <span class="inline-equation"><span class="tex">$d
+          + Hx$</span></span> . <span class=
+          "inline-equation"><span class="tex">$d$</span></span> is
+          the bias term, after which tanh is used as the activation
+          function. The third layer (output layer) of the network
+          has a total of <span class="inline-equation"><span class=
+          "tex">$| V |$</span></span> nodes, and each node
+          <span class="inline-equation"><span class=
+          "tex">$({y_i})$</span></span> represents the unnormalized
+          probability of the <span class=
+          "inline-equation"><span class="tex">$i - 1$</span></span>
+          th word. Finally, the output value is normalized to the
+          rate by using the Softmax function.</p>
+          <div class="table-responsive" id="eqn2">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}y = b + Wx +
+              Utanh\left( {d + Hx}
+              \right)\end{equation}</span><br />
+              <span class="equation-number">(2)</span>
+            </div>
+          </div>
+          <p></p>
+        </section>
+      </section>
+      <section id="sec2Z2">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">2.2</span> Proposed
+            Method</h3>
+          </div>
+        </header>
+        <p>The framework of the proposed model PW-LDA will be
+        introduced in this section. Given a dataset of abstracts
+        from academic papers in the same narrow domain, our goal is
+        to cluster the dataset into a fine-grained cluster
+        <span class="inline-equation"><span class=
+        "tex">${\rm{C}}$</span></span> .</p>
+        <section id="sec2Z2Z1">
+          <p><em>2.2.1 Challenges &amp; Solutions.</em> Two major
+          challenges can be overcome by our model:</p>
+          <p>1. Short texts:</p>
+          <p>● LDA+Word2Vec helps reduce the sparsity of short
+          texts.</p>
+          <p>LDA is traditionally used for document topic
+          clustering. It defines global hierarchical relationships
+          between words, documents and topics. However, we cannot
+          get a good “document-topic distribution” from LDA due to
+          the sparsity of abstracts and low frequencies of terms,
+          thus leading to a bad clustering result.</p>
+          <p>We also refuse to use keywords in
+          <strong>clustering</strong> because generally only 10% or
+          20% of the keywords from the complete keyword list occur
+          in every document and their absolute frequency usually is
+          one or two. In this case, changing a keyword frequency by
+          one can significantly change the clustering results
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href=
+          "#bib5">5</a>,<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#bib7">7</a>,<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#bib3">3</a>]. Instead of clustering, keywords are
+          usually used in classification problems where exact
+          matches are needed. However, it is clustering that is
+          mostly used in recommendation system rather than
+          classification. When clustering academic papers into
+          different topics using PW-LDA, we take many factors into
+          consideration: the probability distribution of words for
+          different topics, semantics of context and syntax. As a
+          result, a reader may be able to find more overall related
+          papers for the latent topic he or she is searching
+          for.</p>
+          <p>Word2Vec is a word embedding model to predict a target
+          word from its surrounding contextual words. In Word2Vec,
+          semantically similar words are mapped to nearby points in
+          a continuous vector space and order of words is taken
+          into consideration as well.</p>
+          <p>To solve this problem, we get inspiration from
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href="#bib18">18</a>] and
+          combines LDA with Word2Vec in our new model PW-LDA.</p>
+          <p>2. Narrow domain:</p>
+          <p>● Purpose sentences extraction method, high-frequency
+          words removal and LDA+Word2Vec all help enhance the
+          capability of discrimination and predication for
+          narrow-domain texts clustering.</p>
+          <p>We notice that the structure of an abstract from
+          scientific academic paper can usually be partitioned into
+          three parts: “<strong>purpose</strong>”,
+          “<strong>method</strong>”, and
+          “<strong>conclusion</strong>”. The “purpose” part mostly
+          appears at the beginning of an abstract and explains
+          research background, research questions and purpose. The
+          following information is usually outlined [<a class="bib"
+          data-trigger="hover" data-toggle="popover"
+          data-placement="top" href="#bib19">19</a>]:</p>
+          <ol class="list-no-style">
+            <li label="1)">What is already known about the
+            subject.<br /></li>
+            <li label="2)">What is not known about the subject and
+            hence what the study intended to examine (or what the
+            paper seeks to present).<br /></li>
+          </ol>
+          <p></p>
+          <p>Therefore, <strong>purpose sentences</strong> are most
+          relevant to the topic of a scientific paper. we introduce
+          Text Partition Algorithm (see Algorithm <a class="tbl"
+          href="#tb3">1</a>) to partition abstracts into three
+          parts. A purified-purpose corpus is obtained by removing
+          high frequency words from purpose sentences corpus. This
+          step is important for achieving a higher accuracy of
+          clustering. As we mentioned in the abstract, narrow
+          domain leads to great overlapping of insignificant words
+          and makes it hard to distinguish between sub-domains. For
+          example, words like “factor”, “characteristic”,
+          “control”, “measure” all appear frequently in our purpose
+          corpus. These words are not removed in previous
+          preprocessing step because they are not seen as common
+          stopwords. However, when the clustering domain becomes
+          narrower, these high frequency words will appear in many
+          subdomains and have substantial negative effects on
+          fine-grained clustering.</p>
+          <div class="table-responsive" id="tb3">
+            <div class="table-caption">
+              <span class="table-number">Algorithm 1:</span>
+              <span class="table-title">Text Partition</span>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td><img src=
+                  "../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image5.jpg"
+                  class="img-responsive" alt="" longdesc="" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Therefore, now they should be treated as new
+          “stopwords” and be removed. See Fig.3 for illustration of
+          this.</p>
+          <p>A comparison experiment on training Word2Vec model
+          using different corpus is shown in Fig.8. It shows that
+          purpose corpus with high-frequency words removed has the
+          highest accuracy.</p>
+        </section>
+        <section id="sec2Z2Z2">
+          <p><em>2.2.2 General Framework.</em> With LDA+Word2Vec,
+          we can project words, document and topic in a semantic
+          vector space and use word embeddings (Word2Vec) to build
+          document embeddings (Doc2Vec) and topic embeddings
+          (Top2Vec), meanwhile having the flexibility to choose
+          different forms of vector transformation (weighted or
+          unweighted vectors) based on our specific needs.</p>
+          <p>Two major changes are made to the method used in
+          [<a class="bib" data-trigger="hover" data-toggle=
+          "popover" data-placement="top" href="#bib18">18</a>] to
+          obtain document and topic vectors: 1. Replacing the
+          original corpus with our purified-purpose corpus. 2.
+          Replacing Euclidean distance with cosine distance.</p>
+          <p>As described in [<a class="bib" data-trigger="hover"
+          data-toggle="popover" data-placement="top" href=
+          "#bib18">18</a>], given a set of documents <span class=
+          "inline-equation"><span class="tex">${\rm{D}} = \{
+          {{\rm{d}}_1},{{\rm{d}}_2}, \ldots ,{{\rm{d}}_{\rm{n}}}\}
+          $</span></span> , words that still remain in
+          purified-purpose corpus for every corresponding document
+          constitute a new set <span class=
+          "inline-equation"><span class="tex">${\rm{P}} = \{
+          {{\rm{p}}_1},{{\rm{p}}_2}, \ldots ,{{\rm{p}}_{\rm{n}}}\}
+          $</span></span> , whose vocabulary is built with
+          <span class="inline-equation"><span class=
+          "tex">${\rm{N}}$</span></span> words: <span class=
+          "inline-equation"><span class="tex">${\rm{W}} = \{
+          {{\rm{w}}_1},{{\rm{w}}_2}, \ldots ,{{\rm{w}}_{\rm{N}}}\}
+          $</span></span> . By training <span class=
+          "inline-equation"><span class=
+          "tex">${\rm{P}}$</span></span> , LDA outputs <span class=
+          "inline-equation"><span class=
+          "tex">${\rm{T\;}}$</span></span> latent topics
+          <span class="inline-equation"><span class="tex">$\{
+          {{{\rm{t}}_1},{{\rm{t}}_2}, \ldots ,{{\rm{t}}_{\rm{T}}}}
+          \}$</span></span> . We rank the probabilities of words
+          from the highest to the lowest for each topic and denote
+          the <span class="inline-equation"><span class=
+          "tex">${{\rm{j}}^{{\rm{th}}}}$</span></span> word in
+          topic <span class="inline-equation"><span class=
+          "tex">${{\rm{t}}_{\rm{i}}}$</span></span> as <span class=
+          "inline-equation"><span class="tex">${{\rm{\theta
+          }}_{{{\rm{i}}_{\rm{j}}}}}$</span></span> . Word2Vec
+          trains <span class="inline-equation"><span class=
+          "tex">${\rm{P}}$</span></span> and vectorizes each word
+          in vocabulary <span class="inline-equation"><span class=
+          "tex">${\rm{W}}$</span></span> into a fixed size
+          (dimension) vector <span class=
+          "inline-equation"><span class="tex">$\{ {{\rm{v}}(
+          {{{\rm{w}}_1}} ),{\rm{v}}( {{{\rm{w}}_2}} ), \ldots
+          ,{\rm{v}}( {{{\rm{w}}_{\rm{N}}}} )} \}$</span></span> .
+          To generate topic vector <span class=
+          "inline-equation"><span class="tex">${\rm{v}}(
+          {{{\rm{t}}_{\rm{i}}}} )$</span></span> , <span class=
+          "inline-equation"><span class=
+          "tex">${\rm{h}}$</span></span> highest-probability words
+          in <span class="inline-equation"><span class=
+          "tex">${{\rm{t}}_{\rm{i}}}$</span></span> are selected
+          and its probabilities are rescaled as weights in
+          <span class="inline-equation"><span class="tex">$( 3
+          )$</span></span> . In <span class=
+          "inline-equation"><span class="tex">$( 4 )$</span></span>
+          , the topic vector is a weighted sum of <span class=
+          "inline-equation"><span class=
+          "tex">${\rm{these\;h}}$</span></span> word vectors.</p>
+          <div class="table-responsive" id="eqn3">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation} {{\rm{\omega
+              }}_{{{\rm{i}}_{\rm{j}}}}} = \frac{{{{\rm{\theta
+              }}_{{i_j}}}}}{{\mathop \sum \nolimits_{n = 1}^h
+              {{\rm{\theta }}_{{i_n}}}}}\end{equation}</span><br />
+              <span class="equation-number">(3)</span>
+            </div>
+          </div>
+          <div class="table-responsive" id="eqn4">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}v\left(
+              {{t_i}} \right) = \mathop \sum \limits_{n = 1}^h
+              {{\rm{\omega }}_{{i_n}}}v\left( {{w_{{i_n}}}}
+              \right)\end{equation}</span><br />
+              <span class="equation-number">(4)</span>
+            </div>
+          </div>
+          <p></p>
+          <p>In (5), document vector is calculated by firstly
+          summing the vectors of words in <span class=
+          "inline-equation"><span class=
+          "tex">${{\rm{p}}_{\rm{i}}}$</span></span> to get the
+          “centroid” of all words in document <span class=
+          "inline-equation"><span class=
+          "tex">${\rm{i}}$</span></span> . Since documents have
+          different length, we then divide the previous vector by
+          the number of words <span class=
+          "inline-equation"><span class=
+          "tex">${{\rm{c}}_{\rm{i}}}{\rm{\;}}$</span></span> in
+          <span class="inline-equation"><span class=
+          "tex">${{\rm{p}}_{\rm{i}}}$</span></span> to scale the
+          measurement at the same level.</p>
+          <div class="table-responsive" id="eqn5">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}
+              {\rm{v}}\left( {{p_i}} \right) = \frac{1}{c}\mathop
+              \sum \limits_{n = 1}^c v\left( {{w_{{i_n}}}}
+              \right)\end{equation}</span><br />
+              <span class="equation-number">(5)</span>
+            </div>
+          </div>
+          <p></p>
+          <p>Cosine distance in semantic vector space measures
+          cosine similarity between document and topics. In (6),
+          for a single document, we calculate distances from it to
+          all latent topics and choose the topic with the smallest
+          cosine distance to be the topic of this document.</p>
+          <div class="table-responsive" id="eqn6">
+            <div class="display-equation">
+              <span class="tex mytex"></span><br />
+              <span class="equation-number">(6)</span>
+            </div>
+          </div>
+          <p></p>
+        </section>
+        <section id="sec2Z2Z3">
+          <p><em>2.2.3 Specific Steps.</em> A flowchart of PW-LDA
+          is shown in <a class="fig" href="#fig4">Fig. 4</a> and
+          the specific steps are as following:</p>
+          <figure id="fig4">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image4.jpg"
+            class="img-responsive" alt="Figure 4:" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 4:</span>
+              <span class="figure-title">Flowchart of the proposed
+              model PW-LDA.</span>
+            </div>
+          </figure>
+          <p><strong><em>Step 1</em></strong> : From Wan Fang Med
+          Database<a class="fn" href="#fn1" id=
+          "foot-fn1"><sup>1</sup></a>, choose 10 different topics
+          (set <span class="inline-equation"><span class=
+          "tex">${\rm{T}} = 10$</span></span> ) and sample 300
+          papers for each topic to get 3000 documents as dataset
+          <span class="inline-equation"><span class=
+          "tex">${\rm{X}}$</span></span> .</p>
+          <p><strong><em>Step 2</em></strong> : Preprocess the
+          dataset <span class="inline-equation"><span class=
+          "tex">${\rm{X}}$</span></span> to get the
+          <strong>preprocessed corpus</strong> and train Word2Vec
+          model A to get the word embeddings.</p>
+          <p>Preprocessing involves the following:</p>
+          <ol class="list-no-style">
+            <li label="(1)">Segment texts;<br /></li>
+            <li label="(2)">Remove stop words and words whose
+            lengths are less than 2 characters;<br /></li>
+          </ol>
+          <p></p>
+          <p><strong><em>Step 3</em></strong> : Partition the
+          preprocessed corpus from <em>Step 2</em> into
+          <strong>purpose corpus</strong>, method corpus and
+          conclusion corpus by Algorithm <a class="tbl" href=
+          "#tb3">1</a>. (A sentence embedding is represented by
+          averaging the embeddings of words in that sentence and
+          use Euclidean distance to measure the distance between
+          two consecutive sentences. The distance between the last
+          sentence of the previous part and the first sentence of
+          the next part is usually far, resulting in a peak in the
+          line plot. One example for a single abstract is shown in
+          Fig.5 and others are similar.)</p>
+          <p><strong><em>Step 4</em></strong> : Purify the
+          information of purpose corpus obtained from <em>Step
+          2</em> by removing the words whose frequency of
+          occurrence being</p>
+          <figure id="fig5">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image6.jpg"
+            class="img-responsive" alt="Figure 5:" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 5:</span>
+              <span class="figure-title">the Euclidean distance
+              between Sentence embeddings.</span>
+            </div>
+          </figure>
+          <p>the top 20% of the purpose corpus to get the
+          <strong>purified-purpose corpus</strong>. This corpus has
+          higher concentration of topic information than the
+          purpose corpus, let alone preprocessed corpus.</p>
+          <p><strong><em>Step 5</em></strong> : Train a new
+          Word2Vec model <span class="inline-equation"><span class=
+          "tex">${\rm{B}}$</span></span> by using the
+          <strong>purified-purpose corpus</strong> obtained from
+          <em>Step 3</em>, in which similar words have smaller
+          cosine distance compared with Word2Vec model <span class=
+          "inline-equation"><span class=
+          "tex">${\rm{A}}$</span></span> . Note that all the word
+          embeddings used after this step are from Word2Vec model
+          <span class="inline-equation"><span class=
+          "tex">${\rm{B}}$</span></span> .</p>
+          <p><strong><em>Step 6</em></strong> : Train the LDA model
+          by using the <strong>purified-purpose corpus</strong>
+          obtained from <em>Step 3</em>.</p>
+          <p><strong><em>Step 7</em></strong> : Get topic
+          embeddings using Eq.(4) from the clusters generated by
+          LDA in <em>Step 5</em>. Here we set the number of
+          selected topic words <span class=
+          "inline-equation"><span class=
+          "tex">${\rm{h}}$</span></span> to be 5.</p>
+          <p><strong><em>Step 8</em></strong> : Get document
+          embedding for a single document using Eq.(5).</p>
+          <p><strong><em>Step 9</em></strong> : Find the clustering
+          category of each document by computing the cosine
+          similarity of document embeddings in <em>Step 7</em> and
+          topic embeddings in <em>Step 6</em> using <a class="eqn"
+          href="#eqn6">Eq. (6)</a>.</p>
+        </section>
+      </section>
+    </section>
+    <section id="sec3">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">3</span> RESULTS AND
+          DISCUSSION</h2>
+        </div>
+      </header>
+      <p>In this section, we conduct experiment with our model on a
+      labeled dataset and discuss the result.</p>
+      <section id="sec3Z1">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.1</span>
+            DATASET</h3>
+          </div>
+        </header>
+        <p>Our experiment dataset is built up by selecting 10
+        diseases as topics and then getting 300 different documents
+        for each topic from Wan Fang Med Database.</p>
+        <p>In Table <a class="tbl" href="#tb1">1</a>, we compare
+        the preprocessed corpus with the purified-purpose corpus.
+        Preprocessed corpus is obtained from 3000 documents after
+        text preprocessing. Purified-purpose corpus is obtained by
+        removing high frequency words from purpose corpus. In the
+        table, ‘C’ denotes the number of clustering centers for
+        LDA, which is the same as the number of topics. ‘Num’
+        denotes the number of documents we have in total.
+        ‘Mean/Max’ denotes the mean word number over the max word
+        number of all the documents, and |V| denotes the size of a
+        dictionary.</p>
+        <div class="table-responsive" id="tb1">
+          <div class="table-caption">
+            <span class="table-number">Table 1:</span> <span class=
+            "table-title">Comparison of:preprocessed corpus
+            and:purified-purpose corpus.</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Corpus\Abbr</th>
+                <th style="text-align:left;">C</th>
+                <th style="text-align:left;">Num</th>
+                <th style="text-align:left;">Mean/Max</th>
+                <th style="text-align:left;">|V|</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Preprocessed
+                corpus</td>
+                <td style="text-align:left;">10</td>
+                <td style="text-align:left;">3000</td>
+                <td style="text-align:left;">73.6/394</td>
+                <td style="text-align:left;">220822</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Purified-purpose
+                corpus</td>
+                <td style="text-align:left;">10</td>
+                <td style="text-align:left;">3000</td>
+                <td style="text-align:left;">5.24/32</td>
+                <td style="text-align:left;">15731</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="sec3Z2">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.2</span> EVALUATION
+            METRICS</h3>
+          </div>
+        </header>
+        <p>The clustering performance of our model PW-LDA is
+        evaluate by comparing the obtained cluster labels of the
+        texts from the model and their original labels. Three
+        metrics, accuracy (ACC), normalized mutual information
+        (NMI) and adjusted rand index (ARI), are used to measure
+        the clustering performance.</p>
+        <section id="sec3Z2Z1">
+          <p><em>3.2.1 accuracy (ACC).</em> Given a text
+          <span class="inline-equation"><span class=
+          "tex">${{\rm{x}}_{\rm{i}}}$</span></span> , let
+          <span class="inline-equation"><span class=
+          "tex">${{\rm{c}}_{\rm{i}}}$</span></span> and
+          <span class="inline-equation"><span class=
+          "tex">${{\rm{y}}_{\rm{i}}}$</span></span> denote the
+          obtained cluster label and the original label of the
+          document, respectively, then ACC can be calculated by</p>
+          <div class="table-responsive" id="eqn7">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}ACC =
+              \frac{{\mathop \sum \nolimits_{i = 1}^n
+              f({y_i},map\left( {{c_i}}
+              \right))}}{n}\end{equation}</span><br />
+              <span class="equation-number">(7)</span>
+            </div>
+          </div>where <span class="inline-equation"><span class=
+          "tex">${\rm{n}}$</span></span> is the number of documents
+          in the corpus. When <span class=
+          "inline-equation"><span class="tex">${\rm{x}} =
+          {\rm{y}}$</span></span> , <span class=
+          "inline-equation"><span class="tex">${\rm{f}}(
+          {{\rm{x}},{\rm{y}}} ) = 1$</span></span> , otherwise
+          <span class="inline-equation"><span class=
+          "tex">${\rm{f}}( {{\rm{x}},{\rm{y}}} ) = 0$</span></span>
+          . The function map transforms the obtained cluster label
+          <span class="inline-equation"><span class=
+          "tex">${{\rm{c}}_{\rm{i}}}$</span></span> into its
+          corresponding label from corpus.
+          <p></p>
+        </section>
+        <section id="sec3Z2Z2">
+          <p><em>3.2.2 normalized mutual information (NMI).</em>
+          Normalized mutual information between original label set
+          <span class="inline-equation"><span class=
+          "tex">${\rm{Y}}$</span></span> and cluster label set
+          <span class="inline-equation"><span class=
+          "tex">${\rm{C}}$</span></span> is a popular metric which
+          can be used for evaluating clustering tasks. NMI is
+          defined as</p>
+          <div class="table-responsive" id="eqn8">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}NMI\left(
+              {Y,C} \right) = \frac{{MI\left( {Y,C}
+              \right)}}{{\sqrt {H\left( Y \right)H\left( C \right)}
+              }}\end{equation}</span><br />
+              <span class="equation-number">(8)</span>
+            </div>
+          </div>where <span class="inline-equation"><span class=
+          "tex">${\rm{MI}}( {{\rm{Y}},{\rm{C}}} )$</span></span> is
+          mutual information between <span class=
+          "inline-equation"><span class=
+          "tex">${\rm{Y}}$</span></span> and <span class=
+          "inline-equation"><span class=
+          "tex">${\rm{C}}$</span></span> , <span class=
+          "inline-equation"><span class=
+          "tex">${\rm{H}}$</span></span> is the entropy and the
+          denominator is used to normalize the mutual information
+          in the range of (0,1).
+          <p></p>
+        </section>
+        <section id="sec3Z2Z3">
+          <p><em>3.2.3 adjusted rand index (ARI).</em> The Rand
+          index is applied to measuring the similarity between two
+          data clustering. The adjusted Rand index is the
+          corrected-for-chance version of the Rand index.
+          <span class="inline-equation"><span class=
+          "tex">${\rm{ARI}}$</span></span> is defined as</p>
+          <div class="table-responsive" id="eqn9">
+            <div class="display-equation">
+              <span class="tex mytex">\begin{equation}ARI =
+              \frac{{\mathop \sum \nolimits_{ij} \left(
+              {\begin{array}{@{}*{1}{c}@{}} {{n_{ij}}}\\ 2
+              \end{array}} \right) - \frac{{\mathop \sum
+              \nolimits_i \left( {\begin{array}{@{}*{1}{c}@{}}
+              {{{\rm{a}}_{\rm{i}}}}\\ 2 \end{array}}
+              \right){\rm{*}}\mathop \sum \nolimits_j \left(
+              {\begin{array}{@{}*{1}{c}@{}} {{{\rm{b}}_{\rm{j}}}}\\
+              2 \end{array}} \right)}}{{\left(
+              {\begin{array}{@{}*{1}{c}@{}} n\\ 2 \end{array}}
+              \right)}}}}{{\frac{{\mathop \sum \nolimits_i \left(
+              {\begin{array}{@{}*{1}{c}@{}} {{a_i}}\\ 2
+              \end{array}} \right) + \mathop \sum \nolimits_j
+              \left( {\begin{array}{@{}*{1}{c}@{}} {{b_j}}\\ 2
+              \end{array}} \right)}}{2} - \frac{{\mathop \sum
+              \nolimits_i \left( {\begin{array}{@{}*{1}{c}@{}}
+              {{a_i}}\\ 2 \end{array}} \right){\rm{*}}\mathop \sum
+              \nolimits_j \left( {\begin{array}{@{}*{1}{c}@{}}
+              {{b_j}}\\ 2 \end{array}} \right)}}{{\left(
+              {\begin{array}{@{}*{1}{c}@{}} n\\ 2 \end{array}}
+              \right)}}}}\end{equation}</span><br />
+              <span class="equation-number">(9)</span>
+            </div>
+          </div>where <span class="inline-equation"><span class=
+          "tex">${\rm{n}}$</span></span> is the number of documents
+          of a corpus, <span class="inline-equation"><span class=
+          "tex">${{\rm{n}}_{{\rm{ij}}}}$</span></span> is the
+          number of documents with cluster label <span class=
+          "inline-equation"><span class=
+          "tex">${\rm{i}}$</span></span> and original
+          label<span class="inline-equation"><span class=
+          "tex">${\rm{\;j}}$</span></span> , <span class=
+          "inline-equation"><span class=
+          "tex">${{\rm{a}}_{\rm{i}}}$</span></span> is the number
+          of documents with cluster label <span class=
+          "inline-equation"><span class=
+          "tex">${\rm{i}}$</span></span> , <span class=
+          "inline-equation"><span class=
+          "tex">${{\rm{b}}_{\rm{j}}}$</span></span> is the number
+          of documents with original label <span class=
+          "inline-equation"><span class=
+          "tex">${\rm{j}}$</span></span> . Here <span class=
+          "inline-equation"><span class="tex">$(
+          {\begin{array}{@{}*{1}{c}@{}} {\rm{n}}\\ 2 \end{array}}
+          )$</span></span> denotes how many different combinations
+          of 2 documents can be drawn from the corpus, <span class=
+          "inline-equation"><span class="tex">$(
+          {\begin{array}{@{}*{1}{c}@{}} n\\ 2 \end{array}} ) =
+          \frac{{{\rm{n}}( {{\rm{n}} - 1} )}}{2}$</span></span>
+          <p></p>
+        </section>
+      </section>
+      <section id="sec3Z3">
+        <header>
+          <div class="title-info">
+            <h3><span class="section-number">3.3</span>
+            QUANTITATIVE RESULT</h3>
+          </div>
+        </header>
+        <section id="sec3Z3Z1">
+          <p><em>3.3.1 Comparison of different Word2Vec sizes.</em>
+          We try to figure out the influence of Word2Vec size
+          (dimension of the vector) on the performance of
+          clustering. The experiment sets the number of LDA topic
+          words to pick to be 5. <a class="fig" href="#fig6">Fig.
+          6</a> shows ACC, NMI and ARI in the trial. Size 50
+          performs a little better than other Word2Vec sizes and it
+          is used in our experiment. We know that bigger Word2Vec
+          size is usually suitable for larger corpus.</p>
+          <figure id="fig6">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image7.jpg"
+            class="img-responsive" alt="Figure 6:" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 6:</span>
+              <span class="figure-title">Performance of PW-LDA in
+              different Word2Vec size.</span>
+            </div>
+          </figure>
+        </section>
+        <section id="sec3Z3Z2">
+          <p><em>3.3.2 Influence of different number of LDA topic
+          words on clustering performance.</em> We try to
+          investigate to what extent the number of LDA topic words
+          influences the clustering performance. The experiment
+          sets the Word2Vec size to be 50. <a class="fig" href=
+          "#fig7">Fig. 7</a> shows ACC, NMI and ARI of the
+          experiment. With the lower bound as 5, the smaller the
+          number is, the better it performs. The words ranked after
+          13 have low weights and contribute little to the topic
+          vector. Therefore, 5 topic words are selected in our
+          experiment.</p>
+          <figure id="fig7">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image8.jpg"
+            class="img-responsive" alt="Figure 7:" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 7:</span>
+              <span class="figure-title">Performance of PW-LDA in
+              different numbers of LDA topic words.</span>
+            </div>
+          </figure>
+        </section>
+        <section id="sec3Z3Z3">
+          <p><em>3.3.3 Comparison of training Word2Vec model B on
+          preprocessed corpus (entire abstracts), purpose corpus
+          and purified-purpose corpus.</em> We compare the
+          clustering result of using three different corpora to
+          train Word2Vec model B, controlling all the other
+          procedures unchanged. <a class="fig" href="#fig8">Fig.
+          8</a> shows that the purified-purpose corpus has the best
+          result among the three, for purified-purpose corpus has
+          higher concentration of information about topics.</p>
+          <figure id="fig8">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image9.jpg"
+            class="img-responsive" alt="Figure 8:" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 8:</span>
+              <span class="figure-title">Performance of training
+              Word2Vec model B on preprocessed corpus, purpose
+              corpus &amp; purified-purpose corpus.</span>
+            </div>
+          </figure>
+          <figure id="fig9">
+            <img src=
+            "../../../data/deliveryimages.acm.org/10.1145/3200000/3191629/images/image10.jpg"
+            class="img-responsive" alt="Figure 9:" longdesc="" />
+            <div class="figure-caption">
+              <span class="figure-number">Figure 9:</span>
+              <span class="figure-title">Performance of PW-LDA and
+              TF-IDF+LDA+W2V.</span>
+            </div>
+          </figure>
+        </section>
+        <section id="sec3Z3Z4">
+          <p><em>3.3.4 Comparison of information extraction.</em>
+          We compare the information extraction method of our model
+          with TF-IDF. TF-IDF calculates the product of a word's TF
+          value and IDF value, which can represent the importance
+          of that word in the text. The counterpart trains TF-IDF
+          model on the preprocessed corpus and selects words whose
+          TF-IDF value ranks top 10 for every abstract. Then
+          calculate a document embedding by summing the word
+          embeddings from that document and divided by 10.
+          <a class="fig" href="#fig8">Fig. 8</a> shows the
+          performance of the proposed method and TF-IDF. It can be
+          seen that PW-LDA performs better than TF-IDF. This is
+          because words which are more closely related to the topic
+          usually appear less frequently in the academic abstract
+          and more frequently in the main body. Therefore, it makes
+          their TF-IDF values too low to be selected.</p>
+        </section>
+        <section id="sec3Z3Z5">
+          <p><em>3.3.5 Comparison of clustering results from
+          different models.</em> We compare PW-LDA with some
+          popular clustering methods, including KMeans, PLSA, LDA
+          and P-LDA. PLSA is the predecessor of LDA, which is also
+          a special LDA with no prior distribution. P-LDA is
+          training LDA on purified-purpose corpus.</p>
+          <p>For each model, programs run for 10 times and the mean
+          value is used to exclude the randomness of LDA algorithm
+          in the experiment. Table <a class="tbl" href="#tb2">2</a>
+          show the performance of them. PW-LDA has higher accuracy
+          compared with others, and it is a significant improvement
+          of NMI and ARI.</p>
+          <div class="table-responsive" id="tb2">
+            <div class="table-caption">
+              <span class="table-number">Table 2:</span>
+              <span class="table-title">Comparison of Different
+              Models.</span>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="text-align:center;">Model\Metrix</th>
+                  <th style="text-align:center;">ACC</th>
+                  <th style="text-align:center;">NMI</th>
+                  <th style="text-align:center;">ARI</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:center;">KMeans</td>
+                  <td style="text-align:center;">0.510</td>
+                  <td style="text-align:center;">0.413</td>
+                  <td style="text-align:center;">0.259</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">PLSA</td>
+                  <td style="text-align:center;">0.577</td>
+                  <td style="text-align:center;">0.465</td>
+                  <td style="text-align:center;">0.359</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">LDA</td>
+                  <td style="text-align:center;">0.592</td>
+                  <td style="text-align:center;">0.469</td>
+                  <td style="text-align:center;">0.356</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">P-LDA</td>
+                  <td style="text-align:center;">0.467</td>
+                  <td style="text-align:center;">0.366</td>
+                  <td style="text-align:center;">0.259</td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">PW-LDA</td>
+                  <td style="text-align:center;">
+                  <strong>0.688</strong></td>
+                  <td style="text-align:center;">
+                  <strong>0.741</strong></td>
+                  <td style="text-align:center;">
+                  <strong>0.726</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The lower accuracy of P-LDA than LDA shows how
+          sparsity can have negative effect on the clustering
+          result of LDA.</p>
+        </section>
+      </section>
+    </section>
+    <section id="sec4">
+      <header>
+        <div class="title-info">
+          <h2><span class="section-number">4</span>
+          CONCLUSIONS</h2>
+        </div>
+      </header>
+      <p>In this paper, we introduced a novel clustering model
+      based on the combination of Latent Dirichlet Allocation (LDA)
+      and Word2Vec skip-gram model. The model refines the
+      information of short texts from academic abstracts according
+      to the feature of paragraphs and it generates topic
+      embeddings containing more information compared with BOW
+      model. It uses less data to train the word embedding and
+      probability matrix. We have shown that this method has better
+      performance than some traditional ones.</p>
+      <p>In the future, we will explore papers from more academic
+      fields and further verify the effectiveness of PW-LDA. Apart
+      from using purpose corpus, we are also interested in using
+      method corpus to do clustering. This may give us a brand-new
+      standard for classification of papers, which put academic
+      papers into different categories based on the research
+      methods they use rather than the specific field they study.
+      And one may find the same idea or research method being used
+      in a computer literature and a medical literature at the same
+      time. Furthermore, parallel computing can be implemented to
+      ensure practicality.</p>
+    </section>
+  </section>
+  <section class="back-matter">
+    <section id="ack-001">
+      <header>
+        <div class="title-info">
+          <h2>ACKNOWLEDGMENTS</h2>
+        </div>
+      </header>
+      <p>The research was supported in part by Ministry of Science
+      and Technology of China under grant 2016YFB0200602, by
+      National Science Foundation of China under grant 11401601, by
+      Guangdong Province Frontier and Key Technology Innovative
+      Grant 2015B010110003 and 2016B030307003, by Guangdong
+      Province Applied Science and Technology Research Grant
+      2015B020233008, by Guangzhou Cooperative and Creative Key
+      Grant 201604020003, by Guangzhou Science and Technology
+      Creative Key Grant 2017B020210001.</p>
+    </section>
+    <section id="bib-sec-001">
+      <header>
+        <div class="title-info">
+          <h2 class="page-brake-head">REFERENCES</h2>
+        </div>
+      </header>
+      <ul class="bibUl">
+        <li id="bib1" label="[1]">Yu, L. (2009). Research and
+        application of text feature extraction technology
+        documents. (Doctoral dissertation, Beijing University of
+        Posts and Telecommunications).</li>
+        <li id="bib2" label="[2]">K. Premalatha, &amp; A.M.
+        Natarajan. (2010). A literature review on document
+        clustering. Information Technology Journal, 9(5).</li>
+        <li id="bib3" label="[3]">Popova, S., Danilova, V., &amp;
+        Egorov, A. (2014). Clustering narrow-domain short texts
+        using k-means, linguistic patterns and lsi. Communications
+        in Computer &amp; Information Science, 436, 66-77.</li>
+        <li id="bib4" label="[4]">Pinto, D., &amp; Rosso, P.
+        (2011). A Self-enriching Methodology for Clustering Narrow
+        Domain Short Texts. Oxford University Press.</li>
+        <li id="bib5" label="[5]">Pinto, D., &amp; Rosso, P.
+        (2007). Clustering Narrow-Domain Short Texts by Using the
+        Kullback-Leibler Distance. International Conference on
+        Intelligent Text Processing and Computational Linguistics
+        (Vol.4394, pp.611-622). Springer Berlin Heidelberg.</li>
+        <li id="bib6" label="[6]">Makagonov, P., Alexandrov, M.,
+        &amp; Gelbukh, A. (2004). Clustering Abstracts Instead of
+        Full Texts. Text, Speech and Dialogue. Springer Berlin
+        Heidelberg.</li>
+        <li id="bib7" label="[7]">Alexandrov, M., Gelbukh, A.,
+        &amp; Rosso, P. (2005). An approach to clustering
+        abstracts. International Conference on Natural Language
+        Processing and Information Systems (Vol.3513, pp.275-285).
+        Springer-Verlag.</li>
+        <li id="bib8" label="[8]">Zheng, C. T., Liu, C., &amp;
+        Wong, H. S. (2017). Corpus-based topic diffusion for short
+        text clustering. Neurocomputing.</li>
+        <li id="bib9" label="[9]">Cagnina, L., Errecalde, M.,
+        Ingaramo, D., &amp; Rosso, P. (2014). An efficient particle
+        swarm optimization approach to cluster short texts.
+        Information Sciences, 265(5), 36-49.</li>
+        <li id="bib10" label="[10]">Seifzadeh S, Farahat A K, Kamel
+        M S, <em>et al.</em> Short-Text Clustering using
+        Statistical Semantics[J]. 2015:805-810.</li>
+        <li id="bib11" label="[11]">Xu, J., Wang, P., Tian, G., Xu,
+        B., Zhao, J., &amp; Wang, F., <em>et al.</em> (2015). Short
+        text clustering via convolutional neural networks.
+        Institute of Automation Chinese Academy of Sciences,
+        62-69.</li>
+        <li id="bib12" label="[12]">Blei, D. M., Ng, A. Y., &amp;
+        Jordan, M. I. (2003). Latent dirichlet allocation. J
+        Machine Learning Research Archive, 3, 993-1022.</li>
+        <li id="bib13" label="[13]">Phan, X. H., Nguyen, L. M.,
+        &amp; Horiguchi, S. (2008). Learning to Classify Short and
+        Sparse Text &amp; Web with Hidden Topics from Large-scale
+        Data Collections. The International Conference of World
+        Wide Web (pp.91-100).</li>
+        <li id="bib14" label="[14]">Kelaiaia, A., &amp; Merouani,
+        H. F. (2013). Clustering with probabilistic topic models on
+        arabic texts. Studies in Computational Intelligence, 488,
+        65-74.</li>
+        <li id="bib15" label="[15]">Onan, A., Bulut, H., &amp;
+        Korukoglu, S. (2017). An improved ant algorithm with
+        LDA-based representation for text document clustering. Sage
+        Publications, Inc.</li>
+        <li id="bib16" label="[16]">Kumar, M., Yadav, D. K., &amp;
+        Gupta, V. K. (2016). Frequent term based text document
+        clustering: A new approach. International Conference on
+        Soft Computing Techniques and Implementations (pp.11-15).
+        IEEE.</li>
+        <li id="bib17" label="[17]">Mikolov, T., Chen, K., Corrado,
+        G., &amp; Dean, J. (2013). Efficient estimation of word
+        representations in vector space. Computer Science.</li>
+        <li id="bib18" label="[18]">Wang, Z., Ma, L., &amp; Zhang,
+        Y. (2016). A Hybrid Document Feature Extraction Method
+        Using Latent Dirichlet Allocation and Word2Vec. IEEE First
+        International Conference on Data Science in Cyberspace
+        (pp.98-103). IEEE Computer Society.</li>
+        <li id="bib19" label="[19]">Andrade, C. (2011). How to
+        write a good abstract for a scientific paper or conference
+        presentation.&nbsp;Indian Journal of
+        Psychiatry,&nbsp;53(2), 172–175.</li>
+      </ul>
+    </section>
+  </section>
+  <section id="foot-001" class="footnote">
+    <header>
+      <div class="title-info">
+        <h2>FOOTNOTE</h2>
+      </div>
+    </header>
+    <p id="fn1"><a href="#foot-fn1"><sup>1</sup></a><a href=
+    "http://med.wanfangdata.com.cn/" target=
+    "_blank">http://med.wanfangdata.com.cn/</a></p>
+    <div class="bibStrip">
+      <p>This paper is published under the Creative Commons
+      Attribution 4.0 International (CC-BY 4.0) license. Authors
+      reserve their rights to disseminate the work on their
+      personal and corporate Web sites with the appropriate
+      attribution.</p>
+      <p><em>WWW '18, April 23-27, 2018, Lyon, France</em></p>
+      <p>© 2018 IW3C2 (International World Wide Web Conference
+      Committee), published under Creative Commons CC-BY 4.0
+      License. ACM ISBN 978-1-4503-5640-4/18/04.<br />
+      DOI: <a class="link-inline force-break" target="_blank" href=
+      "https://doi.org/10.1145/3184558.3191629">https://doi.org/10.1145/3184558.3191629</a></p>
+    </div>
+  </section>
+  <div class="pubHistory">
+    <p></p>
+  </div>
+</body>
+</html>
