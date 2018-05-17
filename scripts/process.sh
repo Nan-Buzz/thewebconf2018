@@ -25,7 +25,7 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   ## I mean.. how did this happen?
   sed -i 's,DOCTYPE html> htmlhtmlhtmlhtmlhtmlhtml<html,DOCTYPE html><html,' $src
   # unknown <SubTitle> tag
-  sed -i 's,SubTitle>,span>g,' $src
+  sed -i 's,SubTitle>,span>,g' $src
   
 
   name=$(basename $html)
@@ -88,5 +88,8 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   sed -i 's#https://dl.acm.org/pubs/lib/js/#../../../data/dl.acm.org/pubs/lib/js/#g' "$dest"
   # This does not really work.. leave at official CDN for now  
   #sed -i 's#https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js[?]config[=]TeX-AMS_CHTML#../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js#g' "$dest"
+
+  ## Add required we-modified-it-blurb (From CC-BY) as well as permalink
+  txt=
 
 done
