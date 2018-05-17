@@ -40,23 +40,23 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   
   echo "doi: $doi"
 
-  echo Fetching crossref metadata for $doi
-  json="$pathToDoi"/$doi/crossref.json
-  wget -q -O $json https://api.crossref.org/v1/works/http://dx.doi.org/$doi &
-
-
   dest="$pathToDoi"/$doi/index.html
-  echo "Saving HTML to $dest"
   mkdir -p $(dirname "$dest")
+  json="$pathToDoi"/$doi/crossref.json
 
-  logfile="$pathToLog"/$(echo $doi | sed s,/,_,g).tidy.log
+  crossreflog="$pathToLog"/$(echo $doi | sed s,/,_,g).crossref.log
+  echo Fetching crossref metadata for $doi
+  wget --output-file=$crossreflog -O $json https://api.crossref.org/v1/works/http://dx.doi.org/$doi &
+
+  echo "Saving HTML to $dest"
+  tidylogfile="$pathToLog"/$(echo $doi | sed s,/,_,g).tidy.log
   echo "Tidying HTML"
   #Make sure you install from https://github.com/htacg/tidy-html5
 
-  tidy -quiet -file "$logfile" --drop-empty-elements no -indent $html > $dest || (
+  tidy -quiet -file "$tidylogfile" --drop-empty-elements no -indent $html > $dest || (
     # Exit code 1 is just warnings, which we can ignore
     if [ $? -ne 1 ]; then 
-      echo "tidy failed, copying HTML as-is" >$logfile
+      echo "tidy failed, copying HTML as-is" >$tidylogfile
       echo "tidy failed, copying HTML as-is" >&2
       cp $html $dest
     fi;
