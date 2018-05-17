@@ -25,11 +25,15 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   # -file $pathToLog/something.txt
   #tidy --drop-empty-elements no -indent $html > $dest || true
 
+
+  mv "$pathToData"dl.acm.org/pubs/lib/js/MathJax\?config\=TeX-AMS_CHTML "$pathToData"dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js
+
+
   filename=$(echo "$html" | sed -r 's#&#&amp;#g')
   echo "Fixing image links"
   sed -i 's#http://deliveryimages.acm.org/#../../../data/deliveryimages.acm.org/#g' "$dest"
   sed -i 's#https://dl.acm.org/pubs/lib/css/#../../../data/dl.acm.org/pubs/lib/css/#g' "$dest"
   sed -i 's#https://dl.acm.org/pubs/lib/js/#../../../data/dl.acm.org/pubs/lib/js/#g' "$dest"
-  sed -i 's#https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/#../../../data/dl.acm.org/pubs/lib/js/#g' "$dest"
+  sed -i 's#https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js[?]config[=]TeX-AMS_CHTML#../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js#g' "$dest"
 
 done
