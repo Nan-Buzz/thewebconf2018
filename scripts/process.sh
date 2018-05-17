@@ -103,12 +103,12 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   permalink="https://w3id.org/oa/$doi"
   echo "<div>" >> $blurb
   echo "<p style='font-size: 75%; color #444'>" >> $blurb
-  echo "This is a HTML copy of <a href='$doilink'>$doilink</a> " >> $blurb
-  echo "originally published by ACM, " >>$blurb
+  echo "This is a web copy of <a href='$doilink'>$doilink</a> " >> $blurb
+  echo "originally published by ACM Press, " >>$blurb
   echo "redistributed under the terms of " >> $blurb
   echo "<a href='https://creativecommons.org/licenses/by/4.0/'>Creative Commons Attribution 4.0 (CC BY 4.0)</a>." >> $blurb
   echo "The <a href='https://github.com/usable-oa/thewebconf2018/tree/master/scripts'>modifications</a> " >> $blurb
-  echo "from the original are solely to improve HTML accessability, compatibility, " >> $blurb
+  echo "from the original are solely to improve HTML aiming to make it Findable, Accessible, Interoperable and Reusable. " >> $blurb
   echo "augmenting HTML metadata and avoiding ACM trademark." >> $blurb  
   echo "To reference this HTML version, use:" >> $blurb
   echo "</p><p>" >> $blurb
