@@ -17,6 +17,16 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   echo "---"
   echo "Processing $html"
 
+  # Fix some HTML syntax errors
+  src=$(tempfile -s .html)
+  cp $html $src
+  sed -i 's,DOCTYPE html> html<html,DOCTYPE html><html,' $src
+  sed -i 's,DOCTYPE html> htmlhtml<html,DOCTYPE html><html,' $src
+  ## I mean.. how did this happen?
+  sed -i 's,DOCTYPE html> htmlhtmlhtmlhtmlhtmlhtml<html,DOCTYPE html><html,' $src
+  # unknown <SubTitle> tag
+  sed -i 's,SubTitle>,span>g,' $src
+  
 
   name=$(basename $html)
   case "$name" in 
@@ -32,7 +42,7 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
       # The rest should match this pattern
       # assume a self-DOI at the very bottom under ACM's 10.1145/ tree
       # and a sub-id of 123.456
-      doi=$(sed -n "s,.*[\"']https://doi.org/\(10.1145\/[0-9][0-9]*\.[0-9][0-9]*\).*,\1,p;q" $html)
+      doi=$(sed -n "s,.*[\"']https://doi.org/\(10.1145\/[0-9][0-9]*\.[0-9][0-9]*\).*,\1,p;q" $src)
   esac
 
   if [[ -z $doi ]] ; then
@@ -59,26 +69,19 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   echo "Tidying HTML"
   #Make sure you install from https://github.com/htacg/tidy-html5
 
-  case "$doi" in
-    # Fix quite broken HTML headers before showing to HTML Tidy
-    "10.1145/3178876.3186114") sed -i 's,DOCTYPE html> htmlhtml<html,DOCTYPE html><html,' $html ;;
-    "10.1145/3184558.3188729") sed -i 's,DOCTYPE html> html<html,DOCTYPE html><html,' $html ;;
-    "10.1145/3184558.3186570") sed -i 's,DOCTYPE html> html<html,DOCTYPE html><html,' $html ;;
-  esac
-
-  tidy -quiet -file "$tidylogfile" --drop-empty-elements no -indent $html > $dest || (
+  tidy -quiet -file "$tidylogfile" --drop-empty-elements no -indent $src > $dest || (
     # Exit code 1 is just warnings, which we can ignore
     if [ $? -ne 1 ]; then 
       echo "tidy failed, copying HTML as-is" >$tidylogfile
       echo "tidy failed, copying HTML as-is" >&2
-      cp $html $dest
+      cp $src $dest
     fi;
   )
 
 
   # Let any crossref finish before we make another one
   wait
-  filename=$(echo "$html" | sed -r 's#&#&amp;#g')
+  
   echo "Fixing image links"
   sed -i 's#http://deliveryimages.acm.org/#../../../data/deliveryimages.acm.org/#g' "$dest"
   sed -i 's#https://dl.acm.org/pubs/lib/css/#../../../data/dl.acm.org/pubs/lib/css/#g' "$dest"
