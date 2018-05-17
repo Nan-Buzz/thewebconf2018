@@ -13,7 +13,6 @@ sed -i "s#<tr><td><div class='utilities-area'><div class='logo-section'><div cla
 #mv "$pathToData"dl.acm.org/pubs/lib/js/MathJax\?config\=TeX-AMS_CHTML "$pathToData"dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js
 
 for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
-
   echo "---"
   echo "Processing $html"
 
@@ -24,15 +23,22 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   sed -i 's,DOCTYPE html> htmlhtml<html,DOCTYPE html><html,' $src
   ## I mean.. how did this happen?
   sed -i 's,DOCTYPE html> htmlhtmlhtmlhtmlhtmlhtml<html,DOCTYPE html><html,' $src
-  # unknown <SubTitle> tag
-  sed -i 's,SubTitle>,span>,g' $src
-  sed -i 's,Appendix>,div>,g' $src
+
+  # Various tags that are not in HTML..
+  for span in Affiliation1 Affiliation CopyrightStatement SmallCap SubTitle ; do 
+      sed -i 's,<$span,<span,g' $src 
+      sed -i 's,</$span,</span,g' $src  
+  done
+  for div in Footnote Appendix Quote; do
+      sed -i 's,<$div,<div,g' $src  
+      sed -i 's,</$div,</div,g' $src  
+  done
   
 
   name=$(basename $html)
   case "$name" in 
     # Hard-coded exceptions as they for whatever reason won't match
-    # regex below
+    # doi regex below
     "p1749-thompson.html") doi="10.1145/3184558.3191636";;
     "p753-youngmann.html") doi="10.1145/3178876.3186156";;
     "p721-veen.html") doi="10.1145/3184558.3185978";;
@@ -70,7 +76,7 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   echo "Tidying HTML"
   #Make sure you install from https://github.com/htacg/tidy-html5
 
-  tidy -quiet -file "$tidylogfile" --new-blocklevel-tags footnote --drop-empty-elements no -indent $src > $dest || (
+  tidy -quiet -file "$tidylogfile" --custom-tags inline --drop-empty-elements no -indent $src > $dest || (
     # Exit code 1 is just warnings, which we can ignore
     if [ $? -ne 1 ]; then 
       echo "tidy failed, copying HTML as-is" >>$tidylogfile
@@ -91,6 +97,31 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   #sed -i 's#https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js[?]config[=]TeX-AMS_CHTML#../../../data/dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js#g' "$dest"
 
   ## Add required we-modified-it-blurb (From CC-BY) as well as permalink
-  txt=
+  
+  blurb=$(tempfile)
+  doilink="https://doi.org/$doi"
+  permalink="https://w3id.org/oa/$doi"
+  echo "<div>" >> $blurb
+  echo "<p style='font-size: 75%; color #444'>" >> $blurb
+  echo "This is a HTML copy of <a href='$doilink'>$doilink</a> " >> $blurb
+  echo "originally published by ACM, " >>$blurb
+  echo "redistributed under the terms of " >> $blurb
+  echo "<a href='https://creativecommons.org/licenses/by/4.0/'>Creative Commons Attribution 4.0 (CC BY 4.0)</a>." >> $blurb
+  echo "The <a href='https://github.com/usable-oa/thewebconf2018/tree/master/scripts'>modifications</a> " >> $blurb
+  echo "from the original are solely to improve HTML accessability, compatibility, " >> $blurb
+  echo "augmenting HTML metadata and avoiding ACM trademark." >> $blurb  
+  echo "To reference this HTML version, use:" >> $blurb
+  echo "</p><p>" >> $blurb
+  echo "<strong>Permalink:</strong>" >> $blurb
+  echo "<a href='$permalink'>$permalink</a>" >> $blurb
+  echo "</p></div>" >> $blurb
+  echo "<hr>" >> $blurb
+
+  ## First ensure there is a new line so we don't loose antyhing after the tag
+  sed -i 's/body id="main">/&\n\n/' "$dest"
+  # Then read in the blurb file below (need to use "" w/escapes to use $blurb)
+  sed -i "/body id=\"main\">/ r $blurb" "$dest"
+
 
 done
+
