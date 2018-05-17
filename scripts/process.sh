@@ -10,6 +10,8 @@ mkdir -p "$pathToData" "$pathToLog"
 
 sed -i "s#<tr><td><div class='utilities-area'><div class='logo-section'><div class='show-for-large-up'><a class='navbar-brand'> <img alt='ACM Logo' class='img-responsive' src='https://dl.acm.org/pubs/lib/images/acm_logo.jpg'></a></div><div class='hide-for-large-up'><a class='navbar-brand'> <img alt='ACM Logo' class='img-responsive' src='https://dl.acm.org/pubs/lib/images/acm_logo_mobile.jpg'></a></div></div></div></td></tr>##g" "$pathToData"dl.acm.org/pubs/lib/js/divTab.js
 
+mv "$pathToData"dl.acm.org/pubs/lib/js/MathJax\?config\=TeX-AMS_CHTML "$pathToData"dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js
+
 for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
 
   echo "---"
@@ -24,10 +26,6 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   cp  $html $dest
   # -file $pathToLog/something.txt
   #tidy --drop-empty-elements no -indent $html > $dest || true
-
-
-  mv "$pathToData"dl.acm.org/pubs/lib/js/MathJax\?config\=TeX-AMS_CHTML "$pathToData"dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js
-
 
   filename=$(echo "$html" | sed -r 's#&#&amp;#g')
   echo "Fixing image links"
