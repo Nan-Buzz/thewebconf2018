@@ -73,17 +73,21 @@ def find_title(doc):
     return t
 
 def listing_html(doi, title, authors, year, permalink, proceeding):
-    print("""<div resource="https://doi.org/%s" vocab="http://schema.org/" typeof="Article">
+    print("""<p resource="https://doi.org/%s" vocab="http://schema.org/" typeof="Article">
         <div>
         <span property="author">%s</span>
-      (<span class="year" property="copyrightYear">%s</span>):
+      (<span class="year" property="datePublished">%s</span>):
     </div>
-    <a href="%s">
-      <strong class="title" property="name">%s</strong>
+    <a href="doi/%s/" property="sameAs">
+      <strong resource="https://doi.org/%s" class="title" property="name">%s</strong>
     </a>
-    <div><em property="isPartOf">%s</em>
-    </div><br>
-</div>""" % (doi, ", ".join(authors), year, permalink, title, proceeding))
+    <div property="isPartOf" typeof="PublicationIssue"><em property="name">%s</em>
+    </div>
+    <div>
+      <div>doi: <a href="https://doi.org/%s">%s</a></div>
+      <div>Permalink: <a href="%s" property='sameAs'>%s</a></div>
+    </div>
+</p>""" % (doi, ", ".join(authors), year, doi, doi, title, proceeding, doi, doi, permalink, permalink))
 
 
 
@@ -92,7 +96,7 @@ def embed_html(doi, title, authors, year):
     print("""<p resource="https://doi.org/%s" vocab="http://schema.org/">
     <div>
         <span property="author">%s</span>
-      (<span class="year" property="year">%s</span>):
+      (<span class="year" property="datePublished">%s</span>):
     </div>
       <strong class="title" property="name">%s</strong> 
 </p>""" % (doi, ", ".join(authors), year, title))
