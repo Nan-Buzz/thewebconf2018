@@ -103,7 +103,7 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   echo "Tidying HTML"
   #Make sure you install from https://github.com/htacg/tidy-html5
 
-  tidy -quiet -file "$tidylogfile" --custom-tags inline --drop-empty-elements no -indent $src > $dest || (
+  tidy -quiet -file "$tidylogfile" --vertical-space no --wrap 0 --custom-tags inline --drop-empty-elements no -indent $src > $dest || (
     # Exit code 1 is just warnings, which we can ignore
     if [ $? -ne 1 ]; then 
       echo "tidy failed, copying HTML as-is" >>$tidylogfile
