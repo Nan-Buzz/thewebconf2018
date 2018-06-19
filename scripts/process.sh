@@ -116,7 +116,7 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   # Let any crossref finish before we process the JSON
   wait
 
-  ./crossref.py $json $permalink >> $toc
+  ./makeindex.py $json $permalink >> $toc
   
   echo "Fixing image links"
   sed -i 's#http://deliveryimages.acm.org/#../../../data/deliveryimages.acm.org/#g' "$dest"
