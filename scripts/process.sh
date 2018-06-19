@@ -24,7 +24,6 @@ echo "    <title>$title</title>" >> $toc
 echo '  </head>' >> $toc
 echo '  <body vocab="http://schema.org/">' >> $toc
 echo '    <header>' >> $toc
-echo "      <h1>$title</h1>" >> $toc
 echo '      <p>This is a web copy of <a property="mainEntityOfPage http://purl.org/pav/derivedFrom http://www.w3.org/ns/prov#wasDerivedFrom" href="'"$src"'"><span property="name">'"$title"'</span></a>.' >> $toc
 echo ' Published in WWW2018 Proceedings © 2018 International World Wide Web Conference Committee, published under' >> $toc
 echo ' <a rel="license" property="license" href="https://creativecommons.org/licenses/by/4.0/">' >> $toc
@@ -33,9 +32,12 @@ echo '      <p>The <a property="http://purl.org/pav/createdWith" typeof="Softwar
 echo "      <p>To cite these papers, use their DOI. To link to or reference their HTML version here, use the corresponding w3id.org permalinks.</p>" >> $toc
 echo "    </header>" >> $toc
 echo "    <main>" >> $toc
+echo '      <article about="" typeof="Article">' >> $toc
+echo '        <h1 property="name">'"$title"'</h1>' >> $toc
+echo '        <div datatype="rdf:HTML" property="schema:description">' >> $toc
 
 
-echo '      <ul rel="hasPart">' >> $toc
+echo '          <ul rel="hasPart">' >> $toc
 for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   echo "---"
   echo "Processing $html"
@@ -154,9 +156,10 @@ echo " Creative Commons CC By 4.0 License</a>.">> $blurb
   sed -i 's;</head>;<link rel="cite-as" href="https://doi.org/'"$doi"'"/></head>;' "$dest"
 
 done
-echo '      </ul>' >> $toc
+echo '          </ul>' >> $toc
 
-
+echo '        </div>' >> $toc
+echo '      </article>' >> $toc
 echo '    </main>' >> $toc
 echo '  </body>' >> $toc
 echo '</html>
