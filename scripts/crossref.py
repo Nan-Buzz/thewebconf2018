@@ -73,7 +73,7 @@ def find_title(doc):
     return t
 
 def listing_html(doi, title, authors, year, permalink, proceeding):
-    print("""<p resource="https://doi.org/%s" vocab="http://schema.org/" typeof="ScholarlyArticle">
+    print("""<div about="https://doi.org/%s" vocab="http://schema.org/" typeof="ScholarlyArticle" style="margin-bottom: 1em">
         <div>
         <span property="author">%s</span>
       (<span class="year" property="datePublished">%s</span>):
@@ -87,13 +87,13 @@ def listing_html(doi, title, authors, year, permalink, proceeding):
       <div>doi: <a href="https://doi.org/%s">%s</a></div>
       <div>Permalink: <a href="%s" property='sameAs'>%s</a></div>
     </div>
-</p>""" % (doi, ", ".join(authors), year, doi, doi, title, proceeding, doi, doi, permalink, permalink))
+</div>""" % (doi, ", ".join(authors), year, doi, doi, title, proceeding, doi, doi, permalink, permalink))
 
 
 
 
 def embed_html(doi, title, authors, year):
-    print("""<p resource="https://doi.org/%s" vocab="http://schema.org/ typeOf='ScholarlyArticle'">
+    print("""<p about="https://doi.org/%s" vocab="http://schema.org/ typeOf='ScholarlyArticle'">
     <div>
         <span property="author">%s</span>
       (<span class="year" property="datePublished">%s</span>):
