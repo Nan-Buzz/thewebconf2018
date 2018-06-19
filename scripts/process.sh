@@ -2,7 +2,7 @@
 
 set -e
 
-title="Proceedings of the 2018 World Wide Web Conference"
+title="Proceedings of the 2018 The Web Conference"
 src="https://www2018.thewebconf.org/proceedings/"
 pathToData="../data/"
 pathToDoi="../doi"
@@ -16,38 +16,23 @@ sed -i "s#<tr><td><div class='utilities-area'><div class='logo-section'><div cla
 #mv "$pathToData"dl.acm.org/pubs/lib/js/MathJax\?config\=TeX-AMS_CHTML "$pathToData"dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js
 
 rm -f $toc
-echo "<!DOCTYPE html>" >> $toc
-echo "<html lang='en'>" >> $toc
-echo "<head>" >> $toc
-echo "  <meta charset='utf-8'>" >> $toc
-echo "  <title>$title</title>" >> $toc
-echo '  <style>*[typeof="ScholarlyArticle"] { margin-bottom: 1em }</style>' >> $toc
-echo "</head>" >> $toc
-echo "<body>" >> $toc
-echo "  <div role='banner' vocab='http://schema.org/'>" >> $toc
-echo "   <h1>$title</h1>" >> $toc
-echo "   <p>" >> $toc
-
-  echo "This is a web copy of <a property='mainEntityOfPage' href='$src'><span property='name'>$title</span></a> " >> $toc
-  echo "originally published by ACM Press, " >>$toc
-  echo "redistributed under the terms of " >> $toc
-  echo "<a rel='license' property='license' href='https://creativecommons.org/licenses/by/4.0/'><span property='name'>Creative Commons Attribution 4.0 (CC BY 4.0)</span></a>." >> $toc
-echo "   </p>" >> $toc
-echo "   <p>" >> $toc
-  echo "The <a property='http://purl.org/pav/createdWith' typeof='SoftwareSourceCode' href='https://github.com/usable-oa/thewebconf2018/tree/master/scripts'>modifications</a> " >> $toc
-  echo "from the originals are solely to improve HTML aiming to make them " >> $toc
-  echo "<a href='https://doi.org/10.1038/sdata.2016.18' property='publishingPrinciples'>Findable, Accessible, Interoperable and Reusable</a>, " >> $toc
-  echo "augmenting metadata and (just in case) avoiding ACM trademarks." >> $toc
-  echo "To help improve this, please <a property='discussionUrl' href='https://github.com/usable-oa/thewebconf2018/issues'>raise an issue or pull request</a>." >> $toc
-echo "   </p>" >> $toc
-echo "   <p>" >> $toc
-  echo "To cite these papers, use their DOI." >> $toc
-  echo "To link to or reference their HTML version here, use the corresponding w3id.org permalinks." >> $toc
-echo "   </p>" >> $toc
-echo "  </div>" >> $toc
-echo "  <div role='main'>" >> $toc
+echo '<!DOCTYPE html>' >> $toc
+echo '<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">' >> $toc
+echo '  <head>' >> $toc
+echo '    <meta charset="utf-8" />' >> $toc
+echo "    <title>$title</title>" >> $toc
+echo '  </head>' >> $toc
+echo '  <body vocab="http://schema.org/">' >> $toc
+echo '    <header>' >> $toc
+echo "      <h1>$title</h1>" >> $toc
+echo "      <p>This is a web copy of <a property='mainEntityOfPage' href='$src'><span property='name'>$title</span></a> originally published by ACM Press, redistributed under the terms of <a rel='license' property='license' href='https://creativecommons.org/licenses/by/4.0/'><span property='name'>Creative Commons Attribution 4.0 (CC BY 4.0)</span></a>.</p>" >> $toc
+echo "      <p>The <a property='http://purl.org/pav/createdWith' typeof='SoftwareSourceCode' href='https://github.com/usable-oa/thewebconf2018/tree/master/scripts'>modifications</a> from the originals are solely to improve HTML aiming to make them <a href='https://doi.org/10.1038/sdata.2016.18' property='publishingPrinciples'>Findable, Accessible, Interoperable and Reusable</a>, augmenting metadata and (just in case) avoiding ACM trademarks. To help improve this, please <a property='discussionUrl' href='https://github.com/usable-oa/thewebconf2018/issues'>raise an issue or pull request</a>.</p>" >> $toc
+echo "      <p>To cite these papers, use their DOI. To link to or reference their HTML version here, use the corresponding w3id.org permalinks.</p>" >> $toc
+echo "    </header>" >> $toc
+echo "    <main>" >> $toc
 
 
+echo '      <ul rel="hasPart">' >> $toc
 for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   echo "---"
   echo "Processing $html"
@@ -127,6 +112,7 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
 
   # Let any crossref finish before we process the JSON
   wait
+
   ./crossref.py $json $permalink >> $toc
   
   echo "Fixing image links"
@@ -162,7 +148,10 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
 
 
 done
+echo '      </ul>' >> $toc
 
-echo "  </div>" >> $toc
-echo "</body>" >> $toc
-echo "</html>" >> $toc
+
+echo '    </main>' >> $toc
+echo '  </body>' >> $toc
+echo '</html>
+' >> $toc

@@ -40,7 +40,7 @@ def main(crossref=None, permalink=None, debug=False, *args):
     doi = find_doi(doc)
     authors = find_authors(doc)
     year = find_year(doc)
-    title = find_title(doc)
+    title = escape_html(find_title(doc))
 
     if "-d" in args or permalink == "-d":
         json.dump(j, sys.stdout, sort_keys=True, indent=2)
@@ -73,34 +73,37 @@ def find_title(doc):
     return t
 
 def listing_html(doi, title, authors, year, permalink, proceeding):
-    print("""<div about="https://doi.org/%s" vocab="http://schema.org/" typeof="ScholarlyArticle">
-        <div>
-        <span property="author">%s</span>
-      (<span class="year" property="datePublished">%s</span>):
-    </div>
-    <a href="doi/%s/" property="sameAs">
-      <strong resource="https://doi.org/%s" class="title" property="name">%s</strong>
-    </a>
-    <div property="isPartOf" typeof="PublicationIssue"><em property="name">%s</em>
-    </div>
-    <div>
-      <div>doi: <a href="https://doi.org/%s">%s</a></div>
-      <div>Permalink: <a href="%s" property='sameAs'>%s</a></div>
-    </div>
-</div>""" % (doi, ", ".join(authors), year, doi, doi, title, proceeding, doi, doi, permalink, permalink))
-
-
-
+    print("""  <li about="https://doi.org/%s" id="%s" typeof="ScholarlyArticle">
+    <a href="doi/%s/" property="name" rel="sameAs">%s</a>
+    <dl>
+      <dt>Authors</dt>
+      <dd xml:lang="" lang="">%s</dd>
+      <dt>Issue</dt>
+      <dd property="isPartOf" typeof="PublicationIssue"><em property="name">%s</em></dd>
+      <dt>DOI</dt>
+      <dd><a href="https://doi.org/%s">%s</a></dd>
+      <dt>Permalink</dt>
+      <dd><a href="%s" property="sameAs">%s</a></dd>
+    </dl>
+  </li>""" % (doi, doi, doi, title, ", ".join(authors), proceeding, doi, doi, permalink, permalink))
 
 def embed_html(doi, title, authors, year):
-    print("""<p about="https://doi.org/%s" vocab="http://schema.org/ typeOf='ScholarlyArticle'">
-    <div>
-        <span property="author">%s</span>
-      (<span class="year" property="datePublished">%s</span>):
-    </div>
-      <strong class="title" property="name">%s</strong> 
-</p>""" % (doi, ", ".join(authors), year, title))
+    print("""<li about="https://doi.org/%s" id="%s" typeof="ScholarlyArticle">
+    <a href="doi/%s/" property="name" rel="sameAs">%s</a>
 
+    <dl>
+      <dt>Authors</dt>
+      <dd xml:lang="" lang="">%s</dd>
+    </dl>
+  </li>""" % (doi, doi, doi, ", ".join(authors)))
+
+
+def escape_html(t):
+    """HTML-escape the text in `t`."""
+    return (t
+        .replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        .replace("'", "&#39;").replace('"', "&quot;")
+        )
 
 if __name__ == "__main__":
     if "-h" in sys.argv:
