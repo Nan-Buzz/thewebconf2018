@@ -1,8 +1,9 @@
+#!/usr/bin/env python3
 import sys
 import json
 
 def help():
-    print("""crossref.py [crossref] [-d]")
+    print("""crossref.py [crossref] [permalink] [-d]")
 
 Extract authorship and title from crossref JSON
 
@@ -14,11 +15,17 @@ If the parameter is missing or -, the JSON is read from stdin.
 Output on stdout is schema.org-annotated HTML5+RDFa that can be included 
 in the top of the corresponding article HTML.
 
+If the parameter [permalink] is provided, it will be assumed to be
+a hyperlink to the HTML article (as part of a listing). 
+In this case the output will also include additional 
+information such as DOI and proceedings.
+
 If the parameter -d is provided, the parsed JSON is output with 
 pretty-printing instead of the HTML.
+
 """)
 
-def main(crossref=None, *args):
+def main(crossref=None, permalink=None, debug=False, *args):
     if crossref is None or crossref == "-":
         # Always read JSON as UTF-8 even if system encoding differs
         f = TextIOWrapper(sys.stdin, encoding="utf-8")
@@ -34,14 +41,21 @@ def main(crossref=None, *args):
     authors = find_authors(doc)
     year = find_year(doc)
     title = find_title(doc)
-    if "-d" in args:
+
+    if "-d" in args or permalink == "-d":
         json.dump(j, sys.stdout, sort_keys=True, indent=2)
+    elif permalink:
+        listing_html(doi, title, authors, year, permalink, find_proceeding(doc))
     else:
-        render_html(doi, title, authors, year)
+        embed_html(doi, title, authors, year)
     return 0
 
 def find_doi(doc):
     return doc["DOI"]
+
+def find_proceeding(doc):
+    # TODO: What if there isn't any?
+    return doc["container-title"][0]
 
 def find_authors(doc):
     auths = []
@@ -58,19 +72,41 @@ def find_title(doc):
     # TODO: Check [1] and "subtitle" ?
     return t
 
-def render_html(doi, title, authors, year):
+def listing_html(doi, title, authors, year, permalink, proceeding):
     print("""<div about="https://doi.org/%s" namespace="http://schema.org/">
     <div>
         <span property="author">%s<span>
       (<span class="year" property="year">%s</span>):
     </div>
+    <a href="%s">
+      <strong class="title" property="title">%s</strong>
+    </a>
+    <div><em>%s</em>
+    </div><br>
+</div>""" % (doi, ", ".join(authors), year, permalink, title, proceeding))
+
+
+
+
+def embed_html(doi, title, authors, year):
+    print("""<p about="https://doi.org/%s" namespace="http://schema.org/">
+    <div>
+        <span property="author">%s<span>
+      (<span class="year" property="year">%s</span>):
+    </div>
       <strong class="title" property="title">%s</strong> 
-</div>""" % (doi, ", ".join(authors), year, title))
+</p>""" % (doi, ", ".join(authors), year, title))
 
 
 if __name__ == "__main__":
     if "-h" in sys.argv:
         help()
         sys.exit(0)
-    i = main(*sys.argv[1:])
+    try:
+        i = main(*sys.argv[1:])
+        if i:
+            print(sys.argv, file=sys.stderr)
+    except Exception as e:
+        print(sys.argv, file=sys.stderr)
+        raise e
     sys.exit(i)

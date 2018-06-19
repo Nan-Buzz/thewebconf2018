@@ -2,8 +2,11 @@
 
 set -e
 
+title="Proceedings of the 2018 World Wide Web Conference"
+src="https://www2018.thewebconf.org/proceedings/"
 pathToData="../data/"
 pathToDoi="../doi"
+toc="../index.html"
 pathToLog="$pathToData"log/
 # rm -rf "$pathToData"
 mkdir -p "$pathToData" "$pathToLog"
@@ -11,6 +14,30 @@ mkdir -p "$pathToData" "$pathToLog"
 sed -i "s#<tr><td><div class='utilities-area'><div class='logo-section'><div class='show-for-large-up'><a class='navbar-brand'> <img alt='ACM Logo' class='img-responsive' src='https://dl.acm.org/pubs/lib/images/acm_logo.jpg'></a></div><div class='hide-for-large-up'><a class='navbar-brand'> <img alt='ACM Logo' class='img-responsive' src='https://dl.acm.org/pubs/lib/images/acm_logo_mobile.jpg'></a></div></div></div></td></tr>##g" "$pathToData"dl.acm.org/pubs/lib/js/divTab.js
 
 #mv "$pathToData"dl.acm.org/pubs/lib/js/MathJax\?config\=TeX-AMS_CHTML "$pathToData"dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js
+
+rm -f $toc
+echo "<DOCTYPE html>" >> $toc
+echo "<html lang='en'>" >> $toc
+echo "<head>" >> $toc
+echo "  <meta charset='utf-8'>" >> $toc
+echo "  <title>$title</title>" >> $toc
+echo "</head>" >> $toc
+echo "<body>" >> $toc
+echo "  <banner>" >> $toc
+echo "   <h1>$title</h1>" >> $toc
+
+  echo "This is a web copy of <a href='$src'>$title</a> " >> $toc
+  echo "originally published by ACM Press, " >>$toc
+  echo "redistributed under the terms of " >> $toc
+  echo "<a href='https://creativecommons.org/licenses/by/4.0/'>Creative Commons Attribution 4.0 (CC BY 4.0)</a>." >> $toc
+  echo "The <a href='https://github.com/usable-oa/thewebconf2018/tree/master/scripts'>modifications</a> " >> $toc
+  echo "from the originals are solely to improve HTML aiming to make it Findable, Accessible, Interoperable and Reusable. " >> $toc
+  echo "augmenting HTML metadata and avoiding ACM trademark." >> $toc
+  echo "To cite these papers, use their DOI." >> $toc
+  echo "To link to or reference their HTML version here, use the corresponding w3id.org permalinks." >> $toc
+echo "  </banner>" >> $toc
+echo "  <main>" >> $toc
+
 
 for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   echo "---"
@@ -45,12 +72,15 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
     "p409-yoon.html") doi="10.1145/3178876.3186107";;    
     "p659-kusmierczyk.html") doi="10.1145/3178876.3186147";;
     "p1369-karypis.html") doi="10.1145/3184558.3191588";;
+    "p433-szekely.html") doi="10.1145/3184558.3186203";; 
     *) 
       # The rest should match this pattern
       # assume a self-DOI at the very bottom under ACM's 10.1145/ tree
       # and a sub-id of 123.456
       doi=$(sed -n "s,.*[\"']https://doi.org/\(10.1145\/[0-9][0-9]*\.[0-9][0-9]*\).*,\1,p;q" $src)
   esac
+  doilink="https://doi.org/$doi"
+  permalink="https://w3id.org/oa/$doi"
 
   if [[ -z $doi ]] ; then
     echo "Can't find DOI of $html" >&2;
@@ -86,8 +116,9 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   )
 
 
-  # Let any crossref finish before we make another one
+  # Let any crossref finish before we process the JSON
   wait
+  ./crossref.py $json $permalink >> $toc
   
   echo "Fixing image links"
   sed -i 's#http://deliveryimages.acm.org/#../../../data/deliveryimages.acm.org/#g' "$dest"
@@ -99,8 +130,6 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   ## Add required we-modified-it-blurb (From CC-BY) as well as permalink
   
   blurb=$(tempfile)
-  doilink="https://doi.org/$doi"
-  permalink="https://w3id.org/oa/$doi"
   echo "<div>" >> $blurb
   echo "<p style='font-size: 75%; color #444'>" >> $blurb
   echo "This is a web copy of <a href='$doilink'>$doilink</a> " >> $blurb
@@ -125,3 +154,6 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
 
 done
 
+echo "  </main>" >> $toc
+echo "</body>" >> $toc
+echo "</html>" >> $toc
