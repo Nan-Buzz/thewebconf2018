@@ -87,7 +87,7 @@ def find_title(doc):
     return t
 
 def listing_html(crossref):
-    print("""  <li about="{permalink}" id="{doi}" typeof="ScholarlyArticle">
+    return """  <li about="{permalink}" id="{doi}" typeof="ScholarlyArticle">
     <a href="{permalink}" property="name">{title}</a>
     <dl>
       <dt>Authors</dt>
@@ -97,7 +97,7 @@ def listing_html(crossref):
       <dt>Permalink</dt>
       <dd><a href="{permalink}">{permalink}</a></dd>
     </dl>
-  </li>""".format(**crossref))
+  </li>""".format(**crossref)
 
 
 def escape_html(t):
@@ -119,7 +119,7 @@ def main(folder="./doi/", permalink=None):
     v = {
         "title": "Proceedings of Foo",
         "src": "http://example.com/",
-        "parts": c
+        "parts": item
     }
     print(htmlTemplate.format(**v))
 
