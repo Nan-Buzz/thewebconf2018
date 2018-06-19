@@ -73,24 +73,21 @@ def find_title(doc):
     return t
 
 def listing_html(doi, title, authors, year, permalink, proceeding):
-    print("""  <li about="https://doi.org/%s" id="%s" typeof="ScholarlyArticle">
-    <a href="doi/%s/" property="name" rel="sameAs">%s</a>
+    print("""  <li about="%s" id="%s" typeof="ScholarlyArticle">
+    <a href="doi/%s/" property="name">%s</a>
     <dl>
       <dt>Authors</dt>
       <dd xml:lang="" lang="">%s</dd>
-      <dt>Issue</dt>
-      <dd property="isPartOf" typeof="PublicationIssue"><em property="name">%s</em></dd>
       <dt>DOI</dt>
-      <dd><a href="https://doi.org/%s">%s</a></dd>
+      <dd><a href="https://doi.org/%s" property="sameAs">%s</a></dd>
       <dt>Permalink</dt>
-      <dd><a href="%s" property="sameAs">%s</a></dd>
+      <dd><a href="%s">%s</a></dd>
     </dl>
-  </li>""" % (doi, doi, doi, title, ", ".join(authors), proceeding, doi, doi, permalink, permalink))
+  </li>""" % (permalink, doi, doi, title, ", ".join(authors), doi, doi, permalink, permalink))
 
 def embed_html(doi, title, authors, year):
     print("""<li about="https://doi.org/%s" id="%s" typeof="ScholarlyArticle">
     <a href="doi/%s/" property="name" rel="sameAs">%s</a>
-
     <dl>
       <dt>Authors</dt>
       <dd xml:lang="" lang="">%s</dd>
