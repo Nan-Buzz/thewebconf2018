@@ -97,7 +97,7 @@ def listing_html(crossref):
       <dt>Permalink</dt>
       <dd><a href="{permalink}">{permalink}</a></dd>
     </dl>
-  </li>""".format(crossref))
+  </li>""".format(**crossref))
 
 
 def escape_html(t):
@@ -115,13 +115,14 @@ def main(folder="./doi/", permalink=None):
     # 4. substitute using htmlTemplate and escape_html
     c = crossref("../doi/10.1145/3184558.3186356/crossref.json")
     c["permalink"] = "https://w3id.org/oa/10.1145/3184558.3186356"
+    print(c)
     item = listing_html(c)
     v = {
         "title": "Proceedings of Foo",
         "src": "http://example.com/",
         "parts": c
     }
-    print(htmlTemplate.format(v))
+    print(htmlTemplate.format(**v))
 
 if __name__ == "__main__":
     if "-h" in sys.argv:
