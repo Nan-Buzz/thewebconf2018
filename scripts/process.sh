@@ -130,7 +130,7 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
   blurb=$(tempfile)
   echo "<div>" >> $blurb
   echo "<p style='font-size: 75%; color #444'>" >> $blurb
-  echo "This is a web copy of <a href='$doilink'>$doilink</a> " >> $blurb
+  echo "This is a web copy of <a href='$doilink'>$doilink</a>." >> $blurb
 echo " Published in WWW2018 Proceedings © 2018 International World Wide Web Conference Committee, published under " >> $blurb
 echo " <a rel='license' property='license' href='https://creativecommons.org/licenses/by/4.0/'>" >> $blurb
 echo " Creative Commons CC By 4.0 License</a>.">> $blurb
@@ -150,6 +150,8 @@ echo " Creative Commons CC By 4.0 License</a>.">> $blurb
   # Then read in the blurb file below (need to use "" w/escapes to use $blurb)
   sed -i "/body id=\"main\">/ r $blurb" "$dest"
 
+  # Insert cite-as
+  sed -i 's;</head>;<link rel="cite-as" href="https://doi.org/'"$doi"'"/></head>;' "$dest"
 
 done
 echo '      </ul>' >> $toc
