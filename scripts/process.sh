@@ -16,15 +16,16 @@ sed -i "s#<tr><td><div class='utilities-area'><div class='logo-section'><div cla
 #mv "$pathToData"dl.acm.org/pubs/lib/js/MathJax\?config\=TeX-AMS_CHTML "$pathToData"dl.acm.org/pubs/lib/js/MathJax.TeX-AMS_CHTML.js
 
 rm -f $toc
-echo "<DOCTYPE html>" >> $toc
+echo "<!DOCTYPE html>" >> $toc
 echo "<html lang='en'>" >> $toc
 echo "<head>" >> $toc
 echo "  <meta charset='utf-8'>" >> $toc
 echo "  <title>$title</title>" >> $toc
 echo "</head>" >> $toc
 echo "<body>" >> $toc
-echo "  <banner>" >> $toc
+echo "  <div role='banner'>" >> $toc
 echo "   <h1>$title</h1>" >> $toc
+echo "   <p>" >> $toc
 
   echo "This is a web copy of <a href='$src'>$title</a> " >> $toc
   echo "originally published by ACM Press, " >>$toc
@@ -33,9 +34,12 @@ echo "   <h1>$title</h1>" >> $toc
   echo "The <a href='https://github.com/usable-oa/thewebconf2018/tree/master/scripts'>modifications</a> " >> $toc
   echo "from the originals are solely to improve HTML aiming to make it Findable, Accessible, Interoperable and Reusable. " >> $toc
   echo "augmenting HTML metadata and avoiding ACM trademark." >> $toc
+echo "   </p>" >> $toc
+echo "   <p>" >> $toc
   echo "To cite these papers, use their DOI." >> $toc
   echo "To link to or reference their HTML version here, use the corresponding w3id.org permalinks." >> $toc
-echo "  </banner>" >> $toc
+echo "   </p>" >> $toc
+echo "  </div role='banner'>" >> $toc
 echo "  <main>" >> $toc
 
 

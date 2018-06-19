@@ -73,15 +73,15 @@ def find_title(doc):
     return t
 
 def listing_html(doi, title, authors, year, permalink, proceeding):
-    print("""<div about="https://doi.org/%s" namespace="http://schema.org/">
-    <div>
+    print("""<div resource="https://doi.org/%s" vocab="http://schema.org/" typeof="Article">
+        <div>
         <span property="author">%s</span>
-      (<span class="year" property="year">%s</span>):
+      (<span class="year" property="copyrightYear">%s</span>):
     </div>
     <a href="%s">
-      <strong class="title" property="title">%s</strong>
+      <strong class="title" property="name">%s</strong>
     </a>
-    <div><em>%s</em>
+    <div><em property="isPartOf">%s</em>
     </div><br>
 </div>""" % (doi, ", ".join(authors), year, permalink, title, proceeding))
 
@@ -89,12 +89,12 @@ def listing_html(doi, title, authors, year, permalink, proceeding):
 
 
 def embed_html(doi, title, authors, year):
-    print("""<p about="https://doi.org/%s" namespace="http://schema.org/">
+    print("""<p resource="https://doi.org/%s" vocab="http://schema.org/">
     <div>
         <span property="author">%s</span>
       (<span class="year" property="year">%s</span>):
     </div>
-      <strong class="title" property="title">%s</strong> 
+      <strong class="title" property="name">%s</strong> 
 </p>""" % (doi, ", ".join(authors), year, title))
 
 
