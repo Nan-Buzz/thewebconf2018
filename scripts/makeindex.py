@@ -24,11 +24,11 @@ htmlTemplate = """
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>${title}</title>
+    <title>{title}</title>
   </head>
   <body vocab="http://schema.org/">
     <header>
-      <p>This is a web copy of <a property="mainEntityOfPage http://purl.org/pav/derivedFrom http://www.w3.org/ns/prov#wasDerivedFrom" href=${src}><span property="name">${title}</span></a>.
+      <p>This is a web copy of <a property="mainEntityOfPage http://purl.org/pav/derivedFrom http://www.w3.org/ns/prov#wasDerivedFrom" href={src}><span property="name">{title}</span></a>.
  Published in WWW2018 Proceedings © 2018 International World Wide Web Conference Committee, published under
  <a rel="license" property="license" href="https://creativecommons.org/licenses/by/4.0/">
  Creative Commons CC By 4.0 License</a>.</p>
@@ -37,10 +37,10 @@ htmlTemplate = """
     </header>
     <main>
       <article about="" typeof="Article">
-        <h1 property="name">${title}</h1>
+        <h1 property="name">{title}</h1>
         <div datatype="rdf:HTML" property="schema:description">
           <ul rel="hasPart">
-            ${parts}
+            {parts}
           </ul>
         </div>
       </article>
@@ -50,13 +50,9 @@ htmlTemplate = """
 """
 
 
-def crossref(crossref=None, permalink=None, debug=False):
-    if crossref is None or crossref == "-":
-        # Always read JSON as UTF-8 even if system encoding differs
-        f = TextIOWrapper(sys.stdin, encoding="utf-8")
-    else:
-        f = open(crossref, encoding="utf-8")
-    j = json.load(f)
+def crossref(crossref):
+    with open(crossref, encoding="utf-8") as f:
+        j = json.load(f)
     if not j["status"] == "ok":
         print("Error in CrossRef JSON, did API call fail?", file=sys.stderr)
         return 1
@@ -90,18 +86,18 @@ def find_title(doc):
     # TODO: Check [1] and "subtitle" ?
     return t
 
-def listing_html(doi, title, authors, year, permalink, proceeding):
-    print("""  <li about="%s" id="%s" typeof="ScholarlyArticle">
-    <a href="%s" property="name">%s</a>
+def listing_html(crossref):
+    print("""  <li about="{permalink}" id="{doi}" typeof="ScholarlyArticle">
+    <a href="{permalink}" property="name">{title}</a>
     <dl>
       <dt>Authors</dt>
-      <dd xml:lang="" lang="">%s</dd>
+      <dd xml:lang="" lang="">{authors}</dd>
       <dt>DOI</dt>
-      <dd><a href="https://doi.org/%s" property="sameAs">%s</a></dd>
+      <dd><a href="https://doi.org/{doi}" property="sameAs">{doi}</a></dd>
       <dt>Permalink</dt>
-      <dd><a href="%s">%s</a></dd>
+      <dd><a href="{permalink}">{permalink}</a></dd>
     </dl>
-  </li>""" % (permalink, doi, permalink, title, ", ".join(authors), doi, doi, permalink, permalink))
+  </li>""".format(crossref))
 
 
 def escape_html(t):
@@ -117,7 +113,15 @@ def main(folder="./doi/", permalink=None):
     # 2. Group by proceedings
     # 3. Sort by DOI
     # 4. substitute using htmlTemplate and escape_html
-    print(htmlTemplate)
+    c = crossref("../doi/10.1145/3184558.3186356/crossref.json")
+    c["permalink"] = "https://w3id.org/oa/10.1145/3184558.3186356"
+    item = listing_html(c)
+    v = {
+        "title": "Proceedings of Foo",
+        "src": "http://example.com/",
+        "parts": c
+    }
+    print(htmlTemplate.format(v))
 
 if __name__ == "__main__":
     if "-h" in sys.argv:
