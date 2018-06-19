@@ -75,7 +75,7 @@ def find_title(doc):
 def listing_html(doi, title, authors, year, permalink, proceeding):
     print("""<div about="https://doi.org/%s" namespace="http://schema.org/">
     <div>
-        <span property="author">%s<span>
+        <span property="author">%s</span>
       (<span class="year" property="year">%s</span>):
     </div>
     <a href="%s">
@@ -91,7 +91,7 @@ def listing_html(doi, title, authors, year, permalink, proceeding):
 def embed_html(doi, title, authors, year):
     print("""<p about="https://doi.org/%s" namespace="http://schema.org/">
     <div>
-        <span property="author">%s<span>
+        <span property="author">%s</span>
       (<span class="year" property="year">%s</span>):
     </div>
       <strong class="title" property="title">%s</strong> 
