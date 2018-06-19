@@ -117,18 +117,21 @@ def find_title(doc):
     # TODO: Check [1] and "subtitle" ?
     return t
 
-def listing_html(crossref):
-    return """<li resource="{permalink}" id="{doi}" typeof="ScholarlyArticle">
-  <a href="{permalink}" property="name"><span property="name">{title}</span></a>
+articleTemplate = Template(
+"""<li resource="${permalink}" id="${doi}" typeof="ScholarlyArticle">
+  <a href="${permalink}" property="name"><span property="name">${title}</span></a>
   <dl>
     <dt>Authors</dt>
-    <dd xml:lang="" lang="">{authors}</dd>
+    <dd xml:lang="" lang="">${authors}</dd>
     <dt>DOI</dt>
-    <dd><a href="https://doi.org/{doi}" property="sameAs">{doi}</a></dd>
+    <dd><a href="https://doi.org/${doi}" property="sameAs">${doi}</a></dd>
     <dt>Permalink</dt>
-    <dd><a href="{permalink}">{permalink}</a></dd>
+    <dd><a href="${permalink}">${permalink}</a></dd>
   </dl>
-</li>""".format(**crossref)
+</li>""")
+
+def listing_html(crossref):
+    return articleTemplate.substitute(**crossref)
 
 
 def escape_html(t):
