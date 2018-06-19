@@ -115,7 +115,6 @@ def main(folder="./doi/", permalink=None):
     # 4. substitute using htmlTemplate and escape_html
     c = crossref("../doi/10.1145/3184558.3186356/crossref.json")
     c["permalink"] = "https://w3id.org/oa/10.1145/3184558.3186356"
-    print(c)
     item = listing_html(c)
     v = {
         "title": "Proceedings of Foo",
