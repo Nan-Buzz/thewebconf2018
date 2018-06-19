@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import sys
 import json
+import os
+import os.path
 
 def help():
     print("""makeindex.py [doi-folder] [permalink-base]")
@@ -50,6 +52,8 @@ htmlTemplate = """
 """
 
 
+
+
 def crossref(crossref):
     with open(crossref, encoding="utf-8") as f:
         j = json.load(f)
@@ -61,7 +65,8 @@ def crossref(crossref):
         "doi": find_doi(doc),
         "authors": find_authors(doc),
         "year": find_year(doc),
-        "title": find_title(doc)
+        "title": find_title(doc),
+        "proceeding": find_proceeding(doc)
     }
 
 def find_doi(doc):
@@ -107,7 +112,12 @@ def escape_html(t):
         .replace("'", "&#39;").replace('"', "&quot;")
         )
 
-def main(folder="./doi/", permalink=None):
+def find_crossrefs(folder):
+    for root, dirs, files in os.walk(folder):
+        if "crossref.json" in files:
+            yield os.path.join(root, "crossref.json")
+
+def main(folder="../doi/", permalink=None):
     # TODO: 
     # 1. Loop over folder to run crossref()
     # 2. Group by proceedings
@@ -116,11 +126,24 @@ def main(folder="./doi/", permalink=None):
     c = crossref("../doi/10.1145/3184558.3186356/crossref.json")
     c["permalink"] = "https://w3id.org/oa/10.1145/3184558.3186356"
     item = listing_html(c)
+    
+    volumes = {}
+    for c in map(crossref, find_crossrefs(folder)):
+        k = c["proceeding"]
+        if k not in volumes:
+            volumes[k] = []
+        volumes[k].append(c)
+    
+    for volume in volumes.values():
+       volume.sort(key=lambda v : v["doi"])
+
     v = {
         "title": "Proceedings of Foo",
         "src": "http://example.com/",
-        "parts": item
+        "parts": "\n".join(map(listing_html, volume))
     }
+
+
     print(htmlTemplate.format(**v))
 
 if __name__ == "__main__":
