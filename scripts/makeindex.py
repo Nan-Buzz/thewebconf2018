@@ -34,8 +34,7 @@ htmlTemplate = """
   </head>
   <body vocab="http://schema.org/">
     <header>
-      <h1>${title}</h1>
-      <p>This is a web copy of <a property="mainEntityOfPage http://purl.org/pav/derivedFrom http://www.w3.org/ns/prov#wasDerivedFrom" href="{$src}"><span property="name">${title}</span></a>.
+      <p>This is a web copy of <a property="mainEntityOfPage http://purl.org/pav/derivedFrom http://www.w3.org/ns/prov#wasDerivedFrom" href=${src}><span property="name">${title}</span></a>.
  Published in WWW2018 Proceedings © 2018 International World Wide Web Conference Committee, published under
  <a rel="license" property="license" href="https://creativecommons.org/licenses/by/4.0/">
  Creative Commons CC By 4.0 License</a>.</p>
@@ -43,9 +42,14 @@ htmlTemplate = """
       <p>To cite these papers, use their DOI. To link to or reference their HTML version here, use the corresponding w3id.org permalinks.</p>
     </header>
     <main>
-      <ul rel="hasPart">
-      ${parts}
-      </ul>
+      <article about="" typeof="Article">
+        <h1 property="name">${title}</h1>
+        <div datatype="rdf:HTML" property="schema:description">
+          <ul rel="hasPart">
+            ${parts}
+          </ul>
+        </div>
+      </article>
     </main>
   </body>
 </html>
@@ -103,7 +107,7 @@ def find_title(doc):
 
 def listing_html(doi, title, authors, year, permalink, proceeding):
     print("""  <li about="%s" id="%s" typeof="ScholarlyArticle">
-    <a href="doi/%s/" property="name">%s</a>
+    <a href="%s" property="name">%s</a>
     <dl>
       <dt>Authors</dt>
       <dd xml:lang="" lang="">%s</dd>
@@ -112,7 +116,7 @@ def listing_html(doi, title, authors, year, permalink, proceeding):
       <dt>Permalink</dt>
       <dd><a href="%s">%s</a></dd>
     </dl>
-  </li>""" % (permalink, doi, doi, title, ", ".join(authors), doi, doi, permalink, permalink))
+  </li>""" % (permalink, doi, permalink, title, ", ".join(authors), doi, doi, permalink, permalink))
 
 
 def escape_html(t):
@@ -127,8 +131,8 @@ def main(folder="./doi/"):
     # 1. Loop over folder to run crossref()
     # 2. Group by proceedings
     # 3. Sort by DOI
-    # 4. Output using htmlTemplate
-    pass    
+    # 4. substitute using htmlTemplate
+    print(htmlTemplate)
 
 if __name__ == "__main__":
     if "-h" in sys.argv:
