@@ -21,6 +21,7 @@ echo "<html lang='en'>" >> $toc
 echo "<head>" >> $toc
 echo "  <meta charset='utf-8'>" >> $toc
 echo "  <title>$title</title>" >> $toc
+echo '  <style>*[typeof="ScholarlyArticle"] { margin-bottom: 1em }</style>' >> $toc
 echo "</head>" >> $toc
 echo "<body>" >> $toc
 echo "  <div role='banner' vocab='http://schema.org/'>" >> $toc

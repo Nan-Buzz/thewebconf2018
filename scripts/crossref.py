@@ -73,7 +73,7 @@ def find_title(doc):
     return t
 
 def listing_html(doi, title, authors, year, permalink, proceeding):
-    print("""<div about="https://doi.org/%s" vocab="http://schema.org/" typeof="ScholarlyArticle" style="margin-bottom: 1em">
+    print("""<div about="https://doi.org/%s" vocab="http://schema.org/" typeof="ScholarlyArticle">
         <div>
         <span property="author">%s</span>
       (<span class="year" property="datePublished">%s</span>):
