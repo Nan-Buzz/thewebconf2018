@@ -158,22 +158,17 @@ def main(folder="../doi/", permalink=None):
             c["permalink"] = permalink + c["doi"]
         else:
             c["permalink"] = os.path.dirname(c["path"])
-
         k = c["proceeding"]
         if k not in volumes:
             volumes[k] = []
         volumes[k].append(c)
-    
     for volume in volumes.values():
        volume.sort(key=lambda v : v["doi"])
-
     v = {
-        "title": "Proceedings of Foo",
-        "src": "http://example.com/",
+        "title": "Proceedings of the 2018 World Wide Web Conference",
+        "src": "https://www2018.thewebconf.org/proceedings/",
         "parts": "\n".join(map(listing_html, volume))
     }
-
-
     print(htmlTemplate.substitute(**v))
 
 if __name__ == "__main__":
