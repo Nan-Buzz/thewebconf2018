@@ -25,7 +25,36 @@ pretty-printing instead of the HTML.
 
 """)
 
-def main(crossref=None, permalink=None, debug=False, *args):
+htmlTemplate = """
+<!DOCTYPE html>
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>${title}</title>
+  </head>
+  <body vocab="http://schema.org/">
+    <header>
+      <h1>${title}</h1>
+      <p>This is a web copy of <a property="mainEntityOfPage http://purl.org/pav/derivedFrom http://www.w3.org/ns/prov#wasDerivedFrom" href="{$src}"><span property="name">${title}</span></a>.
+ Published in WWW2018 Proceedings © 2018 International World Wide Web Conference Committee, published under
+ <a rel="license" property="license" href="https://creativecommons.org/licenses/by/4.0/">
+ Creative Commons CC By 4.0 License</a>.</p>
+      <p>The <a property="http://purl.org/pav/createdWith" typeof="SoftwareSourceCode" href="https://github.com/usable-oa/thewebconf2018/tree/master/scripts">modifications</a> from the originals are solely to improve HTML aiming to make them <a href="https://doi.org/10.1038/sdata.2016.18" property="publishingPrinciples">Findable, Accessible, Interoperable and Reusable</a>, augmenting metadata and (just in case) avoiding ACM trademarks. To help improve this, please <a property="discussionUrl" href="https://github.com/usable-oa/thewebconf2018/issues">raise an issue or pull request</a>.</p>
+      <p>To cite these papers, use their DOI. To link to or reference their HTML version here, use the corresponding w3id.org permalinks.</p>
+    </header>
+    <main>
+      <ul rel="hasPart">
+      ${parts}
+      </ul>
+    </main>
+  </body>
+</html>
+"""
+
+    
+
+
+def crossref(crossref=None, permalink=None, debug=False):
     if crossref is None or crossref == "-":
         # Always read JSON as UTF-8 even if system encoding differs
         f = TextIOWrapper(sys.stdin, encoding="utf-8")
@@ -85,15 +114,6 @@ def listing_html(doi, title, authors, year, permalink, proceeding):
     </dl>
   </li>""" % (permalink, doi, doi, title, ", ".join(authors), doi, doi, permalink, permalink))
 
-def embed_html(doi, title, authors, year):
-    print("""<li about="https://doi.org/%s" id="%s" typeof="ScholarlyArticle">
-    <a href="doi/%s/" property="name" rel="sameAs">%s</a>
-    <dl>
-      <dt>Authors</dt>
-      <dd xml:lang="" lang="">%s</dd>
-    </dl>
-  </li>""" % (doi, doi, doi, ", ".join(authors)))
-
 
 def escape_html(t):
     """HTML-escape the text in `t`."""
@@ -102,15 +122,17 @@ def escape_html(t):
         .replace("'", "&#39;").replace('"', "&quot;")
         )
 
+def main(folder="./doi/"):
+    # TODO: 
+    # 1. Loop over folder to run crossref()
+    # 2. Group by proceedings
+    # 3. Sort by DOI
+    # 4. Output using htmlTemplate
+    pass    
+
 if __name__ == "__main__":
     if "-h" in sys.argv:
         help()
         sys.exit(0)
-    try:
-        i = main(*sys.argv[1:])
-        if i:
-            print(sys.argv, file=sys.stderr)
-    except Exception as e:
-        print(sys.argv, file=sys.stderr)
-        raise e
+    i = main(*sys.argv[1:])
     sys.exit(i)
