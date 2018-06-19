@@ -21,12 +21,36 @@ e.g. https://w3id.org/oa/10.1234/1231
 
 """)
 
-htmlTemplate = """
-<!DOCTYPE html>
+htmlTemplate = """<!DOCTYPE html>
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
     <title>{title}</title>
+    <style>
+li[typeof="ScholarlyArticle"] {
+margin-top:1em;
+}
+li[typeof="ScholarlyArticle"]:first-child {
+margin-top:0;
+}
+li[typeof="ScholarlyArticle"] dt:first-child {
+display:none;
+}
+li[typeof="ScholarlyArticle"] dt,
+li[typeof="ScholarlyArticle"] dd {
+display:inline;
+}
+li[typeof="ScholarlyArticle"] dt:after {
+content:": ";
+}
+li[typeof="ScholarlyArticle"] dd {
+margin:0;
+}
+li[typeof="ScholarlyArticle"] dd + dt:before {
+content:"\A";
+white-space:pre;
+}
+    </style>
   </head>
   <body vocab="http://schema.org/">
     <header>
@@ -93,8 +117,8 @@ def find_title(doc):
     return t
 
 def listing_html(crossref):
-    return """<li about="{permalink}" id="{doi}" typeof="ScholarlyArticle">
-  <a href="{permalink}" property="name">{title}</a>
+    return """<li resource="{permalink}" id="{doi}" typeof="ScholarlyArticle">
+  <a href="{permalink}" property="name"><span property="name">{title}</span></a>
   <dl>
     <dt>Authors</dt>
     <dd xml:lang="" lang="">{authors}</dd>
