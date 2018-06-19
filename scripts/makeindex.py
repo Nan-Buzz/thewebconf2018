@@ -28,7 +28,7 @@ htmlTemplate = """
   </head>
   <body vocab="http://schema.org/">
     <header>
-      <p>This is a web copy of <a property="mainEntityOfPage http://purl.org/pav/derivedFrom http://www.w3.org/ns/prov#wasDerivedFrom" href={src}><span property="name">{title}</span></a>.
+      <p>This is a web copy of <a property="mainEntityOfPage http://purl.org/pav/derivedFrom http://www.w3.org/ns/prov#wasDerivedFrom" href="{src}"><span property="name">{title}</span></a>.
  Published in WWW2018 Proceedings © 2018 International World Wide Web Conference Committee, published under
  <a rel="license" property="license" href="https://creativecommons.org/licenses/by/4.0/">
  Creative Commons CC By 4.0 License</a>.</p>
@@ -40,7 +40,7 @@ htmlTemplate = """
         <h1 property="name">{title}</h1>
         <div datatype="rdf:HTML" property="schema:description">
           <ul rel="hasPart">
-            {parts}
+{parts}
           </ul>
         </div>
       </article>
@@ -87,17 +87,17 @@ def find_title(doc):
     return t
 
 def listing_html(crossref):
-    return """  <li about="{permalink}" id="{doi}" typeof="ScholarlyArticle">
-    <a href="{permalink}" property="name">{title}</a>
-    <dl>
-      <dt>Authors</dt>
-      <dd xml:lang="" lang="">{authors}</dd>
-      <dt>DOI</dt>
-      <dd><a href="https://doi.org/{doi}" property="sameAs">{doi}</a></dd>
-      <dt>Permalink</dt>
-      <dd><a href="{permalink}">{permalink}</a></dd>
-    </dl>
-  </li>""".format(**crossref)
+    return """<li about="{permalink}" id="{doi}" typeof="ScholarlyArticle">
+  <a href="{permalink}" property="name">{title}</a>
+  <dl>
+    <dt>Authors</dt>
+    <dd xml:lang="" lang="">{authors}</dd>
+    <dt>DOI</dt>
+    <dd><a href="https://doi.org/{doi}" property="sameAs">{doi}</a></dd>
+    <dt>Permalink</dt>
+    <dd><a href="{permalink}">{permalink}</a></dd>
+  </dl>
+</li>""".format(**crossref)
 
 
 def escape_html(t):
