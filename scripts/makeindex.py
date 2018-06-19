@@ -76,7 +76,7 @@ def find_authors(doc):
     for a in doc["author"]:
         # FIXME: Should be name order agnostic
         auths.append("%s %s" % (a["given"], a["family"]))
-    return auths
+    return ", ".join(auths)
 
 def find_year(doc):
     return doc["issued"]["date-parts"][0][0]
