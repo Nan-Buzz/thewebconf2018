@@ -29,8 +29,7 @@ echo "      <p>This is a web copy of <a property='mainEntityOfPage' href='$src'>
 echo " Published in WWW2018 Proceedings © 2018 International World Wide Web Conference Committee, published under " >> $toc
 echo " <a rel='license' property='license' href='https://creativecommons.org/licenses/by/4.0/'>" >> $toc
 echo " Creative Commons CC By 4.0 License</a>.">> $toc
-
-echo "      <p>The <a property='http://purl.org/pav/createdWith' typeof='SoftwareSourceCode' href='https://github.com/usable-oa/thewebconf2018/tree/master/scripts'>modifications</a> from the originals are solely to improve HTML aiming to make them <a href='https://doi.org/10.1038/sdata.2016.18' property='publishingPrinciples'>Findable, Accessible, Interoperable and Reusable</a>, augmenting metadata and (just in case) avoiding ACM trademarks. To help improve this, please <a property='discussionUrl' href='https://github.com/usable-oa/thewebconf2018/issues'>raise an issue or pull request</a>.</p>" >> $toc
+echo '      <p>The <a property="http://purl.org/pav/createdWith" typeof="SoftwareSourceCode" href="https://github.com/usable-oa/thewebconf2018/tree/master/scripts">modifications</a> from the originals are solely to improve HTML aiming to make them <a href="https://doi.org/10.1038/sdata.2016.18" property="publishingPrinciples">Findable, Accessible, Interoperable and Reusable</a>, augmenting metadata and (just in case) avoiding ACM trademarks. To help improve this, please <a property="discussionUrl" href="https://github.com/usable-oa/thewebconf2018/issues">raise an issue or pull request</a>.</p>' >> $toc
 echo "      <p>To cite these papers, use their DOI. To link to or reference their HTML version here, use the corresponding w3id.org permalinks.</p>" >> $toc
 echo "    </header>" >> $toc
 echo "    <main>" >> $toc
