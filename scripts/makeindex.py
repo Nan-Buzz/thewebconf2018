@@ -62,6 +62,7 @@ def crossref(crossref):
         return 1
     doc = j["message"]
     return {
+        "path": crossref,
         "doi": find_doi(doc),
         "authors": find_authors(doc),
         "year": find_year(doc),
@@ -122,13 +123,14 @@ def main(folder="../doi/", permalink=None):
     # 1. Loop over folder to run crossref()
     # 2. Group by proceedings
     # 3. Sort by DOI
-    # 4. substitute using htmlTemplate and escape_html
-    c = crossref("../doi/10.1145/3184558.3186356/crossref.json")
-    c["permalink"] = "https://w3id.org/oa/10.1145/3184558.3186356"
-    item = listing_html(c)
-    
+    # 4. substitute using htmlTemplate and escape_html    
     volumes = {}
     for c in map(crossref, find_crossrefs(folder)):
+        if permalink:
+            c["permalink"] = permalink + c["doi"]
+        else:
+            c["permalink"] = os.path.dirname(c["path"])
+
         k = c["proceeding"]
         if k not in volumes:
             volumes[k] = []
