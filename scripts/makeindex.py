@@ -3,6 +3,7 @@ import sys
 import json
 import os
 import os.path
+from string import Template
 
 def help():
     print("""makeindex.py [doi-folder] [permalink-base]")
@@ -21,11 +22,11 @@ e.g. https://w3id.org/oa/10.1234/1231
 
 """)
 
-htmlTemplate = """<!DOCTYPE html>
+htmlTemplate = Template("""<!DOCTYPE html>
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>{title}</title>
+    <title>${title}</title>
     <style>
 li[typeof="ScholarlyArticle"] {
 margin-top:1em;
@@ -47,14 +48,14 @@ li[typeof="ScholarlyArticle"] dd {
 margin:0;
 }
 li[typeof="ScholarlyArticle"] dd + dt:before {
-content:"\A";
+content:"\\A";
 white-space:pre;
 }
     </style>
   </head>
   <body vocab="http://schema.org/">
     <header>
-      <p>This is a web copy of <a property="mainEntityOfPage http://purl.org/pav/derivedFrom http://www.w3.org/ns/prov#wasDerivedFrom" href="{src}"><span property="name">{title}</span></a>.
+      <p>This is a web copy of <a property="mainEntityOfPage http://purl.org/pav/derivedFrom http://www.w3.org/ns/prov#wasDerivedFrom" href="${src}"><span property="name">${title}</span></a>.
  Published in WWW2018 Proceedings © 2018 International World Wide Web Conference Committee, published under
  <a rel="license" property="license" href="https://creativecommons.org/licenses/by/4.0/">
  Creative Commons CC By 4.0 License</a>.</p>
@@ -63,17 +64,17 @@ white-space:pre;
     </header>
     <main>
       <article about="" typeof="Article">
-        <h1 property="name">{title}</h1>
+        <h1 property="name">${title}</h1>
         <div datatype="rdf:HTML" property="schema:description">
           <ul rel="hasPart">
-{parts}
+${parts}
           </ul>
         </div>
       </article>
     </main>
   </body>
 </html>
-"""
+""")
 
 
 
@@ -170,7 +171,7 @@ def main(folder="../doi/", permalink=None):
     }
 
 
-    print(htmlTemplate.format(**v))
+    print(htmlTemplate.substitute(**v))
 
 if __name__ == "__main__":
     if "-h" in sys.argv:
