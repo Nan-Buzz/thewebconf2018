@@ -27,10 +27,10 @@ echo "  <div role='banner' vocab='http://schema.org/'>" >> $toc
 echo "   <h1>$title</h1>" >> $toc
 echo "   <p>" >> $toc
 
-  echo "This is a web copy of <a rel='mainEntityOfPage' href='$src'><span property='name'>$title</span></a> " >> $toc
+  echo "This is a web copy of <a property='mainEntityOfPage' href='$src'><span property='name'>$title</span></a> " >> $toc
   echo "originally published by ACM Press, " >>$toc
   echo "redistributed under the terms of " >> $toc
-  echo "<a rel='license' href='https://creativecommons.org/licenses/by/4.0/'><span property='name'>Creative Commons Attribution 4.0 (CC BY 4.0)</span></a>." >> $toc
+  echo "<a rel='license' property='license' href='https://creativecommons.org/licenses/by/4.0/'><span property='name'>Creative Commons Attribution 4.0 (CC BY 4.0)</span></a>." >> $toc
 echo "   </p>" >> $toc
 echo "   <p>" >> $toc
   echo "The <a property='http://purl.org/pav/createdWith' typeof='SoftwareSourceCode' href='https://github.com/usable-oa/thewebconf2018/tree/master/scripts'>modifications</a> " >> $toc
@@ -43,7 +43,8 @@ echo "   <p>" >> $toc
   echo "To cite these papers, use their DOI." >> $toc
   echo "To link to or reference their HTML version here, use the corresponding w3id.org permalinks." >> $toc
 echo "   </p>" >> $toc
-echo "  </div role='main'>" >> $toc
+echo "  </div>" >> $toc
+echo "  <div role='main'>" >> $toc
 
 
 for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
