@@ -74,7 +74,7 @@ def find_title(doc):
 
 def listing_html(doi, title, authors, year, permalink, proceeding):
     print("""  <li about="%s" id="%s" typeof="ScholarlyArticle">
-    <a href="doi/%s/" property="name">%s</a>
+    <a href="%s" property="name">%s</a>
     <dl>
       <dt>Authors</dt>
       <dd xml:lang="" lang="">%s</dd>
@@ -83,7 +83,7 @@ def listing_html(doi, title, authors, year, permalink, proceeding):
       <dt>Permalink</dt>
       <dd><a href="%s">%s</a></dd>
     </dl>
-  </li>""" % (permalink, doi, doi, title, ", ".join(authors), doi, doi, permalink, permalink))
+  </li>""" % (permalink, doi, permalink, title, ", ".join(authors), doi, doi, permalink, permalink))
 
 def embed_html(doi, title, authors, year):
     print("""<li about="https://doi.org/%s" id="%s" typeof="ScholarlyArticle">
