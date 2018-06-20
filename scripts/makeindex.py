@@ -28,25 +28,34 @@ htmlTemplate = Template("""<!DOCTYPE html>
     <meta charset="utf-8" />
     <title>${title}</title>
     <style>
+article h1 {
+font-size: 2em;
+}
 li[typeof="ScholarlyArticle"] {
 margin-top:1em;
 }
-li[typeof="ScholarlyArticle"]:first-child {
+li[typeof="ScholarlyArticle"]:first-child,
+li[typeof="ScholarlyArticle"] dl {
 margin-top:0;
 }
 li[typeof="ScholarlyArticle"] dt:first-child {
 display:none;
 }
+section[typeof="PublicationIssue"] dt,
+section[typeof="PublicationIssue"] dd,
 li[typeof="ScholarlyArticle"] dt,
 li[typeof="ScholarlyArticle"] dd {
 display:inline;
 }
+section[typeof="PublicationIssue"] dt:after,
 li[typeof="ScholarlyArticle"] dt:after {
 content:": ";
 }
+section[typeof="PublicationIssue"] dd,
 li[typeof="ScholarlyArticle"] dd {
 margin:0;
 }
+section[typeof="PublicationIssue"] dd + dt:before,
 li[typeof="ScholarlyArticle"] dd + dt:before {
 content:"\\A";
 white-space:pre;
@@ -55,10 +64,7 @@ white-space:pre;
   </head>
   <body vocab="http://schema.org/">
     <header>
-      <p>This is a web copy of <a property="mainEntityOfPage http://purl.org/pav/derivedFrom http://www.w3.org/ns/prov#wasDerivedFrom" href="${src}"><span property="name">${title}</span></a>.
- Published in WWW2018 Proceedings © 2018 International World Wide Web Conference Committee, published under
- <a rel="license" property="license" href="https://creativecommons.org/licenses/by/4.0/">
- Creative Commons CC By 4.0 License</a>.</p>
+      <p>This is a web copy of <a property="mainEntityOfPage http://purl.org/pav/derivedFrom http://www.w3.org/ns/prov#wasDerivedFrom" href="${src}"><span property="name">${title}</span></a>. Published in WWW2018 Proceedings © 2018 International World Wide Web Conference Committee, published under <a rel="license" property="license" href="https://creativecommons.org/licenses/by/4.0/"> Creative Commons CC By 4.0 License</a>.</p>
       <p>The <a property="http://purl.org/pav/createdWith" typeof="SoftwareSourceCode" href="https://github.com/usable-oa/thewebconf2018/tree/master/scripts">modifications</a> from the originals are solely to improve HTML aiming to make them <a href="https://doi.org/10.1038/sdata.2016.18" property="publishingPrinciples">Findable, Accessible, Interoperable and Reusable</a>, augmenting metadata and (just in case) avoiding ACM trademarks. To help improve this, please <a property="discussionUrl" href="https://github.com/usable-oa/thewebconf2018/issues">raise an issue or pull request</a>.</p>
       <p>To cite these papers, use their DOI. To link to or reference their HTML version here, use the corresponding w3id.org permalinks.</p>
     </header>
@@ -66,7 +72,6 @@ white-space:pre;
       <article about="" typeof="Article">
         <h1 property="name">${title}</h1>
 ${toc}
-
 ${parts}
       </article>
     </main>
@@ -116,17 +121,17 @@ def find_title(doc):
     return t
 
 articleTemplate = Template(
-"""<li resource="${permalink}" id="${doi}" typeof="ScholarlyArticle">
-  <a href="${permalink}" property="name"><span property="name">${title}</span></a>
-  <dl>
-    <dt>Authors</dt>
-    <dd xml:lang="" lang="">${authors}</dd>
-    <dt>DOI</dt>
-    <dd><a href="https://doi.org/${doi}" property="sameAs">${doi}</a></dd>
-    <dt>Permalink</dt>
-    <dd><a href="${permalink}">${permalink}</a></dd>
-  </dl>
-</li>""")
+"""              <li resource="${permalink}" id="${doi}" typeof="ScholarlyArticle">
+                <a href="${permalink}"><span property="name">${title}</span></a>
+                <dl>
+                  <dt>Authors</dt>
+                  <dd xml:lang="" lang="">${authors}</dd>
+                  <dt>DOI</dt>
+                  <dd><a href="https://doi.org/${doi}" property="sameAs">${doi}</a></dd>
+                  <dt>Permalink</dt>
+                  <dd><a href="${permalink}">${permalink}</a></dd>
+                </dl>
+              </li>""")
 
 def listing_html(crossref):
     return articleTemplate.substitute(**crossref)
@@ -145,36 +150,32 @@ def find_crossrefs(folder):
             yield os.path.join(root, "crossref.json")
 
 issueTemplate = Template(
-"""
-<section id="${isbn}" typeof="PublicationIssue" resource="${uri}">
-  <h3 property="name">${title}</h3>
-  <dl>
-    <dt>Published:</dt> <dd property="datePublished">${year}</dd>    
-    <dt>ISBN:</dt> <dd property="isbn">${isbn}</dd>
-  </dl>
-  
+"""        <section id="${isbn}" resource="${uri}" typeof="PublicationIssue">
+          <h2 property="name">${title}</h2>
+          <dl>
+            <dt>ISBN</dt> <dd lang="" property="isbn" xml:lang="">${isbn}</dd>
+            <dt>Published</dt> <dd property="datePublished"><time datatype="xsd:gYear" property="schema:dateCreated">${year}</time></dd>
+          </dl>
           <div datatype="rdf:HTML" property="schema:description">
-          <ul rel="hasPart">
+            <ul rel="hasPart">
 ${articles}
-          </ul>
-        </div>
-
-</section>
-""")
+            </ul>
+          </div>
+        </section>""")
 
 # https://tools.ietf.org/html/rfc3187
 PROCEEDINGS = [
     # Add here if you get a KeyError
-    ("Proceedings of the 2018 World Wide Web Conference on World Wide Web  - WWW '18", "978-1-4503-5639-8"),
-    ("Companion of the The Web Conference 2018 on The Web Conference 2018  - WWW '18", "978-1-4503-5640-4"),
+    ("Proceedings of the 2018 World Wide Web Conference on World Wide Web  - WWW '18", "9781450356398"),
+    ("Companion of the The Web Conference 2018 on The Web Conference 2018  - WWW '18", "9781450356404"),
 ]
 ISBN = dict(PROCEEDINGS)
 
 
 def isbn(proceeding_title, asUri=False):
-    i = ISBN[proceeding_title]
+    i = ISBN[proceeding_title].replace("-", "")
     if asUri:    
-        return "URN:ISBN:" + i.replace("-", "")
+        return "urn:isbn:" + i
     else:
         return i
 
@@ -195,13 +196,14 @@ def anchors():
     a = []
     # Fixed order
     for title,isbn in PROCEEDINGS:
-        a.append('  <li><a href="#%s">%s</a></li>' % (isbn, title))
+        a.append('            <li><a href="#%s">%s</a></li>' % (isbn, title))
 
     return Template(
-"""<ul>
+"""        <nav>
+          <ul>
 $li
-</ul>
-""").substitute(li="\n".join(a))
+          </ul>
+        </nav>""").substitute(li="\n".join(a))
 
 def main(folder="../doi/", permalink=None):
     # TODO: 
