@@ -65,6 +65,8 @@ white-space:pre;
     <main>
       <article about="" typeof="Article">
         <h1 property="name">${title}</h1>
+${toc}
+
 ${parts}
       </article>
     </main>
@@ -144,8 +146,8 @@ def find_crossrefs(folder):
 
 issueTemplate = Template(
 """
-<section typeof="PublicationIssue" resource="${uri}">
-  <h3 id="#${isbn}" property="name">${title}</h3>
+<section id="${isbn}" typeof="PublicationIssue" resource="${uri}">
+  <h3 property="name">${title}</h3>
   <dl>
     <dt>Published:</dt> <dd property="datePublished">${year}</dd>    
     <dt>ISBN:</dt> <dd property="isbn">${isbn}</dd>
@@ -161,11 +163,13 @@ ${articles}
 """)
 
 # https://tools.ietf.org/html/rfc3187
-ISBN = {
-    # Just add here if you get a KeyError
-"Proceedings of the 2018 World Wide Web Conference on World Wide Web  - WWW '18": "978-1-4503-5639-8",
-"Companion of the The Web Conference 2018 on The Web Conference 2018  - WWW '18": "978-1-4503-5640-4",
-}
+PROCEEDINGS = [
+    # Add here if you get a KeyError
+    ("Proceedings of the 2018 World Wide Web Conference on World Wide Web  - WWW '18", "978-1-4503-5639-8"),
+    ("Companion of the The Web Conference 2018 on The Web Conference 2018  - WWW '18", "978-1-4503-5640-4"),
+]
+ISBN = dict(PROCEEDINGS)
+
 
 def isbn(proceeding_title, asUri=False):
     i = ISBN[proceeding_title]
@@ -187,6 +191,17 @@ def proceeding(articles):
     }
     return issueTemplate.substitute(**i)
 
+def anchors():
+    a = []
+    # Fixed order
+    for title,isbn in PROCEEDINGS:
+        a.append('  <li><a href="#%s">%s</a></li>' % (isbn, title))
+
+    return Template(
+"""<ul>
+$li
+</ul>
+""").substitute(li="\n".join(a))
 
 def main(folder="../doi/", permalink=None):
     # TODO: 
@@ -197,7 +212,7 @@ def main(folder="../doi/", permalink=None):
     proceedings = {}
 
     first = None
-    for c in map(crossref, find_crossrefs(folder)):        
+    for c in map(crossref, find_crossrefs(folder)):
         if first is None:
             first = c
 
@@ -210,15 +225,25 @@ def main(folder="../doi/", permalink=None):
             proceedings[k] = []
         proceedings[k].append(c)
     
+    if not first:
+        print("Found no crossref.json files within " + folder, file=sys.stderr)
+        return 1
+
     for p in proceedings.values():
        p.sort(key=lambda v : v["doi"])
 
+    parts = []
+    # Fixed order
+    for p,isdn in PROCEEDINGS:
+        parts.append(proceeding(proceedings[p]))
+
     # Pick proceeding title from first one
     v = {
-        "title": first["proceeding"],
+        "title": "Proceedings of the 2018 World Wide Web Conference",
         # TODO: Avoid hardcoded
         "src": "https://www2018.thewebconf.org/proceedings/",
-        "parts": "\n\n".join(map(proceeding, proceedings.values()))
+        "toc": anchors(),
+        "parts": "\n\n".join(parts)
     }
 
     print(htmlTemplate.substitute(**v))
