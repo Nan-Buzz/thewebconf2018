@@ -27,7 +27,12 @@ htmlTemplate = Template("""<!DOCTYPE html>
   <head>
     <meta charset="utf-8" />
     <title>${title}</title>
+    <link href="basic.css" media="all" rel="stylesheet" title="Basic" />    
     <style>
+body > header {
+        font-size: smaller;
+        text-align: justify;
+}
 article h1 {
 font-size: 2em;
 }
