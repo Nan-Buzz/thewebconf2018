@@ -110,7 +110,7 @@ def find_authors(doc):
     for a in doc["author"]:
         # FIXME: Should be name order agnostic
         auths.append("%s %s" % (a["given"], a["family"]))
-    return ", ".join(auths)
+    return escape_html(", ".join(auths))
 
 def find_year(doc):
     return doc["issued"]["date-parts"][0][0]
@@ -118,7 +118,7 @@ def find_year(doc):
 def find_title(doc):
     t = doc["title"][0]
     # TODO: Check [1] and "subtitle" ?
-    return t
+    return escape_html(t)
 
 articleTemplate = Template(
 """              <li resource="${permalink}" id="${doi}" typeof="ScholarlyArticle">
