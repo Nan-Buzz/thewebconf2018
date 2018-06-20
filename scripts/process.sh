@@ -49,6 +49,8 @@ for html in $(find ../data/delivery.acm.org/ -name '*html' -type f) ; do
     "p659-kusmierczyk.html") doi="10.1145/3178876.3186147";;
     "p1369-karypis.html") doi="10.1145/3184558.3191588";;
     "p433-szekely.html") doi="10.1145/3184558.3186203";; 
+    "p379-das.html") doi="10.1145/3178876.3186104";; 
+    "p1725-agun.html") doi="10.1145/3178876.3186084";; 
     *) 
       # The rest should match this pattern
       # assume a self-DOI at the very bottom under ACM's 10.1145/ tree
@@ -131,3 +133,4 @@ echo " Creative Commons CC By 4.0 License</a>.">> $blurb
   sed -i 's;</head>;  <link rel="cite-as" href="https://doi.org/'"$doi"'"/>\n</head>;' "$dest"
 
 done
+./makeindex.py ../doi https://w3id.org/oa/ > ../index.html
