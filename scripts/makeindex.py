@@ -65,11 +65,7 @@ white-space:pre;
     <main>
       <article about="" typeof="Article">
         <h1 property="name">${title}</h1>
-        <div datatype="rdf:HTML" property="schema:description">
-          <ul rel="hasPart">
 ${parts}
-          </ul>
-        </div>
       </article>
     </main>
   </body>
@@ -149,24 +145,34 @@ def find_crossrefs(folder):
 issueTemplate = Template(
 """
 <section typeof="PublicationIssue" resource="${uri}">
-  <h2 property="name">${title}</h2>
-  <span property="datePublished">${year}</span>
+  <h3 id="#${isbn}" property="name">${title}</h3>
+  <dl>
+    <dt>Published:</dt> <dd property="datePublished">${year}</dd>    
+    <dt>ISBN:</dt> <dd property="isbn">${isbn}</dd>
+  </dl>
   
-  ${articles}
+          <div datatype="rdf:HTML" property="schema:description">
+          <ul rel="hasPart">
+${articles}
+          </ul>
+        </div>
+
 </section>
 """)
 
 # https://tools.ietf.org/html/rfc3187
-IBSN = {
+ISBN = {
     # Just add here if you get a KeyError
 "Proceedings of the 2018 World Wide Web Conference on World Wide Web  - WWW '18": "978-1-4503-5639-8",
 "Companion of the The Web Conference 2018 on The Web Conference 2018  - WWW '18": "978-1-4503-5640-4",
 }
 
-def ibsn(proceeding_title):
-    i = IBSN[proceeding_title].replace("-", "")
-    # Lower-case?
-    return "URN:IBSN:" + i
+def isbn(proceeding_title, asUri=False):
+    i = ISBN[proceeding_title]
+    if asUri:    
+        return "URN:ISBN:" + i.replace("-", "")
+    else:
+        return i
 
 def proceeding(articles):
     # We'll pick proceeding title from the first article
@@ -175,7 +181,8 @@ def proceeding(articles):
     i = {    
         "title": first["proceeding"],
         "year": first["year"],
-        "uri": ibsn(first["proceeding"]),
+        "isbn": isbn(first["proceeding"]),
+        "uri": isbn(first["proceeding"], asUri=True),
         "articles": "\n".join(map(listing_html, articles))
     }
     return issueTemplate.substitute(**i)
@@ -213,7 +220,6 @@ def main(folder="../doi/", permalink=None):
         "src": "https://www2018.thewebconf.org/proceedings/",
         "parts": "\n\n".join(map(proceeding, proceedings.values()))
     }
-
 
     print(htmlTemplate.substitute(**v))
 
