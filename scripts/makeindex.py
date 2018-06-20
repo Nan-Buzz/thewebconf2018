@@ -146,29 +146,75 @@ def find_crossrefs(folder):
         if "crossref.json" in files:
             yield os.path.join(root, "crossref.json")
 
+issueTemplate = Template(
+"""
+<section typeof="PublicationIssue" resource="${uri}">
+  <h2 property="name">${title}</h2>
+  <span property="datePublished">${year}</span>
+  
+  ${articles}
+</section>
+""")
+
+# https://tools.ietf.org/html/rfc3187
+IBSN = {
+    # Just add here if you get a KeyError
+"Proceedings of the 2018 World Wide Web Conference on World Wide Web  - WWW '18": "978-1-4503-5639-8",
+"Companion of the The Web Conference 2018 on The Web Conference 2018  - WWW '18": "978-1-4503-5640-4",
+}
+
+def ibsn(proceeding_title):
+    i = IBSN[proceeding_title].replace("-", "")
+    # Lower-case?
+    return "URN:IBSN:" + i
+
+def proceeding(articles):
+    # We'll pick proceeding title from the first article
+    first = articles[0]
+
+    i = {    
+        "title": first["proceeding"],
+        "year": first["year"],
+        "uri": ibsn(first["proceeding"]),
+        "articles": "\n".join(map(listing_html, articles))
+    }
+    return issueTemplate.substitute(**i)
+
+
 def main(folder="../doi/", permalink=None):
     # TODO: 
     # 1. Loop over folder to run crossref()
     # 2. Group by proceedings
     # 3. Sort by DOI
     # 4. substitute using htmlTemplate and escape_html    
-    volumes = {}
-    for c in map(crossref, find_crossrefs(folder)):
+    proceedings = {}
+
+    first = None
+    for c in map(crossref, find_crossrefs(folder)):        
+        if first is None:
+            first = c
+
         if permalink:
             c["permalink"] = permalink + c["doi"]
         else:
             c["permalink"] = os.path.dirname(c["path"])
         k = c["proceeding"]
-        if k not in volumes:
-            volumes[k] = []
-        volumes[k].append(c)
-    for volume in volumes.values():
-       volume.sort(key=lambda v : v["doi"])
+        if k not in proceedings:
+            proceedings[k] = []
+        proceedings[k].append(c)
+    
+    for p in proceedings.values():
+       p.sort(key=lambda v : v["doi"])
+
+    # Pick proceeding title from first one
     v = {
-        "title": "Proceedings of the 2018 World Wide Web Conference",
+        "title": first["proceeding"],
+        # TODO: Avoid hardcoded
         "src": "https://www2018.thewebconf.org/proceedings/",
-        "parts": "\n".join(map(listing_html, volume))
+        "parts": "\n\n".join(map(proceeding, proceedings.values()))
     }
+
+
     print(htmlTemplate.substitute(**v))
 
 if __name__ == "__main__":
