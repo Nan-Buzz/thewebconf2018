@@ -128,6 +128,6 @@ echo " Creative Commons CC By 4.0 License</a>.">> $blurb
   sed -i "/body id=\"main\">/ r $blurb" "$dest"
 
   # Insert cite-as
-  sed -i 's;</head>;<link rel="cite-as" href="https://doi.org/'"$doi"'"/></head>;' "$dest"
+  sed -i 's;</head>;  <link rel="cite-as" href="https://doi.org/'"$doi"'"/>\n</head>;' "$dest"
 
 done
