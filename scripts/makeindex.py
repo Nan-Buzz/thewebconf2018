@@ -159,7 +159,7 @@ issueTemplate = Template(
           <h2 property="name">${title}</h2>
           <dl>
             <dt>ISBN</dt> <dd lang="" property="isbn" xml:lang="">${isbn}</dd>
-            <dt>Published</dt> <dd property="datePublished"><time datatype="xsd:gYear" property="schema:dateCreated">${year}</time></dd>
+            <dt>Published</dt> <dd><time datatype="xsd:gYear" property="schema:datePublished">${year}</time></dd>
           </dl>
           <div datatype="rdf:HTML" property="schema:description">
             <ul rel="hasPart">
